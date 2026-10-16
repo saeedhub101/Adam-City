@@ -30,7 +30,12 @@ try {
     Copy-Item -LiteralPath $source -Destination (Join-Path $Destination 'ForTemple') -Recurse
     $assetDir = Join-Path $Destination 'Saeed-Assets'
     New-Item -ItemType Directory -Path $assetDir -Force | Out-Null
-    Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/saeedhub101/Saeed-Fortnite-/main/assets/saeed.glb' -OutFile (Join-Path $assetDir 'saeed.glb')
+    # The repository is private; the checked-out asset is already available locally in the Actions workspace.
+    $sourceGlb = Join-Path $env:GITHUB_WORKSPACE 'assets/saeed.glb'
+    if (-not (Test-Path -LiteralPath $sourceGlb -PathType Leaf)) {
+        throw "Saeed GLB is missing from the checked-out repository: $sourceGlb"
+    }
+    Copy-Item -LiteralPath $sourceGlb -Destination (Join-Path $assetDir 'saeed.glb')
     $glb = Join-Path $assetDir 'saeed.glb'
     $stream = [System.IO.File]::OpenRead($glb)
     try {
