@@ -7,6 +7,8 @@ on:
     paths:
       - "Tools/Get-ReadyUEFNBase.ps1"
       - ".github/workflows/package-saeed-island.yml"
+      - "Verse/saeed_npc_behavior.verse"
+      - "UEFN/SaeedIsland/NPC-INTEGRATION.md"
 
 permissions:
   contents: read
@@ -31,8 +33,15 @@ jobs:
               throw "Required project file missing: $path"
             }
           }
-          Write-Host "UEFN project descriptor, map package, and Saeed GLB are present."
-          Get-Item $project, $map, $model | Select-Object FullName, Length | Format-Table -AutoSize
+          $verseSource = Join-Path $env:GITHUB_WORKSPACE "Verse/saeed_npc_behavior.verse"
+          $verseTarget = Join-Path $destination "ForTemple/Plugins/ForTemple/Content/saeed_npc_behavior.verse"
+          $guideSource = Join-Path $env:GITHUB_WORKSPACE "UEFN/SaeedIsland/NPC-INTEGRATION.md"
+          if (-not (Test-Path -LiteralPath $verseSource -PathType Leaf)) { throw "Missing Saeed NPC Verse source: $verseSource" }
+          if (-not (Test-Path -LiteralPath $guideSource -PathType Leaf)) { throw "Missing NPC integration guide: $guideSource" }
+          Copy-Item -LiteralPath $verseSource -Destination $verseTarget
+          Copy-Item -LiteralPath $guideSource -Destination (Join-Path $destination "NPC-INTEGRATION.md")
+          Write-Host "UEFN project descriptor, map package, Saeed GLB, Verse source, and NPC guide are present."
+          Get-Item $project, $map, $model, $verseTarget | Select-Object FullName, Length | Format-Table -AutoSize
 
       - name: Create downloadable ZIP
         shell: pwsh
