@@ -6,7 +6,7 @@ Use this checklist with the actual UEFN editor. Do not mark an item complete bas
 
 ## 1. Source asset
 
-- [ ] Confirm the exact GLB revision from `saeedhub101/Saeed-V2.0`.
+- [ ] Confirm the asset at `assets/saeed.glb` in `saeedhub101/Saeed-Fortnite-` and record its Git commit and SHA-256.
 - [ ] Keep an untouched copy of the original GLB.
 - [ ] Record file size, SHA-256, node count, skin/joint count, animation names, and morph-target count.
 - [ ] Inspect the model in a GLB viewer or Blender before importing.
