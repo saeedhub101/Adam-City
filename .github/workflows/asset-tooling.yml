@@ -1,0 +1,34 @@
+name: Asset tooling checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-tooling:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run validator unit tests
+        run: python -m unittest discover -s Tests -v
+      - name: Compile validator
+        run: python -m py_compile Tools/validate_glb.py
+      - name: Validate source GLB when present
+        shell: bash
+        run: |
+          if [[ -f assets/Saeed_AI-3D.glb ]]; then
+            python Tools/validate_glb.py assets/Saeed_AI-3D.glb --json
+          else
+            echo "::notice::Source GLB is not stored in this repository yet; only validator tests were run."
+          fi
