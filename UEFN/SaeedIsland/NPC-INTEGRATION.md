@@ -7,7 +7,7 @@
 - A converted `Saeed-Assets/saeed.fbx`, produced by Blender in GitHub Actions.
 - The starter Verse roaming behavior source.
 
-The workflow checks that the original project/map exist, then converts the GLB through Blender and re-imports the FBX in a clean Blender scene. It fails if it cannot find a mesh, armature, or skinned mesh after the round-trip. This validates the model conversion, **not** UEFN import or Fortnite gameplay.
+The workflow checks that the original project/map exist, then converts the GLB through Blender and re-imports the FBX in a clean Blender scene. It fails if it cannot find a mesh, armature, or skinned mesh after the round-trip, if existing shape keys are lost, or if all animation actions disappear. The exporter leaves mesh modifiers unapplied to reduce the risk of losing facial blendshapes. This validates the model conversion, **not** UEFN import or Fortnite gameplay.
 
 ## Finish the NPC inside UEFN
 
