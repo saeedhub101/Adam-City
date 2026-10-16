@@ -1,0 +1,70 @@
+name: Build Saeed Royale for Windows
+
+on:
+  push:
+    paths:
+      - "SaeedRoyaleGodot/**"
+      - ".github/workflows/build-saeed-royale-windows.yml"
+  pull_request:
+    paths:
+      - "SaeedRoyaleGodot/**"
+      - ".github/workflows/build-saeed-royale-windows.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Validate game project contracts
+        run: python3 SaeedRoyaleGodot/Tests/validate_project.py
+
+      - name: Download Godot 4.4.1 and Windows export templates
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/godot" "$HOME/.local/share/godot/export_templates/4.4.1.stable"
+          curl -fL --retry 3 "https://github.com/godotengine/godot/releases/download/4.4.1-stable/Godot_v4.4.1-stable_linux.x86_64.zip" -o "$RUNNER_TEMP/godot/godot.zip"
+          unzip -q "$RUNNER_TEMP/godot/godot.zip" -d "$RUNNER_TEMP/godot"
+          curl -fL --retry 3 "https://github.com/godotengine/godot/releases/download/4.4.1-stable/Godot_v4.4.1-stable_export_templates.tpz" -o "$RUNNER_TEMP/godot/templates.tpz"
+          unzip -q "$RUNNER_TEMP/godot/templates.tpz" -d "$RUNNER_TEMP/godot/templates"
+          cp "$RUNNER_TEMP/godot/templates/templates/"* "$HOME/.local/share/godot/export_templates/4.4.1.stable/"
+          GODOT_BIN="$(find "$RUNNER_TEMP/godot" -maxdepth 1 -type f -name 'Godot_v4.4.1-stable_linux.x86_64' -print -quit)"
+          test -n "$GODOT_BIN"
+          chmod +x "$GODOT_BIN"
+          echo "GODOT_BIN=$GODOT_BIN" >> "$GITHUB_ENV"
+
+      - name: Import and parse project with Godot
+        working-directory: SaeedRoyaleGodot
+        run: |
+          set -euo pipefail
+          "$GODOT_BIN" --headless --editor --path . --import
+          set -o pipefail
+          "$GODOT_BIN" --headless --path . --quit-after 120 2>&1 | tee "$RUNNER_TEMP/godot-smoke.log"
+          if grep -E "SCRIPT ERROR|Parse Error|ERROR:" "$RUNNER_TEMP/godot-smoke.log"; then
+            echo "Godot smoke test emitted errors."
+            exit 1
+          fi
+
+      - name: Export Windows game
+        working-directory: SaeedRoyaleGodot
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          "$GODOT_BIN" --headless --path . --export-release "Windows Desktop" build/SaeedRoyale.exe
+          test -s build/SaeedRoyale.exe
+          cp README.md build/README.txt
+
+      - name: Upload downloadable Windows game
+        uses: actions/upload-artifact@v7
+        with:
+          name: SaeedRoyale-Windows-x64
+          path: SaeedRoyaleGodot/build/
+          if-no-files-found: error
+          retention-days: 30
