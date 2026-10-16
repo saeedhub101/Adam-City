@@ -38,17 +38,25 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Parse PowerShell setup script
+      - name: Parse PowerShell setup scripts
         shell: pwsh
         run: |
-          $tokens = $null
-          $errors = $null
-          [System.Management.Automation.Language.Parser]::ParseFile(
-            "$PWD/Tools/Download-SaeedAsset.ps1",
-            [ref]$tokens,
-            [ref]$errors
-          ) | Out-Null
-          if ($errors.Count -gt 0) {
-            $errors | Format-List | Out-String | Write-Error
+          $scripts = @(
+            "Tools/Download-SaeedAsset.ps1",
+            "Tools/Prepare-UEFNProject.ps1",
+            "Tools/Initialize-SaeedIsland.ps1"
+          )
+          foreach ($script in $scripts) {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              (Join-Path $PWD $script),
+              [ref]$tokens,
+              [ref]$errors
+            ) | Out-Null
+            if ($errors.Count -gt 0) {
+              Write-Error "PowerShell syntax errors in $script"
+              $errors | Format-List | Out-String | Write-Error
+            }
+            Write-Host "Syntax passed: $script"
           }
-          Write-Host "PowerShell syntax validation passed."
