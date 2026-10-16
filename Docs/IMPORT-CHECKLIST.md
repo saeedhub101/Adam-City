@@ -1,5 +1,7 @@
 # UEFN Import and Validation Checklist
 
+Before starting, follow [UEFN-SETUP.md](UEFN-SETUP.md) to retrieve and fingerprint the source asset, create a real UEFN project, and capture evidence. The checklist below must be completed in the editor; repository CI is not a substitute.
+
 Use this checklist with the actual UEFN editor. Do not mark an item complete based on source-file inspection alone.
 
 ## 1. Source asset
