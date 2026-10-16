@@ -12,6 +12,7 @@ class SAEEDROYALE_API ASaeedRoyaleCharacter : public ACharacter
 public:
     ASaeedRoyaleCharacter();
     virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+    virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
     UFUNCTION(BlueprintPure, Category = "Saeed Royale|Health")
