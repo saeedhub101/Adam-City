@@ -27,10 +27,10 @@ jobs:
       - name: Validate source GLB when present
         shell: bash
         run: |
-          if [[ -f assets/Saeed_AI-3D.glb ]]; then
-            python Tools/validate_glb.py assets/Saeed_AI-3D.glb --json
+          if [[ -f assets/saeed.glb ]]; then
+            python Tools/validate_glb.py assets/saeed.glb --json
           else
-            echo "::notice::Source GLB is not stored in this repository yet; only validator tests were run."
+            echo "::notice::assets/saeed.glb is missing; only validator tests were run."
           fi
 
   validate-windows-setup-script:
