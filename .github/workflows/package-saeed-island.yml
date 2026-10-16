@@ -1,0 +1,55 @@
+name: Package SaeedIsland UEFN base
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "Tools/Get-ReadyUEFNBase.ps1"
+      - ".github/workflows/package-saeed-island.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  package-project:
+    runs-on: windows-latest
+    steps:
+      - name: Check out Saeed tooling
+        uses: actions/checkout@v4
+
+      - name: Download and validate existing UEFN project and Saeed model
+        shell: pwsh
+        run: |
+          $destination = Join-Path $env:RUNNER_TEMP "SaeedIsland-Base"
+          ./Tools/Get-ReadyUEFNBase.ps1 -Destination $destination
+          $project = Join-Path $destination "ForTemple/ForTemple.uefnproject"
+          $map = Join-Path $destination "ForTemple/Plugins/ForTemple/Content/ForTemple.umap"
+          $model = Join-Path $destination "Saeed-Assets/saeed.glb"
+          foreach ($path in @($project, $map, $model)) {
+            if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+              throw "Required project file missing: $path"
+            }
+          }
+          Write-Host "UEFN project descriptor, map package, and Saeed GLB are present."
+          Get-Item $project, $map, $model | Select-Object FullName, Length | Format-Table -AutoSize
+
+      - name: Create downloadable ZIP
+        shell: pwsh
+        run: |
+          $destination = Join-Path $env:RUNNER_TEMP "SaeedIsland-Base"
+          $archive = Join-Path $env:RUNNER_TEMP "SaeedIsland-Base.zip"
+          Compress-Archive -Path (Join-Path $destination "*") -DestinationPath $archive -CompressionLevel Optimal
+          if ((Get-Item $archive).Length -lt 1MB) {
+            throw "The packaged project ZIP is unexpectedly small."
+          }
+          Write-Host "Created package: $archive"
+
+      - name: Upload downloadable project package
+        uses: actions/upload-artifact@v4
+        with:
+          name: SaeedIsland-UEFN-Base
+          path: ${{ runner.temp }}/SaeedIsland-Base.zip
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
