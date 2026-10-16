@@ -138,7 +138,7 @@ func _add_tree(pos: Vector3) -> void:
 	add_child(crown)
 
 func _add_box(parent: Node3D, node_name: String, pos: Vector3, size: Vector3, color: Color, solid: bool) -> Node3D:
-	var root := StaticBody3D.new() if solid else Node3D.new()
+	var root: Node3D = StaticBody3D.new() if solid else Node3D.new()
 	root.name = node_name
 	root.position = pos
 	if solid:
