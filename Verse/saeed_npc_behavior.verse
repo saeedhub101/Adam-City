@@ -44,7 +44,3 @@ saeed_npc_behavior<public> := class(npc_behavior):
                 else:
                     # Brief pause before choosing a new target if navigation fails.
                     Navigatable.Wait(?Duration := 1.0)
-
-    OnEnd<override>():void=
-        # No persistent external resources are created by this behavior.
-        return
