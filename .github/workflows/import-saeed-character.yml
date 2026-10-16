@@ -10,6 +10,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: saeed-asset-normalization
+  cancel-in-progress: false
+
 jobs:
   normalize-character:
     runs-on: ubuntu-latest
