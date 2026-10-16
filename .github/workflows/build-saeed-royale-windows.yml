@@ -68,3 +68,33 @@ jobs:
           path: SaeedRoyaleGodot/build/
           if-no-files-found: error
           retention-days: 30
+
+  windows-executable-smoke:
+    needs: validate-and-export
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download exported Windows game
+        uses: actions/download-artifact@v7
+        with:
+          name: SaeedRoyale-Windows-x64
+          path: smoke
+
+      - name: Launch Windows executable headlessly
+        shell: pwsh
+        run: |
+          $exe = Join-Path $PWD "smoke/SaeedRoyale.exe"
+          if (-not (Test-Path $exe)) { throw "Windows executable was not found in the build artifact." }
+          $log = Join-Path $env:RUNNER_TEMP "saeed-royale-windows-smoke.log"
+          $process = Start-Process -FilePath $exe -ArgumentList @("--headless", "--quit-after", "120", "--log-file", $log) -PassThru -Wait
+          if ($process.ExitCode -ne 0) {
+            if (Test-Path $log) { Get-Content $log }
+            throw "Exported Windows game exited with code $($process.ExitCode)."
+          }
+          if (Test-Path $log) {
+            $output = Get-Content -Raw $log
+            if ($output -match "SCRIPT ERROR|Parse Error|ERROR:") {
+              Write-Output $output
+              throw "Exported Windows game logged a runtime error."
+            }
+          }
