@@ -32,3 +32,23 @@ jobs:
           else
             echo "::notice::Source GLB is not stored in this repository yet; only validator tests were run."
           fi
+
+  validate-windows-setup-script:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Parse PowerShell setup script
+        shell: pwsh
+        run: |
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            "$PWD/Tools/Download-SaeedAsset.ps1",
+            [ref]$tokens,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | Format-List | Out-String | Write-Error
+          }
+          Write-Host "PowerShell syntax validation passed."
