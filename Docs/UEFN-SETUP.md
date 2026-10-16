@@ -1,47 +1,62 @@
-# إعداد جزيرة Saeed داخل UEFN
+# إعداد شخصية Saeed كـ NPC داخل جزيرة UEFN
 
-هذه الخطوات تجهز أصل الشخصية ثم تختبره داخل Unreal Editor for Fortnite على Windows. ملفات GitHub وحدها لا تنشئ مشروع UEFN أو جزيرة قابلة للتشغيل.
+> **تنبيه مهم:** وجود `assets/saeed.glb` في GitHub لا يعني أن الشخصية أصبحت داخل الجزيرة. يجب تنفيذ الاستيراد داخل Unreal Editor for Fortnite (UEFN) على Windows. كما أن دعم استيراد GLB مباشرةً يختلف عن مسار استيراد Skeletal Mesh؛ لا تفترض أن GLB يمكن تعيينه مباشرةً إلى NPC.
 
-## 1. جلب ملف الشخصية
+## 1. تجهيز الأصل
 
-من جذر نسخة مستودع `Saeed-Fortnite-` على Windows، شغّل:
+من جذر نسخة المستودع على Windows:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File Tools/Download-SaeedAsset.ps1
+python Tools/validate_glb.py assets/saeed.glb --json
 ```
 
-سيتم تنزيل الأصل المعتمد من هذا المستودع نفسه:
-`assets/saeed.glb`
+احتفظ بنسخة أصلية غير معدلة من GLB. افتحه في Blender وافحص:
+- أن المجسم والـ Armature ظاهرين وأن الـ mesh مرتبط بالـ armature الصحيح.
+- اتجاه المحور، القياس، نقطة الارتكاز، والوقوف على الأرض.
+- أسماء العظام وتسلسلها، ووجود Skin weights سليمة.
+- الخامات والصور والعيون والأسنان واللسان.
+- الحركات وShape Keys/Morph Targets.
 
-رابط التنزيل المباشر:
-https://raw.githubusercontent.com/saeedhub101/Saeed-Fortnite-/main/assets/saeed.glb
+## 2. إنشاء نسخة استيراد متوافقة
 
-يفحص السكربت ترويسة GLB ويطبع بصمة SHA-256. لا يحتاج اللاعب أو المستخدم النهائي إلى Python أو Node.js أو PowerShell؛ هذه أداة إعداد للمطور فقط.
+1. افتح Blender واستورد `assets/saeed.glb` من **File → Import → glTF 2.0**.
+2. لا تغيّر الأصل مباشرةً؛ نفّذ أي تعديل على نسخة عمل منفصلة.
+3. إذا كان إصدار UEFN لديك لا يقبل GLB كسكِلِتون/مجسم قابل للاستخدام، جهّز نسخة FBX من Blender عبر **File → Export → FBX** وفق مسار Unreal Engine الموثق لإصدارك.
+4. قبل التصدير، اختر الـ mesh والـ armature المطلوبين فقط، وتأكد من أن الـ mesh مرتبط بالـ armature وأن الـ transforms والـ rest pose صحيحة. اضبط إعدادات FBX وفق متطلبات Unreal/UEFN الحالية.
+5. اختبر الاستيراد أولًا في مشروع تجريبي. لا تفترض أن Shape Keys أو جميع الحركات أو المواد ستنتقل؛ سجل ما فُقد وما يحتاج إعادة إعداد.
 
-## 2. استيراد الأصل في UEFN
+**لا يوجد حتى الآن ملف FBX معتمد أو إثبات أن تحويل GLB إلى FBX يحافظ على كل خصائص سعيد.** لا تستبدل الأصل الأصلي ولا تعلن نجاح التحويل قبل معاينة الناتج.
 
-1. افتح UEFN وأنشئ مشروع جزيرة حقيقياً أو افتح مشروعك الحالي.
-2. استورد `saeed.glb` من متصفح المحتوى/مسار الاستيراد الذي يدعمه إصدار UEFN لديك.
-3. تحقق من رسالة الاستيراد، والخامات، والاتجاه، والحجم، والـ skeleton، والـ morph targets.
-4. افحص كل حركة مستوردة في المحرر. لا تفترض أن جميع حركات GLB أو Morph Targets مدعومة.
-5. إذا رفض UEFN GLB أو لم يستورد الهيكل كما يلزم، استخدم مسار التحويل الذي يدعمه إصدار UEFN المثبت، ثم أعد اختبار الأصل المحول.
+## 3. استيراد الأصل في UEFN
 
-## 3. إعداد NPC
+1. افتح UEFN وأنشئ مشروع جزيرة تجريبيًا أو افتح مشروعك.
+2. من Content Browser استورد ملف FBX/الأصل الذي أثبتت صلاحيته في الخطوة السابقة، واتبع نافذة Import Options.
+3. تحقق من ظهور Skeletal Mesh والـ Skeleton والمواد. افتح الـ Skeleton وتأكد من سلامة hierarchy والـ weights.
+4. استورد الحركات بصورة منفصلة إن لزم، مع اختيار الـ Skeleton المطابق تمامًا. اختبر كل حركة منفردة.
+5. إذا فشل الاستيراد، احتفظ برسالة الخطأ وسجل UEFN قبل تغيير الملف.
 
-1. أنشئ/اختر NPC Character Definition مدعوماً في إصدار UEFN.
-2. اربط نموذج الشخصية بعد التأكد من توافق الـ skeleton؛ لا تفترض أن أي GLB يمكن استخدامه مباشرةً كـ NPC.
-3. أضف NPC Spawner إلى الجزيرة واضبطه على تعريف الشخصية.
-4. أضف ملف Verse `Verse/saeed_npc_behavior.verse` إلى مشروع Verse في UEFN، ثم عالج أي اختلافات يطلبها مترجم الإصدار الفعلي.
-5. اربط سلوك NPC بتعريف الشخصية أو آلية الإسناد التي يدعمها الإصدار.
+## 4. إعداد NPC داخل الجزيرة
 
-## 4. الاختبار داخل جلسة اللعب
+1. أنشئ NPC Character Definition من القوالب/الأدوات المتاحة في إصدار UEFN المثبت.
+2. اختر مظهرًا أو Character Asset يدعمه نظام NPC في هذا الإصدار. **لا تفترض أن أي Skeletal Mesh مخصص يمكن تعيينه مباشرةً إلى NPC Fortnite**؛ إذا لم يظهر خيار تعيين المجسم المستورد، فهذا قيد توافق يجب حله أولًا وليس خطأ في ملف Verse.
+3. أضف NPC Spawner إلى الجزيرة واضبط Character Definition وموقع الظهور.
+4. أضف `Verse/saeed_npc_behavior.verse` إلى مشروع Verse في UEFN. اربط السلوك بتعريف الشخصية عبر الواجهة التي يوفرها الإصدار.
+5. اضغط Build/Compile في Verse وأصلح أخطاء المترجم كما هي؛ هذا المستودع لا يستطيع ترجمة Verse باستخدام GitHub Actions وحدها.
+6. ابدأ جلسة UEFN واختبر ظهور NPC والملاحة والتصادم والرسوم. تحقق أن نقطة التجوال تقع ضمن أرض قابلة للمشي.
 
-- شغّل Compile في UEFN وأصلح أخطاء Verse أو استيراد الأصول.
-- ابدأ جلسة لعب واختبر ظهور NPC والملاحة والتوقف وعدم الخروج عن الجزيرة.
-- اختبر الحركات والوجه والمواد، وسجّل أي شيء لم ينتقل من GLB.
-- لا تعتبر نجاح GitHub Actions بديلاً عن هذا الاختبار الفعلي.
+## 5. شروط إعلان النجاح
+
+لا تعتبر المهمة مكتملة إلا بعد حفظ دليل على:
+- إصدار UEFN المستخدم واسم مشروع الجزيرة.
+- أسماء الأصول التي أنشأها الاستيراد وأي تحذيرات.
+- نجاح Verse Build/Compile.
+- ظهور سعيد في جلسة لعب فعلية، وصحة المظهر والحجم والاتجاه.
+- نجاح الملاحة وإعادة الظهور.
+- نتيجة فحص كل حركة وخامة وShape Key مطلوب.
 
 ## مراجع
 
-- https://dev.epicgames.com/documentation/fortnite/create-custom-npc-behavior-in-unreal-editor-for-fortnite?lang=en-US
-- `Docs/IMPORT-CHECKLIST.md`
+- [Create custom NPC behavior in UEFN](https://dev.epicgames.com/documentation/fortnite/create-custom-npc-behavior-in-unreal-editor-for-fortnite?lang=en-US)
+- [Importing assets into Unreal Editor for Fortnite](https://dev.epicgames.com/documentation/fortnite/importing-assets-in-unreal-editor-for-fortnite)
+- [IMPORT-CHECKLIST.md](IMPORT-CHECKLIST.md)
