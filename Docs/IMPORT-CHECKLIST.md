@@ -1,47 +1,50 @@
-# UEFN Import and Validation Checklist
+# قائمة قبول استيراد Saeed وربطه بـ NPC في UEFN
 
-Before starting, follow [UEFN-SETUP.md](UEFN-SETUP.md) to retrieve and fingerprint the source asset, create a real UEFN project, and capture evidence. The checklist below must be completed in the editor; repository CI is not a substitute.
+أكمل هذه القائمة داخل UEFN على Windows. فحوصات GitHub لا تُعد بديلًا عن استيراد فعلي أو جلسة لعب.
 
-Use this checklist with the actual UEFN editor. Do not mark an item complete based on source-file inspection alone.
+## 1. الأصل
 
-## 1. Source asset
+- [ ] تنزيل `assets/saeed.glb` وتشغيل `Tools/validate_glb.py` وتسجيل commit وSHA-256.
+- [ ] الاحتفاظ بنسخة أصلية غير معدلة.
+- [ ] فتح GLB في Blender والتحقق من mesh وarmature وweights وتسلسل العظام.
+- [ ] فحص الحجم والاتجاه ونقطة الارتكاز والمواد والخامات والعيون والأسنان واللسان.
+- [ ] تسجيل الحركات وShape Keys/Morph Targets الموجودة فعليًا.
+- [ ] التحقق من حقوق استخدام الأصل في الجزيرة.
 
-- [ ] Confirm the asset at `assets/saeed.glb` in `saeedhub101/Saeed-Fortnite-` and record its Git commit and SHA-256.
-- [ ] Keep an untouched copy of the original GLB.
-- [ ] Record file size, SHA-256, node count, skin/joint count, animation names, and morph-target count.
-- [ ] Inspect the model in a GLB viewer or Blender before importing.
-- [ ] Check license/ownership and ensure the asset is permitted for the intended island.
+## 2. اختيار صيغة يدعمها UEFN
 
-## 2. Import into UEFN
+- [ ] تسجيل إصدار UEFN/Unreal المستخدم.
+- [ ] اختبار مسار استيراد GLB إن كان الإصدار يدعمه للأصل المطلوب.
+- [ ] إذا لم يكن GLB مدعومًا كـ Skeletal Mesh، تجهيز نسخة عمل FBX في Blender وفق متطلبات Unreal Engine، مع إبقاء GLB الأصلي دون تعديل.
+- [ ] استيراد نسخة العمل إلى مشروع اختبار والتحقق من ظهور المجسم والـ Skeleton.
+- [ ] التأكد من سلامة الـ skin weights والـ rest pose واتجاه الشخصية.
+- [ ] توثيق أي مواد أو حركات أو morph targets لم تنتقل؛ لا تفترض الحفاظ عليها تلقائيًا.
 
-- [ ] Import the GLB through the supported UEFN asset-import workflow.
-- [ ] Confirm the mesh is visible and correctly oriented.
-- [ ] Check scale, pivot, floor contact, and forward direction.
-- [ ] Check materials, textures, eyes, teeth, tongue, and transparency.
-- [ ] Confirm the skeleton is recognised and inspect bone hierarchy.
-- [ ] Check which animations and morph targets the importer preserved. Do not assume all GLB features are supported.
-- [ ] If import fails, capture the exact UEFN log/error before modifying the source asset.
+## 3. ربط NPC
 
-## 3. NPC setup
+- [ ] فتح مشروع جزيرة UEFN فعلي.
+- [ ] إنشاء/اختيار NPC Character Definition مدعوم في الإصدار.
+- [ ] التحقق من أن النظام يسمح باستخدام المظهر المستورد؛ لا تفترض أن كل Skeletal Mesh يمكن تعيينه إلى NPC Fortnite.
+- [ ] إعداد NPC Spawner وربطه بتعريف الشخصية.
+- [ ] إضافة `Verse/saeed_npc_behavior.verse` إلى مشروع Verse.
+- [ ] ترجمة Verse في UEFN ومعالجة الأخطاء التي يعرضها المترجم.
+- [ ] ربط السلوك بتعريف NPC بالطريقة التي يدعمها الإصدار.
 
-- [ ] Create or configure a custom NPC Character Definition using the imported assets supported by the current UEFN version.
-- [ ] Configure an NPC Spawner in a test island.
-- [ ] Spawn one Saeed NPC in a controlled test area.
-- [ ] Verify idle, facing direction, navigation, and collision.
-- [ ] Bind only animation assets that UEFN actually imported and can play.
-- [ ] Add Verse behavior only after the base NPC reliably spawns.
+## 4. اختبار داخل جلسة لعب
 
-## 4. Functional tests
+- [ ] بدء جلسة لعب بنجاح.
+- [ ] ظهور NPC مرة واحدة في المكان المحدد.
+- [ ] فحص المظهر والمواد والحجم والاتجاه والتصادم والوقوف على الأرض.
+- [ ] التحقق من الملاحة داخل حدود الأرض القابلة للمشي.
+- [ ] التحقق من إعادة الظهور وإعادة تشغيل الجلسة.
+- [ ] اختبار الحركات والوجه بصورة منفصلة، وتسجيل الميزات غير المدعومة.
 
-- [ ] Island launches successfully in UEFN session.
-- [ ] NPC spawns exactly once at the expected location.
-- [ ] Model and materials remain correct at gameplay camera distance.
-- [ ] NPC does not float, sink into the floor, or face the wrong direction.
-- [ ] Idle animation plays without visible rig breakage.
-- [ ] Each selected animation is tested individually.
-- [ ] NPC behavior remains stable after respawn and session restart.
-- [ ] Record unsupported features and workarounds instead of silently omitting them.
+## 5. الدليل المطلوب
 
-## 5. Evidence required before declaring success
+- [ ] إصدار UEFN واسم مشروع الجزيرة.
+- [ ] أسماء الأصول المستوردة ورسائل التحذير.
+- [ ] نتيجة Verse Build/Compile.
+- [ ] لقطة شاشة أو سجل يثبت ظهور سعيد داخل جلسة لعب.
+- [ ] نتيجة كل اختبار مع ذكر أي عائق متبقٍ.
 
-Record the UEFN version, import warnings, asset names created by UEFN, test outcome, and screenshots or logs for failures. A GitHub commit or green CI workflow alone does not prove in-editor functionality.
+لا تُعلن المهمة مكتملة قبل نجاح الاستيراد والربط والترجمة والاختبار داخل المحرر. راجع [UEFN-SETUP.md](UEFN-SETUP.md).
