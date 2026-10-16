@@ -45,7 +45,12 @@ jobs:
         run: |
           set -euo pipefail
           "$GODOT_BIN" --headless --editor --path . --import
-          "$GODOT_BIN" --headless --path . --quit-after 3
+          set -o pipefail
+          "$GODOT_BIN" --headless --path . --quit-after 120 2>&1 | tee "$RUNNER_TEMP/godot-smoke.log"
+          if grep -E "SCRIPT ERROR|Parse Error|ERROR:" "$RUNNER_TEMP/godot-smoke.log"; then
+            echo "Godot smoke test emitted errors."
+            exit 1
+          fi
 
       - name: Export Windows game
         working-directory: SaeedRoyaleGodot
