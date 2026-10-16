@@ -98,3 +98,27 @@ jobs:
               throw "Exported Windows game logged a runtime error."
             }
           }
+
+  publish-windows-release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: windows-executable-smoke
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download verified Windows game
+        uses: actions/download-artifact@v7
+        with:
+          name: SaeedRoyale-Windows-x64
+          path: release
+
+      - name: Publish public Windows download
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="v0.1.${GITHUB_RUN_NUMBER}"
+          gh release create "$tag" release/SaeedRoyale.exe release/README.txt \
+            --title "Saeed Royale $tag" \
+            --notes "Saeed Royale Windows x64 single-player build. Includes AI rivals, rifle combat, pickups, and a shrinking safe zone. Online multiplayer is not included in this version." \
+            --target "$GITHUB_SHA" \
+            --latest
