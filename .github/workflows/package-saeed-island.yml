@@ -6,9 +6,11 @@ on:
     branches: [main]
     paths:
       - "Tools/Get-ReadyUEFNBase.ps1"
+      - "Tools/Convert-SaeedGlbToFbx.py"
       - ".github/workflows/package-saeed-island.yml"
       - "Verse/saeed_npc_behavior.verse"
       - "UEFN/SaeedIsland/NPC-INTEGRATION.md"
+      - "assets/saeed.glb"
 
 permissions:
   contents: read
@@ -16,6 +18,7 @@ permissions:
 jobs:
   package-project:
     runs-on: windows-latest
+    timeout-minutes: 45
     steps:
       - name: Check out Saeed tooling
         uses: actions/checkout@v4
@@ -40,8 +43,38 @@ jobs:
           if (-not (Test-Path -LiteralPath $guideSource -PathType Leaf)) { throw "Missing NPC integration guide: $guideSource" }
           Copy-Item -LiteralPath $verseSource -Destination $verseTarget
           Copy-Item -LiteralPath $guideSource -Destination (Join-Path $destination "NPC-INTEGRATION.md")
-          Write-Host "UEFN project descriptor, map package, Saeed GLB, Verse source, and NPC guide are present."
+          Write-Host "Project descriptor, map package, original GLB, Verse source, and integration guide verified."
           Get-Item $project, $map, $model, $verseTarget | Select-Object FullName, Length | Format-Table -AutoSize
+
+      - name: Install Blender for skeletal asset conversion
+        shell: pwsh
+        run: |
+          choco install blender --yes --no-progress
+          $blender = Get-ChildItem -Path "C:\Program Files\Blender Foundation" -Filter "blender.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $blender) {
+            $candidate = Get-Command blender -ErrorAction SilentlyContinue
+            if ($candidate) { $blenderPath = $candidate.Source }
+          } else {
+            $blenderPath = $blender.FullName
+          }
+          if (-not $blenderPath -or -not (Test-Path -LiteralPath $blenderPath -PathType Leaf)) {
+            throw "Blender installation succeeded or reported success, but blender.exe could not be located."
+          }
+          & $blenderPath --version
+          "BLENDER_EXE=$blenderPath" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Convert GLB to FBX and validate skeleton, skinning, and round-trip import
+        shell: pwsh
+        run: |
+          $destination = Join-Path $env:RUNNER_TEMP "SaeedIsland-Base"
+          $model = Join-Path $destination "Saeed-Assets/saeed.glb"
+          $fbx = Join-Path $destination "Saeed-Assets/saeed.fbx"
+          $converter = Join-Path $env:GITHUB_WORKSPACE "Tools/Convert-SaeedGlbToFbx.py"
+          & $env:BLENDER_EXE --background --python $converter -- $model $fbx
+          if ($LASTEXITCODE -ne 0) { throw "Blender conversion or FBX round-trip validation failed with exit code $LASTEXITCODE" }
+          if (-not (Test-Path -LiteralPath $fbx -PathType Leaf)) { throw "Expected converted FBX was not created: $fbx" }
+          if ((Get-Item -LiteralPath $fbx).Length -lt 1024) { throw "Converted FBX is unexpectedly small." }
+          Get-Item $model, $fbx | Select-Object Name, Length | Format-Table -AutoSize
 
       - name: Create downloadable ZIP
         shell: pwsh
