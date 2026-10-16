@@ -1,0 +1,29 @@
+name: Validate standalone Saeed Royale prototype
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "StandaloneBattleRoyale/**"
+      - ".github/workflows/validate-standalone-game.yml"
+  pull_request:
+    paths:
+      - "StandaloneBattleRoyale/**"
+      - ".github/workflows/validate-standalone-game.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate project structure and source contracts
+        run: python -m unittest discover -s StandaloneBattleRoyale/Tests -v
