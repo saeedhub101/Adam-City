@@ -95,9 +95,23 @@ void ASaeedRoyaleCharacter::ServerFire_Implementation()
     }
 }
 
-void ASaeedRoyaleCharacter::TakeDamage(float DamageAmount)
+float ASaeedRoyaleCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-    // Damage is applied through the engine's AnyDamage event in the next revision.
+    if (!HasAuthority() || bEliminated || DamageAmount <= 0.0f)
+    {
+        return 0.0f;
+    }
+
+    const float AppliedDamage = FMath::Min(Health, DamageAmount);
+    Health = FMath::Clamp(Health - AppliedDamage, 0.0f, MaxHealth);
+
+    if (Health <= 0.0f)
+    {
+        Eliminate();
+    }
+
+    ForceNetUpdate();
+    return AppliedDamage;
 }
 
 void ASaeedRoyaleCharacter::Eliminate()
