@@ -85,16 +85,11 @@ func _build_world() -> void:
 	_add_box(self, "Arena", Vector3(0, -0.6, 0), Vector3(ARENA_SIZE, 1.0, ARENA_SIZE),
 		Color(0.22, 0.38, 0.20), true)
 
-	var boundary_mat := _material(Color(0.12, 0.2, 0.14))
 	for i in range(4):
-		var wall := MeshInstance3D.new()
-		var mesh := BoxMesh.new()
-		mesh.size = Vector3(ARENA_SIZE, 3.0, 1.0) if i < 2 else Vector3(1.0, 3.0, ARENA_SIZE)
-		wall.mesh = mesh
-		wall.position = [Vector3(0, 1, -ARENA_SIZE / 2), Vector3(0, 1, ARENA_SIZE / 2),
+		var wall_size := Vector3(ARENA_SIZE, 3.0, 1.0) if i < 2 else Vector3(1.0, 3.0, ARENA_SIZE)
+		var wall_pos: Vector3 = [Vector3(0, 1, -ARENA_SIZE / 2), Vector3(0, 1, ARENA_SIZE / 2),
 			Vector3(-ARENA_SIZE / 2, 1, 0), Vector3(ARENA_SIZE / 2, 1, 0)][i]
-		wall.material_override = boundary_mat
-		add_child(wall)
+		_add_box(self, "BoundaryWall_%02d" % i, wall_pos, wall_size, Color(0.12, 0.2, 0.14), true)
 
 	for i in range(24):
 		var x := rng.randf_range(-ARENA_SIZE * 0.43, ARENA_SIZE * 0.43)
