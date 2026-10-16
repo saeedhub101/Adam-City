@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 25
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Validate game project contracts
         run: python3 SaeedRoyaleGodot/Tests/validate_project.py
@@ -62,7 +62,7 @@ jobs:
           cp README.md build/README.txt
 
       - name: Upload downloadable Windows game
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: SaeedRoyale-Windows-x64
           path: SaeedRoyaleGodot/build/
