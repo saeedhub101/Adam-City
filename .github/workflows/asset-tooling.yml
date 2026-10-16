@@ -44,7 +44,8 @@ jobs:
           $scripts = @(
             "Tools/Download-SaeedAsset.ps1",
             "Tools/Prepare-UEFNProject.ps1",
-            "Tools/Initialize-SaeedIsland.ps1"
+            "Tools/Initialize-SaeedIsland.ps1",
+            "Tools/Get-ReadyUEFNBase.ps1"
           )
           foreach ($script in $scripts) {
             $tokens = $null
