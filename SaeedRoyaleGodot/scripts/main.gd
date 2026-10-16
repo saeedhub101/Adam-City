@@ -436,10 +436,10 @@ func _update_bots(delta: float) -> void:
 		if not is_instance_valid(bot):
 			enemies.erase(bot)
 			continue
-		var to_player := player.global_position - bot.global_position
+		var to_player: Vector3 = player.global_position - bot.global_position
 		var flat := Vector3(to_player.x, 0, to_player.z)
 		var distance := flat.length()
-		var velocity := bot.velocity
+		var velocity: Vector3 = bot.velocity
 		if distance > 11.0:
 			var direction := flat.normalized()
 			velocity.x = direction.x * 3.0
