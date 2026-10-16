@@ -49,21 +49,20 @@ func _setup_input() -> void:
 		"jump": [KEY_SPACE],
 		"sprint": [KEY_SHIFT],
 		"reload": [KEY_R],
-		"fire": [MOUSE_BUTTON_LEFT],
 		"restart": [KEY_ENTER]
 	}
 	for action in actions:
 		if not InputMap.has_action(action):
 			InputMap.add_action(action)
 		for keycode in actions[action]:
-			var event: InputEvent
-			if keycode is Key:
-				event = InputEventKey.new()
-				event.keycode = keycode
-			else:
-				event = InputEventMouseButton.new()
-				event.button_index = keycode
+			var event := InputEventKey.new()
+			event.keycode = keycode
 			InputMap.action_add_event(action, event)
+	if not InputMap.has_action("fire"):
+		InputMap.add_action("fire")
+	var fire_event := InputEventMouseButton.new()
+	fire_event.button_index = MOUSE_BUTTON_LEFT
+	InputMap.action_add_event("fire", fire_event)
 
 func _build_world() -> void:
 	var environment := WorldEnvironment.new()
@@ -352,8 +351,6 @@ func _process(delta: float) -> void:
 		_start_reload()
 	if Input.is_action_pressed("fire") and mouse_captured:
 		_shoot()
-	_update_player(delta)
-	_update_bots(delta)
 	_update_pickups(delta)
 	_update_storm(delta)
 	if player_health <= 0:
@@ -362,8 +359,11 @@ func _process(delta: float) -> void:
 		_finish_game(true)
 	_update_hud()
 
-func _physics_process(_delta: float) -> void:
-	pass
+func _physics_process(delta: float) -> void:
+	if game_over:
+		return
+	_update_player(delta)
+	_update_bots(delta)
 
 func _update_player(delta: float) -> void:
 	if not is_instance_valid(player):
