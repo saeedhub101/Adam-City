@@ -2,6 +2,7 @@ using { /Fortnite.com/AI }
 using { /Fortnite.com/Characters }
 using { /Verse.org/Random }
 using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/SpatialMath }
 
 # Starter behavior for Saeed as a custom NPC.
 # Attach this script to an NPC Character Definition configured for Verse Behavior.
