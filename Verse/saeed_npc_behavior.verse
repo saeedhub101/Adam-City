@@ -1,4 +1,5 @@
 using { /Fortnite.com/AI }
+using { /Fortnite.com/AI/movement_types }
 using { /Fortnite.com/Characters }
 using { /Verse.org/Random }
 using { /Verse.org/Simulation }
@@ -17,6 +18,9 @@ saeed_npc_behavior<public> := class(npc_behavior):
     @editable
     WaitDuration:float = 3.0
 
+    # NPC navigation currently requires movement type, reach radius, and partial-path policy.
+    ReachRadius:float = 100.0
+
     OnBegin<override>()<suspends>:void=
         if:
             Agent := GetAgent[]
@@ -32,7 +36,12 @@ saeed_npc_behavior<public> := class(npc_behavior):
                 }
                 TargetPosition := SpawnPosition + Offset
                 NavigationTarget := MakeNavigationTarget(TargetPosition)
-                Result := Navigatable.NavigateTo(NavigationTarget)
+                Result := Navigatable.NavigateTo(
+                    NavigationTarget,
+                    movement_types.Walking,
+                    ReachRadius,
+                    false
+                )
                 if (Result = navigation_result.Reached):
                     Navigatable.Wait(?Duration := WaitDuration)
                 else:
