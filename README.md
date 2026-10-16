@@ -1,39 +1,30 @@
 # Saeed Fortnite
 
-مستودع مستقل لتجهيز شخصية **Saeed** كـ NPC داخل جزيرة Fortnite باستخدام Unreal Editor for Fortnite (UEFN).
+تجهيز أصل شخصية Saeed وتجربة استخدامه كـ NPC داخل جزيرة Fortnite باستخدام Unreal Editor for Fortnite (UEFN).
 
-## أصل الشخصية
+## الأصل والأدوات
 
-ملف الشخصية موجود في هذا المستودع:
+- `assets/saeed.glb`: الأصل الأصلي، احتفظ به دون تعديل.
+- [تنزيل GLB مباشرة](https://raw.githubusercontent.com/saeedhub101/Saeed-Fortnite-/main/assets/saeed.glb)
+- `Tools/Download-SaeedAsset.ps1`: تنزيل الأصل والتحقق من ترويسة الملف وبصمة SHA-256.
+- `Tools/validate_glb.py`: فحص بنية GLB؛ لا يثبت توافق UEFN.
+- `Tests/test_validate_glb.py`: اختبارات أداة الفحص.
+- `Verse/saeed_npc_behavior.verse`: مسودة سلوك تجوال، لم تُترجم داخل UEFN بعد.
+- `Docs/UEFN-SETUP.md`: خطوات تجهيز الأصل والاستيراد وربط NPC.
+- `Docs/IMPORT-CHECKLIST.md`: قائمة قبول يجب إكمالها داخل المحرر.
 
-`assets/saeed.glb`
+## الحالة الفعلية
 
-رابط التنزيل المباشر:
-https://raw.githubusercontent.com/saeedhub101/Saeed-Fortnite-/main/assets/saeed.glb
+- [x] حفظ أصل GLB في هذا المستودع وتوحيد الاسم.
+- [x] إضافة أدوات فحص آلية وGitHub Actions.
+- [x] نجاح الفحوصات الآلية الحالية الخاصة ببنية الملف وأدواته.
+- [ ] تجهيز وتأكيد صيغة استيراد متوافقة مع إصدار UEFN المثبت.
+- [ ] إنشاء/تحديث مشروع جزيرة UEFN فعلي.
+- [ ] ربط المظهر المدعوم بـ NPC Character Definition وNPC Spawner.
+- [ ] ترجمة Verse واختبار NPC داخل جلسة لعب.
 
-يُستخدم هذا المستودع الآن كمصدر استرجاع الشخصية؛ لا يحتاج سكربت التنزيل إلى الرجوع إلى مستودع `Saeed-V2.0`.
+## حدود واضحة
 
-## الحالة
+GitHub Actions تفحص الملفات والنصوص فقط؛ لا تشغّل UEFN ولا تستورد الشخصية داخل جزيرة ولا تترجم Verse باستخدام محرر Epic. لا يوجد في المستودع حتى الآن مشروع جزيرة UEFN موثق أو FBX تم التحقق من مطابقته. لذلك لا يجوز وصف سعيد بأنه ظهر داخل Fortnite قبل نجاح الاختبار داخل المحرر.
 
-- [x] نسخ أصل الشخصية إلى هذا المستودع وتوحيد اسمه إلى `saeed.glb`.
-- [x] توفير رابط تنزيل مباشر من مستودع Fortnite.
-- [x] توفير سكربت Windows لتنزيل الأصل والتحقق من ترويسة GLB وحساب SHA-256.
-- [x] إضافة أداة فحص بنية GLB واختبارات وحدات وGitHub Actions.
-- [x] إضافة مسودة سلوك Verse أولية.
-- [ ] إنشاء مشروع/جزيرة UEFN فعلية على Windows.
-- [ ] التحقق من استيراد الهيكل والخامات والحركات وMorph Targets.
-- [ ] ربط NPC Character Definition وNPC Spawner.
-- [ ] اختبار NPC داخل جلسة Fortnite.
-
-## أدوات المطور
-
-- `assets/saeed.glb`: ملف الشخصية.
-- `Tools/Download-SaeedAsset.ps1`: تنزيل الأصل من مستودع Fortnite الحالي.
-- `Tools/validate_glb.py`: فحص بنيوي لملفات GLB.
-- `Tests/test_validate_glb.py`: اختبارات آلية.
-- `Verse/saeed_npc_behavior.verse`: مسودة تجوال NPC؛ لم تُترجم أو تُختبر داخل UEFN بعد.
-- `Docs/UEFN-SETUP.md` و`Docs/IMPORT-CHECKLIST.md`: خطوات الإعداد والاختبار.
-
-## حدود مهمة
-
-فحص GLB آلياً لا يثبت أن UEFN يدعم كل الحركات أو الخامات أو Morph Targets. يجب الاستيراد الفعلي داخل UEFN ثم اختبار NPC في جلسة لعب قبل اعتبار الجزيرة جاهزة.
+ابدأ من [دليل الإعداد](Docs/UEFN-SETUP.md) ثم أكمل [قائمة التحقق](Docs/IMPORT-CHECKLIST.md).
