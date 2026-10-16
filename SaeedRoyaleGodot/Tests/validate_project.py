@@ -9,7 +9,11 @@ class GodotProjectTests(unittest.TestCase):
         self.assertTrue((ROOT / "main.tscn").is_file())
         self.assertTrue((ROOT / "export_presets.cfg").is_file())
         self.assertIn('run/main_scene="res://main.tscn"', (ROOT / "project.godot").read_text())
-        self.assertIn('name="Windows Desktop"', (ROOT / "export_presets.cfg").read_text())
+        preset = (ROOT / "export_presets.cfg").read_text()
+        self.assertIn('name="Windows Desktop"', preset)
+        self.assertIn("binary_format/64_bits=true", preset)
+        self.assertIn("binary_format/embed_pck=true", preset)
+        self.assertIn("application/modify_resources=false", preset)
 
     def test_gameplay_systems_are_present(self):
         source = (ROOT / "scripts/main.gd").read_text()
