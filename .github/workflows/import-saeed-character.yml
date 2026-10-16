@@ -1,4 +1,4 @@
-name: Import Saeed character asset
+name: Normalize Saeed character asset name
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  import-character:
+  normalize-character:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout destination repository
@@ -20,28 +20,23 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Download the original Saeed GLB
+      - name: Rename the existing character asset in this repository
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p assets
-          curl --fail --location --retry 3 \
-            "https://raw.githubusercontent.com/saeedhub101/Saeed-V2.0/main/assets/Saeed_AI-3D.glb" \
-            --output assets/Saeed_AI-3D.glb
-          test "$(stat -c%s assets/Saeed_AI-3D.glb)" -eq 17232556
-          test "$(head -c 4 assets/Saeed_AI-3D.glb)" = "glTF"
-          sha256sum assets/Saeed_AI-3D.glb
-
-      - name: Commit the original character asset
-        shell: bash
-        run: |
-          set -euo pipefail
+          if [ -f assets/Saeed_AI-3D.glb ] && [ ! -f assets/saeed.glb ]; then
+            git mv assets/Saeed_AI-3D.glb assets/saeed.glb
+          fi
+          test -f assets/saeed.glb
+          test "$(stat -c%s assets/saeed.glb)" -eq 17232556
+          test "$(head -c 4 assets/saeed.glb)" = "glTF"
+          sha256sum assets/saeed.glb
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/Saeed_AI-3D.glb
           if git diff --cached --quiet; then
-            echo "The source GLB is already identical; nothing to commit."
+            echo "Asset already uses the canonical filename."
             exit 0
           fi
-          git commit -m "Add original Saeed 3D character asset"
+          git commit -m "Rename Saeed character asset to saeed.glb"
           git push origin HEAD:main
