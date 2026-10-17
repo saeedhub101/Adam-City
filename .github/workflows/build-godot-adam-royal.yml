@@ -143,26 +143,41 @@ jobs:
           if ($terrain.grid_size -lt 10 -or $terrain.heights_scaled_m.Count -ne $terrain.grid_size) { throw "SRTM terrain grid failed validation" }
           Write-Host "REAL_TERRAIN_DATA_PASS source=$($terrain.source) grid=$($terrain.grid_size)x$($terrain.grid_size) min=$($terrain.minimum_elevation_m) max=$($terrain.maximum_elevation_m)"
 
-      - name: Download and cache real named Manila streets
+      - name: Reuse cached Manila street names; download only when missing or invalid
         shell: pwsh
         working-directory: .
         run: |
           $ErrorActionPreference = 'Stop'
-          python -m pip install --disable-pip-version-check requests
-          if ($LASTEXITCODE -ne 0) { throw "Could not install OSM street-data client" }
-          python GodotAdamRoyal/Tools/build_manila_street_names.py
-          if ($LASTEXITCODE -ne 0) { throw "Real Manila street names download failed; refusing to create fake street names" }
-          $streets = Get-Content 'GodotAdamRoyal/assets/manila_street_names.json' -Raw | ConvertFrom-Json
-          if ($streets.named_road_segments -lt 20 -or $streets.unique_street_names -lt 10) { throw "Manila named-street dataset failed validation" }
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add 'GodotAdamRoyal/assets/manila_street_names.json'
-          if (-not (git diff --cached --quiet)) {
-            git commit -m 'Cache real Manila street names and geometry [skip ci]'
-            git pull --rebase origin main
-            git push origin HEAD:main
+          $streetPath = 'GodotAdamRoyal/assets/manila_street_names.json'
+          $cacheValid = $false
+          if (Test-Path $streetPath) {
+            try {
+              $cachedStreets = Get-Content $streetPath -Raw | ConvertFrom-Json
+              $cacheValid = ($cachedStreets.city -eq 'Manila, Philippines') -and ($cachedStreets.named_road_segments -ge 20) -and ($cachedStreets.unique_street_names -ge 10) -and ($cachedStreets.streets.Count -ge 20)
+            } catch { $cacheValid = $false }
           }
-          Write-Host "MANILA_STREET_NAMES_READY names=$($streets.unique_street_names) segments=$($streets.named_road_segments)"
+          if ($cacheValid) {
+            Write-Host "Using committed Manila named-street cache; skipping Overpass network requests."
+            $streets = $cachedStreets
+          } else {
+            Write-Host "Manila street cache is missing or invalid; attempting to rebuild from real OpenStreetMap data."
+            python -m pip install --disable-pip-version-check requests
+            if ($LASTEXITCODE -ne 0) { throw "Could not install OSM street-data client" }
+            python GodotAdamRoyal/Tools/build_manila_street_names.py
+            if ($LASTEXITCODE -ne 0) { throw "Real Manila street names download failed; refusing to create fake street names" }
+            if (-not (Test-Path $streetPath)) { throw "Street-name builder did not produce $streetPath" }
+            $streets = Get-Content $streetPath -Raw | ConvertFrom-Json
+            if ($streets.named_road_segments -lt 20 -or $streets.unique_street_names -lt 10 -or $streets.streets.Count -lt 20) { throw "Manila named-street dataset failed validation" }
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add $streetPath
+            if (-not (git diff --cached --quiet)) {
+              git commit -m 'Cache real Manila street names and geometry [skip ci]'
+              git pull --rebase origin main
+              git push origin HEAD:main
+            }
+          }
+          Write-Host "MANILA_STREET_NAMES_READY names=$($streets.unique_street_names) segments=$($streets.named_road_segments) cache=$cacheValid"
 
       - name: Stage the real Manila district and player character
         shell: pwsh
