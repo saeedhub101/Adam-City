@@ -29,13 +29,11 @@ jobs:
     steps:
       - name: Checkout
         id: check_checkout
-        if: ${{ always() }}
         continue-on-error: true
         uses: actions/checkout@v4
 
       - name: Set up Python
         id: check_set_up_python
-        if: ${{ always() }}
         continue-on-error: true
         uses: actions/setup-python@v5
         with:
@@ -43,7 +41,6 @@ jobs:
 
       - name: Reuse the committed Manila district; generate and cache only when missing
         id: check_reuse_the_committed_manila_district
-        if: ${{ always() }}
         continue-on-error: true
         shell: pwsh
         working-directory: .
@@ -103,7 +100,6 @@ jobs:
 
       - name: Reuse cached Manila facade improvement; process only when missing or outdated
         id: check_reuse_cached_manila_facade_improvem
-        if: ${{ always() }}
         continue-on-error: true
         shell: pwsh
         working-directory: .
@@ -144,7 +140,6 @@ jobs:
 
       - name: Fetch and validate real Manila elevation data
         id: check_fetch_and_validate_real_manila_elev
-        if: ${{ always() }}
         continue-on-error: true
         shell: pwsh
         working-directory: .
@@ -160,7 +155,6 @@ jobs:
 
       - name: Reuse cached Manila street names; download only when missing or invalid
         id: check_reuse_cached_manila_street_names_do
-        if: ${{ always() }}
         continue-on-error: true
         shell: pwsh
         working-directory: .
@@ -199,7 +193,6 @@ jobs:
 
       - name: Stage the real Manila district and player character
         id: check_stage_the_real_manila_district_and_
-        if: ${{ always() }}
         continue-on-error: true
         shell: pwsh
         run: |
@@ -222,7 +215,6 @@ jobs:
 
       - name: Reuse committed Amman map; generate and cache only when missing
         id: check_reuse_committed_amman_map_generate_
-        if: ${{ always() }}
         continue-on-error: true
         shell: pwsh
         working-directory: .
@@ -263,7 +255,6 @@ jobs:
 
       - name: Use the existing Chicago map from the repository (never download or regenerate)
         id: check_use_the_existing_chicago_map_from_t
-        if: ${{ always() }}
         continue-on-error: true
         shell: pwsh
         working-directory: .
@@ -295,7 +286,6 @@ jobs:
 
       - name: Use the existing San Francisco map from the repository (no external download)
         id: check_use_the_existing_san_francisco_map_
-        if: ${{ always() }}
         continue-on-error: true
         shell: pwsh
         working-directory: .
@@ -331,7 +321,6 @@ jobs:
 
       - name: Reuse committed Chicago and San Francisco maps; cache source assets only when missing
         id: check_reuse_committed_chicago_and_san_fra
-        if: ${{ always() }}
         continue-on-error: true
         shell: pwsh
         working-directory: .
@@ -382,7 +371,6 @@ jobs:
 
       - name: Download Godot 4.4.1 and Windows export templates
         id: check_download_godot_4_4_1_and_windows_ex
-        if: ${{ always() }}
         continue-on-error: true
         shell: pwsh
         run: |
@@ -426,7 +414,6 @@ jobs:
 
       - name: Import and validate Godot project
         id: check_import_and_validate_godot_project
-        if: ${{ always() }}
         continue-on-error: true
         shell: pwsh
         run: |
@@ -479,7 +466,6 @@ jobs:
 
       - name: Run the game and capture aerial, four street views, and player
         id: check_run_the_game_and_capture_aerial_fou
-        if: ${{ always() }}
         continue-on-error: true
         shell: pwsh
         timeout-minutes: 5
@@ -517,7 +503,6 @@ jobs:
 
       - name: Export Windows game
         id: check_export_windows_game
-        if: ${{ always() }}
         continue-on-error: true
         shell: pwsh
         run: |
@@ -544,7 +529,6 @@ jobs:
 
       - name: Smoke-test the exported Windows executable
         id: check_smoke_test_the_exported_windows_exe
-        if: ${{ always() }}
         continue-on-error: true
         shell: pwsh
         run: |
@@ -572,7 +556,6 @@ jobs:
 
       - name: Preserve build evidence
         id: check_preserve_build_evidence
-        if: ${{ always() }}
         continue-on-error: true
         if: always()
         uses: actions/upload-artifact@v4
@@ -593,7 +576,6 @@ jobs:
           retention-days: 14
 
       - name: Report all failed steps and preserve failure status
-        if: ${{ always() }}
         shell: pwsh
         env:
           check_checkout: ${{ steps.check_checkout.outcome }}
