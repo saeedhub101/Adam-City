@@ -55,6 +55,7 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
           const objLoader = new OBJLoader();
           objLoader.setMaterials(materials);
           const object = objLoader.parse(localObjText);
+          object.name = entry.obj;
           object.traverse(node => {
             if (node.isMesh) {
               // Textured aerial imagery already contains scene lighting; avoid expensive city-wide shadow maps.
@@ -89,7 +90,7 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
     root.updateMatrixWorld(true);
     scene.add(root);
     const finalBounds = new THREE.Box3().setFromObject(root);
-    const sampleObject = root.children[0];
+    const sampleObject = root.children.find(node => node.name.includes('Tile_+019_+043_L16_000.obj')) || root.children[0];
     const sampleBounds = sampleObject ? new THREE.Box3().setFromObject(sampleObject) : finalBounds;
     const sampleCenter = sampleBounds.getCenter(new THREE.Vector3());
     const ray = new THREE.Raycaster();
