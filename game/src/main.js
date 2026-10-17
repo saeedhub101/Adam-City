@@ -16,7 +16,7 @@ const buildingList = document.querySelector('#building-photo-list');
 const buildingCount = document.querySelector('#building-photo-count');
 const googleStreetViewBox = document.querySelector('#google-streetview');
 const googleStreetViewStatus = document.querySelector('#google-streetview-status');
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+const GOOGLE_MAPS_API_KEY = 'AIzaSyCyeOhx7lvdix3JAfWgH5O3RhjHLBe2w80';
 
 function loadGoogleStreetView() {
   if (!googleStreetViewBox) return;
