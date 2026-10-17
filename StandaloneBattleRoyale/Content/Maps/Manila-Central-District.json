@@ -15,7 +15,7 @@
   "traffic_signals": 81,
   "sidewalk_meshes": 1741,
   "mesh_objects": 14,
-  "glb_bytes": 19455984,
+  "glb_bytes": 24151620,
   "facade_textures": [
     "Manila-Facade-Texture-1.jpg",
     "Manila-Facade-Texture-2.jpg",
@@ -23,10 +23,10 @@
     "Manila-Facade-Texture-4.jpg"
   ],
   "road_texture": "Manila-Road-Asphalt.jpg",
-  "note": "Real OSM footprints and road alignments with procedural tileable facade atlases. Licensed Manila photographs are retained as reference images and are not falsely represented as building-specific photogrammetry. This improves tiling artifacts but is not a photogrammetry reconstruction.",
-  "facade_texture_source": "locally generated tileable facade atlases; Wikimedia Commons images retained as attributed reference only",
-  "facade_texture_method": "four distinct repeatable facade atlases with window frames, reveals, sills, and material variation; no whole-street photographs stretched across walls",
+  "note": "Real OSM footprints and road alignments textured with cropped photographs of real Manila building facades. Photos are reused across facade batches and are not a full photogrammetry reconstruction; buildings without suitable photographs still require additional photo coverage.",
+  "facade_texture_source": "real Manila building photographs from Real-Facade-Photos, cropped into facade texture atlases",
+  "facade_texture_method": "four or more photographic building facade atlases sourced from real Manila buildings; facade regions cropped before projection; no procedurally drawn window grids",
   "facade_materials_replaced": 4,
-  "facade_photo_projection": false,
-  "facade_pipeline_version": 1
+  "facade_photo_projection": true,
+  "facade_pipeline_version": 2
 }
