@@ -592,3 +592,45 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+      - name: Final failure summary
+        if: always() && (
+          steps.step_checkout.outcome == 'failure' ||
+          steps.step_set_up_python.outcome == 'failure' ||
+          steps.step_reuse_the_committed_manila_district_.outcome == 'failure' ||
+          steps.step_reuse_cached_manila_facade_improveme.outcome == 'failure' ||
+          steps.step_fetch_and_validate_real_manila_eleva.outcome == 'failure' ||
+          steps.step_reuse_cached_manila_street_names_dow.outcome == 'failure' ||
+          steps.step_stage_the_real_manila_district_and_p.outcome == 'failure' ||
+          steps.step_reuse_committed_amman_map_generate_a.outcome == 'failure' ||
+          steps.step_use_the_existing_chicago_map_from_th.outcome == 'failure' ||
+          steps.step_use_the_existing_san_francisco_map_f.outcome == 'failure' ||
+          steps.step_reuse_committed_chicago_and_san_fran.outcome == 'failure' ||
+          steps.step_download_godot_4_4_1_and_windows_exp.outcome == 'failure' ||
+          steps.step_import_and_validate_godot_project.outcome == 'failure' ||
+          steps.step_run_the_game_and_capture_aerial_four.outcome == 'failure' ||
+          steps.step_export_windows_game.outcome == 'failure' ||
+          steps.step_smoke_test_the_exported_windows_exec.outcome == 'failure' ||
+          steps.step_preserve_build_evidence.outcome == 'failure'
+        )
+        shell: pwsh
+        run: |
+          Write-Host 'BUILD_FAILURE_SUMMARY_BEGIN'
+          if ('${{ steps.step_checkout.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_checkout' }
+          if ('${{ steps.step_set_up_python.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_set_up_python' }
+          if ('${{ steps.step_reuse_the_committed_manila_district_.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_reuse_the_committed_manila_district_' }
+          if ('${{ steps.step_reuse_cached_manila_facade_improveme.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_reuse_cached_manila_facade_improveme' }
+          if ('${{ steps.step_fetch_and_validate_real_manila_eleva.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_fetch_and_validate_real_manila_eleva' }
+          if ('${{ steps.step_reuse_cached_manila_street_names_dow.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_reuse_cached_manila_street_names_dow' }
+          if ('${{ steps.step_stage_the_real_manila_district_and_p.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_stage_the_real_manila_district_and_p' }
+          if ('${{ steps.step_reuse_committed_amman_map_generate_a.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_reuse_committed_amman_map_generate_a' }
+          if ('${{ steps.step_use_the_existing_chicago_map_from_th.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_use_the_existing_chicago_map_from_th' }
+          if ('${{ steps.step_use_the_existing_san_francisco_map_f.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_use_the_existing_san_francisco_map_f' }
+          if ('${{ steps.step_reuse_committed_chicago_and_san_fran.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_reuse_committed_chicago_and_san_fran' }
+          if ('${{ steps.step_download_godot_4_4_1_and_windows_exp.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_download_godot_4_4_1_and_windows_exp' }
+          if ('${{ steps.step_import_and_validate_godot_project.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_import_and_validate_godot_project' }
+          if ('${{ steps.step_run_the_game_and_capture_aerial_four.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_run_the_game_and_capture_aerial_four' }
+          if ('${{ steps.step_export_windows_game.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_export_windows_game' }
+          if ('${{ steps.step_smoke_test_the_exported_windows_exec.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_smoke_test_the_exported_windows_exec' }
+          if ('${{ steps.step_preserve_build_evidence.outcome }}' -eq 'failure') { Write-Host 'FAILED_STEP=step_preserve_build_evidence' }
+          Write-Host 'BUILD_FAILURE_SUMMARY_END'
+          throw 'One or more build steps failed. Review FAILED_STEP entries above; the workflow attempted all steps.'
