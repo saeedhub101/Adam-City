@@ -11,7 +11,7 @@
   "buildings": 4342,
   "roads": 3037,
   "mesh_objects": 7,
-  "glb_bytes": 7257496,
+  "glb_bytes": 12752512,
   "facade_textures": [
     "Manila-Facade-Texture-1.jpg",
     "Manila-Facade-Texture-2.jpg",
@@ -19,14 +19,14 @@
     "Manila-Facade-Texture-4.jpg"
   ],
   "road_texture": "Manila-Road-Asphalt.jpg",
-  "note": "Real OSM footprints/road alignments; facade uses a real CC0 facade photograph in four variants. It is not geolocated imagery of each specific Manila building; exact facades still need local street-level imagery.",
+  "note": "Real OSM footprints and road alignments; facade materials use four different actual Manila/Escolta street photographs. These are photographic surface references, not a georeferenced photogrammetry model of every individual building; attribution is documented in Street-Imagery/manifest.json.",
   "optimization": {
     "mode": "offline cached-GLB compaction",
     "mesh_objects_before": 14323,
     "mesh_objects_after": 7
   },
-  "facade_texture_source": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Facade001_4K_Color.jpg",
+  "facade_texture_source": "Wikimedia Commons Manila street photographs; see Street-Imagery and attribution manifest",
   "facade_texture_license": "CC0 1.0 (verify source metadata at Wikimedia Commons)",
-  "facade_texture_method": "one real facade photograph, four color/contrast variants embedded in cached GLB",
+  "facade_texture_method": "four distinct real Manila/Escolta street photographs used as facade image textures",
   "facade_materials_replaced": 4
 }
