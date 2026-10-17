@@ -1,6 +1,6 @@
 # Adam Royal — standalone 3D game
 
-This is a separate Unreal Engine game prototype, not a UEFN island and not part of the existing Fortnite Creative project.
+Adam Royal is a standalone Unreal Engine game project, separate from any UEFN island or Fortnite Creative project.
 
 ## Initial implementation
 
@@ -8,12 +8,14 @@ This is a separate Unreal Engine game prototype, not a UEFN island and not part 
 - Replicated third-person character foundation.
 - Server-authoritative hitscan firing request.
 - Replicated health and elimination state placeholders.
-- Keyboard/mouse input mappings.
+- Keyboard/mouse input mappings (WASD, mouse look, Space jump, left-click hitscan fire).
+- C++ third-person camera boom/follow camera and baseline movement tuning.
 - Game mode foundation with a 100-player design target.
 
 ## Not implemented yet
 
-- No new city map has been downloaded or imported yet. The old Manila GLB was mistakenly restored and has been removed again; do not treat it as a new map. Playable terrain/buildings, loot, inventory, weapon assets, animation setup, UI, lobby, matchmaking, shrinking storm, bots, persistence, dedicated-server deployment, anti-cheat, audio, and optimization remain unfinished.
+- The Manila district generator now produces a real-geography GLB from OpenStreetMap data and packages it with procedural facade atlases and Wikimedia Commons facade reference photos. This is source geometry, not yet a native Unreal .umap level, and the reference photos are not yet mapped onto building meshes.
+- Loot, inventory, production weapon models/animations, HUD, lobby, matchmaking, shrinking storm, bots, persistence, dedicated-server deployment, anti-cheat, audio, and optimization remain unfinished.
 - Saeed GLB import/retargeting into the player character.
 - Controller mappings and console certification work.
 
