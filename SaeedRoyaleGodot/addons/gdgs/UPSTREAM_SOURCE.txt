@@ -1,3 +1,0 @@
-Upstream: https://github.com/ReconWorldLab/godot-gaussian-splatting
-Version source: upstream main at acquisition time; check the bundled upstream license before redistribution.
-Purpose: import and render the committed real Helsinki Gaussian-splat PLY scan. This project vendors the upstream Raster renderer only. Unused Compute, compositor, collision-generation, and relighting modules are excluded; this keeps the project focused on real city rendering and prevents headless import of unused custom GLSL compute shaders.
