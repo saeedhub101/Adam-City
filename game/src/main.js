@@ -258,19 +258,33 @@ async function loadTabarbourMap() {
   const b = TABARBOUR_BBOX;
   const query = '[out:json][timeout:25];(way["building"](' + b.south + ',' + b.west + ',' + b.north + ',' + b.east +
     ');way["highway"](' + b.south + ',' + b.west + ',' + b.north + ',' + b.east + '););out body geom;';
-  const endpoints = ['https://overpass.kumi.systems/api/interpreter?data=', 'https://overpass-api.de/api/interpreter?data='];
   let data = null;
-  for (const endpoint of endpoints) {
-    try {
-      const response = await fetch(endpoint + encodeURIComponent(query), { headers: { Accept: 'application/json' } });
-      if (!response.ok) throw new Error('OSM server HTTP ' + response.status);
+  // Prefer the versioned snapshot shipped with the game. It is refreshed by
+  // .github/workflows/refresh-tabarbour-map.yml and does not require Overpass at runtime.
+  try {
+    const response = await fetch('/data/tabarbour-osm.json', { cache: 'no-store' });
+    if (response.ok) {
       const parsed = await response.json();
-      if (Array.isArray(parsed.elements)) { data = parsed; break; }
-    } catch (error) { console.warn('Tabarbour OSM endpoint failed:', endpoint, error); }
+      if (Array.isArray(parsed.elements) && parsed.elements.length) data = parsed;
+    }
+  } catch (error) {
+    console.warn('Local Tabarbour map snapshot unavailable:', error);
+  }
+  // Network fallback is only for first setup or if the checked-in snapshot is missing.
+  if (!data) {
+    const endpoints = ['https://overpass.kumi.systems/api/interpreter?data=', 'https://overpass-api.de/api/interpreter?data='];
+    for (const endpoint of endpoints) {
+      try {
+        const response = await fetch(endpoint + encodeURIComponent(query), { headers: { Accept: 'application/json' } });
+        if (!response.ok) throw new Error('OSM server HTTP ' + response.status);
+        const parsed = await response.json();
+        if (Array.isArray(parsed.elements) && parsed.elements.length) { data = parsed; break; }
+      } catch (error) { console.warn('Tabarbour OSM endpoint failed:', endpoint, error); }
+    }
   }
   if (!data) {
     statusText.textContent = 'OpenStreetMap data unavailable';
-    showError('تعذر تحميل بيانات طبربور الحقيقية من OpenStreetMap. تحقق من الإنترنت ثم أعد تحميل اللعبة. لن نستبدل المنطقة بشوارع ومبانٍ عشوائية.');
+    showError('تعذر العثور على نسخة خريطة طبربور المحلية أو تحميل بياناتها أول مرة. شغّل Workflow تحديث خريطة طبربور في GitHub Actions ثم أعد تحميل اللعبة.');
     return;
   }
   const roads = data.elements.filter(e => e.type === 'way' && e.tags?.highway);
