@@ -35,18 +35,12 @@ def main() -> None:
         elif "ManilaPhotographicFacade" in name:
             photo_materials.append(geometry)
 
+    # Reapply the real local Manila images even when the cached GLB already contains
+    # older photographic materials from the previous generic-texture attempt.
     if not texture_materials:
-        if not photo_materials:
-            raise RuntimeError("No known Manila facade materials found; refusing to save an untextured map.")
-        report = json.loads(REPORT.read_text(encoding="utf-8"))
-        report["facade_texture_source"] = "Wikimedia Commons Manila street photographs; see Street-Imagery and attribution manifest"
-        report["facade_texture_method"] = "four distinct real Manila/Escolta street photographs used as facade image textures"
-        report["facade_materials_replaced"] = len(photo_materials)
-        report["glb_bytes"] = GLB.stat().st_size
-        report["note"] = "Real OSM footprints and road alignments; facade materials use four different actual Manila/Escolta street photographs. These are photographic surface references, not a georeferenced photogrammetry model of every individual building; attribution is documented in Street-Imagery/manifest.json."
-        REPORT.write_text(json.dumps(report, indent=2), encoding="utf-8")
-        print(f"PHOTO_FACADE_PASS materials={len(photo_materials)} already_applied=true glb_bytes={GLB.stat().st_size}")
-        return
+        texture_materials = photo_materials
+    if not texture_materials:
+        raise RuntimeError("No known Manila facade materials found; refusing to save an untextured map.")
 
     source_images = []
     for filename in PHOTO_FILES:
@@ -77,10 +71,10 @@ def main() -> None:
         if not isinstance(visual, trimesh.visual.TextureVisuals) or material is None:
             continue
         name = str(getattr(material, "name", ""))
-        if "ManilaFacadeStyle" not in name:
+        if "ManilaFacadeStyle" not in name and "ManilaPhotographicFacade" not in name:
             continue
         try:
-            style = int(name.rsplit("Style", 1)[1]) - 1
+            style = int(name.rsplit("Style", 1)[1]) - 1 if "Style" in name else int(name.rsplit("Facade", 1)[1]) - 1
         except (ValueError, IndexError):
             style = replacements % 4
         image = Image.open(paths[style % 4]).convert("RGB")
