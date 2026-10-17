@@ -11,7 +11,7 @@ API = "https://commons.wikimedia.org/w/api.php"
 UA = "SaeedTabarbourOpenWorld/1.0 (photo catalogue; contact via GitHub repository)"
 
 def api(params):
-    params = {"format":"json", "origin":"*", **params}
+    params = {"action":"query", "format":"json", "origin":"*", **params}
     req = urllib.request.Request(API + "?" + urllib.parse.urlencode(params), headers={"User-Agent": UA})
     with urllib.request.urlopen(req, timeout=35) as response:
         return json.load(response)
