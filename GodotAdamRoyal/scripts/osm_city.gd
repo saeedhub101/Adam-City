@@ -63,11 +63,12 @@ func _build_buildings(buildings: Array) -> void:
 	var tool := SurfaceTool.new()
 	tool.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var any_vertices := false
-	for building in buildings:
+	for building_value in buildings:
+		var building: Dictionary = building_value
 		var footprint: Array = building.get("points", [])
 		if footprint.size() < 3:
 			continue
-		var height := clamp(float(building.get("height", 8.0)), 3.0, 100.0)
+		var height: float = clampf(float(building.get("height", 8.0)), 3.0, 100.0)
 		var seed_value := int(building.get("id", 1)) % 13
 		var base := Color(0.48 + float(seed_value % 4) * 0.045, 0.45 + float(seed_value % 5) * 0.035, 0.39 + float(seed_value % 3) * 0.04)
 		var roof := base.lightened(0.18)
@@ -76,10 +77,10 @@ func _build_buildings(buildings: Array) -> void:
 			pts.append(_point(p, 0.0))
 		for i in range(pts.size()):
 			var j := (i + 1) % pts.size()
-			var bottom_a := pts[i]
-			var bottom_b := pts[j]
-			var top_a := bottom_a + Vector3.UP * height
-			var top_b := bottom_b + Vector3.UP * height
+			var bottom_a: Vector3 = pts[i]
+			var bottom_b: Vector3 = pts[j]
+			var top_a: Vector3 = bottom_a + Vector3.UP * height
+			var top_b: Vector3 = bottom_b + Vector3.UP * height
 			tool.set_color(base); tool.add_vertex(bottom_a)
 			tool.set_color(base); tool.add_vertex(bottom_b)
 			tool.set_color(base.darkened(0.08)); tool.add_vertex(top_b)
