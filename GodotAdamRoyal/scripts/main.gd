@@ -4,10 +4,10 @@ const CityBuilder = preload("res://scripts/osm_city.gd")
 const PlayerScene = preload("res://scenes/player.tscn")
 
 var city_builder: Node3D
-var status_label: Label
 
 func _ready() -> void:
 	_build_environment()
+	_build_ground()
 	city_builder = CityBuilder.new()
 	city_builder.name = "ManilaRealCity"
 	add_child(city_builder)
@@ -41,6 +41,25 @@ func _build_environment() -> void:
 	sun.shadow_enabled = true
 	add_child(sun)
 
+func _build_ground() -> void:
+	var ground := StaticBody3D.new()
+	ground.name = "WalkableGround"
+	ground.position.y = -0.12
+	var collision := CollisionShape3D.new()
+	collision.shape = PlaneShape3D.new()
+	ground.add_child(collision)
+	add_child(ground)
+	var plane := MeshInstance3D.new()
+	var plane_mesh := PlaneMesh.new()
+	plane_mesh.size = Vector2(5000, 5000)
+	plane.mesh = plane_mesh
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.28, 0.31, 0.28)
+	mat.roughness = 1.0
+	plane.material_override = mat
+	plane.position.y = -0.13
+	add_child(plane)
+
 func _build_hud(buildings: int, roads: int, loaded: bool) -> void:
 	var layer := CanvasLayer.new()
 	add_child(layer)
@@ -54,7 +73,7 @@ func _build_hud(buildings: int, roads: int, loaded: bool) -> void:
 	heading.text = "ADAM ROYAL  /  MANILA, PHILIPPINES"
 	heading.add_theme_font_size_override("font_size", 20)
 	column.add_child(heading)
-	status_label = Label.new()
+	var status_label := Label.new()
 	if loaded:
 		status_label.text = "REAL OPENSTREETMAP GEOMETRY  •  %d buildings  •  %d road segments" % [buildings, roads]
 	else:
