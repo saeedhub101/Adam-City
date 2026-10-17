@@ -24,74 +24,13 @@ func _ready() -> void:
 
 
 func _run_city_asset_qa_capture() -> void:
-	# QA explicitly renders the imported real-city assets, rather than the generated Manila blockout.
-	var travel := get_node_or_null("RegionTravel")
-	if travel == null:
-		push_error("CITY_ASSET_QA_FAIL: RegionTravel node is missing")
+	# Acceptance capture must show the actual default Manila gameplay scene.
+	if get_node_or_null("ManilaRealWorldDistrict") == null:
+		push_error("VISUAL_QA_FAIL: default Manila city is not loaded")
 		get_tree().quit(2)
 		return
-	travel.call("travel_to", "San Francisco")
-	for i in range(8):
-		await get_tree().process_frame
-	var city_root := get_node_or_null("SanFranciscoTravelRegion")
-	if city_root == null:
-		push_error("CITY_ASSET_QA_FAIL: San Francisco asset could not be loaded")
-		get_tree().quit(2)
-		return
-	var city_mesh: MeshInstance3D = city_root.get_node_or_null("ImportedCityGeometry") as MeshInstance3D
-	if city_mesh == null or city_mesh.mesh == null:
-		push_error("CITY_ASSET_QA_FAIL: imported San Francisco mesh is missing")
-		get_tree().quit(2)
-		return
-	var bounds := city_mesh.get_aabb()
-	var center := city_mesh.global_transform * bounds.get_center()
-	var span := maxf(maxf(bounds.size.x, bounds.size.z) * city_root.scale.x, 80.0)
-	var output_dir := ProjectSettings.globalize_path("res://qa_screenshots")
-	DirAccess.make_dir_recursive_absolute(output_dir)
-	var camera := Camera3D.new()
-	camera.name = "CityAssetQACamera"
-	camera.current = true
-	camera.fov = 68.0
-	add_child(camera)
-	var player_node := get_node_or_null("Player")
-	var captures := [
-		{"name": "01-aerial-full-map.png", "position": center + Vector3(0.0, span * 0.85, 0.0), "target": center},
-		{"name": "02-street-west.png", "position": center + Vector3(-span * 0.06, maxf(3.5, span * 0.008), 0.0), "target": center + Vector3(-span * 0.015, maxf(1.8, span * 0.002), 0.0)},
-		{"name": "03-street-east.png", "position": center + Vector3(span * 0.06, maxf(3.5, span * 0.008), 0.0), "target": center + Vector3(span * 0.015, maxf(1.8, span * 0.002), 0.0)},
-		{"name": "04-street-north.png", "position": center + Vector3(0.0, maxf(3.5, span * 0.008), -span * 0.06), "target": center + Vector3(0.0, maxf(1.8, span * 0.002), -span * 0.015)},
-		{"name": "05-street-south.png", "position": center + Vector3(0.0, maxf(3.5, span * 0.008), span * 0.06), "target": center + Vector3(0.0, maxf(1.8, span * 0.002), span * 0.015)}
-	]
-	for shot in captures:
-		camera.global_position = shot.position
-		camera.look_at(shot.target, Vector3.UP)
-		await get_tree().process_frame
-		await RenderingServer.frame_post_draw
-		var image := get_viewport().get_texture().get_image()
-		var path := output_dir.path_join(shot.name)
-		if image.save_png(path) != OK:
-			push_error("CITY_ASSET_QA_FAIL: screenshot save failed " + path)
-			get_tree().quit(2)
-			return
-		print("CITY_ASSET_QA_IMAGE=" + path + " BYTES=" + str(FileAccess.get_file_as_bytes(path).size()))
-	if player_node != null:
-		camera.global_position = player_node.global_position + Vector3(1.7, 1.2, 2.8)
-		camera.look_at(player_node.global_position + Vector3.UP, Vector3.UP)
-		await get_tree().process_frame
-		await RenderingServer.frame_post_draw
-		var player_image := get_viewport().get_texture().get_image()
-		var player_path := output_dir.path_join("06-player-in-game.png")
-		if player_image.save_png(player_path) != OK:
-			push_error("CITY_ASSET_QA_FAIL: player screenshot save failed")
-			get_tree().quit(2)
-			return
-		print("CITY_ASSET_QA_IMAGE=" + player_path + " BYTES=" + str(FileAccess.get_file_as_bytes(player_path).size()))
-	else:
-		push_error("CITY_ASSET_QA_FAIL: Player node is missing")
-		get_tree().quit(2)
-		return
-	print("CITY_ASSET_QA_PASS city=SanFrancisco captures=6 source=imported_OBJ")
-	print("VISUAL_QA_CAPTURE_COUNT=6")
-	get_tree().quit(0)
+	print("VISUAL_QA_ACCEPTANCE_CITY=Manila")
+	await _run_visual_qa_capture()
 
 func _run_visual_qa_capture() -> void:
 	# Derive camera framing from the real imported map bounds instead of guessed coordinates.
