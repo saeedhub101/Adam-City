@@ -128,6 +128,7 @@ def main() -> None:
         raise RuntimeError("Facade atlas integration failed GLB size/mesh validation.")
 
     report = json.loads(REPORT.read_text(encoding="utf-8"))
+    report["facade_pipeline_version"] = 1
     report["facade_texture_source"] = "locally generated tileable facade atlases; Wikimedia Commons images retained as attributed reference only"
     report["facade_texture_method"] = "four distinct repeatable facade atlases with window frames, reveals, sills, and material variation; no whole-street photographs stretched across walls"
     report["facade_materials_replaced"] = replacements
