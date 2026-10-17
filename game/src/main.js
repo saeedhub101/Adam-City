@@ -12,6 +12,47 @@ const hint = document.querySelector('#hint');
 const errorBox = document.querySelector('#error');
 const referencePanel = document.querySelector('#local-reference');
 document.querySelector('#close-reference')?.addEventListener('click', () => { if (referencePanel) referencePanel.hidden = true; });
+const buildingList = document.querySelector('#building-photo-list');
+const buildingCount = document.querySelector('#building-photo-count');
+
+function renderBuildingPhotoLinks(buildings) {
+  if (!buildingList) return;
+  buildingList.replaceChildren();
+  const fragment = document.createDocumentFragment();
+  for (const way of buildings) {
+    const tags = way.tags || {};
+    const points = way.geometry || [];
+    if (!points.length) continue;
+    const lat = points.reduce((sum, point) => sum + point.lat, 0) / points.length;
+    const lon = points.reduce((sum, point) => sum + point.lon, 0) / points.length;
+    const label = tags.name || tags['addr:housenumber'] || ('مبنى OSM #' + way.id);
+    const item = document.createElement('a');
+    item.className = 'building-photo-item';
+    item.href = tags.mapillary
+      ? 'https://www.mapillary.com/app/?pKey=' + encodeURIComponent(tags.mapillary)
+      : 'https://www.mapillary.com/app/?lat=' + lat.toFixed(6) + '&lng=' + lon.toFixed(6) + '&z=18';
+    item.target = '_blank';
+    item.rel = 'noreferrer';
+    const title = document.createElement('strong');
+    title.textContent = label;
+    const detail = document.createElement('span');
+    detail.textContent = tags.mapillary
+      ? 'صورة مرتبطة بهذا المبنى في بيانات الخريطة'
+      : 'افتح صور الشارع قرب موقع المبنى';
+    item.append(title, detail);
+    if (tags.image || tags.wikimedia_commons) {
+      const source = document.createElement('span');
+      source.className = 'building-photo-source';
+      source.textContent = tags.image ? 'رابط صورة مضاف في OpenStreetMap' : 'مرجع Wikimedia Commons مضاف في OpenStreetMap';
+      item.append(source);
+      if (tags.image) item.href = tags.image.startsWith('http') ? tags.image : 'https://' + tags.image;
+      else if (tags.wikimedia_commons) item.href = 'https://commons.wikimedia.org/wiki/' + encodeURIComponent(tags.wikimedia_commons).replace(/%3A/g, ':').replace(/%2F/g, '/');
+    }
+    fragment.append(item);
+  }
+  buildingList.append(fragment);
+  if (buildingCount) buildingCount.textContent = buildings.length + ' مبنى';
+}
 
 const QUALITY = {
   low:    { pixelRatio: 0.85, shadows: false, shadowSize: 512, far: 360, buildings: 45, antialias: false },
@@ -253,6 +294,7 @@ async function loadTabarbourMap() {
     if (width >= 5.5) addOSMRoad(points, 0.16, curb, 0.041);
   }
   buildings.forEach(addOSMBuilding);
+  renderBuildingPhotoLinks(buildings);
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.MeshStandardMaterial({ color: 0xaaa395, roughness: 1 }));
   ground.rotation.x = -Math.PI / 2; ground.position.y = -0.03; ground.receiveShadow = true; scene.add(ground);
   playerRoot.position.set(0, 0, 0);
