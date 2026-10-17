@@ -300,7 +300,7 @@ jobs:
             throw 'Runtime check failed: the actual character GLB was not loaded.'
           }
 
-          foreach ($regionPattern in @('TRAVEL_ASSET_IMPORT_PASS region=Chicago', 'TRAVEL_ASSET_IMPORT_PASS region=San Francisco')) {
+          foreach ($regionPattern in @('TRAVEL_ASSET_IMPORT_PASS region=Chicago', 'TRAVEL_ASSET_IMPORT_PASS region=San Francisco', 'TRAVEL_ASSET_IMPORT_PASS region=Tabarbour')) {
             if (-not (Select-String -Path $runtimeLog -Pattern $regionPattern -Quiet)) {
               Get-Content $runtimeLog
               throw "Travel region import validation failed: $regionPattern"
