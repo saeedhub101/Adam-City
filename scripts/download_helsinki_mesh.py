@@ -98,7 +98,12 @@ def main() -> int:
         "tiles": tile_records,
     }
     manifest_path = DEST / "manifest.json"
-    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    manifest_text = json.dumps(manifest, ensure_ascii=False, indent=2)
+    manifest_path.write_text(manifest_text, encoding="utf-8")
+    # Compatibility copy for the existing Windows build verification step.
+    compatibility_manifest = ROOT / "game" / "models" / "helsinki" / "manifest.json"
+    compatibility_manifest.parent.mkdir(parents=True, exist_ok=True)
+    compatibility_manifest.write_text(manifest_text, encoding="utf-8")
     print(f"Manifest: {manifest_path}; total OBJ={sum(t['objCount'] for t in tile_records)}, textures={sum(t['textureCount'] for t in tile_records)}")
     return 0
 
