@@ -105,3 +105,20 @@ These are documented as potential future inputs; they are **not** all integrated
 - Wikimedia Commons and street-photo assets: retain the source URL, creator, license and any attribution requirements for each item. Do not assume every image shares the same license.
 - Before shipping downloaded imagery or embedding it in a distributable game, verify each asset's current license and the source service's terms. Publicly viewable does not automatically mean unrestricted redistribution.
 - The build artifact is an intermediate research/source package, not proof that the images have been imported into Unreal or are visible during gameplay. A true gameplay screenshot still requires an Unreal project with the map and materials imported and rendered in the running game.
+
+## سياسة حفظ خريطة مانيلا وإعادة استخدامها (2026-10-17)
+
+- تم توليد خريطة مانيلا المركزية مرة واحدة وحفظ الناتج في المستودع تحت `Content/Maps`، بما يشمل `Manila-Central-District.glb` وتقرير البيانات وخامات الواجهات الإجرائية.
+- **البناء العادي يعيد استخدام الملفات المحفوظة ولا يعيد تنزيل بيانات الخريطة أو توليدها من جديد.** يجب أن يبقى البناء قابلاً للتكرار من الأصول المخزنة في Git.
+- لا تُحدّث الخريطة أو الخامات إلا عند طلب تغيير فعلي للخريطة أو إضافة/تعديل محتواها، ثم تُراجع النتيجة وتُحفظ النسخة الجديدة في المستودع لإعادة استخدامها في عمليات البناء التالية.
+- خيار التشغيل اليدوي `refresh_map_assets` مخصص فقط عندما نقرر صراحة إعادة توليد الخريطة والخامات. لا تفعّله في عمليات البناء الاعتيادية.
+- صور واجهات المباني وصور الشوارع أصول مرجعية منفصلة عن الخريطة. خيار `refresh_reference_photos` مخصص لتحديث هذه الصور فقط، ولا يعني أن الصور طُبقت على المجسمات داخل اللعبة.
+- إذا كانت ملفات الخريطة المحفوظة مفقودة أو تالفة، يجب إظهار فشل واضح والتنبيه إلى الحاجة لاستعادة الأصول أو تشغيل تحديث مقصود؛ لا ينبغي اعتبار إعادة التوليد الصامتة سلوكاً عادياً.
+
+## سياسة لقطات التحقق من اللعبة
+
+- يجب التمييز بين **صورة/ملف مصدر الخريطة** وبين لقطة شاشة ملتقطة من لعبة تعمل فعلياً. وجود GLB أو صور مرجعية في المستودع لا يثبت أن اللعبة عرضتها.
+- يجب أن تنتج اختبارات التشغيل الفعلية لقطات مستقلة تُظهر: (1) مشهداً داخل اللعبة، (2) الشخصية داخل العالم، و(3) مواقع مختلفة من خريطة مانيلا. تُحفظ اللقطات كـ GitHub Actions Artifacts لتسهيل مراجعتها.
+- لا يُعلن نجاح تصوير اللعبة إلا بعد التحقق من ملفات الصور نفسها ومحتواها؛ ولا تُقبل صور الخريطة المصدرية أو صور Wikimedia بديلاً عن لقطات اللعب.
+- **الوضع الحالي بعد Workflow run #43:** نجح فحص مصدر الخريطة، وسجّل التقرير 4,340 مبنى و3,028 طريقاً، لكن الـ Workflow الحالي لا يشغّل Unreal Engine ولا يلتقط صوراً من داخل اللعب. لذلك لم تُثبت بعد لقطات داخل اللعبة أو لقطات للشخصية أثناء اللعب.
+
