@@ -1,4 +1,4 @@
-name: Capture Adam Royal Amman gameplay screenshots
+name: Capture Adam Royal Manila street gameplay screenshots
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
       - ".github/workflows/capture-gameplay-screenshot.yml"
       - "SaeedRoyaleGodot/scripts/main.gd"
       - "SaeedRoyaleGodot/assets/real_city/**"
+      - "SaeedRoyaleGodot/assets/manila/**"
       - "SaeedRoyaleGodot/assets/amman/**"
   workflow_dispatch:
 
@@ -14,7 +15,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: capture-adam-royal-gameplay-main
+  group: capture-adam-royal-manila-main
   cancel-in-progress: false
 
 jobs:
@@ -47,7 +48,7 @@ jobs:
           chmod +x "$GODOT_BIN"
           echo "GODOT_BIN=$GODOT_BIN" >> "$GITHUB_ENV"
 
-      - name: Import and validate the playable Amman city asset
+      - name: Import and validate the playable Manila city asset
         working-directory: SaeedRoyaleGodot
         shell: bash
         run: |
@@ -61,7 +62,7 @@ jobs:
             echo "City asset import produced errors."
             exit 1
           fi
-          test -s assets/amman/Amman-Central-District.glb
+          test -s assets/manila/Manila-Central-District.glb
           test -s assets/real_city/helsinki_city_scan.ply
           mkdir -p screenshots
           rm -f screenshots/adam-royal-*.png
@@ -93,7 +94,7 @@ jobs:
           		push_error("Missing player or camera pivot")
           		quit(1)
           		return
-          	var views = [{"name":"north","p":Vector3(0,0.1,0),"y":0.0},{"name":"east","p":Vector3(28,0.1,0),"y":-1.5708},{"name":"south","p":Vector3(0,0.1,28),"y":3.14159},{"name":"west","p":Vector3(-28,0.1,0),"y":1.5708}]
+          	var views = [{"name":"street-01-intramuros","p":Vector3(0,0.1,0),"y":0.0},{"name":"street-02-ermita","p":Vector3(120,0.1,80),"y":-1.5708},{"name":"street-03-far-district","p":Vector3(-180,0.1,-100),"y":0.4},{"name":"street-04-distant-road","p":Vector3(230,0.1,-190),"y":2.2}]
           	for v in views:
           		player.global_position = v.p
           		player.rotation.y = v.y
@@ -126,7 +127,7 @@ jobs:
           python3 - <<'PY'
           import struct
           from pathlib import Path
-          for view in ("north", "east", "south", "west"):
+          for view in ("street-01-intramuros", "street-02-ermita", "street-03-far-district", "street-04-distant-road"):
               p = Path(f"screenshots/adam-royal-{view}.png")
               data = p.read_bytes()
               if data[:8] != bytes((137,80,78,71,13,10,26,10)): raise SystemExit(f"Bad PNG: {p}")
@@ -150,7 +151,7 @@ jobs:
       - name: Upload screenshot artifact
         uses: actions/upload-artifact@v7
         with:
-          name: Adam-Royal-Multi-Location-Gameplay-Screenshots
+          name: Adam-Royal-Manila-Multi-Street-Screenshots
           path: SaeedRoyaleGodot/screenshots/adam-royal-*.png
           if-no-files-found: error
           retention-days: 30
