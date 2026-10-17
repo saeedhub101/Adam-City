@@ -1,4 +1,4 @@
-name: Build Saeed Royale for Windows
+name: Build Adam Royal for Windows
 
 on:
   push:
@@ -62,14 +62,14 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p build
-          "$GODOT_BIN" --headless --path . --export-release "Windows Desktop" build/SaeedRoyale.exe
+          "$GODOT_BIN" --headless --path . --export-release "Windows Desktop" build/AdamRoyal.exe
           test -s build/SaeedRoyale.exe
           cp README.md build/README.txt
 
       - name: Upload downloadable Windows game
         uses: actions/upload-artifact@v7
         with:
-          name: SaeedRoyale-Windows-x64
+          name: Adam-Royal-Windows-x64
           path: SaeedRoyaleGodot/build/
           if-no-files-found: error
           retention-days: 30
@@ -88,7 +88,7 @@ jobs:
       - name: Launch Windows executable headlessly
         shell: pwsh
         run: |
-          $exe = Join-Path $PWD "smoke/SaeedRoyale.exe"
+          $exe = Join-Path $PWD "smoke/AdamRoyal.exe"
           if (-not (Test-Path $exe)) { throw "Windows executable was not found in the build artifact." }
           $log = Join-Path $env:RUNNER_TEMP "saeed-royale-windows-smoke.log"
           $process = Start-Process -FilePath $exe -ArgumentList @("--headless", "--quit-after", "120", "--log-file", $log) -PassThru -Wait
