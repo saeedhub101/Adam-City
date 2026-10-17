@@ -15,14 +15,45 @@ def material(n,c,r=.8):
     return m
 def xy(c,lon0,lat0,cx,cy):
     return ((c[0]-lon0)*111320*math.cos(math.radians(lat0))-cx,(c[1]-lat0)*111132-cy)
-def meshobj(name,v,f,mats,ids=None):
+def meshobj(name,v,f,mats,ids=None,uv_scale=1.0):
     if not v or not f: return
     me=bpy.data.meshes.new(name); me.from_pydata(v,[],f); me.update()
     ob=bpy.data.objects.new(name,me); bpy.context.collection.objects.link(ob)
     for m in mats: me.materials.append(m)
     if ids:
         for p,i in zip(me.polygons,ids): p.material_index=i
+    # Real UV coordinates are required for PBR image maps to survive GLB export.
+    if mats and any(any(n.type=="TEX_IMAGE" for n in m.node_tree.nodes) for m in mats if m and m.use_nodes):
+        layer=me.uv_layers.new(name="UVMap")
+        for poly in me.polygons:
+            n=poly.normal
+            for li in poly.loop_indices:
+                co=me.vertices[me.loops[li].vertex_index].co
+                if abs(n.z)>.65: uv=(co.x*uv_scale,co.y*uv_scale)
+                elif abs(n.x)>abs(n.y): uv=(co.y*uv_scale,co.z*uv_scale)
+                else: uv=(co.x*uv_scale,co.z*uv_scale)
+                layer.data[li].uv=uv
     return ob
+def pbr_material(name,c,r,folder,prefix):
+    m=material(name,c,r)
+    if not folder.exists(): return m
+    def find_map(suffix):
+        found=sorted(folder.glob(prefix+"*"+suffix+".jpg"))
+        return found[0] if found else None
+    nodes=m.node_tree.nodes; links=m.node_tree.links; bsdf=nodes.get("Principled BSDF")
+    color_path=find_map("_Color")
+    if color_path:
+        tex=nodes.new("ShaderNodeTexImage"); tex.label=name+" albedo"; tex.image=bpy.data.images.load(str(color_path),check_existing=True); tex.extension="REPEAT"
+        links.new(tex.outputs["Color"],bsdf.inputs["Base Color"])
+    rough_path=find_map("_Roughness")
+    if rough_path:
+        tex=nodes.new("ShaderNodeTexImage"); tex.label=name+" roughness"; tex.image=bpy.data.images.load(str(rough_path),check_existing=True); tex.image.colorspace_settings.name="Non-Color"; tex.extension="REPEAT"
+        links.new(tex.outputs["Color"],bsdf.inputs["Roughness"])
+    normal_path=find_map("_NormalGL")
+    if normal_path:
+        tex=nodes.new("ShaderNodeTexImage"); tex.label=name+" normal"; tex.image=bpy.data.images.load(str(normal_path),check_existing=True); tex.image.colorspace_settings.name="Non-Color"; tex.extension="REPEAT"
+        normal=nodes.new("ShaderNodeNormalMap"); links.new(tex.outputs["Color"],normal.inputs["Color"]); links.new(normal.outputs["Normal"],bsdf.inputs["Normal"])
+    return m
 def main():
     src,out,png=getargs(); d=json.loads(src.read_text(encoding="utf-8"))
     o=d.get("origin",{}); lon0=float(o.get("longitude",35.927)); lat0=float(o.get("latitude",31.952))
@@ -37,11 +68,14 @@ def main():
     cx=(min(x for x,y in raw)+max(x for x,y in raw))/2; cy=(min(y for x,y in raw)+max(y for x,y in raw))/2
     def local(c): return xy(c,lon0,lat0,cx,cy)
     bpy.ops.object.select_all(action="SELECT"); bpy.ops.object.delete(use_global=False)
-    facades=[material("Weathered tropical concrete",(.55,.54,.49)),material("Sun-faded plaster",(.72,.68,.58)),material("Aged painted concrete",(.48,.52,.49)),material("Light concrete",(.68,.67,.60)),material("Weathered masonry",(.39,.38,.34))]
+    texture_dir=src.parent/"manila_materials"
+    concrete_colors=[(.55,.54,.49),(.72,.68,.58),(.48,.52,.49),(.68,.67,.60),(.39,.38,.34)]
+    facades=[pbr_material("Manila facade concrete variant %02d"%i,c,.88,texture_dir,"Concrete034") for i,c in enumerate(concrete_colors)]
     glass=material("Smoky blue-grey window glass",(.055,.13,.17),.22); frame=material("Dark metal window frames",(.16,.17,.16),.48)
-    roofmat=material("Weathered flat roof concrete",(.36,.35,.31)); asphalt=material("Worn tropical asphalt",(.085,.09,.09),.96)
+    roofmat=pbr_material("Weathered flat roof concrete",(.36,.35,.31),.91,texture_dir,"Concrete034")
+    asphalt=pbr_material("Worn tropical asphalt",(.085,.09,.09),.96,texture_dir,"Asphalt012")
     groundmat=material("Manila urban ground",(.30,.30,.27),1)
-    sidewalkmat=material("Weathered concrete sidewalk",(.48,.47,.43),.94)
+    sidewalkmat=pbr_material("Weathered concrete sidewalk",(.48,.47,.43),.94,texture_dir,"Concrete034")
     curbmat=material("Raised curb concrete",(.62,.60,.54),.88)
     markingmat=material("Faded road paint",(.78,.74,.60),.86)
     polemat=material("Galvanized utility poles",(.24,.26,.25),.56)
@@ -175,11 +209,11 @@ def main():
                                       (xend-wid,yend-wid,zc-.22),(xend+wid,yend-wid,zc-.22),(xend+wid,yend+wid,zc-.22),(xend-wid,yend+wid,zc-.22)])
                         wiref.extend([(wbase,wbase+1,wbase+5,wbase+4),(wbase+1,wbase+2,wbase+6,wbase+5),(wbase+2,wbase+3,wbase+7,wbase+6),(wbase+3,wbase,wbase+4,wbase+7)])
         nroad+=1
-    meshobj("Real OSM building footprints with facade detail",bv,bf,facades+[roofmat],bi)
+    meshobj("Real OSM building footprints with facade detail",bv,bf,facades+[roofmat],bi,uv_scale=.38)
     meshobj("Facade window glass",wv,wf,[glass],wi)
     meshobj("Raised dark window frames",frv,frf,[frame])
-    meshobj("Road ribbons from OSM centerlines",rv,rf,[asphalt])
-    meshobj("Concrete sidewalks",swv,swf,[sidewalkmat])
+    meshobj("Road ribbons from OSM centerlines",rv,rf,[asphalt],uv_scale=.12)
+    meshobj("Concrete sidewalks",swv,swf,[sidewalkmat],uv_scale=.32)
     meshobj("Raised sidewalk curbs",cv,cf,[curbmat])
     meshobj("Worn broken lane markings",mv,mf,[markingmat])
     meshobj("Shop signs and outdoor AC units",signv,signf,signmats+[polemat],signi)
@@ -218,6 +252,8 @@ def main():
     if bpy.app.version >= (4,0,0): scene.view_settings.view_transform="AgX"
     out.parent.mkdir(parents=True,exist_ok=True); png.parent.mkdir(parents=True,exist_ok=True)
     bpy.ops.object.select_all(action="SELECT")
+    # Embed downloaded CC0 PBR maps in the GLB so the playable build has no external texture dependency.
+    bpy.ops.file.pack_all()
     bpy.ops.export_scene.gltf(filepath=str(out),export_format="GLB",export_apply=True,export_yup=True,export_materials="EXPORT")
     bpy.ops.render.render(write_still=True)
     # Separate zoomed view for reviewing facade and street-block detail.
@@ -227,7 +263,10 @@ def main():
     cam.rotation_euler=(target-cam.location).to_track_quat("-Z","Y").to_euler()
     scene.render.filepath=str(closeup)
     bpy.ops.render.render(write_still=True)
-    print(json.dumps({"buildings":nbuilding,"road_ways":nroad,"windows":nwindow,"features":len(d["features"]),"glb":str(out),"preview":str(png),"closeup":str(closeup)}))
+    print(json.dumps({"buildings":nbuilding,"road_ways":nroad,"windows":nwindow,"sidewalk_segments":nsidewalk,"lane_dashes":nlane,"street_details":nstreet_detail,"pbr_maps":len([x for x in bpy.data.images if x.filepath]),"features":len(d["features"]),"glb":str(out),"preview":str(png),"closeup":str(closeup)}))
     if nbuilding<80 or nroad<50 or nwindow<500: raise SystemExit("Quality gate failed: not enough building/road/window geometry")
+    if nsidewalk<100 or nstreet_detail<20 or nlane<10: raise SystemExit("Quality gate failed: street-detail geometry missing")
+    if not any("Asphalt012" in image.name for image in bpy.data.images) or not any("Concrete034" in image.name for image in bpy.data.images):
+        print("Warning: CC0 texture maps were not found; flat-color fallbacks are active.")
     if out.stat().st_size > 95_000_000: raise SystemExit(f"Runtime GLB exceeds GitHub file limit budget: {out.stat().st_size:,} bytes")
 if __name__=="__main__": main()
