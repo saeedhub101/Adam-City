@@ -14,6 +14,62 @@ const referencePanel = document.querySelector('#local-reference');
 document.querySelector('#close-reference')?.addEventListener('click', () => { if (referencePanel) referencePanel.hidden = true; });
 const buildingList = document.querySelector('#building-photo-list');
 const buildingCount = document.querySelector('#building-photo-count');
+const googleStreetViewBox = document.querySelector('#google-streetview');
+const googleStreetViewStatus = document.querySelector('#google-streetview-status');
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+
+function loadGoogleStreetView() {
+  if (!googleStreetViewBox) return;
+  if (!GOOGLE_MAPS_API_KEY) {
+    if (googleStreetViewStatus) googleStreetViewStatus.textContent =
+      'يلزم ضبط VITE_GOOGLE_MAPS_API_KEY في بيئة بناء الموقع، مع تفعيل Maps JavaScript API وStreet View. لم يتم تحميل المشهد لأن مفتاح API غير مضبوط.';
+    return;
+  }
+  if (window.google?.maps?.StreetViewPanorama) {
+    createGoogleStreetView();
+    return;
+  }
+  window.initTabarbourStreetView = createGoogleStreetView;
+  const script = document.createElement('script');
+  script.src = 'https://maps.googleapis.com/maps/api/js?key=' +
+    encodeURIComponent(GOOGLE_MAPS_API_KEY) + '&callback=initTabarbourStreetView&v=weekly&loading=async';
+  script.async = true;
+  script.onerror = () => {
+    if (googleStreetViewStatus) googleStreetViewStatus.textContent =
+      'تعذر تحميل Google Maps Platform. تحقق من المفتاح، والفوترة، وقيود المفتاح، وتفعيل Maps JavaScript API.';
+  };
+  document.head.append(script);
+}
+
+function createGoogleStreetView() {
+  if (!googleStreetViewBox || !window.google?.maps?.StreetViewPanorama) return;
+  googleStreetViewBox.replaceChildren();
+  const panorama = new google.maps.StreetViewPanorama(googleStreetViewBox, {
+    position: { lat: TABARBOUR.lat, lng: TABARBOUR.lon },
+    pov: { heading: 80, pitch: 10 },
+    zoom: 0,
+    addressControl: true,
+    linksControl: true,
+    panControl: true,
+    zoomControl: true,
+    fullscreenControl: true,
+    motionTracking: false,
+    motionTrackingControl: false
+  });
+  panorama.addListener('status_changed', () => {
+    const status = panorama.getStatus?.();
+    if (status && status !== 'OK' && googleStreetViewStatus) {
+      googleStreetViewStatus.textContent =
+        'لم تُعثر Google على بانوراما في هذا الموضع. جرّب تحريك الموقع إلى شارع قريب داخل Google Street View.';
+    }
+  });
+  panorama.addListener('pano_changed', () => {
+    if (googleStreetViewStatus) googleStreetViewStatus.textContent = '';
+  });
+}
+
+loadGoogleStreetView();
+
 
 function renderBuildingPhotoLinks(buildings) {
   if (!buildingList) return;
