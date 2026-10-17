@@ -29,7 +29,7 @@ jobs:
 
       - name: Install map generation dependencies
         shell: pwsh
-        run: python -m pip install --upgrade requests shapely trimesh mapbox-earcut
+        run: python -m pip install --upgrade requests shapely trimesh mapbox-earcut scipy
 
       - name: Generate real Manila buildings and roads
         shell: pwsh
