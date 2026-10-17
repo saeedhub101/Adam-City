@@ -28,11 +28,11 @@ func _run_visual_qa_capture() -> void:
 	add_child(camera)
 	var player := get_node_or_null("Player")
 	var captures := [
-		{"name": "01-aerial-full-map.png", "position": Vector3(0, 1350, 30), "target": Vector3(0, 0, 0)},
-		{"name": "02-street-west.png", "position": Vector3(-95, 28, 35), "target": Vector3(-30, 2, 20)},
-		{"name": "03-street-east.png", "position": Vector3(115, 24, -70), "target": Vector3(40, 2, -15)},
-		{"name": "04-street-north.png", "position": Vector3(-45, 32, -125), "target": Vector3(-10, 2, -45)},
-		{"name": "05-street-south.png", "position": Vector3(70, 22, 135), "target": Vector3(20, 2, 65)}
+		{"name": "01-aerial-full-map.png", "position": Vector3(0, 2350, 40), "target": Vector3(0, 0, 0)},
+		{"name": "02-street-west.png", "position": Vector3(-820, 24, -460), "target": Vector3(-755, 3, -420)},
+		{"name": "03-street-east.png", "position": Vector3(820, 22, -520), "target": Vector3(750, 3, -470)},
+		{"name": "04-street-north.png", "position": Vector3(-610, 28, 760), "target": Vector3(-555, 3, 690)},
+		{"name": "05-street-south.png", "position": Vector3(640, 24, 800), "target": Vector3(570, 3, 735)}
 	]
 	for shot in captures:
 		camera.global_position = shot.position
