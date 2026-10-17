@@ -6,6 +6,8 @@ on:
     paths:
       - "GodotAdamRoyal/**"
       - "StandaloneBattleRoyale/Tools/build_manila_district.py"
+      - "StandaloneBattleRoyale/Content/Maps/**"
+      - "assets/**"
       - ".github/workflows/build-godot-adam-royal.yml"
   workflow_dispatch:
 
@@ -159,6 +161,41 @@ jobs:
           }
           Write-Host 'Verified: real Manila GLB and player character loaded in the game scene.'
 
+      - name: Run the game and capture aerial, four street views, and player
+        shell: pwsh
+        timeout-minutes: 5
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $shotDir = Join-Path $PWD 'qa_screenshots'
+          if (Test-Path $shotDir) { Remove-Item $shotDir -Recurse -Force }
+          New-Item -ItemType Directory -Path $shotDir -Force | Out-Null
+          $visualLog = Join-Path $env:RUNNER_TEMP 'godot-visual-qa.log'
+          & $env:GODOT_EXE --path "$PWD" -- --qa-capture 2>&1 | Tee-Object -FilePath $visualLog
+          $visualExitCode = $LASTEXITCODE
+          if ($visualExitCode -ne 0) {
+            Write-Host '===== Godot visual QA log ====='
+            if (Test-Path $visualLog) { Get-Content $visualLog }
+            throw "Rendered visual QA session failed with exit code $visualExitCode"
+          }
+          if (-not (Select-String -Path $visualLog -Pattern 'VISUAL_QA_CAPTURE_COUNT=6' -Quiet)) {
+            Get-Content $visualLog
+            throw 'Visual QA did not confirm all six game screenshots.'
+          }
+          $screenshots = @(Get-ChildItem $shotDir -Filter '*.png' -File)
+          if ($screenshots.Count -ne 6) {
+            Get-ChildItem $shotDir -ErrorAction SilentlyContinue | Select-Object Name,Length
+            throw "Expected 6 rendered screenshots (aerial, four streets, player); found $($screenshots.Count)."
+          }
+          foreach ($shot in $screenshots) {
+            if ($shot.Length -lt 10000) { throw "Screenshot appears blank or incomplete: $($shot.Name) ($($shot.Length) bytes)" }
+            Write-Host "VISUAL_QA_IMAGE=$($shot.Name) BYTES=$($shot.Length)"
+          }
+          $requiredShots = @('01-aerial-full-map.png','02-street-west.png','03-street-east.png','04-street-north.png','05-street-south.png','06-player-in-game.png')
+          foreach ($required in $requiredShots) {
+            if (-not (Test-Path (Join-Path $shotDir $required))) { throw "Required visual evidence missing: $required" }
+          }
+          Write-Host 'VISUAL_QA_PASS: aerial map, four distinct street views, and in-game character captured from the running game.'
+
       - name: Export Windows game
         shell: pwsh
         run: |
@@ -176,6 +213,7 @@ jobs:
           name: AdamRoyal-Godot-Windows-${{ github.run_number }}
           path: |
             GodotAdamRoyal/build/
+            GodotAdamRoyal/qa_screenshots/*.png
             GodotAdamRoyal/assets/manila_city.json
             GodotAdamRoyal/assets/*.glb
             StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb
