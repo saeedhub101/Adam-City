@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/capture-gameplay-screenshot.yml"
+      - "SaeedRoyaleGodot/scripts/main.gd"
+      - "SaeedRoyaleGodot/assets/real_city/**"
   workflow_dispatch:
 
 permissions:
