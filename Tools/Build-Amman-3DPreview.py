@@ -41,7 +41,7 @@ def main():
     glass=material("Blue-grey window glass",(.045,.12,.17),.25); frame=material("Window frames",(.22,.21,.19),.5)
     roofmat=material("Flat roof concrete",(.42,.39,.34)); asphalt=material("Road asphalt",(.10,.11,.115),.95)
     groundmat=material("Dry hillside ground",(.48,.42,.33),1)
-    span=max(max(x for x,y in raw)-min(x for x,y in raw),max(y for x,y in raw)-min(y for x,y in raw))+70
+    span=760.0
     bpy.ops.mesh.primitive_plane_add(size=span,location=(0,0,-.12)); bpy.context.object.name="Amman terrain base"; bpy.context.object.data.materials.append(groundmat)
     bv=[]; bf=[]; bi=[]; wv=[]; wf=[]; wi=[]; rv=[]; rf=[]
     nbuilding=nroad=nwindow=0
@@ -51,6 +51,8 @@ def main():
         rings=g.get("coordinates") or []
         if not rings or len(rings[0])<4: continue
         poly=[local(c) for c in rings[0]]
+        # Keep a compact, walkable central district instead of exporting the whole multi-kilometre extract.
+        if not poly or math.hypot(sum(x for x,y in poly)/len(poly),sum(y for x,y in poly)/len(poly)) > 340: continue
         if len(poly)>1 and math.dist(poly[0],poly[-1])<.03: poly=poly[:-1]
         if len(poly)<3: continue
         area=abs(sum(poly[i][0]*poly[(i+1)%len(poly)][1]-poly[(i+1)%len(poly)][0]*poly[i][1] for i in range(len(poly)))/2)
@@ -66,9 +68,9 @@ def main():
         for i in range(n):
             x1,y1=poly[i]; x2,y2=poly[(i+1)%n]; length=math.hypot(x2-x1,y2-y1)
             if length<5: continue
-            ux=(x2-x1)/length; uy=(y2-y1)/length; nx=uy; ny=-ux; count=max(1,min(10,int(length//4.5)))
+            ux=(x2-x1)/length; uy=(y2-y1)/length; nx=uy; ny=-ux; count=max(1,min(5,int(length//8.0)))
             floorh=h/floors
-            for fl in range(floors):
+            for fl in range(0, floors, 2):
                 z0=fl*floorh+floorh*.24; z1=fl*floorh+floorh*.70
                 if z1-z0<.45: continue
                 for j in range(count):
@@ -76,11 +78,7 @@ def main():
                     for dist,z in [(mid-half,z0),(mid+half,z0),(mid+half,z1),(mid-half,z1)]:
                         wv.append((x1+ux*dist+nx*.035,y1+uy*dist+ny*.035,z))
                     wf.append((idx,idx+1,idx+2,idx+3)); wi.append(0); nwindow+=1
-                    # Simple stone sill/lintel strips frame each window.
-                    for a,b,c,e in [(mid-half,z0,mid+half,z0+.035),(mid-half,z1-.035,mid+half,z1)]:
-                        k=len(wv)
-                        for dist,z in [(a,b),(c,b),(c,e),(a,e)]: wv.append((x1+ux*dist+nx*.055,y1+uy*dist+ny*.055,z))
-                        wf.append((k,k+1,k+2,k+3)); wi.append(1)
+
     widths={"motorway":12,"trunk":10,"primary":8,"secondary":7,"tertiary":6,"residential":5,"service":3.5,"footway":1.8,"path":1.5}
     for f in d["features"]:
         p=f.get("properties") or {}; g=f.get("geometry") or {}
@@ -90,7 +88,7 @@ def main():
         width=widths.get(p.get("highway",""),4.2)
         for i in range(len(pts)-1):
             x1,y1=pts[i]; x2,y2=pts[i+1]; dx=x2-x1; dy=y2-y1; L=math.hypot(dx,dy)
-            if L<.8: continue
+            if L<.8 or math.hypot((x1+x2)*.5,(y1+y2)*.5)>380: continue
             nx=-dy/L*width/2; ny=dx/L*width/2; k=len(rv)
             rv.extend([(x1+nx,y1+ny,.01),(x1-nx,y1-ny,.01),(x2-nx,y2-ny,.01),(x2+nx,y2+ny,.01)])
             rf.append((k,k+1,k+2,k+3))
@@ -142,4 +140,5 @@ def main():
     bpy.ops.render.render(write_still=True)
     print(json.dumps({"buildings":nbuilding,"road_ways":nroad,"windows":nwindow,"features":len(d["features"]),"glb":str(out),"preview":str(png),"closeup":str(closeup)}))
     if nbuilding<100 or nroad<50 or nwindow<500: raise SystemExit("Quality gate failed: not enough building/road/window geometry")
+    if out.stat().st_size > 95_000_000: raise SystemExit(f"Runtime GLB exceeds GitHub file limit budget: {out.stat().st_size:,} bytes")
 if __name__=="__main__": main()
