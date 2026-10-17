@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { loadHelsinkiPhotogrammetry } from './helsinki.js';
 import './style.css';
 
 const canvas = document.querySelector('#world');
@@ -16,7 +17,7 @@ const buildingList = document.querySelector('#building-photo-list');
 const buildingCount = document.querySelector('#building-photo-count');
 const googleStreetViewBox = document.querySelector('#google-streetview');
 const googleStreetViewStatus = document.querySelector('#google-streetview-status');
-const GOOGLE_MAPS_API_KEY = 'AIzaSyCyeOhx7lvdix3JAfWgH5O3RhjHLBe2w80';
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 
 function loadGoogleStreetView() {
   if (!googleStreetViewBox) return;
@@ -210,6 +211,11 @@ let elapsed = 0;
 const clock = new THREE.Clock();
 const keys = new Set();
 const obstacles = [];
+let helsinkiMeshRoot = null;
+let helsinkiMeshReady = false;
+const groundRay = new THREE.Raycaster();
+const groundRayOrigin = new THREE.Vector3();
+const groundRayDirection = new THREE.Vector3(0, -1, 0);
 
 // Real street-view facade textures are generated into this manifest by the
 // build-tabarbour-facades GitHub Actions workflow. Missing coverage stays on the
@@ -556,7 +562,11 @@ function createCity(quality) {
   const fill = new THREE.DirectionalLight(0xc5d5e0, 0.32);
   fill.position.set(90, 45, -100);
   scene.add(fill);
-  loadTabarbourMap();
+  loadHelsinkiPhotogrammetry(scene, statusText, showError).then(root => {
+    helsinkiMeshRoot = root;
+    helsinkiMeshReady = Boolean(root);
+    if (root) playerRoot.position.set(0, 0, 0);
+  });
 }
 
 function setupPlayer() {
@@ -588,7 +598,7 @@ function setupPlayer() {
     const scaledBounds = new THREE.Box3().setFromObject(player);
     player.position.y -= scaledBounds.min.y;
     playerRoot.add(player);
-    statusText.textContent = 'Character ready · new controls active';
+    statusText.textContent = helsinkiMeshReady ? 'هلسنكي، فنلندا · الشخصية جاهزة' : 'Character ready · waiting for Helsinki mesh';
   }, undefined, (err) => {
     console.error('Character load failed', err);
     statusText.textContent = 'Character could not load';
@@ -670,8 +680,15 @@ function frame() {
     }
     velocityY -= 17.5 * dt;
     playerRoot.position.y += velocityY * dt;
-    if (playerRoot.position.y <= 0) {
-      playerRoot.position.y = 0;
+    let groundY = 0;
+    if (helsinkiMeshRoot) {
+      groundRayOrigin.set(playerRoot.position.x, playerRoot.position.y + 25, playerRoot.position.z);
+      groundRay.set(groundRayOrigin, groundRayDirection);
+      const groundHits = groundRay.intersectObject(helsinkiMeshRoot, true);
+      if (groundHits.length) groundY = Math.max(0, groundHits[0].point.y);
+    }
+    if (playerRoot.position.y <= groundY) {
+      playerRoot.position.y = groundY;
       velocityY = 0;
       onGround = true;
     }
