@@ -107,8 +107,9 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
       }
       if (spawn) break;
     }
-    root.userData.spawnPosition = spawn || { x: 0, y: 0, z: 0 };
-    root.userData.spawnGroundY = root.userData.spawnPosition.y;
+    if (spawn) { root.position.x -= spawn.x; root.position.y -= spawn.y; root.position.z -= spawn.z; root.updateMatrixWorld(true); }
+    root.userData.spawnPosition = { x: 0, y: 0, z: 0 };
+    root.userData.spawnGroundY = 0;
     const textureCount = manifest.tiles.reduce((sum, tile) => sum + (tile.textureCount || 0), 0);
     statusText.textContent = 'هلسنكي، فنلندا · مجسّم مصوّر LOD ' + (selectedLod ?? 'متاح') + ' · ' + loaded + ' قطعة · ' + entries.length + ' خامة' + (failed ? ' · تعذّر تحميل ' + failed : '');
     console.info('Loaded official Helsinki photogrammetry mesh', {
