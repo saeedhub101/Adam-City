@@ -1,6 +1,6 @@
 extends Node3D
 
-const MANILA_CITY_PATH := "res://assets/manila/Manila-Central-District.glb"
+const AMMAN_CITY_PATH := "res://assets/amman/Amman-Central-District.glb"
 
 const ARENA_SIZE := 760.0
 const BOT_COUNT := 14
@@ -74,18 +74,26 @@ func _build_world() -> void:
 	env.sky.sky_material = ProceduralSkyMaterial.new()
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.62, 0.72, 0.86)
-	env.ambient_light_energy = 0.8
+	env.ambient_light_energy = 0.55
+	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	env.tonemap_exposure = 1.05
+	env.tonemap_white = 6.0
+	env.fog_enabled = true
+	env.fog_light_color = Color(0.66, 0.72, 0.77)
+	env.fog_density = 0.0012
 	environment.environment = env
 	add_child(environment)
 
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-48, -28, 0)
-	sun.light_energy = 1.25
+	sun.light_energy = 1.1
+	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS
+	sun.directional_shadow_max_distance = 180.0
 	sun.shadow_enabled = true
 	add_child(sun)
 
 	_add_box(self, "Arena", Vector3(0, -0.6, 0), Vector3(ARENA_SIZE, 1.0, ARENA_SIZE),
-		Color(0.22, 0.38, 0.20), true)
+		Color(0.19, 0.20, 0.19), true)
 
 	for i in range(4):
 		var wall_size := Vector3(ARENA_SIZE, 3.0, 1.0) if i < 2 else Vector3(1.0, 3.0, ARENA_SIZE)
@@ -110,13 +118,13 @@ func _build_world() -> void:
 
 
 func _add_amman_city() -> void:
-	# The playable map uses the compact Amman district GLB generated from OpenStreetMap geometry.
+	# Load the real Amman district asset tracked in this repository. This is OSM-derived 3D geometry, not a photogrammetry-textured city scan.
 	var packed: PackedScene = load(AMMAN_CITY_PATH) as PackedScene
 	if packed == null:
-		push_error("Manila city asset is missing or failed to import: " + AMMAN_CITY_PATH)
+		push_error("Amman city asset is missing or failed to import: " + AMMAN_CITY_PATH)
 		return
 	var city := packed.instantiate() as Node3D
-	city.name = "ManilaCentralDistrict"
+	city.name = "AmmanCentralDistrict"
 	add_child(city)
 	# Generate collision only for the building shell mesh; windows and decorative parts stay lightweight.
 	var mesh_nodes: Array[Node] = []
