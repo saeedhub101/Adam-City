@@ -88,6 +88,27 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
     root.position.set(-center.x, -bounds.min.y, -center.z);
     root.updateMatrixWorld(true);
     scene.add(root);
+    const finalBounds = new THREE.Box3().setFromObject(root);
+    const ray = new THREE.Raycaster();
+    const down = new THREE.Vector3(0, -1, 0);
+    const xFractions = [0.5, 0.25, 0.75, 0.1, 0.9];
+    const zFractions = [0.5, 0.25, 0.75, 0.1, 0.9];
+    let spawn = null;
+    for (const fx of xFractions) {
+      for (const fz of zFractions) {
+        const x = finalBounds.min.x + (finalBounds.max.x - finalBounds.min.x) * fx;
+        const z = finalBounds.min.z + (finalBounds.max.z - finalBounds.min.z) * fz;
+        ray.set(new THREE.Vector3(x, finalBounds.max.y + 100, z), down);
+        const hits = ray.intersectObject(root, true);
+        if (hits.length) {
+          spawn = { x, y: hits[0].point.y, z };
+          break;
+        }
+      }
+      if (spawn) break;
+    }
+    root.userData.spawnPosition = spawn || { x: 0, y: 0, z: 0 };
+    root.userData.spawnGroundY = root.userData.spawnPosition.y;
     const textureCount = manifest.tiles.reduce((sum, tile) => sum + (tile.textureCount || 0), 0);
     statusText.textContent = 'هلسنكي، فنلندا · مجسّم مصوّر LOD ' + (selectedLod ?? 'متاح') + ' · ' + loaded + ' قطعة · ' + entries.length + ' خامة' + (failed ? ' · تعذّر تحميل ' + failed : '');
     console.info('Loaded official Helsinki photogrammetry mesh', {
