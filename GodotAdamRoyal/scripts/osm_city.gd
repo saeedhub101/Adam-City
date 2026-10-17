@@ -64,7 +64,7 @@ func _build_buildings(buildings: Array) -> void:
 	tool.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var any_vertices := false
 	for building_value in buildings:
-		var building: Dictionary = building_value
+		var building: Dictionary = Dictionary(building_value)
 		var footprint: Array = building.get("points", [])
 		if footprint.size() < 3:
 			continue
