@@ -28,14 +28,23 @@ jobs:
         working-directory: GodotAdamRoyal
     steps:
       - name: Checkout
+        id: check_checkout
+        if: ${{ always() }}
+        continue-on-error: true
         uses: actions/checkout@v4
 
       - name: Set up Python
+        id: check_set_up_python
+        if: ${{ always() }}
+        continue-on-error: true
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Reuse the committed Manila district; generate and cache only when missing
+        id: check_reuse_the_committed_manila_district
+        if: ${{ always() }}
+        continue-on-error: true
         shell: pwsh
         working-directory: .
         run: |
@@ -93,6 +102,9 @@ jobs:
           Write-Host "Reusable Manila cache verified: $($report.buildings) buildings; $($report.roads) roads; $($textures.Count) texture atlases; $((Get-Item $glbPath).Length) GLB bytes."
 
       - name: Reuse cached Manila facade improvement; process only when missing or outdated
+        id: check_reuse_cached_manila_facade_improvem
+        if: ${{ always() }}
+        continue-on-error: true
         shell: pwsh
         working-directory: .
         run: |
@@ -131,6 +143,9 @@ jobs:
           Write-Host "MANILA_FACADE_CACHE_PASS version=$($report.facade_pipeline_version) materials=$($report.facade_materials_replaced) source=$($report.facade_texture_source)"
 
       - name: Fetch and validate real Manila elevation data
+        id: check_fetch_and_validate_real_manila_elev
+        if: ${{ always() }}
+        continue-on-error: true
         shell: pwsh
         working-directory: .
         run: |
@@ -144,6 +159,9 @@ jobs:
           Write-Host "REAL_TERRAIN_DATA_PASS source=$($terrain.source) grid=$($terrain.grid_size)x$($terrain.grid_size) min=$($terrain.minimum_elevation_m) max=$($terrain.maximum_elevation_m)"
 
       - name: Reuse cached Manila street names; download only when missing or invalid
+        id: check_reuse_cached_manila_street_names_do
+        if: ${{ always() }}
+        continue-on-error: true
         shell: pwsh
         working-directory: .
         run: |
@@ -180,6 +198,9 @@ jobs:
           Write-Host "MANILA_STREET_NAMES_READY names=$($streets.unique_street_names) segments=$($streets.named_road_segments) cache=$cacheValid"
 
       - name: Stage the real Manila district and player character
+        id: check_stage_the_real_manila_district_and_
+        if: ${{ always() }}
+        continue-on-error: true
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -200,6 +221,9 @@ jobs:
           }
 
       - name: Reuse committed Amman map; generate and cache only when missing
+        id: check_reuse_committed_amman_map_generate_
+        if: ${{ always() }}
+        continue-on-error: true
         shell: pwsh
         working-directory: .
         run: |
@@ -238,6 +262,9 @@ jobs:
           Write-Host "AMMAN_MAP_CACHE_PASS buildings=$($report.buildings) roadWays=$($report.road_ways) bytes=$((Get-Item $obj).Length)"
 
       - name: Use the existing Chicago map from the repository (never download or regenerate)
+        id: check_use_the_existing_chicago_map_from_t
+        if: ${{ always() }}
+        continue-on-error: true
         shell: pwsh
         working-directory: .
         run: |
@@ -267,6 +294,9 @@ jobs:
           Write-Host "CHICAGO_EXISTING_ASSET_PASS path=$cityObj bytes=$((Get-Item $cityObj).Length)"
 
       - name: Use the existing San Francisco map from the repository (no external download)
+        id: check_use_the_existing_san_francisco_map_
+        if: ${{ always() }}
+        continue-on-error: true
         shell: pwsh
         working-directory: .
         run: |
@@ -300,6 +330,9 @@ jobs:
           Write-Host "SAN_FRANCISCO_EXISTING_ASSET_PASS bytes=$sfBytes"
 
       - name: Reuse committed Chicago and San Francisco maps; cache source assets only when missing
+        id: check_reuse_committed_chicago_and_san_fra
+        if: ${{ always() }}
+        continue-on-error: true
         shell: pwsh
         working-directory: .
         run: |
@@ -348,6 +381,9 @@ jobs:
           Write-Host "Travel maps are staged as additional regions; Manila source scene is not replaced."
 
       - name: Download Godot 4.4.1 and Windows export templates
+        id: check_download_godot_4_4_1_and_windows_ex
+        if: ${{ always() }}
+        continue-on-error: true
         shell: pwsh
         run: |
           $version = "4.4.1"
@@ -389,6 +425,9 @@ jobs:
           if (Test-Path $debugTemplate) { Write-Host "Verified Windows debug template: $debugTemplate" }
 
       - name: Import and validate Godot project
+        id: check_import_and_validate_godot_project
+        if: ${{ always() }}
+        continue-on-error: true
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -439,6 +478,9 @@ jobs:
           Write-Host 'Verified: real Manila GLB and player character loaded in the game scene.'
 
       - name: Run the game and capture aerial, four street views, and player
+        id: check_run_the_game_and_capture_aerial_fou
+        if: ${{ always() }}
+        continue-on-error: true
         shell: pwsh
         timeout-minutes: 5
         run: |
@@ -474,6 +516,9 @@ jobs:
           Write-Host 'VISUAL_QA_PASS: aerial map, four distinct street views, and in-game character captured from the running game.'
 
       - name: Export Windows game
+        id: check_export_windows_game
+        if: ${{ always() }}
+        continue-on-error: true
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -498,6 +543,9 @@ jobs:
           Get-ChildItem build | Select-Object Name,Length
 
       - name: Smoke-test the exported Windows executable
+        id: check_smoke_test_the_exported_windows_exe
+        if: ${{ always() }}
+        continue-on-error: true
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -523,6 +571,9 @@ jobs:
           Write-Host 'EXPORTED_GAME_SMOKE_PASS: EXE loaded the Manila GLB, SRTM terrain, and player character.'
 
       - name: Preserve build evidence
+        id: check_preserve_build_evidence
+        if: ${{ always() }}
+        continue-on-error: true
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -540,3 +591,51 @@ jobs:
             GodotAdamRoyal/.godot/imported/
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Report all failed steps and preserve failure status
+        if: ${{ always() }}
+        shell: pwsh
+        env:
+          check_checkout: ${{ steps.check_checkout.outcome }}
+          check_set_up_python: ${{ steps.check_set_up_python.outcome }}
+          check_reuse_the_committed_manila_district: ${{ steps.check_reuse_the_committed_manila_district.outcome }}
+          check_reuse_cached_manila_facade_improvem: ${{ steps.check_reuse_cached_manila_facade_improvem.outcome }}
+          check_fetch_and_validate_real_manila_elev: ${{ steps.check_fetch_and_validate_real_manila_elev.outcome }}
+          check_reuse_cached_manila_street_names_do: ${{ steps.check_reuse_cached_manila_street_names_do.outcome }}
+          check_stage_the_real_manila_district_and_: ${{ steps.check_stage_the_real_manila_district_and_.outcome }}
+          check_reuse_committed_amman_map_generate_: ${{ steps.check_reuse_committed_amman_map_generate_.outcome }}
+          check_use_the_existing_chicago_map_from_t: ${{ steps.check_use_the_existing_chicago_map_from_t.outcome }}
+          check_use_the_existing_san_francisco_map_: ${{ steps.check_use_the_existing_san_francisco_map_.outcome }}
+          check_reuse_committed_chicago_and_san_fra: ${{ steps.check_reuse_committed_chicago_and_san_fra.outcome }}
+          check_download_godot_4_4_1_and_windows_ex: ${{ steps.check_download_godot_4_4_1_and_windows_ex.outcome }}
+          check_import_and_validate_godot_project: ${{ steps.check_import_and_validate_godot_project.outcome }}
+          check_run_the_game_and_capture_aerial_fou: ${{ steps.check_run_the_game_and_capture_aerial_fou.outcome }}
+          check_export_windows_game: ${{ steps.check_export_windows_game.outcome }}
+          check_smoke_test_the_exported_windows_exe: ${{ steps.check_smoke_test_the_exported_windows_exe.outcome }}
+          check_preserve_build_evidence: ${{ steps.check_preserve_build_evidence.outcome }}
+        run: |
+          $failed = [System.Collections.Generic.List[string]]::new()
+          if ($env:check_checkout -eq 'failure') { $failed.Add('Checkout') }
+          if ($env:check_set_up_python -eq 'failure') { $failed.Add('Set up Python') }
+          if ($env:check_reuse_the_committed_manila_district -eq 'failure') { $failed.Add('Reuse the committed Manila district; generate and cache only when missing') }
+          if ($env:check_reuse_cached_manila_facade_improvem -eq 'failure') { $failed.Add('Reuse cached Manila facade improvement; process only when missing or outdated') }
+          if ($env:check_fetch_and_validate_real_manila_elev -eq 'failure') { $failed.Add('Fetch and validate real Manila elevation data') }
+          if ($env:check_reuse_cached_manila_street_names_do -eq 'failure') { $failed.Add('Reuse cached Manila street names; download only when missing or invalid') }
+          if ($env:check_stage_the_real_manila_district_and_ -eq 'failure') { $failed.Add('Stage the real Manila district and player character') }
+          if ($env:check_reuse_committed_amman_map_generate_ -eq 'failure') { $failed.Add('Reuse committed Amman map; generate and cache only when missing') }
+          if ($env:check_use_the_existing_chicago_map_from_t -eq 'failure') { $failed.Add('Use the existing Chicago map from the repository (never download or regenerate)') }
+          if ($env:check_use_the_existing_san_francisco_map_ -eq 'failure') { $failed.Add('Use the existing San Francisco map from the repository (no external download)') }
+          if ($env:check_reuse_committed_chicago_and_san_fra -eq 'failure') { $failed.Add('Reuse committed Chicago and San Francisco maps; cache source assets only when missing') }
+          if ($env:check_download_godot_4_4_1_and_windows_ex -eq 'failure') { $failed.Add('Download Godot 4.4.1 and Windows export templates') }
+          if ($env:check_import_and_validate_godot_project -eq 'failure') { $failed.Add('Import and validate Godot project') }
+          if ($env:check_run_the_game_and_capture_aerial_fou -eq 'failure') { $failed.Add('Run the game and capture aerial, four street views, and player') }
+          if ($env:check_export_windows_game -eq 'failure') { $failed.Add('Export Windows game') }
+          if ($env:check_smoke_test_the_exported_windows_exe -eq 'failure') { $failed.Add('Smoke-test the exported Windows executable') }
+          if ($env:check_preserve_build_evidence -eq 'failure') { $failed.Add('Preserve build evidence') }
+          if ($failed.Count -gt 0) {
+            Write-Host '===== ALL BUILD FAILURES ====='
+            foreach ($step in $failed) { Write-Host "FAILED_STEP=$step" }
+            Write-Host "BUILD_FAILURE_COUNT=$($failed.Count)"
+            throw "$($failed.Count) step(s) failed; all workflow checks and visual capture steps were attempted where possible."
+          }
+          Write-Host 'BUILD_ALL_STEPS_PASS'
