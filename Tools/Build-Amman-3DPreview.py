@@ -102,15 +102,18 @@ def main():
     sun.data.energy=2.0; sun.rotation_euler=(math.radians(25),math.radians(-20),math.radians(-25))
     bpy.ops.object.light_add(type="AREA",location=(-span*.25,-span*.25,span*.55)); fill=bpy.context.object
     fill.data.energy=span*span*.015; fill.data.shape="DISK"; fill.data.size=span*.5
-    bpy.ops.object.camera_add(location=(span*.52,-span*.7,span*.58)); cam=bpy.context.object
-    cam.rotation_euler=(Vector((0,0,0))-cam.location).to_track_quat("-Z","Y").to_euler()
-    cam.data.type="ORTHO"; cam.data.ortho_scale=span*1.12
+    # Frame the district from its actual center and building height range.
+    zmax=max((v[2] for v in bv),default=30.0)
+    target=Vector((0.0,0.0,zmax*.30))
+    camloc=Vector((span*.62,-span*.78,max(span*.50,zmax*1.25)))
+    bpy.ops.object.camera_add(location=camloc); cam=bpy.context.object
+    cam.rotation_euler=(target-cam.location).to_track_quat("-Z","Y").to_euler()
+    cam.data.type="ORTHO"; cam.data.ortho_scale=span*1.05
     scene=bpy.context.scene; scene.camera=cam
-    # Use Blender Workbench for a deterministic headless preview. EEVEE may initialize EGL/GPU
-    # drivers on hosted runners and crash before producing the review image; GLB materials
-    # are still exported above for Unreal to render with its own renderer.
+    # Workbench is stable on headless runners; configure studio light and contrast.
     scene.render.engine="BLENDER_WORKBENCH"
     scene.display.shading.light="STUDIO"
+    scene.display.shading.studiolight_rotate_z=0.5
     scene.display.shading.color_type="MATERIAL"
     scene.display.shading.show_shadows=True
     scene.display.shading.show_cavity=True
@@ -118,6 +121,7 @@ def main():
     scene.display.shading.curvature_ridge_factor=1.25
     scene.display.shading.curvature_valley_factor=1.0
     scene.display.shading.background_type="WORLD"
+    scene.display.shading.background_color=(0.035,0.045,0.06)
     scene.render.resolution_x=1440; scene.render.resolution_y=900; scene.render.resolution_percentage=100
     scene.render.image_settings.file_format="PNG"; scene.render.filepath=str(png)
     scene.world.color=(.12,.12,.12)
