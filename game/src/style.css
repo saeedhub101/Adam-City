@@ -46,3 +46,6 @@
 .licensed-photo-card strong{font-size:10px;line-height:1.35;overflow-wrap:anywhere}
 .licensed-photo-card span{font-size:9px;color:#bdcbd1;line-height:1.35;overflow-wrap:anywhere}
 @media(max-width:600px){.licensed-photo-card img{height:68px}}
+
+.licensed-photo-building-match{color:#9ce6b0!important;font-weight:700}
+.licensed-photo-building-unmatched{color:#f1c27d!important}
