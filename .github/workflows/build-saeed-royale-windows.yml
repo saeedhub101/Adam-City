@@ -44,12 +44,8 @@ jobs:
         working-directory: SaeedRoyaleGodot
         run: |
           set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install -y xvfb mesa-vulkan-drivers
-          export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.x86_64.json
-          export LIBGL_ALWAYS_SOFTWARE=1
           set -o pipefail
-          xvfb-run -a "$GODOT_BIN" --editor --path . --import 2>&1 | tee "$RUNNER_TEMP/godot-import.log"
+          "$GODOT_BIN" --headless --editor --path . --import 2>&1 | tee "$RUNNER_TEMP/godot-import.log"
           if grep -E "SCRIPT ERROR|Parse Error|ERROR:" "$RUNNER_TEMP/godot-import.log"; then
             echo "Godot asset import emitted errors."
             exit 1
