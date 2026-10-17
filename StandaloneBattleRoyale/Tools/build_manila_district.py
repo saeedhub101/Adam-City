@@ -23,21 +23,29 @@ ENDPOINTS = [
     "https://overpass-api.de/api/interpreter",
     "https://overpass.kumi.systems/api/interpreter",
     "https://overpass.private.coffee/api/interpreter",
+    "https://overpass.nchc.org.tw/api/interpreter",
+    "https://overpass.openstreetmap.ru/api/interpreter",
 ]
 def fetch():
     last = None
     for endpoint in ENDPOINTS:
-        try:
-            r = requests.post(endpoint, data={"data": QUERY}, timeout=210,
-                              headers={"User-Agent":"AdamRoyal-Research-Map/1.0"})
-            r.raise_for_status()
-            data = r.json()
-            if data.get("elements"):
-                return data
-            last = RuntimeError("Overpass returned no elements")
-        except Exception as exc:
-            last = exc
-            time.sleep(2)
+        for method in ("post", "get"):
+            try:
+                headers = {"User-Agent":"AdamRoyal-Research-Map/1.1"}
+                if method == "post":
+                    response = requests.post(endpoint, data={"data": QUERY}, timeout=180, headers=headers)
+                else:
+                    response = requests.get(endpoint, params={"data": QUERY}, timeout=180, headers=headers)
+                response.raise_for_status()
+                data = response.json()
+                if data.get("elements"):
+                    print(f"Downloaded OSM source from {endpoint} ({method.upper()})")
+                    return data
+                last = RuntimeError(f"{endpoint} returned no elements")
+            except Exception as exc:
+                last = exc
+                print(f"OSM endpoint attempt failed: {endpoint} {method.upper()}: {exc}")
+                time.sleep(1)
     raise RuntimeError(f"Could not download OSM district from any Overpass endpoint: {last}")
 
 def main():
