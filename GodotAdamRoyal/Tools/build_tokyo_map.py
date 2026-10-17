@@ -22,14 +22,18 @@ query = f"""[out:json][timeout:180];(
  way(around:{RADIUS_M},{CENTER_LAT},{CENTER_LON})[building];
  way(around:{RADIUS_M},{CENTER_LAT},{CENTER_LON})[highway];
 );out body;>;out skel qt;"""
+# Public Overpass instances are occasionally overloaded. Try independent mirrors
+# before failing; once a successful build is committed, the workflow reuses it.
 endpoints = [
     "https://overpass-api.de/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
     "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.nchc.org.tw/api/interpreter",
 ]
 data = None
 errors = []
 for endpoint in endpoints:
-    for attempt in range(3):
+    for attempt in range(2):
         try:
             response = requests.post(endpoint, data={"data": query}, timeout=210,
                                      headers={"User-Agent":"AdamRoyal-game-map-builder/1.0 (OpenStreetMap attribution included)"})
@@ -41,7 +45,7 @@ for endpoint in endpoints:
             break
         except Exception as exc:
             errors.append(f"{endpoint}: {exc}")
-            time.sleep(2 + attempt * 2)
+            time.sleep(4 + attempt * 5)
     if data:
         break
 if not data:
