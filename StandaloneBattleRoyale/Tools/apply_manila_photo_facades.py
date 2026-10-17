@@ -106,13 +106,13 @@ def main() -> None:
         raise RuntimeError("Facade atlas integration failed GLB size/mesh validation.")
 
     report = json.loads(REPORT.read_text(encoding="utf-8"))
-    report["facade_pipeline_version"] = 1
-    report["facade_texture_source"] = "locally generated tileable facade atlases; Wikimedia Commons images retained as attributed reference only"
-    report["facade_texture_method"] = "four distinct repeatable facade atlases with window frames, reveals, sills, and material variation; no whole-street photographs stretched across walls"
+    report["facade_pipeline_version"] = 2
+    report["facade_texture_source"] = "real Manila building photographs from Real-Facade-Photos, cropped into facade texture atlases"
+    report["facade_texture_method"] = "four or more photographic building facade atlases sourced from real Manila buildings; facade regions cropped before projection; no procedurally drawn window grids"
     report["facade_materials_replaced"] = replacements
-    report["facade_photo_projection"] = False
+    report["facade_photo_projection"] = True
     report["glb_bytes"] = GLB.stat().st_size
-    report["note"] = "Real OSM footprints and road alignments with procedural tileable facade atlases. Licensed Manila photographs are retained as reference images and are not falsely represented as building-specific photogrammetry. This improves tiling artifacts but is not a photogrammetry reconstruction."
+    report["note"] = "Real OSM footprints and road alignments textured with cropped photographs of real Manila building facades. Photos are reused across facade batches and are not a full photogrammetry reconstruction; buildings without suitable photographs still require additional photo coverage."
     REPORT.write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(f"FACADE_ATLAS_PASS materials={replacements} textures={len(texture_paths)} glb_bytes={GLB.stat().st_size}")
 
