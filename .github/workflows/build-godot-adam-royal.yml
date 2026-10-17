@@ -164,6 +164,29 @@ jobs:
             "STAGED_ASSET=$asset SIZE=$($item.Length)"
           }
 
+      - name: Build and cache real Tabarbour district from OpenStreetMap
+        shell: pwsh
+        working-directory: .
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m pip install --disable-pip-version-check requests
+          if ($LASTEXITCODE -ne 0) { throw "Could not install OpenStreetMap download client" }
+          python GodotAdamRoyal/Tools/build_tabarbour_map.py
+          if ($LASTEXITCODE -ne 0) { throw "Tabarbour real-world map build failed" }
+          $mapDir = 'GodotAdamRoyal/assets/cities/tabarbour'
+          $report = Get-Content (Join-Path $mapDir 'Tabarbour-report.json') -Raw | ConvertFrom-Json
+          if ($report.buildings -lt 100 -or $report.road_ways -lt 50 -or $report.obj_bytes -lt 100000) { throw "Tabarbour map quality gate failed: buildings=$($report.buildings), roads=$($report.road_ways), bytes=$($report.obj_bytes)" }
+          if (-not (Test-Path (Join-Path $mapDir 'Tabarbour.mtl'))) { throw "Tabarbour materials file missing" }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$mapDir/Tabarbour.obj" "$mapDir/Tabarbour.mtl" "$mapDir/Tabarbour-report.json" "$mapDir/tabarbour_osm.json"
+          if (-not (git diff --cached --quiet)) {
+            git commit -m 'Cache Tabarbour Amman 3D district map [skip ci]'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          }
+          Write-Host "TABARBOUR_MAP_CACHE_PASS buildings=$($report.buildings) roadWays=$($report.road_ways) vertices=$($report.vertices) bytes=$($report.obj_bytes)"
+
       - name: Stage Chicago and San Francisco travel regions
         shell: pwsh
         working-directory: .
