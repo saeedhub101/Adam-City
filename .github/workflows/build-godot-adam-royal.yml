@@ -1,0 +1,102 @@
+name: Adam Royal — Godot City Build
+
+on:
+  push:
+    branches: [godot-city-conversion]
+    paths:
+      - "GodotAdamRoyal/**"
+      - ".github/workflows/build-godot-adam-royal.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: adam-royal-godot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: GodotAdamRoyal
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download real Manila city geometry from OpenStreetMap
+        shell: pwsh
+        run: |
+          python -m pip install --disable-pip-version-check requests
+          python Tools/build_manila_city.py
+          if ($LASTEXITCODE -ne 0) { throw "OSM city data generation failed" }
+          $city = Get-Content assets/manila_city.json -Raw | ConvertFrom-Json
+          if ($city.buildings.Count -lt 100 -or $city.roads.Count -lt 30) {
+            throw "City dataset is incomplete: buildings=$($city.buildings.Count), roads=$($city.roads.Count)"
+          }
+          "City verified: $($city.buildings.Count) buildings; $($city.roads.Count) roads."
+
+      - name: Download Godot 4.4.1 and Windows export templates
+        shell: pwsh
+        run: |
+          $version = "4.4.1"
+          $base = "https://github.com/godotengine/godot/releases/download/$version-stable"
+          $engineZip = Join-Path $env:RUNNER_TEMP "godot.zip"
+          $templateZip = Join-Path $env:RUNNER_TEMP "templates.zip"
+          Invoke-WebRequest "$base/Godot_v$version-stable_win64_console.exe.zip" -OutFile $engineZip
+          Invoke-WebRequest "$base/Godot_v$version-stable_export_templates.tpz" -OutFile $templateZip
+          $engineDir = Join-Path $env:RUNNER_TEMP "godot-engine"
+          $templateDir = Join-Path $env:RUNNER_TEMP "godot-templates-raw"
+          Expand-Archive $engineZip -DestinationPath $engineDir -Force
+          $templateAsZip = Join-Path $env:RUNNER_TEMP "templates-archive.zip"
+          Copy-Item $templateZip $templateAsZip
+          Expand-Archive $templateAsZip -DestinationPath $templateDir -Force
+          $godot = Get-ChildItem $engineDir -Filter "*console.exe" | Select-Object -First 1
+          if (-not $godot) { throw "Godot console executable not found after download" }
+          "GODOT_EXE=$($godot.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
+          $dest = Join-Path $env:APPDATA "Godot/export_templates/$version.stable"
+          New-Item -ItemType Directory -Path $dest -Force | Out-Null
+          $templateRoot = Join-Path $templateDir "templates"
+          if (Test-Path $templateRoot) {
+            Copy-Item (Join-Path $templateRoot "*") $dest -Recurse -Force
+          } else {
+            Copy-Item (Join-Path $templateDir "*") $dest -Recurse -Force
+          }
+          if (-not (Get-ChildItem $dest -Recurse -File | Select-Object -First 1)) { throw "Godot export templates were not installed" }
+
+      - name: Import and validate Godot project
+        shell: pwsh
+        run: |
+          & $env:GODOT_EXE --headless --path "$PWD" --editor --quit --verbose
+          if ($LASTEXITCODE -ne 0) { throw "Godot project import or script parse failed" }
+          & $env:GODOT_EXE --headless --path "$PWD" --quit-after 5
+          if ($LASTEXITCODE -ne 0) { throw "Godot headless startup/city loading test failed" }
+
+      - name: Export Windows game
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path build -Force | Out-Null
+          & $env:GODOT_EXE --headless --path "$PWD" --export-release "Windows Desktop" "build/AdamRoyal.exe"
+          if ($LASTEXITCODE -ne 0) { throw "Windows export failed" }
+          if (-not (Test-Path "build/AdamRoyal.exe")) { throw "AdamRoyal.exe was not produced" }
+          if ((Get-Item "build/AdamRoyal.exe").Length -lt 1000000) { throw "Exported executable is unexpectedly small" }
+          Get-ChildItem build | Select-Object Name,Length
+
+      - name: Preserve build evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: AdamRoyal-Godot-Windows-${{ github.run_number }}
+          path: |
+            GodotAdamRoyal/build/
+            GodotAdamRoyal/assets/manila_city.json
+            GodotAdamRoyal/.godot/imported/
+          if-no-files-found: warn
+          retention-days: 14
