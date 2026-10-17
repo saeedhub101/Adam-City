@@ -10,6 +10,7 @@ func _ready() -> void:
 	_build_environment()
 	_build_ground()
 	var city_result := _build_city()
+	_build_real_elevation_terrain()
 	city_bounds = _measure_city_bounds()
 	var player = PlayerScene.instantiate()
 	var city_center := city_bounds.get_center()
@@ -173,6 +174,64 @@ func _read_city_stats() -> Dictionary:
 		"buildings": int(parsed.get("buildings", []).size()) if parsed.get("buildings", null) is Array else int(parsed.get("buildings", 0)),
 		"roads": int(parsed.get("roads", []).size()) if parsed.get("roads", null) is Array else int(parsed.get("roads", 0))
 	}
+
+func _build_real_elevation_terrain() -> void:
+	var path := "res://assets/manila_terrain.json"
+	if not FileAccess.file_exists(path):
+		push_error("Real Manila elevation grid is missing; terrain must not be fabricated.")
+		return
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		push_error("Could not open Manila elevation grid.")
+		return
+	var data = JSON.parse_string(file.get_as_text())
+	if typeof(data) != TYPE_DICTIONARY:
+		push_error("Manila elevation grid JSON is invalid.")
+		return
+	var grid_size := int(data.get("grid_size", 0))
+	var heights: Array = data.get("heights_scaled_m", [])
+	if grid_size < 10 or heights.size() != grid_size:
+		push_error("Manila elevation grid has invalid dimensions.")
+		return
+	var south := float(data.bounds.south)
+	var west := float(data.bounds.west)
+	var north := float(data.bounds.north)
+	var east := float(data.bounds.east)
+	var lat0 := (south + north) * 0.5
+	var lon0 := (west + east) * 0.5
+	var tool := SurfaceTool.new()
+	tool.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for row in range(grid_size - 1):
+		if heights[row].size() != grid_size or heights[row + 1].size() != grid_size:
+			push_error("Manila elevation grid row is incomplete.")
+			return
+		for col in range(grid_size - 1):
+			var vertices: Array[Vector3] = []
+			for cell in [Vector2i(row, col), Vector2i(row + 1, col), Vector2i(row, col + 1), Vector2i(row + 1, col + 1)]:
+				var lat := north - (north - south) * float(cell.x) / float(grid_size - 1)
+				var lon := west + (east - west) * float(cell.y) / float(grid_size - 1)
+				var x := (lon - lon0) * 111320.0 * cos(deg_to_rad(lat0))
+				var z := (lat - lat0) * 110540.0
+				var elevation := float(heights[cell.x][cell.y]) - 0.28
+				vertices.append(Vector3(x, z, elevation))
+			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[0])
+			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[1])
+			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[2])
+			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[2])
+			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[1])
+			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[3])
+	tool.generate_normals()
+	var mesh := tool.commit()
+	var material := StandardMaterial3D.new()
+	material.vertex_color_use_as_albedo = true
+	material.roughness = 1.0
+	var terrain := MeshInstance3D.new()
+	terrain.name = "ManilaSRTMElevationTerrain"
+	terrain.mesh = mesh
+	terrain.material_override = material
+	terrain.rotation_degrees = Vector3(-90.0, 0.0, 0.0)
+	add_child(terrain)
+	print("REAL_TERRAIN_LOADED source=" + str(data.get("source")) + " grid=" + str(grid_size) + "x" + str(grid_size) + " elevation_range_m=" + str(data.get("minimum_elevation_m")) + ".." + str(data.get("maximum_elevation_m")))
 
 func _build_environment() -> void:
 	var world := WorldEnvironment.new()
