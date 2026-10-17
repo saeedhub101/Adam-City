@@ -50,41 +50,70 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p SaeedRoyaleGodot/assets
-          query='[out:json][timeout:120];(way["building"](14.56,120.96,14.61,121.01);way["highway"](14.56,120.96,14.61,121.01););out body;>;out skel qt;'
+          # Keep the playable map focused on central Manila; a smaller extract is more reliable
+          # than querying the whole 5.5 km district during public Overpass congestion.
+          south=14.575
+          west=120.975
+          north=14.595
+          east=120.995
+          query="[out:json][timeout:90];(way[\"building\"]($south,$west,$north,$east);way[\"highway\"]($south,$west,$north,$east););out body;>;out skel qt;"
           downloaded=0
           for endpoint in \
             https://overpass-api.de/api/interpreter \
             https://overpass.kumi.systems/api/interpreter \
             https://overpass.private.coffee/api/interpreter; do
             echo "Trying OpenStreetMap Overpass endpoint: $endpoint"
-            if curl --fail --silent --show-error --retry 1 --retry-delay 2 --max-time 180 \
-              -H 'Content-Type: application/x-www-form-urlencoded' --data-urlencode "data=$query" "$endpoint" -o /tmp/manila-osm.json; then
+            if curl --fail --silent --show-error --retry 1 --retry-delay 2 --max-time 120 \
+              -A 'AdamRoyalGame/1.0 (OSM open-data map build)' \
+              --data-urlencode "data=$query" "$endpoint" -o /tmp/manila-osm.json; then
               downloaded=1
               break
             fi
           done
-          test "$downloaded" -eq 1 || { echo 'All public Overpass endpoints failed'; exit 1; }
+          if [ "$downloaded" -ne 1 ]; then
+            echo "Overpass unavailable; falling back to the official OpenStreetMap map API."
+            curl --fail --location --silent --show-error --retry 3 --retry-delay 3 --max-time 180 \
+              -A 'AdamRoyalGame/1.0 (OSM open-data map build)' \
+              "https://api.openstreetmap.org/api/0.6/map?bbox=$west,$south,$east,$north" \
+              -o /tmp/manila-osm.xml
+            echo "MANILA_OSM_FORMAT=xml" >> "$GITHUB_ENV"
+          else
+            echo "MANILA_OSM_FORMAT=json" >> "$GITHUB_ENV"
+          fi
           python3 - <<'PY'
-          import json
+          import json, os, xml.etree.ElementTree as ET
           from pathlib import Path
-          raw=json.loads(Path('/tmp/manila-osm.json').read_text())
-          nodes={x['id']:(x['lon'],x['lat']) for x in raw.get('elements',[]) if x.get('type')=='node'}
+          fmt=os.environ.get('MANILA_OSM_FORMAT','json')
+          nodes={}
+          ways=[]
+          if fmt == 'json':
+              raw=json.loads(Path('/tmp/manila-osm.json').read_text())
+              nodes={str(x['id']):(float(x['lon']),float(x['lat'])) for x in raw.get('elements',[]) if x.get('type')=='node'}
+              ways=[(str(e['id']),[str(n) for n in e.get('nodes',[])],e.get('tags',{})) for e in raw.get('elements',[]) if e.get('type')=='way']
+          else:
+              root=ET.parse('/tmp/manila-osm.xml').getroot()
+              nodes={n.get('id'):(float(n.get('lon')),float(n.get('lat'))) for n in root.findall('node')}
+              for e in root.findall('way'):
+                  tags={t.get('k'):t.get('v') for t in e.findall('tag')}
+                  ways.append((e.get('id'),[n.get('ref') for n in e.findall('nd')],tags))
           features=[]
-          for e in raw.get('elements',[]):
-              if e.get('type')!='way' or not e.get('tags'): continue
-              tags=e['tags']; coords=[nodes[n] for n in e.get('nodes',[]) if n in nodes]
+          for way_id, refs, tags in ways:
+              coords=[nodes[n] for n in refs if n in nodes]
               if 'building' in tags and len(coords)>=4 and coords[0]==coords[-1]:
                   kind='building'; geom={'type':'Polygon','coordinates':[[list(c) for c in coords]]}
               elif 'highway' in tags and len(coords)>=2:
                   kind='road'; geom={'type':'LineString','coordinates':[list(c) for c in coords]}
-              else: continue
-              props={'kind':kind,'osm_id':str(e['id']),'name':tags.get('name',''),'highway':tags.get('highway',''),'building:levels':tags.get('building:levels',''),'height':tags.get('height','')}
+              else:
+                  continue
+              props={'kind':kind,'osm_id':str(way_id),'name':tags.get('name',''),'highway':tags.get('highway',''),'building:levels':tags.get('building:levels',''),'height':tags.get('height','')}
               features.append({'type':'Feature','properties':props,'geometry':geom})
-          b=sum(x['properties']['kind']=='building' for x in features); r=sum(x['properties']['kind']=='road' for x in features)
-          assert b>=150 and r>=80, f'Manila OSM extract incomplete: {b} buildings, {r} roads'
-          out={'type':'FeatureCollection','city':'Manila, Philippines','source':'OpenStreetMap contributors','license':'Open Database License (ODbL) 1.0','origin':{'longitude':120.985,'latitude':14.585},'features':features}
+          b=sum(x['properties']['kind']=='building' for x in features)
+          r=sum(x['properties']['kind']=='road' for x in features)
+          if b<150 or r<80:
+              raise SystemExit(f'Manila OSM extract incomplete: {b} buildings, {r} roads; refusing to generate an empty/poor map')
+          out={'type':'FeatureCollection','city':'Central Manila, Philippines','source':'OpenStreetMap contributors','license':'Open Database License (ODbL) 1.0','origin':{'longitude':120.985,'latitude':14.585},'bbox':[14.575,120.975,14.595,120.995],'features':features}
           Path('SaeedRoyaleGodot/assets/manila_core.geojson').write_text(json.dumps(out,separators=(',',':')),encoding='utf-8')
-          print(f'Fresh Manila OSM source: {b} building footprints, {r} roads, {len(features)} total features')
+          print(f'Validated central Manila OSM extract: {b} building footprints, {r} roads, {len(features)} total features')
           PY
       - name: Generate city mesh and CPU-safe review preview
         shell: bash
@@ -145,7 +174,7 @@ jobs:
           done
           echo "Unable to publish Manila GLB after 3 attempts."
           exit 1
-      - name: Upload Unreal city asset and source review images
+      - name: Upload Manila city asset and source review images
         uses: actions/upload-artifact@v4
         with:
           name: Adam-Royal-Manila-City-Source-Review
