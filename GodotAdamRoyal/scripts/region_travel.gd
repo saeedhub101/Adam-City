@@ -14,6 +14,9 @@ var hud_label: Label
 func _ready() -> void:
 	await get_tree().process_frame
 	player = get_tree().current_scene.get_node_or_null("Player") as CharacterBody3D
+	# Every fresh game session starts in Manila; other regions are opt-in travel destinations.
+	active_region = "Manila"
+	_set_manila_visible(true)
 	_build_travel_hud()
 	for region_name in REGION_PATHS.keys():
 		_validate_region_asset(region_name)
