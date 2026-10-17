@@ -19,6 +19,34 @@ HEADERS = {"User-Agent": "AdamRoyal-Game-Research/1.0 (facade texture integratio
 def main() -> None:
     if not GLB.exists() or not REPORT.exists():
         raise FileNotFoundError("Cached Manila GLB and metadata are required; refusing to rebuild geometry.")
+    scene = trimesh.load(str(GLB), force="scene")
+    texture_materials = []
+    photo_materials = []
+    for geometry in scene.geometry.values():
+        visual = getattr(geometry, "visual", None)
+        material = getattr(visual, "material", None)
+        if not isinstance(visual, trimesh.visual.TextureVisuals) or material is None:
+            continue
+        name = str(getattr(material, "name", ""))
+        if "ManilaFacadeStyle" in name:
+            texture_materials.append(geometry)
+        elif "ManilaPhotographicFacade" in name:
+            photo_materials.append(geometry)
+
+    if not texture_materials:
+        if not photo_materials:
+            raise RuntimeError("No known Manila facade materials found; refusing to save an untextured map.")
+        report = json.loads(REPORT.read_text(encoding="utf-8"))
+        report["facade_texture_source"] = SOURCE_URL
+        report["facade_texture_license"] = "CC0 1.0 (verify source metadata at Wikimedia Commons)"
+        report["facade_texture_method"] = "one real facade photograph, four color/contrast variants embedded in cached GLB"
+        report["facade_materials_replaced"] = len(photo_materials)
+        report["glb_bytes"] = GLB.stat().st_size
+        report["note"] = "Real OSM footprints/road alignments; facade uses a real CC0 facade photograph in four variants. It is not geolocated imagery of each specific Manila building; exact facades still need local street-level imagery."
+        REPORT.write_text(json.dumps(report, indent=2), encoding="utf-8")
+        print(f"PHOTO_FACADE_PASS materials={len(photo_materials)} already_applied=true glb_bytes={GLB.stat().st_size}")
+        return
+
     response = requests.get(SOURCE_URL, headers=HEADERS, timeout=60, allow_redirects=True)
     response.raise_for_status()
     source = Image.open(io.BytesIO(response.content)).convert("RGB")
@@ -37,10 +65,9 @@ def main() -> None:
         variant = ImageEnhance.Brightness(variant).enhance(brightness)
         variant = ImageEnhance.Contrast(variant).enhance(contrast)
         variant = ImageEnhance.Color(variant).enhance(saturation)
-        path = MAP_DIR / f"Manila-Facade-Texture-{index}.jpg"
-        variant.save(path, quality=93, optimize=True)
-        paths.append(path)
-    scene = trimesh.load(str(GLB), force="scene")
+        texture_path = MAP_DIR / f"Manila-Facade-Texture-{index}.jpg"
+        variant.save(texture_path, quality=93, optimize=True)
+        paths.append(texture_path)
     replacements = 0
     for geometry in scene.geometry.values():
         visual = getattr(geometry, "visual", None)
