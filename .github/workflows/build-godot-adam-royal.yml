@@ -2,7 +2,7 @@ name: Adam Royal — Godot City Build
 
 on:
   push:
-    branches: [godot-city-conversion]
+    branches: [main]
     paths:
       - "GodotAdamRoyal/**"
       - ".github/workflows/build-godot-adam-royal.yml"
