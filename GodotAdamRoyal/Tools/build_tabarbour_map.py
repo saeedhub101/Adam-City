@@ -70,7 +70,7 @@ for way in ways:
         ring = coords[:-1]
         if len(ring) < 3: continue
         # Keep building footprints compact and use tagged levels where available.
-        try: levels = max(1, min(30, int(float(tags.get("building:levels", 2))))
+        try: levels = max(1, min(30, int(float(tags.get("building:levels", 2)))))
         except (ValueError, TypeError): levels = 2
         height = max(3.0, min(90.0, float(tags.get("height", levels*3.2)) if str(tags.get("height","")).replace(".","",1).isdigit() else levels*3.2))
         base = [add_vertex(x,0,z) for x,z in ring]
