@@ -15,6 +15,13 @@ class GodotProjectTests(unittest.TestCase):
         self.assertIn("binary_format/embed_pck=true", preset)
         self.assertIn("application/modify_resources=false", preset)
 
+    def test_real_city_asset_is_present_and_referenced(self):
+        source = (ROOT / "scripts/main.gd").read_text()
+        city_asset = ROOT / "assets" / "amman" / "Amman-Central-District.glb"
+        self.assertTrue(city_asset.is_file(), "Amman city GLB must exist in the repository")
+        self.assertIn('res://assets/amman/Amman-Central-District.glb', source)
+        self.assertNotIn('res://assets/manila/Manila-Central-District.glb', source)
+
     def test_gameplay_systems_are_present(self):
         source = (ROOT / "scripts/main.gd").read_text()
         for token in ("func _ready", "func _process", "func _unhandled_input",
