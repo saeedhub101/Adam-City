@@ -83,7 +83,7 @@ function addPhotoFacadeOverlays(way, ring, height) {
   if (!candidates.length || ring.length < 3) return;
   const byEdge = new Map();
   for (const item of candidates) {
-    const match = String(item.key || '').match(/_(\\d+)$/);
+    const match = String(item.key || '').match(/_(\d+)$/);
     if (match && item.texture) byEdge.set(Number(match[1]), item);
   }
   const center = ring.reduce((acc, p) => ({ x: acc.x + p.x / ring.length, z: acc.z + p.z / ring.length }), { x: 0, z: 0 });
