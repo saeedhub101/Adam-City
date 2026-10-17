@@ -13,7 +13,8 @@ func _ready() -> void:
 	city_bounds = _measure_city_bounds()
 	var player = PlayerScene.instantiate()
 	var city_center := city_bounds.get_center()
-	player.position = Vector3(city_center.x, 0.25, city_center.z + minf(city_bounds.size.z * 0.08, 18.0))
+	var spawn_point := _find_nearest_road_point(Vector3(city_center.x, 0.0, city_center.z))
+	player.position = Vector3(spawn_point.x, 0.25, spawn_point.z)
 	add_child(player)
 	_build_hud(int(city_result.get("buildings", 0)), int(city_result.get("roads", 0)), bool(city_result.get("ok", false)))
 
@@ -103,6 +104,8 @@ func _build_city() -> Dictionary:
 		if packed_map != null:
 			var city := packed_map.instantiate()
 			city.name = "ManilaRealWorldDistrict"
+			# The Manila GLB uses Z-up coordinates; Godot's world is Y-up.
+			city.rotation_degrees = Vector3(-90.0, 0.0, 0.0)
 			add_child(city)
 			var stats := _read_city_stats()
 			stats["ok"] = true
