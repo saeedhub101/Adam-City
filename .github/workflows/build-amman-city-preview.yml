@@ -1,4 +1,4 @@
-name: Build Amman 3D city preview for Unreal
+name: Build Manila 3D city map for Adam Royal
 
 on:
   push:
@@ -6,13 +6,13 @@ on:
     paths:
       - ".github/workflows/build-amman-city-preview.yml"
       - "Tools/Build-Amman-3DPreview.py"
-      - "SaeedRoyaleGodot/assets/amman_core.geojson"
+      - "SaeedRoyaleGodot/assets/manila_core.geojson"
   workflow_dispatch:
 
 permissions:
   contents: write
 concurrency:
-  group: amman-city-preview-main
+  group: manila-city-build-main
   cancel-in-progress: true
 
 jobs:
@@ -30,20 +30,33 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes blender python3-numpy python3-pil libegl1 libgl1 libxrender1 libxkbcommon0 libsm6 libxext6 libxi6 libxxf86vm1
           blender --version
-      - name: Validate real OSM source
+      - name: Download and validate real Manila OSM source
+        shell: bash
         run: |
+          set -euo pipefail
+          mkdir -p SaeedRoyaleGodot/assets
+          curl --fail --silent --show-error --retry 4 --retry-delay 3 --max-time 150 -H 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'data=[out:json][timeout:120];(way["building"](14.56,120.96,14.61,121.01);way["highway"](14.56,120.96,14.61,121.01););out body;>;out skel qt;' https://overpass-api.de/api/interpreter -o /tmp/manila-osm.json
           python3 - <<'PY'
           import json
           from pathlib import Path
-          p=Path("SaeedRoyaleGodot/assets/amman_core.geojson")
-          d=json.loads(p.read_text(encoding="utf-8"))
-          assert d.get("source")=="OpenStreetMap contributors"
-          assert d.get("license")=="Open Database License (ODbL) 1.0"
-          assert d.get("type")=="FeatureCollection"
-          b=sum(f.get("properties",{}).get("kind")=="building" for f in d["features"])
-          r=sum(f.get("properties",{}).get("kind")=="road" for f in d["features"])
-          assert b>=100 and r>=50,(b,r)
-          print(f"Source valid: {b} building footprints, {r} road ways")
+          raw=json.loads(Path('/tmp/manila-osm.json').read_text())
+          nodes={x['id']:(x['lon'],x['lat']) for x in raw.get('elements',[]) if x.get('type')=='node'}
+          features=[]
+          for e in raw.get('elements',[]):
+              if e.get('type')!='way' or not e.get('tags'): continue
+              tags=e['tags']; coords=[nodes[n] for n in e.get('nodes',[]) if n in nodes]
+              if 'building' in tags and len(coords)>=4 and coords[0]==coords[-1]:
+                  kind='building'; geom={'type':'Polygon','coordinates':[[list(c) for c in coords]]}
+              elif 'highway' in tags and len(coords)>=2:
+                  kind='road'; geom={'type':'LineString','coordinates':[list(c) for c in coords]}
+              else: continue
+              props={'kind':kind,'osm_id':str(e['id']),'name':tags.get('name',''),'highway':tags.get('highway',''),'building:levels':tags.get('building:levels',''),'height':tags.get('height','')}
+              features.append({'type':'Feature','properties':props,'geometry':geom})
+          b=sum(x['properties']['kind']=='building' for x in features); r=sum(x['properties']['kind']=='road' for x in features)
+          assert b>=150 and r>=80, f'Manila OSM extract incomplete: {b} buildings, {r} roads'
+          out={'type':'FeatureCollection','city':'Manila, Philippines','source':'OpenStreetMap contributors','license':'Open Database License (ODbL) 1.0','origin':{'longitude':120.985,'latitude':14.585},'features':features}
+          Path('SaeedRoyaleGodot/assets/manila_core.geojson').write_text(json.dumps(out,separators=(',',':')),encoding='utf-8')
+          print(f'Fresh Manila OSM source: {b} building footprints, {r} roads, {len(features)} total features')
           PY
       - name: Generate city mesh and CPU-safe review preview
         shell: bash
@@ -51,67 +64,67 @@ jobs:
           set -euo pipefail
           mkdir -p output
           PYTHONPATH=/usr/lib/python3/dist-packages blender -b --factory-startup --python Tools/Build-Amman-3DPreview.py -- \
-            SaeedRoyaleGodot/assets/amman_core.geojson output/Amman-Central-District.glb \
-            output/Amman-Central-District-3D.png 2>&1 | tee output/build.log
-          test -s output/Amman-Central-District.glb
-          test -s output/Amman-Central-District-3D.png
-          test -s output/Amman-Central-District-3D-Closeup.png
+            SaeedRoyaleGodot/assets/manila_core.geojson output/Manila-Central-District.glb \
+            output/Manila-Central-District-3D.png 2>&1 | tee output/build.log
+          test -s output/Manila-Central-District.glb
+          test -s output/Manila-Central-District-3D.png
+          test -s output/Manila-Central-District-3D-Closeup.png
           python3 - <<'PY'
           import struct
           from pathlib import Path
           from PIL import Image, ImageStat
-          g=Path("output/Amman-Central-District.glb").read_bytes()
+          g=Path("output/Manila-Central-District.glb").read_bytes()
           assert g[:4]==b"glTF"
           version,length=struct.unpack_from("<II",g,4)
           assert version==2 and length==len(g),(version,length,len(g))
-          p=Path("output/Amman-Central-District-3D.png").read_bytes()
+          p=Path("output/Manila-Central-District-3D.png").read_bytes()
           assert p[:8]==b"\x89PNG\r\n\x1a\n"
           w,h=struct.unpack_from(">II",p,16)
           assert w>=1280 and h>=720,(w,h)
-          im=Image.open("output/Amman-Central-District-3D.png").convert("RGB")
-          close=Image.open("output/Amman-Central-District-3D-Closeup.png").convert("RGB")
+          im=Image.open("output/Manila-Central-District-3D.png").convert("RGB")
+          close=Image.open("output/Manila-Central-District-3D-Closeup.png").convert("RGB")
           overview_spread=max(ImageStat.Stat(im).stddev)
           close_spread=max(ImageStat.Stat(close).stddev)
           assert overview_spread>3.0, ("overview is effectively blank", ImageStat.Stat(im).stddev)
           assert close_spread>3.0, ("close-up is effectively blank", ImageStat.Stat(close).stddev)
           print(f"Validated GLB {len(g):,} bytes; overview {w}x{h}, RGB stddev {overview_spread:.2f}; close-up RGB stddev {close_spread:.2f}")
-      - name: Publish compact Amman GLB into the playable game
+      - name: Publish compact Manila GLB into the playable game
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
-          asset="SaeedRoyaleGodot/assets/amman/Amman-Central-District.glb"
+          asset="SaeedRoyaleGodot/assets/amman/Manila-Central-District.glb"
           for attempt in 1 2 3; do
             git fetch origin main
             git reset --hard origin/main
             mkdir -p "$(dirname "$asset")"
-            cp output/Amman-Central-District.glb "$asset"
+            cp output/Manila-Central-District.glb "$asset"
             size="$(stat -c %s "$asset")"
             test "$size" -lt 95000000
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add "$asset"
             if git diff --cached --quiet; then
-              echo "Amman runtime asset is already up to date."
+              echo "Manila runtime asset is already up to date."
               exit 0
             fi
-            git commit -m "Add optimized Amman city asset to playable map"
+            git commit -m "Add optimized Manila city asset to playable map"
             if git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push origin HEAD:main; then
               exit 0
             fi
             echo "Concurrent main update detected; retrying against latest main (attempt $attempt)."
           done
-          echo "Unable to publish Amman GLB after 3 attempts."
+          echo "Unable to publish Manila GLB after 3 attempts."
           exit 1
       - name: Upload Unreal city asset and source review images
         uses: actions/upload-artifact@v4
         with:
-          name: Adam-Royal-Amman-City-Source-Review
+          name: Adam-Royal-Manila-City-Source-Review
           path: |
-            output/Amman-Central-District.glb
-            output/Amman-Central-District-3D.png
-            output/Amman-Central-District-3D-Closeup.png
+            output/Manila-Central-District.glb
+            output/Manila-Central-District-3D.png
+            output/Manila-Central-District-3D-Closeup.png
             output/build.log
           if-no-files-found: error
           retention-days: 30
