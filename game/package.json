@@ -3,15 +3,39 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "main": "electron/main.cjs",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "build:win": "npm run build && electron-builder --win portable --x64"
   },
   "dependencies": {
     "three": "^0.180.0"
   },
   "devDependencies": {
+    "electron": "^38.2.0",
+    "electron-builder": "^26.0.12",
     "vite": "^7.1.7"
+  },
+  "build": {
+    "appId": "com.saeed.openworld",
+    "productName": "Saeed Open World",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "artifactName": "Saeed-Open-World-${version}-Windows-${arch}.${ext}"
+    },
+    "npmRebuild": false
   }
 }
