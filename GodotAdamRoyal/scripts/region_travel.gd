@@ -3,7 +3,8 @@ extends Node
 ## Keys: 1 Manila, 2 Chicago, 3 San Francisco.
 const REGION_PATHS := {
 	"Chicago": "res://assets/cities/Chicago.obj",
-	"San Francisco": "res://assets/cities/san_francisco/SanFrancisco_City.obj"
+	"San Francisco": "res://assets/cities/san_francisco/SanFrancisco_City.obj",
+	"Tabarbour": "res://assets/cities/tabarbour/Tabarbour.obj"
 }
 var active_region := "Manila"
 var active_root: Node3D
@@ -43,6 +44,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		KEY_1: travel_to("Manila")
 		KEY_2: travel_to("Chicago")
 		KEY_3: travel_to("San Francisco")
+		KEY_4: travel_to("Tabarbour")
 
 func travel_to(region: String) -> void:
 	if region == active_region:
