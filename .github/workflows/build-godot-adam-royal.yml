@@ -98,9 +98,8 @@ jobs:
           }
           Write-Host "Reusable Manila cache verified: $($report.buildings) buildings; $($report.roads) roads; $($textures.Count) texture atlases; $((Get-Item $glbPath).Length) GLB bytes."
 
-      - name: Download and validate a broad set of real Manila building photographs
+      - name: Download and validate real Manila building photographs
         id: check_download_manila_building_photos
-        continue-on-error: true
         shell: pwsh
         working-directory: .
         run: |
@@ -108,9 +107,13 @@ jobs:
           python -m pip install --disable-pip-version-check requests
           if ($LASTEXITCODE -ne 0) { throw "Could not install photo-source client" }
           python StandaloneBattleRoyale/Tools/fetch_manila_facade_photos.py
-          if ($LASTEXITCODE -ne 0) { throw "Real Manila facade photo collection failed; refusing to build with insufficient photos" }
+          if ($LASTEXITCODE -ne 0) { throw "Real Manila facade photo collection failed; refusing to continue with insufficient photos" }
           $photoDir = 'StandaloneBattleRoyale/Content/Maps/Real-Facade-Photos'
-          $photos = @(Get-ChildItem $photoDir -File | Where-Object { $_.Extension -match '^\.(jpg|jpeg|png|webp)        id: check_reuse_cached_manila_facade_improvem
+          $photos = @(Get-ChildItem $photoDir -File | Where-Object { $_.Extension -match '^\.(jpg|jpeg|png|webp)$' })
+          if ($photos.Count -lt 12) { throw "Photographic coverage gate failed: only $($photos.Count) real building photos; minimum 12 required." }
+          Write-Host "MANILA_REAL_PHOTO_COLLECTION_PASS photos=$($photos.Count)"
+      - name: Reuse cached Manila facade improvement; process only when missing or outdated
+        id: check_reuse_cached_manila_facade_improvement
         continue-on-error: true
         shell: pwsh
         working-directory: .
@@ -148,7 +151,7 @@ jobs:
           }
           $report = Get-Content $reportPath -Raw | ConvertFrom-Json
           Write-Host "MANILA_FACADE_CACHE_PASS version=$($report.facade_pipeline_version) materials=$($report.facade_materials_replaced) source=$($report.facade_texture_source)"
-
+      
       - name: Fetch and validate real Manila elevation data
         id: check_fetch_and_validate_real_manila_elev
         continue-on-error: true
