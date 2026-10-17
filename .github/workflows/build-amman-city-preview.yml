@@ -36,14 +36,14 @@ jobs:
           set -euo pipefail
           mkdir -p SaeedRoyaleGodot/assets/manila_materials
           for item in Asphalt012 Concrete034; do
-            curl --fail --location --silent --show-error --retry 3 --max-time 120 \\
+            curl --fail --location --silent --show-error --retry 3 --max-time 120 \
               "https://ambientcg.com/get?file=${item}_1K-JPG.zip" -o "/tmp/${item}.zip"
             unzip -oq "/tmp/${item}.zip" -d SaeedRoyaleGodot/assets/manila_materials
           done
           echo "Downloaded CC0 texture maps:"
-          find SaeedRoyaleGodot/assets/manila_materials -maxdepth 1 -type f -printf '%f %s bytes\\n' | sort
+          find SaeedRoyaleGodot/assets/manila_materials -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
           test -n "$(find SaeedRoyaleGodot/assets/manila_materials -type f -name 'Asphalt012*_Color.jpg' -print -quit)"
-          test -n "$(find SaeedRoyaleGodot/assets/manila_materials -type f -name 'Concrete034*_Color.jpg' -print -quit)
+          test -n "$(find SaeedRoyaleGodot/assets/manila_materials -type f -name 'Concrete034*_Color.jpg' -print -quit)"
 
       - name: Download and validate real Manila OSM source
         shell: bash
@@ -52,12 +52,12 @@ jobs:
           mkdir -p SaeedRoyaleGodot/assets
           query='[out:json][timeout:120];(way["building"](14.56,120.96,14.61,121.01);way["highway"](14.56,120.96,14.61,121.01););out body;>;out skel qt;'
           downloaded=0
-          for endpoint in \\
-            https://overpass-api.de/api/interpreter \\
-            https://overpass.kumi.systems/api/interpreter \\
+          for endpoint in \
+            https://overpass-api.de/api/interpreter \
+            https://overpass.kumi.systems/api/interpreter \
             https://overpass.private.coffee/api/interpreter; do
             echo "Trying OpenStreetMap Overpass endpoint: $endpoint"
-            if curl --fail --silent --show-error --retry 1 --retry-delay 2 --max-time 180 \\
+            if curl --fail --silent --show-error --retry 1 --retry-delay 2 --max-time 180 \
               -H 'Content-Type: application/x-www-form-urlencoded' --data-urlencode "data=$query" "$endpoint" -o /tmp/manila-osm.json; then
               downloaded=1
               break
