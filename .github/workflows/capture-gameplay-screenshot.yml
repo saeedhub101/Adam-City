@@ -62,6 +62,7 @@ jobs:
           fi
           test -s assets/real_city/helsinki_city_scan.ply
           mkdir -p screenshots
+          rm -f screenshots/adam-royal-*.png
 
       - name: Render a real gameplay screenshot
         working-directory: SaeedRoyaleGodot
@@ -75,29 +76,40 @@ jobs:
           	call_deferred("_capture")
 
           func _capture() -> void:
-          	var packed: PackedScene = load("res://main.tscn")
+          	var packed = load("res://main.tscn")
           	if packed == null:
-          		push_error("Could not load main.tscn for screenshot capture")
+          		push_error("Could not load main scene")
           		quit(1)
           		return
-          	var game: Node = packed.instantiate()
+          	var game = packed.instantiate()
           	root.add_child(game)
-          	for frame_index in range(8):
+          	for i in range(12):
           		await process_frame
-          	await create_timer(2.5).timeout
-          	var viewport: Viewport = root.get_viewport()
-          	var screenshot: Image = viewport.get_texture().get_image()
-          	if screenshot == null or screenshot.is_empty():
-          		push_error("Gameplay screenshot is empty")
+          	var player = game.get("player")
+          	var pivot = game.get("camera_pivot")
+          	if player == null or pivot == null:
+          		push_error("Missing player or camera pivot")
           		quit(1)
           		return
-          	var path := ProjectSettings.globalize_path("res://screenshots/helsinki-gameplay.png")
-          	var error := screenshot.save_png(path)
-          	if error != OK:
-          		push_error("Could not save gameplay screenshot: %s" % error)
-          		quit(1)
-          		return
-          	print("GAMEPLAY_SCREENSHOT=" + path)
+          	var views = [{"name":"north","p":Vector3(0,0.1,0),"y":0.0},{"name":"east","p":Vector3(28,0.1,0),"y":-1.5708},{"name":"south","p":Vector3(0,0.1,28),"y":3.14159},{"name":"west","p":Vector3(-28,0.1,0),"y":1.5708}]
+          	for v in views:
+          		player.global_position = v.p
+          		player.rotation.y = v.y
+          		pivot.rotation = Vector3.ZERO
+          		await create_timer(1.0).timeout
+          		for i in range(3):
+          			await process_frame
+          		var img = root.get_viewport().get_texture().get_image()
+          		if img == null or img.is_empty():
+          			push_error("Empty screenshot: " + v.name)
+          			quit(1)
+          			return
+          		var path = ProjectSettings.globalize_path("res://screenshots/adam-royal-" + v.name + ".png")
+          		if img.save_png(path) != OK:
+          			push_error("Screenshot save failed: " + path)
+          			quit(1)
+          			return
+          		print("GAMEPLAY_SCREENSHOT=" + path)
           	quit(0)
           GDSCRIPT
           timeout 180 xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
@@ -108,18 +120,17 @@ jobs:
             exit 1
           fi
           rm -f .capture_gameplay.gd
-          test -s screenshots/helsinki-gameplay.png
+          for view in north east south west; do test -s "screenshots/adam-royal-$view.png"; done
           python3 - <<'PY'
           import struct
           from pathlib import Path
-          p = Path("screenshots/helsinki-gameplay.png")
-          data = p.read_bytes()
-          if data[:8] != b"\x89PNG\r\n\x1a\n":
-              raise SystemExit("Output is not a PNG image")
-          width, height = struct.unpack(">II", data[16:24])
-          if width < 640 or height < 360:
-              raise SystemExit(f"Screenshot resolution is too small: {width}x{height}")
-          print(f"Validated gameplay screenshot: {width}x{height}, {len(data)} bytes")
+          for view in ("north", "east", "south", "west"):
+              p = Path(f"screenshots/adam-royal-{view}.png")
+              data = p.read_bytes()
+              if data[:8] != bytes((137,80,78,71,13,10,26,10)): raise SystemExit(f"Bad PNG: {p}")
+              width, height = struct.unpack(">II", data[16:24])
+              if width < 640 or height < 360: raise SystemExit(f"Bad resolution: {p} {width}x{height}")
+              print(f"Validated {p}: {width}x{height}")
           PY
 
       - name: Commit screenshot directly to main
@@ -130,14 +141,14 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add SaeedRoyaleGodot/screenshots/helsinki-gameplay.png
-          git commit -m "Add gameplay screenshot of real Helsinki scan"
+          git add SaeedRoyaleGodot/screenshots/adam-royal-*.png
+          git commit -m "Capture four Adam Royal gameplay viewpoints"
           git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push origin HEAD:main
 
       - name: Upload screenshot artifact
         uses: actions/upload-artifact@v7
         with:
-          name: Helsinki-Real-City-Gameplay-Screenshot
-          path: SaeedRoyaleGodot/screenshots/helsinki-gameplay.png
+          name: Adam-Royal-Multi-Location-Gameplay-Screenshots
+          path: SaeedRoyaleGodot/screenshots/adam-royal-*.png
           if-no-files-found: error
           retention-days: 30
