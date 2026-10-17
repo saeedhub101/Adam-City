@@ -1,4 +1,4 @@
-name: Adam Royal — Generate Manila District
+name: Adam Royal — Validate Cached Manila District
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: adam-royal-manila-map
@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   generate-manila:
-    name: Download real OSM data and build 3D district
+    name: Use cached Manila district (generate only if missing)
     runs-on: windows-latest
     timeout-minutes: 20
     steps:
@@ -45,12 +45,28 @@ jobs:
           if ((Get-Item $target).Length -ne (Get-Item $source).Length) { throw 'Staged Saeed GLB differs from the repository source.' }
           Write-Host "Staged existing Saeed character model: $target"
 
-      - name: Generate real Manila buildings and roads
+      - name: Generate district once, then commit the reusable map assets
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          python StandaloneBattleRoyale/Tools/build_manila_district.py
-          if ($LASTEXITCODE -ne 0) { throw 'Manila district generation failed.' }
+          $map = 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb'
+          $report = 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.json'
+          if ((Test-Path $map) -and (Test-Path $report) -and (Get-Item $map).Length -gt 100000) {
+            Write-Host 'Using committed Manila district; no network map download needed.'
+          } else {
+            python StandaloneBattleRoyale/Tools/build_manila_district.py
+            if ($LASTEXITCODE -ne 0) { throw 'Initial Manila district generation failed.' }
+          }
+          if (!(Test-Path $map) -or !(Test-Path $report)) { throw 'Manila map asset or report missing.' }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add $map $report 'StandaloneBattleRoyale/Content/Maps/Manila-Facade-Texture-*.jpg'
+          if (git diff --cached --quiet) {
+            Write-Host 'Reusable map assets are already committed.'
+          } else {
+            git commit -m 'Cache generated Manila district assets'
+            git push
+          }
 
       - name: Download real building-specific facade photographs
         shell: pwsh
