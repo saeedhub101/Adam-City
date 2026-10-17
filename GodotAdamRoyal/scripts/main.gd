@@ -188,13 +188,13 @@ func _build_environment() -> void:
 	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.68, 0.72, 0.78)
-	env.ambient_light_energy = 0.7
+	env.ambient_light_energy = 0.38
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	world.environment = env
 	add_child(world)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-48, -28, 0)
-	sun.light_energy = 1.35
+	sun.light_energy = 0.85
 	sun.shadow_enabled = true
 	add_child(sun)
 
@@ -211,7 +211,7 @@ func _build_ground() -> void:
 	plane_mesh.size = Vector2(5000, 5000)
 	plane.mesh = plane_mesh
 	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.28, 0.31, 0.28)
+	mat.albedo_color = Color(0.22, 0.24, 0.21)
 	mat.roughness = 1.0
 	plane.material_override = mat
 	plane.position.y = -0.13
