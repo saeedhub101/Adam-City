@@ -41,10 +41,18 @@ def main():
     glass=material("Smoky blue-grey window glass",(.055,.13,.17),.22); frame=material("Dark metal window frames",(.16,.17,.16),.48)
     roofmat=material("Weathered flat roof concrete",(.36,.35,.31)); asphalt=material("Worn tropical asphalt",(.085,.09,.09),.96)
     groundmat=material("Manila urban ground",(.30,.30,.27),1)
+    sidewalkmat=material("Weathered concrete sidewalk",(.48,.47,.43),.94)
+    curbmat=material("Raised curb concrete",(.62,.60,.54),.88)
+    markingmat=material("Faded road paint",(.78,.74,.60),.86)
+    polemat=material("Galvanized utility poles",(.24,.26,.25),.56)
+    wiremat=material("Black overhead utility cables",(.055,.06,.055),.72)
+    signmats=[material("Shop sign faded teal",(.035,.27,.25),.7),material("Shop sign faded red",(.48,.095,.055),.7),material("Shop sign faded ochre",(.68,.39,.08),.7)]
     span=760.0
     bpy.ops.mesh.primitive_plane_add(size=span,location=(0,0,-.12)); bpy.context.object.name="Amman terrain base"; bpy.context.object.data.materials.append(groundmat)
-    bv=[]; bf=[]; bi=[]; wv=[]; wf=[]; wi=[]; rv=[]; rf=[]
-    nbuilding=nroad=nwindow=0
+    bv=[]; bf=[]; bi=[]; wv=[]; wf=[]; wi=[]; frv=[]; frf=[]; rv=[]; rf=[]
+    swv=[]; swf=[]; cv=[]; cf=[]; mv=[]; mf=[]; signv=[]; signf=[]; signi=[]
+    polev=[]; polef=[]; wirev=[]; wiref=[]; lampv=[]; lampf=[]
+    nbuilding=nroad=nwindow=0; nsidewalk=nlane=nstreet_detail=0
     for f in d["features"]:
         p=f.get("properties") or {}; g=f.get("geometry") or {}
         if p.get("kind")!="building" or g.get("type")!="Polygon": continue
@@ -78,6 +86,33 @@ def main():
                     for dist,z in [(mid-half,z0),(mid+half,z0),(mid+half,z1),(mid-half,z1)]:
                         wv.append((x1+ux*dist+nx*.035,y1+uy*dist+ny*.035,z))
                     wf.append((idx,idx+1,idx+2,idx+3)); wi.append(0); nwindow+=1
+                    # Raised dark-metal borders give windows depth instead of painted-on rectangles.
+                    border=.075; fx=x1+ux*mid+nx*.045; fy=y1+uy*mid+ny*.045
+                    inner=[(fx-ux*half,fy-uy*half,z0),(fx+ux*half,fy+uy*half,z0),
+                           (fx+ux*half,fy+uy*half,z1),(fx-ux*half,fy-uy*half,z1)]
+                    outer=[(fx-ux*(half+border),fy-uy*(half+border),z0-border),
+                           (fx+ux*(half+border),fy+uy*(half+border),z0-border),
+                           (fx+ux*(half+border),fy+uy*(half+border),z1+border),
+                           (fx-ux*(half+border),fy-uy*(half+border),z1+border)]
+                    basef=len(frv); frv.extend(outer+inner)
+                    frf.extend([(basef,basef+1,basef+5,basef+4),(basef+1,basef+2,basef+6,basef+5),
+                                (basef+2,basef+3,basef+7,basef+6),(basef+3,basef,basef+4,basef+7)])
+                    # Compact outdoor AC units are characteristic of dense tropical streets.
+                    if fl==0 and j==0 and i%2==0 and length>16:
+                        acx=x1+ux*min(length*.55,mid+half+1.0); acy=y1+uy*min(length*.55,mid+half+1.0)
+                        z= max(1.25,floorh*.58); dep=.22; wid=.72; ht=.42; bx=len(signv)
+                        signv.extend([(acx-ux*wid/2+nx*dep,acy-uy*wid/2+ny*dep,z),
+                                      (acx+ux*wid/2+nx*dep,acy+uy*wid/2+ny*dep,z),
+                                      (acx+ux*wid/2+nx*dep,acy+uy*wid/2+ny*dep,z+ht),
+                                      (acx-ux*wid/2+nx*dep,acy-uy*wid/2+ny*dep,z+ht)])
+                        signf.append((bx,bx+1,bx+2,bx+3)); signi.append(3)
+                # A few projecting shop fascia signs at street level break up repetitive blank facades.
+                if floors>0 and length>15 and i%2==0:
+                    mid=length*.52; half=min(2.1,length*.17); z=max(2.15,floorh*.78); depth=.18; ht=.62
+                    sx=x1+ux*mid+nx*depth; sy=y1+uy*mid+ny*depth; bs=len(signv)
+                    signv.extend([(sx-ux*half,sy-uy*half,z),(sx+ux*half,sy+uy*half,z),
+                                  (sx+ux*half,sy+uy*half,z+ht),(sx-ux*half,sy-uy*half,z+ht)])
+                    signf.append((bs,bs+1,bs+2,bs+3)); signi.append((nbuilding+i)%len(signmats)); nstreet_detail+=1
 
     widths={"motorway":12,"trunk":10,"primary":8,"secondary":7,"tertiary":6,"residential":5,"service":3.5,"footway":1.8,"path":1.5}
     for f in d["features"]:
@@ -90,12 +125,66 @@ def main():
             x1,y1=pts[i]; x2,y2=pts[i+1]; dx=x2-x1; dy=y2-y1; L=math.hypot(dx,dy)
             if L<.8 or math.hypot((x1+x2)*.5,(y1+y2)*.5)>380: continue
             nx=-dy/L*width/2; ny=dx/L*width/2; k=len(rv)
-            rv.extend([(x1+nx,y1+ny,.01),(x1-nx,y1-ny,.01),(x2-nx,y2-ny,.01),(x2+nx,y2+ny,.01)])
+            rv.extend([(x1+nx,y1+ny,.015),(x1-nx,y1-ny,.015),(x2-nx,y2-ny,.015),(x2+nx,y2+ny,.015)])
             rf.append((k,k+1,k+2,k+3))
+            # Sidewalk slabs and raised curb strips are independent geometry, not painted textures.
+            sw=1.45; zside=.055; base=len(swv)
+            swv.extend([(x1+nx,y1+ny,zside),(x1-nx,y1-ny,zside),
+                        (x1-nx*(1+sw/(width/2)),y1-ny*(1+sw/(width/2)),zside),
+                        (x1+nx*(1+sw/(width/2)),y1+ny*(1+sw/(width/2)),zside),
+                        (x2+nx,y2+ny,zside),(x2-nx,y2-ny,zside),
+                        (x2-nx*(1+sw/(width/2)),y2-ny*(1+sw/(width/2)),zside),
+                        (x2+nx*(1+sw/(width/2)),y2+ny*(1+sw/(width/2)),zside)])
+            swf.extend([(base,base+1,base+5,base+4),(base+2,base+3,base+7,base+6)])
+            nsidewalk+=1
+            # A raised pale curb lip separates pedestrian space from traffic.
+            cbase=len(cv); out=1.12
+            cv.extend([(x1+nx,y1+ny,.04),(x1+nx*out,y1+ny*out,.04),(x1+nx*out,y1+ny*out,.20),(x1+nx,y1+ny,.20),
+                       (x2+nx,y2+ny,.04),(x2+nx*out,y2+ny*out,.04),(x2+nx*out,y2+ny*out,.20),(x2+nx,y2+ny,.20)])
+            cf.extend([(cbase,cbase+1,cbase+5,cbase+4),(cbase+1,cbase+2,cbase+6,cbase+5),(cbase+2,cbase+3,cbase+7,cbase+6)])
+            cbase=len(cv)
+            cv.extend([(x1-nx,y1-ny,.04),(x1-nx*out,y1-ny*out,.04),(x1-nx*out,y1-ny*out,.20),(x1-nx,y1-ny,.20),
+                       (x2-nx,y2-ny,.04),(x2-nx*out,y2-ny*out,.04),(x2-nx*out,y2-ny*out,.20),(x2-nx,y2-ny,.20)])
+            cf.extend([(cbase,cbase+1,cbase+5,cbase+4),(cbase+1,cbase+2,cbase+6,cbase+5),(cbase+2,cbase+3,cbase+7,cbase+6)])
+            # Broken, weathered lane paint on larger roads only.
+            if p.get("highway") in ("motorway","trunk","primary","secondary") and width>=7:
+                dash=5.0; gap=7.0; at=4.0
+                while at+dash<L:
+                    ax=x1+dx/L*at; ay=y1+dy/L*at; bx=x1+dx/L*(at+dash); by=y1+dy/L*(at+dash)
+                    half=.075; mi=len(mv)
+                    mv.extend([(ax-nx*half,ay-ny*half,.035),(ax+nx*half,ay+ny*half,.035),
+                               (bx+nx*half,by+ny*half,.035),(bx-nx*half,by-ny*half,.035)])
+                    mf.append((mi,mi+1,mi+2,mi+3)); nlane+=1; at+=dash+gap
+            # Sparse utility poles and overhead lines along larger urban roads.
+            if p.get("highway") in ("primary","secondary","tertiary","residential") and L>32:
+                for at in (L*.28,L*.72):
+                    px=x1+dx/L*at+nx*(width*.62+1.2); py=y1+dy/L*at+ny*(width*.62+1.2)
+                    ztop=5.8; half=.09; pb=len(polev)
+                    polev.extend([(px-half,py-half,.1),(px+half,py-half,.1),(px+half,py+half,.1),(px-half,py+half,.1),
+                                  (px-half,py-half,ztop),(px+half,py-half,ztop),(px+half,py+half,ztop),(px-half,py+half,ztop)])
+                    polef.extend([(pb,pb+1,pb+5,pb+4),(pb+1,pb+2,pb+6,pb+5),(pb+2,pb+3,pb+7,pb+6),(pb+3,pb,pb+4,pb+7)])
+                    # Cross-arm and cable are simplified low-poly silhouettes, positioned high enough for gameplay.
+                    arm=len(polev); polev.extend([(px-.58,py-.07,ztop-.25),(px+.58,py-.07,ztop-.25),(px+.58,py+.07,ztop-.25),(px-.58,py+.07,ztop-.25)])
+                    polef.append((arm,arm+1,arm+2,arm+3))
+                    nstreet_detail+=1
+                    if len(wirev)<16000:
+                        # Thin square cable beams; visual silhouette stays light in the exported GLB.
+                        wbase=len(wirev); xend=x1+dx/L*min(L,at+18.0)+nx*(width*.62+1.2); yend=y1+dy/L*min(L,at+18.0)+ny*(width*.62+1.2)
+                        zc=ztop-.10; wid=.025
+                        wirev.extend([(px-wid,py-wid,zc),(px+wid,py-wid,zc),(px+wid,py+wid,zc),(px-wid,py+wid,zc),
+                                      (xend-wid,yend-wid,zc-.22),(xend+wid,yend-wid,zc-.22),(xend+wid,yend+wid,zc-.22),(xend-wid,yend+wid,zc-.22)])
+                        wiref.extend([(wbase,wbase+1,wbase+5,wbase+4),(wbase+1,wbase+2,wbase+6,wbase+5),(wbase+2,wbase+3,wbase+7,wbase+6),(wbase+3,wbase,wbase+4,wbase+7)])
         nroad+=1
     meshobj("Real OSM building footprints with facade detail",bv,bf,facades+[roofmat],bi)
-    meshobj("Facade window glass and frames",wv,wf,[glass,frame],wi)
+    meshobj("Facade window glass",wv,wf,[glass],wi)
+    meshobj("Raised dark window frames",frv,frf,[frame])
     meshobj("Road ribbons from OSM centerlines",rv,rf,[asphalt])
+    meshobj("Concrete sidewalks",swv,swf,[sidewalkmat])
+    meshobj("Raised sidewalk curbs",cv,cf,[curbmat])
+    meshobj("Worn broken lane markings",mv,mf,[markingmat])
+    meshobj("Shop signs and outdoor AC units",signv,signf,signmats+[polemat],signi)
+    meshobj("Utility poles and crossarms",polev,polef,[polemat])
+    meshobj("Overhead utility cables",wirev,wiref,[wiremat])
     bpy.ops.object.light_add(type="SUN",location=(0,0,span*.8)); sun=bpy.context.object
     sun.data.energy=2.0; sun.rotation_euler=(math.radians(25),math.radians(-20),math.radians(-25))
     bpy.ops.object.light_add(type="AREA",location=(-span*.25,-span*.25,span*.55)); fill=bpy.context.object
