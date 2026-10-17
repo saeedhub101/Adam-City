@@ -121,16 +121,22 @@ async function loadLicensedPhotoCatalog() {
       return response.ok ? await response.json() : null;
     } catch { return null; }
   };
-  const [commons, mapillary] = await Promise.all([
+  const [commons, mapillary, kartaview] = await Promise.all([
     loadCatalogue('/data/bundled-photo-catalog.json').then(bundled =>
       bundled || loadCatalogue('/data/tabarbour-photo-catalog.json')),
-    loadCatalogue('/data/mapillary-photo-catalog.json')
+    loadCatalogue('/data/mapillary-photo-catalog.json'),
+    loadCatalogue('/data/kartaview-photo-catalog.json')
   ]);
   const photos = [
     ...((commons?.photos || []).map(photo => ({
       ...photo, imageSrc: photo.localFile || photo.thumbnail, sourceName: 'Wikimedia Commons',
       sourceUrl: photo.page, authorName: photo.author, licenseName: photo.license,
       label: photo.title
+    }))),
+    ...((kartaview?.photos || []).map(photo => ({
+      ...photo, imageSrc: photo.file, sourceName: 'KartaView',
+      sourceUrl: photo.sourceUrl, authorName: photo.attribution || '© Grab and KartaView Contributors',
+      licenseName: photo.license, label: 'صورة شارع من KartaView · ' + photo.id
     }))),
     ...((mapillary?.photos || []).map(photo => ({
       ...photo, imageSrc: photo.file, sourceName: 'Mapillary',
@@ -140,7 +146,7 @@ async function loadLicensedPhotoCatalog() {
   ];
   gallery.replaceChildren();
   if (!photos.length) {
-    status.textContent = 'لم تُجمع صور مرخّصة بعد. أضف MAPILLARY_ACCESS_TOKEN إلى GitHub Actions Secrets لتشغيل جمع صور Mapillary.';
+    status.textContent = 'لم تُجمع صور شوارع بعد. سيحاول البناء جلب صور KartaView العامة دون رمز وصول؛ وقد لا تتوفر تغطية مصورة لهذه المنطقة.';
     return;
   }
   const fragment = document.createDocumentFragment();
