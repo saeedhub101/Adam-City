@@ -110,6 +110,52 @@ function renderBuildingPhotoLinks(buildings) {
   if (buildingCount) buildingCount.textContent = buildings.length + ' مبنى';
 }
 
+
+async function loadLicensedPhotoCatalog() {
+  const gallery = document.querySelector('#licensed-photo-gallery');
+  const status = document.querySelector('#licensed-photo-status');
+  if (!gallery || !status) return;
+  try {
+    const response = await fetch('/data/tabarbour-photo-catalog.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error('catalogue not available');
+    const catalogue = await response.json();
+    const photos = Array.isArray(catalogue.photos) ? catalogue.photos : [];
+    gallery.replaceChildren();
+    if (!photos.length) {
+      status.textContent = 'لم يُعثر بعد على صور مرخّصة كافية في المصدر المفتوح. سيُعاد البحث تلقائيًا؛ لم نضع صورًا عشوائية على المباني.';
+      return;
+    }
+    const fragment = document.createDocumentFragment();
+    for (const photo of photos) {
+      if (!photo.thumbnail || !photo.page) continue;
+      const card = document.createElement('a');
+      card.className = 'licensed-photo-card';
+      card.href = photo.page;
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+      const img = document.createElement('img');
+      img.loading = 'lazy';
+      img.src = photo.thumbnail;
+      img.alt = photo.title || 'صورة مرخّصة من Wikimedia Commons';
+      img.referrerPolicy = 'no-referrer';
+      img.onerror = () => card.classList.add('photo-unavailable');
+      const title = document.createElement('strong');
+      title.textContent = photo.title || 'صورة من المنطقة';
+      const credit = document.createElement('span');
+      credit.textContent = 'المؤلف: ' + (photo.author || 'غير محدد');
+      const license = document.createElement('span');
+      license.textContent = 'الرخصة: ' + (photo.license || 'راجع صفحة المصدر');
+      card.append(img, title, credit, license);
+      fragment.append(card);
+    }
+    gallery.append(fragment);
+    status.textContent = photos.length + ' صورة مرشّحة من Wikimedia Commons. افتح المصدر للتحقق من الموقع والتفاصيل قبل استخدامها كواجهة.';
+  } catch (error) {
+    status.textContent = 'فهرس الصور قيد الإنشاء الآلي. ستظهر الصور المرخّصة بعد نجاح تشغيل مهمة الجمع.';
+  }
+}
+loadLicensedPhotoCatalog();
+
 const QUALITY = {
   low:    { pixelRatio: 0.85, shadows: false, shadowSize: 512, far: 360, buildings: 45, antialias: false },
   medium: { pixelRatio: 1.0,  shadows: true,  shadowSize: 1024, far: 600, buildings: 80, antialias: true },
