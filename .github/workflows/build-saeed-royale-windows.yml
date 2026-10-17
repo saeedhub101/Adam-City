@@ -40,6 +40,9 @@ jobs:
           chmod +x "$GODOT_BIN"
           echo "GODOT_BIN=$GODOT_BIN" >> "$GITHUB_ENV"
 
+      - name: Install virtual display for gameplay screenshot
+        run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri libglx-mesa0
+
       - name: Import and parse project with Godot
         working-directory: SaeedRoyaleGodot
         run: |
@@ -57,19 +60,51 @@ jobs:
             exit 1
           fi
 
+      - name: Capture an in-game screenshot
+        working-directory: SaeedRoyaleGodot
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          timeout 90s env ADAM_ROYAL_CAPTURE="res://build/AdamRoyal-Manila-gameplay.png" xvfb-run -a -s "-screen 0 1920x1080x24" "$GODOT_BIN" --path . --resolution 1920x1080 --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --quit-after 240 2>&1 | tee "$RUNNER_TEMP/godot-screenshot.log"
+          if grep -E "SCRIPT ERROR|Parse Error|ERROR:" "$RUNNER_TEMP/godot-screenshot.log"; then
+            echo "Gameplay screenshot capture emitted a runtime error."
+            exit 1
+          fi
+          grep -F "GAMEPLAY_SCREENSHOT_SAVED=" "$RUNNER_TEMP/godot-screenshot.log"
+          python3 - <<'PY'
+          import struct
+          from pathlib import Path
+          shot = Path("build/AdamRoyal-Manila-gameplay.png")
+          data = shot.read_bytes()
+          assert data[:8] == bytes([137, 80, 78, 71, 13, 10, 26, 10]), "Output is not a PNG screenshot"
+          width, height = struct.unpack(">II", data[16:24])
+          assert width >= 1920 and height >= 1080, f"Expected Full HD screenshot, got {width}x{height}"
+          assert len(data) > 50000, f"Screenshot appears blank or incomplete: {len(data)} bytes"
+          print(f"Verified Manila gameplay screenshot: {width}x{height}, {len(data):,} bytes")
+          PY
+
+      - name: Upload Manila gameplay screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: AdamRoyal-Manila-Gameplay-Screenshot
+          path: SaeedRoyaleGodot/build/AdamRoyal-Manila-gameplay.png
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Export Windows game
         working-directory: SaeedRoyaleGodot
         run: |
           set -euo pipefail
           mkdir -p build
           "$GODOT_BIN" --headless --path . --export-release "Windows Desktop" build/AdamRoyal.exe
-          test -s build/SaeedRoyale.exe
+          test -s build/AdamRoyal.exe
           cp README.md build/README.txt
 
       - name: Upload downloadable Windows game
         uses: actions/upload-artifact@v7
         with:
-          name: Adam-Royal-Windows-x64
+          name: AdamRoyal-Windows-x64
           path: SaeedRoyaleGodot/build/
           if-no-files-found: error
           retention-days: 30
@@ -82,7 +117,7 @@ jobs:
       - name: Download exported Windows game
         uses: actions/download-artifact@v7
         with:
-          name: SaeedRoyale-Windows-x64
+          name: AdamRoyal-Windows-x64
           path: smoke
 
       - name: Launch Windows executable headlessly
