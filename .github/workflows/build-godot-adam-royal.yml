@@ -276,6 +276,13 @@ jobs:
             Get-Content $runtimeLog
             throw 'Runtime check failed: the actual character GLB was not loaded.'
           }
+
+          foreach ($regionPattern in @('TRAVEL_ASSET_IMPORT_PASS region=Chicago', 'TRAVEL_ASSET_IMPORT_PASS region=San Francisco')) {
+            if (-not (Select-String -Path $runtimeLog -Pattern $regionPattern -Quiet)) {
+              Get-Content $runtimeLog
+              throw "Travel region import validation failed: $regionPattern"
+            }
+          }
           if (-not (Select-String -Path $runtimeLog -Pattern 'CITY_COLLISION_MESHES=[1-9]' -Quiet)) {
             Get-Content $runtimeLog
             throw 'Runtime check failed: no building collision meshes were created.'
