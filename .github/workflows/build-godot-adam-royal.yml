@@ -60,11 +60,11 @@ jobs:
           } else {
             python -m pip install --disable-pip-version-check requests shapely trimesh mapbox-earcut scipy numpy pillow
             if ($LASTEXITCODE -ne 0) { throw "Map generator dependencies could not be installed" }
-            if ((Test-Path $glbPath) -and (Test-Path $reportPath) -and (Test-Path $roadTexture) -and ($textures.Count -ge 4)) {
-              Write-Host "Optimizing the committed Manila GLB offline; no Overpass download required."
+            if ((Test-Path $glbPath) -and (Test-Path $reportPath) -and (Test-Path $roadTexture) -and ($textures.Count -ge 4) -and $cacheHasStreetDetail) {
+              Write-Host "Existing Manila geometry is present but needs offline mesh compaction; preserve mapped street-detail data."
               python StandaloneBattleRoyale/Tools/build_manila_district.py --optimize-existing
             } else {
-              Write-Host "No complete committed map cache exists; generating the Manila district from OpenStreetMap."
+              Write-Host "Manila cache is missing required real-world street details; rebuild once from georeferenced OpenStreetMap data."
               python StandaloneBattleRoyale/Tools/build_manila_district.py
             }
             if ($LASTEXITCODE -ne 0) { throw "Manila map optimization/generation failed" }
