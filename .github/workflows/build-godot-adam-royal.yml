@@ -222,29 +222,34 @@ jobs:
           }
           Write-Host "AMMAN_MAP_CACHE_PASS buildings=$($report.buildings) roadWays=$($report.road_ways) bytes=$((Get-Item $obj).Length)"
 
-      - name: Use the existing Tokyo map from the repository (never download or regenerate)
+      - name: Use the existing Chicago map from the repository (never download or regenerate)
         shell: pwsh
         working-directory: .
         run: |
           $ErrorActionPreference = 'Stop'
-          $candidates = @(
-            'GodotAdamRoyal/assets/cities/tokyo/Tokyo.obj',
-            'GodotAdamRoyal/assets/cities/Tokyo.obj',
-            'Tokyo.obj'
-          )
-          $tokyoObj = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
-          if (-not $tokyoObj) {
-            throw 'Tokyo map asset is not present in the current main branch. Per project requirements, workflow will not download or generate a replacement. Add/restore the existing Tokyo asset in the repository, then rerun.'
+          $sourceObj = 'Chicago.obj'
+          $cityDir = 'GodotAdamRoyal/assets/cities/chicago'
+          $cityObj = Join-Path $cityDir 'Chicago.obj'
+          if (-not (Test-Path $sourceObj) -or (Get-Item $sourceObj).Length -lt 100000) {
+            throw 'The committed Chicago.obj source asset is missing or invalid. Workflow will not download or generate a replacement.'
           }
-          if ((Get-Item $tokyoObj).Length -lt 100000) { throw "Existing Tokyo map is invalid or too small: $tokyoObj" }
-          $tokyoDir = Split-Path $tokyoObj -Parent
-          $tokyoMtl = Join-Path $tokyoDir 'Tokyo.mtl'
-          if (-not (Test-Path $tokyoMtl)) {
-            $rootMtl = 'Tokyo.mtl'
-            if (Test-Path $rootMtl) { Copy-Item $rootMtl $tokyoDir -Force }
+          New-Item -ItemType Directory -Path $cityDir -Force | Out-Null
+          if (-not (Test-Path $cityObj) -or (Get-Item $cityObj).Length -lt 100000) {
+            Copy-Item $sourceObj $cityObj -Force
           }
-          if (-not (Test-Path $tokyoMtl)) { throw "Existing Tokyo map has no matching Tokyo.mtl: $tokyoObj" }
-          Write-Host "TOKYO_EXISTING_ASSET_PASS path=$tokyoObj bytes=$((Get-Item $tokyoObj).Length)"
+          $sourceMtl = 'Chicago.mtl'
+          if (Test-Path $sourceMtl) { Copy-Item $sourceMtl $cityDir -Force }
+          if ((Get-Item $cityObj).Length -lt 100000) { throw 'Cached Chicago map is invalid or too small.' }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$cityDir/Chicago.obj"
+          if (Test-Path (Join-Path $cityDir 'Chicago.mtl')) { git add "$cityDir/Chicago.mtl" }
+          if (-not (git diff --cached --quiet)) {
+            git commit -m 'Cache Chicago map from committed source [skip ci]'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          }
+          Write-Host "CHICAGO_EXISTING_ASSET_PASS path=$cityObj bytes=$((Get-Item $cityObj).Length)"
 
       - name: Use the existing San Francisco map from the repository (no external download)
         shell: pwsh
@@ -406,7 +411,7 @@ jobs:
             throw 'Runtime check failed: the actual character GLB was not loaded.'
           }
 
-          foreach ($regionPattern in @('TRAVEL_ASSET_IMPORT_PASS region=Amman', 'TRAVEL_ASSET_IMPORT_PASS region=San Francisco', 'TRAVEL_ASSET_IMPORT_PASS region=Tokyo')) {
+          foreach ($regionPattern in @('TRAVEL_ASSET_IMPORT_PASS region=Amman', 'TRAVEL_ASSET_IMPORT_PASS region=San Francisco', 'TRAVEL_ASSET_IMPORT_PASS region=Chicago')) {
             if (-not (Select-String -Path $runtimeLog -Pattern $regionPattern -Quiet)) {
               Get-Content $runtimeLog
               throw "Travel region import validation failed: $regionPattern"
