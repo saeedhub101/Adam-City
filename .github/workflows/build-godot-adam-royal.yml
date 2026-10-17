@@ -50,7 +50,7 @@ jobs:
           $base = "https://github.com/godotengine/godot/releases/download/$version-stable"
           $engineZip = Join-Path $env:RUNNER_TEMP "godot.zip"
           $templateZip = Join-Path $env:RUNNER_TEMP "templates.zip"
-          Invoke-WebRequest "$base/Godot_v$version-stable_win64_console.exe.zip" -OutFile $engineZip
+          Invoke-WebRequest "$base/Godot_v$version-stable_win64.exe.zip" -OutFile $engineZip
           Invoke-WebRequest "$base/Godot_v$version-stable_export_templates.tpz" -OutFile $templateZip
           $engineDir = Join-Path $env:RUNNER_TEMP "godot-engine"
           $templateDir = Join-Path $env:RUNNER_TEMP "godot-templates-raw"
@@ -58,7 +58,7 @@ jobs:
           $templateAsZip = Join-Path $env:RUNNER_TEMP "templates-archive.zip"
           Copy-Item $templateZip $templateAsZip
           Expand-Archive $templateAsZip -DestinationPath $templateDir -Force
-          $godot = Get-ChildItem $engineDir -Filter "*console.exe" | Select-Object -First 1
+          $godot = Get-ChildItem $engineDir -Filter "*win64.exe" | Select-Object -First 1
           if (-not $godot) { throw "Godot console executable not found after download" }
           "GODOT_EXE=$($godot.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
           $dest = Join-Path $env:APPDATA "Godot/export_templates/$version.stable"
