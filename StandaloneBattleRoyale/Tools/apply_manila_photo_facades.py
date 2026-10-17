@@ -87,11 +87,30 @@ def main() -> None:
         except (ValueError, IndexError):
             style = replacements % 4
         image = Image.open(texture_paths[style]).convert("RGB")
-        uv = np.asarray(visual.uv)
-        if uv.ndim != 2 or len(uv) != len(geometry.vertices):
-            raise RuntimeError(f"Facade mesh {name!r} has invalid UV coordinates")
+        # Rebuild UVs per face: wall projection must follow each wall's orientation.
+        source_vertices = np.asarray(geometry.vertices)
+        source_faces = np.asarray(geometry.faces)
+        if source_faces.ndim != 2 or source_faces.shape[1] != 3:
+            raise RuntimeError(f"Facade mesh {name!r} is not triangular")
+        face_vertices = source_vertices[source_faces].reshape((-1, 3))
+        face_normals = np.asarray(geometry.face_normals)
+        face_uv = np.zeros((len(source_faces), 3, 2), dtype=np.float64)
+        for face_index, tri in enumerate(source_faces):
+            points = source_vertices[tri]
+            normal = face_normals[face_index]
+            if abs(float(normal[2])) > 0.7:
+                face_uv[face_index, :, 0] = points[:, 0] / 5.0
+                face_uv[face_index, :, 1] = points[:, 1] / 5.0
+            elif abs(float(normal[1])) >= abs(float(normal[0])):
+                face_uv[face_index, :, 0] = points[:, 0] / 4.0
+                face_uv[face_index, :, 1] = points[:, 2] / 3.0
+            else:
+                face_uv[face_index, :, 0] = points[:, 1] / 4.0
+                face_uv[face_index, :, 1] = points[:, 2] / 3.0
+        geometry.vertices = face_vertices
+        geometry.faces = np.arange(len(face_vertices), dtype=np.int64).reshape((-1, 3))
         geometry.visual = trimesh.visual.TextureVisuals(
-            uv=uv,
+            uv=face_uv.reshape((-1, 2)),
             material=trimesh.visual.material.PBRMaterial(
                 name=f"ManilaFacadeStyle{style + 1}",
                 baseColorTexture=image,
