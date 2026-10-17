@@ -122,12 +122,13 @@ async function loadLicensedPhotoCatalog() {
     } catch { return null; }
   };
   const [commons, mapillary] = await Promise.all([
-    loadCatalogue('/data/tabarbour-photo-catalog.json'),
+    loadCatalogue('/data/bundled-photo-catalog.json').then(bundled =>
+      bundled || loadCatalogue('/data/tabarbour-photo-catalog.json')),
     loadCatalogue('/data/mapillary-photo-catalog.json')
   ]);
   const photos = [
     ...((commons?.photos || []).map(photo => ({
-      ...photo, imageSrc: photo.thumbnail, sourceName: 'Wikimedia Commons',
+      ...photo, imageSrc: photo.localFile || photo.thumbnail, sourceName: 'Wikimedia Commons',
       sourceUrl: photo.page, authorName: photo.author, licenseName: photo.license,
       label: photo.title
     }))),
@@ -162,6 +163,12 @@ async function loadLicensedPhotoCatalog() {
     credit.textContent = 'المصدر/المصور: ' + (photo.authorName || photo.sourceName || 'غير محدد');
     const license = document.createElement('span');
     license.textContent = 'الرخصة: ' + (photo.licenseName || 'راجع صفحة المصدر');
+    const coordinates = document.createElement('span');
+    coordinates.className = 'licensed-photo-coordinates';
+    coordinates.textContent = Number.isFinite(Number(photo.lat)) && Number.isFinite(Number(photo.lon))
+      && photo.lat !== null && photo.lon !== null
+      ? 'الإحداثيات: ' + Number(photo.lat).toFixed(6) + ', ' + Number(photo.lon).toFixed(6)
+      : 'الإحداثيات: غير متوفرة في المصدر';
     const building = document.createElement('span');
     if (photo.buildingMatch?.osmBuildingId) {
       building.className = 'licensed-photo-building-match';
@@ -170,7 +177,7 @@ async function loadLicensedPhotoCatalog() {
       building.className = 'licensed-photo-building-unmatched';
       building.textContent = 'لم يُثبت ارتباطها بمبنى محدد — لن تُلصق على أي مبنى';
     }
-    card.append(img, title, credit, license, building);
+    card.append(img, title, credit, license, coordinates, building);
     fragment.append(card);
   }
   gallery.append(fragment);
