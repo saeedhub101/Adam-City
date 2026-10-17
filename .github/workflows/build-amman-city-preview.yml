@@ -28,7 +28,7 @@ jobs:
       - name: Install Blender
         run: |
           sudo apt-get update
-          sudo apt-get install --yes blender python3-numpy libegl1 libgl1 libxrender1 libxkbcommon0 libsm6 libxext6 libxi6 libxxf86vm1
+          sudo apt-get install --yes blender python3-numpy python3-pil libegl1 libgl1 libxrender1 libxkbcommon0 libsm6 libxext6 libxi6 libxxf86vm1
           blender --version
       - name: Validate real OSM source
         run: |
@@ -55,9 +55,11 @@ jobs:
             output/Amman-Central-District-3D.png 2>&1 | tee output/build.log
           test -s output/Amman-Central-District.glb
           test -s output/Amman-Central-District-3D.png
+          test -s output/Amman-Central-District-3D-Closeup.png
           python3 - <<'PY'
           import struct
           from pathlib import Path
+          from PIL import Image, ImageStat
           g=Path("output/Amman-Central-District.glb").read_bytes()
           assert g[:4]==b"glTF"
           version,length=struct.unpack_from("<II",g,4)
@@ -66,7 +68,13 @@ jobs:
           assert p[:8]==b"\x89PNG\r\n\x1a\n"
           w,h=struct.unpack_from(">II",p,16)
           assert w>=1280 and h>=720,(w,h)
-          print(f"Validated GLB {len(g):,} bytes and preview {w}x{h} ({len(p):,} bytes)")
+          im=Image.open("output/Amman-Central-District-3D.png").convert("RGB")
+          close=Image.open("output/Amman-Central-District-3D-Closeup.png").convert("RGB")
+          overview_spread=max(ImageStat.Stat(im).stddev)
+          close_spread=max(ImageStat.Stat(close).stddev)
+          assert overview_spread>3.0, ("overview is effectively blank", ImageStat.Stat(im).stddev)
+          assert close_spread>3.0, ("close-up is effectively blank", ImageStat.Stat(close).stddev)
+          print(f"Validated GLB {len(g):,} bytes; overview {w}x{h}, RGB stddev {overview_spread:.2f}; close-up RGB stddev {close_spread:.2f}")
           PY
       - name: Upload Unreal city asset and source review images
         uses: actions/upload-artifact@v4
@@ -75,6 +83,7 @@ jobs:
           path: |
             output/Amman-Central-District.glb
             output/Amman-Central-District-3D.png
+            output/Amman-Central-District-3D-Closeup.png
             output/build.log
           if-no-files-found: error
           retention-days: 30

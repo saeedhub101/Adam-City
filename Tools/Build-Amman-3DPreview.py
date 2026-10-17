@@ -133,6 +133,13 @@ def main():
     bpy.ops.object.select_all(action="SELECT")
     bpy.ops.export_scene.gltf(filepath=str(out),export_format="GLB",export_apply=True,export_yup=True,export_materials="EXPORT")
     bpy.ops.render.render(write_still=True)
-    print(json.dumps({"buildings":nbuilding,"road_ways":nroad,"windows":nwindow,"features":len(d["features"]),"glb":str(out),"preview":str(png)}))
+    # Separate zoomed view for reviewing facade and street-block detail.
+    closeup=png.with_name(png.stem+"-Closeup"+png.suffix)
+    cam.data.ortho_scale=span*.24
+    cam.location=Vector((span*.18,-span*.22,max(span*.20,zmax*.70)))
+    cam.rotation_euler=(target-cam.location).to_track_quat("-Z","Y").to_euler()
+    scene.render.filepath=str(closeup)
+    bpy.ops.render.render(write_still=True)
+    print(json.dumps({"buildings":nbuilding,"road_ways":nroad,"windows":nwindow,"features":len(d["features"]),"glb":str(out),"preview":str(png),"closeup":str(closeup)}))
     if nbuilding<100 or nroad<50 or nwindow<500: raise SystemExit("Quality gate failed: not enough building/road/window geometry")
 if __name__=="__main__": main()
