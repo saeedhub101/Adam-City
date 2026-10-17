@@ -191,9 +191,9 @@ function addBuilding(x, z, w, d, h, seed, palette) {
   obstacles.push({ minX: x - w / 2 - 0.8, maxX: x + w / 2 + 0.8, minZ: z - d / 2 - 0.8, maxZ: z + d / 2 + 0.8 });
 }
 
-const TABARBOUR = { lat: 31.9915, lon: 35.9445 };
+const TABARBOUR = { lat: 32.00306, lon: 35.94722 };
 // Real mapped pilot area around the Tabarbour / Lawyers' Roundabout area.
-const TABARBOUR_BBOX = { south: 31.9855, west: 35.9370, north: 31.9980, east: 35.9520 };
+const TABARBOUR_BBOX = { south: 31.9940, west: 35.9360, north: 32.0120, east: 35.9600 };
 
 function localPoint(lat, lon) {
   return {
@@ -256,69 +256,11 @@ function addOSMBuilding(way, index) {
 }
 
 function createVisibleFallbackCity() {
-  // Keep the world visibly playable even when the OSM snapshot is absent and
-  // Overpass is unreachable. This is a temporary generated neighborhood, not
-  // a substitute for the real Tabarbour snapshot.
-  const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(900, 900),
-    new THREE.MeshStandardMaterial({ color: 0xaaa397, roughness: 1 })
-  );
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.y = -0.04;
-  ground.receiveShadow = true;
-  scene.add(ground);
-
-  const asphalt = new THREE.MeshStandardMaterial({ color: 0x343638, roughness: 0.98 });
-  const sidewalk = new THREE.MeshStandardMaterial({ color: 0xc3bbae, roughness: 1 });
-  const roadLine = new THREE.MeshStandardMaterial({ color: 0xd8d0bd, roughness: 1 });
-  const roadStep = 90;
-  for (let i = -3; i <= 3; i++) {
-    const p = i * roadStep;
-    const arterial = i === 0;
-    const width = arterial ? 13 : 8;
-    const horizontal = new THREE.Mesh(new THREE.BoxGeometry(620, 0.09, width), asphalt);
-    horizontal.position.set(0, 0.015, p);
-    horizontal.receiveShadow = true;
-    scene.add(horizontal);
-    const vertical = new THREE.Mesh(new THREE.BoxGeometry(width, 0.09, 620), asphalt);
-    vertical.position.set(p, 0.016, 0);
-    vertical.receiveShadow = true;
-    scene.add(vertical);
-    for (const side of [-1, 1]) {
-      const hWalk = new THREE.Mesh(new THREE.BoxGeometry(620, 0.12, 1.3), sidewalk);
-      hWalk.position.set(0, 0.07, p + side * (width / 2 + 0.8));
-      scene.add(hWalk);
-      const vWalk = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.12, 620), sidewalk);
-      vWalk.position.set(p + side * (width / 2 + 0.8), 0.07, 0);
-      scene.add(vWalk);
-    }
-    if (arterial) {
-      const marking = new THREE.Mesh(new THREE.BoxGeometry(620, 0.012, 0.12), roadLine);
-      marking.position.set(0, 0.068, 0);
-      scene.add(marking);
-    }
-  }
-
-  const palette = [0xc5b59e, 0xd4c6af, 0xb9a991, 0xd8cbb7, 0xb4a48e, 0xe0d4c0];
-  let seed = 0;
-  for (let ix = -3; ix < 3; ix++) {
-    for (let iz = -3; iz < 3; iz++) {
-      const cx = (ix + 0.5) * roadStep;
-      const cz = (iz + 0.5) * roadStep;
-      const lots = [
-        { x: -20, z: -19, w: 17, d: 15, h: 8 + (seed % 3) * 2.2 },
-        { x:  19, z: -18, w: 19, d: 14, h: 10 + (seed % 4) * 2.1 },
-        { x: -18, z:  19, w: 14, d: 18, h: 7.5 + (seed % 3) * 2.5 },
-        { x:  20, z:  19, w: 16, d: 16, h: 9 + (seed % 5) * 1.8 }
-      ];
-      for (const lot of lots) {
-        addBuilding(cx + lot.x, cz + lot.z, lot.w, lot.d, lot.h, seed++, palette);
-      }
-    }
-  }
-  renderBuildingPhotoLinks([]);
-  statusText.textContent = 'منطقة مؤقتة جاهزة · تعذر تحميل بيانات خريطة طبربور';
-  console.warn('Using generated fallback neighborhood because real OSM data is unavailable.');
+  // Never fabricate streets or buildings when the real map is unavailable.
+  // Keep the scene honest and report the missing real map data.
+  statusText.textContent = 'تعذر تحميل خريطة طبربور الحقيقية';
+  showError('بيانات خريطة طبربور الحقيقية غير متوفرة حاليًا. أعد المحاولة بعد تحديث ملف الخريطة من GitHub Actions.');
+  console.error('Real Tabarbour OSM snapshot unavailable; no substitute city will be generated.');
 }
 
 async function loadTabarbourMap() {
