@@ -62,7 +62,7 @@ def main() -> None:
         name = str(tags["name"]).strip()
         if not name:
             continue
-        key = (name.casefold(), tuple(points))
+        key = (name.casefold(), tuple((point[0], point[1]) for point in points))
         if key in seen:
             continue
         seen.add(key)
