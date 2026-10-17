@@ -10,8 +10,8 @@
   },
   "buildings": 4342,
   "roads": 3037,
-  "mesh_objects": 14323,
-  "glb_bytes": 11488868,
+  "mesh_objects": 7,
+  "glb_bytes": 6106920,
   "facade_textures": [
     "Manila-Facade-Texture-1.jpg",
     "Manila-Facade-Texture-2.jpg",
@@ -19,5 +19,10 @@
     "Manila-Facade-Texture-4.jpg"
   ],
   "road_texture": "Manila-Road-Asphalt.jpg",
-  "note": "Real OSM footprints and road alignments; facade atlases and asphalt are procedural, and center markings are approximations. Exact facade appearance, road paint, curbs, signs, and street furniture require correctly geolocated imagery or verified mapped tags."
+  "note": "Real OSM footprints and road alignments; facade atlases and asphalt are procedural, and center markings are approximations. Exact facade appearance, road paint, curbs, signs, and street furniture require correctly geolocated imagery or verified mapped tags. Existing OSM geometry was compacted offline; no network download was needed.",
+  "optimization": {
+    "mode": "offline cached-GLB compaction",
+    "mesh_objects_before": 14323,
+    "mesh_objects_after": 7
+  }
 }
