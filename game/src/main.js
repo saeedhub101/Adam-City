@@ -145,11 +145,20 @@ async function loadLicensedPhotoCatalog() {
       credit.textContent = 'المؤلف: ' + (photo.author || 'غير محدد');
       const license = document.createElement('span');
       license.textContent = 'الرخصة: ' + (photo.license || 'راجع صفحة المصدر');
-      card.append(img, title, credit, license);
+      const building = document.createElement('span');
+      if (photo.buildingMatch?.osmBuildingId) {
+        building.className = 'licensed-photo-building-match';
+        building.textContent = 'المبنى المطابق: ' + photo.buildingMatch.buildingName + ' (OSM #' + photo.buildingMatch.osmBuildingId + ')';
+      } else {
+        building.className = 'licensed-photo-building-unmatched';
+        building.textContent = 'لم يُثبت ارتباطها بمبنى محدد — لن تُلصق على أي مبنى';
+      }
+      card.append(img, title, credit, license, building);
       fragment.append(card);
     }
     gallery.append(fragment);
-    status.textContent = photos.length + ' صورة مرشّحة من Wikimedia Commons. افتح المصدر للتحقق من الموقع والتفاصيل قبل استخدامها كواجهة.';
+    const exactMatches = Number(catalogue.matchedToBuildingCount || photos.filter(photo => photo.buildingMatch?.osmBuildingId).length);
+    status.textContent = photos.length + ' صورة مرخّصة؛ ' + exactMatches + ' فقط رُبطت بمبنى محدد بإحداثيات تقع داخل بصمته على الخريطة.';
   } catch (error) {
     status.textContent = 'فهرس الصور قيد الإنشاء الآلي. ستظهر الصور المرخّصة بعد نجاح تشغيل مهمة الجمع.';
   }
