@@ -8,14 +8,50 @@ var city_builder: Node3D
 func _ready() -> void:
 	_build_environment()
 	_build_ground()
-	city_builder = CityBuilder.new()
-	city_builder.name = "ManilaRealCity"
-	add_child(city_builder)
-	var result: Dictionary = city_builder.load_city()
+	var city_result := _build_city()
 	var player = PlayerScene.instantiate()
 	player.position = Vector3(0, 0.25, 12)
 	add_child(player)
-	_build_hud(int(result.get("buildings", 0)), int(result.get("roads", 0)), bool(result.get("ok", false)))
+	_build_hud(int(city_result.get("buildings", 0)), int(city_result.get("roads", 0)), bool(city_result.get("ok", false)))
+
+func _build_city() -> Dictionary:
+	# The workflow stages a textured, real-geography Manila GLB here before import.
+	var map_path := "res://assets/manila_city.glb"
+	if FileAccess.file_exists(map_path):
+		var packed_map := load(map_path) as PackedScene
+		if packed_map != null:
+			var city := packed_map.instantiate()
+			city.name = "ManilaRealWorldDistrict"
+			add_child(city)
+			var stats := _read_city_stats()
+			stats["ok"] = true
+			print("CITY_RENDER_SOURCE=GLB")
+			print("CITY_BUILDINGS=%d CITY_ROADS=%d" % [int(stats.get("buildings", 0)), int(stats.get("roads", 0))])
+			return stats
+		push_error("Manila GLB exists but Godot could not load it: " + map_path)
+
+	# Diagnostic fallback keeps the scene inspectable if the GLB is unavailable.
+	city_builder = CityBuilder.new()
+	city_builder.name = "ManilaOSMFallback"
+	add_child(city_builder)
+	var fallback_result: Dictionary = city_builder.load_city()
+	print("CITY_RENDER_SOURCE=OSM_JSON_FALLBACK")
+	return fallback_result
+
+func _read_city_stats() -> Dictionary:
+	var path := "res://assets/manila_city.json"
+	if not FileAccess.file_exists(path):
+		return {"buildings": 0, "roads": 0}
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return {"buildings": 0, "roads": 0}
+	var parsed = JSON.parse_string(file.get_as_text())
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return {"buildings": 0, "roads": 0}
+	return {
+		"buildings": int(parsed.get("buildings", []).size()) if parsed.get("buildings", null) is Array else int(parsed.get("buildings", 0)),
+		"roads": int(parsed.get("roads", []).size()) if parsed.get("roads", null) is Array else int(parsed.get("roads", 0))
+	}
 
 func _build_environment() -> void:
 	var world := WorldEnvironment.new()
@@ -65,7 +101,7 @@ func _build_hud(buildings: int, roads: int, loaded: bool) -> void:
 	add_child(layer)
 	var panel := PanelContainer.new()
 	panel.position = Vector2(20, 20)
-	panel.custom_minimum_size = Vector2(410, 100)
+	panel.custom_minimum_size = Vector2(460, 110)
 	layer.add_child(panel)
 	var column := VBoxContainer.new()
 	panel.add_child(column)
@@ -75,9 +111,9 @@ func _build_hud(buildings: int, roads: int, loaded: bool) -> void:
 	column.add_child(heading)
 	var status_label := Label.new()
 	if loaded:
-		status_label.text = "REAL OPENSTREETMAP GEOMETRY  •  %d buildings  •  %d road segments" % [buildings, roads]
+		status_label.text = "REAL CITY MODEL  •  %d mapped buildings  •  %d road ways" % [buildings, roads]
 	else:
-		status_label.text = "CITY DATA MISSING — run Tools/build_manila_city.py before launching"
+		status_label.text = "CITY DATA MISSING — map import failed"
 	column.add_child(status_label)
 	var help := Label.new()
 	help.text = "WASD move  •  Mouse look  •  Space jump  •  Esc releases mouse"
