@@ -109,6 +109,9 @@ def main():
     bpy.ops.object.camera_add(location=camloc); cam=bpy.context.object
     cam.rotation_euler=(target-cam.location).to_track_quat("-Z","Y").to_euler()
     cam.data.type="ORTHO"; cam.data.ortho_scale=span*1.05
+    # The whole Amman extract can span several kilometres; Blender defaults to a 1 km far clip,
+    # which silently clipped the entire scene in headless renders. Scale clipping to the real scene.
+    cam.data.clip_start=0.1; cam.data.clip_end=max(10000.0,span*4.0,zmax*4.0+cam.location.length)
     scene=bpy.context.scene; scene.camera=cam
     # Workbench is stable on headless runners; configure studio light and contrast.
     scene.render.engine="BLENDER_WORKBENCH"
