@@ -43,6 +43,23 @@ jobs:
           }
           "City verified: $($city.buildings.Count) buildings; $($city.roads.Count) roads."
 
+      - name: Stage the real Manila district and player character
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Path assets -Force | Out-Null
+          $characterSource = Join-Path $env:GITHUB_WORKSPACE 'assets/saeed.glb'
+          $mapSource = Join-Path $env:GITHUB_WORKSPACE 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb'
+          if (-not (Test-Path $characterSource)) { throw "Source character GLB is missing: $characterSource" }
+          if (-not (Test-Path $mapSource)) { throw "Manila district GLB is missing: $mapSource" }
+          Copy-Item $characterSource (Join-Path $PWD 'assets/adam_royal_character.glb') -Force
+          Copy-Item $mapSource (Join-Path $PWD 'assets/manila_city.glb') -Force
+          foreach ($asset in @('assets/adam_royal_character.glb', 'assets/manila_city.glb')) {
+            $item = Get-Item $asset
+            if ($item.Length -lt 100000) { throw "Staged asset is unexpectedly small: $asset ($($item.Length) bytes)" }
+            "STAGED_ASSET=$asset SIZE=$($item.Length)"
+          }
+
       - name: Download Godot 4.4.1 and Windows export templates
         shell: pwsh
         run: |
@@ -74,10 +91,33 @@ jobs:
       - name: Import and validate Godot project
         shell: pwsh
         run: |
-          & $env:GODOT_EXE --headless --path "$PWD" --editor --quit --verbose
-          if ($LASTEXITCODE -ne 0) { throw "Godot project import or script parse failed" }
-          & $env:GODOT_EXE --headless --path "$PWD" --quit-after 5
-          if ($LASTEXITCODE -ne 0) { throw "Godot headless startup/city loading test failed" }
+          $ErrorActionPreference = 'Stop'
+          $importLog = Join-Path $env:RUNNER_TEMP 'godot-import.log'
+          & $env:GODOT_EXE --headless --path "$PWD" --editor --quit --verbose 2>&1 | Tee-Object -FilePath $importLog
+          $importExitCode = $LASTEXITCODE
+          if ($importExitCode -ne 0) {
+            Write-Host '===== Godot import log ====='
+            if (Test-Path $importLog) { Get-Content $importLog }
+            throw "Godot project import or script parse failed with exit code $importExitCode"
+          }
+
+          $runtimeLog = Join-Path $env:RUNNER_TEMP 'godot-runtime.log'
+          & $env:GODOT_EXE --headless --path "$PWD" --quit-after 30 --verbose 2>&1 | Tee-Object -FilePath $runtimeLog
+          $runtimeExitCode = $LASTEXITCODE
+          if ($runtimeExitCode -ne 0) {
+            Write-Host '===== Godot runtime log ====='
+            if (Test-Path $runtimeLog) { Get-Content $runtimeLog }
+            throw "Godot headless startup/city loading test failed with exit code $runtimeExitCode"
+          }
+          if (-not (Select-String -Path $runtimeLog -Pattern 'CITY_RENDER_SOURCE=GLB' -Quiet)) {
+            Get-Content $runtimeLog
+            throw 'Runtime check failed: the real Manila GLB was not loaded.'
+          }
+          if (-not (Select-String -Path $runtimeLog -Pattern 'CHARACTER_MODEL_LOADED=true' -Quiet)) {
+            Get-Content $runtimeLog
+            throw 'Runtime check failed: the actual character GLB was not loaded.'
+          }
+          Write-Host 'Verified: real Manila GLB and player character loaded in the game scene.'
 
       - name: Export Windows game
         shell: pwsh
@@ -97,6 +137,7 @@ jobs:
           path: |
             GodotAdamRoyal/build/
             GodotAdamRoyal/assets/manila_city.json
+            GodotAdamRoyal/assets/*.glb
             GodotAdamRoyal/.godot/imported/
           if-no-files-found: warn
           retention-days: 14
