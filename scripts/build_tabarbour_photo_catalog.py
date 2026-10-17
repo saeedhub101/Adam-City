@@ -118,7 +118,9 @@ def main():
     output = {
         "area": "Tabarbour, Amman, Jordan",
         "generatedAt": datetime.now(timezone.utc).isoformat(),
-        "method": "Wikimedia Commons geosearch + text search; strict unique OSM footprint matching",\n        "matchedToBuildingCount": sum(1 for p in photos if p.get("buildingMatch")),\n        "matchingPolicy": "Automatic association only when photo coordinates fall inside exactly one OSM building footprint. No nearest-building guesses.",
+        "method": "Wikimedia Commons geosearch + text search; strict unique OSM footprint matching",
+        "matchedToBuildingCount": sum(1 for p in photos if p.get("buildingMatch")),
+        "matchingPolicy": "Automatic association only when photo coordinates fall inside exactly one OSM building footprint. No nearest-building guesses.",
         "radiusMeters": RADIUS,
         "count": min(len(photos), 100),
         "photos": photos[:100]
