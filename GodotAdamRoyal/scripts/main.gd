@@ -82,7 +82,7 @@ func _build_ground() -> void:
 	ground.name = "WalkableGround"
 	ground.position.y = -0.12
 	var collision := CollisionShape3D.new()
-	collision.shape = PlaneShape3D.new()
+	collision.shape = WorldBoundaryShape3D.new()
 	ground.add_child(collision)
 	add_child(ground)
 	var plane := MeshInstance3D.new()
