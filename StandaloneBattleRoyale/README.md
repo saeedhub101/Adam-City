@@ -5,6 +5,7 @@ This is a separate Unreal Engine game prototype, not a UEFN island and not part 
 ## Initial implementation
 
 - Unreal Engine C++ project/module skeleton.
+- Restored a real 3D GLB district model for Manila at `Content/Maps/Manila-Central-District.glb` as the map source asset.
 - Replicated third-person character foundation.
 - Server-authoritative hitscan firing request.
 - Replicated health and elimination state placeholders.
@@ -13,7 +14,7 @@ This is a separate Unreal Engine game prototype, not a UEFN island and not part 
 
 ## Not implemented yet
 
-- Playable map, terrain, buildings, loot, inventory, weapon assets, animation setup, UI, lobby, matchmaking, shrinking storm, bots, persistence, dedicated-server deployment, anti-cheat, audio, and optimization.
+- The Manila GLB is present as a source asset, but it has not yet been imported into Unreal `.uasset` assets or assembled into a playable `.umap` level. Playable terrain/buildings, loot, inventory, weapon assets, animation setup, UI, lobby, matchmaking, shrinking storm, bots, persistence, dedicated-server deployment, anti-cheat, audio, and optimization remain unfinished.
 - Saeed GLB import/retargeting into the player character.
 - Controller mappings and console certification work.
 
@@ -24,11 +25,11 @@ GitHub Actions can check source files and package source artifacts, but cannot c
 ## First local validation
 
 1. Install Unreal Engine using Epic Games Launcher on Windows.
-2. Open SaeedRoyale.uproject and let Unreal generate project files.
-3. Compile the editor target.
-4. Create a test map, place PlayerStarts, and set SaeedRoyaleGameMode as the map GameMode.
-5. Use Play > Number of Players = 2 and run as a listen server to test replication and server-side damage.
-6. Fix all compile/runtime errors before adding the storm and loot systems.
+2. Open `SaeedRoyale.uproject` and import `Content/Maps/Manila-Central-District.glb` using the editor's GLTF/GLB import support.
+3. Inspect the imported mesh hierarchy, scale, origin, and materials; split or optimize the city into streaming-friendly sections if required.
+4. Save a real `.umap` level, add PlayerStarts and lighting, and set SaeedRoyaleGameMode as the map GameMode.
+5. Compile the editor target and test Play-in-Editor before producing gameplay screenshots.
+6. Use Play > Number of Players = 2 and run as a listen server to test replication and server-side damage.
 
 ## Platform plan
 
