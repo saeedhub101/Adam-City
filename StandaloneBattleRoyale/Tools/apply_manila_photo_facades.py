@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 """Apply a real CC0 facade photograph to the cached Manila GLB without rebuilding its geometry."""
 from __future__ import annotations
-import io
 import json
-import random
 from pathlib import Path
-import requests
 import numpy as np
 import trimesh
 from PIL import Image, ImageEnhance, ImageOps
@@ -13,8 +10,13 @@ from PIL import Image, ImageEnhance, ImageOps
 MAP_DIR = Path("StandaloneBattleRoyale/Content/Maps")
 GLB = MAP_DIR / "Manila-Central-District.glb"
 REPORT = MAP_DIR / "Manila-Central-District.json"
-SOURCE_URL = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Facade001_4K_Color.jpg"
-HEADERS = {"User-Agent": "AdamRoyal-Game-Research/1.0 (facade texture integration)"}
+PHOTO_DIR = MAP_DIR / "Street-Imagery"
+PHOTO_FILES = [
+    "commons_manila_019_First_United_Building_Escolta_Binondo_Manila_2014-10-04_jpg.jpg",
+    "commons_manila_018_Escolta_Street_in_Manila_looking_west_from_the_Burke_Street_intersecti.jpg",
+    "commons_manila_016_Escolta_Street_Binondo_Manila_04-07-2023_jpg.jpg",
+    "commons_manila_002_Escolta_Street_buildings_drone_Binondo_Manila_09-06-2025_jpg.jpg",
+]
 
 def main() -> None:
     if not GLB.exists() or not REPORT.exists():
@@ -37,37 +39,37 @@ def main() -> None:
         if not photo_materials:
             raise RuntimeError("No known Manila facade materials found; refusing to save an untextured map.")
         report = json.loads(REPORT.read_text(encoding="utf-8"))
-        report["facade_texture_source"] = SOURCE_URL
-        report["facade_texture_license"] = "CC0 1.0 (verify source metadata at Wikimedia Commons)"
-        report["facade_texture_method"] = "one real facade photograph, four color/contrast variants embedded in cached GLB"
+        report["facade_texture_source"] = "Wikimedia Commons Manila street photographs; see Street-Imagery and attribution manifest"
+        report["facade_texture_method"] = "four distinct real Manila/Escolta street photographs used as facade image textures"
         report["facade_materials_replaced"] = len(photo_materials)
         report["glb_bytes"] = GLB.stat().st_size
-        report["note"] = "Real OSM footprints/road alignments; facade uses a real CC0 facade photograph in four variants. It is not geolocated imagery of each specific Manila building; exact facades still need local street-level imagery."
+        report["note"] = "Real OSM footprints and road alignments; facade materials use four different actual Manila/Escolta street photographs. These are photographic surface references, not a georeferenced photogrammetry model of every individual building; attribution is documented in Street-Imagery/manifest.json."
         REPORT.write_text(json.dumps(report, indent=2), encoding="utf-8")
         print(f"PHOTO_FACADE_PASS materials={len(photo_materials)} already_applied=true glb_bytes={GLB.stat().st_size}")
         return
 
-    response = requests.get(SOURCE_URL, headers=HEADERS, timeout=60, allow_redirects=True)
-    response.raise_for_status()
-    source = Image.open(io.BytesIO(response.content)).convert("RGB")
-    if source.width < 512 or source.height < 512:
-        raise RuntimeError(f"Downloaded facade image is too small: {source.size}")
-    # Keep four distinct photographic variants, avoiding one identical color on every building.
-    variants = [
-        (1.00, 1.00, 1.00),
-        (0.88, 0.92, 1.05),
-        (1.08, 0.90, 0.88),
-        (0.96, 1.08, 0.94),
-    ]
+    source_images = []
+    for filename in PHOTO_FILES:
+        image_path = PHOTO_DIR / filename
+        if not image_path.is_file():
+            raise FileNotFoundError(f"Required real Manila street photograph is missing: {image_path}")
+        image = Image.open(image_path).convert("RGB")
+        if image.width < 512 or image.height < 256:
+            raise RuntimeError(f"Manila reference photo is too small: {image_path} {image.size}")
+        source_images.append((filename, image))
+
+    # Use four different, locally cached photographs of actual Escolta/Binondo streets,
+    # rather than one generic non-Manila facade image tinted four times.
     paths = []
-    for index, (brightness, contrast, saturation) in enumerate(variants, start=1):
-        variant = ImageOps.fit(source, (1024, 1024), method=Image.Resampling.LANCZOS, centering=(0.5, 0.5))
-        variant = ImageEnhance.Brightness(variant).enhance(brightness)
-        variant = ImageEnhance.Contrast(variant).enhance(contrast)
-        variant = ImageEnhance.Color(variant).enhance(saturation)
+    for index, (filename, source) in enumerate(source_images, start=1):
+        variant = ImageOps.fit(source, (1024, 1024), method=Image.Resampling.LANCZOS, centering=(0.5, 0.42))
+        variant = ImageEnhance.Contrast(variant).enhance(1.06)
+        variant = ImageEnhance.Color(variant).enhance(0.96)
         texture_path = MAP_DIR / f"Manila-Facade-Texture-{index}.jpg"
         variant.save(texture_path, quality=93, optimize=True)
         paths.append(texture_path)
+        print(f"MANILA_PHOTO_TEXTURE={texture_path.name} source={filename} source_size={source.size}")
+
     replacements = 0
     for geometry in scene.geometry.values():
         visual = getattr(geometry, "visual", None)
@@ -99,12 +101,11 @@ def main() -> None:
     if GLB.stat().st_size < 100_000 or len(check.geometry) > 50:
         raise RuntimeError("Photographic facade GLB failed size/mesh validation.")
     report = json.loads(REPORT.read_text(encoding="utf-8"))
-    report["facade_texture_source"] = SOURCE_URL
-    report["facade_texture_license"] = "CC0 1.0 (verify source metadata at Wikimedia Commons)"
-    report["facade_texture_method"] = "one real facade photograph, four color/contrast variants embedded in cached GLB"
+    report["facade_texture_source"] = "Wikimedia Commons Manila street photographs; see Street-Imagery and attribution manifest"
+    report["facade_texture_method"] = "four distinct real Manila/Escolta street photographs used as facade image textures"
     report["facade_materials_replaced"] = replacements
     report["glb_bytes"] = GLB.stat().st_size
-    report["note"] = "Real OSM footprints/road alignments; facade uses a real CC0 facade photograph in four variants. It is not geolocated imagery of each specific Manila building; exact facades still need local street-level imagery."
+    report["note"] = "Real OSM footprints and road alignments; facade materials use four different actual Manila/Escolta street photographs. These are photographic surface references, not a georeferenced photogrammetry model of every individual building; attribution is documented in Street-Imagery/manifest.json."
     REPORT.write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(f"PHOTO_FACADE_PASS materials={replacements} image={source.size} glb_bytes={GLB.stat().st_size}")
 
