@@ -12,7 +12,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: manila-city-build-main
+  group: manila-city-build-main-v2
   cancel-in-progress: true
 
 jobs:
