@@ -106,6 +106,9 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Checkout release target
+        uses: actions/checkout@v5
+
       - name: Download verified Windows game
         uses: actions/download-artifact@v7
         with:
