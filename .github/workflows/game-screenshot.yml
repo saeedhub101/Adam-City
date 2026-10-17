@@ -40,7 +40,7 @@ jobs:
       - name: Cache Helsinki source tile
         uses: actions/cache@v4
         with:
-          path: .cache/helsinki
+          path: game/public/models/helsinki
           key: helsinki-city-lod16-v2
 
       - name: Download official Helsinki reality-mesh tile and textures
