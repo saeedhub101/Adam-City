@@ -31,6 +31,8 @@ var victory := false
 var mouse_captured := true
 var player_speed := 7.0
 var rng := RandomNumberGenerator.new()
+var screenshot_capture_remaining := -1.0
+var screenshot_capture_path := ""
 
 func _ready() -> void:
 	rng.randomize()
@@ -41,6 +43,9 @@ func _ready() -> void:
 	_build_hud()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_update_hud()
+	if OS.has_environment("ADAM_ROYAL_CAPTURE"):
+		screenshot_capture_path = OS.get_environment("ADAM_ROYAL_CAPTURE")
+		screenshot_capture_remaining = 3.0
 
 func _setup_input() -> void:
 	var actions := {
@@ -340,6 +345,19 @@ func _unhandled_input(event: InputEvent) -> void:
 		camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, deg_to_rad(-35), deg_to_rad(35))
 
 func _process(delta: float) -> void:
+	if screenshot_capture_remaining >= 0.0:
+		screenshot_capture_remaining -= delta
+		if screenshot_capture_remaining <= 0.0:
+			var absolute_path := ProjectSettings.globalize_path(screenshot_capture_path)
+			var output_dir := absolute_path.get_base_dir()
+			DirAccess.make_dir_recursive_absolute(output_dir)
+			var image := get_viewport().get_texture().get_image()
+			var save_error := image.save_png(absolute_path)
+			if save_error == OK:
+				print("GAMEPLAY_SCREENSHOT_SAVED=", absolute_path, " SIZE=", image.get_width(), "x", image.get_height())
+			else:
+				push_error("Gameplay screenshot could not be saved: " + absolute_path + " error=" + str(save_error))
+			screenshot_capture_remaining = -1.0
 	if game_over:
 		if Input.is_action_just_pressed("restart"):
 			_restart_game()
