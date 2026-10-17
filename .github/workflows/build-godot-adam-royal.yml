@@ -31,17 +31,24 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Download real Manila city geometry from OpenStreetMap
+      - name: Download and build the real Manila district from OpenStreetMap
         shell: pwsh
+        working-directory: .
         run: |
-          python -m pip install --disable-pip-version-check requests
-          python Tools/build_manila_city.py
-          if ($LASTEXITCODE -ne 0) { throw "OSM city data generation failed" }
-          $city = Get-Content assets/manila_city.json -Raw | ConvertFrom-Json
-          if ($city.buildings.Count -lt 100 -or $city.roads.Count -lt 30) {
-            throw "City dataset is incomplete: buildings=$($city.buildings.Count), roads=$($city.roads.Count)"
+          $ErrorActionPreference = 'Stop'
+          python -m pip install --disable-pip-version-check requests shapely trimesh mapbox-earcut scipy numpy pillow
+          if ($LASTEXITCODE -ne 0) { throw "Map generator dependencies could not be installed" }
+          python StandaloneBattleRoyale/Tools/build_manila_district.py
+          if ($LASTEXITCODE -ne 0) { throw "Fresh Manila map generation failed" }
+          $reportPath = 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.json'
+          $glbPath = 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb'
+          if (-not (Test-Path $reportPath) -or -not (Test-Path $glbPath)) { throw "Map generator did not produce the GLB and report" }
+          $report = Get-Content $reportPath -Raw | ConvertFrom-Json
+          if ($report.buildings -lt 100 -or $report.roads -lt 30) {
+            throw "Fresh city dataset is incomplete: buildings=$($report.buildings), roads=$($report.roads)"
           }
-          "City verified: $($city.buildings.Count) buildings; $($city.roads.Count) roads."
+          if ((Get-Item $glbPath).Length -lt 100000) { throw "Generated Manila GLB is unexpectedly small" }
+          "Fresh Manila GLB verified: $($report.buildings) buildings; $($report.roads) road ways; $((Get-Item $glbPath).Length) bytes."
 
       - name: Stage the real Manila district and player character
         shell: pwsh
@@ -50,10 +57,13 @@ jobs:
           New-Item -ItemType Directory -Path assets -Force | Out-Null
           $characterSource = Join-Path $env:GITHUB_WORKSPACE 'assets/saeed.glb'
           $mapSource = Join-Path $env:GITHUB_WORKSPACE 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb'
+          $reportSource = Join-Path $env:GITHUB_WORKSPACE 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.json'
           if (-not (Test-Path $characterSource)) { throw "Source character GLB is missing: $characterSource" }
-          if (-not (Test-Path $mapSource)) { throw "Manila district GLB is missing: $mapSource" }
+          if (-not (Test-Path $mapSource)) { throw "Freshly generated Manila district GLB is missing: $mapSource" }
+          if (-not (Test-Path $reportSource)) { throw "Manila source-data report is missing: $reportSource" }
           Copy-Item $characterSource (Join-Path $PWD 'assets/adam_royal_character.glb') -Force
           Copy-Item $mapSource (Join-Path $PWD 'assets/manila_city.glb') -Force
+          Copy-Item $reportSource (Join-Path $PWD 'assets/manila_city.json') -Force
           foreach ($asset in @('assets/adam_royal_character.glb', 'assets/manila_city.glb')) {
             $item = Get-Item $asset
             if ($item.Length -lt 100000) { throw "Staged asset is unexpectedly small: $asset ($($item.Length) bytes)" }
