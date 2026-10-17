@@ -1,0 +1,137 @@
+name: Capture real Helsinki gameplay screenshot
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/capture-gameplay-screenshot.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: capture-helsinki-gameplay-main
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Install headless display and software OpenGL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgl1-mesa-dri
+
+      - name: Download Godot 4.4.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/godot"
+          curl -fL --retry 4 --connect-timeout 30 \
+            "https://github.com/godotengine/godot/releases/download/4.4.1-stable/Godot_v4.4.1-stable_linux.x86_64.zip" \
+            -o "$RUNNER_TEMP/godot/godot.zip"
+          unzip -q "$RUNNER_TEMP/godot/godot.zip" -d "$RUNNER_TEMP/godot"
+          GODOT_BIN="$(find "$RUNNER_TEMP/godot" -maxdepth 1 -type f -name 'Godot_v4.4.1-stable_linux.x86_64' -print -quit)"
+          test -n "$GODOT_BIN"
+          chmod +x "$GODOT_BIN"
+          echo "GODOT_BIN=$GODOT_BIN" >> "$GITHUB_ENV"
+
+      - name: Import and validate the real city asset
+        working-directory: SaeedRoyaleGodot
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$GODOT_BIN" --headless --editor --path . --import 2>&1 | tee "$RUNNER_TEMP/city-import.log"
+          if grep -E "SCRIPT ERROR|Parse Error|ERROR:" "$RUNNER_TEMP/city-import.log"; then
+            echo "City asset import produced errors."
+            exit 1
+          fi
+          test -s assets/real_city/helsinki_city_scan.ply
+          mkdir -p screenshots
+
+      - name: Render a real gameplay screenshot
+        working-directory: SaeedRoyaleGodot
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > .capture_gameplay.gd <<'GDSCRIPT'
+          extends SceneTree
+
+          func _initialize() -> void:
+          	call_deferred("_capture")
+
+          func _capture() -> void:
+          	var packed: PackedScene = load("res://main.tscn")
+          	if packed == null:
+          		push_error("Could not load main.tscn for screenshot capture")
+          		quit(1)
+          		return
+          	var game: Node = packed.instantiate()
+          	root.add_child(game)
+          	for frame_index in range(8):
+          		await process_frame
+          	await create_timer(2.5).timeout
+          	var viewport: Viewport = root.get_viewport()
+          	var screenshot: Image = viewport.get_texture().get_image()
+          	if screenshot == null or screenshot.is_empty():
+          		push_error("Gameplay screenshot is empty")
+          		quit(1)
+          		return
+          	var path := ProjectSettings.globalize_path("res://screenshots/helsinki-gameplay.png")
+          	var error := screenshot.save_png(path)
+          	if error != OK:
+          		push_error("Could not save gameplay screenshot: %s" % error)
+          		quit(1)
+          		return
+          	print("GAMEPLAY_SCREENSHOT=" + path)
+          	quit(0)
+          GDSCRIPT
+          timeout 180 xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            "$GODOT_BIN" --path . --rendering-method gl_compatibility --script res://.capture_gameplay.gd \
+            2>&1 | tee "$RUNNER_TEMP/city-screenshot.log"
+          if grep -E "SCRIPT ERROR|Parse Error|ERROR:" "$RUNNER_TEMP/city-screenshot.log"; then
+            echo "Gameplay screenshot run produced errors."
+            exit 1
+          fi
+          rm -f .capture_gameplay.gd
+          test -s screenshots/helsinki-gameplay.png
+          python3 - <<'PY'
+          import struct
+          from pathlib import Path
+          p = Path("screenshots/helsinki-gameplay.png")
+          data = p.read_bytes()
+          if data[:8] != b"\x89PNG\r\n\x1a\n":
+              raise SystemExit("Output is not a PNG image")
+          width, height = struct.unpack(">II", data[16:24])
+          if width < 640 or height < 360:
+              raise SystemExit(f"Screenshot resolution is too small: {width}x{height}")
+          print(f"Validated gameplay screenshot: {width}x{height}, {len(data)} bytes")
+          PY
+
+      - name: Commit screenshot directly to main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add SaeedRoyaleGodot/screenshots/helsinki-gameplay.png
+          git commit -m "Add gameplay screenshot of real Helsinki scan"
+          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push origin HEAD:main
+
+      - name: Upload screenshot artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: Helsinki-Real-City-Gameplay-Screenshot
+          path: SaeedRoyaleGodot/screenshots/helsinki-gameplay.png
+          if-no-files-found: error
+          retention-days: 30
