@@ -1,86 +1,114 @@
 #!/usr/bin/env python3
-"""Fetch geolocated, building-specific Manila facade photographs from Wikimedia Commons."""
+"""Download real, named-building facade reference photos from Wikimedia Commons."""
 from __future__ import annotations
 import json
+import re
+import time
 from pathlib import Path
+from urllib.parse import quote
+
 import requests
 
-OUT = Path("StandaloneBattleRoyale/Content/Maps/Real-Facade-Photos")
+ROOT = Path("StandaloneBattleRoyale/Content/Maps")
+OUT = ROOT / "Real-Facade-Photos"
 OUT.mkdir(parents=True, exist_ok=True)
 API = "https://commons.wikimedia.org/w/api.php"
-# These Commons categories identify real, named buildings in Binondo/Escolta.
-CATEGORIES = {
-    "First United Building": "Category:First United Building",
-    "Regina Building": "Category:Regina Building",
-    "Afable Building": "Category:Afable Building",
+BUILDINGS = {
+    "First United Building": ("First United Building", "First United Building Manila"),
+    "Regina Building": ("Regina Building Manila", "Regina Building Escolta"),
+    "Afable Building": ("Afable Building Manila", "Afable Building Binondo"),
 }
-session = requests.Session()
-session.headers.update({"User-Agent": "AdamRoyal-ResearchGame/1.0 (educational research; contact via GitHub repo)"})
-manifest = []
-for building, category in CATEGORIES.items():
-    try:
-        data = session.get(API, params={
-            "action":"query","format":"json","generator":"categorymembers",
-            "gcmtitle":category,"gcmtype":"file","gcmlimit":30,
-            "prop":"imageinfo","iiprop":"url|extmetadata","iiurlwidth":2048
-        }, timeout=45).json()
-        pages = (data.get("query") or {}).get("pages") or {}
-        # Commons category membership is inconsistent; fall back to a direct
-        # file-title search for the named building instead of failing the build.
-        if not pages:
-            search = session.get(API, params={
-                "action":"query","format":"json","generator":"search",
-                "gsrsearch":f'intitle:"{building}" filetype:bitmap',
-                "gsrnamespace":6,"gsrlimit":30,
-                "prop":"imageinfo","iiprop":"url|extmetadata","iiurlwidth":2048
-            }, timeout=45).json()
-            pages = (search.get("query") or {}).get("pages") or {}
-        candidates = []
-        for page in pages.values():
-            info = (page.get("imageinfo") or [{}])[0]
-            url = info.get("thumburl") or info.get("url")
-            if not url or not str(url).lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
-                continue
-            title = page.get("title", "")
-            # Prefer exterior/façade views and avoid interiors, maps, logos and plans.
-            low = title.lower()
-            if any(w in low for w in ("interior", "floor plan", "map", "logo", "plaque")):
-                continue
-            score = sum(w in low for w in ("facade", "façade", "exterior", "building", "south façade", "street"))
-            candidates.append((score, title, url, info.get("extmetadata", {})))
-        candidates.sort(reverse=True, key=lambda x: x[0])
-        saved = 0
-        for score, title, url, meta in candidates:
-            if saved >= 3:
-                break
+SESSION = requests.Session()
+SESSION.headers.update({"User-Agent": "AdamRoyalResearch/1.0 (public educational mapping; repository issue tracker)"})
+EXTS = (".jpg", ".jpeg", ".png", ".webp")
+
+
+def api(params):
+    response = SESSION.get(API, params={**params, "format": "json"}, timeout=45)
+    response.raise_for_status()
+    data = response.json()
+    if "error" in data:
+        raise RuntimeError(str(data["error"]))
+    return data
+
+
+def main():
+    manifest = []
+    errors = []
+    for building, terms in BUILDINGS.items():
+        candidates = {}
+        for term in terms:
             try:
-                response = session.get(url, timeout=60)
-                response.raise_for_status()
-                ext = ".png" if "png" in response.headers.get("content-type", "").lower() else ".jpg"
-                slug = "".join(c if c.isalnum() else "_" for c in building).strip("_")
-                name = f"{slug}_{saved+1}{ext}"
-                (OUT / name).write_bytes(response.content)
-                def field(key):
-                    return (meta.get(key) or {}).get("value", "")
-                manifest.append({
-                    "building": building, "file": name, "commons_title": title,
-                    "source_page": "https://commons.wikimedia.org/wiki/" + requests.utils.quote(title.replace(" ", "_")),
-                    "image_url": url, "license": field("LicenseShortName"),
-                    "artist": field("Artist"), "attribution_required": True,
-                    "status": "reference_photo_not_yet_projected_onto_3d_mesh"
+                data = api({
+                    "action": "query", "list": "search", "srsearch": term,
+                    "srnamespace": 6, "srlimit": 30,
                 })
-                saved += 1
+                for item in data.get("query", {}).get("search", []):
+                    title = item.get("title", "")
+                    low = title.lower()
+                    if not low.endswith(EXTS) or any(x in low for x in ("interior", "floor plan", "map", "logo", "plaque", "diagram")):
+                        continue
+                    candidates[title] = candidates.get(title, 0) + sum(k in low for k in ("facade", "façade", "exterior", "building", "street"))
+                time.sleep(0.15)
             except Exception as exc:
-                print(f"Photo download skipped for {title}: {exc}")
-        print(f"{building}: downloaded {saved} real facade/reference photos")
-    except Exception as exc:
-        print(f"Commons category failed for {building}: {exc}")
-if not manifest:
-    print("WARNING: Wikimedia Commons returned no usable photos. Continuing with procedural facade textures; photo references remain unavailable.")
-(OUT / "manifest.json").write_text(json.dumps({
-    "source": "Wikimedia Commons API",
-    "purpose": "Building-specific real facade reference photographs",
-    "important_limit": "Photos are downloaded and identified by named building; this stage does not claim they have been photogrammetrically reconstructed or correctly UV-projected onto every 3D wall.",
-    "images": manifest
-}, ensure_ascii=False, indent=2), encoding="utf-8")
-print(f"Downloaded {len(manifest)} photographs; manifest written.")
+                errors.append(f"{term}: {exc}")
+        titles = list(candidates)
+        # Ask for image metadata in batches; API titles can contain special characters.
+        for offset in range(0, len(titles), 20):
+            batch = titles[offset:offset+20]
+            if not batch:
+                continue
+            try:
+                data = api({
+                    "action": "query", "titles": "|".join(batch),
+                    "prop": "imageinfo", "iiprop": "url|extmetadata", "iiurlwidth": 1800,
+                })
+                pages = data.get("query", {}).get("pages", {})
+            except Exception as exc:
+                errors.append(f"metadata for {building}: {exc}")
+                continue
+            saved = 0
+            for page in sorted(pages.values(), key=lambda p: candidates.get(p.get("title", ""), 0), reverse=True):
+                if saved >= 3:
+                    break
+                info = (page.get("imageinfo") or [{}])[0]
+                url = info.get("thumburl") or info.get("url")
+                title = page.get("title", "")
+                if not url or not url.lower().split("?")[0].endswith(EXTS):
+                    continue
+                try:
+                    response = SESSION.get(url, timeout=60)
+                    response.raise_for_status()
+                    ctype = response.headers.get("content-type", "").lower()
+                    if not ctype.startswith("image/") or len(response.content) < 12000:
+                        continue
+                    ext = ".png" if "png" in ctype else ".webp" if "webp" in ctype else ".jpg"
+                    slug = re.sub(r"[^A-Za-z0-9_-]+", "_", building).strip("_")
+                    name = f"{slug}_{saved+1}{ext}"
+                    (OUT / name).write_bytes(response.content)
+                    meta = info.get("extmetadata") or {}
+                    field = lambda key: (meta.get(key) or {}).get("value", "")
+                    manifest.append({
+                        "building": building, "file": name, "commons_title": title,
+                        "source_page": "https://commons.wikimedia.org/wiki/" + quote(title.replace(" ", "_")),
+                        "image_url": url, "license": field("LicenseShortName"),
+                        "artist": field("Artist"), "attribution_required": True,
+                        "status": "reference_photo_not_yet_projected_onto_3d_mesh"
+                    })
+                    saved += 1
+                except Exception as exc:
+                    errors.append(f"download {title}: {exc}")
+            print(f"{building}: saved {saved} photo(s)")
+    (OUT / "manifest.json").write_text(json.dumps({
+        "source": "Wikimedia Commons API", "purpose": "Named Manila building facade reference photographs",
+        "important_limit": "Reference images are not automatically UV-projected onto the 3D model.",
+        "images": manifest, "errors": errors,
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"Wikimedia facade collection: {len(manifest)} image(s) saved.")
+    if not manifest:
+        print("WARNING: No facade photos were available from Wikimedia Commons.")
+    # Empty coverage is recorded but does not invalidate the map build.
+
+
+if __name__ == "__main__":
+    main()
