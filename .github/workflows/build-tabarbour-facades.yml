@@ -39,10 +39,10 @@ jobs:
           cd /tmp/orthofacade
           python -m pip install --upgrade pip
           python -m pip install numpy opencv-python scipy shapely pyproj Pillow requests matplotlib
-          # Pilot area centred on the actual Tabarbour game origin. The pipeline
+          # The complete Tabarbour game bbox. The pipeline
           # derives wall textures from street-level imagery; it does not invent facade photos.
-          python prefetch.py --bbox 31.9990,35.9430,32.0070,35.9510 --max-panos 80
-          python run.py --run tabarbour --bbox 31.9990,35.9430,32.0070,35.9510 --stage all --workers 2
+          python prefetch.py --bbox 31.9940,35.9360,32.0120,35.9600 --max-panos 300
+          python run.py --run tabarbour --bbox 31.9940,35.9360,32.0120,35.9600 --stage all --workers 4
           mkdir -p "$GITHUB_WORKSPACE/game/public/data/facades/textures"
           python - <<'PY'
           import csv, json, shutil
