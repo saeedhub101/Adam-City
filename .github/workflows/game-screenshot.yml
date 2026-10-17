@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "game/**"
+      - "scripts/download_helsinki_mesh.py"
       - ".github/workflows/game-screenshot.yml"
   workflow_dispatch:
 
@@ -35,6 +36,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Cache Helsinki source tile
+        uses: actions/cache@v4
+        with:
+          path: .cache/helsinki
+          key: helsinki-2017-668492x2-lod15-v1
 
       - name: Download official Helsinki reality-mesh tile and textures
         working-directory: .
