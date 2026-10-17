@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111820" />
+    <title>Saeed Open World</title>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="world" aria-label="3D open world game"></canvas>
+      <section id="settings" class="settings">
+        <div class="settings-card">
+          <div class="eyebrow">SAEED OPEN WORLD · EARLY BUILD</div>
+          <h1>Enter the city</h1>
+          <p class="intro">Choose a graphics preset for your device before loading the world.</p>
+          <label for="quality">Graphics quality</label>
+          <select id="quality">
+            <option value="low">Low · integrated / older devices</option>
+            <option value="medium" selected>Medium · balanced</option>
+            <option value="high">High · dedicated GPU</option>
+            <option value="ultra">Ultra · powerful GPU</option>
+          </select>
+          <button id="start">Start exploring</button>
+          <p class="fine-print">WASD move · Mouse look · Space jump · Esc unlock mouse</p>
+        </div>
+      </section>
+      <div id="hud" class="hud hidden">
+        <div class="brand">SAEED <span>OPEN WORLD</span></div>
+        <div class="status"><i></i><span id="status-text">Loading character…</span></div>
+        <div class="controls">WASD <span>MOVE</span> &nbsp; SPACE <span>JUMP</span> &nbsp; CLICK <span>LOOK</span></div>
+        <div id="hint" class="hint">Click the scene to capture mouse</div>
+      </div>
+      <div id="error" class="error hidden"></div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
