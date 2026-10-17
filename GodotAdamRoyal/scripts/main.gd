@@ -14,6 +14,62 @@ func _ready() -> void:
 	add_child(player)
 	_build_hud(int(city_result.get("buildings", 0)), int(city_result.get("roads", 0)), bool(city_result.get("ok", false)))
 
+	if OS.get_cmdline_user_args().has("--qa-capture"):
+		call_deferred("_run_visual_qa_capture")
+
+func _run_visual_qa_capture() -> void:
+	# Capture the rendered game viewport, not a generated mockup or a headless placeholder.
+	var output_dir := ProjectSettings.globalize_path("res://qa_screenshots")
+	DirAccess.make_dir_recursive_absolute(output_dir)
+	var camera := Camera3D.new()
+	camera.name = "VisualQACamera"
+	camera.current = true
+	camera.fov = 72.0
+	add_child(camera)
+	var player := get_node_or_null("Player")
+	var captures := [
+		{"name": "01-aerial-full-map.png", "position": Vector3(0, 1350, 30), "target": Vector3(0, 0, 0)},
+		{"name": "02-street-west.png", "position": Vector3(-95, 28, 35), "target": Vector3(-30, 2, 20)},
+		{"name": "03-street-east.png", "position": Vector3(115, 24, -70), "target": Vector3(40, 2, -15)},
+		{"name": "04-street-north.png", "position": Vector3(-45, 32, -125), "target": Vector3(-10, 2, -45)},
+		{"name": "05-street-south.png", "position": Vector3(70, 22, 135), "target": Vector3(20, 2, 65)}
+	]
+	for shot in captures:
+		camera.global_position = shot.position
+		camera.look_at(shot.target, Vector3.UP)
+		await get_tree().process_frame
+		await get_tree().process_frame
+		await RenderingServer.frame_post_draw
+		var image := get_viewport().get_texture().get_image()
+		var output_path := output_dir.path_join(shot.name)
+		var error := image.save_png(output_path)
+		if error != OK:
+			push_error("QA screenshot save failed: " + output_path + " error=" + str(error))
+			get_tree().quit(2)
+			return
+		print("QA_SCREENSHOT=" + output_path + " SIZE=" + str(image.get_size()))
+	# A dedicated close third-person view confirms the imported player mesh is present in the rendered scene.
+	if player != null:
+		camera.global_position = Vector3(0, 4.2, 0)
+		camera.look_at(Vector3(0, 1.0, 12), Vector3.UP)
+		await get_tree().process_frame
+		await get_tree().process_frame
+		await RenderingServer.frame_post_draw
+		var player_image := get_viewport().get_texture().get_image()
+		var player_path := output_dir.path_join("06-player-in-game.png")
+		var player_error := player_image.save_png(player_path)
+		if player_error != OK:
+			push_error("Player screenshot save failed: " + player_path)
+			get_tree().quit(2)
+			return
+		print("QA_SCREENSHOT=" + player_path + " CHARACTER_MODEL_LOADED=" + str(player.get("character_loaded")))
+	else:
+		push_error("Visual QA could not find Player node")
+		get_tree().quit(2)
+		return
+	print("VISUAL_QA_CAPTURE_COUNT=6")
+	get_tree().quit(0)
+
 func _build_city() -> Dictionary:
 	# The workflow stages a textured, real-geography Manila GLB here before import.
 	var map_path := "res://assets/manila_city.glb"
