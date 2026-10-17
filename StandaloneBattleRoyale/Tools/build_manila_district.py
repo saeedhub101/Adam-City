@@ -308,5 +308,37 @@ def main():
     }
     OUT.with_suffix(".json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(json.dumps(report, indent=2))
+def optimize_existing() -> None:
+    """Compact the already committed GLB offline; avoid a redundant Overpass download."""
+    if not OUT.exists():
+        raise FileNotFoundError(f"Cannot optimize missing cached map: {OUT}")
+    report_path = OUT.with_suffix(".json")
+    if not report_path.exists():
+        raise FileNotFoundError(f"Cannot optimize without map report: {report_path}")
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    original_scene = trimesh.load(str(OUT), force="scene")
+    before = len(original_scene.geometry)
+    compact = compact_scene(original_scene)
+    if len(compact.geometry) > 50:
+        raise RuntimeError(f"Offline compaction failed: {len(compact.geometry)} mesh batches remain")
+    compact.export(str(OUT), file_type="glb")
+    checked = trimesh.load(str(OUT), force="scene")
+    if len(checked.geometry) < 2 or OUT.stat().st_size < 100_000:
+        raise RuntimeError("Optimized cached Manila GLB failed structural/size validation")
+    report["mesh_objects"] = len(checked.geometry)
+    report["glb_bytes"] = OUT.stat().st_size
+    report["optimization"] = {
+        "mode": "offline cached-GLB compaction",
+        "mesh_objects_before": before,
+        "mesh_objects_after": len(checked.geometry),
+    }
+    report["note"] = str(report.get("note", "")) + " Existing OSM geometry was compacted offline; no network download was needed."
+    report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    print(json.dumps(report, indent=2))
+
+
 if __name__ == "__main__":
-    main()
+    if "--optimize-existing" in sys.argv:
+        optimize_existing()
+    else:
+        main()
