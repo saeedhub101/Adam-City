@@ -39,6 +39,10 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Collect public KartaView photos without an access token
+        working-directory: .
+        run: python scripts/collect_kartaview_tabarbour.py
+
       - name: Download licensed photos and preserve GPS coordinates
         working-directory: .
         run: python scripts/prepare_bundled_photos.py
