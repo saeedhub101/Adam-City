@@ -7,8 +7,10 @@ run/main_scene="res://main.tscn"
 config/description="Adam Royal — a standalone 3D battle royale survival game."
 
 [display]
-window/size/viewport_width=1280
-window/size/viewport_height=720
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/window_width_override=1920
+window/size/window_height_override=1080
 window/stretch/mode="canvas_items"
 
 [rendering]
