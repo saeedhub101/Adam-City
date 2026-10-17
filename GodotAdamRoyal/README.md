@@ -1,12 +1,19 @@
-# Adam Royal — Godot city build
+# Adam Royal
 
-This is the Godot 4 implementation being developed on branch `godot-city-conversion`. It does not overwrite the Unreal project on `main`.
+Adam Royal is the Windows 3D game prototype built with Godot 4.
 
-## Real city source
+## Included in the Windows build
 
-The playable district is central Manila (Intramuros / Ermita / the southern Binondo edge), using real OpenStreetMap building footprints and road ways. The build workflow downloads current geometry and generates `assets/manila_city.json` before importing and exporting the game. No API key is required for the Overpass download, but public endpoints may throttle requests.
+- The central Manila district GLB, built from real OpenStreetMap road and building geometry and textured with procedural facade atlases.
+- The existing 3D player character from `assets/saeed.glb`, staged as `assets/adam_royal_character.glb` during CI.
+- Third-person camera, WASD movement, mouse look, jump, and an in-game city/source HUD.
+- OpenStreetMap attribution: © OpenStreetMap contributors — https://www.openstreetmap.org/copyright
 
-OpenStreetMap attribution: © OpenStreetMap contributors — https://www.openstreetmap.org/copyright
+## Build and validation
+
+The workflow `.github/workflows/build-godot-adam-royal.yml` downloads fresh Manila OSM geometry for validation, stages the map GLB and actual player model, imports resources, runs the game headlessly, verifies that both GLBs load in the scene, exports `AdamRoyal.exe`, and uploads the executable and source assets as a workflow artifact.
+
+Build logs are captured and printed on failure so Godot parser/import errors are visible instead of being replaced by a generic error.
 
 ## Controls
 
@@ -15,12 +22,8 @@ OpenStreetMap attribution: © OpenStreetMap contributors — https://www.openstr
 - Space: jump
 - Escape: release mouse; click to recapture
 
-## Build
+## Accuracy and current limits
 
-GitHub Actions workflow: `.github/workflows/build-godot-adam-royal.yml`
+The street layout and building footprints come from real mapped Manila geography. The current city GLB uses extruded building geometry and procedural facade textures; it is **not** photogrammetry, and the reference photographs in the repository are not yet projected onto the corresponding building meshes. This build is a playable prototype, not a finished AAA-quality game. Cars, pedestrians, high-quality character animation, collision across the imported city, optimized LODs, and deeper gameplay systems still need implementation and testing.
 
-It downloads Godot 4.4.1 and its Windows export templates, fetches the city dataset, validates that the dataset has at least 100 buildings and 30 road ways, runs a headless project startup check, exports `AdamRoyal.exe`, and uploads the output as a workflow artifact.
-
-## Important realism boundary
-
-The current city builder uses real map geometry but extrudes footprints into simplified building masses. It is a real-world street layout, not yet photogrammetric imagery or photorealistic facade capture. Realistic facade textures, vehicles, and human character assets remain production tasks and must be sourced with redistribution rights.
+The city source is OpenStreetMap under ODbL 1.0. Retain attribution and verify redistribution rights for any third-party character or image assets before commercial release.
