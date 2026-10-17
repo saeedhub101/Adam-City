@@ -8,8 +8,8 @@ GLB; it never creates a fake .umap or reports success from source-file checks.
 import os
 import unreal
 
-ROOT = os.path.abspath(os.path.join(unreal.Paths.project_dir(), ".."))
-GLB = os.path.join(ROOT, "StandaloneBattleRoyale", "Content", "Maps", "Manila-Central-District.glb")
+PROJECT_DIR = unreal.Paths.project_dir()
+GLB = os.path.join(PROJECT_DIR, "Content", "Maps", "Manila-Central-District.glb")
 LEVEL_PACKAGE = "/Game/Maps/ManilaCentral"
 IMPORT_PATH = "/Game/Maps/ManilaDistrictSource"
 
