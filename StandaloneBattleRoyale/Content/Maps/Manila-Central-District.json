@@ -1,0 +1,22 @@
+{
+  "source": "OpenStreetMap contributors",
+  "attribution": "\u00a9 OpenStreetMap contributors",
+  "license": "ODbL 1.0",
+  "bounds": {
+    "south": 14.575,
+    "west": 120.965,
+    "north": 14.6,
+    "east": 120.99
+  },
+  "buildings": 4340,
+  "roads": 3028,
+  "mesh_objects": 7369,
+  "glb_bytes": 6459216,
+  "facade_textures": [
+    "Manila-Facade-Texture-1.jpg",
+    "Manila-Facade-Texture-2.jpg",
+    "Manila-Facade-Texture-3.jpg",
+    "Manila-Facade-Texture-4.jpg"
+  ],
+  "note": "Real OSM footprints and road alignments; fallback facade textures are procedural, not matched photographs. Exact building signage requires geolocated street-level imagery."
+}
