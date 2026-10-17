@@ -224,6 +224,40 @@ function createCity(quality) {
   }
 }
 
+function loadRealBuildingLandmark() {
+  // Real, textured GLB reconstruction of Devonaboy Jome Masjidi.
+  // The source file is self-contained (embedded textures) and loads asynchronously.
+  const url = 'https://raw.githubusercontent.com/bilol-makhmudov/monuments/main/uzbekistan/andijan/devonaboy-mosque/devonaboy_web.glb';
+  new GLTFLoader().load(url, (gltf) => {
+    const landmark = gltf.scene;
+    landmark.name = 'RealGLBBuildingLandmark';
+    landmark.traverse((node) => {
+      if (node.isMesh) {
+        node.castShadow = true;
+        node.receiveShadow = true;
+        if (node.material) {
+          node.material.side = THREE.DoubleSide;
+          node.material.needsUpdate = true;
+        }
+      }
+    });
+    const bounds = new THREE.Box3().setFromObject(landmark);
+    const size = bounds.getSize(new THREE.Vector3());
+    const maxDimension = Math.max(size.x, size.y, size.z, 1);
+    // Place a substantial, recognizable landmark away from the spawn intersection.
+    const scale = 34 / maxDimension;
+    landmark.scale.setScalar(scale);
+    const scaledBounds = new THREE.Box3().setFromObject(landmark);
+    landmark.position.y -= scaledBounds.min.y;
+    landmark.position.set(72, landmark.position.y, -92);
+    landmark.rotation.y = -Math.PI / 4;
+    scene.add(landmark);
+    console.info('Real textured GLB landmark loaded:', size.toArray());
+  }, undefined, (error) => {
+    console.error('Real GLB landmark failed to load:', error);
+  });
+}
+
 function setupPlayer() {
   playerRoot.position.set(0, 0, 0);
   scene.add(playerRoot);
@@ -268,6 +302,7 @@ function setupWorld(qualityKey) {
   camera.position.set(0, 3.2, 7);
   obstacles.length = 0;
   createCity(quality);
+  loadRealBuildingLandmark();
   setupPlayer();
   renderer.setAnimationLoop(frame);
 }
