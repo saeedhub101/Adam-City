@@ -212,8 +212,9 @@ func _build_real_elevation_terrain() -> void:
 				var lon := west + (east - west) * float(cell.y) / float(grid_size - 1)
 				var x := (lon - lon0) * 111320.0 * cos(deg_to_rad(lat0))
 				var z := (lat - lat0) * 110540.0
-				var elevation := float(heights[cell.x][cell.y]) - 0.28
-				vertices.append(Vector3(x, z, elevation))
+				var elevation := float(heights[cell.x][cell.y]) + 0.02
+				# Terrain is generated directly in Godot Y-up world coordinates.
+				vertices.append(Vector3(x, elevation, z))
 			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[0])
 			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[1])
 			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[2])
@@ -229,7 +230,7 @@ func _build_real_elevation_terrain() -> void:
 	terrain.name = "ManilaSRTMElevationTerrain"
 	terrain.mesh = mesh
 	terrain.material_override = material
-	terrain.rotation_degrees = Vector3(-90.0, 0.0, 0.0)
+	# Do not rotate generated terrain: its vertices already use Godot Y-up coordinates.
 	add_child(terrain)
 	print("REAL_TERRAIN_LOADED source=" + str(data.get("source")) + " grid=" + str(grid_size) + "x" + str(grid_size) + " elevation_range_m=" + str(data.get("minimum_elevation_m")) + ".." + str(data.get("maximum_elevation_m")))
 
@@ -273,7 +274,7 @@ func _build_ground() -> void:
 	mat.albedo_color = Color(0.22, 0.24, 0.21)
 	mat.roughness = 1.0
 	plane.material_override = mat
-	plane.position.y = -0.13
+	plane.position.y = -0.35
 	add_child(plane)
 
 func _build_hud(buildings: int, roads: int, loaded: bool) -> void:
