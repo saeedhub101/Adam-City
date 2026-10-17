@@ -111,8 +111,10 @@ def main():
         photos += [p for p in gather({"generator":"search", **base, "gsrsearch":'Tabarbour OR طبربور', "gsrnamespace":6, "gsrlimit":50}, seen) if any(term in p["title"].casefold() for term in ("tabarbour", "طبربور"))]
     except Exception as exc:
         print("Commons text search warning:", exc)
-    # Prioritize genuinely geolocated photos, then cap the catalogue for quick loading.
-    photos.sort(key=lambda p: (p["lat"] is None or p["lon"] is None, p["title"].lower()))
+    # Match only when coordinates fall inside one unique building footprint.
+    for photo in photos:
+        photo["buildingMatch"] = match_photo_to_building(photo, buildings)
+    photos.sort(key=lambda p: (p["buildingMatch"] is None, p["lat"] is None or p["lon"] is None, p["title"].lower()))
     output = {
         "area": "Tabarbour, Amman, Jordan",
         "generatedAt": datetime.now(timezone.utc).isoformat(),
