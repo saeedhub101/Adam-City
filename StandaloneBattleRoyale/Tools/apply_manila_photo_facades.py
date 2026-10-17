@@ -23,44 +23,22 @@ PHOTO_DIR = MAP_DIR / "Street-Imagery"
 
 
 def make_facade_texture(path: Path, style: int) -> Image.Image:
-    """Create a seamless, readable facade atlas with window reveals and varied materials."""
-    random.seed(7319 + style * 97)
-    size = 512
-    palettes = [
-        ((177, 166, 147), (48, 65, 76)),
-        ((205, 192, 164), (56, 69, 76)),
-        ((143, 145, 141), (52, 68, 77)),
-        ((183, 160, 132), (70, 76, 76)),
-    ]
-    wall, glass = palettes[style % len(palettes)]
-    im = Image.new("RGB", (size, size), wall)
-    px = im.load()
-    for y in range(size):
-        for x in range(size):
-            n = random.randint(-7, 7)
-            px[x, y] = tuple(max(0, min(255, c + n)) for c in wall)
-    d = ImageDraw.Draw(im)
-    row_h = 82 if style % 2 == 0 else 68
-    # Edge-aligned rows and columns keep tiling coherent at the UV boundary.
-    for y in range(0, size, row_h):
-        d.rectangle((0, y, size, min(size, y + 7)), fill=tuple(max(0, c - 27) for c in wall))
-        for x in range(8, size, 58):
-            ww = random.randint(27, 35)
-            hh = max(24, row_h - random.randint(23, 31))
-            top = y + 12
-            bottom = min(size - 1, top + hh)
-            right = min(size - 1, x + ww)
-            d.rectangle((x - 4, top - 4, right + 4, bottom + 5), fill=tuple(max(0, c - 36) for c in wall))
-            tint = random.choice([glass, (35, 48, 58), (77, 87, 89), (91, 99, 96)])
-            d.rectangle((x, top, right, bottom), fill=tint)
-            d.line((x + 4, top + 2, x + 4, bottom - 2), fill=(155, 165, 163), width=2)
-            d.line((x + (right - x) // 2, top, x + (right - x) // 2, bottom), fill=(30, 38, 42), width=3)
-            d.line((x, top + (bottom - top) // 2, right, top + (bottom - top) // 2), fill=(30, 38, 42), width=2)
-            d.line((x - 4, bottom + 5, right + 4, bottom + 5), fill=tuple(min(255, c + 24) for c in wall), width=3)
-    im = im.filter(ImageFilter.GaussianBlur(0.2))
-    im.save(path, quality=94, optimize=True)
-    return im
+    """Use real Manila building photographs as facade textures; never draw synthetic window grids."""
+    from PIL import ImageOps
 
+    photo_dir = MAP_DIR / "Real-Facade-Photos"
+    photos = sorted(p for p in photo_dir.glob("*.jpg") if p.is_file())
+    if len(photos) < 4:
+        raise RuntimeError(f"Expected real facade photographs in {photo_dir}; found {len(photos)}")
+    source = Image.open(photos[style % len(photos)]).convert("RGB")
+    # Crop a facade region; do not stretch an entire street panorama over a wall.
+    width, height = source.size
+    crop_width, crop_height = max(1, int(width * 0.62)), max(1, int(height * 0.72))
+    left, top = max(0, (width - crop_width) // 2), max(0, (height - crop_height) // 2)
+    source = source.crop((left, top, left + crop_width, top + crop_height))
+    image = ImageOps.fit(source, (1024, 1024), method=Image.Resampling.LANCZOS, centering=(0.5, 0.42))
+    image.save(path, quality=95, optimize=True)
+    return image
 
 def main() -> None:
     if not GLB.is_file() or not REPORT.is_file():
