@@ -121,8 +121,9 @@ function initRenderer(qualityKey) {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.08;
-  renderer.setClearColor(0x91a7b7);
+  // Filmic exposure and physically-based output keep materials grounded instead of toy-like.
+  renderer.toneMappingExposure = 0.92;
+  renderer.setClearColor(0x9aa9b4);
   return q;
 }
 
@@ -131,11 +132,11 @@ function addBuilding(x, z, w, d, h, seed, palette) {
   group.position.set(x, 0, z);
   const wallMat = new THREE.MeshStandardMaterial({
     color: palette[seed % palette.length], map: facadeTexture, normalMap: facadeNormal,
-    normalScale: new THREE.Vector2(0.28, 0.28), roughness: 0.97, metalness: 0.0
+    normalScale: new THREE.Vector2(0.28, 0.28), roughness: 0.94, metalness: 0.0
   });
   const trimMat = new THREE.MeshStandardMaterial({ color: 0xe1d7c5, map: facadeTexture, roughness: 0.92 });
   const balconyMat = new THREE.MeshStandardMaterial({ color: 0x716d65, roughness: 0.72, metalness: 0.25 });
-  const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x263e4a, roughness: 0.22, metalness: 0.22, clearcoat: 0.45 });
+  const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x263e4a, roughness: 0.32, metalness: 0.08, clearcoat: 0.18 });
   const box = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), wallMat);
   box.position.y = h / 2;
   box.castShadow = true;
@@ -333,15 +334,25 @@ async function loadTabarbourMap() {
 }
 
 function createCity(quality) {
-  scene.background = new THREE.Color(0x93aaba);
-  scene.fog = new THREE.Fog(0x93aaba, quality.far * 0.6, quality.far * 1.35);
-  scene.add(new THREE.HemisphereLight(0xddeaff, 0x75685a, 2.0));
-  const sun = new THREE.DirectionalLight(0xffe6c5, 3.1);
-  sun.position.set(-100, 160, 70); sun.castShadow = quality.shadows;
+  // Natural Amman daylight: neutral sky, warm sun, restrained atmospheric haze.
+  const sky = new THREE.Color(0xaebdc7);
+  scene.background = sky;
+  scene.fog = new THREE.Fog(sky, quality.far * 0.72, quality.far * 1.65);
+  scene.environment = null;
+  scene.add(new THREE.HemisphereLight(0xe2e9ed, 0x62584b, 1.15));
+  const sun = new THREE.DirectionalLight(0xfff0d9, 2.35);
+  sun.position.set(-120, 180, 95);
+  sun.castShadow = quality.shadows;
   sun.shadow.mapSize.set(quality.shadowSize, quality.shadowSize);
-  sun.shadow.camera.left = -250; sun.shadow.camera.right = 250;
-  sun.shadow.camera.top = 250; sun.shadow.camera.bottom = -250;
-  sun.shadow.bias = -0.00015; scene.add(sun);
+  sun.shadow.camera.left = -220; sun.shadow.camera.right = 220;
+  sun.shadow.camera.top = 220; sun.shadow.camera.bottom = -220;
+  sun.shadow.bias = -0.00012;
+  sun.shadow.normalBias = 0.025;
+  scene.add(sun);
+  // Soft fill prevents pitch-black shaded facades while preserving sun direction.
+  const fill = new THREE.DirectionalLight(0xc5d5e0, 0.32);
+  fill.position.set(90, 45, -100);
+  scene.add(fill);
   loadTabarbourMap();
 }
 
