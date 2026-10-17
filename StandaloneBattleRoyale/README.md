@@ -72,3 +72,36 @@ The current automated pipeline is a **source-data generator and validation step*
 
 The Wikimedia photos are currently **reference assets** packaged beside the GLB. They are not yet projected onto the corresponding 3D building meshes, and the generated facade atlases remain procedural. Therefore the current artifact does not yet guarantee authentic building signage, exact facade colors, or photogrammetric-level realism. Also, placing a GLB under `Content/Maps` does not by itself make it a native Unreal `.umap` level: import it in Unreal, inspect materials/collision/scale, configure lighting and gameplay actors, then test in Play-in-Editor before calling it playable. The GitHub workflow does not currently compile Unreal or capture actual gameplay screenshots.
 
+
+
+## Street imagery collection and additional city-data sources (2026-10-17)
+
+### Implemented in this repository
+
+- `StandaloneBattleRoyale/Tools/fetch_manila_street_imagery.py` samples a grid across the same Manila district and queries the public KartaView / OpenStreetCam nearby-photo API. It attempts to download geolocated street-level photos (up to 180 images) from different grid points, records available coordinates, heading, capture date and source URL, and writes `Content/Maps/Street-Imagery/manifest.json`.
+- `.github/workflows/validate-standalone-game.yml` runs this collector and includes the resulting `Street-Imagery` folder in the `Adam-Royal-Manila-Central-District` artifact.
+- Wikimedia Commons collection remains in `StandaloneBattleRoyale/Tools/fetch_manila_facade_photos.py`. It searches for photos of First United Building, Regina Building and Afable Building, then records attribution/license metadata in `Real-Facade-Photos/manifest.json`. If Commons returns no usable photos, the step warns and continues; a successful workflow therefore does **not** guarantee that any photographs were downloaded.
+- OpenStreetMap/Overpass supplies the currently implemented road and building-footprint geometry. Pillow-generated facade atlases are fallback procedural materials, not real photographs.
+- The photo collectors create reference libraries only. They do **not** yet automatically match every photo to a specific building, reconstruct 3D buildings from photos, or apply the photos as in-game materials. Their manifests report downloaded assets separately from assets actually rendered in the game.
+
+### Other useful sources evaluated for expanding coverage
+
+These are documented as potential future inputs; they are **not** all integrated into the current generator:
+
+1. **Overture Maps** — global building and transportation datasets, useful for broad building/road coverage and cross-checking OSM. Documentation: https://docs.overturemaps.org/guides/buildings/ ; explorer: https://explore.overturemaps.org/
+2. **Microsoft Global ML Building Footprints** — large-scale building-footprint dataset; footprints alone do not provide real facade textures or complete 3D buildings. https://github.com/microsoft/GlobalMLBuildingFootprints
+3. **OpenStreetMap / Overpass Turbo** — editable road/building map data and query interface. https://www.openstreetmap.org/ ; https://overpass-turbo.eu/
+4. **KartaView** — street-level imagery; the collector above attempts public API access, but actual coverage and successful downloads vary by location/API availability. https://kartaview.org/ ; terms: https://kartaview.org/terms
+5. **Mapillary** — another large street-level imagery source. API access, attribution, licensing and permitted reuse must be checked before automated download or redistribution. https://www.mapillary.com/ ; developer information: https://www.mapillary.com/developer
+6. **Panoramax** — open street-level photo ecosystem; coverage depends on the city. https://panoramax.fr/
+7. **Wikimedia Commons** — individually licensed building/street photographs with source and attribution metadata. https://commons.wikimedia.org/
+8. **OpenAerialMap / Humanitarian OpenStreetMap Team imagery catalog** — aerial imagery useful for roofs, blocks and context, not a substitute for street-level facade photos. Check each imagery item's license and attribution. https://openaerialmap.org/ ; https://imagery.hotosm.org/
+9. **OpenBuildingMap** — building-footprint/attribute exploration that can help identify buildings and compare data coverage. https://www.openbuildingmap.org/
+10. **Google Photorealistic 3D Tiles** — visually rich 3D city coverage, but requires Google Maps Platform setup/API key and is governed by service-specific terms and usage restrictions. Do not scrape or bulk-extract tiles into the game; review official terms first. https://developers.google.com/maps/documentation/tile/3d-tiles
+
+### Attribution and usage checks
+
+- OSM data: © OpenStreetMap contributors, ODbL 1.0; https://www.openstreetmap.org/copyright
+- Wikimedia Commons and street-photo assets: retain the source URL, creator, license and any attribution requirements for each item. Do not assume every image shares the same license.
+- Before shipping downloaded imagery or embedding it in a distributable game, verify each asset's current license and the source service's terms. Publicly viewable does not automatically mean unrestricted redistribution.
+- The build artifact is an intermediate research/source package, not proof that the images have been imported into Unreal or are visible during gameplay. A true gameplay screenshot still requires an Unreal project with the map and materials imported and rendered in the running game.
