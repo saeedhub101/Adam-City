@@ -204,7 +204,35 @@ def compact_scene(scene: trimesh.Scene) -> trimesh.Scene:
         )
     return compact
 
+def optimize_existing():
+    """Compact the committed GLB without contacting Overpass, preserving world transforms."""
+    if not OUT.exists():
+        raise FileNotFoundError(f"Cannot optimize missing committed Manila GLB: {OUT}")
+    source_scene = trimesh.load(str(OUT), force="scene")
+    # Scene geometry is stored in local space; dump() applies each node transform before batching.
+    transformed_meshes = source_scene.dump(concatenate=False)
+    flattened = trimesh.Scene()
+    for index, mesh in enumerate(transformed_meshes):
+        if isinstance(mesh, trimesh.Trimesh) and len(mesh.faces):
+            flattened.add_geometry(mesh, geom_name=f"mesh_{index}", node_name=f"mesh_{index}")
+    compact = compact_scene(flattened)
+    compact.export(str(OUT), file_type="glb")
+    check = trimesh.load(str(OUT), force="scene")
+    if len(check.geometry) > 50:
+        raise RuntimeError(f"Offline GLB optimization left {len(check.geometry)} mesh objects")
+    report_path = OUT.with_suffix(".json")
+    report = json.loads(report_path.read_text(encoding="utf-8")) if report_path.exists() else {}
+    report["mesh_objects"] = len(check.geometry)
+    report["glb_bytes"] = OUT.stat().st_size
+    report["optimization"] = "offline material/color batching of committed GLB"
+    report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    print(f"OFFLINE_GLB_OPTIMIZATION_PASS meshes={len(check.geometry)} bytes={OUT.stat().st_size}")
+
+
 def main():
+    if "--optimize-existing" in sys.argv:
+        optimize_existing()
+        return
     data = fetch()
     nodes = {e["id"]:(e["lon"],e["lat"]) for e in data["elements"] if e["type"]=="node"}
     ways = [e for e in data["elements"] if e["type"]=="way"]
