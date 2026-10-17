@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: adam-royal-godot-${{ github.ref }}
@@ -31,24 +31,42 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Download and build the real Manila district from OpenStreetMap
+      - name: Reuse the committed Manila district; generate and cache only when missing
         shell: pwsh
         working-directory: .
         run: |
           $ErrorActionPreference = 'Stop'
-          python -m pip install --disable-pip-version-check requests shapely trimesh mapbox-earcut scipy numpy pillow
-          if ($LASTEXITCODE -ne 0) { throw "Map generator dependencies could not be installed" }
-          python StandaloneBattleRoyale/Tools/build_manila_district.py
-          if ($LASTEXITCODE -ne 0) { throw "Fresh Manila map generation failed" }
-          $reportPath = 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.json'
-          $glbPath = 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb'
-          if (-not (Test-Path $reportPath) -or -not (Test-Path $glbPath)) { throw "Map generator did not produce the GLB and report" }
-          $report = Get-Content $reportPath -Raw | ConvertFrom-Json
-          if ($report.buildings -lt 100 -or $report.roads -lt 30) {
-            throw "Fresh city dataset is incomplete: buildings=$($report.buildings), roads=$($report.roads)"
+          $mapDir = 'StandaloneBattleRoyale/Content/Maps'
+          $reportPath = Join-Path $mapDir 'Manila-Central-District.json'
+          $glbPath = Join-Path $mapDir 'Manila-Central-District.glb'
+          $textures = @(Get-ChildItem $mapDir -Filter 'Manila-Facade-Texture-*.jpg' -File -ErrorAction SilentlyContinue)
+          $cacheValid = (Test-Path $reportPath) -and (Test-Path $glbPath) -and ((Get-Item $glbPath).Length -gt 100000) -and ($textures.Count -ge 4)
+          if ($cacheValid) {
+            Write-Host "Using committed Manila map cache; skipping OpenStreetMap download and regeneration."
+          } else {
+            python -m pip install --disable-pip-version-check requests shapely trimesh mapbox-earcut scipy numpy pillow
+            if ($LASTEXITCODE -ne 0) { throw "Map generator dependencies could not be installed" }
+            python StandaloneBattleRoyale/Tools/build_manila_district.py
+            if ($LASTEXITCODE -ne 0) { throw "Manila map generation failed" }
           }
-          if ((Get-Item $glbPath).Length -lt 100000) { throw "Generated Manila GLB is unexpectedly small" }
-          "Fresh Manila GLB verified: $($report.buildings) buildings; $($report.roads) road ways; $((Get-Item $glbPath).Length) bytes."
+          if (-not (Test-Path $reportPath) -or -not (Test-Path $glbPath)) { throw "Manila map GLB/report missing" }
+          $report = Get-Content $reportPath -Raw | ConvertFrom-Json
+          $textures = @(Get-ChildItem $mapDir -Filter 'Manila-Facade-Texture-*.jpg' -File -ErrorAction SilentlyContinue)
+          if ($report.buildings -lt 100 -or $report.roads -lt 30) { throw "Map quality gate failed: buildings=$($report.buildings), roads=$($report.roads)" }
+          if ($textures.Count -lt 4) { throw "Expected four reusable facade texture files; found $($textures.Count)" }
+          if ((Get-Item $glbPath).Length -lt 100000) { throw "Manila GLB is unexpectedly small" }
+          if (-not $cacheValid) {
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add $glbPath $reportPath
+            git add -f "$mapDir/Manila-Facade-Texture-*.jpg"
+            if (-not (git diff --cached --quiet)) {
+              git commit -m 'Cache Manila district map and facade textures'
+              git pull --rebase origin main
+              git push origin HEAD:main
+            }
+          }
+          Write-Host "Reusable Manila cache verified: $($report.buildings) buildings; $($report.roads) roads; $($textures.Count) texture atlases; $((Get-Item $glbPath).Length) GLB bytes."
 
       - name: Stage the real Manila district and player character
         shell: pwsh
@@ -148,6 +166,9 @@ jobs:
             GodotAdamRoyal/build/
             GodotAdamRoyal/assets/manila_city.json
             GodotAdamRoyal/assets/*.glb
+            StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb
+            StandaloneBattleRoyale/Content/Maps/Manila-Central-District.json
+            StandaloneBattleRoyale/Content/Maps/Manila-Facade-Texture-*.jpg
             GodotAdamRoyal/.godot/imported/
           if-no-files-found: warn
           retention-days: 14
