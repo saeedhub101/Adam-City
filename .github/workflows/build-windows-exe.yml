@@ -1,11 +1,10 @@
-name: Build Windows EXE with offline photos and GPS
+name: Build Windows EXE with Helsinki reality mesh
 
 on:
   push:
     branches: [main]
     paths:
       - "game/**"
-      - "scripts/prepare_bundled_photos.py"
       - "scripts/download_helsinki_mesh.py"
       - ".github/workflows/build-windows-exe.yml"
   workflow_dispatch:
@@ -40,29 +39,15 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Download and validate an official Helsinki 3D textured mesh tile
+      - name: Cache Helsinki source tile
+        uses: actions/cache@v4
+        with:
+          path: .cache/helsinki
+          key: helsinki-2017-668492x2-lod15-v1
+
+      - name: Download and prepare the Helsinki photogrammetry tile
         working-directory: .
         run: python scripts/download_helsinki_mesh.py
-
-      - name: Collect public KartaView photos without an access token
-        working-directory: .
-        run: python scripts/collect_kartaview_tabarbour.py
-
-      - name: Download licensed photos and preserve GPS coordinates
-        working-directory: .
-        run: python scripts/prepare_bundled_photos.py
-
-      - name: Include Mapillary photos when token is available
-        working-directory: .
-        env:
-          MAPILLARY_ACCESS_TOKEN: ${{ secrets.MAPILLARY_ACCESS_TOKEN }}
-        shell: pwsh
-        run: |
-          if ($env:MAPILLARY_ACCESS_TOKEN) {
-            python scripts/collect_mapillary_tabarbour.py
-          } else {
-            Write-Host "MAPILLARY_ACCESS_TOKEN is not configured; building with the licensed Wikimedia photos available."
-          }
 
       - name: Install Node dependencies
         run: npm install
@@ -70,27 +55,27 @@ jobs:
       - name: Build portable Windows EXE
         run: npm run build:win
 
-      - name: Verify EXE and bundled photo catalogue
+      - name: Verify EXE and Helsinki mesh bundle
         shell: pwsh
         run: |
           $exe = Get-ChildItem release -Filter *.exe | Select-Object -First 1
           if (-not $exe) { throw "No Windows EXE was produced." }
-          if (-not (Test-Path dist/data/bundled-photo-catalog.json)) { throw "Bundled photo catalogue is missing." }
-          $catalog = Get-Content dist/data/bundled-photo-catalog.json -Raw | ConvertFrom-Json
-          if ($catalog.bundledCount -lt 1) { throw "No local photos were bundled." }
+          if (-not (Test-Path dist/models/helsinki/manifest.json)) { throw "Helsinki mesh manifest is missing from the game bundle." }
+          $manifest = Get-Content dist/models/helsinki/manifest.json -Raw | ConvertFrom-Json
+          if ($manifest.tiles.Count -lt 1) { throw "No Helsinki mesh tile was bundled." }
+          $objects = @($manifest.tiles | ForEach-Object { $_.objects.Count } | Measure-Object -Sum).Sum
+          $textures = @($manifest.tiles | ForEach-Object { $_.textureCount } | Measure-Object -Sum).Sum
+          if ($objects -lt 1 -or $textures -lt 1) { throw "The Helsinki OBJ/texture bundle is empty." }
           Write-Host "EXE: $($exe.Name), size: $($exe.Length) bytes"
-          Write-Host "Bundled photos: $($catalog.bundledCount); catalog entries: $($catalog.count)"
-          Write-Host "GPS coordinates are retained per photo when present in the source."
-          if (-not (Test-Path models/helsinki/manifest.json)) { throw "Helsinki mesh manifest is missing." }
+          Write-Host "Helsinki OBJ pieces: $objects; texture images: $textures"
+          Write-Host "Source imagery year: $($manifest.imageryYear); license: $($manifest.license)"
 
-      - name: Upload portable EXE and GPS photo catalogue
+      - name: Upload portable EXE and mesh manifest
         uses: actions/upload-artifact@v4
         with:
           name: Saeed-Open-World-Windows-EXE
           path: |
             game/release/*.exe
-            game/dist/data/bundled-photo-catalog.json
-            game/public/models/helsinki/manifest.json
-            game/public/models/helsinki/**/*.zip
+            game/dist/models/helsinki/manifest.json
           if-no-files-found: error
           retention-days: 30
