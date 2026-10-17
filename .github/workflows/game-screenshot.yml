@@ -58,7 +58,7 @@ jobs:
       - name: Open game and capture screenshot
         run: |
           mkdir -p artifacts
-          cat > /tmp/capture-game.mjs <<'EOF'
+          cat > capture-game.mjs <<'EOF'
           import { chromium } from 'playwright';
 
           const browser = await chromium.launch({
@@ -88,8 +88,6 @@ jobs:
           await page.locator('#start').click();
           await page.waitForTimeout(2500);
 
-          // Wait for the actual GLB to load where possible; keep a screenshot even if
-          // a remote asset/network issue prevents it, and report the status in the log.
           try {
             await page.waitForFunction(() => {
               const status = document.querySelector('#status-text')?.textContent || '';
@@ -111,7 +109,7 @@ jobs:
           console.log('Screenshot saved to artifacts/game-screenshot.png');
           await browser.close();
           EOF
-          node /tmp/capture-game.mjs
+          node capture-game.mjs
 
       - name: Upload screenshot as a single-file artifact
         uses: actions/upload-artifact@v4
