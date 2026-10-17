@@ -96,9 +96,9 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
     ray.set(new THREE.Vector3(sampleCenter.x, finalBounds.max.y + 100, sampleCenter.z), new THREE.Vector3(0, -1, 0));
     const hits = ray.intersectObject(root, true);
     if (hits.length) {
-      root.position.x -= hits[0].point.x;
-      root.position.y -= hits[0].point.y;
-      root.position.z -= hits[0].point.z;
+      root.position.x -= hits[hits.length - 1].point.x;
+      root.position.y -= hits[hits.length - 1].point.y;
+      root.position.z -= hits[hits.length - 1].point.z;
       root.updateMatrixWorld(true);
     }
     root.userData.spawnPosition = { x: 0, y: 0, z: 0 };
