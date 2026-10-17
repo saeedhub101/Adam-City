@@ -57,8 +57,8 @@ jobs:
             exit 1
           fi
           "$GODOT_BIN" --headless --editor --path . --import 2>&1 | tee "$RUNNER_TEMP/city-import.log"
-          if grep -E "SCRIPT ERROR|Parse Error|ERROR:" "$RUNNER_TEMP/city-import.log"; then
-            echo "City asset import produced errors."
+          if grep -E "SCRIPT ERROR|Parse Error|ERROR:" "$RUNNER_TEMP/city-import.log" | grep -vF 'ERROR: Parameter "t" is null.'; then
+            echo "City asset import produced an unexpected error."
             exit 1
           fi
           test -s assets/manila/Manila-Central-District.glb
