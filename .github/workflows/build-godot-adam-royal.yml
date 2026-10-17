@@ -282,6 +282,31 @@ jobs:
           Write-Host "WINDOWS_EXPORT_PASS: $((Get-Item 'build/AdamRoyal.exe').Length) bytes"
           Get-ChildItem build | Select-Object Name,Length
 
+      - name: Smoke-test the exported Windows executable
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $exePath = (Resolve-Path 'build/AdamRoyal.exe').Path
+          $runtimeLog = Join-Path $env:RUNNER_TEMP 'adam-royal-exported-runtime.log'
+          & $exePath --headless --quit-after 30 --verbose 2>&1 | Tee-Object -FilePath $runtimeLog
+          $runtimeExitCode = $LASTEXITCODE
+          if ($runtimeExitCode -ne 0) {
+            Write-Host '===== Exported EXE runtime log ====='
+            Get-Content $runtimeLog
+            throw "Exported AdamRoyal.exe failed its startup test with exit code $runtimeExitCode"
+          }
+          if (Select-String -Path $runtimeLog -Pattern 'SCRIPT ERROR:|ERROR: Failed to load script' -Quiet) {
+            Get-Content $runtimeLog
+            throw 'Exported AdamRoyal.exe reported script parse/compile errors.'
+          }
+          foreach ($pattern in @('CITY_RENDER_SOURCE=GLB', 'CHARACTER_MODEL_LOADED=true', 'REAL_TERRAIN_LOADED source=')) {
+            if (-not (Select-String -Path $runtimeLog -Pattern $pattern -Quiet)) {
+              Get-Content $runtimeLog
+              throw "Exported game is missing runtime evidence marker: $pattern"
+            }
+          }
+          Write-Host 'EXPORTED_GAME_SMOKE_PASS: EXE loaded the Manila GLB, SRTM terrain, and player character.'
+
       - name: Preserve build evidence
         if: always()
         uses: actions/upload-artifact@v4
