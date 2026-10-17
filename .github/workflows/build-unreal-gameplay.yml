@@ -1,0 +1,126 @@
+name: Adam Royal — Unreal Editor, Package & Gameplay Capture
+
+on:
+  workflow_dispatch:
+    inputs:
+      unreal_root:
+        description: "Absolute Unreal Engine installation root on the self-hosted runner (e.g. C:\\Program Files\\Epic Games\\UE_5.4)"
+        required: true
+        type: string
+      build_configuration:
+        description: "Unreal build configuration"
+        required: true
+        type: choice
+        options:
+          - Development
+          - DebugGame
+        default: Development
+
+permissions:
+  contents: read
+
+concurrency:
+  group: adam-royal-unreal-gameplay
+  cancel-in-progress: false
+
+jobs:
+  build-unreal:
+    name: Import Manila, compile and package on a licensed Unreal runner
+    runs-on: [self-hosted, Windows, X64, unreal-engine]
+    timeout-minutes: 180
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Resolve Unreal Engine and project
+        env:
+          UNREAL_ROOT_INPUT: ${{ inputs.unreal_root }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $engineRoot = $env:UNREAL_ROOT_INPUT
+          if (!(Test-Path (Join-Path $engineRoot 'Engine/Build/BatchFiles/RunUAT.bat'))) {
+            throw "Unreal Engine installation not found at '$engineRoot'. Install a matching Unreal Engine version on the self-hosted runner."
+          }
+          $uproject = Join-Path $env:GITHUB_WORKSPACE 'StandaloneBattleRoyale/SaeedRoyale.uproject'
+          if (!(Test-Path $uproject)) { throw "Unreal project missing: $uproject" }
+          $editor = Join-Path $engineRoot 'Engine/Binaries/Win64/UnrealEditor-Cmd.exe'
+          $uat = Join-Path $engineRoot 'Engine/Build/BatchFiles/RunUAT.bat'
+          if (!(Test-Path $editor)) { throw "UnrealEditor-Cmd.exe missing: $editor" }
+          "UNREAL_ROOT=$engineRoot" >> $env:GITHUB_ENV
+          "UNREAL_EDITOR=$editor" >> $env:GITHUB_ENV
+          "UNREAL_UAT=$uat" >> $env:GITHUB_ENV
+          "UPROJECT=$uproject" >> $env:GITHUB_ENV
+          Write-Host "Resolved Unreal installation and project."
+
+      - name: Validate cached Manila and player assets
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $map = 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb'
+          $report = 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.json'
+          $player = 'StandaloneBattleRoyale/Content/Characters/Saeed.glb'
+          foreach ($file in @($map, $report, $player)) {
+            if (!(Test-Path $file)) { throw "Required cached asset missing: $file" }
+          }
+          if ((Get-Item $map).Length -lt 100000) { throw 'Cached Manila GLB is unexpectedly small.' }
+          $data = Get-Content $report -Raw | ConvertFrom-Json
+          if ($data.buildings -lt 30 -or $data.roads -lt 15) { throw 'Manila geometry source quality gate failed.' }
+          Write-Host "Cached map: $($data.buildings) buildings / $($data.roads) roads. No map regeneration requested."
+
+      - name: Run Unreal Editor Python import and native-level creation
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $log = Join-Path $env:RUNNER_TEMP 'adam-royal-create-level.log'
+          & $env:UNREAL_EDITOR $env:UPROJECT -unattended -nop4 -nosplash -NullRHI -NoSound -UTF8Output "-ExecutePythonScript=$env:GITHUB_WORKSPACE/StandaloneBattleRoyale/Tools/create_manila_playable_level.py" "-abslog=$log"
+          $code = $LASTEXITCODE
+          if ($code -ne 0) {
+            if (Test-Path $log) { Get-Content $log -Tail 250 }
+            throw "Unreal Editor import/level creation failed with exit code $code."
+          }
+          if (Test-Path $log) { Get-Content $log -Tail 150 }
+          $level = 'StandaloneBattleRoyale/Content/Maps/ManilaCentral.umap'
+          if (!(Test-Path $level)) {
+            # Unreal saves packages under Content; do not accept an editor log alone.
+            throw "Native .umap not found at expected path $level. Inspect the Unreal log and package location."
+          }
+
+      - name: Compile and package the standalone game
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $output = Join-Path $env:GITHUB_WORKSPACE 'StandaloneBattleRoyale/Build/Windows'
+          & $env:UNREAL_UAT BuildCookRun "-project=$env:UPROJECT" -noP4 -build -cook -stage -pak -archive "-archivedirectory=$output" -platform=Win64 "-clientconfig=${{ inputs.build_configuration }}" -utf8output
+          if ($LASTEXITCODE -ne 0) { throw "Unreal BuildCookRun failed with exit code $LASTEXITCODE." }
+          if (!(Test-Path $output)) { throw 'Packaged build output directory missing.' }
+          $executables = @(Get-ChildItem $output -Recurse -File -Filter '*.exe')
+          if ($executables.Count -eq 0) { throw 'BuildCookRun returned success but produced no packaged executable.' }
+          Write-Host "Packaged executables: $($executables.FullName -join ', ')"
+
+      - name: Enforce real gameplay screenshot evidence
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $shotsDir = 'StandaloneBattleRoyale/Saved/GameplayScreenshots'
+          $shots = @()
+          if (Test-Path $shotsDir) {
+            $shots = @(Get-ChildItem $shotsDir -File | Where-Object { $_.Extension -in '.png','.jpg','.jpeg' })
+          }
+          if ($shots.Count -lt 3) {
+            throw "Gameplay capture is not complete: expected >=3 screenshots actually captured from a running game (gameplay, visible player, and a distinct Manila location); found $($shots.Count). This workflow will not fabricate screenshots or substitute GLB/reference photos. Add/repair the in-game capture automation before claiming this gate passed."
+          }
+          foreach ($shot in $shots) {
+            if ($shot.Length -lt 20000) { throw "Screenshot is empty or too small: $($shot.FullName)" }
+          }
+
+      - name: Upload Unreal logs, native level and gameplay evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Adam-Royal-Unreal-Build-Evidence
+          if-no-files-found: warn
+          retention-days: 30
+          path: |
+            StandaloneBattleRoyale/Content/Maps/ManilaCentral.umap
+            StandaloneBattleRoyale/Saved/GameplayScreenshots/**
+            StandaloneBattleRoyale/Build/Windows/**
+            ${{ runner.temp }}/adam-royal-create-level.log
