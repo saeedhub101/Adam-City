@@ -8,9 +8,16 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
     const response = await fetch('/models/helsinki/manifest.json', { cache: 'no-store' });
     if (!response.ok) throw new Error('ملف فهرس مجسّم هلسنكي غير موجود ضمن هذا البناء');
     const manifest = await response.json();
-    const entries = (manifest.tiles || []).flatMap(tile => tile.objects || [])
-      .filter(item => item.obj && item.mtl)
+    const allEntries = (manifest.tiles || []).flatMap(tile => tile.objects || [])
+      .filter(item => item.obj && item.mtl);
+    // The archive contains an adaptive LOD tree. Loading every level at once
+    // overlays the same city repeatedly and can overwhelm the browser. L16 is
+    // the 250 m-scale representation intended for a playable first region.
+    const preferred = allEntries.filter(item => /_L16(?:_|\\.)/.test(item.obj));
+    const fallback = allEntries.filter(item => /_L15(?:_|\\.)/.test(item.obj));
+    const entries = (preferred.length ? preferred : fallback.length ? fallback : allEntries)
       .sort((a, b) => b.bytes - a.bytes);
+    const selectedLod = preferred.length ? 16 : fallback.length ? 15 : null;
     if (!entries.length) throw new Error('لم يُعثر على ملفات OBJ وMTL صالحة في المنطقة المنزّلة');
 
     const root = new THREE.Group();
@@ -56,9 +63,9 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
     root.updateMatrixWorld(true);
     scene.add(root);
     const textureCount = manifest.tiles.reduce((sum, tile) => sum + (tile.textureCount || 0), 0);
-    statusText.textContent = 'هلسنكي، فنلندا · مجسّم مصوّر · ' + loaded + ' قطعة · ' + textureCount + ' خامة' + (failed ? ' · تعذّر تحميل ' + failed : '');
+    statusText.textContent = 'هلسنكي، فنللندا · مجسّم مصوّر LOD ' + (selectedLod ?? 'متاح') + ' · ' + loaded + ' قطعة · ' + entries.length + ' خامة' + (failed ? ' · تعذّر تحميل ' + failed : '');
     console.info('Loaded official Helsinki photogrammetry mesh', {
-      imageryYear: manifest.imageryYear, loadedObjects: loaded, failedObjects: failed,
+      imageryYear: manifest.imageryYear, selectedLod, loadedObjects: loaded, selectedObjects: entries.length, failedObjects: failed,
       textureCount, license: manifest.license
     });
     return root;
