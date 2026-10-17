@@ -14,10 +14,19 @@ OUT = ROOT / "Real-Facade-Photos"
 OUT.mkdir(parents=True, exist_ok=True)
 API = "https://commons.wikimedia.org/w/api.php"
 BUILDINGS = {
-    "First United Building": ("First United Building", "First United Building Manila"),
+    "First United Building": ("First United Building Manila", "First United Building Escolta Manila"),
     "Regina Building": ("Regina Building Manila", "Regina Building Escolta"),
-    "Afable Building": ("Afable Building Manila", "Afable Building Binondo"),
-}
+    "Perez-Samanillo Building": ("Perez Samanillo Building Manila", "Don Roman Santos Building Manila"),
+    "Calvo Building": ("Calvo Building Escolta Manila", "Calvo Building Manila facade"),
+    "Luneta Hotel": ("Luneta Hotel Manila exterior", "Luneta Hotel Manila facade"),
+    "Manila Central Post Office": ("Manila Central Post Office exterior", "Manila Post Office building facade"),
+    "Manila City Hall": ("Manila City Hall exterior", "Manila City Hall facade"),
+    "Manila Metropolitan Theater": ("Manila Metropolitan Theater exterior", "Metropolitan Theater Manila facade"),
+    "Escolta Street Buildings": ("Escolta Street Manila buildings", "Escolta Manila heritage buildings facade"),
+    "Binondo Street Buildings": ("Binondo Manila street buildings", "Binondo Manila building facade"),
+    "Intramuros Buildings": ("Intramuros Manila historic buildings exterior", "Intramuros Manila street facade"),
+    "Jones Bridge Area": ("Jones Bridge Manila surrounding buildings", "Jones Bridge Manila city buildings"),
+} 
 SESSION = requests.Session()
 SESSION.headers.update({"User-Agent": "AdamRoyalResearch/1.0 (public educational mapping; repository issue tracker)"})
 EXTS = (".jpg", ".jpeg", ".png", ".webp")
@@ -69,7 +78,7 @@ def main():
                 continue
             saved = 0
             for page in sorted(pages.values(), key=lambda p: candidates.get(p.get("title", ""), 0), reverse=True):
-                if saved >= 3:
+                if saved >= 4:
                     break
                 info = (page.get("imageinfo") or [{}])[0]
                 url = info.get("thumburl") or info.get("url")
@@ -101,13 +110,12 @@ def main():
             print(f"{building}: saved {saved} photo(s)")
     (OUT / "manifest.json").write_text(json.dumps({
         "source": "Wikimedia Commons API", "purpose": "Named Manila building facade reference photographs",
-        "important_limit": "Reference images are not automatically UV-projected onto the 3D model.",
+        "important_limit": "Coverage depends on available licensed photos; downloaded photos must be projected onto building materials and are not a complete photogrammetry reconstruction.",
         "images": manifest, "errors": errors,
     }, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"Wikimedia facade collection: {len(manifest)} image(s) saved.")
-    if not manifest:
-        print("WARNING: No facade photos were available from Wikimedia Commons.")
-    # Empty coverage is recorded but does not invalidate the map build.
+    if len(manifest) < 12:
+        raise RuntimeError(f"Insufficient real building photos: collected {len(manifest)}, require at least 12. Add sources or fix Wikimedia query failures before building.")
 
 
 if __name__ == "__main__":
