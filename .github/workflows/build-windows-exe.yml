@@ -6,6 +6,7 @@ on:
     paths:
       - "game/**"
       - "scripts/prepare_bundled_photos.py"
+      - "scripts/download_helsinki_mesh.py"
       - ".github/workflows/build-windows-exe.yml"
   workflow_dispatch:
 
@@ -19,7 +20,7 @@ concurrency:
 jobs:
   build-windows-exe:
     runs-on: windows-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     defaults:
       run:
         working-directory: game
@@ -38,6 +39,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Download and validate an official Helsinki 3D textured mesh tile
+        working-directory: .
+        run: python scripts/download_helsinki_mesh.py
 
       - name: Collect public KartaView photos without an access token
         working-directory: .
@@ -76,6 +81,7 @@ jobs:
           Write-Host "EXE: $($exe.Name), size: $($exe.Length) bytes"
           Write-Host "Bundled photos: $($catalog.bundledCount); catalog entries: $($catalog.count)"
           Write-Host "GPS coordinates are retained per photo when present in the source."
+          if (-not (Test-Path models/helsinki/manifest.json)) { throw "Helsinki mesh manifest is missing." }
 
       - name: Upload portable EXE and GPS photo catalogue
         uses: actions/upload-artifact@v4
@@ -84,5 +90,7 @@ jobs:
           path: |
             game/release/*.exe
             game/dist/data/bundled-photo-catalog.json
+            game/public/models/helsinki/manifest.json
+            game/public/models/helsinki/**/*.zip
           if-no-files-found: error
           retention-days: 30
