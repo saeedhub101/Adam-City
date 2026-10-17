@@ -167,30 +167,83 @@ jobs:
             "STAGED_ASSET=$asset SIZE=$($item.Length)"
           }
 
-      - name: Build and cache real Tabarbour district from OpenStreetMap
+      - name: Reuse committed Amman map; generate and cache only when missing
         shell: pwsh
         working-directory: .
         run: |
           $ErrorActionPreference = 'Stop'
-          python -m pip install --disable-pip-version-check requests
-          if ($LASTEXITCODE -ne 0) { throw "Could not install OpenStreetMap download client" }
-          python GodotAdamRoyal/Tools/build_tabarbour_map.py
-          if ($LASTEXITCODE -ne 0) { throw "Tabarbour real-world map build failed" }
           $mapDir = 'GodotAdamRoyal/assets/cities/tabarbour'
-          $report = Get-Content (Join-Path $mapDir 'Tabarbour-report.json') -Raw | ConvertFrom-Json
-          if ($report.buildings -lt 100 -or $report.road_ways -lt 50 -or $report.obj_bytes -lt 100000) { throw "Tabarbour map quality gate failed: buildings=$($report.buildings), roads=$($report.road_ways), bytes=$($report.obj_bytes)" }
-          if (-not (Test-Path (Join-Path $mapDir 'Tabarbour.mtl'))) { throw "Tabarbour materials file missing" }
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add "$mapDir/Tabarbour.obj" "$mapDir/Tabarbour.mtl" "$mapDir/Tabarbour-report.json" "$mapDir/tabarbour_osm.json"
-          if (-not (git diff --cached --quiet)) {
-            git commit -m 'Cache Tabarbour Amman 3D district map [skip ci]'
-            git pull --rebase origin main
-            git push origin HEAD:main
+          $obj = Join-Path $mapDir 'Tabarbour.obj'
+          $mtl = Join-Path $mapDir 'Tabarbour.mtl'
+          $reportPath = Join-Path $mapDir 'Tabarbour-report.json'
+          $raw = Join-Path $mapDir 'tabarbour_osm.json'
+          $cacheValid = $false
+          if ((Test-Path $obj) -and (Test-Path $mtl) -and (Test-Path $reportPath) -and (Test-Path $raw)) {
+            try {
+              $report = Get-Content $reportPath -Raw | ConvertFrom-Json
+              $cacheValid = ($report.buildings -ge 100) -and ($report.road_ways -ge 50) -and ($report.obj_bytes -ge 100000) -and ((Get-Item $obj).Length -ge 100000)
+            } catch { $cacheValid = $false }
           }
-          Write-Host "TABARBOUR_MAP_CACHE_PASS buildings=$($report.buildings) roadWays=$($report.road_ways) vertices=$($report.vertices) bytes=$($report.obj_bytes)"
+          if ($cacheValid) {
+            Write-Host "Using committed Amman (Tabarbour) map cache; skipping OpenStreetMap download."
+          } else {
+            python -m pip install --disable-pip-version-check requests
+            if ($LASTEXITCODE -ne 0) { throw "Could not install OpenStreetMap download client" }
+            python GodotAdamRoyal/Tools/build_tabarbour_map.py
+            if ($LASTEXITCODE -ne 0) { throw "Amman real-world map build failed" }
+            $report = Get-Content $reportPath -Raw | ConvertFrom-Json
+            if ($report.buildings -lt 100 -or $report.road_ways -lt 50 -or $report.obj_bytes -lt 100000) { throw "Amman map quality gate failed: buildings=$($report.buildings), roads=$($report.road_ways), bytes=$($report.obj_bytes)" }
+            if (-not (Test-Path $mtl)) { throw "Amman materials file missing" }
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add "$mapDir/Tabarbour.obj" "$mapDir/Tabarbour.mtl" "$mapDir/Tabarbour-report.json" "$mapDir/tabarbour_osm.json"
+            if (-not (git diff --cached --quiet)) {
+              git commit -m 'Cache Amman district map and OSM source data [skip ci]'
+              git pull --rebase origin main
+              git push origin HEAD:main
+            }
+          }
+          Write-Host "AMMAN_MAP_CACHE_PASS buildings=$($report.buildings) roadWays=$($report.road_ways) bytes=$((Get-Item $obj).Length)"
 
-      - name: Stage Chicago and San Francisco travel regions
+      - name: Reuse committed Tokyo map; generate and cache only when missing
+        shell: pwsh
+        working-directory: .
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $mapDir = 'GodotAdamRoyal/assets/cities/tokyo'
+          $obj = Join-Path $mapDir 'Tokyo.obj'
+          $mtl = Join-Path $mapDir 'Tokyo.mtl'
+          $reportPath = Join-Path $mapDir 'Tokyo-report.json'
+          $raw = Join-Path $mapDir 'tokyo_osm.json'
+          $cacheValid = $false
+          if ((Test-Path $obj) -and (Test-Path $mtl) -and (Test-Path $reportPath) -and (Test-Path $raw)) {
+            try {
+              $report = Get-Content $reportPath -Raw | ConvertFrom-Json
+              $cacheValid = ($report.buildings -ge 100) -and ($report.road_ways -ge 50) -and ($report.obj_bytes -ge 100000) -and ((Get-Item $obj).Length -ge 100000)
+            } catch { $cacheValid = $false }
+          }
+          if ($cacheValid) {
+            Write-Host "Using committed Tokyo map cache; skipping OpenStreetMap download."
+          } else {
+            python -m pip install --disable-pip-version-check requests
+            if ($LASTEXITCODE -ne 0) { throw "Could not install OpenStreetMap download client" }
+            python GodotAdamRoyal/Tools/build_tokyo_map.py
+            if ($LASTEXITCODE -ne 0) { throw "Tokyo real-world map build failed" }
+            $report = Get-Content $reportPath -Raw | ConvertFrom-Json
+            if ($report.buildings -lt 100 -or $report.road_ways -lt 50 -or $report.obj_bytes -lt 100000) { throw "Tokyo map quality gate failed: buildings=$($report.buildings), roads=$($report.road_ways), bytes=$($report.obj_bytes)" }
+            if (-not (Test-Path $mtl)) { throw "Tokyo materials file missing" }
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add "$mapDir/Tokyo.obj" "$mapDir/Tokyo.mtl" "$mapDir/Tokyo-report.json" "$mapDir/tokyo_osm.json"
+            if (-not (git diff --cached --quiet)) {
+              git commit -m 'Cache Tokyo district map and OSM source data [skip ci]'
+              git pull --rebase origin main
+              git push origin HEAD:main
+            }
+          }
+          Write-Host "TOKYO_MAP_CACHE_PASS buildings=$($report.buildings) roadWays=$($report.road_ways) bytes=$((Get-Item $obj).Length)"
+
+      - name: Reuse committed Chicago and San Francisco maps; cache source assets only when missing
         shell: pwsh
         working-directory: .
         run: |
@@ -199,29 +252,43 @@ jobs:
           $sfDir = Join-Path $cityDir 'san_francisco'
           New-Item -ItemType Directory -Path $sfDir -Force | Out-Null
 
-          $chicagoSource = Join-Path $env:GITHUB_WORKSPACE 'Chicago.obj'
-          if (-not (Test-Path $chicagoSource)) { throw "Chicago OBJ source missing from repository root: $chicagoSource" }
-          if ((Get-Item $chicagoSource).Length -lt 100000) { throw 'Chicago OBJ source is unexpectedly small.' }
-          Copy-Item $chicagoSource (Join-Path $cityDir 'Chicago.obj') -Force
-          $chicagoMtl = Join-Path $env:GITHUB_WORKSPACE 'Chicago.mtl'
-          if (Test-Path $chicagoMtl) { Copy-Item $chicagoMtl $cityDir -Force }
-          Get-ChildItem $env:GITHUB_WORKSPACE -File | Where-Object { $_.Name -like 'Chicago*' -and $_.Extension -in @('.mtl','.jpg','.jpeg','.png','.tga') } | ForEach-Object { Copy-Item $_.FullName $cityDir -Force }
+          $chicagoObj = Join-Path $cityDir 'Chicago.obj'
+          if (-not (Test-Path $chicagoObj) -or (Get-Item $chicagoObj).Length -lt 100000) {
+            $chicagoSource = Join-Path $env:GITHUB_WORKSPACE 'Chicago.obj'
+            if (-not (Test-Path $chicagoSource)) { throw "Chicago OBJ source missing from repository root: $chicagoSource" }
+            if ((Get-Item $chicagoSource).Length -lt 100000) { throw 'Chicago OBJ source is unexpectedly small.' }
+            Copy-Item $chicagoSource $chicagoObj -Force
+            $chicagoMtl = Join-Path $env:GITHUB_WORKSPACE 'Chicago.mtl'
+            if (Test-Path $chicagoMtl) { Copy-Item $chicagoMtl $cityDir -Force }
+            Get-ChildItem $env:GITHUB_WORKSPACE -File | Where-Object { $_.Name -like 'Chicago*' -and $_.Extension -in @('.mtl','.jpg','.jpeg','.png','.tga') } | ForEach-Object { Copy-Item $_.FullName $cityDir -Force }
+          }
 
-          $sfArchive = Join-Path $env:GITHUB_WORKSPACE 'SanFrancisco_City.OBJ.zip'
-          if (-not (Test-Path $sfArchive)) { throw "San Francisco OBJ archive missing: $sfArchive" }
-          $extractDir = Join-Path $env:RUNNER_TEMP 'san-francisco-obj'
-          if (Test-Path $extractDir) { Remove-Item $extractDir -Recurse -Force }
-          Expand-Archive -LiteralPath $sfArchive -DestinationPath $extractDir -Force
-          $sfObj = Get-ChildItem $extractDir -Recurse -File -Filter '*.obj' | Select-Object -First 1
-          if (-not $sfObj) { throw 'San Francisco archive contains no OBJ geometry.' }
-          Copy-Item $sfObj.DirectoryName (Join-Path $sfDir 'source') -Recurse -Force
-          Copy-Item $sfObj.FullName (Join-Path $sfDir 'SanFrancisco_City.obj') -Force
-          $sfMtl = Get-ChildItem $extractDir -Recurse -File -Filter '*.mtl' | Select-Object -First 1
-          if ($sfMtl) { Copy-Item $sfMtl.FullName (Join-Path $sfDir 'SanFrancisco_City.mtl') -Force }
+          $sfObjPath = Join-Path $sfDir 'SanFrancisco_City.obj'
+          if (-not (Test-Path $sfObjPath) -or (Get-Item $sfObjPath).Length -lt 100000) {
+            $sfArchive = Join-Path $env:GITHUB_WORKSPACE 'SanFrancisco_City.OBJ.zip'
+            if (-not (Test-Path $sfArchive)) { throw "San Francisco OBJ archive missing: $sfArchive" }
+            $extractDir = Join-Path $env:RUNNER_TEMP 'san-francisco-obj'
+            if (Test-Path $extractDir) { Remove-Item $extractDir -Recurse -Force }
+            Expand-Archive -LiteralPath $sfArchive -DestinationPath $extractDir -Force
+            $sfObj = Get-ChildItem $extractDir -Recurse -File -Filter '*.obj' | Select-Object -First 1
+            if (-not $sfObj) { throw 'San Francisco archive contains no OBJ geometry.' }
+            Copy-Item $sfObj.DirectoryName (Join-Path $sfDir 'source') -Recurse -Force
+            Copy-Item $sfObj.FullName $sfObjPath -Force
+            $sfMtl = Get-ChildItem $extractDir -Recurse -File -Filter '*.mtl' | Select-Object -First 1
+            if ($sfMtl) { Copy-Item $sfMtl.FullName (Join-Path $sfDir 'SanFrancisco_City.mtl') -Force }
+          }
           $chicagoBytes = (Get-Item (Join-Path $cityDir 'Chicago.obj')).Length
           $sfBytes = (Get-Item (Join-Path $sfDir 'SanFrancisco_City.obj')).Length
           if ($chicagoBytes -lt 100000 -or $sfBytes -lt 100000) { throw "Travel region geometry failed size validation: Chicago=$chicagoBytes SanFrancisco=$sfBytes" }
-          Write-Host "TRAVEL_REGION_STAGED Chicago.obj=$chicagoBytes SanFrancisco.obj=$sfBytes"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$cityDir/Chicago.obj" "$sfDir/SanFrancisco_City.obj" "$sfDir/SanFrancisco_City.mtl" "$cityDir/Chicago.mtl"
+          if (-not (git diff --cached --quiet)) {
+            git commit -m 'Cache Chicago and San Francisco travel maps [skip ci]'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          }
+          Write-Host "TRAVEL_REGION_CACHE_PASS Chicago.obj=$chicagoBytes SanFrancisco.obj=$sfBytes"
           Write-Host "Travel maps are staged as additional regions; Manila source scene is not replaced."
 
       - name: Download Godot 4.4.1 and Windows export templates
@@ -303,7 +370,7 @@ jobs:
             throw 'Runtime check failed: the actual character GLB was not loaded.'
           }
 
-          foreach ($regionPattern in @('TRAVEL_ASSET_IMPORT_PASS region=Chicago', 'TRAVEL_ASSET_IMPORT_PASS region=San Francisco', 'TRAVEL_ASSET_IMPORT_PASS region=Tabarbour')) {
+          foreach ($regionPattern in @('TRAVEL_ASSET_IMPORT_PASS region=Amman', 'TRAVEL_ASSET_IMPORT_PASS region=San Francisco', 'TRAVEL_ASSET_IMPORT_PASS region=Tokyo')) {
             if (-not (Select-String -Path $runtimeLog -Pattern $regionPattern -Quiet)) {
               Get-Content $runtimeLog
               throw "Travel region import validation failed: $regionPattern"
