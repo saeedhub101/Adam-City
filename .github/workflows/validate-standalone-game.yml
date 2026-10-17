@@ -31,6 +31,7 @@ jobs:
           $descriptor = Get-Content $project -Raw | ConvertFrom-Json
           if ($descriptor.Modules[0].Name -ne 'SaeedRoyale') { throw 'Unexpected Unreal module.' }
           if (!(Test-Path 'assets/saeed.glb')) { throw 'Character asset assets/saeed.glb is missing.' }
+          if (!(Test-Path 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb')) { throw 'Real Manila district map asset is missing from Unreal Content.' }
           if (!(Test-Path 'StandaloneBattleRoyale/Source/SaeedRoyale/Private/SaeedRoyaleCharacter.cpp')) { throw 'Unreal character source missing.' }
           $forbidden = Get-ChildItem -Path . -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.FullName -match '[\\/]SaeedRoyaleGodot[\\/]|\.gd$|\.tscn$|project\.godot$' }
           if ($forbidden) { $forbidden | ForEach-Object { Write-Error $_.FullName }; throw 'Godot content remains.' }
