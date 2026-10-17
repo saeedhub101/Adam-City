@@ -157,7 +157,7 @@ jobs:
           $shotsDir = Join-Path $project 'Saved/GameplayScreenshots'
           $shots = @()
           if (Test-Path $shotsDir) {
-            $shots = @(Get-ChildItem $shotsDir -File -Include '*.png','*.jpg','*.jpeg' -ErrorAction SilentlyContinue)
+            $shots = @(Get-ChildItem $shotsDir -File -ErrorAction SilentlyContinue | Where-Object { $_.Extension -in '.png','.jpg','.jpeg' })
           }
           if ($shots.Count -lt 3) {
             throw "Gameplay screenshot gate failed: expected at least 3 real gameplay screenshots in $shotsDir (gameplay view, visible player character, and a different Manila location); found $($shots.Count). Do not substitute GLB previews or reference photos."
