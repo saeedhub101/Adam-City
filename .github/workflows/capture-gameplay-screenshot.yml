@@ -8,7 +8,6 @@ on:
       - "SaeedRoyaleGodot/scripts/main.gd"
       - "SaeedRoyaleGodot/assets/real_city/**"
       - "SaeedRoyaleGodot/assets/manila/**"
-      - "SaeedRoyaleGodot/assets/amman/**"
   workflow_dispatch:
 
 permissions:
@@ -63,7 +62,6 @@ jobs:
             exit 1
           fi
           test -s assets/manila/Manila-Central-District.glb
-          test -s assets/real_city/helsinki_city_scan.ply
           mkdir -p screenshots
           rm -f screenshots/adam-royal-*.png
 
@@ -123,7 +121,7 @@ jobs:
             exit 1
           fi
           rm -f .capture_gameplay.gd
-          for view in north east south west; do test -s "screenshots/adam-royal-$view.png"; done
+          for view in street-01-intramuros street-02-ermita street-03-far-district street-04-distant-road; do test -s "screenshots/adam-royal-$view.png"; done
           python3 - <<'PY'
           import struct
           from pathlib import Path
@@ -145,7 +143,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add SaeedRoyaleGodot/screenshots/adam-royal-*.png
-          git commit -m "Capture four Adam Royal gameplay viewpoints"
+          git commit -m "Capture four distant Adam Royal Manila street locations"
           git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push origin HEAD:main
 
       - name: Upload screenshot artifact
