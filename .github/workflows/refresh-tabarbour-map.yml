@@ -1,0 +1,75 @@
+name: Refresh Tabarbour map snapshot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 2 * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/refresh-tabarbour-map.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-tabarbour-map
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Fetch current OpenStreetMap data
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p game/public/data
+          cat > /tmp/tabarbour-query.txt <<'QUERY'
+          [out:json][timeout:60];
+          (
+            way["building"](31.9855,35.9370,31.9980,35.9520);
+            way["highway"](31.9855,35.9370,31.9980,35.9520);
+          );
+          out body geom;
+          QUERY
+          success=0
+          for endpoint in "https://overpass-api.de/api/interpreter" "https://overpass.kumi.systems/api/interpreter" "https://overpass.private.coffee/api/interpreter"; do
+            echo "Trying $endpoint"
+            if curl --fail --silent --show-error --retry 2 --retry-delay 3 --max-time 150 \
+              --get --data-urlencode "data@/tmp/tabarbour-query.txt" \
+              -H "Accept: application/json" "$endpoint" -o /tmp/tabarbour-osm.json; then
+              if jq -e '.elements | type == "array" and length > 0' /tmp/tabarbour-osm.json >/dev/null; then
+                success=1
+                break
+              fi
+            fi
+          done
+          if [ "$success" -ne 1 ]; then
+            echo "::error::Could not download valid OpenStreetMap data. Existing snapshot was not changed."
+            exit 1
+          fi
+          jq '{generator, osm3s, elements}' /tmp/tabarbour-osm.json > game/public/data/tabarbour-osm.json
+          echo "Fetched $(jq '.elements | length' game/public/data/tabarbour-osm.json) OSM elements."
+          test "$(jq '[.elements[] | select(.tags.building)] | length' game/public/data/tabarbour-osm.json)" -gt 0
+          test "$(jq '[.elements[] | select(.tags.highway)] | length' game/public/data/tabarbour-osm.json)" -gt 0
+
+      - name: Commit refreshed snapshot if changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- game/public/data/tabarbour-osm.json; then
+            echo "The checked-in map snapshot is already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add game/public/data/tabarbour-osm.json
+          git commit -m "Refresh Tabarbour OpenStreetMap snapshot"
+          git push origin HEAD:main
