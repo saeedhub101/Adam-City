@@ -52,7 +52,7 @@ for row in range(GRID):
     row_values = []
     for col in range(GRID):
         elevation = float(values[row * GRID + col])
-        row_values.append(round((elevation - minimum) * 0.45, 3))
+        row_values.append(round((elevation - minimum) * 0.06, 3))
     grid.append(row_values)
 
 out = Path("GodotAdamRoyal/assets/manila_terrain.json")
