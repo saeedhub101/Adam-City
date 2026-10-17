@@ -12,7 +12,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: amman-city-preview-optimized-main
+  group: amman-city-preview-main
   cancel-in-progress: true
 
 jobs:
@@ -81,20 +81,29 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p SaeedRoyaleGodot/assets/amman
-          cp output/Amman-Central-District.glb SaeedRoyaleGodot/assets/amman/Amman-Central-District.glb
-          size="$(stat -c %s SaeedRoyaleGodot/assets/amman/Amman-Central-District.glb)"
-          test "$size" -lt 95000000
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add SaeedRoyaleGodot/assets/amman/Amman-Central-District.glb
-          if git diff --cached --quiet; then
-            echo "Amman runtime asset is unchanged."
-            exit 0
-          fi
-          git commit -m "Add optimized Amman city to playable map"
-          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push origin HEAD:main
-          PY
+          asset="SaeedRoyaleGodot/assets/amman/Amman-Central-District.glb"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            mkdir -p "$(dirname "$asset")"
+            cp output/Amman-Central-District.glb "$asset"
+            size="$(stat -c %s "$asset")"
+            test "$size" -lt 95000000
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add "$asset"
+            if git diff --cached --quiet; then
+              echo "Amman runtime asset is already up to date."
+              exit 0
+            fi
+            git commit -m "Add optimized Amman city asset to playable map"
+            if git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Concurrent main update detected; retrying against latest main (attempt $attempt)."
+          done
+          echo "Unable to publish Amman GLB after 3 attempts."
+          exit 1
       - name: Upload Unreal city asset and source review images
         uses: actions/upload-artifact@v4
         with:
