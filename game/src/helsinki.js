@@ -13,8 +13,8 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
     // The archive contains an adaptive LOD tree. Loading every level at once
     // overlays the same city repeatedly and can overwhelm the browser. L16 is
     // the 250 m-scale representation intended for a playable first region.
-    const preferred = allEntries.filter(item => /_L16(?:_|\\.)/.test(item.obj));
-    const fallback = allEntries.filter(item => /_L15(?:_|\\.)/.test(item.obj));
+    const preferred = allEntries.filter(item => /_L16(?:_|\.)/.test(item.obj));
+    const fallback = allEntries.filter(item => /_L15(?:_|\.)/.test(item.obj));
     const entries = (preferred.length ? preferred : fallback.length ? fallback : allEntries)
       .sort((a, b) => b.bytes - a.bytes);
     const selectedLod = preferred.length ? 16 : fallback.length ? 15 : null;
@@ -63,7 +63,7 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
     root.updateMatrixWorld(true);
     scene.add(root);
     const textureCount = manifest.tiles.reduce((sum, tile) => sum + (tile.textureCount || 0), 0);
-    statusText.textContent = 'هلسنكي، فنللندا · مجسّم مصوّر LOD ' + (selectedLod ?? 'متاح') + ' · ' + loaded + ' قطعة · ' + entries.length + ' خامة' + (failed ? ' · تعذّر تحميل ' + failed : '');
+    statusText.textContent = 'هلسنكي، فنلندا · مجسّم مصوّر LOD ' + (selectedLod ?? 'متاح') + ' · ' + loaded + ' قطعة · ' + entries.length + ' خامة' + (failed ? ' · تعذّر تحميل ' + failed : '');
     console.info('Loaded official Helsinki photogrammetry mesh', {
       imageryYear: manifest.imageryYear, selectedLod, loadedObjects: loaded, selectedObjects: entries.length, failedObjects: failed,
       textureCount, license: manifest.license
