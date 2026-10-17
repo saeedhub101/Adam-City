@@ -15,7 +15,7 @@ OBJ = OUT / "Tokyo.obj"
 REPORT = OUT / "Tokyo-report.json"
 
 def xy(lat, lon):
-    # Local equirectangular coordinates in metres around Tabarbour.
+    # Local equirectangular coordinates in metres around central Tokyo.
     return ((lon-CENTER_LON)*111320*math.cos(math.radians(CENTER_LAT)), (lat-CENTER_LAT)*110540)
 
 query = f"""[out:json][timeout:180];(
@@ -111,7 +111,7 @@ with (OUT/"Tabarbour.mtl").open("w", encoding="utf-8") as f:
     f.write("newmtl building_wall\nKd 0.67 0.64 0.59\n")
     f.write("newmtl building_roof\nKd 0.48 0.45 0.41\n")
     f.write("newmtl road\nKd 0.18 0.19 0.20\n")
-report = {"region":"Tabarbour, Amman, Jordan","center":{"lat":CENTER_LAT,"lon":CENTER_LON},"radius_m":RADIUS_M,
+report = {"region":"Tokyo, Japan","center":{"lat":CENTER_LAT,"lon":CENTER_LON},"radius_m":RADIUS_M,
           "source":"OpenStreetMap contributors","license":"ODbL 1.0","buildings":building_count,
           "road_ways":road_count,"vertices":len(vertices),"faces":len(faces),"obj_bytes":OBJ.stat().st_size,
           "raw_osm_file":DATA.name}
