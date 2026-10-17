@@ -89,19 +89,13 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
     root.position.set(-center.x, -bounds.min.y, -center.z);
     root.updateMatrixWorld(true);
     scene.add(root);
-    const finalBounds = new THREE.Box3().setFromObject(root);
     const sampleObject = root.children.find(node => node.name.includes('Tile_+019_+043_L16_000.obj')) || root.children[0];
-    const sampleBounds = sampleObject ? new THREE.Box3().setFromObject(sampleObject) : finalBounds;
+    const sampleBounds = sampleObject ? new THREE.Box3().setFromObject(sampleObject) : new THREE.Box3().setFromObject(root);
     const sampleCenter = sampleBounds.getCenter(new THREE.Vector3());
-    const ray = new THREE.Raycaster();
-    ray.set(new THREE.Vector3(sampleCenter.x, finalBounds.max.y + 100, sampleCenter.z), new THREE.Vector3(0, -1, 0));
-    const hits = ray.intersectObject(root, true);
-    if (hits.length) {
-      root.position.x -= hits[hits.length - 1].point.x;
-      root.position.y -= hits[hits.length - 1].point.y;
-      root.position.z -= hits[hits.length - 1].point.z;
-      root.updateMatrixWorld(true);
-    }
+    root.position.x -= sampleCenter.x;
+    root.position.y -= sampleBounds.min.y;
+    root.position.z -= sampleCenter.z;
+    root.updateMatrixWorld(true);
     root.userData.spawnPosition = { x: 0, y: 0, z: 0 };
     root.userData.spawnGroundY = 0;
     const textureCount = manifest.tiles.reduce((sum, tile) => sum + (tile.textureCount || 0), 0);
