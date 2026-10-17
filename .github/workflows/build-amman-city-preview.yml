@@ -94,7 +94,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          asset="SaeedRoyaleGodot/assets/amman/Manila-Central-District.glb"
+          asset="SaeedRoyaleGodot/assets/manila/Manila-Central-District.glb"
           for attempt in 1 2 3; do
             git fetch origin main
             git reset --hard origin/main
