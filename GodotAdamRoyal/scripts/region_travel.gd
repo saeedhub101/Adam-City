@@ -1,10 +1,10 @@
 extends Node
 ## Region travel for Adam Royal. Keeps the existing Manila scene intact.
-## Keys: 1 Manila, 2 Chicago, 3 San Francisco.
+## Travel order: 1 Manila, 2 Amman, 3 San Francisco, 4 Tokyo.
 const REGION_PATHS := {
-	"Chicago": "res://assets/cities/Chicago.obj",
+	"Amman": "res://assets/cities/tabarbour/Tabarbour.obj",
 	"San Francisco": "res://assets/cities/san_francisco/SanFrancisco_City.obj",
-	"Tabarbour": "res://assets/cities/tabarbour/Tabarbour.obj"
+	"Tokyo": "res://assets/cities/tokyo/Tokyo.obj"
 }
 var active_region := "Manila"
 var active_root: Node3D
@@ -17,7 +17,7 @@ func _ready() -> void:
 	_build_travel_hud()
 	for region_name in REGION_PATHS.keys():
 		_validate_region_asset(region_name)
-	print("REGION_TRAVEL_READY regions=Manila,Chicago,San Francisco")
+	print("REGION_TRAVEL_READY regions=Manila,Amman,San Francisco,Tokyo")
 
 func _validate_region_asset(region: String) -> void:
 	var path: String = REGION_PATHS[region]
@@ -42,9 +42,9 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		return
 	match event.keycode:
 		KEY_1: travel_to("Manila")
-		KEY_2: travel_to("Chicago")
+		KEY_2: travel_to("Amman")
 		KEY_3: travel_to("San Francisco")
-		KEY_4: travel_to("Tabarbour")
+		KEY_4: travel_to("Tokyo")
 
 func travel_to(region: String) -> void:
 	if region == active_region:
@@ -182,4 +182,4 @@ func _build_travel_hud() -> void:
 
 func _update_hud() -> void:
 	if is_instance_valid(hud_label):
-		hud_label.text = "1  Manila\n2  Chicago\n3  San Francisco\nCurrent: " + active_region
+		hud_label.text = "1  Manila\n2  Amman\n3  San Francisco\n4  Tokyo\nCurrent: " + active_region
