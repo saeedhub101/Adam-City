@@ -71,6 +71,47 @@ let elapsed = 0;
 const clock = new THREE.Clock();
 const keys = new Set();
 const obstacles = [];
+
+// Real street-view facade textures are generated into this manifest by the
+// build-tabarbour-facades GitHub Actions workflow. Missing coverage stays on the
+// neutral fallback material; no unrelated photo is assigned to a building.
+let facadeManifest = { buildings: {} };
+const facadePhotoLoader = new THREE.TextureLoader();
+
+function addPhotoFacadeOverlays(way, ring, height) {
+  const candidates = facadeManifest.buildings?.[String(way.id)] || [];
+  if (!candidates.length || ring.length < 3) return;
+  const byEdge = new Map();
+  for (const item of candidates) {
+    const match = String(item.key || '').match(/_(\\d+)$/);
+    if (match && item.texture) byEdge.set(Number(match[1]), item);
+  }
+  const center = ring.reduce((acc, p) => ({ x: acc.x + p.x / ring.length, z: acc.z + p.z / ring.length }), { x: 0, z: 0 });
+  for (let i = 0; i < ring.length; i++) {
+    const photo = byEdge.get(i);
+    if (!photo) continue;
+    const a = ring[i], b = ring[(i + 1) % ring.length];
+    const dx = b.x - a.x, dz = b.z - a.z;
+    const length = Math.hypot(dx, dz);
+    if (length < 1.2) continue;
+    facadePhotoLoader.load(photo.texture, (texture) => {
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.anisotropy = renderer?.capabilities?.getMaxAnisotropy?.() || 1;
+      const material = new THREE.MeshStandardMaterial({ map: texture, roughness: 0.98, metalness: 0, side: THREE.DoubleSide });
+      const wall = new THREE.Mesh(new THREE.PlaneGeometry(length, height), material);
+      const mx = (a.x + b.x) / 2, mz = (a.z + b.z) / 2;
+      let nx = mx - center.x, nz = mz - center.z;
+      const nlen = Math.hypot(nx, nz) || 1;
+      nx /= nlen; nz /= nlen;
+      wall.position.set(mx + nx * 0.045, height / 2, mz + nz * 0.045);
+      wall.rotation.y = Math.atan2(-dz, dx);
+      wall.castShadow = true;
+      wall.receiveShadow = true;
+      wall.name = 'PhotoFacade-' + way.id + '-' + i;
+      scene.add(wall);
+    }, undefined, (error) => console.warn('Facade photo unavailable:', photo.texture, error));
+  }
+}
 const WORLD_SIZE = 1200;
 const PLAYER_HEIGHT = 1.72;
 const playerRoot = new THREE.Group();
@@ -243,6 +284,9 @@ function addOSMBuilding(way, index) {
   mesh.castShadow = true; mesh.receiveShadow = true;
   mesh.name = 'OSM-building-' + (tags.name || way.id || index);
   scene.add(mesh);
+  // Where Mapillary street-level coverage exists, place the rectified real-photo
+  // texture on the matching OSM wall edge. Other edges remain untextured fallback.
+  addPhotoFacadeOverlays(way, ring, height);
   const xs = ring.map(p => p.x), zs = ring.map(p => p.z);
   obstacles.push({ minX: Math.min(...xs)-0.65, maxX: Math.max(...xs)+0.65, minZ: Math.min(...zs)-0.65, maxZ: Math.max(...zs)+0.65 });
   const roofShape = new THREE.Shape();
@@ -315,6 +359,17 @@ async function loadTabarbourMap() {
   const allElements = [...osmElements, ...customElements];
   const roads = allElements.filter(e => e.type === 'way' && e.tags?.highway);
   const buildings = allElements.filter(e => e.type === 'way' && e.tags?.building);
+  try {
+    const facadeResponse = await fetch('/data/facades/manifest.json', { cache: 'no-store' });
+    if (facadeResponse.ok) {
+      const parsedFacades = await facadeResponse.json();
+      if (parsedFacades && parsedFacades.buildings && typeof parsedFacades.buildings === 'object') {
+        facadeManifest = parsedFacades;
+      }
+    }
+  } catch (error) {
+    console.info('No generated street-view facade textures yet; showing real OSM footprints until the texture workflow completes.', error);
+  }
   const asphalt = new THREE.MeshStandardMaterial({ color: 0x34393c, roughness: 0.98 });
   const curb = new THREE.MeshStandardMaterial({ color: 0xd2cbbd, roughness: 1 });
   const roadWidth = tags => {
