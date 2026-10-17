@@ -28,7 +28,7 @@ jobs:
       - name: Install Blender
         run: |
           sudo apt-get update
-          sudo apt-get install --yes blender
+          sudo apt-get install --yes blender python3-numpy
           blender --version
       - name: Validate real OSM source
         run: |
@@ -50,7 +50,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p output
-          blender -b --factory-startup --python Tools/Build-Amman-3DPreview.py -- \
+          PYTHONPATH=/usr/lib/python3/dist-packages blender -b --factory-startup --python Tools/Build-Amman-3DPreview.py -- \
             SaeedRoyaleGodot/assets/amman_core.geojson output/Amman-Central-District.glb \
             output/Amman-Central-District-3D.png 2>&1 | tee output/build.log
           test -s output/Amman-Central-District.glb
