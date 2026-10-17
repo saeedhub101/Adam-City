@@ -1,6 +1,6 @@
 extends Node3D
 
-const AMMAN_CITY_PATH := "res://assets/amman/Amman-Central-District.glb"
+const MANILA_CITY_PATH := "res://assets/manila/Manila-Central-District.glb"
 
 const ARENA_SIZE := 760.0
 const BOT_COUNT := 14
@@ -101,7 +101,7 @@ func _build_world() -> void:
 			Vector3(-ARENA_SIZE / 2, 1, 0), Vector3(ARENA_SIZE / 2, 1, 0)][i]
 		_add_box(self, "BoundaryWall_%02d" % i, wall_pos, wall_size, Color(0.12, 0.2, 0.14), true)
 
-	_add_amman_city()
+	_add_manila_city()
 
 
 	storm_ring = MeshInstance3D.new()
@@ -117,14 +117,14 @@ func _build_world() -> void:
 	add_child(storm_ring)
 
 
-func _add_amman_city() -> void:
-	# Load the real Amman district asset tracked in this repository. This is OSM-derived 3D geometry, not a photogrammetry-textured city scan.
-	var packed: PackedScene = load(AMMAN_CITY_PATH) as PackedScene
+func _add_manila_city() -> void:
+	# Load the generated Manila city asset built from real OpenStreetMap building footprints and road geometry.
+	var packed: PackedScene = load(MANILA_CITY_PATH) as PackedScene
 	if packed == null:
-		push_error("Amman city asset is missing or failed to import: " + AMMAN_CITY_PATH)
+		push_error("Manila city asset is missing or failed to import: " + MANILA_CITY_PATH)
 		return
 	var city := packed.instantiate() as Node3D
-	city.name = "AmmanCentralDistrict"
+	city.name = "ManilaCentralDistrict"
 	add_child(city)
 	# Generate collision only for the building shell mesh; windows and decorative parts stay lightweight.
 	var mesh_nodes: Array[Node] = []
