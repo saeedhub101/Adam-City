@@ -76,8 +76,10 @@ jobs:
               -A 'AdamRoyalGame/1.0 (OSM open-data map build)' \
               "https://api.openstreetmap.org/api/0.6/map?bbox=$west,$south,$east,$north" \
               -o /tmp/manila-osm.xml
+            export MANILA_OSM_FORMAT=xml
             echo "MANILA_OSM_FORMAT=xml" >> "$GITHUB_ENV"
           else
+            export MANILA_OSM_FORMAT=json
             echo "MANILA_OSM_FORMAT=json" >> "$GITHUB_ENV"
           fi
           python3 - <<'PY'
