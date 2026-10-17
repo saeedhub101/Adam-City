@@ -1,4 +1,4 @@
-# Saeed Royale — standalone battle royale
+# Adam Royal — standalone 3D game
 
 This is a separate Unreal Engine game prototype, not a UEFN island and not part of the existing Fortnite Creative project.
 
