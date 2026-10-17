@@ -52,7 +52,9 @@ jobs:
               $cachedMeshCount = [int]$cachedReport.mesh_objects
             } catch { $cachedMeshCount = 999999 }
           }
-          $cacheValid = (Test-Path $reportPath) -and (Test-Path $glbPath) -and (Test-Path $roadTexture) -and ((Get-Item $glbPath).Length -gt 100000) -and ($textures.Count -ge 4) -and ($cachedMeshCount -le 50)
+          $cacheHasStreetDetail = $false
+          if (Test-Path $reportPath) { try { $cacheHasStreetDetail = ($cachedReport.sidewalk_meshes -gt 0) -and ($null -ne $cachedReport.mapped_trees) -and ($null -ne $cachedReport.street_lamps) } catch { $cacheHasStreetDetail = $false } }
+          $cacheValid = (Test-Path $reportPath) -and (Test-Path $glbPath) -and (Test-Path $roadTexture) -and ((Get-Item $glbPath).Length -gt 100000) -and ($textures.Count -ge 4) -and ($cachedMeshCount -le 50) -and $cacheHasStreetDetail
           if ($cacheValid) {
             Write-Host "Using committed Manila map cache; skipping OpenStreetMap download and regeneration."
           } else {
@@ -71,6 +73,7 @@ jobs:
           $report = Get-Content $reportPath -Raw | ConvertFrom-Json
           $textures = @(Get-ChildItem $mapDir -Filter 'Manila-Facade-Texture-*.jpg' -File -ErrorAction SilentlyContinue)
           if ($report.buildings -lt 100 -or $report.roads -lt 30) { throw "Map quality gate failed: buildings=$($report.buildings), roads=$($report.roads)" }
+          if ($report.sidewalk_meshes -lt 20 -or $null -eq $report.mapped_trees -or $null -eq $report.street_lamps) { throw "Manila street-detail quality gate failed: sidewalks=$($report.sidewalk_meshes), trees=$($report.mapped_trees), lamps=$($report.street_lamps)" }
           if ($report.mesh_objects -gt 50) { throw "Map is not optimized: $($report.mesh_objects) mesh objects remain; expected 50 or fewer." }
           if ($textures.Count -lt 4) { throw "Expected four reusable facade texture files; found $($textures.Count)" }
           if (-not (Test-Path $roadTexture)) { throw 'Reusable asphalt texture is missing.' }
