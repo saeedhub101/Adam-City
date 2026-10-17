@@ -144,3 +144,25 @@ jobs:
         run: |
           python StandaloneBattleRoyale/Tests/validate_prototype.py
           if ($LASTEXITCODE -ne 0) { throw 'Unreal source tests failed.' }
+
+      - name: Require real gameplay screenshots (never accept map/source images)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $project = 'StandaloneBattleRoyale'
+          $levels = @(Get-ChildItem $project -Recurse -File -Filter '*.umap' -ErrorAction SilentlyContinue)
+          if ($levels.Count -eq 0) {
+            throw 'Gameplay screenshot gate failed: no native Unreal .umap level exists. The cached Manila GLB is source geometry, not a playable Unreal level. Configure/import the level and run the game before capturing screenshots.'
+          }
+          $shotsDir = Join-Path $project 'Saved/GameplayScreenshots'
+          $shots = @()
+          if (Test-Path $shotsDir) {
+            $shots = @(Get-ChildItem $shotsDir -File -Include '*.png','*.jpg','*.jpeg' -ErrorAction SilentlyContinue)
+          }
+          if ($shots.Count -lt 3) {
+            throw "Gameplay screenshot gate failed: expected at least 3 real gameplay screenshots in $shotsDir (gameplay view, visible player character, and a different Manila location); found $($shots.Count). Do not substitute GLB previews or reference photos."
+          }
+          foreach ($shot in $shots) {
+            if ($shot.Length -lt 20000) { throw "Gameplay screenshot looks empty or invalid: $($shot.FullName)" }
+          }
+          Write-Host "Gameplay screenshot gate passed: $($shots.Count) screenshot files."
