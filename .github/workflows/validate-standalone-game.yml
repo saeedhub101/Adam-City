@@ -6,6 +6,17 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      refresh_map_assets:
+        description: "Regenerate the Manila map and procedural textures from current source"
+        required: false
+        type: boolean
+        default: false
+      refresh_reference_photos:
+        description: "Fetch additional reference photos (normally reuse committed photos)"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -51,35 +62,57 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $map = 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb'
           $report = 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.json'
-          if ((Test-Path $map) -and (Test-Path $report) -and (Get-Item $map).Length -gt 100000) {
+          $refresh = '${{ inputs.refresh_map_assets }}' -eq 'true'
+          if (!$refresh -and (Test-Path $map) -and (Test-Path $report) -and (Get-Item $map).Length -gt 100000) {
             Write-Host 'Using committed Manila district; no network map download needed.'
           } else {
             python StandaloneBattleRoyale/Tools/build_manila_district.py
             if ($LASTEXITCODE -ne 0) { throw 'Initial Manila district generation failed.' }
           }
           if (!(Test-Path $map) -or !(Test-Path $report)) { throw 'Manila map asset or report missing.' }
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add $map $report 'StandaloneBattleRoyale/Content/Maps/Manila-Facade-Texture-*.jpg'
-          if (git diff --cached --quiet) {
-            Write-Host 'Reusable map assets are already committed.'
+      - name: Reuse committed facade photos unless refresh is requested
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $photos = Get-ChildItem 'StandaloneBattleRoyale/Content/Maps/Real-Facade-Photos' -File -ErrorAction SilentlyContinue | Where-Object { $_.Extension -in '.jpg','.jpeg','.png','.webp' }
+          $refresh = '${{ inputs.refresh_reference_photos }}' -eq 'true'
+          if (!$refresh -and $photos.Count -gt 0) {
+            Write-Host "Using $($photos.Count) committed facade photos; skipping network download."
           } else {
-            git commit -m 'Cache generated Manila district assets'
-            git push
+            python StandaloneBattleRoyale/Tools/fetch_manila_facade_photos.py
+            if ($LASTEXITCODE -ne 0) { throw 'Facade photo download failed.' }
           }
 
-      - name: Download real building-specific facade photographs
+      - name: Reuse committed street imagery unless refresh is requested
         shell: pwsh
         run: |
-          python StandaloneBattleRoyale/Tools/fetch_manila_facade_photos.py
-          if ($LASTEXITCODE -ne 0) { throw 'Facade photo download failed.' }
+          $ErrorActionPreference = 'Stop'
+          $photos = Get-ChildItem 'StandaloneBattleRoyale/Content/Maps/Street-Imagery' -File -ErrorAction SilentlyContinue | Where-Object { $_.Extension -in '.jpg','.jpeg','.png','.webp' }
+          $refresh = '${{ inputs.refresh_reference_photos }}' -eq 'true'
+          if (!$refresh -and $photos.Count -gt 0) {
+            Write-Host "Using $($photos.Count) committed street photos; skipping network download."
+          } else {
+            python StandaloneBattleRoyale/Tools/fetch_manila_street_imagery.py
+            if ($LASTEXITCODE -ne 0) { throw 'Street imagery harvesting failed.' }
+          }
 
-      - name: Download public street-level photos across Manila
+      - name: Commit only changed generated map, textures, and photo assets
+        if: github.event_name != 'pull_request'
         shell: pwsh
         run: |
-          python StandaloneBattleRoyale/Tools/fetch_manila_street_imagery.py
-          if ($LASTEXITCODE -ne 0) { throw 'Street imagery harvesting failed.' }
-
+          $ErrorActionPreference = 'Stop'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb StandaloneBattleRoyale/Content/Maps/Manila-Central-District.json
+          git add -f StandaloneBattleRoyale/Content/Maps/Manila-Facade-Texture-*.jpg
+          git add -f StandaloneBattleRoyale/Content/Maps/Real-Facade-Photos/
+          git add -f StandaloneBattleRoyale/Content/Maps/Street-Imagery/
+          if (git diff --cached --quiet) {
+            Write-Host 'No generated asset changes; repository cache remains unchanged.'
+          } else {
+            git commit -m 'Cache updated Manila map and texture assets'
+            git push
+          }
       - name: Verify generated map is present in Unreal Content
         shell: pwsh
         run: |
