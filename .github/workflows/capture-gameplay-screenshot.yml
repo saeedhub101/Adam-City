@@ -28,7 +28,7 @@ jobs:
       - name: Install headless display and software OpenGL
         run: |
           sudo apt-get update
-          sudo apt-get install -y xvfb libgl1-mesa-dri
+          sudo apt-get install -y xvfb libgl1-mesa-dri mesa-vulkan-drivers
 
       - name: Download Godot 4.4.1
         shell: bash
@@ -49,7 +49,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          "$GODOT_BIN" --headless --editor --path . --import 2>&1 | tee "$RUNNER_TEMP/city-import.log"
+          export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/lvp_icd.x86_64.json
+          export LIBGL_ALWAYS_SOFTWARE=1
+          xvfb-run -a "$GODOT_BIN" --editor --path . --import 2>&1 | tee "$RUNNER_TEMP/city-import.log"
           if grep -E "SCRIPT ERROR|Parse Error|ERROR:" "$RUNNER_TEMP/city-import.log"; then
             echo "City asset import produced errors."
             exit 1
