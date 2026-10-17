@@ -91,23 +91,8 @@ func _build_world() -> void:
 			Vector3(-ARENA_SIZE / 2, 1, 0), Vector3(ARENA_SIZE / 2, 1, 0)][i]
 		_add_box(self, "BoundaryWall_%02d" % i, wall_pos, wall_size, Color(0.12, 0.2, 0.14), true)
 
-	for i in range(24):
-		var x := rng.randf_range(-ARENA_SIZE * 0.43, ARENA_SIZE * 0.43)
-		var z := rng.randf_range(-ARENA_SIZE * 0.43, ARENA_SIZE * 0.43)
-		if Vector2(x, z).length() < 16:
-			continue
-		var w := rng.randf_range(4.0, 10.0)
-		var d := rng.randf_range(4.0, 10.0)
-		var h := rng.randf_range(2.5, 7.0)
-		_add_box(self, "Cover_%02d" % i, Vector3(x, h / 2.0, z), Vector3(w, h, d),
-			[Color(0.43, 0.36, 0.27), Color(0.28, 0.34, 0.38), Color(0.48, 0.43, 0.31)][i % 3], true)
+	_build_urban_district()
 
-	for i in range(38):
-		var x := rng.randf_range(-ARENA_SIZE * 0.45, ARENA_SIZE * 0.45)
-		var z := rng.randf_range(-ARENA_SIZE * 0.45, ARENA_SIZE * 0.45)
-		if Vector2(x, z).length() < 12:
-			continue
-		_add_tree(Vector3(x, 0, z))
 
 	storm_ring = MeshInstance3D.new()
 	var ring := TorusMesh.new()
@@ -120,6 +105,83 @@ func _build_world() -> void:
 	storm_ring.scale = Vector3(storm_radius, 1, storm_radius)
 	storm_ring.material_override = _material(Color(0.2, 0.85, 1.0, 0.7), true)
 	add_child(storm_ring)
+
+
+func _build_urban_district() -> void:
+	# Dense, street-oriented city block layout replaces the old random box obstacles.
+	# This is a gameplay-ready procedural fallback, not a substitute for a scanned city mesh.
+	var road_mat := _material(Color(0.075, 0.083, 0.09))
+	var sidewalk_mat := _material(Color(0.43, 0.42, 0.38))
+	var line_mat := _material(Color(0.82, 0.78, 0.62))
+	var asphalt := _add_box(self, "MainRoad", Vector3(0, -0.045, 0), Vector3(ARENA_SIZE, 0.08, 13.0), Color(0.075, 0.083, 0.09), false)
+	_add_box(self, "CrossRoad", Vector3(0, -0.035, 0), Vector3(13.0, 0.09, ARENA_SIZE), Color(0.075, 0.083, 0.09), false)
+	for lane in range(-8, 9, 4):
+		for seg in range(-9, 10, 2):
+			_add_box(self, "RoadMark_H", Vector3(float(seg) * 10.0, 0.012, float(lane)), Vector3(4.2, 0.025, 0.13), Color(0.86, 0.82, 0.69), false)
+			_add_box(self, "RoadMark_V", Vector3(float(lane), 0.013, float(seg) * 10.0), Vector3(0.13, 0.025, 4.2), Color(0.86, 0.82, 0.69), false)
+	for side in [-1.0, 1.0]:
+		_add_box(self, "Sidewalk_H_%s" % str(side), Vector3(0, 0.02, side * 8.1), Vector3(ARENA_SIZE, 0.16, 2.0), Color(0.48, 0.47, 0.43), false)
+		_add_box(self, "Sidewalk_V_%s" % str(side), Vector3(side * 8.1, 0.02, 0), Vector3(2.0, 0.16, ARENA_SIZE), Color(0.48, 0.47, 0.43), false)
+	var block_index := 0
+	for bx in range(-4, 5):
+		for bz in range(-4, 5):
+			var center := Vector3(float(bx) * 22.0, 0, float(bz) * 22.0)
+			if Vector2(center.x, center.z).length() < 19.0:
+				continue
+			var w := rng.randf_range(10.0, 16.0)
+			var d := rng.randf_range(10.0, 16.0)
+			var floors := rng.randi_range(2, 7)
+			var h := float(floors) * rng.randf_range(2.7, 3.15)
+			_build_detailed_building(center, Vector2(w, d), h, block_index)
+			block_index += 1
+	for i in range(32):
+		var x := rng.randf_range(-ARENA_SIZE * 0.44, ARENA_SIZE * 0.44)
+		var z := rng.randf_range(-ARENA_SIZE * 0.44, ARENA_SIZE * 0.44)
+		if absf(x) < 12.0 or absf(z) < 12.0:
+			continue
+		_add_tree(Vector3(x, 0, z))
+
+func _build_detailed_building(center: Vector3, footprint: Vector2, height: float, index: int) -> void:
+	var palettes := [
+		[Color(0.54, 0.51, 0.45), Color(0.28, 0.33, 0.36)],
+		[Color(0.65, 0.57, 0.45), Color(0.22, 0.30, 0.35)],
+		[Color(0.43, 0.45, 0.43), Color(0.18, 0.27, 0.32)],
+		[Color(0.68, 0.65, 0.57), Color(0.20, 0.31, 0.36)]
+	]
+	var palette: Array = palettes[index % palettes.size()]
+	var shell := _add_box(self, "Building_%03d" % index, center + Vector3(0, height * 0.5, 0),
+		Vector3(footprint.x, height, footprint.y), palette[0], true)
+	var trim := _material(Color(0.16, 0.18, 0.19))
+	var glass := _material(Color(0.10, 0.22, 0.28))
+	var lit_glass := _material(Color(0.68, 0.58, 0.36))
+	# Recessed-looking window panels, horizontal floor bands and roof parapets.
+	var columns := maxi(2, int(footprint.x / 2.0))
+	var rows := maxi(1, int(height / 2.8) - 1)
+	for floor_idx in range(rows):
+		var y := center.y + 1.1 + float(floor_idx) * (height - 1.6) / float(rows)
+		_add_box(self, "FloorBand", Vector3(center.x, y, center.z - footprint.y * 0.501), Vector3(footprint.x + 0.05, 0.11, 0.12), palette[1], false)
+		for col in range(columns):
+			var x := center.x - footprint.x * 0.5 + (float(col) + 0.5) * footprint.x / float(columns)
+			var window_width := footprint.x / float(columns) * 0.57
+			var win_color: Color = lit_glass if rng.randf() < 0.16 else palette[1]
+			_add_box(self, "WindowFront", Vector3(x, y + 0.45, center.z - footprint.y * 0.506),
+				Vector3(window_width, 0.9, 0.07), win_color, false)
+			_add_box(self, "WindowFrameTop", Vector3(x, y + 0.94, center.z - footprint.y * 0.512),
+				Vector3(window_width + 0.08, 0.07, 0.09), trim.albedo_color, false)
+		_add_box(self, "FacadeBand", Vector3(center.x, y - 0.13, center.z - footprint.y * 0.508),
+			Vector3(footprint.x, 0.08, 0.1), palette[0], false)
+	_add_box(self, "RoofParapet", Vector3(center.x, center.y + height + 0.18, center.z),
+		Vector3(footprint.x + 0.3, 0.36, footprint.y + 0.3), palette[1], false)
+	# Side windows add depth and stop the blocks reading as single flat cubes.
+	for floor_idx in range(rows):
+		var y := center.y + 1.25 + float(floor_idx) * (height - 1.8) / float(rows)
+		for col in range(maxi(2, int(footprint.y / 2.2))):
+			var z := center.z - footprint.y * 0.5 + (float(col) + 0.5) * footprint.y / float(maxi(2, int(footprint.y / 2.2)))
+			_add_box(self, "WindowSide", Vector3(center.x + footprint.x * 0.506, y + 0.3, z),
+				Vector3(0.07, 0.72, 0.62), palette[1], false)
+	# A simple ground-floor shopfront differentiates street-level facades.
+	_add_box(self, "Shopfront", Vector3(center.x, 1.15, center.z - footprint.y * 0.509),
+		Vector3(footprint.x * 0.62, 1.8, 0.08), Color(0.08, 0.14, 0.17), false)
 
 func _add_tree(pos: Vector3) -> void:
 	_add_box(self, "TreeTrunk", pos + Vector3(0, 1.1, 0), Vector3(0.65, 2.2, 0.65), Color(0.27, 0.17, 0.1), true)
