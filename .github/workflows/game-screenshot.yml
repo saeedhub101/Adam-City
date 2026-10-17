@@ -31,6 +31,15 @@ jobs:
           cache: npm
           cache-dependency-path: game/package.json
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download official Helsinki reality-mesh tile and textures
+        working-directory: .
+        run: python scripts/download_helsinki_mesh.py
+
       - name: Install dependencies
         run: npm install
 
@@ -91,7 +100,7 @@ jobs:
           try {
             await page.waitForFunction(() => {
               const status = document.querySelector('#status-text')?.textContent || '';
-              return status.includes('Character ready') || status.includes('could not load');
+              return status.includes('هلسنكي') || status.includes('تعذّر تحميل مجسّم هلسنكي') || status.includes('Character ready') || status.includes('could not load');
             }, { timeout: 60000 });
           } catch {
             console.log('Timed out waiting for character status.');
