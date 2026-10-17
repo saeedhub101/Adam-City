@@ -1,6 +1,6 @@
 extends Node3D
 
-const AMMAN_CITY_PATH := "res://assets/manila/Manila-Central-District.glb"
+const MANILA_CITY_PATH := "res://assets/manila/Manila-Central-District.glb"
 
 const ARENA_SIZE := 760.0
 const BOT_COUNT := 14
