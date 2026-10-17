@@ -115,53 +115,68 @@ async function loadLicensedPhotoCatalog() {
   const gallery = document.querySelector('#licensed-photo-gallery');
   const status = document.querySelector('#licensed-photo-status');
   if (!gallery || !status) return;
-  try {
-    const response = await fetch('/data/tabarbour-photo-catalog.json', { cache: 'no-store' });
-    if (!response.ok) throw new Error('catalogue not available');
-    const catalogue = await response.json();
-    const photos = Array.isArray(catalogue.photos) ? catalogue.photos : [];
-    gallery.replaceChildren();
-    if (!photos.length) {
-      status.textContent = 'لم يُعثر بعد على صور مرخّصة كافية في المصدر المفتوح. سيُعاد البحث تلقائيًا؛ لم نضع صورًا عشوائية على المباني.';
-      return;
-    }
-    const fragment = document.createDocumentFragment();
-    for (const photo of photos) {
-      if (!photo.thumbnail || !photo.page) continue;
-      const card = document.createElement('a');
-      card.className = 'licensed-photo-card';
-      card.href = photo.page;
-      card.target = '_blank';
-      card.rel = 'noopener noreferrer';
-      const img = document.createElement('img');
-      img.loading = 'lazy';
-      img.src = photo.thumbnail;
-      img.alt = photo.title || 'صورة مرخّصة من Wikimedia Commons';
-      img.referrerPolicy = 'no-referrer';
-      img.onerror = () => card.classList.add('photo-unavailable');
-      const title = document.createElement('strong');
-      title.textContent = photo.title || 'صورة من المنطقة';
-      const credit = document.createElement('span');
-      credit.textContent = 'المؤلف: ' + (photo.author || 'غير محدد');
-      const license = document.createElement('span');
-      license.textContent = 'الرخصة: ' + (photo.license || 'راجع صفحة المصدر');
-      const building = document.createElement('span');
-      if (photo.buildingMatch?.osmBuildingId) {
-        building.className = 'licensed-photo-building-match';
-        building.textContent = 'المبنى المطابق: ' + photo.buildingMatch.buildingName + ' (OSM #' + photo.buildingMatch.osmBuildingId + ')';
-      } else {
-        building.className = 'licensed-photo-building-unmatched';
-        building.textContent = 'لم يُثبت ارتباطها بمبنى محدد — لن تُلصق على أي مبنى';
-      }
-      card.append(img, title, credit, license, building);
-      fragment.append(card);
-    }
-    gallery.append(fragment);
-    const exactMatches = Number(catalogue.matchedToBuildingCount || photos.filter(photo => photo.buildingMatch?.osmBuildingId).length);
-    status.textContent = photos.length + ' صورة مرخّصة؛ ' + exactMatches + ' فقط رُبطت بمبنى محدد بإحداثيات تقع داخل بصمته على الخريطة.';
-  } catch (error) {
-    status.textContent = 'فهرس الصور قيد الإنشاء الآلي. ستظهر الصور المرخّصة بعد نجاح تشغيل مهمة الجمع.';
+  const loadCatalogue = async (path) => {
+    try {
+      const response = await fetch(path, { cache: 'no-store' });
+      return response.ok ? await response.json() : null;
+    } catch { return null; }
+  };
+  const [commons, mapillary] = await Promise.all([
+    loadCatalogue('/data/tabarbour-photo-catalog.json'),
+    loadCatalogue('/data/mapillary-photo-catalog.json')
+  ]);
+  const photos = [
+    ...((commons?.photos || []).map(photo => ({
+      ...photo, imageSrc: photo.thumbnail, sourceName: 'Wikimedia Commons',
+      sourceUrl: photo.page, authorName: photo.author, licenseName: photo.license,
+      label: photo.title
+    }))),
+    ...((mapillary?.photos || []).map(photo => ({
+      ...photo, imageSrc: photo.file, sourceName: 'Mapillary',
+      sourceUrl: photo.sourceUrl, authorName: photo.creator,
+      licenseName: photo.license, label: 'صورة شارع من Mapillary · ' + photo.id
+    })))
+  ];
+  gallery.replaceChildren();
+  if (!photos.length) {
+    status.textContent = 'لم تُجمع صور مرخّصة بعد. أضف MAPILLARY_ACCESS_TOKEN إلى GitHub Actions Secrets لتشغيل جمع صور Mapillary.';
+    return;
   }
+  const fragment = document.createDocumentFragment();
+  for (const photo of photos) {
+    if (!photo.imageSrc || !photo.sourceUrl) continue;
+    const card = document.createElement('a');
+    card.className = 'licensed-photo-card';
+    card.href = photo.sourceUrl;
+    card.target = '_blank';
+    card.rel = 'noopener noreferrer';
+    const img = document.createElement('img');
+    img.loading = 'lazy';
+    img.src = photo.imageSrc;
+    img.alt = photo.label || 'صورة شارع مرخّصة';
+    img.referrerPolicy = 'no-referrer';
+    img.onerror = () => card.classList.add('photo-unavailable');
+    const title = document.createElement('strong');
+    title.textContent = photo.label || 'صورة من طبربور';
+    const credit = document.createElement('span');
+    credit.textContent = 'المصدر/المصور: ' + (photo.authorName || photo.sourceName || 'غير محدد');
+    const license = document.createElement('span');
+    license.textContent = 'الرخصة: ' + (photo.licenseName || 'راجع صفحة المصدر');
+    const building = document.createElement('span');
+    if (photo.buildingMatch?.osmBuildingId) {
+      building.className = 'licensed-photo-building-match';
+      building.textContent = 'المبنى المطابق: ' + (photo.buildingMatch.buildingName || 'مبنى OSM') + ' (OSM #' + photo.buildingMatch.osmBuildingId + ')';
+    } else {
+      building.className = 'licensed-photo-building-unmatched';
+      building.textContent = 'لم يُثبت ارتباطها بمبنى محدد — لن تُلصق على أي مبنى';
+    }
+    card.append(img, title, credit, license, building);
+    fragment.append(card);
+  }
+  gallery.append(fragment);
+  const exactMatches = photos.filter(photo => photo.buildingMatch?.osmBuildingId).length;
+  const mapillaryCount = (mapillary?.photos || []).length;
+  status.textContent = photos.length + ' صورة مرخّصة (' + mapillaryCount + ' من Mapillary محفوظة داخل المستودع)؛ ' + exactMatches + ' فقط رُبطت بمبنى محدد بإحداثيات موثقة.';
 }
 loadLicensedPhotoCatalog();
 
