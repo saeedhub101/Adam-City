@@ -287,8 +287,24 @@ async function loadTabarbourMap() {
     showError('تعذر العثور على نسخة خريطة طبربور المحلية أو تحميل بياناتها أول مرة. شغّل Workflow تحديث خريطة طبربور في GitHub Actions ثم أعد تحميل اللعبة.');
     return;
   }
-  const roads = data.elements.filter(e => e.type === 'way' && e.tags?.highway);
-  const buildings = data.elements.filter(e => e.type === 'way' && e.tags?.building);
+  // Merge the checked-in OSM snapshot with our own persistent map edits.
+  // Keep custom edits in a separate file so refreshing OSM never overwrites them.
+  let customData = { elements: [] };
+  try {
+    const customResponse = await fetch('/data/tabarbour-custom.json', { cache: 'no-store' });
+    if (customResponse.ok) {
+      const parsedCustom = await customResponse.json();
+      if (Array.isArray(parsedCustom.elements)) customData = parsedCustom;
+    }
+  } catch (error) {
+    console.warn('Custom Tabarbour map edits unavailable; loading OSM only:', error);
+  }
+  const customElements = customData.elements;
+  const customIds = new Set(customElements.map(e => String(e.id)));
+  const osmElements = data.elements.filter(e => !customIds.has(String(e.id)));
+  const allElements = [...osmElements, ...customElements];
+  const roads = allElements.filter(e => e.type === 'way' && e.tags?.highway);
+  const buildings = allElements.filter(e => e.type === 'way' && e.tags?.building);
   const asphalt = new THREE.MeshStandardMaterial({ color: 0x34393c, roughness: 0.98 });
   const curb = new THREE.MeshStandardMaterial({ color: 0xd2cbbd, roughness: 1 });
   const roadWidth = tags => {
