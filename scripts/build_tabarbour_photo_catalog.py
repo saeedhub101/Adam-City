@@ -51,8 +51,55 @@ def gather(params, seen):
         })
     return found
 
+def point_in_polygon(lat, lon, ring):
+    """Ray casting in lon/lat coordinates; only exact footprint containment is auto-matched."""
+    if len(ring) < 3:
+        return False
+    inside = False
+    j = len(ring) - 1
+    for i, point in enumerate(ring):
+        xi, yi = point.get("lon"), point.get("lat")
+        xj, yj = ring[j].get("lon"), ring[j].get("lat")
+        if xi is None or yi is None or xj is None or yj is None:
+            j = i
+            continue
+        crosses = ((yi > lat) != (yj > lat)) and (lon < (xj - xi) * (lat - yi) / ((yj - yi) or 1e-15) + xi)
+        if crosses:
+            inside = not inside
+        j = i
+    return inside
+
+def load_buildings():
+    source = Path("game/public/data/tabarbour-osm.json")
+    data = json.loads(source.read_text(encoding="utf-8"))
+    buildings = []
+    for way in data.get("elements", []):
+        tags = way.get("tags") or {}
+        geometry = way.get("geometry") or []
+        if way.get("type") != "way" or not tags.get("building") or len(geometry) < 3:
+            continue
+        buildings.append({
+            "id": str(way["id"]),
+            "name": tags.get("name") or tags.get("addr:housenumber") or ("OSM building #" + str(way["id"])),
+            "ring": geometry
+        })
+    return buildings
+
+def match_photo_to_building(photo, buildings):
+    lat, lon = photo.get("lat"), photo.get("lon")
+    if lat is None or lon is None:
+        return None
+    matches = [b for b in buildings if point_in_polygon(lat, lon, b["ring"])]
+    # A point must fall inside exactly one mapped building footprint. A nearby point
+    # or ambiguous overlap is never enough to claim an exact building match.
+    if len(matches) != 1:
+        return None
+    b = matches[0]
+    return {"osmBuildingId": b["id"], "buildingName": b["name"], "matchMethod": "geotag_inside_unique_osm_footprint"}
+
 def main():
     seen, photos = set(), []
+    buildings = load_buildings()
     base = {"prop":"imageinfo|coordinates", "iiprop":"url|extmetadata", "iiurlwidth":900, "ggsnamespace":6, "ggslimit":100}
     try:
         photos += [p for p in gather({"generator":"geosearch", **base, "ggscoord":f"{LAT}|{LON}", "ggsradius":RADIUS, "ggsprimary":"all", "ggsnamespace":6}, seen) if p["lat"] is not None and p["lon"] is not None]
@@ -69,7 +116,7 @@ def main():
     output = {
         "area": "Tabarbour, Amman, Jordan",
         "generatedAt": datetime.now(timezone.utc).isoformat(),
-        "method": "Wikimedia Commons geosearch + text search",
+        "method": "Wikimedia Commons geosearch + text search; strict unique OSM footprint matching",\n        "matchedToBuildingCount": sum(1 for p in photos if p.get("buildingMatch")),\n        "matchingPolicy": "Automatic association only when photo coordinates fall inside exactly one OSM building footprint. No nearest-building guesses.",
         "radiusMeters": RADIUS,
         "count": min(len(photos), 100),
         "photos": photos[:100]
