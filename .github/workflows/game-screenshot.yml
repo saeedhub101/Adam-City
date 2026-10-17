@@ -41,7 +41,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .cache/helsinki
-          key: helsinki-2017-668492x2-lod15-v1
+          key: helsinki-city-lod16-v2
 
       - name: Download official Helsinki reality-mesh tile and textures
         working-directory: .
