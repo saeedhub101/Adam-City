@@ -121,58 +121,87 @@ def make_road_texture(path: Path) -> Image.Image:
 
 
 def compact_scene(scene: trimesh.Scene) -> trimesh.Scene:
-    """Merge thousands of tiny OSM meshes into a few material batches for real-time rendering."""
+    """Merge thousands of OSM meshes into material/color batches for real-time rendering.
+
+    Important: Scene.geometry keys are not guaranteed to equal node_name values. Group
+    untextured road markings by their actual face color, not by geometry key, otherwise
+    every individual dash remains a separate mesh in the exported GLB.
+    """
     groups = {}
     materials = {}
-    for name, mesh in scene.geometry.items():
+    color_groups = {}
+    for geometry_name, mesh in scene.geometry.items():
         visual = mesh.visual
         material = getattr(visual, "material", None)
         if isinstance(visual, trimesh.visual.TextureVisuals) and material is not None:
-            key = getattr(material, "name", "") or name
+            key = "texture:" + (getattr(material, "name", "") or "unnamed")
             groups.setdefault(key, []).append(mesh)
             materials[key] = material
-        elif name.startswith("road_mark_"):
-            groups.setdefault("road_markings", []).append(mesh)
-        elif name == "district_ground":
-            groups.setdefault("district_ground", []).append(mesh)
-        else:
-            groups.setdefault(name, []).append(mesh)
+            continue
+
+        face_colors = getattr(visual, "face_colors", None)
+        if face_colors is not None and len(face_colors):
+            colors = np.asarray(face_colors, dtype=np.uint8)
+            color = tuple(int(v) for v in colors[0])
+            if len(colors) == 1 or np.all(colors == colors[0]):
+                key = "color:" + "_".join(map(str, color))
+                groups.setdefault(key, []).append(mesh)
+                color_groups[key] = color
+                continue
+
+        vertex_colors = getattr(visual, "vertex_colors", None)
+        if vertex_colors is not None and len(vertex_colors):
+            colors = np.asarray(vertex_colors, dtype=np.uint8)
+            if len(colors) == 1 or np.all(colors == colors[0]):
+                color = tuple(int(v) for v in colors[0])
+                key = "color:" + "_".join(map(str, color))
+                groups.setdefault(key, []).append(mesh)
+                color_groups[key] = color
+                continue
+
+        groups.setdefault("unclassified:" + geometry_name, []).append(mesh)
 
     compact = trimesh.Scene()
     for key, meshes in groups.items():
         vertex_chunks = []
         face_chunks = []
         uv_chunks = []
+        face_color_chunks = []
         vertex_offset = 0
+        has_uv = key in materials
+        has_color = key in color_groups
         for mesh in meshes:
             vertex_chunks.append(np.asarray(mesh.vertices))
             face_chunks.append(np.asarray(mesh.faces) + vertex_offset)
             vertex_offset += len(mesh.vertices)
-            if key in materials:
+            if has_uv:
                 uv = getattr(mesh.visual, "uv", None)
                 if uv is None or len(uv) != len(mesh.vertices):
                     raise RuntimeError(f"Textured mesh {key} has missing/incompatible UV coordinates")
                 uv_chunks.append(np.asarray(uv))
+            elif has_color:
+                face_color_chunks.append(
+                    np.tile(np.asarray(color_groups[key], dtype=np.uint8), (len(mesh.faces), 1))
+                )
         merged = trimesh.Trimesh(
             vertices=np.concatenate(vertex_chunks, axis=0),
             faces=np.concatenate(face_chunks, axis=0),
             process=False,
         )
-        if key in materials:
+        if has_uv:
             merged.visual = trimesh.visual.TextureVisuals(
                 uv=np.concatenate(uv_chunks, axis=0),
                 material=materials[key],
             )
-        elif key == "road_markings":
-            merged.visual.face_colors = np.tile(
-                np.array([205, 194, 145, 255], dtype=np.uint8), (len(merged.faces), 1)
-            )
-        elif key == "district_ground":
-            merged.visual.face_colors = np.tile(
-                np.array([83, 103, 75, 255], dtype=np.uint8), (len(merged.faces), 1)
-            )
-        compact.add_geometry(merged, node_name=key)
+        elif has_color:
+            merged.visual.face_colors = np.concatenate(face_color_chunks, axis=0)
+        compact.add_geometry(merged, geom_name=key, node_name=key)
     print(f"Compacted map mesh batches: {len(scene.geometry)} -> {len(compact.geometry)}")
+    if len(compact.geometry) > 50:
+        raise RuntimeError(
+            f"Map compaction failed: {len(compact.geometry)} mesh batches remain; "
+            "expected 50 or fewer."
+        )
     return compact
 
 def main():
