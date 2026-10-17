@@ -20,6 +20,14 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
     const selectedLod = preferred.length ? 15 : fallback.length ? 16 : null;
     if (!entries.length) throw new Error('لم يُعثر على ملفات OBJ وMTL صالحة في المنطقة المنزّلة');
 
+    const firstObjUrl = new URL('/' + entries[0].obj.replace(/^\\/+/, ''), window.location.origin);
+    const firstObjResponse = await fetch(firstObjUrl.href);
+    if (!firstObjResponse.ok) throw new Error('تعذّر قراءة أول ملف OBJ لهلسنكي');
+    const firstObjText = await firstObjResponse.text();
+    const firstVertex = firstObjText.match(/^v\\s+([-+0-9.eE]+)\\s+([-+0-9.eE]+)\\s+([-+0-9.eE]+)/m);
+    if (!firstVertex) throw new Error('ملف OBJ لا يحتوي على إحداثيات رؤوس صالحة');
+    const sourceOrigin = [Number(firstVertex[1]), Number(firstVertex[2]), Number(firstVertex[3])];
+
     const root = new THREE.Group();
     root.name = 'Helsinki-2017-Photogrammetry';
     let loaded = 0;
@@ -33,9 +41,20 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
           const mtlUrl = new URL(entry.mtl, objUrl);
           const materials = await new MTLLoader().loadAsync(mtlUrl.href);
           materials.preload();
+          const objText = entry.obj === entries[0].obj
+            ? firstObjText
+            : await fetch(objUrl.href).then(result => {
+                if (!result.ok) throw new Error('HTTP ' + result.status + ' reading OBJ');
+                return result.text();
+              });
+          // Rebase large projected GIS coordinates before OBJLoader stores them
+          // as Float32 values; otherwise metre-scale details collapse at 6–25 million units.
+          const localObjText = objText.replace(/^v\\s+([-+0-9.eE]+)\\s+([-+0-9.eE]+)\\s+([-+0-9.eE]+)(.*)$/gm,
+            (_line, x, y, z, tail) => 'v ' + (Number(x) - sourceOrigin[0]) + ' ' +
+              (Number(y) - sourceOrigin[1]) + ' ' + (Number(z) - sourceOrigin[2]) + tail);
           const objLoader = new OBJLoader();
           objLoader.setMaterials(materials);
-          const object = await objLoader.loadAsync(objUrl.href);
+          const object = objLoader.parse(localObjText);
           object.traverse(node => {
             if (node.isMesh) {
               // Textured aerial imagery already contains scene lighting; avoid expensive city-wide shadow maps.
