@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "GodotAdamRoyal/**"
+      - "StandaloneBattleRoyale/Tools/build_manila_district.py"
       - ".github/workflows/build-godot-adam-royal.yml"
   workflow_dispatch:
 
@@ -41,7 +42,14 @@ jobs:
           $glbPath = Join-Path $mapDir 'Manila-Central-District.glb'
           $textures = @(Get-ChildItem $mapDir -Filter 'Manila-Facade-Texture-*.jpg' -File -ErrorAction SilentlyContinue)
           $roadTexture = Join-Path $mapDir 'Manila-Road-Asphalt.jpg'
-          $cacheValid = (Test-Path $reportPath) -and (Test-Path $glbPath) -and (Test-Path $roadTexture) -and ((Get-Item $glbPath).Length -gt 100000) -and ($textures.Count -ge 4)
+          $cachedMeshCount = 999999
+          if (Test-Path $reportPath) {
+            try {
+              $cachedReport = Get-Content $reportPath -Raw | ConvertFrom-Json
+              $cachedMeshCount = [int]$cachedReport.mesh_objects
+            } catch { $cachedMeshCount = 999999 }
+          }
+          $cacheValid = (Test-Path $reportPath) -and (Test-Path $glbPath) -and (Test-Path $roadTexture) -and ((Get-Item $glbPath).Length -gt 100000) -and ($textures.Count -ge 4) -and ($cachedMeshCount -le 50)
           if ($cacheValid) {
             Write-Host "Using committed Manila map cache; skipping OpenStreetMap download and regeneration."
           } else {
@@ -54,6 +62,7 @@ jobs:
           $report = Get-Content $reportPath -Raw | ConvertFrom-Json
           $textures = @(Get-ChildItem $mapDir -Filter 'Manila-Facade-Texture-*.jpg' -File -ErrorAction SilentlyContinue)
           if ($report.buildings -lt 100 -or $report.roads -lt 30) { throw "Map quality gate failed: buildings=$($report.buildings), roads=$($report.roads)" }
+          if ($report.mesh_objects -gt 50) { throw "Map is not optimized: $($report.mesh_objects) mesh objects remain; expected 50 or fewer." }
           if ($textures.Count -lt 4) { throw "Expected four reusable facade texture files; found $($textures.Count)" }
           if (-not (Test-Path $roadTexture)) { throw 'Reusable asphalt texture is missing.' }
           if ((Get-Item $glbPath).Length -lt 100000) { throw "Manila GLB is unexpectedly small" }
