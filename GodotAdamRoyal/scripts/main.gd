@@ -4,13 +4,16 @@ const CityBuilder = preload("res://scripts/osm_city.gd")
 const PlayerScene = preload("res://scenes/player.tscn")
 
 var city_builder: Node3D
+var city_bounds := AABB(Vector3(-500, 0, -500), Vector3(1000, 100, 1000))
 
 func _ready() -> void:
 	_build_environment()
 	_build_ground()
 	var city_result := _build_city()
+	city_bounds = _measure_city_bounds()
 	var player = PlayerScene.instantiate()
-	player.position = Vector3(0, 0.25, 12)
+	var city_center := city_bounds.get_center()
+	player.position = Vector3(city_center.x, 0.25, city_center.z + minf(city_bounds.size.z * 0.08, 18.0))
 	add_child(player)
 	_build_hud(int(city_result.get("buildings", 0)), int(city_result.get("roads", 0)), bool(city_result.get("ok", false)))
 
@@ -18,21 +21,23 @@ func _ready() -> void:
 		call_deferred("_run_visual_qa_capture")
 
 func _run_visual_qa_capture() -> void:
-	# Capture the rendered game viewport, not a generated mockup or a headless placeholder.
+	# Derive camera framing from the real imported map bounds instead of guessed coordinates.
 	var output_dir := ProjectSettings.globalize_path("res://qa_screenshots")
 	DirAccess.make_dir_recursive_absolute(output_dir)
 	var camera := Camera3D.new()
 	camera.name = "VisualQACamera"
 	camera.current = true
-	camera.fov = 72.0
+	camera.fov = 68.0
 	add_child(camera)
 	var player := get_node_or_null("Player")
+	var center := city_bounds.get_center()
+	var span := maxf(maxf(city_bounds.size.x, city_bounds.size.z), 100.0)
 	var captures := [
-		{"name": "01-aerial-full-map.png", "position": Vector3(0, 2350, 40), "target": Vector3(0, 0, 0)},
-		{"name": "02-street-west.png", "position": Vector3(-820, 24, -460), "target": Vector3(-755, 3, -420)},
-		{"name": "03-street-east.png", "position": Vector3(820, 22, -520), "target": Vector3(750, 3, -470)},
-		{"name": "04-street-north.png", "position": Vector3(-610, 28, 760), "target": Vector3(-555, 3, 690)},
-		{"name": "05-street-south.png", "position": Vector3(640, 24, 800), "target": Vector3(570, 3, 735)}
+		{"name": "01-aerial-full-map.png", "position": center + Vector3(0, span * 1.05, 0), "target": center},
+		{"name": "02-street-west.png", "position": center + Vector3(-span * 0.28, span * 0.055, -span * 0.12), "target": center + Vector3(-span * 0.20, 5, -span * 0.08)},
+		{"name": "03-street-east.png", "position": center + Vector3(span * 0.28, span * 0.055, -span * 0.10), "target": center + Vector3(span * 0.20, 5, -span * 0.06)},
+		{"name": "04-street-north.png", "position": center + Vector3(-span * 0.10, span * 0.055, -span * 0.28), "target": center + Vector3(-span * 0.06, 5, -span * 0.20)},
+		{"name": "05-street-south.png", "position": center + Vector3(span * 0.10, span * 0.055, span * 0.28), "target": center + Vector3(span * 0.06, 5, span * 0.20)}
 	]
 	for shot in captures:
 		camera.global_position = shot.position
@@ -47,11 +52,10 @@ func _run_visual_qa_capture() -> void:
 			push_error("QA screenshot save failed: " + output_path + " error=" + str(error))
 			get_tree().quit(2)
 			return
-		print("QA_SCREENSHOT=" + output_path + " SIZE=" + str(image.get_size()))
-	# A dedicated close third-person view confirms the imported player mesh is present in the rendered scene.
+		print("QA_SCREENSHOT=" + output_path + " SIZE=" + str(image.get_size()) + " CITY_CENTER=" + str(center))
 	if player != null:
-		camera.global_position = Vector3(0, 4.2, 0)
-		camera.look_at(Vector3(0, 1.0, 12), Vector3.UP)
+		camera.global_position = player.global_position + Vector3(3.5, 2.6, 5.5)
+		camera.look_at(player.global_position + Vector3.UP * 1.0, Vector3.UP)
 		await get_tree().process_frame
 		await get_tree().process_frame
 		await RenderingServer.frame_post_draw
@@ -67,8 +71,29 @@ func _run_visual_qa_capture() -> void:
 		push_error("Visual QA could not find Player node")
 		get_tree().quit(2)
 		return
+	print("CITY_BOUNDS=" + str(city_bounds) + " CITY_CENTER=" + str(center))
 	print("VISUAL_QA_CAPTURE_COUNT=6")
 	get_tree().quit(0)
+
+func _measure_city_bounds() -> AABB:
+	var combined := AABB()
+	var found := false
+	var city := get_node_or_null("ManilaRealWorldDistrict")
+	if city == null:
+		city = get_node_or_null("ManilaOSMFallback")
+	if city != null:
+		for node in city.find_children("*", "MeshInstance3D", true, false):
+			var mesh_instance := node as MeshInstance3D
+			if mesh_instance == null or mesh_instance.mesh == null:
+				continue
+			var bounds := mesh_instance.global_transform * mesh_instance.get_aabb()
+			combined = bounds if not found else combined.merge(bounds)
+			found = true
+	if not found:
+		push_warning("Could not measure imported city geometry; using conservative fallback bounds.")
+		return AABB(Vector3(-1200, 0, -1200), Vector3(2400, 120, 2400))
+	print("CITY_BOUNDS_MEASURED=" + str(combined))
+	return combined
 
 func _build_city() -> Dictionary:
 	# The workflow stages a textured, real-geography Manila GLB here before import.
