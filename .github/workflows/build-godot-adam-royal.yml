@@ -92,26 +92,43 @@ jobs:
           }
           Write-Host "Reusable Manila cache verified: $($report.buildings) buildings; $($report.roads) roads; $($textures.Count) texture atlases; $((Get-Item $glbPath).Length) GLB bytes."
 
-      - name: Apply real photographic facade textures to cached Manila map
+      - name: Reuse cached Manila facade improvement; process only when missing or outdated
         shell: pwsh
         working-directory: .
         run: |
           $ErrorActionPreference = 'Stop'
-          python -m pip install --disable-pip-version-check requests pillow trimesh numpy mapbox-earcut scipy
-          if ($LASTEXITCODE -ne 0) { throw "Could not install facade texture processing dependencies" }
-          python StandaloneBattleRoyale/Tools/apply_manila_photo_facades.py
-          if ($LASTEXITCODE -ne 0) { throw "Photo facade integration failed; refusing to continue with untextured map" }
-          $report = Get-Content 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.json' -Raw | ConvertFrom-Json
-          if ($report.facade_materials_replaced -lt 1) { throw "No photographic facade materials were applied" }
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb' 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.json' 'StandaloneBattleRoyale/Content/Maps/Manila-Facade-Texture-*.jpg'
-          if (-not (git diff --cached --quiet)) {
-            git commit -m 'Apply real photographic facade textures to Manila map [skip ci]'
-            git pull --rebase origin main
-            git push origin HEAD:main
+          $mapDir = 'StandaloneBattleRoyale/Content/Maps'
+          $reportPath = Join-Path $mapDir 'Manila-Central-District.json'
+          $glbPath = Join-Path $mapDir 'Manila-Central-District.glb'
+          $cached = $false
+          if ((Test-Path $reportPath) -and (Test-Path $glbPath)) {
+            try {
+              $existing = Get-Content $reportPath -Raw | ConvertFrom-Json
+              $atlases = @(Get-ChildItem $mapDir -Filter 'Manila-Facade-Texture-*.jpg' -File -ErrorAction SilentlyContinue)
+              $cached = ($existing.facade_pipeline_version -ge 1) -and ($existing.facade_materials_replaced -ge 1) -and ($atlases.Count -ge 4) -and ((Get-Item $glbPath).Length -gt 100000)
+            } catch { $cached = $false }
           }
-          Write-Host "PHOTO_FACADE_PIPELINE_PASS materials=$($report.facade_materials_replaced) source=$($report.facade_texture_source)"
+          if ($cached) {
+            Write-Host 'Using committed Manila facade-improved GLB and atlases; skipping texture processing.'
+          } else {
+            python -m pip install --disable-pip-version-check pillow trimesh numpy mapbox-earcut scipy
+            if ($LASTEXITCODE -ne 0) { throw "Could not install facade texture processing dependencies" }
+            python StandaloneBattleRoyale/Tools/apply_manila_photo_facades.py
+            if ($LASTEXITCODE -ne 0) { throw "Facade atlas integration failed; refusing to continue with an unverified map" }
+            $report = Get-Content $reportPath -Raw | ConvertFrom-Json
+            if ($report.facade_materials_replaced -lt 1 -or $report.facade_pipeline_version -lt 1) { throw "Manila facade improvement did not produce a valid versioned cache" }
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+users.noreply.github.com'
+            git add "$mapDir/Manila-Central-District.glb" "$mapDir/Manila-Central-District.json"
+            git add -f "$mapDir/Manila-Facade-Texture-*.jpg"
+            if (-not (git diff --cached --quiet)) {
+              git commit -m 'Cache improved Manila facade materials [skip ci]'
+              git pull --rebase origin main
+              git push origin HEAD:main
+            }
+          }
+          $report = Get-Content $reportPath -Raw | ConvertFrom-Json
+          Write-Host "MANILA_FACADE_CACHE_PASS version=$($report.facade_pipeline_version) materials=$($report.facade_materials_replaced) source=$($report.facade_texture_source)"
 
       - name: Fetch and validate real Manila elevation data
         shell: pwsh
