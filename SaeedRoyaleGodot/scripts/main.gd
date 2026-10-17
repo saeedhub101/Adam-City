@@ -248,7 +248,7 @@ func _build_hud() -> void:
 	layer.add_child(hud_label)
 
 	var title := Label.new()
-	title.text = "SAEED ROYALE"
+	title.text = "ADAM ROYAL"
 	title.position = Vector2(0, 16)
 	title.anchor_left = 0.5
 	title.anchor_right = 0.5
