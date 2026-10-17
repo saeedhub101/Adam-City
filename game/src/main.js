@@ -64,7 +64,10 @@ function initRenderer(qualityKey) {
 function addBuilding(x, z, w, d, h, seed, palette) {
   const group = new THREE.Group();
   group.position.set(x, 0, z);
-  const wallMat = new THREE.MeshStandardMaterial({ color: palette[seed % palette.length], roughness: 0.88, metalness: 0.02 });
+  const wallMat = new THREE.MeshStandardMaterial({ color: palette[seed % palette.length], roughness: 0.94, metalness: 0.0 });
+  const trimMat = new THREE.MeshStandardMaterial({ color: 0xe1d7c5, roughness: 0.82 });
+  const balconyMat = new THREE.MeshStandardMaterial({ color: 0x716d65, roughness: 0.72, metalness: 0.25 });
+  const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x263e4a, roughness: 0.22, metalness: 0.22, clearcoat: 0.45 });
   const box = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), wallMat);
   box.position.y = h / 2;
   box.castShadow = true;
@@ -81,14 +84,15 @@ function addBuilding(x, z, w, d, h, seed, palette) {
 
   // Recessed-looking dark window strips add scale without excessive draw calls.
   const floors = Math.max(1, Math.floor(h / 3.1));
-  const windows = new THREE.MeshStandardMaterial({ color: 0x253b49, roughness: 0.32, metalness: 0.18 });
+  const windows = glassMat;
   for (let floor = 0; floor < floors; floor++) {
     const wy = 1.05 + floor * 3.05;
     if (wy > h - 0.45) continue;
     const count = Math.max(1, Math.floor(w / 2.5));
     for (let i = 0; i < count; i++) {
       const wx = -w / 2 + (i + 0.5) * w / count;
-      const win = new THREE.Mesh(new THREE.BoxGeometry(Math.min(0.95, w / count * 0.55), 1.05, 0.035), windows);
+      const ww = Math.min(1.15, w / count * 0.56);
+      const win = new THREE.Mesh(new THREE.BoxGeometry(ww, 1.18, 0.055), windows);
       win.position.set(wx, wy, d / 2 + 0.018);
       group.add(win);
       const winBack = win.clone();
@@ -124,9 +128,10 @@ function createCity(quality) {
   ground.receiveShadow = true;
   scene.add(ground);
 
-  // A connected street grid with sidewalks and a few open plazas.
+  // Connected asphalt streets, concrete sidewalks, painted lane markings and curb stones.
   const asphalt = new THREE.MeshStandardMaterial({ color: 0x343b40, roughness: 0.96 });
-  const sidewalk = new THREE.MeshStandardMaterial({ color: 0xbab5a8, roughness: 1 });
+  const sidewalk = new THREE.MeshStandardMaterial({ color: 0xc5bfb2, roughness: 1 });
+  const marking = new THREE.MeshStandardMaterial({ color: 0xd8d5c9, roughness: 0.9 });
   for (let p = -WORLD_SIZE / 2; p <= WORLD_SIZE / 2; p += 52) {
     const roadH = new THREE.Mesh(new THREE.PlaneGeometry(WORLD_SIZE, 12), asphalt);
     roadH.rotation.x = -Math.PI / 2;
