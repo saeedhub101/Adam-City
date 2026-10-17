@@ -10,8 +10,12 @@
   },
   "buildings": 4342,
   "roads": 3037,
-  "mesh_objects": 7,
-  "glb_bytes": 10360328,
+  "mapped_trees": 3693,
+  "street_lamps": 32,
+  "traffic_signals": 81,
+  "sidewalk_meshes": 1741,
+  "mesh_objects": 14,
+  "glb_bytes": 15202272,
   "facade_textures": [
     "Manila-Facade-Texture-1.jpg",
     "Manila-Facade-Texture-2.jpg",
@@ -19,15 +23,5 @@
     "Manila-Facade-Texture-4.jpg"
   ],
   "road_texture": "Manila-Road-Asphalt.jpg",
-  "note": "Real OSM footprints and road alignments with procedural tileable facade atlases. Licensed Manila photographs are retained as reference images and are not falsely represented as building-specific photogrammetry. This improves tiling artifacts but is not a photogrammetry reconstruction.",
-  "optimization": {
-    "mode": "offline cached-GLB compaction",
-    "mesh_objects_before": 14323,
-    "mesh_objects_after": 7
-  },
-  "facade_texture_source": "locally generated tileable facade atlases; Wikimedia Commons images retained as attributed reference only",
-  "facade_texture_license": "CC0 1.0 (verify source metadata at Wikimedia Commons)",
-  "facade_texture_method": "four distinct repeatable facade atlases with window frames, reveals, sills, and material variation; no whole-street photographs stretched across walls",
-  "facade_materials_replaced": 4,
-  "facade_photo_projection": false
+  "note": "Real OSM footprints, roads and mapped tree/street-furniture points; generated raised sidewalks; facade atlases/asphalt remain procedural and lane markings approximate."
 }
