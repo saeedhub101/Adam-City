@@ -1,0 +1,80 @@
+name: Build Amman 3D city preview for Unreal
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/build-amman-city-preview.yml"
+      - "Tools/Build-Amman-3DPreview.py"
+      - "SaeedRoyaleGodot/assets/amman_core.geojson"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+concurrency:
+  group: amman-city-preview-main
+  cancel-in-progress: false
+
+jobs:
+  generate-city:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - name: Install Blender
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes blender
+          blender --version
+      - name: Validate real OSM source
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("SaeedRoyaleGodot/assets/amman_core.geojson")
+          d=json.loads(p.read_text(encoding="utf-8"))
+          assert d.get("source")=="OpenStreetMap contributors"
+          assert d.get("license")=="Open Database License (ODbL) 1.0"
+          assert d.get("type")=="FeatureCollection"
+          b=sum(f.get("properties",{}).get("kind")=="building" for f in d["features"])
+          r=sum(f.get("properties",{}).get("kind")=="road" for f in d["features"])
+          assert b>=100 and r>=50,(b,r)
+          print(f"Source valid: {b} building footprints, {r} road ways")
+          PY
+      - name: Generate city mesh and render preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output
+          blender -b --factory-startup --python Tools/Build-Amman-3DPreview.py -- \
+            SaeedRoyaleGodot/assets/amman_core.geojson output/Amman-Central-District.glb \
+            output/Amman-Central-District-3D.png 2>&1 | tee output/build.log
+          test -s output/Amman-Central-District.glb
+          test -s output/Amman-Central-District-3D.png
+          python3 - <<'PY'
+          import struct
+          from pathlib import Path
+          g=Path("output/Amman-Central-District.glb").read_bytes()
+          assert g[:4]==b"glTF"
+          version,length=struct.unpack_from("<II",g,4)
+          assert version==2 and length==len(g),(version,length,len(g))
+          p=Path("output/Amman-Central-District-3D.png").read_bytes()
+          assert p[:8]==b"\x89PNG\r\n\x1a\n"
+          w,h=struct.unpack_from(">II",p,16)
+          assert w>=1280 and h>=720,(w,h)
+          print(f"Validated GLB {len(g):,} bytes and preview {w}x{h} ({len(p):,} bytes)")
+          PY
+      - name: Upload Unreal city asset and source review images
+        uses: actions/upload-artifact@v4
+        with:
+          name: Adam-Royal-Amman-City-Source-Review
+          path: |
+            output/Amman-Central-District.glb
+            output/Amman-Central-District-3D.png
+            output/build.log
+          if-no-files-found: error
+          retention-days: 30
