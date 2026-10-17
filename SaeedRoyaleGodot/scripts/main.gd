@@ -1,9 +1,8 @@
 extends Node3D
 
-const SPLAT_NODE_SCRIPT := preload("res://addons/gdgs/runtime/nodes/gaussian_splat_node.gd")
-const CITY_SCAN_PATH := "res://assets/real_city/helsinki_city_scan.ply"
+const AMMAN_CITY_PATH := "res://assets/amman/Amman-Central-District.glb"
 
-const ARENA_SIZE := 220.0
+const ARENA_SIZE := 760.0
 const BOT_COUNT := 14
 const STARTING_AMMO := 30
 const MAX_HEALTH := 100.0
@@ -18,7 +17,7 @@ var status_label: Label
 var center_label: Label
 var restart_button: Button
 var storm_ring: MeshInstance3D
-var storm_radius := 92.0
+var storm_radius := 320.0
 var storm_timer := 0.0
 var elapsed := 0.0
 var player_health := MAX_HEALTH
@@ -94,7 +93,7 @@ func _build_world() -> void:
 			Vector3(-ARENA_SIZE / 2, 1, 0), Vector3(ARENA_SIZE / 2, 1, 0)][i]
 		_add_box(self, "BoundaryWall_%02d" % i, wall_pos, wall_size, Color(0.12, 0.2, 0.14), true)
 
-	_add_real_city_scan()
+	_add_amman_city()
 
 
 	storm_ring = MeshInstance3D.new()
@@ -110,22 +109,31 @@ func _build_world() -> void:
 	add_child(storm_ring)
 
 
-func _add_real_city_scan() -> void:
-	# Use a real photogrammetry/Gaussian-splat capture of Helsinki. No generated
-	# box buildings are used as a substitute for the scan.
-	var gaussian: Resource = load(CITY_SCAN_PATH)
-	if gaussian == null:
-		push_error("Real Helsinki city scan failed to import: " + CITY_SCAN_PATH)
+func _add_amman_city() -> void:
+	# The playable map uses the compact Amman district GLB generated from OpenStreetMap geometry.
+	var packed: PackedScene = load(AMMAN_CITY_PATH) as PackedScene
+	if packed == null:
+		push_error("Amman city asset is missing or failed to import: " + AMMAN_CITY_PATH)
 		return
-	var bounds: AABB = gaussian.get("aabb")
-	var scan: Node3D = SPLAT_NODE_SCRIPT.new()
-	scan.name = "HelsinkiPhotogrammetryCity"
-	scan.set("gaussian", gaussian)
-	add_child(scan)
-	# The PLY capture is Y-up. Keep the renderer's default horizontal
-	# orientation correction, and align the scan's lowest point with the arena.
-	scan.scale = Vector3.ONE * 0.3
-	scan.position.y = bounds.size.y * 0.15
+	var city := packed.instantiate() as Node3D
+	city.name = "AmmanCentralDistrict"
+	add_child(city)
+	# Generate collision only for the building shell mesh; windows and decorative parts stay lightweight.
+	var mesh_nodes: Array[Node] = []
+	_collect_city_meshes(city, mesh_nodes)
+	for item in mesh_nodes:
+		var mesh_node := item as MeshInstance3D
+		if mesh_node == null or mesh_node.mesh == null:
+			continue
+		if not mesh_node.name.to_lower().contains("building"):
+			continue
+		mesh_node.create_trimesh_collision()
+
+func _collect_city_meshes(node: Node, out: Array[Node]) -> void:
+	for child in node.get_children():
+		if child is MeshInstance3D:
+			out.append(child)
+		_collect_city_meshes(child, out)
 
 func _add_box(parent: Node3D, node_name: String, pos: Vector3, size: Vector3, color: Color, solid: bool) -> Node3D:
 	var root: Node3D = StaticBody3D.new() if solid else Node3D.new()
@@ -211,7 +219,7 @@ func _spawn_bots() -> void:
 		bot.set_meta("attack_wait", rng.randf_range(0.5, 2.0))
 		bot.set_meta("wander", Vector3(rng.randf_range(-1, 1), 0, rng.randf_range(-1, 1)))
 		var angle := TAU * float(i) / BOT_COUNT + rng.randf_range(-0.2, 0.2)
-		var radius := rng.randf_range(25, 68)
+		var radius := rng.randf_range(35, 250)
 		bot.position = Vector3(cos(angle) * radius, 0.1, sin(angle) * radius)
 		var collision := CollisionShape3D.new()
 		var shape := CapsuleShape3D.new()
