@@ -28,7 +28,7 @@ jobs:
       - name: Install Blender
         run: |
           sudo apt-get update
-          sudo apt-get install --yes blender python3-numpy
+          sudo apt-get install --yes blender python3-numpy libegl1 libgl1 libxrender1 libxkbcommon0 libsm6 libxext6 libxi6 libxxf86vm1
           blender --version
       - name: Validate real OSM source
         run: |
@@ -45,7 +45,7 @@ jobs:
           assert b>=100 and r>=50,(b,r)
           print(f"Source valid: {b} building footprints, {r} road ways")
           PY
-      - name: Generate city mesh and render preview
+      - name: Generate city mesh and CPU-safe review preview
         shell: bash
         run: |
           set -euo pipefail
