@@ -1,0 +1,72 @@
+name: Build Windows EXE with offline photos and GPS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "game/**"
+      - "scripts/prepare_bundled_photos.py"
+      - ".github/workflows/build-windows-exe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: saeed-open-world-windows-exe
+  cancel-in-progress: false
+
+jobs:
+  build-windows-exe:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: game
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: game/package.json
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download licensed photos and preserve GPS coordinates
+        working-directory: .
+        run: python scripts/prepare_bundled_photos.py
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Build portable Windows EXE
+        run: npm run build:win
+
+      - name: Verify EXE and bundled photo catalogue
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem release -Filter *.exe | Select-Object -First 1
+          if (-not $exe) { throw "No Windows EXE was produced." }
+          if (-not (Test-Path dist/data/bundled-photo-catalog.json)) { throw "Bundled photo catalogue is missing." }
+          $catalog = Get-Content dist/data/bundled-photo-catalog.json -Raw | ConvertFrom-Json
+          if ($catalog.bundledCount -lt 1) { throw "No local photos were bundled." }
+          Write-Host "EXE: $($exe.Name), size: $($exe.Length) bytes"
+          Write-Host "Bundled photos: $($catalog.bundledCount); catalog entries: $($catalog.count)"
+          Write-Host "GPS coordinates are retained per photo when present in the source."
+
+      - name: Upload portable EXE and GPS photo catalogue
+        uses: actions/upload-artifact@v4
+        with:
+          name: Saeed-Open-World-Windows-EXE
+          path: |
+            game/release/*.exe
+            game/dist/data/bundled-photo-catalog.json
+          if-no-files-found: error
+          retention-days: 30
