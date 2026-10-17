@@ -1,4 +1,4 @@
-name: Capture real Helsinki gameplay screenshot
+name: Capture Adam Royal Amman gameplay screenshots
 
 on:
   push:
@@ -7,13 +7,14 @@ on:
       - ".github/workflows/capture-gameplay-screenshot.yml"
       - "SaeedRoyaleGodot/scripts/main.gd"
       - "SaeedRoyaleGodot/assets/real_city/**"
+      - "SaeedRoyaleGodot/assets/amman/**"
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: capture-helsinki-gameplay-main
+  group: capture-adam-royal-gameplay-main
   cancel-in-progress: false
 
 jobs:
@@ -46,7 +47,7 @@ jobs:
           chmod +x "$GODOT_BIN"
           echo "GODOT_BIN=$GODOT_BIN" >> "$GITHUB_ENV"
 
-      - name: Import and validate the real city asset
+      - name: Import and validate the playable Amman city asset
         working-directory: SaeedRoyaleGodot
         shell: bash
         run: |
@@ -60,6 +61,7 @@ jobs:
             echo "City asset import produced errors."
             exit 1
           fi
+          test -s assets/amman/Amman-Central-District.glb
           test -s assets/real_city/helsinki_city_scan.ply
           mkdir -p screenshots
           rm -f screenshots/adam-royal-*.png
