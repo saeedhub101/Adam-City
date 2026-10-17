@@ -56,6 +56,7 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
       statusText.textContent = 'تحميل هلسنكي · ' + loaded + ' / ' + entries.length + ' قطعة';
     }
     if (!loaded) throw new Error('فشل تحميل كل قطع المجسّم أو خاماتها');
+    root.rotation.x = -Math.PI / 2;
     root.updateMatrixWorld(true);
     const bounds = new THREE.Box3().setFromObject(root);
     const center = bounds.getCenter(new THREE.Vector3());
