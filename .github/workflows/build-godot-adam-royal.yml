@@ -222,43 +222,62 @@ jobs:
           }
           Write-Host "AMMAN_MAP_CACHE_PASS buildings=$($report.buildings) roadWays=$($report.road_ways) bytes=$((Get-Item $obj).Length)"
 
-      - name: Reuse committed Tokyo map; generate and cache only when missing
+      - name: Use the existing Tokyo map from the repository (never download or regenerate)
         shell: pwsh
         working-directory: .
         run: |
           $ErrorActionPreference = 'Stop'
-          $mapDir = 'GodotAdamRoyal/assets/cities/tokyo'
-          $obj = Join-Path $mapDir 'Tokyo.obj'
-          $mtl = Join-Path $mapDir 'Tokyo.mtl'
-          $reportPath = Join-Path $mapDir 'Tokyo-report.json'
-          $raw = Join-Path $mapDir 'tokyo_osm.json'
-          $cacheValid = $false
-          if ((Test-Path $obj) -and (Test-Path $mtl) -and (Test-Path $reportPath) -and (Test-Path $raw)) {
-            try {
-              $report = Get-Content $reportPath -Raw | ConvertFrom-Json
-              $cacheValid = ($report.buildings -ge 100) -and ($report.road_ways -ge 50) -and ($report.obj_bytes -ge 100000) -and ((Get-Item $obj).Length -ge 100000)
-            } catch { $cacheValid = $false }
+          $candidates = @(
+            'GodotAdamRoyal/assets/cities/tokyo/Tokyo.obj',
+            'GodotAdamRoyal/assets/cities/Tokyo.obj',
+            'Tokyo.obj'
+          )
+          $tokyoObj = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $tokyoObj) {
+            throw 'Tokyo map asset is not present in the current main branch. Per project requirements, workflow will not download or generate a replacement. Add/restore the existing Tokyo asset in the repository, then rerun.'
           }
-          if ($cacheValid) {
-            Write-Host "Using committed Tokyo map cache; skipping OpenStreetMap download."
-          } else {
-            python -m pip install --disable-pip-version-check requests
-            if ($LASTEXITCODE -ne 0) { throw "Could not install OpenStreetMap download client" }
-            python GodotAdamRoyal/Tools/build_tokyo_map.py
-            if ($LASTEXITCODE -ne 0) { throw "Tokyo real-world map build failed" }
-            $report = Get-Content $reportPath -Raw | ConvertFrom-Json
-            if ($report.buildings -lt 100 -or $report.road_ways -lt 50 -or $report.obj_bytes -lt 100000) { throw "Tokyo map quality gate failed: buildings=$($report.buildings), roads=$($report.road_ways), bytes=$($report.obj_bytes)" }
-            if (-not (Test-Path $mtl)) { throw "Tokyo materials file missing" }
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add "$mapDir/Tokyo.obj" "$mapDir/Tokyo.mtl" "$mapDir/Tokyo-report.json" "$mapDir/tokyo_osm.json"
-            if (-not (git diff --cached --quiet)) {
-              git commit -m 'Cache Tokyo district map and OSM source data [skip ci]'
-              git pull --rebase origin main
-              git push origin HEAD:main
-            }
+          if ((Get-Item $tokyoObj).Length -lt 100000) { throw "Existing Tokyo map is invalid or too small: $tokyoObj" }
+          $tokyoDir = Split-Path $tokyoObj -Parent
+          $tokyoMtl = Join-Path $tokyoDir 'Tokyo.mtl'
+          if (-not (Test-Path $tokyoMtl)) {
+            $rootMtl = 'Tokyo.mtl'
+            if (Test-Path $rootMtl) { Copy-Item $rootMtl $tokyoDir -Force }
           }
-          Write-Host "TOKYO_MAP_CACHE_PASS buildings=$($report.buildings) roadWays=$($report.road_ways) bytes=$((Get-Item $obj).Length)"
+          if (-not (Test-Path $tokyoMtl)) { throw "Existing Tokyo map has no matching Tokyo.mtl: $tokyoObj" }
+          Write-Host "TOKYO_EXISTING_ASSET_PASS path=$tokyoObj bytes=$((Get-Item $tokyoObj).Length)"
+
+      - name: Use the existing San Francisco map from the repository (no external download)
+        shell: pwsh
+        working-directory: .
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $sfDir = 'GodotAdamRoyal/assets/cities/san_francisco'
+          New-Item -ItemType Directory -Path $sfDir -Force | Out-Null
+          $sfObjPath = Join-Path $sfDir 'SanFrancisco_City.obj'
+          if (-not (Test-Path $sfObjPath) -or (Get-Item $sfObjPath).Length -lt 100000) {
+            $sfArchive = 'SanFrancisco_City.OBJ.zip'
+            if (-not (Test-Path $sfArchive)) { throw "The committed San Francisco source archive is missing: $sfArchive" }
+            $extractDir = Join-Path $env:RUNNER_TEMP 'san-francisco-obj'
+            if (Test-Path $extractDir) { Remove-Item $extractDir -Recurse -Force }
+            Expand-Archive -LiteralPath $sfArchive -DestinationPath $extractDir -Force
+            $sfObj = Get-ChildItem $extractDir -Recurse -File -Filter '*.obj' | Select-Object -First 1
+            if (-not $sfObj) { throw 'The committed San Francisco archive contains no OBJ geometry.' }
+            Copy-Item $sfObj.FullName $sfObjPath -Force
+            $sfMtl = Get-ChildItem $extractDir -Recurse -File -Filter '*.mtl' | Select-Object -First 1
+            if ($sfMtl) { Copy-Item $sfMtl.FullName (Join-Path $sfDir 'SanFrancisco_City.mtl') -Force }
+            Copy-Item $sfObj.DirectoryName (Join-Path $sfDir 'source') -Recurse -Force
+          }
+          $sfBytes = (Get-Item $sfObjPath).Length
+          if ($sfBytes -lt 100000) { throw 'Existing San Francisco map is invalid or too small.' }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$sfDir/SanFrancisco_City.obj" "$sfDir/SanFrancisco_City.mtl"
+          if (-not (git diff --cached --quiet)) {
+            git commit -m 'Cache San Francisco map extracted from committed source [skip ci]'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          }
+          Write-Host "SAN_FRANCISCO_EXISTING_ASSET_PASS bytes=$sfBytes"
 
       - name: Reuse committed Chicago and San Francisco maps; cache source assets only when missing
         shell: pwsh
