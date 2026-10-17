@@ -1,0 +1,101 @@
+name: Build real Tabarbour facade textures
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/build-tabarbour-facades.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tabarbour-facade-textures
+  cancel-in-progress: false
+
+jobs:
+  textures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Download and run street-level facade reconstruction
+        env:
+          MAPILLARY_TOKEN: ${{ secrets.MAPILLARY_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/louis-e/orthofacade.git /tmp/orthofacade
+          cd /tmp/orthofacade
+          python -m pip install --upgrade pip
+          python -m pip install numpy opencv-python scipy shapely pyproj Pillow requests matplotlib
+          # Pilot area centred on the actual Tabarbour game origin. The pipeline
+          # derives wall textures from street-level imagery; it does not invent facade photos.
+          python prefetch.py --bbox 31.9990,35.9430,32.0070,35.9510 --max-panos 80
+          python run.py --run tabarbour --bbox 31.9990,35.9430,32.0070,35.9510 --stage all --workers 2
+          mkdir -p "$GITHUB_WORKSPACE/game/public/data/facades/textures"
+          python - <<'PY'
+          import csv, json, shutil
+          from pathlib import Path
+
+          root = Path("/tmp/orthofacade/out/tabarbour")
+          texture_dir = root / "texture" / "tex"
+          index_path = root / "texture" / "index.tsv"
+          dest = Path(__import__("os").environ["GITHUB_WORKSPACE"]) / "game/public/data/facades"
+          dest.mkdir(parents=True, exist_ok=True)
+          by_way = {}
+          copied = 0
+          if index_path.exists():
+              with index_path.open(encoding="utf-8", newline="") as f:
+                  for row in csv.DictReader(f, delimiter="\t"):
+                      way_id = row.get("way_id", "").strip()
+                      wall_key = row.get("wall_key", "").strip()
+                      tier = row.get("tier", "D").strip()
+                      confidence = float(row.get("confidence") or 0)
+                      source = texture_dir / f"{wall_key}_tex.png"
+                      if not way_id or not wall_key or not source.is_file() or tier not in ("A", "B", "C"):
+                          continue
+                      shutil.copy2(source, dest / "textures" / source.name)
+                      by_way.setdefault(way_id, []).append({
+                          "key": wall_key,
+                          "texture": f"/data/facades/textures/{source.name}",
+                          "tier": tier,
+                          "confidence": confidence
+                      })
+                      copied += 1
+          manifest = {
+              "generator": "orthofacade + Mapillary street-level imagery",
+              "area": "Tabarbour, Amman, Jordan (pilot)",
+              "generatedAt": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat(),
+              "texturedWalls": copied,
+              "buildings": by_way
+          }
+          (dest / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+          print(f"Exported {copied} real-photo facade wall textures across {len(by_way)} OSM buildings.")
+          if copied == 0:
+              raise SystemExit("No facade textures were produced. Check Mapillary coverage/token and the workflow logs.")
+          PY
+
+      - name: Commit generated facade textures
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add game/public/data/facades
+          if git diff --cached --quiet; then
+            echo "No facade texture changes."
+            exit 0
+          fi
+          git commit -m "Add real Tabarbour street-view facade textures"
+          git push origin HEAD:main
