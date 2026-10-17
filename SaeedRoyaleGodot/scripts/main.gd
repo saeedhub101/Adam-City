@@ -124,7 +124,7 @@ func _add_real_city_scan() -> void:
 	add_child(scan)
 	# The source capture uses Z-up; rotate it into Godot's Y-up world while
 	# retaining the renderer's default model-orientation correction.
-	scan.rotate_object_local(Vector3.RIGHT, -PI / 2.0)
+	scan.rotate_object_local(Vector3.RIGHT, PI / 2.0)
 	scan.scale = Vector3.ONE * 0.3
 	scan.position.y = bounds.size.z * 0.15
 
