@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: amman-city-preview-main
   cancel-in-progress: false
@@ -75,6 +75,25 @@ jobs:
           assert overview_spread>3.0, ("overview is effectively blank", ImageStat.Stat(im).stddev)
           assert close_spread>3.0, ("close-up is effectively blank", ImageStat.Stat(close).stddev)
           print(f"Validated GLB {len(g):,} bytes; overview {w}x{h}, RGB stddev {overview_spread:.2f}; close-up RGB stddev {close_spread:.2f}")
+      - name: Publish compact Amman GLB into the playable game
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p SaeedRoyaleGodot/assets/amman
+          cp output/Amman-Central-District.glb SaeedRoyaleGodot/assets/amman/Amman-Central-District.glb
+          size="$(stat -c %s SaeedRoyaleGodot/assets/amman/Amman-Central-District.glb)"
+          test "$size" -lt 95000000
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add SaeedRoyaleGodot/assets/amman/Amman-Central-District.glb
+          if git diff --cached --quiet; then
+            echo "Amman runtime asset is unchanged."
+            exit 0
+          fi
+          git commit -m "Add optimized Amman city to playable map"
+          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push origin HEAD:main
           PY
       - name: Upload Unreal city asset and source review images
         uses: actions/upload-artifact@v4
