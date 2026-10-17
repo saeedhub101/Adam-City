@@ -2,5 +2,17 @@
   "FileVersion": 3,
   "Category": "Games",
   "Description": "Adam Royal standalone 3D multiplayer game prototype, separate from the UEFN island.",
-  "Modules": [{"Name": "SaeedRoyale", "Type": "Runtime", "LoadingPhase": "Default"}]
+  "Modules": [
+    {
+      "Name": "SaeedRoyale",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    { "Name": "PythonScriptPlugin", "Enabled": true },
+    { "Name": "EditorScriptingUtilities", "Enabled": true },
+    { "Name": "InterchangeEditor", "Enabled": true },
+    { "Name": "GLTFImporter", "Enabled": true }
+  ]
 }
