@@ -1,0 +1,17 @@
+{
+  "source": "KartaView public street-level imagery API",
+  "district": {
+    "south": 14.575,
+    "west": 120.965,
+    "north": 14.6,
+    "east": 120.99
+  },
+  "query_grid": {
+    "latitude_steps": 6,
+    "longitude_steps": 6,
+    "radius_meters": 350
+  },
+  "downloaded_photos": 0,
+  "important_limit": "These are geolocated reference photos. This script does not claim they are projected onto buildings or used as in-game textures.",
+  "images": []
+}
