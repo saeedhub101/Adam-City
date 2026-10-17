@@ -81,7 +81,7 @@ jobs:
               "elements": elements
           }
           target = Path("game/public/data/tabarbour-osm.json")
-          target.write_text(json.dumps(output, ensure_ascii=False, separators=(",", ":")) + "\\n", encoding="utf-8")
+          target.write_text(json.dumps(output, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
           print(f"Geofabrik snapshot: {len(elements)} ways, {buildings} buildings, {roads} roads")
           print(f"Saved {target} ({target.stat().st_size} bytes)")
           PY
