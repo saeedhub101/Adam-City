@@ -20,13 +20,13 @@ UA = "SaeedOpenWorld/1.0 (public KartaView imagery collector)"
 MAX_PHOTOS = 500
 # Sample the area on a grid. Public endpoint is used without a token; keep
 # requests modest to respect the documented unauthenticated rate limits.
-GRID_LATS = [31.996, 32.000, 32.004, 32.008, 32.011]
-GRID_LONS = [35.938, 35.943, 35.948, 35.953, 35.958]
+GRID_LATS = [31.996, 32.001, 32.006, 32.011]
+GRID_LONS = [35.938, 35.945, 35.951, 35.958]
 
 
 def get_json(url):
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=35) as response:
+    with urllib.request.urlopen(req, timeout=12) as response:
         return json.load(response)
 
 
@@ -49,7 +49,7 @@ def main():
                 "lat": lat,
                 "lng": lon,
                 "zoomLevel": 18,
-                "radius": 400,
+                "radius": 500,
                 "join": "sequence",
                 "orderBy": "id",
                 "orderDirection": "desc",
@@ -105,7 +105,7 @@ def main():
         try:
             if not target.exists() or target.stat().st_size == 0:
                 req = urllib.request.Request(photo["imageUrl"], headers={"User-Agent": UA})
-                with urllib.request.urlopen(req, timeout=45) as response:
+                with urllib.request.urlopen(req, timeout=20) as response:
                     content = response.read(8 * 1024 * 1024 + 1)
                 if len(content) > 8 * 1024 * 1024:
                     raise ValueError("thumbnail exceeds 8 MiB")
