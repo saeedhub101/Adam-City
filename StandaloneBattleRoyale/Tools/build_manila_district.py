@@ -19,6 +19,9 @@ QUERY = f"""[out:json][timeout:180];
 (
  way[building]({S},{W},{N},{E});
  way[highway]({S},{W},{N},{E});
+ node[natural=tree]({S},{W},{N},{E});
+ node[highway=street_lamp]({S},{W},{N},{E});
+ node[highway=traffic_signals]({S},{W},{N},{E});
 );
 out body; >; out skel qt;"""
 ENDPOINTS = [
@@ -265,6 +268,42 @@ def main():
         roughnessFactor=0.96,
     )
     building_count = road_count = 0
+    tree_count = lamp_count = signal_count = sidewalk_count = 0
+    def add_colored(mesh, color, name):
+        mesh.visual.face_colors = np.tile(np.array(color, dtype=np.uint8), (len(mesh.faces), 1))
+        scene.add_geometry(mesh, node_name=name)
+    # Build mapped street furniture using real OSM point coordinates.
+    for element in data["elements"]:
+        if element.get("type") != "node" or "lon" not in element or "lat" not in element:
+            continue
+        tags = element.get("tags", {})
+        x = (element["lon"] - lon0) * 111320 * math.cos(math.radians(lat0))
+        y = (element["lat"] - lat0) * 110540
+        if tags.get("natural") == "tree":
+            trunk = trimesh.creation.cylinder(radius=0.16, height=2.2, sections=7)
+            trunk.apply_translation([x, y, 1.1])
+            add_colored(trunk, [91, 64, 43, 255], f"tree_trunk_{tree_count}")
+            crown = trimesh.creation.icosphere(subdivisions=1, radius=1.25)
+            crown.apply_scale([0.95, 0.95, 1.15])
+            crown.apply_translation([x, y, 2.9])
+            add_colored(crown, [67, 103, 57, 255], f"tree_crown_{tree_count}")
+            tree_count += 1
+        elif tags.get("highway") == "street_lamp":
+            pole = trimesh.creation.cylinder(radius=0.055, height=5.2, sections=6)
+            pole.apply_translation([x, y, 2.6])
+            add_colored(pole, [61, 65, 67, 255], f"lamp_pole_{lamp_count}")
+            head = trimesh.creation.box(extents=[0.65, 0.22, 0.12])
+            head.apply_translation([x + 0.25, y, 5.05])
+            add_colored(head, [213, 204, 161, 255], f"lamp_head_{lamp_count}")
+            lamp_count += 1
+        elif tags.get("highway") == "traffic_signals":
+            pole = trimesh.creation.cylinder(radius=0.07, height=3.5, sections=6)
+            pole.apply_translation([x, y, 1.75])
+            add_colored(pole, [54, 58, 60, 255], f"signal_pole_{signal_count}")
+            box = trimesh.creation.box(extents=[0.28, 0.22, 0.7])
+            box.apply_translation([x, y, 3.35])
+            add_colored(box, [44, 47, 45, 255], f"signal_box_{signal_count}")
+            signal_count += 1
     for way in ways:
         ids = way.get("nodes", [])
         if len(ids) < 2 or any(i not in nodes for i in ids):
@@ -319,6 +358,21 @@ def main():
                     material=road_material,
                 )
                 scene.add_geometry(mesh, node_name=f"road_{road_count}")
+                # Add raised concrete sidewalks along main and residential streets.
+                if road_kind in ("primary", "secondary", "tertiary", "residential", "unclassified"):
+                    try:
+                        outer = line.buffer(width / 2 + 1.65, cap_style="flat", join_style="mitre")
+                        sidewalks = outer.difference(road)
+                        sidewalk_parts = list(sidewalks.geoms) if sidewalks.geom_type == "MultiPolygon" else [sidewalks]
+                        for sidewalk_part in sidewalk_parts:
+                            if sidewalk_part.is_empty or sidewalk_part.area < 2.0:
+                                continue
+                            sidewalk_mesh = trimesh.creation.extrude_polygon(sidewalk_part, 0.16)
+                            sidewalk_mesh.apply_translation([0, 0, 0.12])
+                            add_colored(sidewalk_mesh, [157, 151, 137, 255], f"sidewalk_{road_count}_{sidewalk_count}")
+                            sidewalk_count += 1
+                    except Exception as sidewalk_error:
+                        print(f"Sidewalk generation skipped for road {road_count}: {sidewalk_error}")
                 if road_kind in ("primary", "secondary", "tertiary", "trunk"):
                     try:
                         dash_len, gap_len = 5.0, 4.0
@@ -357,11 +411,11 @@ def main():
         "attribution":"© OpenStreetMap contributors",
         "license":"ODbL 1.0",
         "bounds":{"south":S,"west":W,"north":N,"east":E},
-        "buildings":building_count,"roads":road_count,
+        "buildings":building_count,"roads":road_count,"mapped_trees":tree_count,"street_lamps":lamp_count,"traffic_signals":signal_count,"sidewalk_meshes":sidewalk_count,
         "mesh_objects":len(check.geometry),"glb_bytes":OUT.stat().st_size,
         "facade_textures":[p.name for p in texture_paths],
         "road_texture":road_texture_path.name,
-        "note":"Real OSM footprints and road alignments; facade atlases and asphalt are procedural, and center markings are approximations. Exact facade appearance, road paint, curbs, signs, and street furniture require correctly geolocated imagery or verified mapped tags."
+        "note":"Real OSM footprints, roads and mapped tree/street-furniture points; generated raised sidewalks; facade atlases/asphalt remain procedural and lane markings approximate."
     }
     OUT.with_suffix(".json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(json.dumps(report, indent=2))
