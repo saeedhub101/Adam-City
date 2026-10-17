@@ -136,7 +136,19 @@ jobs:
           } else {
             Copy-Item (Join-Path $templateDir "*") $dest -Recurse -Force
           }
-          if (-not (Get-ChildItem $dest -Recurse -File | Select-Object -First 1)) { throw "Godot export templates were not installed" }
+          $releaseTemplate = Join-Path $dest "windows_release_x86_64.exe"
+          $debugTemplate = Join-Path $dest "windows_debug_x86_64.exe"
+          if (-not (Test-Path $releaseTemplate)) {
+            $foundRelease = Get-ChildItem $templateDir -Recurse -File -Filter "windows_release_x86_64.exe" | Select-Object -First 1
+            if ($foundRelease) { Copy-Item $foundRelease.FullName $releaseTemplate -Force }
+          }
+          if (-not (Test-Path $releaseTemplate)) {
+            Get-ChildItem $templateDir -Recurse -File | Select-Object FullName,Length | Format-Table -AutoSize | Out-String | Write-Host
+            throw "Required Windows release export template was not installed at $releaseTemplate"
+          }
+          if ((Get-Item $releaseTemplate).Length -lt 1000000) { throw "Windows release export template is unexpectedly small" }
+          Write-Host "Verified Windows release template: $releaseTemplate ($((Get-Item $releaseTemplate).Length) bytes)"
+          if (Test-Path $debugTemplate) { Write-Host "Verified Windows debug template: $debugTemplate" }
 
       - name: Import and validate Godot project
         shell: pwsh
@@ -215,11 +227,25 @@ jobs:
       - name: Export Windows game
         shell: pwsh
         run: |
+          $ErrorActionPreference = 'Stop'
           New-Item -ItemType Directory -Path build -Force | Out-Null
-          & $env:GODOT_EXE --headless --path "$PWD" --export-release "Windows Desktop" "build/AdamRoyal.exe"
-          if ($LASTEXITCODE -ne 0) { throw "Windows export failed" }
-          if (-not (Test-Path "build/AdamRoyal.exe")) { throw "AdamRoyal.exe was not produced" }
+          $exportLog = Join-Path $env:RUNNER_TEMP 'godot-windows-export.log'
+          $releaseTemplate = Join-Path $env:APPDATA 'Godot/export_templates/4.4.1.stable/windows_release_x86_64.exe'
+          if (-not (Test-Path $releaseTemplate)) { throw "Required Windows release export template is missing: $releaseTemplate" }
+          if ((Get-Item $releaseTemplate).Length -lt 1000000) { throw "Windows release export template is invalid or truncated" }
+          & $env:GODOT_EXE --headless --path "$PWD" --verbose --export-release "Windows Desktop" "build/AdamRoyal.exe" 2>&1 | Tee-Object -FilePath $exportLog
+          $exportExitCode = $LASTEXITCODE
+          if ($exportExitCode -ne 0) {
+            Write-Host '===== Godot Windows export log ====='
+            if (Test-Path $exportLog) { Get-Content $exportLog }
+            throw "Godot Windows export failed with exit code $exportExitCode"
+          }
+          if (-not (Test-Path "build/AdamRoyal.exe")) {
+            if (Test-Path $exportLog) { Get-Content $exportLog }
+            throw "Godot reported export success but build/AdamRoyal.exe was not produced"
+          }
           if ((Get-Item "build/AdamRoyal.exe").Length -lt 1000000) { throw "Exported executable is unexpectedly small" }
+          Write-Host "WINDOWS_EXPORT_PASS: $((Get-Item 'build/AdamRoyal.exe').Length) bytes"
           Get-ChildItem build | Select-Object Name,Length
 
       - name: Preserve build evidence
