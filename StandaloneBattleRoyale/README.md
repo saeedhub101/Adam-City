@@ -141,3 +141,25 @@ The committed GLB is source geometry, not a native Unreal level. To create the a
 
 **Verification status:** committing this script and enabling plugins does not itself create the binary `.umap`. The level only exists after the script succeeds inside a compatible Unreal Editor. A hosted GitHub runner without Unreal Engine cannot generate a valid native level from the GLB alone.
 
+## Unreal Engine CI build path (2026-10-17)
+
+The separate workflow `.github/workflows/build-unreal-gameplay.yml` is the real-engine path; the cached-map workflow is not an Unreal compile.
+
+### Runner requirements
+
+- Register a **Windows x64 self-hosted GitHub Actions runner** with labels `self-hosted`, `Windows`, `X64`, and `unreal-engine`.
+- Install Unreal Engine on that machine and make sure the project can open with that engine version. The workflow takes the absolute Engine root as a manual input; it does not download Unreal or bypass Epic licensing/account requirements.
+- Ensure the engine includes the editor command-line executable and AutomationTool (`UnrealEditor-Cmd.exe` and `RunUAT.bat`). Required project plugins must be available in that installation.
+- In GitHub Actions, run **Adam Royal — Unreal Editor, Package & Gameplay Capture** manually and supply the engine root. This job is intentionally isolated from normal map-cache builds so ordinary pushes do not queue on a machine that may be offline.
+
+### What the workflow does and does not prove
+
+1. Reuses the committed Manila GLB and Saeed GLB; it does not regenerate the city during a normal build.
+2. Runs Unreal Editor's Python script to import the city and attempt to save a native `.umap`.
+3. Calls Unreal AutomationTool to compile/cook/package the Windows game and requires a packaged executable.
+4. Requires at least three actual in-game screenshots before passing and uploads build evidence/logs as an artifact. It never makes substitute screenshots from the source GLB or reference-photo folders.
+
+**Known blockers that must be solved by an actual Unreal run:** the current level-creation script is an initial import scaffold. Its static-mesh placement loop currently places discovered meshes at the origin and may overlap them; GLB importer output and plugin availability vary by engine version. Therefore the workflow must not be treated as a finished playable city merely because a `.umap` exists. Review the editor log and level in Unreal, preserve source node transforms, assign a real imported skeletal mesh to the pawn, and test the running game before accepting it.
+
+The screenshot gate is deliberately strict but is not yet a screenshot generator. Until a real game-side capture routine is implemented and exercised, this job will fail at the evidence gate rather than claim gameplay or character visibility without proof. This change prepares the CI route; it does not claim that Unreal has already run or that screenshots have been produced.
+
