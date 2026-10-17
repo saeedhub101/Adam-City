@@ -1,0 +1,56 @@
+name: Vendor Godot Gaussian Splat renderer
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/vendor-gdgs-renderer.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: vendor-gdgs-main
+  cancel-in-progress: false
+
+jobs:
+  vendor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Vendor the renderer source and its license
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/ReconWorldLab/godot-gaussian-splatting.git "$RUNNER_TEMP/gdgs"
+          test -f "$RUNNER_TEMP/gdgs/addons/gdgs/plugin.cfg"
+          test -f "$RUNNER_TEMP/gdgs/addons/gdgs/runtime/nodes/gaussian_splat_node.gd"
+          mkdir -p SaeedRoyaleGodot/addons
+          rm -rf SaeedRoyaleGodot/addons/gdgs
+          cp -a "$RUNNER_TEMP/gdgs/addons/gdgs" SaeedRoyaleGodot/addons/gdgs
+          cp "$RUNNER_TEMP/gdgs/LICENSE" SaeedRoyaleGodot/addons/gdgs/UPSTREAM_LICENSE
+          printf '%s\n' \
+            'Upstream: https://github.com/ReconWorldLab/godot-gaussian-splatting' \
+            'Version source: upstream main at acquisition time; check the bundled upstream license before redistribution.' \
+            'Purpose: import and render the committed real Helsinki Gaussian-splat PLY scan.' \
+            > SaeedRoyaleGodot/addons/gdgs/UPSTREAM_SOURCE.txt
+          test "$(find SaeedRoyaleGodot/addons/gdgs -type f | wc -l)" -gt 20
+
+      - name: Commit renderer directly to main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add SaeedRoyaleGodot/addons/gdgs
+          git commit -m "Vendor GDGS renderer for real city scan"
+          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push origin HEAD:main
