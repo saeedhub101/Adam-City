@@ -1,0 +1,122 @@
+name: Build game and capture screenshot
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "game/**"
+      - ".github/workflows/game-screenshot.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-screenshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: game
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: game/package.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Install Chromium for screenshot
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Start Vite preview server
+        run: |
+          npm run preview -- --host 127.0.0.1 > /tmp/saeed-vite-preview.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then
+              echo "Preview server is ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/saeed-vite-preview.log
+          exit 1
+
+      - name: Open game and capture screenshot
+        run: |
+          mkdir -p artifacts
+          cat > /tmp/capture-game.mjs <<'EOF'
+          import { chromium } from 'playwright';
+
+          const browser = await chromium.launch({
+            headless: true,
+            args: [
+              '--use-gl=angle',
+              '--use-angle=swiftshader',
+              '--enable-webgl',
+              '--ignore-gpu-blocklist',
+              '--disable-dev-shm-usage'
+            ]
+          });
+
+          const page = await browser.newPage({
+            viewport: { width: 1600, height: 900 },
+            deviceScaleFactor: 1
+          });
+
+          const errors = [];
+          page.on('pageerror', error => errors.push(error.message));
+          page.on('console', message => {
+            if (message.type() === 'error') errors.push(message.text());
+          });
+
+          await page.goto('http://127.0.0.1:4173/', { waitUntil: 'networkidle', timeout: 90000 });
+          await page.locator('#quality').selectOption('high');
+          await page.locator('#start').click();
+          await page.waitForTimeout(2500);
+
+          // Wait for the actual GLB to load where possible; keep a screenshot even if
+          // a remote asset/network issue prevents it, and report the status in the log.
+          try {
+            await page.waitForFunction(() => {
+              const status = document.querySelector('#status-text')?.textContent || '';
+              return status.includes('Character ready') || status.includes('could not load');
+            }, { timeout: 60000 });
+          } catch {
+            console.log('Timed out waiting for character status.');
+          }
+
+          await page.waitForTimeout(1800);
+          await page.screenshot({
+            path: 'artifacts/game-screenshot.png',
+            fullPage: false,
+            animations: 'disabled'
+          });
+
+          console.log('Character status:', await page.locator('#status-text').textContent().catch(() => 'missing'));
+          console.log('Page errors:', JSON.stringify(errors.slice(0, 20)));
+          console.log('Screenshot saved to artifacts/game-screenshot.png');
+          await browser.close();
+          EOF
+          node /tmp/capture-game.mjs
+
+      - name: Upload screenshot as a single-file artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-screenshot
+          path: game/artifacts/game-screenshot.png
+          if-no-files-found: error
+          retention-days: 14
