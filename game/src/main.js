@@ -338,7 +338,7 @@ async function loadTabarbourMap() {
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.MeshStandardMaterial({ color: 0xaaa395, roughness: 1 }));
   ground.rotation.x = -Math.PI / 2; ground.position.y = -0.03; ground.receiveShadow = true; scene.add(ground);
   playerRoot.position.set(0, 0, 0);
-  statusText.textContent = 'طبربور · ' + buildings.length + ' مبنى مرسوم من الخريطة · ' + roads.length + ' شارع';
+  statusText.textContent = 'طبربور · ' + buildings.length + ' مبنى · ' + roads.length + ' شارع · OSM';
   console.info('Loaded real OSM Tabarbour data', { buildings: buildings.length, roads: roads.length });
 }
 
