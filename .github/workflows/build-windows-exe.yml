@@ -43,6 +43,18 @@ jobs:
         working-directory: .
         run: python scripts/prepare_bundled_photos.py
 
+      - name: Include Mapillary photos when token is available
+        working-directory: .
+        env:
+          MAPILLARY_ACCESS_TOKEN: ${{ secrets.MAPILLARY_ACCESS_TOKEN }}
+        shell: pwsh
+        run: |
+          if ($env:MAPILLARY_ACCESS_TOKEN) {
+            python scripts/collect_mapillary_tabarbour.py
+          } else {
+            Write-Host "MAPILLARY_ACCESS_TOKEN is not configured; building with the licensed Wikimedia photos available."
+          }
+
       - name: Install Node dependencies
         run: npm install
 
