@@ -125,13 +125,6 @@ jobs:
           Copy-Item $templateZip $templateAsZip
           Expand-Archive $templateAsZip -DestinationPath $templateDir -Force
 
-          # Godot invokes rcedit to stamp Windows version metadata into the exported EXE.
-          $rceditDir = Join-Path $env:RUNNER_TEMP "rcedit"
-          New-Item -ItemType Directory -Path $rceditDir -Force | Out-Null
-          $rceditPath = Join-Path $rceditDir "rcedit.exe"
-          Invoke-WebRequest "https://github.com/electron/rcedit/releases/download/v2.0.0/rcedit-x64.exe" -OutFile $rceditPath
-          if ((Get-Item $rceditPath).Length -lt 1000000) { throw "Downloaded rcedit executable is incomplete." }
-          Add-Content -Path $env:GITHUB_PATH -Value $rceditDir
           $godot = Get-ChildItem $engineDir -Filter "*win64.exe" | Select-Object -First 1
           if (-not $godot) { throw "Godot console executable not found after download" }
           "GODOT_EXE=$($godot.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
