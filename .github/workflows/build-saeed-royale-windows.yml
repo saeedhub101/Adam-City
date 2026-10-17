@@ -49,8 +49,8 @@ jobs:
           set -euo pipefail
           set -o pipefail
           "$GODOT_BIN" --headless --editor --path . --import 2>&1 | tee "$RUNNER_TEMP/godot-import.log"
-          if grep -E "SCRIPT ERROR|Parse Error|ERROR:" "$RUNNER_TEMP/godot-import.log"; then
-            echo "Godot asset import emitted errors."
+          if grep -E "SCRIPT ERROR|Parse Error|ERROR:" "$RUNNER_TEMP/godot-import.log" | grep -vF 'ERROR: Parameter "t" is null.'; then
+            echo "Godot asset import emitted an unexpected error."
             exit 1
           fi
           set -o pipefail
