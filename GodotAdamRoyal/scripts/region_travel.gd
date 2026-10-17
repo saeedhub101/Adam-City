@@ -14,7 +14,27 @@ func _ready() -> void:
 	await get_tree().process_frame
 	player = get_tree().current_scene.get_node_or_null("Player") as CharacterBody3D
 	_build_travel_hud()
+	for region_name in REGION_PATHS.keys():
+		_validate_region_asset(region_name)
 	print("REGION_TRAVEL_READY regions=Manila,Chicago,San Francisco")
+
+func _validate_region_asset(region: String) -> void:
+	var path: String = REGION_PATHS[region]
+	if not ResourceLoader.exists(path):
+		push_error("TRAVEL_ASSET_IMPORT_FAIL region=" + region + " path=" + path)
+		print("TRAVEL_ASSET_IMPORT_FAIL region=" + region)
+		return
+	var resource = load(path)
+	var mesh: Mesh = resource as Mesh
+	if mesh == null and resource is PackedScene:
+		var packed_root := (resource as PackedScene).instantiate()
+		mesh = _combine_meshes(packed_root)
+		packed_root.free()
+	if mesh == null or mesh.get_surface_count() == 0:
+		push_error("TRAVEL_ASSET_IMPORT_FAIL region=" + region + " no mesh surfaces")
+		print("TRAVEL_ASSET_IMPORT_FAIL region=" + region)
+		return
+	print("TRAVEL_ASSET_IMPORT_PASS region=" + region + " surfaces=" + str(mesh.get_surface_count()) + " vertices=" + str(_mesh_vertex_count(mesh)))
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if not event.pressed or event.echo:
@@ -67,7 +87,7 @@ func travel_to(region: String) -> void:
 		return
 	# Center the source geometry and normalize huge OBJ coordinates to a walkable scene scale.
 	var center := bounds.get_center()
-	city_mesh.position = -center
+	city_mesh.position = Vector3(-center.x, -bounds.position.y, -center.z)
 	var horizontal_span := maxf(bounds.size.x, bounds.size.z)
 	var scale_factor := 1.0
 	if horizontal_span > 1200.0:
@@ -77,6 +97,7 @@ func travel_to(region: String) -> void:
 	root.scale = Vector3.ONE * scale_factor
 	var static_body := StaticBody3D.new()
 	static_body.name = "ImportedCityCollision"
+	static_body.position = city_mesh.position
 	var collision := CollisionShape3D.new()
 	collision.shape = imported_mesh.create_trimesh_shape()
 	static_body.add_child(collision)
