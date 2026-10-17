@@ -53,15 +53,15 @@ def gather(params, seen):
 
 def main():
     seen, photos = set(), []
-    base = {"prop":"imageinfo", "iiprop":"url|extmetadata", "iiurlwidth":900, "ggsnamespace":6, "ggslimit":100}
+    base = {"prop":"imageinfo|coordinates", "iiprop":"url|extmetadata", "iiurlwidth":900, "ggsnamespace":6, "ggslimit":100}
     try:
-        photos += gather({"generator":"geosearch", **base, "ggscoord":f"{LAT}|{LON}", "ggsradius":RADIUS, "ggsnamespace":6}, seen)
+        photos += [p for p in gather({"generator":"geosearch", **base, "ggscoord":f"{LAT}|{LON}", "ggsradius":RADIUS, "ggsprimary":"all", "ggsnamespace":6}, seen) if p["lat"] is not None and p["lon"] is not None]
     except Exception as exc:
         print("Commons geosearch warning:", exc)
     time.sleep(0.3)
-    # Text search catches locally described photos whose EXIF/geolocation is absent.
+    # Text search is only a fallback for files explicitly named after Tabarbour; do not add generic Jordan/Amman images.
     try:
-        photos += gather({"generator":"search", **base, "gsrsearch":'Tabarbour OR طبربور', "gsrnamespace":6, "gsrlimit":50}, seen)
+        photos += [p for p in gather({"generator":"search", **base, "gsrsearch":'Tabarbour OR طبربور', "gsrnamespace":6, "gsrlimit":50}, seen) if any(term in p["title"].casefold() for term in ("tabarbour", "طبربور"))]
     except Exception as exc:
         print("Commons text search warning:", exc)
     # Prioritize genuinely geolocated photos, then cap the catalogue for quick loading.
