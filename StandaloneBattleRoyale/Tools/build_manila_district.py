@@ -96,6 +96,29 @@ def make_facade_texture(path: Path, style: int) -> Image.Image:
     im.save(path, quality=92)
     return im
 
+def make_road_texture(path: Path) -> Image.Image:
+    """Create a reusable, physically varied asphalt texture; lane markings are modeled separately."""
+    import random
+    random.seed(42017)
+    size = 512
+    im = Image.new("RGB", (size, size))
+    px = im.load()
+    for y in range(size):
+        for x in range(size):
+            grain = random.randint(-13, 13)
+            repair = -18 if random.random() < 0.012 else 0
+            base = 55 + grain + repair
+            px[x, y] = (max(0, base - 3), max(0, base - 2), max(0, base))
+    d = ImageDraw.Draw(im)
+    for _ in range(1100):
+        x, y = random.randrange(size), random.randrange(size)
+        shade = random.choice([(39, 40, 41), (69, 68, 65), (76, 74, 70), (48, 49, 48)])
+        r = random.choice((1, 1, 2))
+        d.ellipse((x-r, y-r, x+r, y+r), fill=shade)
+    im = im.filter(ImageFilter.GaussianBlur(0.35))
+    im.save(path, quality=94)
+    return im
+
 def main():
     data = fetch()
     nodes = {e["id"]:(e["lon"],e["lat"]) for e in data["elements"] if e["type"]=="node"}
@@ -119,6 +142,15 @@ def main():
             metallicFactor=0.06,
             roughnessFactor=0.82,
         ))
+    road_texture_path = Path("StandaloneBattleRoyale/Content/Maps/Manila-Road-Asphalt.jpg")
+    road_texture_path.parent.mkdir(parents=True, exist_ok=True)
+    road_texture = make_road_texture(road_texture_path)
+    road_material = trimesh.visual.material.PBRMaterial(
+        name="ManilaAsphalt",
+        baseColorTexture=road_texture,
+        metallicFactor=0.0,
+        roughnessFactor=0.96,
+    )
     building_count = road_count = 0
     for way in ways:
         ids = way.get("nodes", [])
@@ -158,12 +190,38 @@ def main():
             try:
                 line = LineString(pts).simplify(1.2)
                 if line.length < 8: continue
-                width = 8.0 if tags["highway"] in ("primary","secondary","trunk","tertiary") else 4.5
+                road_kind = str(tags.get("highway", "residential")).lower()
+                default_width = 10.5 if road_kind in ("primary", "trunk") else 8.0 if road_kind in ("secondary", "tertiary") else 6.0 if road_kind in ("residential", "unclassified") else 3.2
+                try:
+                    width = float(str(tags.get("width", default_width)).replace(" m", "").strip())
+                    if width <= 0 or width > 40: width = default_width
+                except (TypeError, ValueError):
+                    width = default_width
                 road = line.buffer(width/2, cap_style="flat", join_style="mitre")
                 if road.is_empty: continue
                 mesh = trimesh.creation.extrude_polygon(road, 0.12)
-                mesh.visual.face_colors = [48, 51, 56, 255]
+                vertices = mesh.vertices
+                mesh.visual = trimesh.visual.TextureVisuals(
+                    uv=np.column_stack((vertices[:, 0] / 4.0, vertices[:, 1] / 4.0)),
+                    material=road_material,
+                )
                 scene.add_geometry(mesh, node_name=f"road_{road_count}")
+                if road_kind in ("primary", "secondary", "tertiary", "trunk"):
+                    try:
+                        dash_len, gap_len = 5.0, 4.0
+                        distance = 0.0
+                        while distance < line.length:
+                            a = line.interpolate(distance)
+                            b = line.interpolate(min(distance + dash_len, line.length))
+                            dash = LineString([(a.x, a.y), (b.x, b.y)]).buffer(0.075, cap_style="flat")
+                            if not dash.is_empty:
+                                mark = trimesh.creation.extrude_polygon(dash, 0.025)
+                                mark.apply_translation([0, 0, 0.13])
+                                mark.visual.face_colors = [205, 194, 145, 255]
+                                scene.add_geometry(mark, node_name=f"road_mark_{road_count}_{int(distance)}")
+                            distance += dash_len + gap_len
+                    except Exception:
+                        pass
                 road_count += 1
             except Exception:
                 continue
@@ -186,7 +244,8 @@ def main():
         "buildings":building_count,"roads":road_count,
         "mesh_objects":len(check.geometry),"glb_bytes":OUT.stat().st_size,
         "facade_textures":[p.name for p in texture_paths],
-        "note":"Real OSM footprints and road alignments; fallback facade textures are procedural, not matched photographs. Exact building signage requires geolocated street-level imagery."
+        "road_texture":road_texture_path.name,
+        "note":"Real OSM footprints and road alignments; facade atlases and asphalt are procedural, and center markings are approximations. Exact facade appearance, road paint, curbs, signs, and street furniture require correctly geolocated imagery or verified mapped tags."
     }
     OUT.with_suffix(".json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(json.dumps(report, indent=2))
