@@ -64,7 +64,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet -- game/public/data/tabarbour-osm.json; then
+          if git diff --quiet -- game/public/data/tabarbour-osm.json && git ls-files --error-unmatch game/public/data/tabarbour-osm.json >/dev/null 2>&1; then
             echo "The checked-in map snapshot is already current."
             exit 0
           fi
