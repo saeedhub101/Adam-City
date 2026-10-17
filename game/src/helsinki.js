@@ -61,7 +61,12 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
               node.castShadow = false;
               node.receiveShadow = false;
               const mats = Array.isArray(node.material) ? node.material : [node.material];
-              mats.forEach(mat => { if (mat?.map) mat.map.colorSpace = THREE.SRGBColorSpace; });
+              mats.forEach(mat => {
+                if (!mat) return;
+                mat.side = THREE.DoubleSide;
+                if (mat.map) mat.map.colorSpace = THREE.SRGBColorSpace;
+                mat.needsUpdate = true;
+              });
             }
           });
           return object;
