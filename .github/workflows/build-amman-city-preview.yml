@@ -13,12 +13,12 @@ permissions:
   contents: write
 concurrency:
   group: amman-city-preview-main
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   generate-city:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 25
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
