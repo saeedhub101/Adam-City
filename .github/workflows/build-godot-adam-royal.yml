@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - "GodotAdamRoyal/**"
-      - "StandaloneBattleRoyale/Tools/build_manila_district.py"
+      - "StandaloneBattleRoyale/Tools/**"
       - "StandaloneBattleRoyale/Content/Maps/**"
       - "assets/**"
       - ".github/workflows/build-godot-adam-royal.yml"
@@ -88,6 +88,19 @@ jobs:
             }
           }
           Write-Host "Reusable Manila cache verified: $($report.buildings) buildings; $($report.roads) roads; $($textures.Count) texture atlases; $((Get-Item $glbPath).Length) GLB bytes."
+
+      - name: Fetch and validate real Manila elevation data
+        shell: pwsh
+        working-directory: .
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m pip install --disable-pip-version-check requests
+          if ($LASTEXITCODE -ne 0) { throw "Could not install elevation data client" }
+          python StandaloneBattleRoyale/Tools/build_manila_terrain.py
+          if ($LASTEXITCODE -ne 0) { throw "Real SRTM elevation acquisition failed; refusing to substitute invented terrain" }
+          $terrain = Get-Content 'GodotAdamRoyal/assets/manila_terrain.json' -Raw | ConvertFrom-Json
+          if ($terrain.grid_size -lt 10 -or $terrain.heights_scaled_m.Count -ne $terrain.grid_size) { throw "SRTM terrain grid failed validation" }
+          Write-Host "REAL_TERRAIN_DATA_PASS source=$($terrain.source) grid=$($terrain.grid_size)x$($terrain.grid_size) min=$($terrain.minimum_elevation_m) max=$($terrain.maximum_elevation_m)"
 
       - name: Stage the real Manila district and player character
         shell: pwsh
