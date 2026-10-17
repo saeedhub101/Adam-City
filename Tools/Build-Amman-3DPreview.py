@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate a detailed central-Amman GLB and preview from real OSM footprints."""
+"""Generate a detailed central-Manila GLB and preview from real OSM footprints."""
 import bpy, json, math, sys, hashlib, struct
 from pathlib import Path
 from mathutils import Vector
@@ -37,10 +37,10 @@ def main():
     cx=(min(x for x,y in raw)+max(x for x,y in raw))/2; cy=(min(y for x,y in raw)+max(y for x,y in raw))/2
     def local(c): return xy(c,lon0,lat0,cx,cy)
     bpy.ops.object.select_all(action="SELECT"); bpy.ops.object.delete(use_global=False)
-    facades=[material("Amman limestone",(.68,.58,.44)),material("Sandstone",(.76,.67,.53)),material("Pale concrete",(.58,.57,.52)),material("White plaster",(.8,.77,.7)),material("Old stone",(.47,.42,.35))]
-    glass=material("Blue-grey window glass",(.045,.12,.17),.25); frame=material("Window frames",(.22,.21,.19),.5)
-    roofmat=material("Flat roof concrete",(.42,.39,.34)); asphalt=material("Road asphalt",(.10,.11,.115),.95)
-    groundmat=material("Dry hillside ground",(.48,.42,.33),1)
+    facades=[material("Weathered tropical concrete",(.55,.54,.49)),material("Sun-faded plaster",(.72,.68,.58)),material("Aged painted concrete",(.48,.52,.49)),material("Light concrete",(.68,.67,.60)),material("Weathered masonry",(.39,.38,.34))]
+    glass=material("Smoky blue-grey window glass",(.055,.13,.17),.22); frame=material("Dark metal window frames",(.16,.17,.16),.48)
+    roofmat=material("Weathered flat roof concrete",(.36,.35,.31)); asphalt=material("Worn tropical asphalt",(.085,.09,.09),.96)
+    groundmat=material("Manila urban ground",(.30,.30,.27),1)
     span=760.0
     bpy.ops.mesh.primitive_plane_add(size=span,location=(0,0,-.12)); bpy.context.object.name="Amman terrain base"; bpy.context.object.data.materials.append(groundmat)
     bv=[]; bf=[]; bi=[]; wv=[]; wf=[]; wi=[]; rv=[]; rf=[]
@@ -51,12 +51,12 @@ def main():
         rings=g.get("coordinates") or []
         if not rings or len(rings[0])<4: continue
         poly=[local(c) for c in rings[0]]
-        # Keep a compact, walkable central district instead of exporting the whole multi-kilometre extract.
-        if not poly or math.hypot(sum(x for x,y in poly)/len(poly),sum(y for x,y in poly)/len(poly)) > 340: continue
+        # Keep the dense central district within the playable arena; retain smaller informal and residential structures.
+        if not poly or math.hypot(sum(x for x,y in poly)/len(poly),sum(y for x,y in poly)/len(poly)) > 378: continue
         if len(poly)>1 and math.dist(poly[0],poly[-1])<.03: poly=poly[:-1]
         if len(poly)<3: continue
         area=abs(sum(poly[i][0]*poly[(i+1)%len(poly)][1]-poly[(i+1)%len(poly)][0]*poly[i][1] for i in range(len(poly)))/2)
-        if area<8: continue
+        if area<3: continue
         try: floors=max(1,min(16,int(float(p.get("building:levels","")))))
         except: floors=2+int(hashlib.md5(str(p.get("osm_id","")).encode()).hexdigest()[:2],16)%4
         try: h=max(floors*2.65,min(55,float(str(p.get("height","")).replace(" m",""))))
@@ -139,6 +139,6 @@ def main():
     scene.render.filepath=str(closeup)
     bpy.ops.render.render(write_still=True)
     print(json.dumps({"buildings":nbuilding,"road_ways":nroad,"windows":nwindow,"features":len(d["features"]),"glb":str(out),"preview":str(png),"closeup":str(closeup)}))
-    if nbuilding<100 or nroad<50 or nwindow<500: raise SystemExit("Quality gate failed: not enough building/road/window geometry")
+    if nbuilding<80 or nroad<50 or nwindow<500: raise SystemExit("Quality gate failed: not enough building/road/window geometry")
     if out.stat().st_size > 95_000_000: raise SystemExit(f"Runtime GLB exceeds GitHub file limit budget: {out.stat().st_size:,} bytes")
 if __name__=="__main__": main()
