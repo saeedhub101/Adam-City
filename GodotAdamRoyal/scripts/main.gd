@@ -32,13 +32,18 @@ func _run_visual_qa_capture() -> void:
 	add_child(camera)
 	var player := get_node_or_null("Player")
 	var center := city_bounds.get_center()
+	var map_center := Vector3(center.x, 0.12, center.z)
 	var span := maxf(maxf(city_bounds.size.x, city_bounds.size.z), 100.0)
+	var west_road := _find_nearest_road_point(map_center + Vector3(-span * 0.22, 0.0, 0.0))
+	var east_road := _find_nearest_road_point(map_center + Vector3(span * 0.22, 0.0, 0.0))
+	var north_road := _find_nearest_road_point(map_center + Vector3(0.0, 0.0, -span * 0.22))
+	var south_road := _find_nearest_road_point(map_center + Vector3(0.0, 0.0, span * 0.22))
 	var captures := [
-		{"name": "01-aerial-full-map.png", "position": center + Vector3(0, span * 1.05, 0), "target": center},
-		{"name": "02-street-west.png", "position": center + Vector3(-span * 0.28, span * 0.055, -span * 0.12), "target": center + Vector3(-span * 0.20, 5, -span * 0.08)},
-		{"name": "03-street-east.png", "position": center + Vector3(span * 0.28, span * 0.055, -span * 0.10), "target": center + Vector3(span * 0.20, 5, -span * 0.06)},
-		{"name": "04-street-north.png", "position": center + Vector3(-span * 0.10, span * 0.055, -span * 0.28), "target": center + Vector3(-span * 0.06, 5, -span * 0.20)},
-		{"name": "05-street-south.png", "position": center + Vector3(span * 0.10, span * 0.055, span * 0.28), "target": center + Vector3(span * 0.06, 5, span * 0.20)}
+		{"name": "01-aerial-full-map.png", "position": map_center + Vector3(0.0, span * 0.9, 0.0), "target": map_center},
+		{"name": "02-street-west.png", "position": west_road + Vector3(-7.0, 4.2, 0.0), "target": west_road + Vector3(7.0, 1.8, 0.0)},
+		{"name": "03-street-east.png", "position": east_road + Vector3(7.0, 4.2, 0.0), "target": east_road + Vector3(-7.0, 1.8, 0.0)},
+		{"name": "04-street-north.png", "position": north_road + Vector3(0.0, 4.2, -7.0), "target": north_road + Vector3(0.0, 1.8, 7.0)},
+		{"name": "05-street-south.png", "position": south_road + Vector3(0.0, 4.2, 7.0), "target": south_road + Vector3(0.0, 1.8, -7.0)}
 	]
 	for shot in captures:
 		camera.global_position = shot.position
@@ -55,7 +60,7 @@ func _run_visual_qa_capture() -> void:
 			return
 		print("QA_SCREENSHOT=" + output_path + " SIZE=" + str(image.get_size()) + " CITY_CENTER=" + str(center))
 	if player != null:
-		camera.global_position = player.global_position + Vector3(3.5, 2.6, 5.5)
+		camera.global_position = player.global_position + Vector3(1.7, 1.2, 2.8)
 		camera.look_at(player.global_position + Vector3.UP * 1.0, Vector3.UP)
 		await get_tree().process_frame
 		await get_tree().process_frame
@@ -72,9 +77,41 @@ func _run_visual_qa_capture() -> void:
 		push_error("Visual QA could not find Player node")
 		get_tree().quit(2)
 		return
-	print("CITY_BOUNDS=" + str(city_bounds) + " CITY_CENTER=" + str(center))
+	print("CITY_BOUNDS=" + str(city_bounds) + " CITY_CENTER=" + str(map_center))
 	print("VISUAL_QA_CAPTURE_COUNT=6")
 	get_tree().quit(0)
+
+func _find_nearest_road_point(reference: Vector3) -> Vector3:
+	var city := get_node_or_null("ManilaRealWorldDistrict")
+	if city == null:
+		return Vector3(reference.x, 0.12, reference.z)
+	var best_point := Vector3(reference.x, 0.12, reference.z)
+	var best_distance: float = INF
+	for node in city.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance == null or mesh_instance.mesh == null:
+			continue
+		if not mesh_instance.name.to_lower().contains("asphalt") or mesh_instance.mesh.get_surface_count() == 0:
+			continue
+		var arrays: Array = mesh_instance.mesh.surface_get_arrays(0)
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+		if indices.size() >= 3:
+			for i in range(0, indices.size(), 3):
+				var local_point: Vector3 = (vertices[indices[i]] + vertices[indices[i + 1]] + vertices[indices[i + 2]]) / 3.0
+				var world_point: Vector3 = mesh_instance.global_transform * local_point
+				var distance: float = Vector2(world_point.x - reference.x, world_point.z - reference.z).length_squared()
+				if distance < best_distance:
+					best_distance = distance
+					best_point = Vector3(world_point.x, 0.12, world_point.z)
+		else:
+			for local_point in vertices:
+				var world_point: Vector3 = mesh_instance.global_transform * local_point
+				var distance: float = Vector2(world_point.x - reference.x, world_point.z - reference.z).length_squared()
+				if distance < best_distance:
+					best_distance = distance
+					best_point = Vector3(world_point.x, 0.12, world_point.z)
+	return best_point
 
 func _measure_city_bounds() -> AABB:
 	var combined := AABB()
@@ -164,7 +201,7 @@ func _build_environment() -> void:
 func _build_ground() -> void:
 	var ground := StaticBody3D.new()
 	ground.name = "WalkableGround"
-	ground.position.y = -0.12
+	ground.position.y = 0.12
 	var collision := CollisionShape3D.new()
 	collision.shape = WorldBoundaryShape3D.new()
 	ground.add_child(collision)
