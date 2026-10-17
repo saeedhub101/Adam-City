@@ -11,3 +11,7 @@
 .local-reference .photo-unavailable{display:flex;align-items:center;justify-content:center;min-height:88px;background:#343e46}
 .local-reference .photo-unavailable:after{content:"افتح المصدر لعرض الصور";padding:8px;text-align:center;color:#e3e8ea}
 @media(max-width:600px){.local-reference{left:10px;bottom:10px;width:calc(100vw - 20px);padding:9px}.local-reference-grid img{height:68px}.local-reference-head strong{font-size:12px}.local-reference-grid span{font-size:10px}}
+
+.local-reference-grid .source-link{min-height:88px;justify-content:center;align-items:center;text-align:center;padding:8px;border:1px solid #ffffff24;border-radius:8px;background:#24313b;gap:6px}
+.local-reference-grid .source-link-icon{font-size:24px;color:#b8d9e4}
+@media(max-width:600px){.local-reference-grid .source-link{min-height:68px;padding:5px}}
