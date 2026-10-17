@@ -38,6 +38,12 @@ jobs:
           python StandaloneBattleRoyale/Tools/build_manila_district.py
           if ($LASTEXITCODE -ne 0) { throw 'Manila district generation failed.' }
 
+      - name: Download real building-specific facade photographs
+        shell: pwsh
+        run: |
+          python StandaloneBattleRoyale/Tools/fetch_manila_facade_photos.py
+          if ($LASTEXITCODE -ne 0) { throw 'Facade photo download failed.' }
+
       - name: Verify generated map is present in Unreal Content
         shell: pwsh
         run: |
@@ -58,6 +64,7 @@ jobs:
             StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb
             StandaloneBattleRoyale/Content/Maps/Manila-Central-District.json
             StandaloneBattleRoyale/Content/Maps/Manila-Facade-Texture-*.jpg
+            StandaloneBattleRoyale/Content/Maps/Real-Facade-Photos/**
           if-no-files-found: error
           retention-days: 30
 
