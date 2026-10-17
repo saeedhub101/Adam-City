@@ -28,6 +28,12 @@ class PrototypeStructureTests(unittest.TestCase):
         self.assertIn("DefaultPawnClass = ASaeedRoyaleCharacter::StaticClass()", mode)
         self.assertIn('ActionName="Fire"', inputs)
         self.assertIn("GlobalDefaultGameMode=/Script/SaeedRoyale.SaeedRoyaleGameMode", engine_config)
+        character = (ROOT / "Source/SaeedRoyale/Private/SaeedRoyaleCharacter.cpp").read_text(encoding="utf-8")
+        header = (ROOT / "Source/SaeedRoyale/Public/SaeedRoyaleCharacter.h").read_text(encoding="utf-8")
+        self.assertIn("CreateDefaultSubobject<USpringArmComponent>", character)
+        self.assertIn("CreateDefaultSubobject<UCameraComponent>", character)
+        self.assertIn("TargetArmLength = 360.0f", character)
+        self.assertIn("FollowCamera", header)
 
     def test_no_accidental_uefn_verse_dependency(self):
         descriptor = (ROOT / "SaeedRoyale.uproject").read_text(encoding="utf-8")
