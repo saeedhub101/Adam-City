@@ -40,7 +40,8 @@ jobs:
           $reportPath = Join-Path $mapDir 'Manila-Central-District.json'
           $glbPath = Join-Path $mapDir 'Manila-Central-District.glb'
           $textures = @(Get-ChildItem $mapDir -Filter 'Manila-Facade-Texture-*.jpg' -File -ErrorAction SilentlyContinue)
-          $cacheValid = (Test-Path $reportPath) -and (Test-Path $glbPath) -and ((Get-Item $glbPath).Length -gt 100000) -and ($textures.Count -ge 4)
+          $roadTexture = Join-Path $mapDir 'Manila-Road-Asphalt.jpg'
+          $cacheValid = (Test-Path $reportPath) -and (Test-Path $glbPath) -and (Test-Path $roadTexture) -and ((Get-Item $glbPath).Length -gt 100000) -and ($textures.Count -ge 4)
           if ($cacheValid) {
             Write-Host "Using committed Manila map cache; skipping OpenStreetMap download and regeneration."
           } else {
@@ -54,12 +55,14 @@ jobs:
           $textures = @(Get-ChildItem $mapDir -Filter 'Manila-Facade-Texture-*.jpg' -File -ErrorAction SilentlyContinue)
           if ($report.buildings -lt 100 -or $report.roads -lt 30) { throw "Map quality gate failed: buildings=$($report.buildings), roads=$($report.roads)" }
           if ($textures.Count -lt 4) { throw "Expected four reusable facade texture files; found $($textures.Count)" }
+          if (-not (Test-Path $roadTexture)) { throw 'Reusable asphalt texture is missing.' }
           if ((Get-Item $glbPath).Length -lt 100000) { throw "Manila GLB is unexpectedly small" }
           if (-not $cacheValid) {
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git add $glbPath $reportPath
             git add -f "$mapDir/Manila-Facade-Texture-*.jpg"
+            git add -f $roadTexture
             if (-not (git diff --cached --quiet)) {
               git commit -m 'Cache Manila district map and facade textures'
               git pull --rebase origin main
@@ -169,6 +172,7 @@ jobs:
             StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb
             StandaloneBattleRoyale/Content/Maps/Manila-Central-District.json
             StandaloneBattleRoyale/Content/Maps/Manila-Facade-Texture-*.jpg
+            StandaloneBattleRoyale/Content/Maps/Manila-Road-Asphalt.jpg
             GodotAdamRoyal/.godot/imported/
           if-no-files-found: warn
           retention-days: 14
