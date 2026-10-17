@@ -38,6 +38,28 @@ const right = new THREE.Vector3();
 const move = new THREE.Vector3();
 const raycaster = new THREE.Raycaster();
 
+// Photographic PBR facade material from Poly Haven (CC0).
+// The texture is tileable and loaded asynchronously so the scene can start immediately.
+const facadeTexture = new THREE.TextureLoader().load(
+  'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plastered_wall/plastered_wall_diff_1k.jpg',
+  (texture) => {
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(2, 2);
+  },
+  undefined,
+  (error) => console.warn('Facade texture unavailable; using fallback material.', error)
+);
+const facadeNormal = new THREE.TextureLoader().load(
+  'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plastered_wall/plastered_wall_nor_gl_1k.jpg',
+  (texture) => {
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(2, 2);
+  },
+  undefined,
+  (error) => console.warn('Facade normal map unavailable; using fallback material.', error)
+);
+
 function showError(message) {
   errorBox.textContent = message;
   errorBox.classList.remove('hidden');
@@ -64,8 +86,11 @@ function initRenderer(qualityKey) {
 function addBuilding(x, z, w, d, h, seed, palette) {
   const group = new THREE.Group();
   group.position.set(x, 0, z);
-  const wallMat = new THREE.MeshStandardMaterial({ color: palette[seed % palette.length], roughness: 0.94, metalness: 0.0 });
-  const trimMat = new THREE.MeshStandardMaterial({ color: 0xe1d7c5, roughness: 0.82 });
+  const wallMat = new THREE.MeshStandardMaterial({
+    color: palette[seed % palette.length], map: facadeTexture, normalMap: facadeNormal,
+    normalScale: new THREE.Vector2(0.28, 0.28), roughness: 0.97, metalness: 0.0
+  });
+  const trimMat = new THREE.MeshStandardMaterial({ color: 0xe1d7c5, map: facadeTexture, roughness: 0.92 });
   const balconyMat = new THREE.MeshStandardMaterial({ color: 0x716d65, roughness: 0.72, metalness: 0.25 });
   const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x263e4a, roughness: 0.22, metalness: 0.22, clearcoat: 0.45 });
   const box = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), wallMat);
@@ -81,6 +106,24 @@ function addBuilding(x, z, w, d, h, seed, palette) {
   roof.position.y = h + 0.08;
   roof.castShadow = true;
   group.add(roof);
+
+  // Parapets, rooftop service rooms and deep limestone window surrounds.
+  const limestone = new THREE.MeshStandardMaterial({ color: 0xd1c4ad, map: facadeTexture, roughness: 0.96 });
+  const parapet = new THREE.Mesh(new THREE.BoxGeometry(w + 0.18, 0.42, 0.18), limestone);
+  parapet.position.set(0, h + 0.25, d / 2 - 0.02);
+  parapet.castShadow = true;
+  group.add(parapet);
+  const sideParapet = parapet.clone();
+  sideParapet.rotation.y = Math.PI / 2;
+  sideParapet.scale.set(d / (w + 0.18), 1, 1);
+  sideParapet.position.set(w / 2 - 0.02, h + 0.25, 0);
+  group.add(sideParapet);
+  if (seed % 3 === 0) {
+    const rooftopRoom = new THREE.Mesh(new THREE.BoxGeometry(w * 0.32, 1.4, d * 0.3), wallMat);
+    rooftopRoom.position.set(-w * 0.22, h + 0.85, -d * 0.18);
+    rooftopRoom.castShadow = true;
+    group.add(rooftopRoom);
+  }
 
   // Recessed-looking dark window strips add scale without excessive draw calls.
   const floors = Math.max(1, Math.floor(h / 3.1));
