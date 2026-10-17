@@ -2,6 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "SaeedRoyaleCharacter.generated.h"
 
 UCLASS()
@@ -11,6 +13,12 @@ class SAEEDROYALE_API ASaeedRoyaleCharacter : public ACharacter
 
 public:
     ASaeedRoyaleCharacter();
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Adam Royal|Camera", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<USpringArmComponent> CameraBoom;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Adam Royal|Camera", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<UCameraComponent> FollowCamera;
     virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
     virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
