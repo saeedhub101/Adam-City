@@ -47,7 +47,7 @@ func _run_city_asset_qa_capture() -> void:
 	var center := city_mesh.global_transform * bounds.get_center()
 	var span := maxf(maxf(bounds.size.x, bounds.size.z) * city_root.scale.x, 80.0)
 	var output_dir := ProjectSettings.globalize_path("res://qa_screenshots")
-		DirAccess.make_dir_recursive_absolute(output_dir)
+	DirAccess.make_dir_recursive_absolute(output_dir)
 	var camera := Camera3D.new()
 	camera.name = "CityAssetQACamera"
 	camera.current = true
