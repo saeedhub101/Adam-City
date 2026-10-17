@@ -15,3 +15,9 @@ window/stretch/mode="canvas_items"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 environment/defaults/default_clear_color=Color(0.36, 0.57, 0.72, 1)
+
+[editor_plugins]
+enabled=PackedStringArray("res://addons/gdgs/plugin.cfg")
+
+[gdgs]
+rendering/backend="Raster"
