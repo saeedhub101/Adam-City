@@ -1,4 +1,4 @@
-name: Adam Royal — Unreal Engine
+name: Adam Royal — Generate Manila District
 
 on:
   push:
@@ -11,44 +11,58 @@ permissions:
   contents: read
 
 concurrency:
-  group: adam-royal-unreal-main
+  group: adam-royal-manila-map
   cancel-in-progress: true
 
 jobs:
-  validate:
-    name: Validate Unreal project
+  generate-manila:
+    name: Download real OSM data and build 3D district
     runs-on: windows-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
-      - name: Verify Unreal project and ensure Godot is gone
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $project = 'StandaloneBattleRoyale/SaeedRoyale.uproject'
-          if (!(Test-Path $project)) { throw "Unreal project missing: $project" }
-          $descriptor = Get-Content $project -Raw | ConvertFrom-Json
-          if ($descriptor.Modules[0].Name -ne 'SaeedRoyale') { throw 'Unexpected Unreal module.' }
-          if (!(Test-Path 'assets/saeed.glb')) { throw 'Character asset assets/saeed.glb is missing.' }
-          if (!(Test-Path 'StandaloneBattleRoyale/Source/SaeedRoyale/Private/SaeedRoyaleCharacter.cpp')) { throw 'Unreal character source missing.' }
-          $forbidden = Get-ChildItem -Path . -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.FullName -match '[\\/]SaeedRoyaleGodot[\\/]|\.gd$|\.tscn$|project\.godot$' }
-          if ($forbidden) { $forbidden | ForEach-Object { Write-Error $_.FullName }; throw 'Godot content remains.' }
-          Write-Host 'Unreal project and character asset verified.'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
 
-      - name: Run Unreal source contract tests
+      - name: Install map generation dependencies
+        shell: pwsh
+        run: python -m pip install --upgrade requests shapely trimesh mapbox-earcut
+
+      - name: Generate real Manila buildings and roads
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
+          python StandaloneBattleRoyale/Tools/build_manila_district.py
+          if ($LASTEXITCODE -ne 0) { throw 'Manila district generation failed.' }
+
+      - name: Verify generated map is present in Unreal Content
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $map = 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb'
+          $report = 'StandaloneBattleRoyale/Content/Maps/Manila-Central-District.json'
+          if (!(Test-Path $map)) { throw 'Generated GLB missing.' }
+          if ((Get-Item $map).Length -lt 100000) { throw 'Generated GLB is unexpectedly small.' }
+          $data = Get-Content $report -Raw | ConvertFrom-Json
+          if ($data.buildings -lt 30 -or $data.roads -lt 15) { throw 'Map quality gate failed.' }
+          Write-Host "Verified: $($data.buildings) buildings, $($data.roads) roads, $($data.glb_bytes) bytes."
+
+      - name: Upload generated Unreal map source and provenance
+        uses: actions/upload-artifact@v4
+        with:
+          name: Adam-Royal-Manila-Central-District
+          path: |
+            StandaloneBattleRoyale/Content/Maps/Manila-Central-District.glb
+            StandaloneBattleRoyale/Content/Maps/Manila-Central-District.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Validate Unreal source contracts
+        shell: pwsh
+        run: |
           python StandaloneBattleRoyale/Tests/validate_prototype.py
           if ($LASTEXITCODE -ne 0) { throw 'Unreal source tests failed.' }
-
-      - name: Report whether Unreal Engine can be compiled on this runner
-        shell: pwsh
-        run: |
-          $candidates = @('C:\Program Files\Epic Games\UE_5.5','C:\Program Files\Epic Games\UE_5.6','C:\Program Files\Epic Games\UE_5.7') | Where-Object { Test-Path (Join-Path $_ 'Engine/Binaries/Win64/UnrealEditor-Cmd.exe') }
-          if ($candidates.Count -eq 0) {
-            Write-Host 'Unreal Engine is not installed on this hosted runner; this run validates source only, not a compiled game.'
-          } else {
-            Write-Host "Unreal Engine found at $($candidates[0]); source validation completed."
-          }

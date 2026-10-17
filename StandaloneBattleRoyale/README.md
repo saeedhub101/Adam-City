@@ -40,3 +40,10 @@ GitHub Actions can check source files and package source artifacts, but cannot c
 Official Unreal multiplayer guide: https://dev.epicgames.com/documentation/unreal-engine/multiplayer-programming-quick-start-for-unreal-engine
 
 Official PS5 access requirements: https://dev.epicgames.com/documentation/unreal-engine/development-for-playstation-5-in-unreal-engine
+
+
+## Real-world Manila district source
+
+The map-generation workflow downloads current OpenStreetMap ways for a bounded central-Manila area, builds extruded building footprints and road geometry, and exports a GLB plus a provenance report into the workflow artifact `Adam-Royal-Manila-Central-District`. This is actual mapped geography, but buildings are procedural extrusions rather than photo-scanned assets. The workflow does not claim that Unreal has compiled or imported the GLB into a packaged game; the GLB is placed in the Unreal project's `Content/Maps` path in the generated artifact for editor import and review.
+
+Map data © OpenStreetMap contributors, available under ODbL 1.0. See https://www.openstreetmap.org/copyright.
