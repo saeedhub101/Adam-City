@@ -242,6 +242,10 @@ jobs:
             Get-Content $runtimeLog
             throw 'Runtime check failed: the actual character GLB was not loaded.'
           }
+          if (-not (Select-String -Path $runtimeLog -Pattern 'CITY_COLLISION_MESHES=[1-9]' -Quiet)) {
+            Get-Content $runtimeLog
+            throw 'Runtime check failed: no building collision meshes were created.'
+          }
           Write-Host 'Verified: real Manila GLB and player character loaded in the game scene.'
 
       - name: Run the game and capture aerial, four street views, and player
@@ -320,7 +324,7 @@ jobs:
             Get-Content $runtimeLog
             throw 'Exported AdamRoyal.exe reported script parse/compile errors.'
           }
-          foreach ($pattern in @('CITY_RENDER_SOURCE=GLB', 'CHARACTER_MODEL_LOADED=true', 'REAL_TERRAIN_LOADED source=')) {
+          foreach ($pattern in @('CITY_RENDER_SOURCE=GLB', 'CHARACTER_MODEL_LOADED=true', 'CITY_COLLISION_MESHES=[1-9]', 'REAL_TERRAIN_LOADED source=')) {
             if (-not (Select-String -Path $runtimeLog -Pattern $pattern -Quiet)) {
               Get-Content $runtimeLog
               throw "Exported game is missing runtime evidence marker: $pattern"
