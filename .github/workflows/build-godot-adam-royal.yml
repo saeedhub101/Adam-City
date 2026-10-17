@@ -82,7 +82,7 @@ jobs:
             git add -f "$mapDir/Manila-Facade-Texture-*.jpg"
             git add -f $roadTexture
             if (-not (git diff --cached --quiet)) {
-              git commit -m 'Cache Manila district map and facade textures'
+              git commit -m 'Cache Manila district map and facade textures [skip ci]'
               git pull --rebase origin main
               git push origin HEAD:main
             }
