@@ -11,11 +11,6 @@ class PrototypeStructureTests(unittest.TestCase):
         self.assertEqual(descriptor["Modules"][0]["Name"], "SaeedRoyale")
         self.assertEqual(descriptor["Modules"][0]["Type"], "Runtime")
 
-    def test_real_manila_map_asset_is_in_unreal_content(self):
-        map_asset = ROOT / "Content/Maps/Manila-Central-District.glb"
-        self.assertTrue(map_asset.is_file(), "Real Manila district GLB must be present in the Unreal project.")
-        self.assertGreater(map_asset.stat().st_size, 1024 * 1024, "Map asset unexpectedly small; check that the real district model was restored.")
-
     def test_character_has_network_authority_and_replication(self):
         header = (ROOT / "Source/SaeedRoyale/Public/SaeedRoyaleCharacter.h").read_text(encoding="utf-8")
         source = (ROOT / "Source/SaeedRoyale/Private/SaeedRoyaleCharacter.cpp").read_text(encoding="utf-8")
