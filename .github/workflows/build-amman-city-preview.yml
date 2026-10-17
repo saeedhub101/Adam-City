@@ -35,7 +35,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p SaeedRoyaleGodot/assets
-          curl --fail --silent --show-error --retry 4 --retry-delay 3 --max-time 150 -H 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'data=[out:json][timeout:120];(way["building"](14.56,120.96,14.61,121.01);way["highway"](14.56,120.96,14.61,121.01););out body;>;out skel qt;' https://overpass-api.de/api/interpreter -o /tmp/manila-osm.json
+          curl --fail --silent --show-error --retry 4 --retry-delay 3 --max-time 150 -H 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'data=[out:json][timeout:120];(way["building"](14.56,120.96,14.61,121.01);way["highway"](14.56,120.96,14.61,121.01););out body;>;out skel qt;' https://overpass.kumi.systems/api/interpreter -o /tmp/manila-osm.json
           python3 - <<'PY'
           import json
           from pathlib import Path
