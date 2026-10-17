@@ -55,11 +55,11 @@ func _run_city_asset_qa_capture() -> void:
 	add_child(camera)
 	var player_node := get_node_or_null("Player")
 	var captures := [
-		{"name": "01-san-francisco-aerial.png", "position": center + Vector3(0.0, span * 0.85, 0.0), "target": center},
-		{"name": "02-san-francisco-street-west.png", "position": center + Vector3(-span * 0.20, span * 0.035, 0.0), "target": center + Vector3(-span * 0.05, span * 0.02, 0.0)},
-		{"name": "03-san-francisco-street-east.png", "position": center + Vector3(span * 0.20, span * 0.035, 0.0), "target": center + Vector3(span * 0.05, span * 0.02, 0.0)},
-		{"name": "04-san-francisco-street-north.png", "position": center + Vector3(0.0, span * 0.035, -span * 0.20), "target": center + Vector3(0.0, span * 0.02, -span * 0.05)},
-		{"name": "05-san-francisco-street-south.png", "position": center + Vector3(0.0, span * 0.035, span * 0.20), "target": center + Vector3(0.0, span * 0.02, span * 0.05)}
+		{"name": "01-aerial-full-map.png", "position": center + Vector3(0.0, span * 0.85, 0.0), "target": center},
+		{"name": "02-street-west.png", "position": center + Vector3(-span * 0.06, maxf(3.5, span * 0.008), 0.0), "target": center + Vector3(-span * 0.015, maxf(1.8, span * 0.002), 0.0)},
+		{"name": "03-street-east.png", "position": center + Vector3(span * 0.06, maxf(3.5, span * 0.008), 0.0), "target": center + Vector3(span * 0.015, maxf(1.8, span * 0.002), 0.0)},
+		{"name": "04-street-north.png", "position": center + Vector3(0.0, maxf(3.5, span * 0.008), -span * 0.06), "target": center + Vector3(0.0, maxf(1.8, span * 0.002), -span * 0.015)},
+		{"name": "05-street-south.png", "position": center + Vector3(0.0, maxf(3.5, span * 0.008), span * 0.06), "target": center + Vector3(0.0, maxf(1.8, span * 0.002), span * 0.015)}
 	]
 	for shot in captures:
 		camera.global_position = shot.position
@@ -79,7 +79,7 @@ func _run_city_asset_qa_capture() -> void:
 		await get_tree().process_frame
 		await RenderingServer.frame_post_draw
 		var player_image := get_viewport().get_texture().get_image()
-		var player_path := output_dir.path_join("06-san-francisco-player.png")
+		var player_path := output_dir.path_join("06-player-in-game.png")
 		if player_image.save_png(player_path) != OK:
 			push_error("CITY_ASSET_QA_FAIL: player screenshot save failed")
 			get_tree().quit(2)
