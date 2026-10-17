@@ -151,7 +151,7 @@ function createCity(quality) {
     }
   }
 
-  const palette = [0xd0c4ad, 0xb9ae9a, 0xd8d1c2, 0xa99f8d, 0xc8b99e, 0xaaa99f, 0xe0d7c7];
+  const palette = [0xc9b99f, 0xb8a88e, 0xd5c8b2, 0xa99b84, 0xc2b49c, 0xb9b3a5, 0xd9cbb3];
   let seed = 13;
   let count = 0;
   for (let z = -WORLD_SIZE / 2 + 18; z < WORLD_SIZE / 2 - 12 && count < quality.buildings; z += 26) {
