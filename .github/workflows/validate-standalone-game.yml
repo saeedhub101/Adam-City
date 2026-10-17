@@ -1,14 +1,6 @@
 name: Adam Royal — Validate Cached Manila District
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "StandaloneBattleRoyale/**"
-  pull_request:
-    branches: [main]
-    paths:
-      - "StandaloneBattleRoyale/**"
   workflow_dispatch:
     inputs:
       refresh_map_assets:
