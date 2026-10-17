@@ -58,6 +58,12 @@ jobs:
           python StandaloneBattleRoyale/Tools/fetch_manila_facade_photos.py
           if ($LASTEXITCODE -ne 0) { throw 'Facade photo download failed.' }
 
+      - name: Download public street-level photos across Manila
+        shell: pwsh
+        run: |
+          python StandaloneBattleRoyale/Tools/fetch_manila_street_imagery.py
+          if ($LASTEXITCODE -ne 0) { throw 'Street imagery harvesting failed.' }
+
       - name: Verify generated map is present in Unreal Content
         shell: pwsh
         run: |
@@ -80,6 +86,7 @@ jobs:
             StandaloneBattleRoyale/Content/Maps/Manila-Central-District.json
             StandaloneBattleRoyale/Content/Maps/Manila-Facade-Texture-*.jpg
             StandaloneBattleRoyale/Content/Maps/Real-Facade-Photos/**
+            StandaloneBattleRoyale/Content/Maps/Street-Imagery/**
           if-no-files-found: error
           retention-days: 30
 
