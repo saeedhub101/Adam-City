@@ -1,5 +1,8 @@
 extends Node3D
 
+const SPLAT_NODE_SCRIPT := preload("res://addons/gdgs/runtime/nodes/gaussian_splat_node.gd")
+const CITY_SCAN_PATH := "res://assets/real_city/helsinki_city_scan.ply"
+
 const ARENA_SIZE := 220.0
 const BOT_COUNT := 14
 const STARTING_AMMO := 30
@@ -91,7 +94,7 @@ func _build_world() -> void:
 			Vector3(-ARENA_SIZE / 2, 1, 0), Vector3(ARENA_SIZE / 2, 1, 0)][i]
 		_add_box(self, "BoundaryWall_%02d" % i, wall_pos, wall_size, Color(0.12, 0.2, 0.14), true)
 
-	_build_urban_district()
+	_add_real_city_scan()
 
 
 	storm_ring = MeshInstance3D.new()
@@ -107,99 +110,23 @@ func _build_world() -> void:
 	add_child(storm_ring)
 
 
-func _build_urban_district() -> void:
-	# Dense, street-oriented city block layout replaces the old random box obstacles.
-	# This is a gameplay-ready procedural fallback, not a substitute for a scanned city mesh.
-	var road_mat := _material(Color(0.075, 0.083, 0.09))
-	var sidewalk_mat := _material(Color(0.43, 0.42, 0.38))
-	var line_mat := _material(Color(0.82, 0.78, 0.62))
-	var asphalt := _add_box(self, "MainRoad", Vector3(0, -0.045, 0), Vector3(ARENA_SIZE, 0.08, 13.0), Color(0.075, 0.083, 0.09), false)
-	_add_box(self, "CrossRoad", Vector3(0, -0.035, 0), Vector3(13.0, 0.09, ARENA_SIZE), Color(0.075, 0.083, 0.09), false)
-	for lane in range(-8, 9, 4):
-		for seg in range(-9, 10, 2):
-			_add_box(self, "RoadMark_H", Vector3(float(seg) * 10.0, 0.012, float(lane)), Vector3(4.2, 0.025, 0.13), Color(0.86, 0.82, 0.69), false)
-			_add_box(self, "RoadMark_V", Vector3(float(lane), 0.013, float(seg) * 10.0), Vector3(0.13, 0.025, 4.2), Color(0.86, 0.82, 0.69), false)
-	for side in [-1.0, 1.0]:
-		_add_box(self, "Sidewalk_H_%s" % str(side), Vector3(0, 0.02, side * 8.1), Vector3(ARENA_SIZE, 0.16, 2.0), Color(0.48, 0.47, 0.43), false)
-		_add_box(self, "Sidewalk_V_%s" % str(side), Vector3(side * 8.1, 0.02, 0), Vector3(2.0, 0.16, ARENA_SIZE), Color(0.48, 0.47, 0.43), false)
-	var block_index := 0
-	for bx in range(-4, 5):
-		for bz in range(-4, 5):
-			var center := Vector3(float(bx) * 22.0, 0, float(bz) * 22.0)
-			if Vector2(center.x, center.z).length() < 19.0:
-				continue
-			var w := rng.randf_range(10.0, 16.0)
-			var d := rng.randf_range(10.0, 16.0)
-			var floors := rng.randi_range(2, 7)
-			var h := float(floors) * rng.randf_range(2.7, 3.15)
-			_build_detailed_building(center, Vector2(w, d), h, block_index)
-			block_index += 1
-	for i in range(32):
-		var x := rng.randf_range(-ARENA_SIZE * 0.44, ARENA_SIZE * 0.44)
-		var z := rng.randf_range(-ARENA_SIZE * 0.44, ARENA_SIZE * 0.44)
-		if absf(x) < 12.0 or absf(z) < 12.0:
-			continue
-		_add_tree(Vector3(x, 0, z))
-
-func _build_detailed_building(center: Vector3, footprint: Vector2, height: float, index: int) -> void:
-	var facade_color: Color
-	var glass_color: Color
-	match index % 4:
-		0:
-			facade_color = Color(0.54, 0.51, 0.45)
-			glass_color = Color(0.28, 0.33, 0.36)
-		1:
-			facade_color = Color(0.65, 0.57, 0.45)
-			glass_color = Color(0.22, 0.30, 0.35)
-		2:
-			facade_color = Color(0.43, 0.45, 0.43)
-			glass_color = Color(0.18, 0.27, 0.32)
-		_:
-			facade_color = Color(0.68, 0.65, 0.57)
-			glass_color = Color(0.20, 0.31, 0.36)
-	var shell := _add_box(self, "Building_%03d" % index, center + Vector3(0, height * 0.5, 0),
-		Vector3(footprint.x, height, footprint.y), facade_color, true)
-	var trim := _material(Color(0.16, 0.18, 0.19))
-	var lit_glass := Color(0.68, 0.58, 0.36)
-	# Recessed-looking window panels, horizontal floor bands and roof parapets.
-	var columns := maxi(2, int(footprint.x / 2.0))
-	var rows := maxi(1, int(height / 2.8) - 1)
-	for floor_idx in range(rows):
-		var y := center.y + 1.1 + float(floor_idx) * (height - 1.6) / float(rows)
-		_add_box(self, "FloorBand", Vector3(center.x, y, center.z - footprint.y * 0.501), Vector3(footprint.x + 0.05, 0.11, 0.12), glass_color, false)
-		for col in range(columns):
-			var x := center.x - footprint.x * 0.5 + (float(col) + 0.5) * footprint.x / float(columns)
-			var window_width := footprint.x / float(columns) * 0.57
-			var win_color: Color = lit_glass if rng.randf() < 0.16 else glass_color
-			_add_box(self, "WindowFront", Vector3(x, y + 0.45, center.z - footprint.y * 0.506),
-				Vector3(window_width, 0.9, 0.07), win_color, false)
-			_add_box(self, "WindowFrameTop", Vector3(x, y + 0.94, center.z - footprint.y * 0.512),
-				Vector3(window_width + 0.08, 0.07, 0.09), trim.albedo_color, false)
-		_add_box(self, "FacadeBand", Vector3(center.x, y - 0.13, center.z - footprint.y * 0.508),
-			Vector3(footprint.x, 0.08, 0.1), facade_color, false)
-	_add_box(self, "RoofParapet", Vector3(center.x, center.y + height + 0.18, center.z),
-		Vector3(footprint.x + 0.3, 0.36, footprint.y + 0.3), glass_color, false)
-	# Side windows add depth and stop the blocks reading as single flat cubes.
-	for floor_idx in range(rows):
-		var y := center.y + 1.25 + float(floor_idx) * (height - 1.8) / float(rows)
-		for col in range(maxi(2, int(footprint.y / 2.2))):
-			var z := center.z - footprint.y * 0.5 + (float(col) + 0.5) * footprint.y / float(maxi(2, int(footprint.y / 2.2)))
-			_add_box(self, "WindowSide", Vector3(center.x + footprint.x * 0.506, y + 0.3, z),
-				Vector3(0.07, 0.72, 0.62), glass_color, false)
-	# A simple ground-floor shopfront differentiates street-level facades.
-	_add_box(self, "Shopfront", Vector3(center.x, 1.15, center.z - footprint.y * 0.509),
-		Vector3(footprint.x * 0.62, 1.8, 0.08), Color(0.08, 0.14, 0.17), false)
-
-func _add_tree(pos: Vector3) -> void:
-	_add_box(self, "TreeTrunk", pos + Vector3(0, 1.1, 0), Vector3(0.65, 2.2, 0.65), Color(0.27, 0.17, 0.1), true)
-	var crown := MeshInstance3D.new()
-	var mesh := SphereMesh.new()
-	mesh.radius = rng.randf_range(1.3, 2.1)
-	mesh.height = mesh.radius * 2.0
-	crown.mesh = mesh
-	crown.position = pos + Vector3(0, 3.0, 0)
-	crown.material_override = _material(Color(0.13, rng.randf_range(0.28, 0.4), 0.16))
-	add_child(crown)
+func _add_real_city_scan() -> void:
+	# Use a real photogrammetry/Gaussian-splat capture of Helsinki. No generated
+	# box buildings are used as a substitute for the scan.
+	var gaussian: Resource = load(CITY_SCAN_PATH)
+	if gaussian == null:
+		push_error("Real Helsinki city scan failed to import: " + CITY_SCAN_PATH)
+		return
+	var bounds: AABB = gaussian.get("aabb")
+	var scan: Node3D = SPLAT_NODE_SCRIPT.new()
+	scan.name = "HelsinkiPhotogrammetryCity"
+	scan.set("gaussian", gaussian)
+	add_child(scan)
+	# The source capture uses Z-up; rotate it into Godot's Y-up world while
+	# retaining the renderer's default model-orientation correction.
+	scan.rotation = Basis.from_euler(Vector3(-PI / 2.0, 0.0, 0.0)).get_euler() * Vector3.ONE
+	scan.scale = Vector3.ONE * 0.3
+	scan.position.y = bounds.size.z * 0.15
 
 func _add_box(parent: Node3D, node_name: String, pos: Vector3, size: Vector3, color: Color, solid: bool) -> Node3D:
 	var root: Node3D = StaticBody3D.new() if solid else Node3D.new()
