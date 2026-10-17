@@ -142,43 +142,50 @@ func _build_urban_district() -> void:
 		_add_tree(Vector3(x, 0, z))
 
 func _build_detailed_building(center: Vector3, footprint: Vector2, height: float, index: int) -> void:
-	var palettes := [
-		[Color(0.54, 0.51, 0.45), Color(0.28, 0.33, 0.36)],
-		[Color(0.65, 0.57, 0.45), Color(0.22, 0.30, 0.35)],
-		[Color(0.43, 0.45, 0.43), Color(0.18, 0.27, 0.32)],
-		[Color(0.68, 0.65, 0.57), Color(0.20, 0.31, 0.36)]
-	]
-	var palette: Array = palettes[index % palettes.size()]
+	var facade_color: Color
+	var glass_color: Color
+	match index % 4:
+		0:
+			facade_color = Color(0.54, 0.51, 0.45)
+			glass_color = Color(0.28, 0.33, 0.36)
+		1:
+			facade_color = Color(0.65, 0.57, 0.45)
+			glass_color = Color(0.22, 0.30, 0.35)
+		2:
+			facade_color = Color(0.43, 0.45, 0.43)
+			glass_color = Color(0.18, 0.27, 0.32)
+		_:
+			facade_color = Color(0.68, 0.65, 0.57)
+			glass_color = Color(0.20, 0.31, 0.36)
 	var shell := _add_box(self, "Building_%03d" % index, center + Vector3(0, height * 0.5, 0),
-		Vector3(footprint.x, height, footprint.y), palette[0], true)
+		Vector3(footprint.x, height, footprint.y), facade_color, true)
 	var trim := _material(Color(0.16, 0.18, 0.19))
-	var glass := _material(Color(0.10, 0.22, 0.28))
-	var lit_glass := _material(Color(0.68, 0.58, 0.36))
+	var lit_glass := Color(0.68, 0.58, 0.36)
 	# Recessed-looking window panels, horizontal floor bands and roof parapets.
 	var columns := maxi(2, int(footprint.x / 2.0))
 	var rows := maxi(1, int(height / 2.8) - 1)
 	for floor_idx in range(rows):
 		var y := center.y + 1.1 + float(floor_idx) * (height - 1.6) / float(rows)
-		_add_box(self, "FloorBand", Vector3(center.x, y, center.z - footprint.y * 0.501), Vector3(footprint.x + 0.05, 0.11, 0.12), palette[1], false)
+		_add_box(self, "FloorBand", Vector3(center.x, y, center.z - footprint.y * 0.501), Vector3(footprint.x + 0.05, 0.11, 0.12), glass_color, false)
 		for col in range(columns):
 			var x := center.x - footprint.x * 0.5 + (float(col) + 0.5) * footprint.x / float(columns)
 			var window_width := footprint.x / float(columns) * 0.57
-			var win_color: Color = lit_glass if rng.randf() < 0.16 else palette[1]
+			var win_color: Color = lit_glass if rng.randf() < 0.16 else glass_color
 			_add_box(self, "WindowFront", Vector3(x, y + 0.45, center.z - footprint.y * 0.506),
 				Vector3(window_width, 0.9, 0.07), win_color, false)
 			_add_box(self, "WindowFrameTop", Vector3(x, y + 0.94, center.z - footprint.y * 0.512),
 				Vector3(window_width + 0.08, 0.07, 0.09), trim.albedo_color, false)
 		_add_box(self, "FacadeBand", Vector3(center.x, y - 0.13, center.z - footprint.y * 0.508),
-			Vector3(footprint.x, 0.08, 0.1), palette[0], false)
+			Vector3(footprint.x, 0.08, 0.1), facade_color, false)
 	_add_box(self, "RoofParapet", Vector3(center.x, center.y + height + 0.18, center.z),
-		Vector3(footprint.x + 0.3, 0.36, footprint.y + 0.3), palette[1], false)
+		Vector3(footprint.x + 0.3, 0.36, footprint.y + 0.3), glass_color, false)
 	# Side windows add depth and stop the blocks reading as single flat cubes.
 	for floor_idx in range(rows):
 		var y := center.y + 1.25 + float(floor_idx) * (height - 1.8) / float(rows)
 		for col in range(maxi(2, int(footprint.y / 2.2))):
 			var z := center.z - footprint.y * 0.5 + (float(col) + 0.5) * footprint.y / float(maxi(2, int(footprint.y / 2.2)))
 			_add_box(self, "WindowSide", Vector3(center.x + footprint.x * 0.506, y + 0.3, z),
-				Vector3(0.07, 0.72, 0.62), palette[1], false)
+				Vector3(0.07, 0.72, 0.62), glass_color, false)
 	# A simple ground-floor shopfront differentiates street-level facades.
 	_add_box(self, "Shopfront", Vector3(center.x, 1.15, center.z - footprint.y * 0.509),
 		Vector3(footprint.x * 0.62, 1.8, 0.08), Color(0.08, 0.14, 0.17), false)
