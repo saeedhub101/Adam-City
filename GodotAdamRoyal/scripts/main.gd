@@ -145,6 +145,8 @@ func _build_city() -> Dictionary:
 			# The Manila GLB uses Z-up coordinates; Godot's world is Y-up.
 			city.rotation_degrees = Vector3(-90.0, 0.0, 0.0)
 			add_child(city)
+			var collision_mesh_count := _add_city_collisions(city)
+			print("CITY_COLLISION_MESHES=" + str(collision_mesh_count))
 			var stats := _read_city_stats()
 			stats["ok"] = true
 			print("CITY_RENDER_SOURCE=GLB")
@@ -159,6 +161,35 @@ func _build_city() -> Dictionary:
 	var fallback_result: Dictionary = city_builder.load_city()
 	print("CITY_RENDER_SOURCE=OSM_JSON_FALLBACK")
 	return fallback_result
+
+func _add_city_collisions(city: Node3D) -> int:
+	var collision_mesh_count := 0
+	for node in city.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance == null or mesh_instance.mesh == null:
+			continue
+		var is_facade := mesh_instance.name.to_lower().contains("facade")
+		if not is_facade:
+			for surface_index in range(mesh_instance.mesh.get_surface_count()):
+				var material := mesh_instance.mesh.surface_get_material(surface_index)
+				if material != null and material.resource_name.to_lower().contains("facade"):
+					is_facade = true
+					break
+		if not is_facade:
+			continue
+		var shape: Shape3D = mesh_instance.mesh.create_trimesh_shape()
+		if shape == null:
+			push_error("Could not build collision for city mesh: " + mesh_instance.name)
+			continue
+		var body := StaticBody3D.new()
+		body.name = mesh_instance.name + "_Collision"
+		body.transform = mesh_instance.transform
+		var collision := CollisionShape3D.new()
+		collision.shape = shape
+		body.add_child(collision)
+		mesh_instance.get_parent().add_child(body)
+		collision_mesh_count += 1
+	return collision_mesh_count
 
 func _read_city_stats() -> Dictionary:
 	var path := "res://assets/manila_city.json"
