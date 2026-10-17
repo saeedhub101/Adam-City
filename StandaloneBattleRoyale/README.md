@@ -16,7 +16,7 @@ Adam Royal is a standalone Unreal Engine game project, separate from any UEFN is
 
 - The Manila district generator now produces a real-geography GLB from OpenStreetMap data and packages it with procedural facade atlases and Wikimedia Commons facade reference photos. This is source geometry, not yet a native Unreal .umap level, and the reference photos are not yet mapped onto building meshes.
 - Loot, inventory, production weapon models/animations, HUD, lobby, matchmaking, shrinking storm, bots, persistence, dedicated-server deployment, anti-cheat, audio, and optimization remain unfinished.
-- Saeed GLB import/retargeting into the player character.
+- The existing player model is `assets/saeed.glb` (about 17 MB). The workflow now stages this exact file as `Content/Characters/Saeed.glb` in the downloadable artifact. It is not yet a native Unreal skeletal-mesh asset: it must be imported through Unreal's glTF-capable pipeline (or converted in Blender), checked for skeleton/skin/animations, and assigned to the character mesh before the model is visible in gameplay.
 - Controller mappings and console certification work.
 
 ## Verification truth
@@ -29,8 +29,9 @@ GitHub Actions can check source files and package source artifacts, but cannot c
 2. Download a fresh, openly licensed city-area extract (not the old GLB) and save the source data in the repository.
 3. Convert/import the new map data into Unreal assets and inspect scale, origin, roads, building geometry, and materials.
 4. Save a real `.umap` level, add PlayerStarts and lighting, and set SaeedRoyaleGameMode as the map GameMode.
-5. Compile the editor target and test Play-in-Editor before producing gameplay screenshots.
-6. Use Play > Number of Players = 2 and run as a listen server to test replication and server-side damage.
+5. Import `Content/Characters/Saeed.glb` into Unreal (or convert it through Blender if required), verify the skeletal mesh, skeleton, materials and animations, and assign the resulting Unreal skeletal mesh to `ASaeedRoyaleCharacter`/a character Blueprint.
+6. Compile the editor target and test Play-in-Editor before producing gameplay screenshots.
+7. Use Play > Number of Players = 2 and run as a listen server to test replication and server-side damage.
 
 ## Platform plan
 
