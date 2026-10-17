@@ -25,30 +25,40 @@ ENDPOINTS = [
     "https://overpass-api.de/api/interpreter",
     "https://overpass.kumi.systems/api/interpreter",
     "https://overpass.private.coffee/api/interpreter",
+    "https://overpass.osm.ch/api/interpreter",
     "https://overpass.nchc.org.tw/api/interpreter",
-    "https://overpass.openstreetmap.ru/api/interpreter",
 ]
 def fetch():
+    """Fetch OSM data with bounded retries; public Overpass servers are occasionally overloaded."""
     last = None
-    for endpoint in ENDPOINTS:
-        for method in ("post", "get"):
-            try:
-                headers = {"User-Agent":"AdamRoyal-Research-Map/1.1"}
-                if method == "post":
-                    response = requests.post(endpoint, data={"data": QUERY}, timeout=180, headers=headers)
-                else:
-                    response = requests.get(endpoint, params={"data": QUERY}, timeout=180, headers=headers)
-                response.raise_for_status()
-                data = response.json()
-                if data.get("elements"):
-                    print(f"Downloaded OSM source from {endpoint} ({method.upper()})")
-                    return data
-                last = RuntimeError(f"{endpoint} returned no elements")
-            except Exception as exc:
-                last = exc
-                print(f"OSM endpoint attempt failed: {endpoint} {method.upper()}: {exc}")
-                time.sleep(1)
-    raise RuntimeError(f"Could not download OSM district from any Overpass endpoint: {last}")
+    session = requests.Session()
+    headers = {
+        "User-Agent": "AdamRoyal-Research-Map/1.2 (OSM attribution in project README)",
+        "Accept": "application/json",
+    }
+    for round_no in range(2):
+        for endpoint in ENDPOINTS:
+            # POST first to avoid huge query strings; retry with GET for servers that reject POST.
+            for method in ("post", "get"):
+                try:
+                    if method == "post":
+                        response = session.post(endpoint, data={"data": QUERY}, timeout=(12, 75), headers=headers)
+                    else:
+                        response = session.get(endpoint, params={"data": QUERY}, timeout=(12, 75), headers=headers)
+                    response.raise_for_status()
+                    data = response.json()
+                    if data.get("elements"):
+                        print(f"Downloaded OSM source from {endpoint} ({method.upper()}, pass {round_no + 1})")
+                        return data
+                    last = RuntimeError(f"{endpoint} returned no elements")
+                except Exception as exc:
+                    last = exc
+                    print(f"OSM endpoint attempt failed: {endpoint} {method.upper()} pass {round_no + 1}: {exc}")
+                    time.sleep(1.5 * (round_no + 1))
+        if round_no == 0:
+            print("All OSM endpoints failed once; waiting before a second pass.")
+            time.sleep(8)
+    raise RuntimeError(f"Could not download OSM district from any Overpass endpoint after retries: {last}")
 
 def make_facade_texture(path: Path, style: int) -> Image.Image:
     """Create distinct tileable facade atlases as a fallback when no matched street photo exists."""
