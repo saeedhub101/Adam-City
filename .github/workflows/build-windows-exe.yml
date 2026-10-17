@@ -42,8 +42,8 @@ jobs:
       - name: Cache Helsinki source tile
         uses: actions/cache@v4
         with:
-          path: .cache/helsinki
-          key: helsinki-2017-668492x2-lod15-v1
+          path: game/public/models/helsinki
+          key: helsinki-2017-678492x2-lod16-v1
 
       - name: Download and prepare the Helsinki photogrammetry tile
         working-directory: .
