@@ -14,7 +14,8 @@ BBOX = (35.9360, 31.9940, 35.9600, 32.0120)
 API = "https://graph.mapillary.com/images"
 OUT = Path("game/public/images/mapillary")
 MANIFEST = Path("game/public/data/mapillary-photo-catalog.json")
-MAX_IMAGES = 40
+MAX_IMAGES = 2000
+MAX_PAGES = 100
 UA = "SaeedTabarbourOpenWorld/1.0 (Mapillary imagery attribution)"
 
 def get_json(url):
@@ -27,42 +28,48 @@ def main():
     query = {
         "bbox": ",".join(map(str, BBOX)),
         "limit": 200,
-        "fields": "id,thumb_1024_url,computed_geometry,creator,captured_at,compass_angle,is_pano,sequence",
+        "fields": "id,thumb_256_url,thumb_1024_url,computed_geometry,creator,captured_at,compass_angle,is_pano,sequence",
     }
-    url = API + "?" + urllib.parse.urlencode(query)
-    data = get_json(url)
-    rows = data.get("data", [])
-    # Keep stable, uniquely identified images with coordinates and downloadable thumbnails.
+    next_url = API + "?" + urllib.parse.urlencode(query)
     selected = []
     seen = set()
-    for item in rows:
-        image_id = str(item.get("id", ""))
-        geom = item.get("computed_geometry") or {}
-        coords = geom.get("coordinates") or []
-        thumb = item.get("thumb_1024_url")
-        if not image_id or image_id in seen or len(coords) < 2 or not thumb:
-            continue
-        lon, lat = coords[0], coords[1]
-        if not (BBOX[0] <= lon <= BBOX[2] and BBOX[1] <= lat <= BBOX[3]):
-            continue
-        seen.add(image_id)
-        selected.append((item, lon, lat))
-    # Sort spatially and cap the initial repository footprint.
-    selected = selected[:MAX_IMAGES]
+    pages = 0
+    # Follow Graph API pagination instead of silently reading only the first 200 images.
+    while next_url and pages < MAX_PAGES and len(selected) < MAX_IMAGES:
+        data = get_json(next_url)
+        pages += 1
+        for item in data.get("data", []):
+            image_id = str(item.get("id", ""))
+            geom = item.get("computed_geometry") or {}
+            coords = geom.get("coordinates") or []
+            thumb = item.get("thumb_256_url") or item.get("thumb_1024_url")
+            if not image_id or image_id in seen or len(coords) < 2 or not thumb:
+                continue
+            lon, lat = coords[0], coords[1]
+            if not (BBOX[0] <= lon <= BBOX[2] and BBOX[1] <= lat <= BBOX[3]):
+                continue
+            seen.add(image_id)
+            selected.append((item, lon, lat, thumb))
+            if len(selected) >= MAX_IMAGES:
+                break
+        next_url = (data.get("paging") or {}).get("next")
+        if next_url:
+            time.sleep(0.2)
+    print(f"Scanned {pages} API page(s); found {len(selected)} eligible images.")
     photos = []
-    for item, lon, lat in selected:
+    for index, (item, lon, lat, thumb) in enumerate(selected, start=1):
         image_id = str(item["id"])
         filename = image_id + ".jpg"
         target = OUT / filename
         if not target.exists():
-            req = urllib.request.Request(item["thumb_1024_url"], headers={"User-Agent": UA})
+            req = urllib.request.Request(thumb, headers={"User-Agent": UA})
             with urllib.request.urlopen(req, timeout=60) as response:
                 content = response.read()
-            if not content.startswith(b"\xff\xd8\xff"):
+            if not content.startswith(bytes([255, 216, 255])):
                 print("Skipping non-JPEG thumbnail", image_id)
                 continue
             target.write_bytes(content)
-            time.sleep(0.15)
+            time.sleep(0.1)
         creator = item.get("creator") or {}
         username = creator.get("username") or "Unknown Mapillary contributor"
         photos.append({
@@ -79,14 +86,17 @@ def main():
             "sourceUrl": "https://www.mapillary.com/app/?pKey=" + image_id,
             "license": "CC BY-SA 4.0",
             "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
-            "attribution": "Photo by " + username + " on Mapillary, CC BY-SA 4.0; thumbnail resized to 1024px.",
+            "attribution": "Photo by " + username + " on Mapillary; thumbnail downloaded from Mapillary.",
             "buildingMatch": None
         })
+        if index % 100 == 0:
+            print(f"Prepared {index}/{len(selected)} photos")
     manifest = {
         "area": "Tabarbour, Amman, Jordan",
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "source": "Mapillary Graph API",
-        "license": "CC BY-SA 4.0",
+        "pagesScanned": pages,
+        "limit": MAX_IMAGES,
         "matchingPolicy": "Photos are stored with GPS and compass metadata. They are not assigned to a specific building automatically; image location alone does not prove which facade is shown.",
         "count": len(photos),
         "photos": photos
