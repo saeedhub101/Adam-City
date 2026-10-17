@@ -1,6 +1,140 @@
 {
   "source": "Wikimedia Commons API",
-  "purpose": "Building-specific real facade reference photographs",
-  "important_limit": "Photos are downloaded and identified by named building; this stage does not claim they have been photogrammetrically reconstructed or correctly UV-projected onto every 3D wall.",
-  "images": []
+  "purpose": "Named Manila building facade reference photographs",
+  "important_limit": "Reference images are not automatically UV-projected onto the 3D model.",
+  "images": [
+    {
+      "building": "First United Building",
+      "file": "First_United_Building_1.jpg",
+      "commons_title": "File:South façade of the First United Building with Regina Building to the right.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File%3ASouth_fa%C3%A7ade_of_the_First_United_Building_with_Regina_Building_to_the_right.jpg",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/South_fa%C3%A7ade_of_the_First_United_Building_with_Regina_Building_to_the_right.jpg/1920px-South_fa%C3%A7ade_of_the_First_United_Building_with_Regina_Building_to_the_right.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "license": "CC BY-SA 3.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Ramon_FVelasquez\" title=\"User:Ramon FVelasquez\">Ramon FVelasquez</a>",
+      "attribution_required": true,
+      "status": "reference_photo_not_yet_projected_onto_3d_mesh"
+    },
+    {
+      "building": "First United Building",
+      "file": "First_United_Building_2.jpg",
+      "commons_title": "File:First United Building, Binondo, Manila, Oct 2025.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File%3AFirst_United_Building%2C_Binondo%2C_Manila%2C_Oct_2025.jpg",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/First_United_Building%2C_Binondo%2C_Manila%2C_Oct_2025.jpg/1920px-First_United_Building%2C_Binondo%2C_Manila%2C_Oct_2025.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Ralffralff\" title=\"User:Ralffralff\">Ralff Nestor Nacor</a>",
+      "attribution_required": true,
+      "status": "reference_photo_not_yet_projected_onto_3d_mesh"
+    },
+    {
+      "building": "First United Building",
+      "file": "First_United_Building_3.jpg",
+      "commons_title": "File:Perez-Samanillo Building.JPG",
+      "source_page": "https://commons.wikimedia.org/wiki/File%3APerez-Samanillo_Building.JPG",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Perez-Samanillo_Building.JPG/1920px-Perez-Samanillo_Building.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "license": "CC BY-SA 3.0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Ryomaandres\" title=\"User:Ryomaandres\">Ryomaandres</a>",
+      "attribution_required": true,
+      "status": "reference_photo_not_yet_projected_onto_3d_mesh"
+    },
+    {
+      "building": "First United Building",
+      "file": "First_United_Building_1.jpg",
+      "commons_title": "File:First United Building (Escolta, Binondo, Manila; 2014-10-04).jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File%3AFirst_United_Building_%28Escolta%2C_Binondo%2C_Manila%3B_2014-10-04%29.jpg",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/First_United_Building_%28Escolta%2C_Binondo%2C_Manila%3B_2014-10-04%29.jpg/1920px-First_United_Building_%28Escolta%2C_Binondo%2C_Manila%3B_2014-10-04%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "license": "CC BY-SA 4.0",
+      "artist": "<a href=\"https://en.wikipedia.org/wiki/User:Patrickroque01\" class=\"extiw\" title=\"en:User:Patrickroque01\">Patrick Roque</a> (<a href=\"https://en.wikipedia.org/wiki/User_talk:Patrickroque01\" class=\"extiw\" title=\"en:User talk:Patrickroque01\">talk</a>) (<a href=\"https://en.wikipedia.org/wiki/Special:ListFiles/Patrickroque01\" class=\"extiw\" title=\"en:Special:ListFiles/Patrickroque01\">Uploads</a>)",
+      "attribution_required": true,
+      "status": "reference_photo_not_yet_projected_onto_3d_mesh"
+    },
+    {
+      "building": "First United Building",
+      "file": "First_United_Building_2.jpg",
+      "commons_title": "File:First United Building Detail Side Facade.JPG",
+      "source_page": "https://commons.wikimedia.org/wiki/File%3AFirst_United_Building_Detail_Side_Facade.JPG",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3f/First_United_Building_Detail_Side_Facade.JPG/1920px-First_United_Building_Detail_Side_Facade.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "license": "CC BY-SA 3.0",
+      "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Fmgverzon&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Fmgverzon (page does not exist)\">Fmgverzon</a>",
+      "attribution_required": true,
+      "status": "reference_photo_not_yet_projected_onto_3d_mesh"
+    },
+    {
+      "building": "First United Building",
+      "file": "First_United_Building_3.jpg",
+      "commons_title": "File:First United Building Main Corner Facade.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File%3AFirst_United_Building_Main_Corner_Facade.jpg",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/First_United_Building_Main_Corner_Facade.jpg/1920px-First_United_Building_Main_Corner_Facade.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "license": "CC BY-SA 3.0",
+      "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Fmgverzon&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Fmgverzon (page does not exist)\">Fmgverzon</a>",
+      "attribution_required": true,
+      "status": "reference_photo_not_yet_projected_onto_3d_mesh"
+    },
+    {
+      "building": "First United Building",
+      "file": "First_United_Building_1.jpg",
+      "commons_title": "File:0381jfFirst United Building Community Museum Sy Lian Teng Escolta Binondo Manilafvf 11.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File%3A0381jfFirst_United_Building_Community_Museum_Sy_Lian_Teng_Escolta_Binondo_Manilafvf_11.jpg",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/0381jfFirst_United_Building_Community_Museum_Sy_Lian_Teng_Escolta_Binondo_Manilafvf_11.jpg/1920px-0381jfFirst_United_Building_Community_Museum_Sy_Lian_Teng_Escolta_Binondo_Manilafvf_11.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "license": "CC0",
+      "artist": "<a rel=\"mw:WikiLink\" href=\"https://commons.wikimedia.org/wiki/User:Judgefloro\" title=\"User:Judgefloro\">Judgefloro</a>",
+      "attribution_required": true,
+      "status": "reference_photo_not_yet_projected_onto_3d_mesh"
+    },
+    {
+      "building": "First United Building",
+      "file": "First_United_Building_2.jpg",
+      "commons_title": "File:0381jfFirst United Building Community Museum Sy Lian Teng Escolta Binondo Manilafvf 18.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File%3A0381jfFirst_United_Building_Community_Museum_Sy_Lian_Teng_Escolta_Binondo_Manilafvf_18.jpg",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/0381jfFirst_United_Building_Community_Museum_Sy_Lian_Teng_Escolta_Binondo_Manilafvf_18.jpg/1920px-0381jfFirst_United_Building_Community_Museum_Sy_Lian_Teng_Escolta_Binondo_Manilafvf_18.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "license": "CC0",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Judgefloro\" title=\"User:Judgefloro\">Judgefloro</a>",
+      "attribution_required": true,
+      "status": "reference_photo_not_yet_projected_onto_3d_mesh"
+    },
+    {
+      "building": "First United Building",
+      "file": "First_United_Building_3.jpg",
+      "commons_title": "File:0381jfFirst United Building Community Museum Sy Lian Teng Escolta Binondo Manilafvf 24.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File%3A0381jfFirst_United_Building_Community_Museum_Sy_Lian_Teng_Escolta_Binondo_Manilafvf_24.jpg",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/0381jfFirst_United_Building_Community_Museum_Sy_Lian_Teng_Escolta_Binondo_Manilafvf_24.jpg/1920px-0381jfFirst_United_Building_Community_Museum_Sy_Lian_Teng_Escolta_Binondo_Manilafvf_24.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "license": "CC0",
+      "artist": "<a rel=\"mw:WikiLink\" href=\"https://commons.wikimedia.org/wiki/User:Judgefloro\" title=\"User:Judgefloro\">Judgefloro</a>",
+      "attribution_required": true,
+      "status": "reference_photo_not_yet_projected_onto_3d_mesh"
+    },
+    {
+      "building": "Regina Building",
+      "file": "Regina_Building_1.jpg",
+      "commons_title": "File:07396jfSanta Cruz Manila Buildings Lacson Streets Landmarksfvf 05.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File%3A07396jfSanta_Cruz_Manila_Buildings_Lacson_Streets_Landmarksfvf_05.jpg",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/07396jfSanta_Cruz_Manila_Buildings_Lacson_Streets_Landmarksfvf_05.jpg/1920px-07396jfSanta_Cruz_Manila_Buildings_Lacson_Streets_Landmarksfvf_05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "license": "Public domain",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Judgefloro\" title=\"User:Judgefloro\">Judgefloro</a>",
+      "attribution_required": true,
+      "status": "reference_photo_not_yet_projected_onto_3d_mesh"
+    },
+    {
+      "building": "Regina Building",
+      "file": "Regina_Building_2.jpg",
+      "commons_title": "File:07396jfSanta Cruz Manila Buildings Lacson Streets Landmarksfvf 06.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File%3A07396jfSanta_Cruz_Manila_Buildings_Lacson_Streets_Landmarksfvf_06.jpg",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/07396jfSanta_Cruz_Manila_Buildings_Lacson_Streets_Landmarksfvf_06.jpg/1920px-07396jfSanta_Cruz_Manila_Buildings_Lacson_Streets_Landmarksfvf_06.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "license": "Public domain",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Judgefloro\" title=\"User:Judgefloro\">Judgefloro</a>",
+      "attribution_required": true,
+      "status": "reference_photo_not_yet_projected_onto_3d_mesh"
+    },
+    {
+      "building": "Regina Building",
+      "file": "Regina_Building_3.jpg",
+      "commons_title": "File:Escolta Street - ground level of Regina Building (Binondo, Manila; 2014-11-11).jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File%3AEscolta_Street_-_ground_level_of_Regina_Building_%28Binondo%2C_Manila%3B_2014-11-11%29.jpg",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Escolta_Street_-_ground_level_of_Regina_Building_%28Binondo%2C_Manila%3B_2014-11-11%29.jpg/1920px-Escolta_Street_-_ground_level_of_Regina_Building_%28Binondo%2C_Manila%3B_2014-11-11%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "license": "CC BY-SA 4.0",
+      "artist": "Patrick Roque",
+      "attribution_required": true,
+      "status": "reference_photo_not_yet_projected_onto_3d_mesh"
+    }
+  ],
+  "errors": []
 }

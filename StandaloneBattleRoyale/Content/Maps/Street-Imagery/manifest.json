@@ -1,17 +1,22 @@
 {
-  "source": "KartaView public street-level imagery API",
-  "district": {
-    "south": 14.575,
-    "west": 120.965,
-    "north": 14.6,
-    "east": 120.99
-  },
-  "query_grid": {
-    "latitude_steps": 6,
-    "longitude_steps": 6,
-    "radius_meters": 350
-  },
+  "source": "Wikimedia Commons API",
+  "search_terms": [
+    "Escolta Manila street",
+    "Binondo Manila street",
+    "Manila downtown street",
+    "Manila street traffic",
+    "Manila old buildings street",
+    "Intramuros Manila street"
+  ],
   "downloaded_photos": 0,
-  "important_limit": "These are geolocated reference photos. This script does not claim they are projected onto buildings or used as in-game textures.",
-  "images": []
+  "important_limit": "Reference photos are not automatically projected onto 3D buildings as textures.",
+  "images": [],
+  "errors": [
+    "Escolta Manila street: 429 Client Error: Too Many Requests for url: https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=Escolta+Manila+street&srnamespace=6&srlimit=50&format=json",
+    "Binondo Manila street: 429 Client Error: Too Many Requests for url: https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=Binondo+Manila+street&srnamespace=6&srlimit=50&format=json",
+    "Manila downtown street: 429 Client Error: Too Many Requests for url: https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=Manila+downtown+street&srnamespace=6&srlimit=50&format=json",
+    "Manila street traffic: 429 Client Error: Too Many Requests for url: https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=Manila+street+traffic&srnamespace=6&srlimit=50&format=json",
+    "Manila old buildings street: 429 Client Error: Too Many Requests for url: https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=Manila+old+buildings+street&srnamespace=6&srlimit=50&format=json",
+    "Intramuros Manila street: 429 Client Error: Too Many Requests for url: https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=Intramuros+Manila+street&srnamespace=6&srlimit=50&format=json"
+  ]
 }
