@@ -173,12 +173,12 @@ def main():
             nsidewalk+=1
             # A raised pale curb lip separates pedestrian space from traffic.
             cbase=len(cv); curb_scale=1.12
-            cv.extend([(x1+nx,y1+ny,.04),(x1+nx*curb_scale,y1+ny*curb_scale,.04),(x1+nx*out,y1+ny*out,.20),(x1+nx,y1+ny,.20),
-                       (x2+nx,y2+ny,.04),(x2+nx*curb_scale,y2+ny*curb_scale,.04),(x2+nx*out,y2+ny*out,.20),(x2+nx,y2+ny,.20)])
+            cv.extend([(x1+nx,y1+ny,.04),(x1+nx*curb_scale,y1+ny*curb_scale,.04),(x1+nx*curb_scale,y1+ny*curb_scale,.20),(x1+nx,y1+ny,.20),
+                       (x2+nx,y2+ny,.04),(x2+nx*curb_scale,y2+ny*curb_scale,.04),(x2+nx*curb_scale,y2+ny*curb_scale,.20),(x2+nx,y2+ny,.20)])
             cf.extend([(cbase,cbase+1,cbase+5,cbase+4),(cbase+1,cbase+2,cbase+6,cbase+5),(cbase+2,cbase+3,cbase+7,cbase+6)])
             cbase=len(cv)
             cv.extend([(x1-nx,y1-ny,.04),(x1-nx*curb_scale,y1-ny*curb_scale,.04),(x1-nx*curb_scale,y1-ny*curb_scale,.20),(x1-nx,y1-ny,.20),
-                       (x2-nx,y2-ny,.04),(x2-nx*curb_scale,y2-ny*curb_scale,.04),(x2-nx*out,y2-ny*out,.20),(x2-nx,y2-ny,.20)])
+                       (x2-nx,y2-ny,.04),(x2-nx*curb_scale,y2-ny*curb_scale,.04),(x2-nx*curb_scale,y2-ny*curb_scale,.20),(x2-nx,y2-ny,.20)])
             cf.extend([(cbase,cbase+1,cbase+5,cbase+4),(cbase+1,cbase+2,cbase+6,cbase+5),(cbase+2,cbase+3,cbase+7,cbase+6)])
             # Broken, weathered lane paint on larger roads only.
             if p.get("highway") in ("motorway","trunk","primary","secondary") and width>=7:
