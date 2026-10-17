@@ -128,3 +128,16 @@ These are documented as potential future inputs; they are **not** all integrated
 
 **تنبيه تنفيذي:** هذا الفحص يمنع النجاح الكاذب لكنه لا يشغّل Unreal ولا يلتقط الصور بنفسه. المستودع حتى هذا التحديث لا يحتوي مستوى `.umap` جاهزاً، وبيئة GitHub-hosted الحالية لا تتضمن تثبيت Unreal Engine مُهيّأً للمشروع. لذلك من المتوقع أن يفشل الفحص الجديد إلى أن يُستورد GLB إلى مستوى Unreal قابل للتشغيل، وتُجهّز بيئة Windows بها Unreal Engine، ويُضاف مشغّل التقاط فعلي يحفظ الصور المطلوبة في المسار المحدد. لا يجوز وصف الصور بأنها أُنتجت حتى تظهر الملفات وتُراجع.
 
+## Creating the native Manila Unreal level
+
+The committed GLB is source geometry, not a native Unreal level. To create the actual binary `.umap` asset, use the matching Unreal Engine installation on Windows:
+
+1. Open `StandaloneBattleRoyale/SaeedRoyale.uproject` in Unreal Editor and allow the enabled Python Editor Scripting and GLTF/Interchange plugins to initialize. If Unreal reports an unavailable plugin, enable the equivalent GLTF/Interchange importer shipped with that exact engine version and restart the editor.
+2. Confirm `Content/Maps/Manila-Central-District.glb` exists. The workflow caches this file; do not redownload it for normal builds.
+3. In Unreal Editor, open **Tools → Execute Python Script** and run `Tools/create_manila_playable_level.py` (path relative to this project folder).
+4. The script attempts to import the GLB, create `/Game/Maps/ManilaCentral`, place imported static meshes, add lighting and a PlayerStart, and save the native level. It deliberately raises an error if import produces no usable static meshes; an empty level must not be reported as success.
+5. Open `Content/Maps/ManilaCentral.umap` and inspect the district scale, mesh placement, road/building materials and player start. If the GLB importer returns separate meshes without preserving their source transforms, correct their placement before treating the level as playable.
+6. The script does **not** claim the character GLB has been imported as a skeletal mesh or assigned to the pawn. That is a separate required Unreal Editor step before gameplay screenshots can prove the character is visible.
+
+**Verification status:** committing this script and enabling plugins does not itself create the binary `.umap`. The level only exists after the script succeeds inside a compatible Unreal Editor. A hosted GitHub runner without Unreal Engine cannot generate a valid native level from the GLB alone.
+
