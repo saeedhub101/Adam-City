@@ -10,6 +10,8 @@ const hud = document.querySelector('#hud');
 const statusText = document.querySelector('#status-text');
 const hint = document.querySelector('#hint');
 const errorBox = document.querySelector('#error');
+const referencePanel = document.querySelector('#local-reference');
+document.querySelector('#close-reference')?.addEventListener('click', () => { if (referencePanel) referencePanel.hidden = true; });
 
 const QUALITY = {
   low:    { pixelRatio: 0.85, shadows: false, shadowSize: 512, far: 360, buildings: 45, antialias: false },
