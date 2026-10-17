@@ -26,37 +26,65 @@ jobs:
         with:
           ref: main
 
-      - name: Fetch current OpenStreetMap data
+      - name: Fetch fresh Jordan extract from Geofabrik and clip to Tabarbour
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p game/public/data
-          cat > /tmp/tabarbour-query.txt <<'QUERY'
-          [out:json][timeout:60];
-          (
-            way["building"](31.9940,35.9360,32.0120,35.9600);
-            way["highway"](31.9940,35.9360,32.0120,35.9600);
-          );
-          out body geom;
-          QUERY
-          success=0
-          for endpoint in "https://overpass-api.de/api/interpreter" "https://overpass.kumi.systems/api/interpreter" "https://overpass.private.coffee/api/interpreter"; do
-            echo "Trying $endpoint"
-            if curl --fail --silent --show-error --retry 2 --retry-delay 3 --max-time 150 \
-              --get --data-urlencode "data@/tmp/tabarbour-query.txt" \
-              -H "Accept: application/json" "$endpoint" -o /tmp/tabarbour-osm.json; then
-              if jq -e '.elements | type == "array" and length > 0' /tmp/tabarbour-osm.json >/dev/null; then
-                success=1
-                break
-              fi
-            fi
-          done
-          if [ "$success" -ne 1 ]; then
-            echo "::error::Could not download valid OpenStreetMap data. Existing snapshot was not changed."
-            exit 1
-          fi
-          jq '{generator, osm3s, elements}' /tmp/tabarbour-osm.json > game/public/data/tabarbour-osm.json
-          echo "Fetched $(jq '.elements | length' game/public/data/tabarbour-osm.json) OSM elements."
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          python3 -m pip install --break-system-packages osmium
+          curl --fail --location --retry 3 --retry-delay 2 --max-time 240 \
+            "https://download.geofabrik.de/asia/jordan-latest.osm.pbf" \
+            --output /tmp/jordan-latest.osm.pbf
+          python3 - <<'PY'
+          import datetime, json, osmium
+          from pathlib import Path
+
+          SOUTH, WEST, NORTH, EAST = 31.9940, 35.9360, 32.0120, 35.9600
+          elements = []
+
+          class TabarbourHandler(osmium.SimpleHandler):
+              def way(self, way):
+                  tags = dict(way.tags)
+                  if "building" not in tags and "highway" not in tags:
+                      return
+                  geometry = []
+                  for node in way.nodes:
+                      if not node.location.valid():
+                          continue
+                      geometry.append({"lat": node.location.lat, "lon": node.location.lon})
+                  if len(geometry) < 2:
+                      return
+                  # Keep ways with at least one mapped point in the target bounds.
+                  if not any(SOUTH <= p["lat"] <= NORTH and WEST <= p["lon"] <= EAST for p in geometry):
+                      return
+                  elements.append({
+                      "type": "way",
+                      "id": way.id,
+                      "tags": tags,
+                      "geometry": geometry
+                  })
+
+          handler = TabarbourHandler()
+          handler.apply_file("/tmp/jordan-latest.osm.pbf", locations=True)
+          elements.sort(key=lambda item: (item["type"], item["id"]))
+          buildings = sum(1 for e in elements if "building" in e["tags"])
+          roads = sum(1 for e in elements if "highway" in e["tags"])
+          if buildings == 0 or roads == 0:
+              raise SystemExit(f"Invalid Geofabrik clip: buildings={buildings}, roads={roads}")
+          output = {
+              "generator": "Geofabrik Jordan extract clipped for Tabarbour",
+              "source": "https://download.geofabrik.de/asia/jordan-latest.osm.pbf",
+              "generatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "bbox": {"south": SOUTH, "west": WEST, "north": NORTH, "east": EAST},
+              "elements": elements
+          }
+          target = Path("game/public/data/tabarbour-osm.json")
+          target.write_text(json.dumps(output, ensure_ascii=False, separators=(",", ":")) + "\\n", encoding="utf-8")
+          print(f"Geofabrik snapshot: {len(elements)} ways, {buildings} buildings, {roads} roads")
+          print(f"Saved {target} ({target.stat().st_size} bytes)")
+          PY
           test "$(jq '[.elements[] | select(.tags.building)] | length' game/public/data/tabarbour-osm.json)" -gt 0
           test "$(jq '[.elements[] | select(.tags.highway)] | length' game/public/data/tabarbour-osm.json)" -gt 0
 
