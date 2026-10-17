@@ -45,6 +45,11 @@
           </a>
         </div>
         <p>المتاح علنًا لا يتضمن صورة موثقة لكل واجهة في المنطقة. رابط Mapillary يفتح خريطة الصور الميدانية إن وُجدت تغطية. لا تُستخدم هذه الصور كخامات لواجهات مبانٍ غير مطابقة.</p>
+        <details class="building-photo-directory" open>
+          <summary>ربط المباني بمراجع الصور <span id="building-photo-count">جارٍ تحميل المباني…</span></summary>
+          <p class="directory-note">لكل مبنى رابط Mapillary عند إحداثياته. إذا تضمنت بيانات OpenStreetMap رابط صورة محددًا فسيُستخدم؛ وإلا فالرابط يعرض صور الشارع القريبة، وليس ضمانًا بوجود صورة مطابقة للمبنى.</p>
+          <div id="building-photo-list" class="building-photo-list" aria-live="polite"></div>
+        </details>
       </aside>
       <div id="hud" class="hud hidden">
         <div class="brand">SAEED <span>OPEN WORLD</span></div>
