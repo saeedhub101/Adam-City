@@ -117,6 +117,14 @@ jobs:
           $templateAsZip = Join-Path $env:RUNNER_TEMP "templates-archive.zip"
           Copy-Item $templateZip $templateAsZip
           Expand-Archive $templateAsZip -DestinationPath $templateDir -Force
+
+          # Godot invokes rcedit to stamp Windows version metadata into the exported EXE.
+          $rceditDir = Join-Path $env:RUNNER_TEMP "rcedit"
+          New-Item -ItemType Directory -Path $rceditDir -Force | Out-Null
+          $rceditPath = Join-Path $rceditDir "rcedit.exe"
+          Invoke-WebRequest "https://github.com/electron/rcedit/releases/download/v2.0.0/rcedit-x64.exe" -OutFile $rceditPath
+          if ((Get-Item $rceditPath).Length -lt 1000000) { throw "Downloaded rcedit executable is incomplete." }
+          Add-Content -Path $env:GITHUB_PATH -Value $rceditDir
           $godot = Get-ChildItem $engineDir -Filter "*win64.exe" | Select-Object -First 1
           if (-not $godot) { throw "Godot console executable not found after download" }
           "GODOT_EXE=$($godot.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
@@ -142,6 +150,10 @@ jobs:
             if (Test-Path $importLog) { Get-Content $importLog }
             throw "Godot project import or script parse failed with exit code $importExitCode"
           }
+          if (Select-String -Path $importLog -Pattern 'SCRIPT ERROR:|ERROR: Failed to load script' -Quiet) {
+            Get-Content $importLog
+            throw 'Godot reported script parse/compile errors during import.'
+          }
 
           $runtimeLog = Join-Path $env:RUNNER_TEMP 'godot-runtime.log'
           & $env:GODOT_EXE --headless --path "$PWD" --quit-after 30 --verbose 2>&1 | Tee-Object -FilePath $runtimeLog
@@ -150,6 +162,10 @@ jobs:
             Write-Host '===== Godot runtime log ====='
             if (Test-Path $runtimeLog) { Get-Content $runtimeLog }
             throw "Godot headless startup/city loading test failed with exit code $runtimeExitCode"
+          }
+          if (Select-String -Path $runtimeLog -Pattern 'SCRIPT ERROR:|ERROR: Failed to load script' -Quiet) {
+            Get-Content $runtimeLog
+            throw 'Godot reported script parse/compile errors during runtime.'
           }
           if (-not (Select-String -Path $runtimeLog -Pattern 'CITY_RENDER_SOURCE=GLB' -Quiet)) {
             Get-Content $runtimeLog
