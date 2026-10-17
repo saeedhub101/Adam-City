@@ -1,6 +1,6 @@
 extends Node3D
 
-const AMMAN_CITY_PATH := "res://assets/amman/Amman-Central-District.glb"
+const AMMAN_CITY_PATH := "res://assets/manila/Manila-Central-District.glb"
 
 const ARENA_SIZE := 760.0
 const BOT_COUNT := 14
@@ -113,10 +113,10 @@ func _add_amman_city() -> void:
 	# The playable map uses the compact Amman district GLB generated from OpenStreetMap geometry.
 	var packed: PackedScene = load(AMMAN_CITY_PATH) as PackedScene
 	if packed == null:
-		push_error("Amman city asset is missing or failed to import: " + AMMAN_CITY_PATH)
+		push_error("Manila city asset is missing or failed to import: " + AMMAN_CITY_PATH)
 		return
 	var city := packed.instantiate() as Node3D
-	city.name = "AmmanCentralDistrict"
+	city.name = "ManilaCentralDistrict"
 	add_child(city)
 	# Generate collision only for the building shell mesh; windows and decorative parts stay lightweight.
 	var mesh_nodes: Array[Node] = []
