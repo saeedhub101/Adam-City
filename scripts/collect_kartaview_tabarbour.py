@@ -109,7 +109,7 @@ def main():
                     content = response.read(8 * 1024 * 1024 + 1)
                 if len(content) > 8 * 1024 * 1024:
                     raise ValueError("thumbnail exceeds 8 MiB")
-                if not (content.startswith(bytes([255, 216, 255]) or content.startswith(b"\x89PNG\r\n\x1a\n"))):
+                if not (content.startswith(bytes([255, 216, 255])) or content.startswith(b"\\x89PNG\\r\\n\\x1a\\n")):
                     raise ValueError("image response is not JPEG/PNG")
                 target.write_bytes(content)
             photo["file"] = "/images/kartaview/" + filename
