@@ -215,12 +215,13 @@ func _build_real_elevation_terrain() -> void:
 				var elevation := float(heights[cell.x][cell.y]) + 0.02
 				# Terrain is generated directly in Godot Y-up world coordinates.
 				vertices.append(Vector3(x, elevation, z))
+			# Counter-clockwise winding when viewed from above, so generated normals face upward.
 			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[0])
-			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[1])
-			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[2])
 			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[2])
 			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[1])
+			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[2])
 			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[3])
+			tool.set_color(Color(0.30, 0.32, 0.27)); tool.add_vertex(vertices[1])
 	tool.generate_normals()
 	var mesh := tool.commit()
 	var material := StandardMaterial3D.new()
