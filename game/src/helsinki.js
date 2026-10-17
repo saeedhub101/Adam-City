@@ -13,11 +13,11 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
     // The archive contains an adaptive LOD tree. Loading every level at once
     // overlays the same city repeatedly and can overwhelm the browser. L16 is
     // the 250 m-scale representation intended for a playable first region.
-    const preferred = allEntries.filter(item => /_L16(?:_|\.)/.test(item.obj));
-    const fallback = allEntries.filter(item => /_L15(?:_|\.)/.test(item.obj));
+    const preferred = allEntries.filter(item => /_L15(?:_|\.)/.test(item.obj));
+    const fallback = allEntries.filter(item => /_L16(?:_|\.)/.test(item.obj));
     const entries = (preferred.length ? preferred : fallback.length ? fallback : allEntries)
       .sort((a, b) => b.bytes - a.bytes);
-    const selectedLod = preferred.length ? 16 : fallback.length ? 15 : null;
+    const selectedLod = preferred.length ? 15 : fallback.length ? 16 : null;
     if (!entries.length) throw new Error('لم يُعثر على ملفات OBJ وMTL صالحة في المنطقة المنزّلة');
 
     const root = new THREE.Group();
@@ -38,8 +38,9 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
           const object = await objLoader.loadAsync(objUrl.href);
           object.traverse(node => {
             if (node.isMesh) {
-              node.castShadow = true;
-              node.receiveShadow = true;
+              // Textured aerial imagery already contains scene lighting; avoid expensive city-wide shadow maps.
+              node.castShadow = false;
+              node.receiveShadow = false;
               const mats = Array.isArray(node.material) ? node.material : [node.material];
               mats.forEach(mat => { if (mat?.map) mat.map.colorSpace = THREE.SRGBColorSpace; });
             }
