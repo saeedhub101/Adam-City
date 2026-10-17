@@ -213,9 +213,6 @@ const keys = new Set();
 const obstacles = [];
 let helsinkiMeshRoot = null;
 let helsinkiMeshReady = false;
-const groundRay = new THREE.Raycaster();
-const groundRayOrigin = new THREE.Vector3();
-const groundRayDirection = new THREE.Vector3(0, -1, 0);
 
 // Real street-view facade textures are generated into this manifest by the
 // build-tabarbour-facades GitHub Actions workflow. Missing coverage stays on the
@@ -680,13 +677,9 @@ function frame() {
     }
     velocityY -= 17.5 * dt;
     playerRoot.position.y += velocityY * dt;
-    let groundY = 0;
-    if (helsinkiMeshRoot) {
-      groundRayOrigin.set(playerRoot.position.x, playerRoot.position.y + 25, playerRoot.position.z);
-      groundRay.set(groundRayOrigin, groundRayDirection);
-      const groundHits = groundRay.intersectObject(helsinkiMeshRoot, true);
-      if (groundHits.length) groundY = Math.max(0, groundHits[0].point.y);
-    }
+    // The photogrammetry mesh is visual geometry; keep character gravity inexpensive.
+    // Helsinki's starter tile is nearly level, so use its normalized ground datum.
+    const groundY = 0;
     if (playerRoot.position.y <= groundY) {
       playerRoot.position.y = groundY;
       velocityY = 0;
