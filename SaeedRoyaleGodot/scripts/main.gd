@@ -122,11 +122,10 @@ func _add_real_city_scan() -> void:
 	scan.name = "HelsinkiPhotogrammetryCity"
 	scan.set("gaussian", gaussian)
 	add_child(scan)
-	# The source capture uses Z-up; rotate it into Godot's Y-up world while
-	# retaining the renderer's default model-orientation correction.
-	scan.rotate_object_local(Vector3.RIGHT, PI / 2.0)
+	# The PLY capture is Y-up. Keep the renderer's default horizontal
+	# orientation correction, and align the scan's lowest point with the arena.
 	scan.scale = Vector3.ONE * 0.3
-	scan.position.y = bounds.size.z * 0.15
+	scan.position.y = bounds.size.y * 0.15
 
 func _add_box(parent: Node3D, node_name: String, pos: Vector3, size: Vector3, color: Color, solid: bool) -> Node3D:
 	var root: Node3D = StaticBody3D.new() if solid else Node3D.new()
