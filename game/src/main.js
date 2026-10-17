@@ -28,7 +28,7 @@ let elapsed = 0;
 const clock = new THREE.Clock();
 const keys = new Set();
 const obstacles = [];
-const WORLD_SIZE = 520;
+const WORLD_SIZE = 1200;
 const PLAYER_HEIGHT = 1.72;
 const playerRoot = new THREE.Group();
 const cameraTarget = new THREE.Vector3();
@@ -147,81 +147,128 @@ function addBuilding(x, z, w, d, h, seed, palette) {
   obstacles.push({ minX: x - w / 2 - 0.8, maxX: x + w / 2 + 0.8, minZ: z - d / 2 - 0.8, maxZ: z + d / 2 + 0.8 });
 }
 
+const TABARBOUR = { lat: 31.9915, lon: 35.9445 };
+// Real mapped pilot area around the Tabarbour / Lawyers' Roundabout area.
+const TABARBOUR_BBOX = { south: 31.9855, west: 35.9370, north: 31.9980, east: 35.9520 };
+
+function localPoint(lat, lon) {
+  return {
+    x: (lon - TABARBOUR.lon) * 111320 * Math.cos(TABARBOUR.lat * Math.PI / 180),
+    z: -(lat - TABARBOUR.lat) * 111320
+  };
+}
+function wayPoints(way) { return (way.geometry || []).map(p => localPoint(p.lat, p.lon)); }
+
+function addOSMRoad(points, width, material, y = 0.035) {
+  if (points.length < 2) return;
+  for (let i = 0; i < points.length - 1; i++) {
+    const a = points[i], b = points[i + 1];
+    const dx = b.x - a.x, dz = b.z - a.z, length = Math.hypot(dx, dz);
+    if (length < 0.5) continue;
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(width, length), material);
+    mesh.rotation.x = -Math.PI / 2;
+    mesh.rotation.z = -Math.atan2(dz, dx) - Math.PI / 2;
+    mesh.position.set((a.x + b.x) / 2, y, (a.z + b.z) / 2);
+    scene.add(mesh);
+  }
+}
+
+function addOSMBuilding(way, index) {
+  const pts = wayPoints(way);
+  if (pts.length < 4) return;
+  if (Math.hypot(pts[0].x - pts[pts.length - 1].x, pts[0].z - pts[pts.length - 1].z) > 1.5) return;
+  const ring = pts.slice(0, -1);
+  if (ring.length < 3) return;
+  const shape = new THREE.Shape();
+  shape.moveTo(ring[0].x, -ring[0].z);
+  for (let i = 1; i < ring.length; i++) shape.lineTo(ring[i].x, -ring[i].z);
+  shape.closePath();
+  const tags = way.tags || {};
+  const rawHeight = Number.parseFloat(String(tags.height || '').replace(/m$/i, ''));
+  const levels = Number.parseFloat(tags['building:levels'] || tags.levels || '');
+  const height = Number.isFinite(rawHeight) && rawHeight > 2 ? THREE.MathUtils.clamp(rawHeight, 3, 55)
+    : Number.isFinite(levels) && levels > 0 ? THREE.MathUtils.clamp(levels * 3.1, 3, 55) : 7.5;
+  const colors = [0xcbbba3, 0xd7c8b1, 0xb8a88f, 0xd0c2ab, 0xbeb09a, 0xe0d2bd];
+  const material = new THREE.MeshStandardMaterial({
+    color: colors[index % colors.length], map: facadeTexture, normalMap: facadeNormal,
+    normalScale: new THREE.Vector2(0.22, 0.22), roughness: 0.96
+  });
+  const geometry = new THREE.ExtrudeGeometry(shape, { depth: height, bevelEnabled: false, curveSegments: 1 });
+  geometry.rotateX(-Math.PI / 2);
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.castShadow = true; mesh.receiveShadow = true;
+  mesh.name = 'OSM-building-' + (tags.name || way.id || index);
+  scene.add(mesh);
+  const xs = ring.map(p => p.x), zs = ring.map(p => p.z);
+  obstacles.push({ minX: Math.min(...xs)-0.65, maxX: Math.max(...xs)+0.65, minZ: Math.min(...zs)-0.65, maxZ: Math.max(...zs)+0.65 });
+  const roofShape = new THREE.Shape();
+  roofShape.moveTo(ring[0].x, -ring[0].z);
+  for (let i = 1; i < ring.length; i++) roofShape.lineTo(ring[i].x, -ring[i].z);
+  roofShape.closePath();
+  const roofGeo = new THREE.ShapeGeometry(roofShape);
+  roofGeo.rotateX(-Math.PI / 2);
+  const roof = new THREE.Mesh(roofGeo, new THREE.MeshStandardMaterial({ color: 0x9d9689, roughness: 1, side: THREE.DoubleSide }));
+  roof.position.y = height; roof.receiveShadow = true; scene.add(roof);
+}
+
+async function loadTabarbourMap() {
+  const b = TABARBOUR_BBOX;
+  const query = '[out:json][timeout:25];(way["building"](' + b.south + ',' + b.west + ',' + b.north + ',' + b.east +
+    ');way["highway"](' + b.south + ',' + b.west + ',' + b.north + ',' + b.east + '););out body geom;';
+  const endpoints = ['https://overpass.kumi.systems/api/interpreter?data=', 'https://overpass-api.de/api/interpreter?data='];
+  let data = null;
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint + encodeURIComponent(query), { headers: { Accept: 'application/json' } });
+      if (!response.ok) throw new Error('OSM server HTTP ' + response.status);
+      const parsed = await response.json();
+      if (Array.isArray(parsed.elements)) { data = parsed; break; }
+    } catch (error) { console.warn('Tabarbour OSM endpoint failed:', endpoint, error); }
+  }
+  if (!data) {
+    statusText.textContent = 'OpenStreetMap data unavailable';
+    showError('تعذر تحميل بيانات طبربور الحقيقية من OpenStreetMap. تحقق من الإنترنت ثم أعد تحميل اللعبة. لن نستبدل المنطقة بشوارع ومبانٍ عشوائية.');
+    return;
+  }
+  const roads = data.elements.filter(e => e.type === 'way' && e.tags?.highway);
+  const buildings = data.elements.filter(e => e.type === 'way' && e.tags?.building);
+  const asphalt = new THREE.MeshStandardMaterial({ color: 0x34393c, roughness: 0.98 });
+  const curb = new THREE.MeshStandardMaterial({ color: 0xd2cbbd, roughness: 1 });
+  const roadWidth = tags => {
+    const tagged = Number.parseFloat(tags.width || '');
+    if (Number.isFinite(tagged)) return THREE.MathUtils.clamp(tagged, 2.5, 28);
+    if (['motorway','trunk','primary'].includes(tags.highway)) return 11;
+    if (['secondary','tertiary'].includes(tags.highway)) return 8;
+    if (['residential','unclassified'].includes(tags.highway)) return 5.8;
+    if (['service','living_street'].includes(tags.highway)) return 3.5;
+    return 2.5;
+  };
+  for (const road of roads) {
+    const points = wayPoints(road);
+    if (points.length < 2) continue;
+    const width = roadWidth(road.tags || {});
+    addOSMRoad(points, width, asphalt, 0.026);
+    if (width >= 5.5) addOSMRoad(points, 0.16, curb, 0.041);
+  }
+  buildings.forEach(addOSMBuilding);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.MeshStandardMaterial({ color: 0xaaa395, roughness: 1 }));
+  ground.rotation.x = -Math.PI / 2; ground.position.y = -0.03; ground.receiveShadow = true; scene.add(ground);
+  playerRoot.position.set(0, 0, 0);
+  statusText.textContent = 'طبربور · ' + buildings.length + ' مبنى مرسوم من الخريطة · ' + roads.length + ' شارع';
+  console.info('Loaded real OSM Tabarbour data', { buildings: buildings.length, roads: roads.length });
+}
+
 function createCity(quality) {
   scene.background = new THREE.Color(0x93aaba);
-  scene.fog = new THREE.Fog(0x93aaba, quality.far * 0.45, quality.far);
-  const hemi = new THREE.HemisphereLight(0xddeaff, 0x75685a, 2.0);
-  scene.add(hemi);
+  scene.fog = new THREE.Fog(0x93aaba, quality.far * 0.6, quality.far * 1.35);
+  scene.add(new THREE.HemisphereLight(0xddeaff, 0x75685a, 2.0));
   const sun = new THREE.DirectionalLight(0xffe6c5, 3.1);
-  sun.position.set(-100, 160, 70);
-  sun.castShadow = quality.shadows;
+  sun.position.set(-100, 160, 70); sun.castShadow = quality.shadows;
   sun.shadow.mapSize.set(quality.shadowSize, quality.shadowSize);
-  sun.shadow.camera.left = -110;
-  sun.shadow.camera.right = 110;
-  sun.shadow.camera.top = 110;
-  sun.shadow.camera.bottom = -110;
-  sun.shadow.bias = -0.00015;
-  scene.add(sun);
-
-  const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(WORLD_SIZE, WORLD_SIZE),
-    new THREE.MeshStandardMaterial({ color: 0x9b9a8c, roughness: 1 })
-  );
-  ground.rotation.x = -Math.PI / 2;
-  ground.receiveShadow = true;
-  scene.add(ground);
-
-  // Connected asphalt streets, concrete sidewalks, painted lane markings and curb stones.
-  const asphalt = new THREE.MeshStandardMaterial({ color: 0x343b40, roughness: 0.96 });
-  const sidewalk = new THREE.MeshStandardMaterial({ color: 0xc5bfb2, roughness: 1 });
-  const marking = new THREE.MeshStandardMaterial({ color: 0xd8d5c9, roughness: 0.9 });
-  for (let p = -WORLD_SIZE / 2; p <= WORLD_SIZE / 2; p += 52) {
-    const roadH = new THREE.Mesh(new THREE.PlaneGeometry(WORLD_SIZE, 12), asphalt);
-    roadH.rotation.x = -Math.PI / 2;
-    roadH.position.set(0, 0.018, p);
-    scene.add(roadH);
-    const roadV = new THREE.Mesh(new THREE.PlaneGeometry(12, WORLD_SIZE), asphalt);
-    roadV.rotation.x = -Math.PI / 2;
-    roadV.position.set(p, 0.02, 0);
-    scene.add(roadV);
-    for (const side of [-1, 1]) {
-      const curbH = new THREE.Mesh(new THREE.BoxGeometry(WORLD_SIZE, 0.14, 1.3), sidewalk);
-      curbH.position.set(0, 0.06, p + side * 7.0);
-      scene.add(curbH);
-      const curbV = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.14, WORLD_SIZE), sidewalk);
-      curbV.position.set(p + side * 7.0, 0.06, 0);
-      scene.add(curbV);
-    }
-  }
-
-  const palette = [0xc9b99f, 0xb8a88e, 0xd5c8b2, 0xa99b84, 0xc2b49c, 0xb9b3a5, 0xd9cbb3];
-  let seed = 13;
-  let count = 0;
-  for (let z = -WORLD_SIZE / 2 + 18; z < WORLD_SIZE / 2 - 12 && count < quality.buildings; z += 26) {
-    for (let x = -WORLD_SIZE / 2 + 18; x < WORLD_SIZE / 2 - 12 && count < quality.buildings; x += 26) {
-      seed = (seed * 9301 + 49297) % 233280;
-      const rand = seed / 233280;
-      if (rand < 0.16 || (Math.abs(x) < 20 && Math.abs(z) < 20)) continue;
-      const w = 9 + rand * 7;
-      const d = 9 + ((seed * 7) % 60) / 10;
-      const h = 5 + ((seed * 17) % 90) / 10;
-      addBuilding(x + (rand - 0.5) * 4, z + (rand - 0.5) * 4, w, d, h, Math.abs(Math.floor(seed)) % 7, palette);
-      count++;
-    }
-  }
-
-  // Distant rocky ridges frame the city skyline.
-  const ridgeMat = new THREE.MeshStandardMaterial({ color: 0x827e73, roughness: 1 });
-  for (let i = 0; i < 34; i++) {
-    const angle = i / 34 * Math.PI * 2;
-    const radius = 230 + (i % 5) * 10;
-    const height = 20 + (i % 7) * 5;
-    const hill = new THREE.Mesh(new THREE.ConeGeometry(18 + (i % 4) * 5, height, 5), ridgeMat);
-    hill.position.set(Math.cos(angle) * radius, height / 2 - 1, Math.sin(angle) * radius);
-    hill.rotation.y = angle * 0.2;
-    hill.castShadow = false;
-    scene.add(hill);
-  }
+  sun.shadow.camera.left = -250; sun.shadow.camera.right = 250;
+  sun.shadow.camera.top = 250; sun.shadow.camera.bottom = -250;
+  sun.shadow.bias = -0.00015; scene.add(sun);
+  loadTabarbourMap();
 }
 
 function loadRealBuildingLandmark() {
@@ -302,7 +349,6 @@ function setupWorld(qualityKey) {
   camera.position.set(0, 3.2, 7);
   obstacles.length = 0;
   createCity(quality);
-  loadRealBuildingLandmark();
   setupPlayer();
   renderer.setAnimationLoop(frame);
 }
