@@ -12,7 +12,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: amman-city-preview-main
+  group: amman-city-preview-optimized-main
   cancel-in-progress: true
 
 jobs:
