@@ -34,8 +34,8 @@ jobs:
           cat > /tmp/tabarbour-query.txt <<'QUERY'
           [out:json][timeout:60];
           (
-            way["building"](31.9855,35.9370,31.9980,35.9520);
-            way["highway"](31.9855,35.9370,31.9980,35.9520);
+            way["building"](31.9940,35.9360,32.0120,35.9600);
+            way["highway"](31.9940,35.9360,32.0120,35.9600);
           );
           out body geom;
           QUERY
