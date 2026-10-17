@@ -164,6 +164,40 @@ jobs:
             "STAGED_ASSET=$asset SIZE=$($item.Length)"
           }
 
+      - name: Stage Chicago and San Francisco travel regions
+        shell: pwsh
+        working-directory: .
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $cityDir = Join-Path $env:GITHUB_WORKSPACE 'GodotAdamRoyal/assets/cities'
+          $sfDir = Join-Path $cityDir 'san_francisco'
+          New-Item -ItemType Directory -Path $sfDir -Force | Out-Null
+
+          $chicagoSource = Join-Path $env:GITHUB_WORKSPACE 'Chicago.obj'
+          if (-not (Test-Path $chicagoSource)) { throw "Chicago OBJ source missing from repository root: $chicagoSource" }
+          if ((Get-Item $chicagoSource).Length -lt 100000) { throw 'Chicago OBJ source is unexpectedly small.' }
+          Copy-Item $chicagoSource (Join-Path $cityDir 'Chicago.obj') -Force
+          $chicagoMtl = Join-Path $env:GITHUB_WORKSPACE 'Chicago.mtl'
+          if (Test-Path $chicagoMtl) { Copy-Item $chicagoMtl $cityDir -Force }
+          Get-ChildItem $env:GITHUB_WORKSPACE -File | Where-Object { $_.Name -like 'Chicago*' -and $_.Extension -in @('.mtl','.jpg','.jpeg','.png','.tga') } | ForEach-Object { Copy-Item $_.FullName $cityDir -Force }
+
+          $sfArchive = Join-Path $env:GITHUB_WORKSPACE 'SanFrancisco_City.OBJ.zip'
+          if (-not (Test-Path $sfArchive)) { throw "San Francisco OBJ archive missing: $sfArchive" }
+          $extractDir = Join-Path $env:RUNNER_TEMP 'san-francisco-obj'
+          if (Test-Path $extractDir) { Remove-Item $extractDir -Recurse -Force }
+          Expand-Archive -LiteralPath $sfArchive -DestinationPath $extractDir -Force
+          $sfObj = Get-ChildItem $extractDir -Recurse -File -Filter '*.obj' | Select-Object -First 1
+          if (-not $sfObj) { throw 'San Francisco archive contains no OBJ geometry.' }
+          Copy-Item $sfObj.DirectoryName (Join-Path $sfDir 'source') -Recurse -Force
+          Copy-Item $sfObj.FullName (Join-Path $sfDir 'SanFrancisco_City.obj') -Force
+          $sfMtl = Get-ChildItem $extractDir -Recurse -File -Filter '*.mtl' | Select-Object -First 1
+          if ($sfMtl) { Copy-Item $sfMtl.FullName (Join-Path $sfDir 'SanFrancisco_City.mtl') -Force }
+          $chicagoBytes = (Get-Item (Join-Path $cityDir 'Chicago.obj')).Length
+          $sfBytes = (Get-Item (Join-Path $sfDir 'SanFrancisco_City.obj')).Length
+          if ($chicagoBytes -lt 100000 -or $sfBytes -lt 100000) { throw "Travel region geometry failed size validation: Chicago=$chicagoBytes SanFrancisco=$sfBytes" }
+          Write-Host "TRAVEL_REGION_STAGED Chicago.obj=$chicagoBytes SanFrancisco.obj=$sfBytes"
+          Write-Host "Travel maps are staged as additional regions; Manila source scene is not replaced."
+
       - name: Download Godot 4.4.1 and Windows export templates
         shell: pwsh
         run: |
