@@ -49,6 +49,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          if find addons/gdgs -name '*.glsl' -print -quit | grep -q .; then
+            echo "Raster-only project must not contain unused custom GLSL compute shaders."
+            exit 1
+          fi
           "$GODOT_BIN" --headless --editor --path . --import 2>&1 | tee "$RUNNER_TEMP/city-import.log"
           if grep -E "SCRIPT ERROR|Parse Error|ERROR:" "$RUNNER_TEMP/city-import.log"; then
             echo "City asset import produced errors."
