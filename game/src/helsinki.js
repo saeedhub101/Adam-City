@@ -89,25 +89,18 @@ export async function loadHelsinkiPhotogrammetry(scene, statusText, showError) {
     root.updateMatrixWorld(true);
     scene.add(root);
     const finalBounds = new THREE.Box3().setFromObject(root);
+    const sampleObject = root.children[0];
+    const sampleBounds = sampleObject ? new THREE.Box3().setFromObject(sampleObject) : finalBounds;
+    const sampleCenter = sampleBounds.getCenter(new THREE.Vector3());
     const ray = new THREE.Raycaster();
-    const down = new THREE.Vector3(0, -1, 0);
-    const xFractions = [0.5, 0.25, 0.75, 0.1, 0.9];
-    const zFractions = [0.5, 0.25, 0.75, 0.1, 0.9];
-    let spawn = null;
-    for (const fx of xFractions) {
-      for (const fz of zFractions) {
-        const x = finalBounds.min.x + (finalBounds.max.x - finalBounds.min.x) * fx;
-        const z = finalBounds.min.z + (finalBounds.max.z - finalBounds.min.z) * fz;
-        ray.set(new THREE.Vector3(x, finalBounds.max.y + 100, z), down);
-        const hits = ray.intersectObject(root, true);
-        if (hits.length) {
-          spawn = { x, y: hits[0].point.y, z };
-          break;
-        }
-      }
-      if (spawn) break;
+    ray.set(new THREE.Vector3(sampleCenter.x, finalBounds.max.y + 100, sampleCenter.z), new THREE.Vector3(0, -1, 0));
+    const hits = ray.intersectObject(root, true);
+    if (hits.length) {
+      root.position.x -= hits[0].point.x;
+      root.position.y -= hits[0].point.y;
+      root.position.z -= hits[0].point.z;
+      root.updateMatrixWorld(true);
     }
-    if (spawn) { root.position.x -= spawn.x; root.position.y -= spawn.y; root.position.z -= spawn.z; root.updateMatrixWorld(true); }
     root.userData.spawnPosition = { x: 0, y: 0, z: 0 };
     root.userData.spawnGroundY = 0;
     const textureCount = manifest.tiles.reduce((sum, tile) => sum + (tile.textureCount || 0), 0);
