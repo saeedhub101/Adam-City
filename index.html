@@ -22,9 +22,9 @@ const fileNames=[
 '05853jfTowers_Hotel_Mabini_Streets_Buildings_Malate_Manilafvf_08.jpg',
 '05117jfStreets_Harrison_Plaza_Mabini_Ocampo_Streets_Buildings_Malate_Manilafvf_12.jpg'];
 const textures=[];const loader=new THREE.TextureLoader();loader.setCrossOrigin('anonymous');
-const url=f=>'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(f);
+const url=f=>'https://images.weserv.nl/?url='+encodeURIComponent('commons.wikimedia.org/wiki/Special:FilePath/'+f);
 const facades=fileNames.map(()=>new THREE.MeshBasicMaterial({color:0x777777,side:THREE.DoubleSide}));
-fileNames.forEach((f,i)=>loader.load(url(f),t=>{t.colorSpace=THREE.SRGBColorSpace;facades[i].map=t;facades[i].color.set(0xffffff);facades[i].needsUpdate=true},undefined,()=>{}));
+fileNames.forEach((f,i)=>loader.load(url(f),t=>{t.colorSpace=THREE.SRGBColorSpace;t.wrapS=THREE.ClampToEdgeWrapping;facades[i].map=t;facades[i].color.set(0xffffff);facades[i].needsUpdate=true;document.querySelector('#info').textContent='Real Mabini-area photo loaded on the street frontage. Walk forward to explore the connected blocks.'},undefined,()=>{document.querySelector('#info').textContent='Street is playable; a photo source failed to load. Check your connection or reload.'}));
 function addSide(side){for(let i=0;i<13;i++){const z=13-i*18;const m=facades[(i+(side===1?1:0))%facades.length];const w=10+(i%3)*2.5,h=13+(i%4)*2.2;const geo=new THREE.PlaneGeometry(w,h);let material=m||new THREE.MeshBasicMaterial({color:0x777777});const plane=new THREE.Mesh(geo,material);plane.position.set(side*8.3,h/2,z);plane.rotation.y=side===-1?Math.PI/2:-Math.PI/2;scene.add(plane);
  // Thin neutral side returns connect adjacent photo fronts into a continuous street wall
  const sideMat=mat(i%2?0x706b63:0x8b8176);const returnWall=new THREE.Mesh(new THREE.PlaneGeometry(18,h),sideMat);returnWall.position.set(side*8.32,h/2,z-9);returnWall.rotation.y=side===1?-Math.PI/2:Math.PI/2;scene.add(returnWall);
