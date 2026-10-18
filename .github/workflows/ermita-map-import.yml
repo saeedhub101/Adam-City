@@ -14,7 +14,7 @@ permissions:
 
 concurrency:
   group: ermita-map-import
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   import:
