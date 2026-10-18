@@ -95,7 +95,7 @@ function setSatelliteImagery(enabled){
 
 function addLocalAerialImagery(){
  const imageUrl='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/external/openaerialmap/ermita-5b90f92da0d7280005fab355.jpg';
- map.addSource('local-aerial-image-source',{type:'image',url:imageUrl,coordinates:[[120.979078,14.596839],[120.984291,14.596839],[120.984291,14.592126],[120.979078,14.592126]]});
+ map.addSource('local-aerial-image-source',{type:'image',url:imageUrl,coordinates:[[120.979060723937,14.596850060355752],[120.9843077431096,14.596850060355752],[120.9843077431096,14.59211535406543],[120.979060723937,14.59211535406543]]});
  map.addLayer({id:'local-aerial-image',type:'raster',source:'local-aerial-image-source',layout:{visibility:'none'},paint:{'raster-opacity':1,'raster-fade-duration':0}},'local-buildings-3d');
 }
 function setLocalAerialImagery(enabled){if(map.getLayer('local-aerial-image'))map.setLayoutProperty('local-aerial-image','visibility',enabled?'visible':'none');}
