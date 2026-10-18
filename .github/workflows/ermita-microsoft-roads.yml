@@ -39,5 +39,6 @@ jobs:
             echo "No Microsoft road data changes."
           else
             git commit -m "Import Microsoft road detections for Ermita"
+            git pull --rebase origin main
             git push origin main
           fi
