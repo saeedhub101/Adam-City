@@ -42,7 +42,7 @@ const MAP_CENTER={lat:14.5717,lon:120.9854}; // Mabini Street / Pedro Gil hotel 
 const realMapGroup=new THREE.Group();scene.add(realMapGroup);
 const mapStatus=document.createElement('div');
 mapStatus.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);padding:10px 14px;border-radius:9px;background:#102027dd;color:#fff;font:12px system-ui;z-index:4;pointer-events:none';
-mapStatus.textContent='Loading saved Malate map…';document.body.appendChild(mapStatus);
+mapStatus.textContent='Loading saved Metro Manila map…';document.body.appendChild(mapStatus);
 const project=(lat,lon)=>({x:(lon-MAP_CENTER.lon)*107200,z:-(lat-MAP_CENTER.lat)*111100});
 const osmBuildingMats=[0xc9c2b5,0xd8d1c3,0xb8b9b4,0xd1c5b3,0xbfc8c7,0xd4d0c8].map(c=>material(c));
 function addFootprint(el){
