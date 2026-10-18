@@ -590,6 +590,7 @@ node/6351453894,"PMP Diagnostic Center, Inc.",amenity,doctors,,,,,Taft Avenue,,O
 node/6351798185,KFC,amenity,fast_food,chicken,,,,United Nations Avenue,,OpenStreetMap contributors,ODbL 1.0
 node/6410604885,Techshop28 Audiophile Store,shop,electronics,,Mo-Su 09:30-20:00,+63 919 899 1168,,Taft Avenue,1546,OpenStreetMap contributors,ODbL 1.0
 node/6448831985,7-Eleven,shop,convenience,,24/7,,,,,OpenStreetMap contributors,ODbL 1.0
+node/6466250085,Philippine General Hospital Psychiatry & Behavioral Medicine Department,healthcare,psychotherapist,,,,,Taft Avenue,,OpenStreetMap contributors,ODbL 1.0
 node/6507747541,,amenity,drinking_water,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/6550807486,GIWU Shipping,shop,travel_agency,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/6572548786,Members Church of God International,amenity,place_of_worship,,,,,,,OpenStreetMap contributors,ODbL 1.0
@@ -667,17 +668,23 @@ node/7020887643,,highway,crossing,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/7020887662,BPI,amenity,atm,,24/7,,,United Nations Avenue,669,OpenStreetMap contributors,ODbL 1.0
 node/7021734614,,amenity,toilets,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/7039898986,St. Cecilia Polyclinic,amenity,clinic,,,,,A. Mabini Street,,OpenStreetMap contributors,ODbL 1.0
+node/7039922585,,healthcare,laboratory,,,,,United Nations Avenue,,OpenStreetMap contributors,ODbL 1.0
 node/7039932485,,amenity,doctors,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/7039933087,Calpe Medical Services and Supplies,amenity,clinic,,,,,A. Mabini Street,,OpenStreetMap contributors,ODbL 1.0
 node/7039956885,CBZ Medical Clinic,amenity,clinic,,,,,San Marcelino Street,,OpenStreetMap contributors,ODbL 1.0
 node/7039960085,,amenity,doctors,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/7065793296,R&L Dental Clinic,amenity,dentist,,,,,,,OpenStreetMap contributors,ODbL 1.0
+node/7072149585,Philippine General Hospital,healthcare,psychotherapist,,,,,Taft Avenue,,OpenStreetMap contributors,ODbL 1.0
 node/7091095985,Avs Medical Clinic,amenity,clinic,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/7091102490,RBG Medical and Dental Clinic,amenity,dentist,,,,,A. Mabini Street,,OpenStreetMap contributors,ODbL 1.0
 node/7091616585,Vizcarra Diagnostic Center,amenity,clinic,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/7091739288,Centerport Medical Services Inc.,amenity,clinic,,,,,United Nations Avenue,,OpenStreetMap contributors,ODbL 1.0
 node/7097379685,RedDoorz @ Grand Lodge,tourism,hotel,,,+6322498745,,,1440,OpenStreetMap contributors,ODbL 1.0
 node/7103953713,,man_made,lighthouse,,,,,,,OpenStreetMap contributors,ODbL 1.0
+node/7123874885,,healthcare,laboratory,,,,,Taft Avenue,,OpenStreetMap contributors,ODbL 1.0
+node/7155274086,University Physicians Medical Center,healthcare,psychotherapist,,,,,Taft Avenue,,OpenStreetMap contributors,ODbL 1.0
+node/7155365485,MVR LAB Diagnostic Center,healthcare,psychotherapist,,,,,Kalaw Avenue,,OpenStreetMap contributors,ODbL 1.0
+node/7155382085,JED Diagnostic Clinic,healthcare,psychotherapist,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/7166114418,,amenity,fountain,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/7298365886,Manila Youth Reception Center,amenity,social_facility,,,,,A. Villegas Street,,OpenStreetMap contributors,ODbL 1.0
 node/7324832748,Lawton,amenity,ferry_terminal,,,,,,,OpenStreetMap contributors,ODbL 1.0
@@ -968,6 +975,7 @@ node/10769040897,Rooster Statue,tourism,artwork,,,,,,,OpenStreetMap contributors
 node/10769095307,,tourism,artwork,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/10769095308,Plaza Lawton,highway,bus_stop,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/10800996227,,amenity,toilets,,,,,,,OpenStreetMap contributors,ODbL 1.0
+node/10801000630,Materials Storage Facility,healthcare,rehabilitation,,,+639 8928-1225,https://manilabayanihan.com/,Manila Baywalk,,OpenStreetMap contributors,ODbL 1.0
 node/10823001285,Yankee Candle,shop,candles,,Mo-Su 10:00-22:00,09171378297,https://serenitybliss.com.ph/,Pedro Gil Street,,OpenStreetMap contributors,ODbL 1.0
 node/10889584506,Seafood Paradise Buffet,amenity,restaurant,seafood,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/10898644809,,barrier,gate,,,,,,,OpenStreetMap contributors,ODbL 1.0
@@ -1386,6 +1394,7 @@ node/11861378908,J. Bocobo Police Community Precinct 3,amenity,police,,,,,,,Open
 node/11861378909,Paragon Tower Hotel,tourism,hotel,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/11868633547,Sterling Bank of Asia,amenity,bank,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/11868633549,LBC,amenity,post_office,,,,,United Nations Avenue,,OpenStreetMap contributors,ODbL 1.0
+node/11868633550,Jacob's Ladder Immunization Center,healthcare,vaccination_centre,,,,,United Nations Avenue,,OpenStreetMap contributors,ODbL 1.0
 node/11868641607,Perry Ellis,shop,clothes,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/11868641608,HLA,shop,clothes,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/11868641609,Oxygen,shop,clothes,,,,,,,OpenStreetMap contributors,ODbL 1.0
@@ -1404,6 +1413,7 @@ node/11868641621,Dulang Restaurant,amenity,restaurant,,,,,,,OpenStreetMap contri
 node/11868641622,Security Bank,amenity,bank,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/11868641623,Banco de Oro,amenity,atm,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/11868641625,BDO,amenity,bank,,,,,,,OpenStreetMap contributors,ODbL 1.0
+node/11868641626,Pinnacle Diagnostic Medical Corporation,healthcare,laboratory,,,,,M. Adriatico Street,1439,OpenStreetMap contributors,ODbL 1.0
 node/11868641627,Sumi Sumi,amenity,restaurant,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/11868641628,Bench,shop,clothes,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/11868641629,Adidas,shop,sports,,,,,,,OpenStreetMap contributors,ODbL 1.0
@@ -1718,6 +1728,7 @@ node/12683935544,Italianni's,amenity,restaurant,italian,,,,,,OpenStreetMap contr
 node/12683935545,Capital Your Gadget Pawnshop,shop,pawnbroker,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/12683935546,Midtown Inn Diner,amenity,restaurant,,,,,Jorge Bocobo Street,,OpenStreetMap contributors,ODbL 1.0
 node/12683935551,LBC,amenity,post_office,,,,,,,OpenStreetMap contributors,ODbL 1.0
+node/12683935553,Premiere Medical & Cardiovascular Laboratory,healthcare,laboratory,,,,,Maria Orosa Street,,OpenStreetMap contributors,ODbL 1.0
 node/12683935554,Rita's Original Pancit Malabon,amenity,restaurant,,,,,Maria Orosa Street,,OpenStreetMap contributors,ODbL 1.0
 node/12683935555,7-Eleven,shop,convenience,,,,,Maria Orosa Street,,OpenStreetMap contributors,ODbL 1.0
 node/12683935556,Viva L'e Baron,shop,hairdresser,,,,,,,OpenStreetMap contributors,ODbL 1.0
@@ -1879,6 +1890,7 @@ node/13227648501,El Capitan Dorm,tourism,apartment,,,,,,,OpenStreetMap contribut
 node/13256226053,Landbank,amenity,bank,,,,,United Nations Avenue,,OpenStreetMap contributors,ODbL 1.0
 node/13256226054,Maysum Seafood Restaurant,amenity,restaurant,,,,,United Nations Avenue,,OpenStreetMap contributors,ODbL 1.0
 node/13256226055,Anytime Fitness,leisure,fitness_centre,,24/7,,,United Nations Avenue,,OpenStreetMap contributors,ODbL 1.0
+node/13256226056,Premiere Eye Center,healthcare,clinic,,,,,United Nations Avenue,,OpenStreetMap contributors,ODbL 1.0
 node/13256226057,Dampaseatos,amenity,restaurant,,,,,United Nations Avenue,,OpenStreetMap contributors,ODbL 1.0
 node/13256976609,,highway,crossing,,,,,,,OpenStreetMap contributors,ODbL 1.0
 node/13260869025,Plaza Lawton,highway,bus_stop,,,,,,,OpenStreetMap contributors,ODbL 1.0

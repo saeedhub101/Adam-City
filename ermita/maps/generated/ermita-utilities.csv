@@ -1,0 +1,754 @@
+osm_feature_id,name,geometry_type,latitude,longitude,tags_json,source,license
+node/297179456,,Point,14.5813039,120.9851111,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""additional"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/299396616,,Point,14.5773349,120.9783483,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/316818889,,Point,14.5791723,120.9901092,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/333482430,,Point,14.5863709,120.9806991,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/359371121,MPD Gate 2,Point,14.5838555,120.9867315,"{""access"": ""no"", ""barrier"": ""gate"", ""gate:type"": ""double"", ""name"": ""MPD Gate 2""}",OpenStreetMap contributors,ODbL 1.0
+node/417741091,,Point,14.5793307,120.9848097,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/417741097,Gate 2,Point,14.5796343,120.9826667,"{""access"": ""no"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double"", ""name"": ""Gate 2""}",OpenStreetMap contributors,ODbL 1.0
+node/417741099,,Point,14.579251,120.98466,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/558320861,PGH Gate 1,Point,14.5777594,120.9871439,"{""access"": ""permissive"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""entrance"": ""main"", ""gate:type"": ""double"", ""mapillary"": ""505503543967172"", ""name"": ""PGH Gate 1""}",OpenStreetMap contributors,ODbL 1.0
+node/598895471,,Point,14.5806527,120.9781502,"{""addr:city"": ""Manila"", ""addr:province"": ""Metro Manila"", ""barrier"": ""entrance""}",OpenStreetMap contributors,ODbL 1.0
+node/667623446,Bgy.659-A Zone71,Point,14.5915305,120.9805734,"{""addr:city"": ""Manila"", ""addr:province"": ""Metro Manila"", ""man_made"": ""highway_boundary"", ""name"": ""Bgy.659-A Zone71""}",OpenStreetMap contributors,ODbL 1.0
+node/667623452,Gate 1,Point,14.5915107,120.9813193,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double"", ""name"": ""Gate 1""}",OpenStreetMap contributors,ODbL 1.0
+node/860960387,,Point,14.5864474,120.9817761,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/1036700542,,Point,14.5828773,120.9812207,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/1038036106,Villegas Avenue Gate,Point,14.5896901,120.9819101,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double"", ""name"": ""Villegas Avenue Gate"", ""operator"": ""Manila City Hall""}",OpenStreetMap contributors,ODbL 1.0
+node/1038036114,Taft Avenue Gate,Point,14.5895772,120.9812495,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double"", ""name"": ""Taft Avenue Gate"", ""operator"": ""Manila City Hall""}",OpenStreetMap contributors,ODbL 1.0
+node/1038058856,,Point,14.5800703,120.9769343,"{""barrier"": ""bollard""}",OpenStreetMap contributors,ODbL 1.0
+node/1038058914,,Point,14.5843503,120.9804519,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/1038073298,,Point,14.5923631,120.9803271,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/1048072411,,Point,14.5750823,120.9857174,"{""access"": ""destination"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/1055798820,,Point,14.595054,120.9785348,"{""access"": ""no"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/1055798821,,Point,14.5953973,120.9797516,"{""access"": ""no"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/1056866775,,Point,14.5768565,120.987682,"{""access"": ""destination"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/1058468695,,Point,14.5826652,120.9820051,"{""access"": ""no"", ""barrier"": ""gate"", ""check_date"": ""2026-08-27"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/1059006536,SV Gate,Point,14.5858657,120.9859728,"{""access"": ""private"", ""barrier"": ""gate"", ""entrance"": ""yes"", ""name"": ""SV Gate""}",OpenStreetMap contributors,ODbL 1.0
+node/1059006545,,Point,14.5856515,120.9858947,"{""access"": ""permissive"", ""barrier"": ""lift_gate"", ""barrier:personnel"": ""yes"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/1059036060,,Point,14.5882133,120.9866138,"{""access"": ""permissive"", ""access:conditional"": ""no @ (24:00-06:00)"", ""barrier"": ""gate"", ""barrier:personnel"": ""no"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/1068853343,,Point,14.5951122,120.9790456,"{""access"": ""no"", ""barrier"": ""gate"", ""gate:type"": ""double"", ""material"": ""steel""}",OpenStreetMap contributors,ODbL 1.0
+node/1107317420,,Point,14.5863956,120.9855644,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/1423836623,,Point,14.5913371,120.9807108,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""operator:wikipedia"": ""en:Meralco"", ""power"": ""pole"", ""ref"": ""H4 338T"", ""structure"": ""tubular""}",OpenStreetMap contributors,ODbL 1.0
+node/1423836624,,Point,14.5914106,120.9817732,"{""line_attachment"": ""anchor"", ""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""operator:wikipedia"": ""en:Meralco"", ""power"": ""pole"", ""ref"": ""H4 339T"", ""structure"": ""tubular""}",OpenStreetMap contributors,ODbL 1.0
+node/1423836689,,Point,14.5941306,120.979973,"{""man_made"": ""surveillance"", ""surveillance"": ""outdoor""}",OpenStreetMap contributors,ODbL 1.0
+node/1501266883,,Point,14.5813673,120.9795116,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""man_made"": ""flagpole"", ""operator"": ""National Library of the Philippines"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1911986"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/1753490509,,Point,14.5754704,120.9866269,"{""access"": ""destination"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/1988304159,,Point,14.5870357,120.9808508,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""man_made"": ""flagpole"", ""operator"": ""National Museum of the Philippines"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1667156"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/2150242410,,Point,14.5933676,120.9817216,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/2855540349,,Point,14.577395,120.978311,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/3148776128,,Point,14.5797497,120.9855401,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""sliding""}",OpenStreetMap contributors,ODbL 1.0
+node/3199833877,,Point,14.5787609,120.9749023,"{""access"": ""permissive"", ""barrier"": ""lift_gate"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/3202651976,,Point,14.5809424,120.9755186,"{""man_made"": ""survey_point"", ""note"": ""Geodessy Surveying Int. Global Positioning System GPS 14.58094;120.97551"", ""source"": ""http://www.denr.gov.ph/priority-programs/cadastral-survey-program.html""}",OpenStreetMap contributors,ODbL 1.0
+node/3202752882,,Point,14.5831973,120.9776771,"{""camera:mount"": ""pole"", ""camera:type"": ""dome"", ""man_made"": ""surveillance"", ""surveillance"": ""outdoor"", ""surveillance:type"": ""camera""}",OpenStreetMap contributors,ODbL 1.0
+node/3327052588,,Point,14.5803926,120.9857005,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/3717879742,,Point,14.5789235,120.9840502,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/3961429018,,Point,14.5770658,120.9777275,"{""country"": ""US"", ""flag:name"": ""United States"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q42537"", ""man_made"": ""flagpole"", ""operator"": ""United States Embassy in the Philippines"", ""operator:wikidata"": ""Q5369961"", ""subject"": ""United States"", ""subject:wikidata"": ""Q30"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/3961429026,,Point,14.578633,120.9776057,"{""access"": ""private"", ""barrier"": ""lift_gate""}",OpenStreetMap contributors,ODbL 1.0
+node/4338751727,,Point,14.5901792,120.9855341,"{""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/4338751728,,Point,14.5903336,120.9856581,"{""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/4338751730,,Point,14.590344,120.9849406,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""operator:wikipedia"": ""en:Meralco"", ""power"": ""pole"", ""ref"": ""H4 344T"", ""structure"": ""tubular""}",OpenStreetMap contributors,ODbL 1.0
+node/4338751732,,Point,14.5903427,120.9839617,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""operator:wikipedia"": ""en:Meralco"", ""power"": ""pole"", ""ref"": ""H4 342T"", ""structure"": ""tubular""}",OpenStreetMap contributors,ODbL 1.0
+node/4338751733,,Point,14.5904789,120.9820311,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""operator:wikipedia"": ""en:Meralco"", ""power"": ""pole"", ""ref"": ""H4 340T"", ""structure"": ""tubular""}",OpenStreetMap contributors,ODbL 1.0
+node/4338751735,,Point,14.5905283,120.9831724,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""operator:wikipedia"": ""en:Meralco"", ""power"": ""pole"", ""ref"": ""H4 341T"", ""structure"": ""tubular""}",OpenStreetMap contributors,ODbL 1.0
+node/4754993499,,Point,14.5886738,120.9810497,"{""display:analog"": ""yes"", ""man_made"": ""monitoring_station"", ""monitoring:water_level"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/4818208905,,Point,14.5835251,120.9842936,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/4818208906,,Point,14.5833032,120.9844197,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/4818208907,,Point,14.5837224,120.9841984,"{""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/4818208908,,Point,14.583895,120.9840924,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/4818208909,,Point,14.5840235,120.9839999,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/4818208910,,Point,14.5836069,120.9844487,"{""location:transition"": ""yes"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/4823208932,,Point,14.5859927,120.9807104,"{""man_made"": ""street_cabinet"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""substation"", ""rating"": ""1000 kVA"", ""street_cabinet"": ""power"", ""substation"": ""minor_distribution"", ""voltage"": ""34500;240""}",OpenStreetMap contributors,ODbL 1.0
+node/5521601846,,Point,14.5796375,120.9853509,"{""access"": ""permissive"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/5672289056,,Point,14.5908655,120.9811892,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""man_made"": ""flagpole"", ""operator"": ""City Government of Manila"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1461"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/5727225801,,Point,14.5905336,120.9833183,"{""flag:colour"": ""purple"", ""flag:name"": ""World Organization of the Scout Movement"", ""flag:type"": ""organisation"", ""location"": ""roof"", ""man_made"": ""flagpole"", ""operator"": ""Boy Scouts of the Philippines"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q4952136"", ""subject"": ""World Organization of the Scout Movement"", ""subject:wikidata"": ""Q210347"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/5813762468,,Point,14.5924549,120.9803125,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/5813762471,,Point,14.5911284,120.9809316,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""man_made"": ""flagpole"", ""operator"": ""City Government of Manila"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1461"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/5828470803,,Point,14.5819145,120.9839773,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""sliding""}",OpenStreetMap contributors,ODbL 1.0
+node/5828595831,,Point,14.5811202,120.9734907,"{""access"": ""permissive"", ""barrier"": ""lift_gate"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/5828595833,,Point,14.5833648,120.9765606,"{""barrier"": ""kerb"", ""kerb"": ""flush""}",OpenStreetMap contributors,ODbL 1.0
+node/5835453702,,Point,14.5774931,120.9872968,"{""access"": ""no"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/6126603973,,Point,14.5781649,120.9777441,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/6141307758,,Point,14.5833438,120.9765728,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/6141636646,,Point,14.5826792,120.9776855,"{""barrier"": ""entrance""}",OpenStreetMap contributors,ODbL 1.0
+node/6149007939,,Point,14.5824367,120.9770175,"{""barrier"": ""entrance""}",OpenStreetMap contributors,ODbL 1.0
+node/6149007941,,Point,14.5824418,120.9768664,"{""barrier"": ""entrance""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424294,,Point,14.5867789,120.9855437,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424296,,Point,14.5855381,120.9860896,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424298,,Point,14.5846945,120.9864651,"{""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424299,,Point,14.5838988,120.9868151,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424300,,Point,14.5871436,120.9853895,"{""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424301,,Point,14.5876359,120.9851466,"{""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424302,,Point,14.5878704,120.9850351,"{""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424304,,Point,14.5881067,120.9849324,"{""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424310,,Point,14.5851228,120.9861491,"{""height"": ""27.5"", ""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424311,,Point,14.5847937,120.9862947,"{""height"": ""27.5"", ""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424312,,Point,14.5854467,120.9860053,"{""height"": ""27.5"", ""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424314,,Point,14.5861481,120.9856899,"{""height"": ""27.5"", ""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424316,,Point,14.5870112,120.9852795,"{""height"": ""27.5"", ""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424317,,Point,14.5872863,120.9851642,"{""height"": ""27.5"", ""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424318,,Point,14.5875926,120.9850636,"{""height"": ""27.5"", ""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424319,,Point,14.5879184,120.9849214,"{""height"": ""27.5"", ""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424322,,Point,14.5889593,120.9848651,"{""height"": ""27.5"", ""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424323,,Point,14.5895153,120.9850595,"{""material"": ""steel"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424325,,Point,14.5900118,120.9857784,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424326,,Point,14.589886,120.9854981,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424327,,Point,14.5894499,120.9851897,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424328,,Point,14.5891773,120.9850261,"{""height"": ""27.5"", ""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424329,,Point,14.5886958,120.9846841,"{""height"": ""27.5"", ""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424330,,Point,14.588457,120.9846733,"{""height"": ""27.5"", ""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424331,,Point,14.5887581,120.9845116,"{""height"": ""27.5"", ""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424333,,Point,14.5854635,120.9875145,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424334,,Point,14.5863428,120.9872389,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424335,,Point,14.5872928,120.9869184,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424336,,Point,14.5881857,120.9866233,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424337,,Point,14.5885258,120.9865227,"{""material"": ""concrete"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424362,,Point,14.5823141,120.9874172,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424378,,Point,14.5805957,120.9883895,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424379,,Point,14.5798325,120.9889367,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424392,,Point,14.5796794,120.9889166,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424393,,Point,14.5793296,120.9890936,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424394,,Point,14.5783918,120.9897776,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424395,,Point,14.5787604,120.9902993,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424397,,Point,14.5775092,120.9910946,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6172424406,,Point,14.5781543,120.9929641,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/6305323608,,Point,14.5907548,120.9835829,"{""access"": ""permissive"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/6630882660,,Point,14.5814948,120.9763064,"{""barrier"": ""bollard"", ""crossing:island"": ""yes"", ""wheelchair"": ""limited""}",OpenStreetMap contributors,ODbL 1.0
+node/6762879404,,Point,14.5829314,120.9781415,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/6776052609,,Point,14.5833599,120.9788403,"{""barrier"": ""entrance""}",OpenStreetMap contributors,ODbL 1.0
+node/6776052619,,Point,14.5839118,120.9787388,"{""barrier"": ""entrance""}",OpenStreetMap contributors,ODbL 1.0
+node/6776152754,,Point,14.5845162,120.9786061,"{""access"": ""no"", ""barrier"": ""gate"", ""gate:type"": ""double"", ""locked"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/6778473897,,Point,14.5831299,120.9784089,"{""barrier"": ""entrance""}",OpenStreetMap contributors,ODbL 1.0
+node/6978570585,,Point,14.5905331,120.983305,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""man_made"": ""flagpole"", ""operator"": ""Boy Scouts of the Philippines"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q4952136"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/7006051806,,Point,14.5817385,120.9810926,"{""barrier"": ""kerb"", ""wheelchair"": ""no""}",OpenStreetMap contributors,ODbL 1.0
+node/7006051807,,Point,14.582054,120.9809933,"{""barrier"": ""kerb"", ""wheelchair"": ""no""}",OpenStreetMap contributors,ODbL 1.0
+node/7020887631,,Point,14.582593,120.9847722,"{""barrier"": ""kerb"", ""wheelchair"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/7020887634,,Point,14.5824,120.9848684,"{""barrier"": ""kerb"", ""kerb"": ""raised"", ""wheelchair"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/7020887636,,Point,14.5822614,120.9846037,"{""barrier"": ""kerb"", ""wheelchair"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/7020887637,,Point,14.582455,120.9844994,"{""barrier"": ""kerb"", ""wheelchair"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/7020887638,,Point,14.5824595,120.9844477,"{""barrier"": ""kerb"", ""wheelchair"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/7103953713,,Point,14.5824674,120.9716946,"{""addr:city"": ""Manila"", ""addr:place"": ""HPCG, Port Area, South Harbor"", ""building:material"": ""steel"", ""man_made"": ""lighthouse"", ""operator"": ""Manila Station, Philippine Coast Guard"", ""ref:pcg"": ""NCR-0CL-010"", ""seamark:light:colour"": ""white"", ""seamark:light:period"": ""10"", ""seamark:name"": ""Coast Guard Headquarters Wharf"", ""seamark:type"": ""light_major"", ""source"": ""Philippine Coast Guard""}",OpenStreetMap contributors,ODbL 1.0
+node/7454239287,,Point,14.5913108,120.9820236,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/7456312698,,Point,14.5952041,120.9792049,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""man_made"": ""flagpole"", ""operator"": ""Philippine Postal Corporation"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1406037"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/7726827489,,Point,14.5878496,120.9819093,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""man_made"": ""flagpole"", ""operator"": ""City Government of Manila"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1461"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/7726827495,,Point,14.5834498,120.9818099,"{""flag:colour"": ""white"", ""flag:name"": ""National Museum of the Philippines"", ""flag:type"": ""governmental"", ""man_made"": ""flagpole"", ""operator"": ""National Museum of the Philippines"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1667156"", ""subject"": ""National Museum of the Philippines"", ""subject:wikidata"": ""Q1667156"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/7726827496,,Point,14.5836133,120.9820517,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""man_made"": ""flagpole"", ""operator"": ""National Museum of the Philippines"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1667156"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/7726827502,,Point,14.5850592,120.9812294,"{""flag:colour"": ""white"", ""flag:name"": ""National Museum of the Philippines"", ""flag:type"": ""governmental"", ""man_made"": ""flagpole"", ""operator"": ""National Museum of the Philippines"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1667156"", ""subject"": ""National Museum of the Philippines"", ""subject:wikidata"": ""Q1667156"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/7726827503,,Point,14.5849462,120.9809585,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""man_made"": ""flagpole"", ""operator"": ""National Museum of the Philippines"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1667156"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole"", ""wikidata"": ""Q55624779""}",OpenStreetMap contributors,ODbL 1.0
+node/7791922041,,Point,14.5905326,120.9832917,"{""flag:colour"": ""purple"", ""flag:name"": ""World Organization of the Scout Movement"", ""flag:type"": ""organisation"", ""location"": ""roof"", ""man_made"": ""flagpole"", ""operator"": ""Boy Scouts of the Philippines"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q4952136"", ""subject"": ""World Organization of the Scout Movement"", ""subject:wikidata"": ""Q210347"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/7791922062,,Point,14.5911442,120.9810386,"{""flag:name"": ""Bandila ng Matagumpay"", ""flag:name:en"": ""Flag of Victory"", ""flag:name:tl"": ""Bandila ng Matagumpay"", ""flag:type"": ""historic"", ""man_made"": ""flagpole"", ""operator"": ""City Government of Manila"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1461"", ""subject"": ""Pio del Pilar"", ""subject:wikidata"": ""Q3905410"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/7791922063,,Point,14.591155,120.9809972,"{""flag:colour"": ""red"", ""flag:name"": ""Katipunan Sun with Face Flag"", ""flag:type"": ""historic"", ""man_made"": ""flagpole"", ""operator"": ""City Government of Manila"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1461"", ""subject"": ""Katipunan;Republic of Biak-na-Bato"", ""subject:wikidata"": ""Q673018;Q575132"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/7791922064,,Point,14.5911712,120.9809351,"{""flag:colour"": ""red"", ""flag:name"": ""Katipunan Acronym in Triangle Flag"", ""flag:type"": ""historic"", ""man_made"": ""flagpole"", ""operator"": ""City Government of Manila"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1461"", ""subject"": ""Katipunan"", ""subject:wikidata"": ""Q673018"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/7791922065,,Point,14.5911658,120.9809558,"{""flag:colour"": ""red"", ""flag:name"": ""Magdalo Faction"", ""flag:type"": ""historic"", ""man_made"": ""flagpole"", ""operator"": ""City Government of Manila"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1461"", ""subject"": ""Magdalo Faction"", ""subject:wikidata"": ""Q6729984"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/7791922066,,Point,14.5911496,120.9810179,"{""flag:colour"": ""black"", ""flag:name"": ""Bungo ni Llanera"", ""flag:name:en"": ""Skull of Llanera"", ""flag:name:tl"": ""Bungo ni Llanera"", ""flag:type"": ""historic"", ""flag:wikidata"": ""Q135472669"", ""man_made"": ""flagpole"", ""material"": ""metal"", ""operator"": ""City Government of Manila"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1461"", ""subject"": ""Mariano Llanera"", ""subject:wikidata"": ""Q12967763"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/7791922067,,Point,14.5911766,120.9809144,"{""flag:colour"": ""red"", ""flag:name"": ""Katipunan Acronym Flag"", ""flag:type"": ""historic"", ""man_made"": ""flagpole"", ""operator"": ""City Government of Manila"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1461"", ""subject"": ""Katipunan"", ""subject:wikidata"": ""Q673018"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/7791922068,,Point,14.5911604,120.9809765,"{""flag:colour"": ""red"", ""flag:name"": ""Bandila ni Andres Bonifacio"", ""flag:name:en"": ""Flag of Andres Bonifacio"", ""flag:name:tl"": ""Bandila ni Andres Bonifacio"", ""flag:type"": ""historic"", ""man_made"": ""flagpole"", ""operator"": ""City Government of Manila"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1461"", ""subject"": ""Andres Bonifacio"", ""subject:wikidata"": ""Q313604"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/7791922069,,Point,14.5911388,120.9810593,"{""flag:name"": ""Bandila ni Gregorio del Pilar"", ""flag:name:en"": ""Flag of Gregorio del Pilar"", ""flag:name:tl"": ""Bandila ni Gregorio del Pilar"", ""flag:type"": ""historic"", ""man_made"": ""flagpole"", ""operator"": ""City Government of Manila"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1461"", ""subject"": ""Gregorio del Pilar"", ""subject:wikidata"": ""Q738506"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/7791922070,,Point,14.591182,120.9808936,"{""flag:colour"": ""red"", ""flag:name"": ""Single K Flag"", ""flag:type"": ""historic"", ""man_made"": ""flagpole"", ""operator"": ""City Government of Manila"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q1461"", ""subject"": ""Katipunan"", ""subject:wikidata"": ""Q673018"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/8234817110,,Point,14.581804,120.9837238,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""location"": ""overhead"", ""man_made"": ""flagpole"", ""operator"": ""National Bureau of Investigation"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q3336849"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/8234817114,,Point,14.5818878,120.9841469,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/8234837626,,Point,14.5816924,120.983928,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/8311983342,,Point,14.5771611,120.9874977,"{""access"": ""destination"", ""barrier"": ""gate"", ""foot"": ""no"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8313862923,,Point,14.584808,120.9877029,"{""access"": ""no"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8314237276,,Point,14.5822297,120.9735328,"{""access"": ""permissive"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/8314262584,,Point,14.5827477,120.9746645,"{""access"": ""permissive"", ""barrier"": ""lift_gate""}",OpenStreetMap contributors,ODbL 1.0
+node/8359972650,,Point,14.5773898,120.9839853,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936477,,Point,14.5785644,120.9797367,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936478,,Point,14.5788694,120.9795973,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936487,,Point,14.5813744,120.9798481,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936488,,Point,14.5811168,120.9792667,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936489,,Point,14.5814678,120.980092,"{""access"": ""permissive"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936490,,Point,14.5842818,120.9781922,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936491,,Point,14.5841119,120.9779149,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936492,,Point,14.5827048,120.980874,"{""access"": ""no"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936494,,Point,14.5811603,120.9817357,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936495,,Point,14.5815315,120.981503,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936496,Gate 1,Point,14.57977,120.9825901,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double"", ""motor_vehicle"": ""no"", ""name"": ""Gate 1""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936497,,Point,14.5830555,120.98611,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936498,,Point,14.5871072,120.983512,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936499,,Point,14.5856594,120.9859155,"{""access"": ""permissive"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936500,,Point,14.58325,120.986664,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8374936501,,Point,14.5831405,120.9863338,"{""access"": ""permissive"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8374960524,,Point,14.5798863,120.985915,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8386678162,,Point,14.5778467,120.9921111,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8500799856,,Point,14.5821259,120.9744877,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8500890919,,Point,14.5782559,120.9830091,"{""access"": ""permissive"", ""barrier"": ""swing_gate"", ""swing_gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8500927349,,Point,14.580072,120.9824209,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/8506128587,,Point,14.5806571,120.9855498,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8560162547,,Point,14.5755351,120.9793356,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8563234055,,Point,14.5791952,120.9893344,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8579113311,,Point,14.5826003,120.9809491,"{""access"": ""customers"", ""barrier"": ""lift_gate"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/8584908546,,Point,14.5854838,120.9859677,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8584908547,,Point,14.58525,120.9862981,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8584908549,,Point,14.5793881,120.9745039,"{""access"": ""permissive"", ""barrier"": ""lift_gate"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/8586638514,,Point,14.5889879,120.9853799,"{""access"": ""permissive"", ""barrier"": ""gate"", ""barrier:personnel"": ""no"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8609518821,,Point,14.5787076,120.9838905,"{""access"": ""permissive"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8609532261,,Point,14.5753162,120.9862656,"{""access"": ""destination"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8631203257,,Point,14.5949472,120.9807025,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/8636528581,,Point,14.585447,120.9803479,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8639917848,,Point,14.5877093,120.9810901,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8639928909,,Point,14.5801009,120.9773419,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8645992975,,Point,14.5815028,120.9866294,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8645992980,,Point,14.5818174,120.9860099,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8649726323,,Point,14.578655,120.9837587,"{""access"": ""permissive"", ""barrier"": ""swing_gate"", ""opening_hours"": ""Mo-Su 10:00-22:00"", ""swing_gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8649816863,,Point,14.5792731,120.9764658,"{""access"": ""private"", ""barrier"": ""lift_gate"", ""barrier:personnel"": ""yes"", ""lift_gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8654010702,,Point,14.5869589,120.9819276,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8658647491,,Point,14.5745648,120.980683,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8675799539,,Point,14.5748697,120.9852839,"{""access"": ""permissive"", ""barrier"": ""gate"", ""opening_hours"": ""Mo-Su 10:00-22:00""}",OpenStreetMap contributors,ODbL 1.0
+node/8678965901,,Point,14.5839871,120.9880114,"{""access"": ""no"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/8678965902,,Point,14.584113,120.9879711,"{""access"": ""no"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9090935344,,Point,14.5760421,120.9854054,"{""access"": ""destination"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/9308798249,,Point,14.596014,120.9806518,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9765819181,,Point,14.595278,120.9777869,"{""material"": ""steel"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""operator:wikipedia"": ""en:Meralco"", ""power"": ""pole"", ""ref"": ""I4 193T"", ""structure"": ""tubular""}",OpenStreetMap contributors,ODbL 1.0
+node/9767525054,,Point,14.5758453,120.9875044,"{""access"": ""destination"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9789328965,,Point,14.5771947,120.9877953,"{""access"": ""no"", ""barrier"": ""gate"", ""gate:type"": ""double"", ""locked"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/9791026057,,Point,14.5853979,120.9875125,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9791297842,,Point,14.5835816,120.9874155,"{""access"": ""permissive"", ""barrier"": ""lift_gate"", ""barrier:personnel"": ""yes"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/9836906689,,Point,14.5954064,120.9802444,"{""access"": ""no"", ""barrier"": ""jersey_barrier""}",OpenStreetMap contributors,ODbL 1.0
+node/9839547734,,Point,14.5764973,120.9882663,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9868840275,,Point,14.5797209,120.9900565,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9882031345,,Point,14.5928482,120.980233,"{""access"": ""permissive"", ""barrier"": ""swing_gate"", ""swing_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/9909967096,,Point,14.5955357,120.9798245,"{""access"": ""permissive"", ""barrier"": ""lift_gate"", ""barrier:personnel"": ""yes"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/9910662119,,Point,14.5959817,120.9807031,"{""access"": ""permissive"", ""barrier"": ""lift_gate"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/9943981581,,Point,14.5903813,120.9808719,"{""access"": ""no"", ""barrier"": ""fence"", ""material"": ""metal""}",OpenStreetMap contributors,ODbL 1.0
+node/9963016324,,Point,14.5940783,120.9795546,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9963355794,,Point,14.5947188,120.9785223,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9963388731,,Point,14.5948534,120.9790481,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9963388732,,Point,14.5949995,120.9783574,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/9969919622,,Point,14.5930224,120.9804461,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9971595575,,Point,14.5825843,120.9741498,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9971595576,,Point,14.5825487,120.9740871,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9971595577,,Point,14.5827008,120.9743627,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9971595578,,Point,14.5837382,120.9747777,"{""barrier"": ""block""}",OpenStreetMap contributors,ODbL 1.0
+node/9971595579,,Point,14.5838422,120.9747217,"{""barrier"": ""block""}",OpenStreetMap contributors,ODbL 1.0
+node/9971842377,,Point,14.579301,120.9764578,"{""access"": ""private"", ""barrier"": ""swing_gate"", ""swing_gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9971842378,,Point,14.57885,120.9758824,"{""access"": ""private"", ""barrier"": ""lift_gate"", ""barrier:personnel"": ""yes"", ""lift_gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9971842379,,Point,14.5789707,120.9758086,"{""access"": ""permissive"", ""barrier"": ""swing_gate"", ""barrier:personnel"": ""yes"", ""swing_gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9971842389,,Point,14.5827321,120.9744157,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9971994189,,Point,14.5808697,120.978815,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9971994190,,Point,14.5808563,120.978541,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9974088853,,Point,14.584931,120.9835664,"{""access"": ""private"", ""barrier"": ""lift_gate"", ""barrier:personnel"": ""yes"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/9974088854,,Point,14.5849271,120.9835582,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9974088855,,Point,14.590736,120.983583,"{""access"": ""permissive"", ""barrier"": ""lift_gate"", ""barrier:personnel"": ""yes"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/9974088856,,Point,14.5893727,120.9822609,"{""access"": ""permissive"", ""barrier"": ""swing_gate"", ""swing_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/9974275847,,Point,14.587799,120.9849362,"{""access"": ""private"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9974275850,,Point,14.5894977,120.9841769,"{""access"": ""permissive"", ""barrier"": ""swing_gate"", ""swing_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/9974452155,,Point,14.579266,120.9894745,"{""access"": ""private"", ""barrier"": ""lift_gate"", ""barrier:personnel"": ""yes"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/9974452156,,Point,14.5823169,120.9814411,"{""access"": ""customers"", ""barrier"": ""lift_gate"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/9994685461,,Point,14.5955314,120.9798256,"{""access"": ""permissive"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/9994685462,,Point,14.5955602,120.9799358,"{""access"": ""permissive"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/10035629663,,Point,14.5745687,120.980701,"{""access"": ""permissive"", ""barrier"": ""lift_gate"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/10706452471,,Point,14.5771151,120.9823691,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/10708570051,,Point,14.5763375,120.9792782,"{""access"": ""no"", ""barrier"": ""jersey_barrier""}",OpenStreetMap contributors,ODbL 1.0
+node/10817191988,,Point,14.5791006,120.9843933,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817191990,,Point,14.5788227,120.9806801,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole"", ""switch"": ""disconnector""}",OpenStreetMap contributors,ODbL 1.0
+node/10817191991,,Point,14.5788001,120.9815138,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817191992,,Point,14.5792312,120.9805064,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817191993,,Point,14.5794464,120.9817725,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817191994,,Point,14.5796935,120.9824818,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817191995,,Point,14.5797925,120.9859735,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817191996,,Point,14.5794658,120.9853443,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817191997,,Point,14.5772936,120.981335,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817191998,,Point,14.5798588,120.979632,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+node/10817192000,,Point,14.580742,120.9813433,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817192001,,Point,14.5815737,120.980858,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817192002,,Point,14.5782985,120.9829054,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817192004,,Point,14.5832198,120.9838131,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230005,,Point,14.579278,120.9786029,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230006,,Point,14.5778973,120.9810687,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230007,,Point,14.5814491,120.9806541,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230008,,Point,14.5796724,120.9812338,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230009,,Point,14.5793645,120.9848821,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230010,,Point,14.5802567,120.9804296,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230012,,Point,14.5809444,120.9816866,"{""location:transition"": ""yes"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230013,,Point,14.5782002,120.9827209,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230014,,Point,14.5777035,120.9811682,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230015,,Point,14.5786255,120.9807576,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230016,,Point,14.5811283,120.9815777,"{""location:transition"": ""yes"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230017,,Point,14.5797236,120.9803014,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230019,,Point,14.5832906,120.9839438,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230020,,Point,14.5776547,120.9811849,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230021,,Point,14.5811904,120.9807913,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230022,,Point,14.5820123,120.9816291,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230023,,Point,14.5792177,120.9846126,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230024,,Point,14.5785817,120.981588,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230025,,Point,14.5788801,120.9839811,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230026,,Point,14.579741,120.9816055,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230027,,Point,14.579263,120.9812452,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230028,,Point,14.5813604,120.9814455,"{""location:transition"": ""yes"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230029,,Point,14.5824176,120.9823444,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230030,,Point,14.5794955,120.9825905,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230031,,Point,14.57926,120.9818769,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230032,,Point,14.5793037,120.9804805,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230033,,Point,14.5780482,120.9824262,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230034,,Point,14.5816384,120.9809673,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230035,,Point,14.5829475,120.9833129,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230037,,Point,14.5795426,120.9809892,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230038,,Point,14.5827525,120.9829359,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230039,,Point,14.5797893,120.9814462,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230040,,Point,14.5797098,120.9814854,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230041,,Point,14.5826705,120.9827905,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230042,,Point,14.5799026,120.9825239,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""substation"", ""substation"": ""distribution"", ""voltage"": ""34500;440""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230044,,Point,14.5787281,120.981883,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230045,,Point,14.5795071,120.9851304,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole"", ""switch"": ""mechanical""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230046,,Point,14.5800917,120.9801166,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230047,,Point,14.5785112,120.983297,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230048,,Point,14.5808004,120.9814569,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230049,,Point,14.5803564,120.982104,"{""location:transition"": ""yes"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230050,,Point,14.5784348,120.9831586,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230051,,Point,14.577966,120.9824799,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230052,,Point,14.5802108,120.9813314,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230053,,Point,14.5783561,120.983011,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230055,,Point,14.5799208,120.9824856,"{""location:transition"": ""yes"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230056,,Point,14.5823014,120.9821373,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230057,,Point,14.5803445,120.9805959,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230059,,Point,14.5807991,120.9818404,"{""location:transition"": ""yes"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230060,,Point,14.5798748,120.9825116,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230061,,Point,14.5784795,120.98219,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230062,,Point,14.580631,120.9811127,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230064,,Point,14.5818579,120.9813574,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230065,,Point,14.5821455,120.9818639,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230066,,Point,14.5797703,120.9859306,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230068,,Point,14.5783156,120.9822804,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230069,,Point,14.5789346,120.981437,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230070,,Point,14.5802496,120.9821651,"{""location:transition"": ""yes"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230071,,Point,14.578253,120.9809089,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230072,,Point,14.5790269,120.9842574,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230073,,Point,14.5788039,120.9820142,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230075,,Point,14.5804657,120.9808185,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230076,,Point,14.5793831,120.9820888,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230077,,Point,14.57988,120.9815227,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230078,,Point,14.5778162,120.9822021,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230079,,Point,14.5799506,120.9823342,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230080,,Point,14.5817712,120.9812102,"{""location:transition"": ""yes"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230081,,Point,14.5794367,120.9788909,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230082,,Point,14.5795935,120.9812759,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230083,,Point,14.5794025,120.9807178,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230084,,Point,14.5794918,120.9816187,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230085,,Point,14.5805322,120.9819973,"{""location:transition"": ""yes"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230086,,Point,14.5782988,120.9812298,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230087,,Point,14.5810656,120.9808651,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230088,,Point,14.5796456,120.9792428,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230089,,Point,14.5784416,120.9814916,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230090,,Point,14.5799336,120.9801975,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230091,,Point,14.579589,120.9855882,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230093,,Point,14.5795212,120.9809468,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230094,,Point,14.5795685,120.982263,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230095,,Point,14.5828988,120.9832093,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230097,,Point,14.5779904,120.9825246,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230098,,Point,14.5795888,120.9852744,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230099,,Point,14.579168,120.9783879,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230100,,Point,14.5815135,120.9813571,"{""location:transition"": ""yes"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230102,,Point,14.5794717,120.9810604,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230103,,Point,14.5799948,120.9799282,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230104,,Point,14.5784935,120.9808055,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230105,,Point,14.5794127,120.9809091,"{""cables"": ""9"", ""circuits"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230106,,Point,14.5787617,120.9837652,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230107,,Point,14.5801732,120.9812127,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230110,,Point,14.5794922,120.9808889,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230111,,Point,14.5792179,120.9817728,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10817230112,,Point,14.5825533,120.9825848,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/10898644809,,Point,14.5833192,120.9831695,"{""access"": ""permissive"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/11283248374,,Point,14.5817748,120.9837098,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/11389870763,,Point,14.5786907,120.9836171,"{""access"": ""permissive"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/11389903370,,Point,14.578605,120.9834578,"{""access"": ""permissive"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/11389903388,,Point,14.5795924,120.98501,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""man_made"": ""flagpole"", ""material"": ""metal"", ""operator"": ""University of the Philippines Manila"", ""operator:type"": ""public"", ""operator:wikidata"": ""Q7896753"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/11389903389,,Point,14.5794509,120.9846157,"{""flag:colour"": ""purple"", ""flag:name"": ""Supreme Court of the Philippines"", ""flag:type"": ""governmental"", ""man_made"": ""flagpole"", ""material"": ""metal"", ""operator"": ""Supreme Court of the Philippines"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q514212"", ""subject"": ""Supreme Court of the Philippines"", ""subject:wikidata"": ""Q514212"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/11389903393,,Point,14.5803536,120.9855612,"{""flag:colour"": ""purple"", ""flag:name"": ""Supreme Court of the Philippines"", ""flag:type"": ""governmental"", ""man_made"": ""flagpole"", ""material"": ""metal"", ""operator"": ""Supreme Court of the Philippines"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q514212"", ""subject"": ""Supreme Court of the Philippines"", ""subject:wikidata"": ""Q514212"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/11389903394,,Point,14.5802978,120.9855947,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""man_made"": ""flagpole"", ""material"": ""metal"", ""operator"": ""Supreme Court of the Philippines"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q514212"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/11389903398,,Point,14.5793224,120.9847207,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""man_made"": ""flagpole"", ""material"": ""metal"", ""operator"": ""Supreme Court of the Philippines"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q514212"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/11472455872,,Point,14.5873583,120.9808269,"{""barrier"": ""kerb"", ""kerb"": ""lowered""}",OpenStreetMap contributors,ODbL 1.0
+node/11472455890,,Point,14.5867718,120.9806551,"{""barrier"": ""kerb"", ""kerb"": ""lowered""}",OpenStreetMap contributors,ODbL 1.0
+node/11524478696,,Point,14.5830117,120.9751986,"{""barrier"": ""kerb"", ""kerb"": ""raised""}",OpenStreetMap contributors,ODbL 1.0
+node/11546812444,,Point,14.5793674,120.9866112,"{""access"": ""permissive"", ""barrier"": ""lift_gate"", ""barrier:personnel"": ""yes"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/11573239141,,Point,14.5883279,120.9855504,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/11573347286,,Point,14.5896905,120.9819139,"{""access"": ""private"", ""barrier"": ""lift_gate"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/11602429002,,Point,14.5863833,120.980663,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/11602429015,,Point,14.5863568,120.9807456,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/11602429167,,Point,14.5829366,120.9751991,"{""barrier"": ""kerb"", ""kerb"": ""flush"", ""wheelchair"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/11602539279,,Point,14.5877144,120.9810437,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/11602539291,,Point,14.5877022,120.9811357,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/11623591351,,Point,14.5813919,120.9871544,"{""access"": ""no"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/11623591356,,Point,14.5816472,120.9866718,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/11623591359,,Point,14.5817166,120.9862363,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/11623642499,,Point,14.5831333,120.9863362,"{""access"": ""private"", ""barrier"": ""lift_gate"", ""barrier:personnel"": ""yes"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/11623642500,,Point,14.5842295,120.9856211,"{""access"": ""private"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/11626297453,,Point,14.5749075,120.9852344,"{""access"": ""permissive"", ""barrier"": ""swing_gate"", ""swing_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/11634867987,,Point,14.5787003,120.9836119,"{""access"": ""permissive"", ""barrier"": ""lift_gate"", ""barrier:personnel"": ""yes"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/11634875651,,Point,14.5769556,120.9824132,"{""access"": ""permissive"", ""amenity"": ""parking_entrance"", ""barrier"": ""gate"", ""barrier:personnel"": ""yes"", ""gate:type"": ""double"", ""parking"": ""rooftop""}",OpenStreetMap contributors,ODbL 1.0
+node/11635011646,,Point,14.5797512,120.9855393,"{""access"": ""private"", ""barrier"": ""lift_gate"", ""barrier:personnel"": ""yes"", ""lift_gate:type"": ""single""}",OpenStreetMap contributors,ODbL 1.0
+node/11731011468,,Point,14.5939949,120.9796549,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""man_made"": ""flagpole"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928""}",OpenStreetMap contributors,ODbL 1.0
+node/11731011869,,Point,14.5954049,120.9782087,"{""access"": ""permissive"", ""barrier"": ""chain""}",OpenStreetMap contributors,ODbL 1.0
+node/11739050914,,Point,14.5903038,120.9843315,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/11739050920,,Point,14.5902279,120.984033,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/11739180199,,Point,14.5831748,120.9867979,"{""barrier"": ""height_restrictor"", ""maxheight"": ""4.21""}",OpenStreetMap contributors,ODbL 1.0
+node/11751707428,,Point,14.5774514,120.9880303,"{""access"": ""destination"", ""barrier"": ""gate"", ""barrier:personnel"": ""additional""}",OpenStreetMap contributors,ODbL 1.0
+node/11892399814,,Point,14.5905577,120.9842795,"{""channel"": ""15"", ""communication:television"": ""isdb-t"", ""frequency"": ""479.143 MHz"", ""man_made"": ""tower"", ""network"": ""GMA Network"", ""network:wikidata"": ""Q399643"", ""operator"": ""GMA Network, Inc."", ""operator:wikidata"": ""Q15548065"", ""tower:construction"": ""lattice"", ""tower:type"": ""communication"", ""wikidata"": ""Q3543528"", ""wikipedia"": ""en:DZBB-TV""}",OpenStreetMap contributors,ODbL 1.0
+node/11956077250,,Point,14.5761062,120.9798371,"{""barrier"": ""lift_gate""}",OpenStreetMap contributors,ODbL 1.0
+node/11956212371,,Point,14.5758219,120.983147,"{""barrier"": ""lift_gate""}",OpenStreetMap contributors,ODbL 1.0
+node/11956400196,,Point,14.5823612,120.9739998,"{""barrier"": ""lift_gate""}",OpenStreetMap contributors,ODbL 1.0
+node/11956400197,,Point,14.5824876,120.9744882,"{""barrier"": ""chain""}",OpenStreetMap contributors,ODbL 1.0
+node/11956572614,,Point,14.5840279,120.9801932,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/11956572615,,Point,14.5833021,120.9805956,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12009988124,,Point,14.5849534,120.9835465,"{""access"": ""private"", ""barrier"": ""lift_gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12009988127,,Point,14.5838972,120.9847906,"{""access"": ""permissive"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12009988134,,Point,14.5842601,120.9854256,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12010035954,,Point,14.5932622,120.9817572,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12010035955,,Point,14.592801,120.9819275,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12010035956,,Point,14.5923524,120.9820467,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12010178393,,Point,14.5839896,120.9774141,"{""access"": ""no"", ""barrier"": ""jersey_barrier""}",OpenStreetMap contributors,ODbL 1.0
+node/12010299411,,Point,14.575582,120.9868869,"{""access"": ""destination"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12046425235,,Point,14.5819768,120.9809626,"{""barrier"": ""kerb"", ""wheelchair"": ""no""}",OpenStreetMap contributors,ODbL 1.0
+node/12092773813,,Point,14.5796134,120.9856524,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12092773818,,Point,14.5794035,120.985244,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12092773819,,Point,14.5792678,120.9849801,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12092773837,,Point,14.5789675,120.984396,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12092773839,,Point,14.5787462,120.9839655,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12092784593,,Point,14.5828504,120.9752467,"{""barrier"": ""kerb"", ""kerb"": ""flush"", ""supervised"": ""no"", ""wheelchair"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/12092784594,,Point,14.5826796,120.975317,"{""barrier"": ""bollard"", ""kerb"": ""flush"", ""wheelchair"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/12092784595,,Point,14.5826689,120.9756418,"{""barrier"": ""kerb"", ""kerb"": ""flush"", ""wheelchair"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/12092784596,,Point,14.5827383,120.9757761,"{""barrier"": ""kerb"", ""kerb"": ""flush"", ""wheelchair"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/12092784597,,Point,14.5825734,120.9754568,"{""barrier"": ""bollard"", ""kerb"": ""flush"", ""wheelchair"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/12117601549,,Point,14.5812188,120.9795503,"{""man_made"": ""street_cabinet""}",OpenStreetMap contributors,ODbL 1.0
+node/12392858411,,Point,14.5805025,120.9730453,"{""access"": ""permit"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12392858428,,Point,14.5796421,120.9729885,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12394970828,,Point,14.5802722,120.9729961,"{""access"": ""permit"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12673199742,,Point,14.5804175,120.9868688,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""location"": ""overhead"", ""man_made"": ""flagpole"", ""material"": ""metal"", ""operator"": ""Girl Scouts of the Philippines"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q5564427"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/12683935539,,Point,14.5785289,120.9816498,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/12992918442,,Point,14.5814013,120.9737842,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13135604170,,Point,14.5736719,120.9823318,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13135604178,,Point,14.573868,120.9820151,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13135854093,,Point,14.578275,120.9893042,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13135880801,,Point,14.5782776,120.9828079,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13136363502,,Point,14.5828696,120.9854431,"{""access"": ""permissive"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13136363528,,Point,14.5849514,120.983542,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13136363535,,Point,14.5794165,120.9816425,"{""access"": ""permissive"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13138023572,,Point,14.593616,120.9812079,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13138023573,,Point,14.5934641,120.9812582,"{""access"": ""permissive"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13138023580,,Point,14.590457,120.9845803,"{""access"": ""permissive"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13138023582,,Point,14.5896835,120.9842683,"{""access"": ""permissive"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13138023585,,Point,14.5882818,120.9853969,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13138023588,,Point,14.587999,120.9822079,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13139374744,,Point,14.5867537,120.9807175,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13139374745,,Point,14.5873435,120.9808861,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13308648994,,Point,14.5944767,120.98242,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+node/13313760405,,Point,14.5865452,120.9856584,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13313800999,,Point,14.5852376,120.9860748,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13314389957,,Point,14.5865589,120.9871336,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13314764265,,Point,14.5792729,120.9750312,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13315524279,,Point,14.5811288,120.9735074,"{""access"": ""permissive"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13315524280,,Point,14.5810556,120.9735556,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13315524289,,Point,14.5794811,120.974491,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13315636328,,Point,14.5795434,120.9808989,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13316794081,,Point,14.5789607,120.9774556,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13316794084,,Point,14.5793769,120.9772055,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13318058375,,Point,14.5815829,120.9764668,"{""barrier"": ""kerb"", ""kerb"": ""lowered""}",OpenStreetMap contributors,ODbL 1.0
+node/13318058389,,Point,14.5802019,120.9772832,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13319968665,,Point,14.585002,120.9794254,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13320475630,,Point,14.583532,120.9746857,"{""access"": ""no"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13320475633,,Point,14.5831093,120.9749292,"{""access"": ""no"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13320493817,,Point,14.582661,120.9744232,"{""barrier"": ""bollard""}",OpenStreetMap contributors,ODbL 1.0
+node/13320493818,,Point,14.5825113,120.9741482,"{""barrier"": ""bollard""}",OpenStreetMap contributors,ODbL 1.0
+node/13327937390,,Point,14.5888282,120.984849,"{""access"": ""permissive"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13327950689,,Point,14.5839839,120.9840437,"{""barrier"": ""lift_gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13328232324,,Point,14.5838862,120.9799362,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13328232325,,Point,14.5831647,120.9803398,"{""access"": ""permissive"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13329473725,,Point,14.5812615,120.987141,"{""access"": ""permissive"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13329921606,,Point,14.5750433,120.9819607,"{""barrier"": ""lift_gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13329921607,,Point,14.5750277,120.9819693,"{""access"": ""permissive"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13329921610,,Point,14.5750975,120.9814154,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13329921624,,Point,14.5795128,120.9889814,"{""access"": ""permissive"", ""barrier"": ""chain""}",OpenStreetMap contributors,ODbL 1.0
+node/13329921640,,Point,14.5769416,120.9823877,"{""access"": ""permissive"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13334360572,,Point,14.5878445,120.9811546,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13348779708,,Point,14.5905773,120.9809542,"{""man_made"": ""planter""}",OpenStreetMap contributors,ODbL 1.0
+node/13348779709,,Point,14.5905317,120.9809853,"{""man_made"": ""planter""}",OpenStreetMap contributors,ODbL 1.0
+node/13348779710,,Point,14.5905848,120.9809828,"{""man_made"": ""planter""}",OpenStreetMap contributors,ODbL 1.0
+node/13351498382,,Point,14.5883687,120.9820452,"{""barrier"": ""bollard""}",OpenStreetMap contributors,ODbL 1.0
+node/13351498383,,Point,14.5878168,120.9819148,"{""barrier"": ""bollard""}",OpenStreetMap contributors,ODbL 1.0
+node/13351498384,,Point,14.5883146,120.9816354,"{""barrier"": ""bollard""}",OpenStreetMap contributors,ODbL 1.0
+node/13354147232,,Point,14.5849019,120.9811357,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13354337740,,Point,14.5814432,120.976546,"{""barrier"": ""kerb"", ""kerb"": ""lowered""}",OpenStreetMap contributors,ODbL 1.0
+node/13354337741,,Point,14.5813774,120.9764262,"{""barrier"": ""kerb"", ""kerb"": ""lowered""}",OpenStreetMap contributors,ODbL 1.0
+node/13354337742,,Point,14.5812679,120.9762266,"{""barrier"": ""kerb"", ""kerb"": ""lowered""}",OpenStreetMap contributors,ODbL 1.0
+node/13354337743,,Point,14.5814057,120.9761439,"{""barrier"": ""kerb"", ""kerb"": ""lowered""}",OpenStreetMap contributors,ODbL 1.0
+node/13354337744,,Point,14.5813344,120.9763478,"{""barrier"": ""kerb"", ""kerb"": ""lowered""}",OpenStreetMap contributors,ODbL 1.0
+node/13354337745,,Point,14.5814738,120.9762681,"{""barrier"": ""kerb"", ""kerb"": ""lowered""}",OpenStreetMap contributors,ODbL 1.0
+node/13354337746,,Point,14.5815162,120.9763453,"{""barrier"": ""kerb"", ""kerb"": ""lowered""}",OpenStreetMap contributors,ODbL 1.0
+node/13354337750,,Point,14.5813571,120.9763893,"{""barrier"": ""bollard"", ""crossing:island"": ""yes"", ""wheelchair"": ""limited""}",OpenStreetMap contributors,ODbL 1.0
+node/13368345848,,Point,14.5829369,120.9757666,"{""barrier"": ""kerb"", ""kerb"": ""raised""}",OpenStreetMap contributors,ODbL 1.0
+node/13368345855,,Point,14.5828028,120.9752762,"{""barrier"": ""kerb"", ""kerb"": ""flush"", ""supervised"": ""no"", ""wheelchair"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/13368345856,,Point,14.5831062,120.9753745,"{""barrier"": ""kerb"", ""kerb"": ""raised""}",OpenStreetMap contributors,ODbL 1.0
+node/13368345860,,Point,14.5826363,120.9755786,"{""barrier"": ""kerb"", ""kerb"": ""flush"", ""wheelchair"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+node/13370019756,,Point,14.5833954,120.9766637,"{""access"": ""permissive"", ""barrier"": ""gate"", ""gate:type"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+node/13370019757,,Point,14.5834177,120.9766504,"{""barrier"": ""kerb"", ""kerb"": ""flush""}",OpenStreetMap contributors,ODbL 1.0
+node/13414315044,,Point,14.589984,120.9852428,"{""barrier"": ""wicket_gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13414315071,,Point,14.5900811,120.9853639,"{""amenity"": ""vending_machine"", ""man_made"": ""fuel_pump"", ""vending"": ""fuel""}",OpenStreetMap contributors,ODbL 1.0
+node/13414315072,,Point,14.5898583,120.9852167,"{""amenity"": ""vending_machine"", ""man_made"": ""fuel_pump"", ""vending"": ""fuel""}",OpenStreetMap contributors,ODbL 1.0
+node/13414323002,,Point,14.589604,120.9853539,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13414323044,,Point,14.5886856,120.9864661,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13414323058,,Point,14.5891517,120.9858898,"{""barrier"": ""wicket_gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13415310490,,Point,14.5882315,120.9855353,"{""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/13420291530,,Point,14.5863021,120.9830411,"{""barrier"": ""wicket_gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13420304120,,Point,14.5865733,120.9829481,"{""barrier"": ""wicket_gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13420304131,,Point,14.5864513,120.9827609,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""lit"": ""yes"", ""man_made"": ""flagpole"", ""operator"": ""Department of Budget and Management"", ""operator:type"": ""government"", ""operator:wikidata"": ""Q3545668"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/13420304147,,Point,14.5864081,120.9826373,"{""man_made"": ""utility_pole""}",OpenStreetMap contributors,ODbL 1.0
+node/13420304149,,Point,14.5867808,120.9824362,"{""man_made"": ""utility_pole""}",OpenStreetMap contributors,ODbL 1.0
+node/13420304152,,Point,14.5859999,120.9828811,"{""man_made"": ""utility_pole""}",OpenStreetMap contributors,ODbL 1.0
+node/13420304164,,Point,14.5862817,120.9830265,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13420304166,,Point,14.5861461,120.9828788,"{""man_made"": ""utility_pole""}",OpenStreetMap contributors,ODbL 1.0
+node/13420304170,,Point,14.5867282,120.9833326,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13433986250,,Point,14.5850079,120.983486,"{""access"": ""private"", ""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+node/13587948753,,Point,14.5806891,120.9882414,"{""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""location"": ""overground"", ""man_made"": ""flagpole"", ""material"": ""metal"", ""operator"": ""Bureau of Fire Protection"", ""operator:type"": ""public"", ""operator:wikidata"": ""Q17027200"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928""}",OpenStreetMap contributors,ODbL 1.0
+node/13894094308,,Point,14.5936057,120.9801973,"{""barrier"": ""gate"", ""material"": ""metal""}",OpenStreetMap contributors,ODbL 1.0
+node/13894094392,,Point,14.5946685,120.9811119,"{""barrier"": ""gate"", ""material"": ""metal""}",OpenStreetMap contributors,ODbL 1.0
+node/13894094418,,Point,14.5944314,120.9806403,"{""barrier"": ""bollard""}",OpenStreetMap contributors,ODbL 1.0
+node/14148245605,,Point,14.5950414,120.9792506,"{""barrier"": ""kerb"", ""kerb"": ""raised""}",OpenStreetMap contributors,ODbL 1.0
+node/14148245606,,Point,14.5951349,120.9792208,"{""barrier"": ""kerb"", ""kerb"": ""raised""}",OpenStreetMap contributors,ODbL 1.0
+node/14148245607,,Point,14.5950261,120.9792554,"{""barrier"": ""kerb"", ""kerb"": ""raised""}",OpenStreetMap contributors,ODbL 1.0
+node/14148245608,,Point,14.5949509,120.9792793,"{""barrier"": ""kerb"", ""kerb"": ""raised""}",OpenStreetMap contributors,ODbL 1.0
+node/14250372614,,Point,14.5844182,120.9878566,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250372620,,Point,14.5883918,120.9848268,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250372621,,Point,14.5873771,120.9852743,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250372622,,Point,14.5864924,120.9856621,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250372623,,Point,14.5861694,120.9857989,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250372624,,Point,14.5858644,120.9859394,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250372625,,Point,14.585295,120.9862017,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250372626,,Point,14.5849494,120.9863572,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250372627,,Point,14.5842878,120.986644,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250372628,,Point,14.5841875,120.9866881,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551652,,Point,14.5786983,120.9920289,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551654,,Point,14.5782169,120.9891715,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551655,,Point,14.5781718,120.9891034,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551656,,Point,14.5782492,120.9890378,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551665,,Point,14.5786247,120.9895089,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551666,,Point,14.5790106,120.9892816,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551667,,Point,14.5814503,120.9877642,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551668,,Point,14.5828864,120.9871413,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551669,,Point,14.583389,120.9869309,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551670,,Point,14.5840618,120.9866132,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551671,,Point,14.5845297,120.9864047,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551672,,Point,14.5858143,120.9858418,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551673,,Point,14.5867132,120.9854267,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551674,,Point,14.588093,120.984841,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551675,,Point,14.5890291,120.9847084,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551676,,Point,14.5892352,120.9848572,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+node/14250551678,,Point,14.5903398,120.985232,"{""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""pole""}",OpenStreetMap contributors,ODbL 1.0
+way/4940732,,LineString,14.5824377,120.9785436,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/16554364,,LineString,14.5803926,120.9857005,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/27323169,Estero de Balete,LineString,14.586288,120.9852893,"{""boat"": ""no"", ""name"": ""Estero de Balete"", ""waterway"": ""river""}",OpenStreetMap contributors,ODbL 1.0
+way/28395504,University of the Philippines Manila,Polygon,14.5759437,120.98647332244963,"{""addr:city"": ""Manila"", ""addr:province"": ""Metro Manila"", ""amenity"": ""university"", ""barrier"": ""fence"", ""name"": ""University of the Philippines Manila"", ""wikidata"": ""Q7896753"", ""wikipedia"": ""en:University of the Philippines Manila""}",OpenStreetMap contributors,ODbL 1.0
+way/30268900,,LineString,14.5773349,120.9783483,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/50711510,,Polygon,14.58678015,120.98640658304873,"{""natural"": ""water"", ""water"": ""river""}",OpenStreetMap contributors,ODbL 1.0
+way/89383961,,LineString,14.5869369,120.9807429,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/89542259,,LineString,14.5845973,120.9799796,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/90125781,Ermita Substation,Polygon,14.57974045,120.98082713706464,"{""name"": ""Ermita Substation"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""substation"", ""substation"": ""distribution"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+way/90144041,,LineString,14.5796153,120.9853111,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/90148237,,LineString,14.5794362,120.9827784,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/90316401,Philippine General Hospital,Polygon,14.577771,120.9857068955966,"{""addr:city"": ""Manila"", ""addr:postcode"": ""1000"", ""addr:province"": ""Metro Manila"", ""addr:street"": ""Taft Avenue"", ""amenity"": ""hospital"", ""barrier"": ""fence"", ""contact:phone"": ""+63 2 3450 0188"", ""healthcare"": ""hospital"", ""healthcare:speciality"": ""general;covid19"", ""name"": ""Philippine General Hospital"", ""name:en"": ""Philippine General Hospital"", ""name:es"": ""Hospital General de Filipinas"", ""name:fil"": ""Ospital Heneral ng Pilipinas"", ""name:tl"": ""Ospital Heneral ng Pilipinas"", ""operator"": ""University of the Philippines Manila"", ""operator:type"": ""public"", ""specialized_education"": ""special_needs"", ""website"": ""https://www.pgh.gov.ph/"", ""wikidata"": ""Q775409"", ""wikipedia"": ""en:Philippine General Hospital""}",OpenStreetMap contributors,ODbL 1.0
+way/91233716,,LineString,14.5858657,120.9859728,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/91233717,,LineString,14.5856515,120.9858947,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/92005585,,LineString,14.5951122,120.9790456,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/128969945,Escoda — Tutuban,LineString,14.5904789,120.9820311,"{""cables"": ""3"", ""circuits"": ""1"", ""name"": ""Escoda — Tutuban"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""operator:wikipedia"": ""en:Meralco"", ""power"": ""line"", ""source"": ""Bing"", ""voltage"": ""115000"", ""wires"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+way/156307461,,LineString,14.5789235,120.9840502,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/156307485,,LineString,14.5809884,120.9841535,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/156307595,,LineString,14.5810427,120.9823875,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""metal""}",OpenStreetMap contributors,ODbL 1.0
+way/220711614,,LineString,14.5788474,120.9839086,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/220711618,,LineString,14.5807479,120.9838239,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/220711620,,LineString,14.5813039,120.9851111,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/220711621,,LineString,14.5814383,120.9850363,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/220711623,,LineString,14.5797949,120.9837897,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/220711624,,LineString,14.5817748,120.9837098,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/220711625,,LineString,14.5801789,120.9841388,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/220711634,,LineString,14.5799876,120.983989,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/220711639,,LineString,14.5792578,120.9832081,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/220713559,,LineString,14.5801789,120.9841388,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/220713560,,LineString,14.5798705,120.9840541,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/244384574,,Polygon,14.57919935,120.99083434847704,"{""barrier"": ""fence"", ""landuse"": ""garages""}",OpenStreetMap contributors,ODbL 1.0
+way/314226129,Chinese Garden Pond,Polygon,14.5831402,120.97734141519337,"{""name"": ""Chinese Garden Pond"", ""natural"": ""water"", ""water"": ""pond""}",OpenStreetMap contributors,ODbL 1.0
+way/314226130,,Polygon,14.5824742,120.97712542003637,"{""natural"": ""water"", ""water"": ""pond""}",OpenStreetMap contributors,ODbL 1.0
+way/314226131,,Polygon,14.582308950000002,120.97693753399089,"{""natural"": ""water"", ""water"": ""pond""}",OpenStreetMap contributors,ODbL 1.0
+way/414893018,,LineString,14.5943774,120.9802442,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/489590978,,LineString,14.5836069,120.9844487,"{""cables"": ""3"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""13200""}",OpenStreetMap contributors,ODbL 1.0
+way/489590979,,LineString,14.5837224,120.9841984,"{""cables"": ""6"", ""circuits"": ""2"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+way/541686694,,Polygon,14.584679300000001,120.97957655532616,"{""natural"": ""water"", ""water"": ""pond""}",OpenStreetMap contributors,ODbL 1.0
+way/562685962,,LineString,14.5826238,120.9786997,"{""man_made"": ""pipeline"", ""seamark:pipeline_submarine:category"": ""water""}",OpenStreetMap contributors,ODbL 1.0
+way/562685963,,LineString,14.5828296,120.9788428,"{""man_made"": ""pipeline"", ""seamark:pipeline_submarine:category"": ""water""}",OpenStreetMap contributors,ODbL 1.0
+way/562685964,,LineString,14.582817,120.9788526,"{""man_made"": ""pipeline"", ""seamark:pipeline_submarine:category"": ""water""}",OpenStreetMap contributors,ODbL 1.0
+way/562685965,,LineString,14.5830036,120.9791531,"{""man_made"": ""pipeline"", ""seamark:pipeline_submarine:category"": ""water""}",OpenStreetMap contributors,ODbL 1.0
+way/562685966,,LineString,14.5827025,120.9787423,"{""man_made"": ""pipeline"", ""seamark:pipeline_submarine:category"": ""water""}",OpenStreetMap contributors,ODbL 1.0
+way/562685967,,LineString,14.5829495,120.9789494,"{""man_made"": ""pipeline"", ""seamark:pipeline_submarine:category"": ""water""}",OpenStreetMap contributors,ODbL 1.0
+way/562685968,,LineString,14.5827283,120.9786785,"{""man_made"": ""pipeline"", ""seamark:pipeline_submarine:category"": ""water""}",OpenStreetMap contributors,ODbL 1.0
+way/575422167,,LineString,14.5807479,120.9838239,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/630382541,,LineString,14.5784726,120.9770484,"{""admin_level"": ""10"", ""barrier"": ""wall"", ""boundary"": ""administrative"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/655512562,Chinese Garden,Polygon,14.5832747,120.97761879273115,"{""barrier"": ""fence"", ""leisure"": ""garden"", ""name"": ""Chinese Garden""}",OpenStreetMap contributors,ODbL 1.0
+way/656406017,Diorama of the Martyrdom of Dr. José Rizal,Polygon,14.5828147,120.97670149040317,"{""barrier"": ""fence"", ""historic"": ""memorial"", ""memorial"": ""statue"", ""name"": ""Diorama of the Martyrdom of Dr. José Rizal"", ""subject:wikidata"": ""Q137799337"", ""subject:wikipedia"": ""en:Trial and execution of José Rizal""}",OpenStreetMap contributors,ODbL 1.0
+way/659263219,Paco — Tegen (line 2),LineString,14.5861694,120.9857989,"{""cables"": ""3"", ""name"": ""Paco — Tegen (line 2)"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""line"", ""voltage"": ""115000"", ""wires"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+way/659263220,,LineString,14.5751288,120.9923485,"{""man_made"": ""guy_wire""}",OpenStreetMap contributors,ODbL 1.0
+way/659263221,,LineString,14.5901137,120.9858565,"{""man_made"": ""guy_wire""}",OpenStreetMap contributors,ODbL 1.0
+way/659263222,Paco-Tegen 115 kV line 2,LineString,14.5827424,120.9896556,"{""cables"": ""3"", ""name"": ""Paco-Tegen 115 kV line 2"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""line"", ""voltage"": ""115000"", ""wires"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+way/720742680,Japanese Garden,Polygon,14.5840659,120.97919935937264,"{""barrier"": ""fence"", ""leisure"": ""garden"", ""name"": ""Japanese Garden"", ""wikidata"": ""Q140461316""}",OpenStreetMap contributors,ODbL 1.0
+way/722389193,,LineString,14.5838154,120.978627,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/722389194,,LineString,14.5833599,120.9788403,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/722389196,,LineString,14.5840276,120.9788636,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/722396132,,LineString,14.5845162,120.9786061,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/722639602,,LineString,14.5831299,120.9784089,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/742140446,Jones Bridge,Polygon,14.5958249,120.97731386838348,"{""bridge:structure"": ""humpback"", ""layer"": ""2"", ""man_made"": ""bridge"", ""name"": ""Jones Bridge"", ""tourism"": ""yes"", ""wikidata"": ""Q6275142""}",OpenStreetMap contributors,ODbL 1.0
+way/809323016,,Polygon,14.5731047,120.98997911004173,"{""bridge"": ""viaduct"", ""layer"": ""1"", ""man_made"": ""bridge""}",OpenStreetMap contributors,ODbL 1.0
+way/809323017,,Polygon,14.5787759,120.9867552480883,"{""bridge"": ""viaduct"", ""layer"": ""1"", ""man_made"": ""bridge""}",OpenStreetMap contributors,ODbL 1.0
+way/809323019,,Polygon,14.595174100000001,120.98089089099872,"{""layer"": ""1"", ""man_made"": ""bridge""}",OpenStreetMap contributors,ODbL 1.0
+way/809323032,,Polygon,14.5875814,120.98199052589898,"{""layer"": ""1"", ""man_made"": ""bridge""}",OpenStreetMap contributors,ODbL 1.0
+way/816715134,MacArthur Bridge,Polygon,14.5969306,120.98042518296997,"{""layer"": ""1"", ""man_made"": ""bridge"", ""maxweight"": ""20"", ""name"": ""MacArthur Bridge"", ""start_date"": ""1952"", ""wikidata"": ""Q25203997"", ""wikimedia_commons"": ""Category:MacArthur Bridge (Manila)"", ""wikipedia"": ""en:MacArthur Bridge (Manila)""}",OpenStreetMap contributors,ODbL 1.0
+way/818631739,,Polygon,14.58275755,120.98424515503496,"{""layer"": ""1"", ""man_made"": ""bridge""}",OpenStreetMap contributors,ODbL 1.0
+way/818768625,,LineString,14.5822186,120.9845644,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/823277744,,LineString,14.5815702,120.9833428,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/824018832,,Polygon,14.57885495,120.9798519160191,"{""building"": ""yes"", ""man_made"": ""tower"", ""tower:type"": ""bell_tower""}",OpenStreetMap contributors,ODbL 1.0
+way/824397150,Falcon Bridge,Polygon,14.58665355,120.9863144518509,"{""layer"": ""1"", ""man_made"": ""bridge"", ""name"": ""Falcon Bridge""}",OpenStreetMap contributors,ODbL 1.0
+way/849764942,,LineString,14.5754483,120.9786447,"{""admin_level"": ""10"", ""barrier"": ""retaining_wall"", ""boundary"": ""administrative"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/851332132,,LineString,14.5755351,120.9793356,"{""admin_level"": ""10"", ""barrier"": ""wall"", ""boundary"": ""administrative"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/879137748,Rizal Park Flag Pole,Polygon,14.5815558,120.97659156165048,"{""alt_name"": ""Independence Flag Pole"", ""country"": ""PH"", ""flag:name"": ""Philippines"", ""flag:type"": ""national"", ""flag:wikidata"": ""Q134627"", ""height"": ""45.72"", ""lit"": ""yes"", ""man_made"": ""flagpole"", ""material"": ""steel"", ""name"": ""Rizal Park Flag Pole"", ""name:en"": ""Rizal Park Flag Pole"", ""operator"": ""National Parks Development Committee"", ""operator:type"": ""government"", ""subject"": ""Philippines"", ""subject:wikidata"": ""Q928"", ""support"": ""pole"", ""tourism"": ""attraction"", ""wikidata"": ""Q25038909"", ""wikimedia_commons"": ""Category:Independence Flagpole"", ""wikipedia"": ""en:Independence Flagpole""}",OpenStreetMap contributors,ODbL 1.0
+way/879137752,,Polygon,14.5816746,120.97709785,"{""area"": ""yes"", ""barrier"": ""hedge""}",OpenStreetMap contributors,ODbL 1.0
+way/879137753,,Polygon,14.58192695,120.97695048838236,"{""area"": ""yes"", ""barrier"": ""hedge""}",OpenStreetMap contributors,ODbL 1.0
+way/879137754,,Polygon,14.58182025,120.97692602960527,"{""area"": ""yes"", ""barrier"": ""hedge""}",OpenStreetMap contributors,ODbL 1.0
+way/879137755,,Polygon,14.58177165,120.97712604082278,"{""area"": ""yes"", ""barrier"": ""hedge""}",OpenStreetMap contributors,ODbL 1.0
+way/879137756,,Polygon,14.58189505,120.97706027151663,"{""area"": ""yes"", ""barrier"": ""hedge""}",OpenStreetMap contributors,ODbL 1.0
+way/879137757,,Polygon,14.581702700000001,120.97699496458333,"{""area"": ""yes"", ""barrier"": ""hedge""}",OpenStreetMap contributors,ODbL 1.0
+way/922050399,,LineString,14.5958099,120.978424,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/922050400,,LineString,14.5956185,120.9801362,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1017269729,,LineString,14.579251,120.98466,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1017269730,,LineString,14.579538,120.9843059,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/1017269731,,LineString,14.579923,120.9846685,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/1017269732,,LineString,14.578605,120.9834578,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1064090494,,LineString,14.578633,120.9776057,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/1076793609,,LineString,14.5954922,120.9797203,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1076793617,,LineString,14.5950987,120.978521,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1081204560,,LineString,14.5960357,120.9797543,"{""barrier"": ""yes""}",OpenStreetMap contributors,ODbL 1.0
+way/1081204562,,LineString,14.5955161,120.9797995,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1144826048,Ayala Bridge,Polygon,14.591418350000001,120.98654901201807,"{""bridge:structure"": ""truss"", ""layer"": ""1"", ""man_made"": ""bridge"", ""material"": ""steel"", ""name"": ""Ayala Bridge"", ""name:en"": ""Ayala Bridge"", ""name:es"": ""Puente Ayala"", ""name:tl"": ""Tulay ng Ayala"", ""wikidata"": ""Q12961833"", ""wikimedia_commons"": ""Category:Ayala Bridge"", ""wikipedia"": ""en:Ayala Bridge""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135854,,LineString,14.5779904,120.9825246,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135855,,LineString,14.5809444,120.9816866,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135856,,LineString,14.5795685,120.982263,"{""cables"": ""9"", ""circuits"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500;4160;4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135857,,LineString,14.5787617,120.9837652,"{""cables"": ""9"", ""circuits"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500;34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135858,,LineString,14.5799506,120.9823342,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135859,,LineString,14.5794025,120.9807178,"{""cables"": ""9"", ""circuits"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135860,,LineString,14.578253,120.9809089,"{""cables"": ""9"", ""circuits"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500;4160;4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135861,,LineString,14.5795935,120.9812759,"{""cables"": ""9"", ""circuits"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500;4160;4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135862,,LineString,14.580631,120.9811127,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135863,,LineString,14.5818579,120.9813574,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""ref"": ""455"", ""voltage"": ""34500""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135864,,LineString,14.5808004,120.9814569,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""ref"": ""455"", ""voltage"": ""34500""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135865,,LineString,14.579589,120.9855882,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135866,,LineString,14.5797098,120.9814854,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135867,,LineString,14.5794918,120.9816187,"{""cables"": ""12"", ""circuits"": ""4"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500;34500;4160;4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135868,,LineString,14.5794464,120.9817725,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135869,,LineString,14.5794127,120.9809091,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135870,,LineString,14.5798748,120.9825116,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""ref"": ""455"", ""voltage"": ""34500""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135871,,LineString,14.5794658,120.9853443,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135872,,LineString,14.5788039,120.9820142,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135873,,LineString,14.5793404,120.9807487,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135874,,LineString,14.5792744,120.9828379,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""ref"": ""455"", ""voltage"": ""34500""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135875,,LineString,14.5798588,120.979632,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135876,,LineString,14.5794918,120.9816187,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135877,,LineString,14.5782002,120.9827209,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135878,,LineString,14.5789346,120.981437,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135879,,LineString,14.5797236,120.9803014,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135880,,LineString,14.5817712,120.9812102,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135881,,LineString,14.5780482,120.9824262,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135882,,LineString,14.5815737,120.980858,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135883,,LineString,14.5796724,120.9812338,"{""cables"": ""9"", ""circuits"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500;4160;4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135884,,LineString,14.5829475,120.9833129,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135885,,LineString,14.5787281,120.981883,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135886,,LineString,14.57926,120.9818769,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135887,,LineString,14.5801732,120.9812127,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135888,,LineString,14.5794955,120.9825905,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135889,,LineString,14.5778162,120.9822021,"{""cables"": ""3"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135890,,LineString,14.5823014,120.9821373,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1163135891,,LineString,14.5795071,120.9851304,"{""cables"": ""6"", ""circuits"": ""2"", ""frequency"": ""60"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""minor_line"", ""voltage"": ""34500;4160""}",OpenStreetMap contributors,ODbL 1.0
+way/1248149916,,Polygon,14.58752645,120.98094837387683,"{""natural"": ""water"", ""water"": ""fountain""}",OpenStreetMap contributors,ODbL 1.0
+way/1248149917,,Polygon,14.586566900000001,120.98067127616723,"{""natural"": ""water"", ""water"": ""fountain""}",OpenStreetMap contributors,ODbL 1.0
+way/1251686704,,LineString,14.5796555,120.9853831,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1278496643,,LineString,14.577529,120.9782363,"{""barrier"": ""wall"", ""height"": ""3"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/1288857329,,LineString,14.5815221,120.9799579,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1288857330,,LineString,14.5811406,120.9793098,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1288857331,,LineString,14.5810913,120.9792213,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1337839638,,LineString,14.5959553,120.9784561,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1339961359,,Polygon,14.5792456,120.97350756097978,"{""natural"": ""water"", ""water"": ""pond""}",OpenStreetMap contributors,ODbL 1.0
+way/1369560108,,LineString,14.5814011,120.982708,"{""barrier"": ""jersey_barrier""}",OpenStreetMap contributors,ODbL 1.0
+way/1369560109,,LineString,14.5816788,120.9832306,"{""barrier"": ""jersey_barrier""}",OpenStreetMap contributors,ODbL 1.0
+way/1369560110,,LineString,14.5820166,120.9838573,"{""barrier"": ""jersey_barrier""}",OpenStreetMap contributors,ODbL 1.0
+way/1369560111,,LineString,14.5823608,120.9845269,"{""barrier"": ""jersey_barrier""}",OpenStreetMap contributors,ODbL 1.0
+way/1369560112,,LineString,14.5808799,120.981739,"{""barrier"": ""jersey_barrier""}",OpenStreetMap contributors,ODbL 1.0
+way/1369560113,,LineString,14.580793,120.9815788,"{""barrier"": ""jersey_barrier""}",OpenStreetMap contributors,ODbL 1.0
+way/1451118574,,Polygon,14.59596235,120.9784113973478,"{""area"": ""yes"", ""man_made"": ""pier""}",OpenStreetMap contributors,ODbL 1.0
+way/1451118575,,Polygon,14.59576585,120.97823649772775,"{""area"": ""yes"", ""man_made"": ""pier""}",OpenStreetMap contributors,ODbL 1.0
+way/1451780771,,LineString,14.5792729,120.9750312,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1451849810,,LineString,14.5788078,120.9747971,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1451849812,,LineString,14.5806942,120.973836,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1452030628,,Polygon,14.584316699999999,120.97912746063267,"{""natural"": ""water"", ""water"": ""pond""}",OpenStreetMap contributors,ODbL 1.0
+way/1452193578,,LineString,14.5799961,120.9774076,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1452193583,,LineString,14.5814432,120.976546,"{""barrier"": ""chain""}",OpenStreetMap contributors,ODbL 1.0
+way/1452193584,,LineString,14.5804897,120.9778489,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1452193585,,LineString,14.5808579,120.9787939,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1452431282,,LineString,14.5849644,120.9793282,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1453745222,,LineString,14.5875999,120.9811057,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1453745223,,LineString,14.5870735,120.9808013,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1453745224,,LineString,14.5873555,120.9809318,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1453745225,,LineString,14.5876827,120.9810219,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1453745226,,LineString,14.5867231,120.9807471,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1453745227,,LineString,14.5867231,120.9807471,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1456105041,,LineString,14.5848534,120.9810268,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1457823831,,LineString,14.5831246,120.9803624,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1457823832,,LineString,14.5832126,120.9803109,"{""barrier"": ""kerb""}",OpenStreetMap contributors,ODbL 1.0
+way/1457823833,,LineString,14.5838437,120.9799438,"{""barrier"": ""kerb""}",OpenStreetMap contributors,ODbL 1.0
+way/1457823834,,LineString,14.5838862,120.9799362,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1457823835,,LineString,14.5839386,120.9799061,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1457823838,,LineString,14.5839897,120.9802213,"{""barrier"": ""hedge""}",OpenStreetMap contributors,ODbL 1.0
+way/1457823839,,LineString,14.5840279,120.9801932,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1457823844,,LineString,14.5833021,120.9805956,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1457831095,,LineString,14.5813841,120.9761565,"{""barrier"": ""chain""}",OpenStreetMap contributors,ODbL 1.0
+way/1457831096,,LineString,14.5817007,120.9759689,"{""barrier"": ""chain""}",OpenStreetMap contributors,ODbL 1.0
+way/1457831097,,LineString,14.5812504,120.9762367,"{""barrier"": ""chain""}",OpenStreetMap contributors,ODbL 1.0
+way/1457836321,,LineString,14.5833954,120.9766637,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1460507381,,LineString,14.5966097,120.9769469,"{""barrier"": ""fence"", ""fence_type"": ""railing"", ""height"": ""1"", ""layer"": ""2""}",OpenStreetMap contributors,ODbL 1.0
+way/1460507388,,LineString,14.5952895,120.9777418,"{""barrier"": ""fence"", ""height"": ""1"", ""layer"": ""2"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/1460507393,,LineString,14.5962933,120.9771579,"{""barrier"": ""fence"", ""height"": ""1"", ""layer"": ""2"", ""material"": ""concrete""}",OpenStreetMap contributors,ODbL 1.0
+way/1462420846,,LineString,14.589984,120.9852428,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1462420871,,LineString,14.589604,120.9853539,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+way/1462420872,,LineString,14.5895329,120.9855837,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1462420873,,LineString,14.5895957,120.9854239,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1462420875,,LineString,14.5896148,120.9858561,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1462420882,,LineString,14.589608,120.9858236,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1462420883,,LineString,14.589608,120.9858236,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+way/1462420885,,LineString,14.5887851,120.9864316,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1462420888,,LineString,14.588627,120.9864858,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1462420889,,LineString,14.5886856,120.9864661,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+way/1462420892,,LineString,14.5891517,120.9858898,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1462420894,,LineString,14.5885723,120.9864226,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1462420895,,LineString,14.5885723,120.9864226,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+way/1462527705,,LineString,14.587941,120.9853959,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1462740191,,LineString,14.587999,120.9822079,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1463026593,,LineString,14.5868183,120.9838113,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1463026594,,LineString,14.5887778,120.9845047,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1463026595,,LineString,14.5866554,120.9830081,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1463026596,,LineString,14.5866242,120.9829853,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+way/1463026597,,LineString,14.5866865,120.983031,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+way/1463026600,,LineString,14.5864089,120.9828219,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1463026620,,LineString,14.5864081,120.9826373,"{""power"": ""minor_line""}",OpenStreetMap contributors,ODbL 1.0
+way/1463026748,,LineString,14.5861165,120.9832072,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1463026749,,LineString,14.5867282,120.9833326,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+way/1463026750,,LineString,14.5863021,120.9830411,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1463026751,,LineString,14.5862817,120.9830265,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+way/1464534436,,LineString,14.5883133,120.9844425,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1464534437,,LineString,14.5884549,120.9845414,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1464534439,,LineString,14.588426,120.9845212,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1464534440,,LineString,14.588331,120.9844549,"{""barrier"": ""gate""}",OpenStreetMap contributors,ODbL 1.0
+way/1464538370,,LineString,14.5850533,120.9834686,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1524377700,,LineString,14.5936057,120.9801973,"{""barrier"": ""wall""}",OpenStreetMap contributors,ODbL 1.0
+way/1524502727,,Polygon,14.59416505,120.98209624271476,"{""natural"": ""water"", ""water"": ""fishpond""}",OpenStreetMap contributors,ODbL 1.0
+way/1524502755,,LineString,14.5938853,120.9823744,"{""barrier"": ""fence""}",OpenStreetMap contributors,ODbL 1.0
+way/1565040967,Paco — Tegen (line 2),LineString,14.5812129,120.994344,"{""cables"": ""3"", ""name"": ""Paco — Tegen (line 2)"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""line"", ""voltage"": ""115000"", ""wires"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+way/1565040968,Paco — Escoda,LineString,14.5784502,120.9942448,"{""cables"": ""3"", ""circuits"": ""1"", ""name"": ""Paco — Escoda"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""operator:wikipedia"": ""en:Meralco"", ""power"": ""line"", ""source"": ""Bing"", ""voltage"": ""115000"", ""wires"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+way/1565040969,Paco — Tegen (line 2) | Escoda — Tutuban,LineString,14.5805957,120.9883895,"{""cables"": ""6"", ""circuits"": ""2"", ""name"": ""Paco — Tegen (line 2) | Escoda — Tutuban"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""line"", ""voltage"": ""115000"", ""wires"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+way/1565054660,Escoda GIS Substation,Polygon,14.5784116,120.98916773219295,"{""name"": ""Escoda GIS Substation"", ""name:it"": ""Sottostazione elettrica con quadri elettrici isolati in gas Escoda"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""substation"", ""substation"": ""distribution"", ""voltage"": ""115000""}",OpenStreetMap contributors,ODbL 1.0
+way/1565054661,Paco — Escoda | Escoda — Tutuban,LineString,14.5783918,120.9897776,"{""cables"": ""3"", ""circuits"": ""1"", ""name"": ""Paco — Escoda | Escoda — Tutuban"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""operator:wikipedia"": ""en:Meralco"", ""power"": ""line"", ""source"": ""Bing"", ""voltage"": ""115000"", ""wires"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+way/1565054662,Paco — Escoda,LineString,14.5781718,120.9891034,"{""cables"": ""3"", ""circuits"": ""1"", ""name"": ""Paco — Escoda"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""operator:wikipedia"": ""en:Meralco"", ""power"": ""line"", ""source"": ""Bing"", ""voltage"": ""115000"", ""wires"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+way/1565054663,,LineString,14.5782588,120.9891654,"{""cables"": ""3"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""power"": ""line"", ""voltage"": ""115000""}",OpenStreetMap contributors,ODbL 1.0
+way/1565054664,Escoda — Tutuban,LineString,14.5790106,120.9892816,"{""cables"": ""3"", ""circuits"": ""1"", ""name"": ""Escoda — Tutuban"", ""operator"": ""Meralco"", ""operator:wikidata"": ""Q6817918"", ""operator:wikipedia"": ""en:Meralco"", ""power"": ""line"", ""source"": ""Bing"", ""voltage"": ""115000"", ""wires"": ""double""}",OpenStreetMap contributors,ODbL 1.0
+way/1565054665,,LineString,14.5900281,120.9859689,"{""man_made"": ""guy_wire""}",OpenStreetMap contributors,ODbL 1.0
