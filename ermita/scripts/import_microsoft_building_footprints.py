@@ -33,6 +33,7 @@ def main():
         "features_read": 0,
         "features_intersecting_aoi": 0,
         "features_written": 0,
+        "duplicate_features_skipped": 0,
         "limitations": [
             "This is a supplemental non-government dataset, not a Philippine government dataset.",
             "Contains detected building footprints only; no façades, windows, signs, logos, or guaranteed building names.",
@@ -61,6 +62,7 @@ def main():
             member = max(members, key=lambda n: zf.getinfo(n).file_size)
             report["archive_member"] = member
             tmp_out = OUT.with_suffix(OUT.suffix + ".tmp")
+            seen_keys = set()
             try:
                 with zf.open(member, "r") as src, gzip.open(tmp_out, "wt", encoding="utf-8", compresslevel=6) as dst:
                     for raw in src:
@@ -79,7 +81,15 @@ def main():
                         if clipped.is_empty:
                             continue
                         feature["geometry"] = mapping(clipped)
-                        feature.setdefault("properties", {})
+                        props = feature.setdefault("properties", {})
+                        # Deduplicate within the downloaded source snapshot by stable source ID;
+                        # fall back to clipped geometry when no source ID is available.
+                        source_id = feature.get("id") or props.get("id") or props.get("building_id") or props.get("osm_id")
+                        dedupe_key = f"id:{source_id}" if source_id is not None else f"geom:{clipped.wkb_hex}"
+                        if dedupe_key in seen_keys:
+                            report["duplicate_features_skipped"] += 1
+                            continue
+                        seen_keys.add(dedupe_key)
                         feature["properties"]["source_dataset"] = "Microsoft Open Building Footprints Philippines"
                         feature["properties"]["source_imagery_vintage"] = "2016-2020"
                         dst.write(json.dumps(feature, separators=(",", ":")) + "\n")
