@@ -300,16 +300,26 @@ map.on('load',async()=>{
   map.addSource('terrain-dem',{type:'raster-dem',tiles:['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});
   map.setTerrain({source:'terrain-dem',exaggeration:1.15});
   map.setSky({ 'sky-color':'#8dbbe2','sky-horizon-blend':0.5,'horizon-color':'#e8f1fa','horizon-fog-blend':0.2,'fog-color':'#dce8f3','fog-ground-blend':0.15,'atmosphere-blend':0.8});
-  const results=await Promise.all([
-   fetch(base+'ermita-road-network.geojson').then(r=>{if(!r.ok)throw Error('Road data HTTP '+r.status);return r.json()}),
-   fetch(base+'ermita-building-footprints.geojson').then(r=>{if(!r.ok)throw Error('Building data HTTP '+r.status);return r.json()}),
-   fetch('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/external/dpwh-road-surface-type-ermita.geojson').then(r=>{if(!r.ok)throw Error('DPWH road data HTTP '+r.status);return r.json()})
+  // Load each dataset independently: a missing DPWH/buildings file must never suppress the road layer.
+  const empty={type:'FeatureCollection',features:[]};
+  async function loadGeoJSON(url,label){
+   try{const r=await fetch(url);if(!r.ok)throw Error(label+' HTTP '+r.status);return await r.json();}
+   catch(err){console.error(label+' failed:',err);return {...empty,loadError:String(err.message||err)};}
+  }
+  const [roadResult,buildingResult,surfaceResult]=await Promise.all([
+   loadGeoJSON(base+'ermita-road-network.geojson','Road network'),
+   loadGeoJSON(base+'ermita-building-footprints.geojson','Building footprints'),
+   loadGeoJSON('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/external/dpwh-road-surface-type-ermita.geojson','DPWH road data')
   ]);
-  roadsData={type:'FeatureCollection',features:(results[0].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
-  buildingsData={type:'FeatureCollection',features:(results[1].features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
-  surfaceData={type:'FeatureCollection',features:(results[2].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
-  addBuildings(buildingsData);addRoads(roadsData);addDpwRoadSurface(surfaceData);addLandmarks();addRealModelMarkers();addSatelliteImagery();addLocalRamonModel(roadsData);
-  setStatus(buildingsData.features.length.toLocaleString()+' local building outlines in 3D · '+roadsData.features.length.toLocaleString()+' mapped road/path lines · '+surfaceData.features.length.toLocaleString()+' official DPWH road records loaded · 6 landmark markers (approximate positions)');
+  roadsData={type:'FeatureCollection',features:(roadResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
+  buildingsData={type:'FeatureCollection',features:(buildingResult.features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
+  surfaceData={type:'FeatureCollection',features:(surfaceResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
+  addRoads(roadsData);
+  if(buildingsData.features.length)addBuildings(buildingsData);
+  if(surfaceData.features.length)addDpwRoadSurface(surfaceData);
+  addLandmarks();addRealModelMarkers();addSatelliteImagery();addLocalRamonModel(roadsData);
+  const errors=[roadResult.loadError,buildingResult.loadError,surfaceResult.loadError].filter(Boolean);
+  setStatus(roadsData.features.length.toLocaleString()+' mapped road/path lines loaded · '+buildingsData.features.length.toLocaleString()+' building footprints · '+surfaceData.features.length.toLocaleString()+' DPWH road records'+(errors.length?' · Some data sources failed; see console.':' · all available layers loaded'));
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
 });
 document.getElementById('imagery').addEventListener('change',e=>setSatelliteImagery(e.target.checked));
