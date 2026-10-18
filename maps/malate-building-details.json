@@ -17,7 +17,9 @@
     "roof": "Verified roof shape",
     "roofColor": "Optional numeric Three.js hex color",
     "balconies": "Whether balconies are present",
-    "sign": "Verified storefront sign text"
+    "sign": "Verified storefront sign text",
+    "source_url": "Source supporting the building-specific correction; required for curated overrides",
+    "verified_date": "Date the correction was checked, YYYY-MM-DD; required for curated overrides"
   },
   "buildings": {}
 }
