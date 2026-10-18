@@ -1,0 +1,45 @@
+{
+  "source": "Poly Haven public API",
+  "source_url": "https://polyhaven.com/",
+  "license": "CC0 assets",
+  "assets": [
+    {
+      "id": "modular_urban_apartments_facade",
+      "name": "Urban modular facade model",
+      "type": "model",
+      "source_url": "https://polyhaven.com/a/modular_urban_apartments_facade",
+      "files": [],
+      "status": "no self-contained GLB model under 80 MiB; skipped"
+    },
+    {
+      "id": "rectangular_facade_tiles_02",
+      "name": "High-resolution facade tile PBR material",
+      "type": "texture",
+      "source_url": "https://polyhaven.com/a/rectangular_facade_tiles_02",
+      "files": [
+        {
+          "path": "ermita/assets/textures/rectangular_facade_tiles_02_albedo.jpg",
+          "bytes": 2818495,
+          "sha256": "74aed3c4f535a47d6d68d91d9682b2fead263275bf8b96b52fab0d6f435413d3",
+          "status": "downloaded",
+          "channel": "albedo",
+          "resolution_path": "blend/2k/blend/include/textures/rectangular_facade_tiles_02_diff_2k.jpg"
+        },
+        {
+          "path": "ermita/assets/textures/rectangular_facade_tiles_02_normal.jpg",
+          "bytes": 3144171,
+          "sha256": "da13d83f54cbe54684ac365af4b6b2046bfb38acb21e6da8c6aa09180c54f608",
+          "status": "downloaded",
+          "channel": "normal",
+          "resolution_path": "gltf/2k/gltf/include/textures/rectangular_facade_tiles_02_nor_gl_2k.jpg"
+        }
+      ],
+      "status": "downloaded-or-reused"
+    }
+  ],
+  "notes": [
+    "These are high-quality reusable facade modules/materials, not scans of specific Ermita buildings.",
+    "Do not replace a location-matched real building with a generic model. Use these assets as a fallback for matching building types while real facade imagery is being aligned.",
+    "Files are capped at 80 MiB each; existing files are reused."
+  ]
+}
