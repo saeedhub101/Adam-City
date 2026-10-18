@@ -80,6 +80,22 @@ def download(item, target):
             out.write(chunk)
     return {"path": str(target), "bytes": target.stat().st_size, "sha256": hashlib.sha256(target.read_bytes()).hexdigest(), "status": "downloaded"}
 
+def discover_assets(asset_type, terms):
+    data = get_json(f"{API}/assets?type={asset_type}")
+    ranked = []
+    if isinstance(data, dict):
+        for slug, meta in data.items():
+            if not isinstance(meta, dict):
+                continue
+            tags = meta.get("tags", []) if isinstance(meta.get("tags"), list) else []
+            cats = meta.get("categories", []) if isinstance(meta.get("categories"), list) else []
+            haystack = " ".join([slug, str(meta.get("name", "")), str(meta.get("description", "")), " ".join(tags), " ".join(cats)]).lower()
+            score = sum(1 for term in terms if term in haystack)
+            if score:
+                ranked.append((-score, slug, meta.get("name", slug)))
+    ranked.sort()
+    return [{"id": slug, "name": name} for _, slug, name in ranked[:30]]
+
 def main():
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
     TEXTURE_DIR.mkdir(parents=True, exist_ok=True)
@@ -88,44 +104,51 @@ def main():
         "Do not replace a location-matched real building with a generic model. Use these assets as a fallback for matching building types while real facade imagery is being aligned.",
         "Files are capped at 80 MiB each; existing files are reused."
     ]}
-    tasks = [
-        ("model", "modular_urban_apartments_facade", "Urban modular facade model"),
-        ("texture", "rectangular_facade_tiles_02", "High-resolution facade tile PBR material"),
-    ]
-    for kind, slug, label in tasks:
-        entry = {"id": slug, "name": label, "type": kind, "source_url": f"https://polyhaven.com/a/{slug}", "files": [], "status": "pending"}
-        try:
-            tree = get_json(f"{API}/files/{slug}")
-            leaves = flatten(tree)
-            if kind == "model":
-                chosen = choose_file(leaves, "model")
-                if not chosen:
-                    entry["status"] = "no self-contained GLB model under 80 MiB; skipped"
-                else:
-                    suffix = ".glb"
-                    result = download(chosen, MODEL_DIR / f"{slug}{suffix}")
+    # Discover valid IDs from the live API; never assume guessed slugs exist.
+    model_candidates = discover_assets("models", ["building", "architecture", "house", "facade", "shop", "urban"])
+    texture_candidates = discover_assets("textures", ["facade", "brick", "concrete", "plaster", "wall", "stucco"])
+    for kind, candidates in [("model", model_candidates), ("texture", texture_candidates)]:
+        success = False
+        tried = []
+        for candidate in candidates:
+            slug = candidate["id"]
+            tried.append(slug)
+            entry = {"id": slug, "name": candidate["name"], "type": kind, "source_url": f"https://polyhaven.com/a/{slug}", "files": [], "status": "pending"}
+            try:
+                tree = get_json(f"{API}/files/{slug}")
+                leaves = flatten(tree)
+                if kind == "model":
+                    chosen = choose_file(leaves, "model")
+                    if not chosen:
+                        continue
+                    result = download(chosen, MODEL_DIR / f"{slug}.glb")
                     entry["files"].append(result)
-                    entry["status"] = "downloaded-or-reused"
-            else:
-                chosen = choose_file(leaves, "texture")
-                if not chosen:
-                    entry["status"] = "no compact texture maps found; skipped"
                 else:
+                    chosen = choose_file(leaves, "texture")
+                    if not chosen:
+                        continue
                     for channel, item in chosen.items():
                         ext = Path(item["path"].split("?")[0]).suffix.lower() or ".jpg"
                         result = download(item, TEXTURE_DIR / f"{slug}_{channel}{ext}")
                         result["channel"] = channel
                         result["resolution_path"] = item["path"]
                         entry["files"].append(result)
+                if entry["files"]:
                     entry["status"] = "downloaded-or-reused"
-        except Exception as exc:
-            entry["status"] = f"failed: {type(exc).__name__}: {exc}"
-        catalog["assets"].append(entry)
-        print(f"{slug}: {entry['status']}")
+                    catalog["assets"].append(entry)
+                    print(f"{slug}: {entry['status']}")
+                    success = True
+                    break
+            except Exception as exc:
+                entry["status"] = f"failed: {type(exc).__name__}: {exc}"
+                print(f"{slug}: {entry['status']}")
+                catalog["assets"].append(entry)
+        if not success:
+            catalog["assets"].append({"type": kind, "status": "no compatible asset found after discovery", "tried_ids": tried})
     CATALOG.parent.mkdir(parents=True, exist_ok=True)
     CATALOG.write_text(json.dumps(catalog, indent=2) + "\n", encoding="utf-8")
-    if not any(a["files"] for a in catalog["assets"]):
-        raise SystemExit("No assets downloaded or reused; inspect the report and retry another source.")
+    if not any(a.get("files") for a in catalog["assets"]):
+        print("No compatible files downloaded this run; catalog report saved for diagnosis.")
 
 if __name__ == "__main__":
     main()
