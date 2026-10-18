@@ -20,12 +20,7 @@ const material=(c,r=.86)=>new THREE.MeshStandardMaterial({color:c,roughness:r});
 function box(parent,w,h,d,x,y,z,m,cast=true){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=cast;o.receiveShadow=true;parent.add(o);return o}
 function cylinder(parent,rt,rb,h,x,y,z,m,n=10){const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,n),m);o.position.set(x,y,z);o.castShadow=true;parent.add(o);return o}
 const asphalt=material(0x3e4547),sidewalk=material(0xbeb6a5),curb=material(0x777b77),paint=material(0xe8dfc5),dark=material(0x29363a);
-box(scene,17,.15,270,0,-.1,-96,asphalt,false);
-for(const side of [-1,1]){box(scene,4.2,.35,270,side*10.6,.03,-96,sidewalk,false);box(scene,.25,.38,270,side*8.45,.05,-96,curb,false);}
-// Junction crossing, drainage covers and painted lane marks
-for(let n=0;n<9;n++)box(scene,.72,.035,5.8,-6.5+n*1.62,.005,1.5,paint,false);
-for(let z=-9;z>-245;z-=12){box(scene,.12,.025,4,0,.005,z,paint,false);for(const side of [-1,1])box(scene,.12,.02,2.4,side*7.6,.01,z,paint,false)}
-for(let i=0;i<8;i++)box(scene,.16,.025,.6,-7.7+i*.12,.01,-20,material(0x565d5d),false);
+// Road surfaces are generated exclusively from saved OSM highway geometries below; do not draw a fabricated straight road over the real map.
 const palette=[
 {wall:0xd7d0c2,trim:0xeee4d1,glass:0x42616c,accent:0x9a4937},
 {wall:0xc6c6bf,trim:0xf0e9df,glass:0x385864,accent:0xc13f31},
@@ -41,6 +36,7 @@ function building({x,z,w,h,d,floors=5,idx=0,label='Mabini Rooms',style='flat'}){
 const MAP_CENTER={lat:14.57168,lon:120.98445}; // Pedro Gil Street corner A. Mabini Street, Malate
 const realMapGroup=new THREE.Group();scene.add(realMapGroup);
 const buildingFootprints=[],roadCenterlines=[];
+let namedStreets=[];
 const mapStatus=document.createElement('div');
 mapStatus.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);padding:10px 14px;border-radius:9px;background:#102027dd;color:#fff;font:12px system-ui;z-index:4;pointer-events:none';
 mapStatus.textContent='Loading saved Malate map…';document.body.appendChild(mapStatus);
@@ -79,11 +75,11 @@ function addRoad(el){
  if(pts.length<2||pts.some(p=>Math.abs(p.x)>165||Math.abs(p.z)>245))return;
  const tags=el.tags||{},kind=tags.highway||'road';
  roadCenterlines.push({pts,kind});
- const width=Number(tags.width)||({'primary':10,'secondary':8,'tertiary':7,'residential':5.5,'unclassified':5,'service':3.5,'living_street':5,'footway':1.6,'pedestrian':2.5,'path':1.5}[kind]||4.5);
+ const width=Number(tags.width)||({'motorway':9,'trunk':8,'primary':7,'secondary':6,'tertiary':5,'residential':4,'unclassified':3.8,'service':2.5,'living_street':4,'footway':1.4,'pedestrian':2.2,'path':1.2,'cycleway':1.8}[kind]||3.5);
  const roadMat=material(kind==='footway'?0xbcb5a7:kind==='primary'||kind==='secondary'?0x41474a:0x55595a);
  for(let i=1;i<pts.length;i++){
   const a=pts[i-1],b=pts[i],dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);if(len<.2)continue;
-  const slab=box(realMapGroup,width,.12,len,(a.x+b.x)/2,.025,(a.z+b.z)/2,roadMat,false);
+  const slab=box(realMapGroup,width,.16,len,(a.x+b.x)/2,.12,(a.z+b.z)/2,roadMat,false);
   slab.rotation.y=Math.atan2(dx,dz);
  }
 }
@@ -94,13 +90,17 @@ async function loadRealCity(){
  const data=await response.json();
  if(!Array.isArray(data.elements)||!data.elements.length)throw new Error('Saved map file contains no map features.');
  const elements=data.elements;
- for(const el of elements){if(el.tags?.highway)addRoad(el);else if(el.tags?.building)addFootprint(el);}
+ // Build road geometry first so collision and street-name lookup are available before buildings.
+ for(const el of elements)if(el.tags?.highway)addRoad(el);
+ for(const el of elements)if(el.tags?.building)addFootprint(el);
  const spawn={x:0,z:0};let best=null,bestD=Infinity;
  for(const road of roadCenterlines){for(let i=1;i<road.pts.length;i++){const a=road.pts[i-1],b=road.pts[i],dx=b.x-a.x,dz=b.z-a.z,l2=dx*dx+dz*dz;if(!l2)continue;const t=THREE.MathUtils.clamp(((spawn.x-a.x)*dx+(spawn.z-a.z)*dz)/l2,0,1),q={x:a.x+t*dx,z:a.z+t*dz},d=Math.hypot(q.x-spawn.x,q.z-spawn.z);if(d<bestD){bestD=d;best={a,b,q}}}}
  if(best&&bestD<18){player.position.set(best.q.x,0,best.q.z);yaw=Math.atan2(-(best.b.x-best.a.x),-(best.b.z-best.a.z));}else{player.position.set(0,0,8);yaw=0;}
  mapStatus.remove();
  const info=data._cache||{};
- showToast('MALATE MAP LOADED · '+(info.buildings||elements.filter(e=>e.tags?.building).length)+' buildings');
+ try{const sr=await fetch('./maps/malate-streets.json',{cache:'force-cache'});if(sr.ok){const sd=await sr.json();namedStreets=Array.isArray(sd.streets)?sd.streets:[];}}catch(e){console.warn('Street-name cache unavailable',e)}
+ const nearest=namedStreets.map(s=>({s,d:Math.hypot(project(s.lat,s.lon).x-player.position.x,project(s.lat,s.lon).z-player.position.z)})).sort((a,b)=>a.d-b.d)[0];
+ showToast('MALATE MAP · '+(info.buildings||elements.filter(e=>e.tags?.building).length)+' buildings'+(nearest&&nearest.d<35?' · '+nearest.s.name:''));
 }
 loadRealCity().catch(err=>{console.error('OpenStreetMap data load failed:',err);mapStatus.textContent='Saved map could not load — '+(err?.message||'missing map file')+'. The Malate map cache may still be building.';mapStatus.style.maxWidth='min(90vw,560px)';mapStatus.style.textAlign='center';mapStatus.style.background='#762f27ee';});
 function tree(x,z){cylinder(scene,.14,.22,2.6,x,1.3,z,material(0x70513a),8);const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.25,1),material(0x477a58));crown.position.set(x,3.2,z);crown.scale.set(1,1.1,1);crown.castShadow=true;scene.add(crown)}
@@ -111,7 +111,7 @@ for(let z=-5;z>-230;z-=25){const pole=cylinder(scene,.07,.1,5.8,sideCoord(z),2.9
 function sideCoord(z){return z%2?7.2:-7.2}
 function pointInFootprint(x,z,poly){let inside=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if(((a.z>z)!==(b.z>z))&&(x<(b.x-a.x)*(z-a.z)/(b.z-a.z+1e-9)+a.x))inside=!inside;}return inside}
 function segmentDistance(x,z,a,b){const dx=b.x-a.x,dz=b.z-a.z,l2=dx*dx+dz*dz;if(!l2)return Math.hypot(x-a.x,z-a.z);const t=THREE.MathUtils.clamp(((x-a.x)*dx+(z-a.z)*dz)/l2,0,1);return Math.hypot(x-(a.x+t*dx),z-(a.z+t*dz))}
-function blockedAt(x,z){for(const poly of buildingFootprints){if(pointInFootprint(x,z,poly))return true;for(let i=0;i<poly.length;i++)if(segmentDistance(x,z,poly[i],poly[(i+1)%poly.length])<.72)return true;}return false}
+function blockedAt(x,z){for(const road of roadCenterlines){const roadWidth=({'primary':7,'secondary':6,'tertiary':5,'residential':4,'unclassified':3.8,'service':2.5,'living_street':4,'footway':1.4,'pedestrian':2.2,'path':1.2}[road.kind]||3.5);for(let i=1;i<road.pts.length;i++)if(segmentDistance(x,z,road.pts[i-1],road.pts[i])<roadWidth*.5+.45)return false;}for(const poly of buildingFootprints){if(pointInFootprint(x,z,poly))return true;for(let i=0;i<poly.length;i++)if(segmentDistance(x,z,poly[i],poly[(i+1)%poly.length])<.72)return true;}return false}
 // overhead cable spans create a recognizable dense urban street silhouette
 for(let z=-8;z>-230;z-=25){const wire=new THREE.Mesh(new THREE.CylinderGeometry(.018,.018,15,5),material(0x313a3c));wire.rotation.z=Math.PI/2;wire.position.set(0,5.45,z);scene.add(wire)}
 // A third-person character with animated limbs.
