@@ -61,10 +61,24 @@ jobs:
             echo "No generated data changes to commit."
           else
             git commit -m "Import Ermita map data and regenerate detailed 3D buildings"
-            # Integrate any commits added to main while data was being generated.
-            git fetch origin main
-            git rebase origin/main
-            git push origin HEAD:main
+            # Generated datasets overlap with other import workflows. Resolve conflicts
+            # in favor of this run's generated outputs and retry races safely.
+            for attempt in 1 2 3 4; do
+              git fetch origin main
+              git rebase -X theirs origin/main || {
+                git rebase --abort || true
+                echo "Rebase failed on attempt ${attempt}; retrying from latest main."
+                sleep $((attempt * 3))
+                continue
+              }
+              if git push origin HEAD:main; then
+                exit 0
+              fi
+              echo "Push race on attempt ${attempt}; rebasing onto newest main."
+              sleep $((attempt * 3))
+            done
+            echo "::error::Could not publish generated data after four safe retries."
+            exit 1
           fi
 
       - name: Report independent import stage results

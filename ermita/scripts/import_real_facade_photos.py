@@ -23,8 +23,8 @@ API = "https://api.openstreetcam.org/2.0/photo/"
 USER_AGENT = "Adam-City-Ermita-KartaView-Metadata/1.0 (open mapping research)"
 TO_METERS = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True).transform
 TO_LONLAT = Transformer.from_crs("EPSG:3857", "EPSG:4326", always_xy=True).transform
-MAX_API_CELLS = 120
-CELL_STEP_M = 300.0
+MAX_API_CELLS = 500
+CELL_STEP_M = 180.0
 TIMEOUT = (15, 45)
 
 PHOTO_FIELDS = [
@@ -34,6 +34,7 @@ PHOTO_FIELDS = [
     "image_processing_status", "image_processing_result", "sequence_device",
     "sequence_date_added", "sequence_distance_km", "sequence_field_of_view_deg",
     "sequence_nw_lat", "sequence_nw_lon", "sequence_se_lat", "sequence_se_lon",
+    "image_url", "processed_image_url", "thumbnail_url", "license", "source_record_json",
     "source_page", "metadata_source",
 ]
 
@@ -70,14 +71,31 @@ def read_existing():
 
 
 def query_metadata(session, lat, lon):
+    """Fetch every available page for a search cell, not only the first 100 photos."""
     params = {
         "lat": lat, "lng": lon, "radius": 220, "zoomLevel": 18,
         "join": "sequence", "orderBy": "id", "orderDirection": "desc",
         "itemsPerPage": 100,
     }
-    response = session.get(API, params=params, timeout=TIMEOUT)
-    response.raise_for_status()
-    return photo_rows(response.json())
+    collected = []
+    seen = set()
+    for page in range(1, 51):
+        response = session.get(API, params={**params, "page": page}, timeout=TIMEOUT)
+        response.raise_for_status()
+        batch = photo_rows(response.json())
+        if not batch:
+            break
+        added = 0
+        for item in batch:
+            pid = str(first(item, "id", "photoId", "photo_id", "photoID"))
+            key = pid or json.dumps(item, sort_keys=True, ensure_ascii=False)
+            if key not in seen:
+                seen.add(key)
+                collected.append(item)
+                added += 1
+        if len(batch) < params["itemsPerPage"] or added == 0:
+            break
+    return collected
 
 
 def main():
@@ -132,12 +150,11 @@ def main():
             errors.append({"cell": index, "error": str(exc)[:200]})
         time.sleep(0.15)
 
-    # Do not re-import existing records. Query the public coverage grid to discover new IDs,
-    # then append only IDs that are not already in the local metadata cache.
+    # Enrich existing records with newly exposed fields while preserving prior values.
     new_records = 0
+    enriched_records = 0
     for pid, item in discovered.items():
-        if pid in existing:
-            continue
+        old_row = existing.get(pid, {})
         seq = item.get("sequence") if isinstance(item.get("sequence"), dict) else {}
         row = {
             "photo_id": pid,
@@ -163,11 +180,23 @@ def main():
             "sequence_nw_lon": first(seq, "nwLng", "nw_lng"),
             "sequence_se_lat": first(seq, "seLat", "se_lat"),
             "sequence_se_lon": first(seq, "seLng", "se_lng"),
+            "image_url": first(item, "fileurl", "fileUrl", "imageUrl", "image_url", "photoUrl", "photo_url"),
+            "processed_image_url": first(item, "fileurlProc", "fileurl_proc", "processedImageUrl", "processed_image_url"),
+            "thumbnail_url": first(item, "fileurlLTh", "thumbnailUrl", "thumbnail_url", "thumbUrl"),
+            "license": first(item, "license", "licenseName", "license_name", "licence"),
+            "source_record_json": json.dumps(item, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
             "source_page": f"https://kartaview.org/map/@{row_lat(item)},{row_lon(item)},18z",
-            "metadata_source": "KartaView public API; metadata only, image bytes not downloaded",
+            "metadata_source": "KartaView public API; full available source record preserved",
         }
-        existing[pid] = row
-        new_records += 1
+        merged = dict(old_row)
+        for key, value in row.items():
+            if value not in (None, ""):
+                merged[key] = value
+        existing[pid] = merged
+        if old_row:
+            enriched_records += 1
+        else:
+            new_records += 1
 
     all_rows = sorted(existing.values(), key=lambda r: (str(r.get("sequence_id", "")), int_or_large(r.get("sequence_index")), str(r.get("photo_id", ""))))
     with PHOTOS_CSV.open("w", newline="", encoding="utf-8") as stream:
@@ -217,17 +246,18 @@ def main():
         "status": "success" if not errors else "partial",
         "area": "Ermita, Manila, Philippines",
         "source": "KartaView public API",
-        "mode": "metadata-only; no image files requested or downloaded",
+        "mode": "expanded spatial metadata discovery with pagination and raw source records; existing image downloads preserved",
         "queried_grid_cells": len(cells),
+        "pagination_pages_per_cell_max": 50,
         "new_photo_metadata_records_added": new_records,
-        "existing_photo_metadata_records_reimported": 0,
+        "existing_photo_metadata_records_enriched": enriched_records,
         "total_preserved_photo_metadata_records": len(all_rows),
         "unique_sequences_with_metadata": len(seq_rows),
         "geojson_point_features": len(features),
         "api_errors": errors,
         "outputs": [str(PHOTOS_CSV.relative_to(ROOT)), str(PHOTOS_GEOJSON.relative_to(ROOT)), str(SEQUENCES_CSV.relative_to(ROOT))],
-        "incremental_policy": "Existing metadata records are not rewritten; only previously unseen photo IDs are appended. The API coverage grid is queried to discover new IDs, but existing records are not re-imported. No existing image files are deleted.",
-        "limitations": ["The public nearby-photo endpoint is bounded by its response size and grid coverage; this is not a guarantee of complete citywide KartaView coverage.", "GPS points and sequence metadata describe capture coverage, not verified road signs or extracted lane/traffic-sign detections."]
+        "incremental_policy": "New IDs are appended; existing IDs are enriched with newly available non-empty fields; prior values are retained when the API omits them. No existing image files are deleted.",
+        "limitations": ["Coverage is limited to the area derived from imported building footprints, the public API response, and 500 sampled spatial cells; this is broader and paginated but cannot guarantee the provider exposes every city photo.", "Image URLs and raw API records are indexed when exposed by the API; image binaries are not automatically downloaded by this metadata script.", "GPS points and sequence metadata describe capture coverage, not verified road signs or extracted lane/traffic-sign detections."]
     }
     REPORT_FILE.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
