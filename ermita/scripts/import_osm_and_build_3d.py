@@ -25,6 +25,30 @@ area(3600103706)->.ermitaArea;
 (
   nwr(area.ermitaArea)["highway"];
   nwr(area.ermitaArea)["building"];
+  nwr(area.ermitaArea)["building:part"];
+  nwr(area.ermitaArea)["healthcare"];
+  nwr(area.ermitaArea)["education"];
+  nwr(area.ermitaArea)["public_transport"];
+  nwr(area.ermitaArea)["bus"];
+  nwr(area.ermitaArea)["bicycle"];
+  nwr(area.ermitaArea)["sidewalk"];
+  nwr(area.ermitaArea)["kerb"];
+  nwr(area.ermitaArea)["tactile_paving"];
+  nwr(area.ermitaArea)["street_lamp"];
+  nwr(area.ermitaArea)["traffic_sign"];
+  nwr(area.ermitaArea)["parking"];
+  nwr(area.ermitaArea)["bench"];
+  nwr(area.ermitaArea)["waste_basket"];
+  nwr(area.ermitaArea)["drinking_water"];
+  nwr(area.ermitaArea)["fountain"];
+  nwr(area.ermitaArea)["species"];
+  nwr(area.ermitaArea)["leaf_type"];
+  nwr(area.ermitaArea)["leaf_cycle"];
+  nwr(area.ermitaArea)["height"];
+  nwr(area.ermitaArea)["building:levels"];
+  nwr(area.ermitaArea)["roof:shape"];
+  nwr(area.ermitaArea)["roof:material"];
+  nwr(area.ermitaArea)["roof:colour"];
   nwr(area.ermitaArea)["amenity"];
   nwr(area.ermitaArea)["shop"];
   nwr(area.ermitaArea)["tourism"];
@@ -176,12 +200,14 @@ def main():
 
     # Emit dedicated themed indexes to make the imported data easy to use later.
     themes = {
-        "transport": {"highway", "public_transport", "railway", "route", "crossing", "traffic_calming"},
-        "accessibility": {"wheelchair", "entrance", "door", "toilets", "tactile_paving", "ramp"},
-        "utilities": {"power", "man_made", "waterway", "water", "barrier"},
-        "environment": {"natural", "landuse", "leisure"},
+        "transport": {"highway", "public_transport", "railway", "route", "crossing", "traffic_calming", "bus", "parking", "bicycle", "traffic_sign"},
+        "accessibility": {"wheelchair", "entrance", "door", "toilets", "tactile_paving", "ramp", "sidewalk", "kerb", "bicycle"},
+        "utilities": {"power", "man_made", "waterway", "water", "barrier", "street_lamp", "drinking_water", "fountain"},
+        "environment": {"natural", "landuse", "leisure", "species", "leaf_type", "leaf_cycle", "water", "waterway"},
         "public_services": {"amenity", "emergency", "healthcare", "office", "education"},
         "heritage": {"historic", "memorial", "tourism"},
+        "street_furniture": {"bench", "waste_basket", "street_lamp", "traffic_sign", "barrier"},
+        "building_details": {"building", "building:part", "height", "building:levels", "roof:shape", "roof:material", "roof:colour", "addr:street", "addr:housenumber"},
         "businesses": {"shop", "craft", "office", "amenity"},
     }
     for theme, tag_keys in themes.items():
@@ -244,6 +270,8 @@ def main():
         "retrieved_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "osm_element_count": len(osm_json.get("elements", [])), "geojson_feature_count": len(all_features),
         "building_feature_count": len(buildings), "poi_and_infrastructure_rows": len(rows),
+        "tag_key_feature_counts": {key: sum(1 for feature in all_features if key in tags_for(feature)) for key in sorted({key for feature in all_features for key in tags_for(feature).keys()})},
+        "themed_csvs": sorted(f"ermita-{theme}.csv" for theme in themes),
         "extruded_building_polygon_count": built, "source": "OpenStreetMap contributors",
         "license": "ODbL 1.0; attribution and share-alike obligations apply",
         "limitations": [
