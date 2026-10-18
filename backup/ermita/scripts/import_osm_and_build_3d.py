@@ -236,6 +236,42 @@ def main():
                     "source": "OpenStreetMap contributors", "license": "ODbL 1.0",
                 })
 
+    # Publish a dedicated street-sign / signal layer, rather than leaving these only in generic OSM exports.
+    sign_features = []
+    sign_keys = {"traffic_sign", "traffic_sign:forward", "traffic_sign:backward", "traffic_signals", "destination", "destination:ref"}
+    for feature in all_features:
+        tags = tags_for(feature)
+        if not sign_keys.intersection(tags.keys()):
+            continue
+        sign_features.append({
+            "type": "Feature",
+            "id": fid(feature),
+            "geometry": feature.get("geometry"),
+            "properties": {
+                "osm_feature_id": fid(feature),
+                "name": tags.get("name", ""),
+                "traffic_sign": tags.get("traffic_sign", ""),
+                "traffic_sign_forward": tags.get("traffic_sign:forward", ""),
+                "traffic_sign_backward": tags.get("traffic_sign:backward", ""),
+                "traffic_signals": tags.get("traffic_signals", ""),
+                "destination": tags.get("destination", ""),
+                "destination_ref": tags.get("destination:ref", ""),
+                "all_osm_tags": tags,
+                "source": "OpenStreetMap contributors",
+                "license": "ODbL 1.0",
+            },
+        })
+    (MAP_DIR / "ermita-street-signs-and-signals.geojson").write_text(
+        json.dumps({
+            "type": "FeatureCollection",
+            "name": "Ermita street signs and traffic signals from OpenStreetMap",
+            "source": "https://www.openstreetmap.org/copyright",
+            "license": "OpenStreetMap contributors, ODbL 1.0",
+            "features": sign_features,
+        }, ensure_ascii=False, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+    )
+
     # Extrude mapped building polygons. This is a basic visualization, not surveyed architecture.
     to_meters = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True).transform
     meshes, built = [], 0
@@ -269,9 +305,9 @@ def main():
         "area_relation_id": 103706, "retrieval_endpoint": endpoint,
         "retrieved_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "osm_element_count": len(osm_json.get("elements", [])), "geojson_feature_count": len(all_features),
-        "building_feature_count": len(buildings), "poi_and_infrastructure_rows": len(rows),
+        "building_feature_count": len(buildings), "poi_and_infrastructure_rows": len(rows),\n        "street_sign_and_signal_feature_count": len(sign_features),
         "tag_key_feature_counts": {key: sum(1 for feature in all_features if key in tags_for(feature)) for key in sorted({key for feature in all_features for key in tags_for(feature).keys()})},
-        "themed_csvs": sorted(f"ermita-{theme}.csv" for theme in themes),
+        "themed_csvs": sorted(f"ermita-{theme}.csv" for theme in themes),\n        "dedicated_sign_layer": "ermita-street-signs-and-signals.geojson",
         "extruded_building_polygon_count": built, "source": "OpenStreetMap contributors",
         "license": "ODbL 1.0; attribution and share-alike obligations apply",
         "limitations": [
