@@ -15,7 +15,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: ermita-map-import
+  group: main-writer
   cancel-in-progress: false
 
 jobs:
@@ -51,6 +51,7 @@ jobs:
       - name: Commit imported map data and 3D model
         if: always()
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add kartaview ermita/maps/generated ermita/maps/external ermita/3d/generated ermita/3d/terrain
@@ -60,7 +61,7 @@ jobs:
             git commit -m "Import Ermita map data and regenerate detailed 3D buildings"
             # Integrate any commits added to main while data was being generated.
             git fetch origin main
-            git rebase -X theirs origin/main
+            git rebase origin/main
             git push origin HEAD:main
           fi
 
