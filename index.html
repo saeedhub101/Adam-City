@@ -59,6 +59,83 @@ for(const base of ['#d4c8b4','#c5c9c6','#d8d2c5','#bfc7c8','#d6c0a7','#c8c5bd'])
  const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(1,1);
  facadeMats.push(new THREE.MeshStandardMaterial({map:tex,roughness:.88,metalness:.02}));
 }
+
+// Cached, tag-aware Manila facade materials. Cache keys keep the large OSM city lightweight.
+const facadeProfileCache=new Map();
+const facadePalette=[
+ {wall:'#d6c9b7',trim:'#f0e6d8',glass:'#6f929b',accent:'#a24c3d'},
+ {wall:'#c9cfcb',trim:'#edf0e8',glass:'#668994',accent:'#315f6d'},
+ {wall:'#e0d5c2',trim:'#f5ead8',glass:'#597d89',accent:'#a86e42'},
+ {wall:'#bfc8c8',trim:'#e2e4dc',glass:'#527580',accent:'#596b59'},
+ {wall:'#d3c4b2',trim:'#eee2d2',glass:'#6d8790',accent:'#7d493d'},
+ {wall:'#c7c7bf',trim:'#ece8dd',glass:'#486b78',accent:'#ba8a4d'}
+];
+function buildingProfile(tags,id,rawHeight,rawLevels){
+ const detail=buildingDetails[String(id)]||{};
+ const type=String(detail.type||tags.building||tags['building:part']||'yes').toLowerCase();
+ const levels=Math.max(1,Math.min(40,Number(detail.levels||rawLevels)||Math.max(1,Math.round(rawHeight/3.15))));
+ const style=String(detail.style||(['apartments','hotel','office','commercial','retail','university','hospital'].includes(type)?'urban':(['house','detached','semidetached_house','bungalow'].includes(type)?'lowrise':'mixed')));
+ const idx=Math.abs(Number(id)||0)%facadePalette.length;
+ return {type,levels,style,idx,detail};
+}
+function makeTaggedFacade(tags,id,height,levels,perimeter){
+ const profile=buildingProfile(tags,id,height,levels),detail=profile.detail;
+ const palette=facadePalette[Number.isInteger(Number(detail.palette))?Math.abs(Number(detail.palette))%facadePalette.length:profile.idx];
+ const storefront=['retail','commercial','shop','supermarket','restaurant','cafe','fast_food','bank'].some(k=>tags[k]!==undefined)||['retail','commercial','shop','supermarket'].includes(profile.type);
+ const balcony=detail.balconies!==undefined?!!detail.balconies:((Math.abs(Number(id)||0)%5===0)||['apartments','residential','hotel'].includes(profile.type));
+ const roofStyle=String(detail.roof||tags['roof:shape']||'flat');
+ const key=[profile.type,profile.levels,profile.style,palette.wall,storefront,balcony,roofStyle,detail.facade||''].join('|');
+ if(facadeProfileCache.has(key))return facadeProfileCache.get(key);
+ const c=document.createElement('canvas');c.width=256;c.height=512;const g=c.getContext('2d');
+ g.fillStyle=detail.wall||palette.wall;g.fillRect(0,0,256,512);
+ const floors=Math.max(1,Math.min(20,profile.levels)),groundH=storefront?Math.min(70,Math.max(44,512/(floors+1))):Math.min(28,512/(floors+2));
+ const upperH=(512-groundH)/floors,cols=profile.style==='lowrise'?3:(profile.levels>10?5:4),cw=256/cols;
+ // Warm concrete/plaster panels and floor slabs are typical of the mixed-use street fabric.
+ for(let r=0;r<floors;r++){
+  const y=groundH+r*upperH;
+  g.fillStyle=detail.trim||palette.trim;g.fillRect(0,y,256,Math.max(2,upperH*.065));
+  for(let col=0;col<cols;col++){
+   const margin=Math.max(4,cw*.15),ww=cw-2*margin,wy=y+upperH*.17,wh=Math.max(5,upperH*.48);
+   g.fillStyle='#5a5b57';g.fillRect(col*cw+margin-2,wy-2,ww+4,wh+4);
+   g.fillStyle=detail.glass||palette.glass;g.fillRect(col*cw+margin,wy,ww,wh);
+   g.fillStyle='#b9c6c4';g.fillRect(col*cw+margin+ww*.47,wy,Math.max(1,ww*.06),wh);
+   if(balcony&&r%2===0){
+    g.fillStyle='#c9c7bd';g.fillRect(col*cw+margin-3,wy+wh+2,ww+6,3);
+    g.fillStyle='#8b9693';g.fillRect(col*cw+margin-2,wy+wh+5,ww+4,2);
+    for(let rail=0;rail<4;rail++){g.fillRect(col*cw+margin+rail*ww/3,wy+wh+3,1,7)}
+   }
+   // Occasional compact window AC units, rather than perfectly uniform glass grids.
+   if((Math.abs(Number(id)||0)+r*7+col*3)%6===0){
+    g.fillStyle='#e6e0d4';g.fillRect(col*cw+margin+ww*.22,wy+wh+3,ww*.55,5);
+    g.fillStyle='#818987';g.fillRect(col*cw+margin+ww*.28,wy+wh+4,ww*.43,3);
+   }
+  }
+ }
+ if(storefront){
+  g.fillStyle='#313a3b';g.fillRect(0,0,256,groundH);
+  g.fillStyle=detail.accent||palette.accent;g.fillRect(0,3,256,Math.max(12,groundH*.27));
+  g.fillStyle='#f7edda';g.font='bold 11px Arial';g.textAlign='center';
+  const label=String(detail.sign||tags.brand||tags.name||tags['name:en']||'LOCAL SHOP').toUpperCase().slice(0,25);
+  g.fillText(label,128,Math.max(14,groundH*.21));
+  const bays=3;
+  for(let b=0;b<bays;b++){
+   const x=b*256/bays+5,bw=256/bays-10,yy=groundH*.34,bh=groundH*.59;
+   g.fillStyle='#243b42';g.fillRect(x,yy,bw,bh);
+   g.fillStyle='#89aeb5';g.fillRect(x+3,yy+3,bw-6,bh*.55);
+   g.fillStyle='#c2b7a4';g.fillRect(x,yy+bh-5,bw,5);
+  }
+ } else {
+  g.fillStyle=palette.trim;g.fillRect(0,0,256,Math.max(4,groundH*.22));
+ }
+ // Parapet and roof-edge shadow help the silhouette read at street level.
+ g.fillStyle=detail.trim||palette.trim;g.fillRect(0,0,256,5);
+ const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
+ tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
+ tex.repeat.set(Math.max(1,Math.min(8,perimeter/9)),Math.max(1,Math.min(6,height/9)));
+ const mat=new THREE.MeshStandardMaterial({map:tex,roughness:.91,metalness:.01});
+ facadeProfileCache.set(key,mat);return mat;
+}
+
 function addArea(el,target,colour){const ns=el.geometry||[];if(ns.length<4)return;const pts=ns.map(p=>project(p.lat,p.lon));if(pts.some(p=>Math.abs(p.x)>3500||Math.abs(p.z)>3500))return;target.push(pts);const sh=new THREE.Shape();sh.moveTo(pts[0].x,-pts[0].z);for(let i=1;i<pts.length;i++)sh.lineTo(pts[i].x,-pts[i].z);sh.closePath();const mesh=new THREE.Mesh(new THREE.ShapeGeometry(sh),new THREE.MeshStandardMaterial({color:colour,roughness:.95,side:THREE.DoubleSide}));mesh.rotation.x=-Math.PI/2;mesh.position.y=-.02;scene.add(mesh)}
 function addRailway(el){const pts=(el.geometry||[]).map(p=>project(p.lat,p.lon));if(pts.length<2||pts.some(p=>Math.abs(p.x)>3500||Math.abs(p.z)>3500))return;railwayLines.push({pts,tags:el.tags||{}});const elevated=(el.tags?.bridge==='yes'||el.tags?.layer==='1'||el.tags?.railway==='light_rail');const y=elevated?5.2:.2;for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);if(len<.2)continue;const angle=Math.atan2(dx,dz);for(const off of [-.72,.72]){const rail=box(scene,.12,.13,len,(a.x+b.x)/2+Math.cos(angle)*off,y,(a.z+b.z)/2-Math.sin(angle)*off,material(0x333b40),false);rail.rotation.y=angle;}if(elevated){const deck=box(scene,3.2,.3,len,(a.x+b.x)/2,y-.22,(a.z+b.z)/2,material(0x888982),false);deck.rotation.y=angle;for(let t=.15;t<1;t+=Math.min(2/len,.15)){const x=a.x+dx*t,z=a.z+dz*t;box(scene,.35,4.9,.35,x,y/2,z,material(0x777b78),false)}}else if(el.tags?.railway==='light_rail'||el.tags?.railway==='rail'){for(let t=.08;t<1;t+=Math.min(1.3/len,.12)){const x=a.x+dx*t,z=a.z+dz*t;const sleeper=box(scene,2.1,.08,.28,x,.13,z,material(0x5b5146),false);sleeper.rotation.y=angle}}}}
 function addFootprint(el){
@@ -69,12 +146,16 @@ function addFootprint(el){
  const shape=new THREE.Shape();shape.moveTo(pts[0].x,-pts[0].z);
  for(let i=1;i<pts.length;i++)shape.lineTo(pts[i].x,-pts[i].z);
  shape.closePath();
- const tags=el.tags||{},levels=Number(tags['building:levels']||tags.levels||0);
- const height=Number(tags.height)||Math.max(4,(levels||({house:2,apartments:5,hotel:8,commercial:4,office:6,retail:2}[tags.building]||3))*3.1);
+ const tags=el.tags||{},detail=buildingDetails[String(el.id)]||{},rawLevels=Number(detail.levels||tags['building:levels']||tags.levels||0);
+ const levels=rawLevels||({house:2,detached:2,apartments:5,hotel:8,commercial:4,office:6,retail:2,school:3,university:5,hospital:6}[tags.building]||3);
+ const height=Number(detail.height||tags.height)||Math.max(3.4,levels*3.15);
+ const perimeter=pts.reduce((sum,p,i)=>i?sum+Math.hypot(p.x-pts[i-1].x,p.z-pts[i-1].z):sum,0);
+ const facade=makeTaggedFacade(tags,el.id,height,levels,perimeter);
  const geom=new THREE.ExtrudeGeometry(shape,{depth:height,bevelEnabled:false});
  // Shape is drawn in map x/z; rotate its 2D plane upright into the world footprint.
  geom.rotateX(-Math.PI/2);
- const mesh=new THREE.Mesh(geom,facadeMats[Math.abs(Number(el.id)||0)%facadeMats.length]);
+ // ExtrudeGeometry uses material 0 for caps and 1 for the vertical walls.
+ const mesh=new THREE.Mesh(geom,[material(Number(detail.roofColor)||0x77766f),facade]);
  mesh.position.y=0;mesh.castShadow=true;mesh.receiveShadow=true;realMapGroup.add(mesh);
  const roof=new THREE.Mesh(new THREE.ShapeGeometry(shape),material(0x77766f));
  roof.rotation.x=-Math.PI/2;roof.position.y=height+.015;realMapGroup.add(roof);
@@ -114,6 +195,9 @@ async function loadRealCity(){
  const placeData=markerResponse&&markerResponse.ok?await markerResponse.json():{places:[]};
  // Build road geometry first so collision and street-name lookup are available before buildings.
  for(const el of elements){const tags=el.tags||{};if(el.type==='way'&&['rail','light_rail','subway','tram'].includes(tags.railway))addRailway(el);if(el.type==='way'&&(tags.natural==='water'||tags.waterway==='riverbank'||tags.water==='lake'))addArea(el,waterPolygons,0x3d9db5);if(el.type==='way'&&tags.natural==='beach')addArea(el,beachPolygons,0xdcc58d);if(el.type==='way'&&tags.highway)addRoad(el);}
+ // Optional verified per-building corrections live separately from imported OSM data.
+ let buildingDetails={};
+ try{const detailsResponse=await fetch('./maps/malate-building-details.json',{cache:'no-cache'});if(detailsResponse.ok){const detailsData=await detailsResponse.json();if(detailsData&&detailsData.buildings&&typeof detailsData.buildings==='object')buildingDetails=detailsData.buildings;}}catch(err){console.warn('Building detail overrides unavailable; using OSM tags and procedural facade profiles.',err)}
  for(const el of elements)if(el.type==='way'&&(el.tags?.building||el.tags?.['building:part']))addFootprint(el);
  // Emergency and travel markers use clear letter/icon badges: H hospital, HOTEL, helicopter, and airport.
  const markerStyles={hospital:{symbol:'H',color:0xff5555},clinic:{symbol:'+',color:0xff8585},doctors:{symbol:'+',color:0xff8585},pharmacy:{symbol:'P',color:0x77dca1},hotel:{symbol:'HOTEL',color:0xffc85c},helicopter:{symbol:'🚁',color:0x76d9ff},airport:{symbol:'✈',color:0x91baff},transit:{symbol:'M',color:0xe4d27c},fire_station:{symbol:'F',color:0xff995b},police:{symbol:'POL',color:0x7fb5ff},school:{symbol:'S',color:0xffdf8c},university:{symbol:'U',color:0xffdf8c},college:{symbol:'C',color:0xffdf8c},bus_station:{symbol:'BUS',color:0xa6b8c9},ferry_terminal:{symbol:'⛴',color:0x78d8ed},museum:{symbol:'MUS',color:0xc7a4ff},attraction:{symbol:'★',color:0xffc85c},information:{symbol:'i',color:0x9bd9ff},mall:{symbol:'MALL',color:0xff7ac8},supermarket:{symbol:'SHOP',color:0x91dba1},convenience:{symbol:'STORE',color:0xa8dfb2},restaurant:{symbol:'FOOD',color:0xffad75},cafe:{symbol:'CAFE',color:0xc9a27d},bank:{symbol:'BANK',color:0x9cbaff},atm:{symbol:'ATM',color:0x9cbaff},place_of_worship:{symbol:'WORSHIP',color:0xc9b3ff},library:{symbol:'LIB',color:0xb8c6ff},parking:{symbol:'PARKING',color:0xabb6bf},toilets:{symbol:'WC',color:0x93d7e5},park:{symbol:'PARK',color:0x8bdb92},garden:{symbol:'GARDEN',color:0x8bdb92},tree:{symbol:'TREE',color:0x5fc878},bench:{symbol:'BENCH',color:0xd8c8a4},waste_basket:{symbol:'BIN',color:0xb7c2c7},bicycle_parking:{symbol:'BIKE',color:0x8bc9e8},drinking_water:{symbol:'WATER',color:0x65cce5},traffic_signals:{symbol:'SIGNAL',color:0xff625d},crossing:{symbol:'CROSS',color:0xf0e6b0},street_lamp:{symbol:'LAMP',color:0xffdf91},fire_hydrant:{symbol:'HYDRANT',color:0xff8c6e},bus_stop:{symbol:'BUS',color:0xa6b8c9},bicycle_rental:{symbol:'BIKE',color:0x8bc9e8},charging_station:{symbol:'EV',color:0x8fe2ac},fuel:{symbol:'FUEL',color:0xffc17a}};
