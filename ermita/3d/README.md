@@ -58,3 +58,13 @@ The current reliable base is the actual mapped geometry in OpenStreetMap plus th
 - Do not mix datasets with incompatible reuse conditions; preserve source-specific attribution and review ODbL share-alike obligations for derived databases.
 - Keep original source files unchanged. Record every cleaned/merged derivative and its QA counts.
 - Check repository size limits; use appropriate external artifact storage for large permitted source archives.
+
+
+## Active source acquisition (2026-10-18)
+
+The current source-by-source access audit is in `building-data-source-investigation.md`; the source status register is `source-manifest.csv`; ready-to-send provider requests are in `data-acquisition-request-pack.md`.
+
+- **Street-level facade references:** the repository already reports 238 local KartaView images and 246 candidate building matches. This is candidate evidence, not verified facade mapping. Keep KartaView out of the live map renderer as requested; do not download duplicate photo IDs. KartaView imagery requires CC BY-SA 4.0 compliance and attribution: © Grab and KartaView Contributors.
+- **DSM/DTM/LiDAR/orthophotos:** LiPAD currently directs requests through registration and manual data-request forms. NAMRIA lists specialized LiDAR and IfSAR products, but exact Ermita coverage, current quote, resolution, acquisition date, and reuse terms must be confirmed before acquisition.
+- **OpenDronePH:** requires registration and donor-specific reuse checks; Manila coverage is not yet confirmed.
+- **Repository status:** this pass updated source documentation and request templates. It did not obtain a LiPAD approval, purchase NAMRIA products, submit external forms, or download new government datasets. Never mark those steps complete without actual data/approval evidence.
