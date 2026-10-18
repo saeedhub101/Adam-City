@@ -13,7 +13,7 @@
 <body><div id="app"><canvas id="world"></canvas></div>
 <div class="hud hidden" id="hud"><div class="tag"><b>MABINI STREET</b><br><span style="opacity:.7">MALATE · MANILA</span></div><div class="tag" id="state">WALK</div></div>
 <div class="hint hidden" id="hint">WASD / Arrow keys · Shift run · Mouse drag to look · Space jump · Esc unlock mouse</div>
-<div class="screen" id="start"><div class="panel"><div class="eyebrow">CITY WALK · MANILA, PHILIPPINES</div><h1>Mabini<br>Street</h1><p>A walkable street-level game prototype. Explore the block, move through the street, and look around from behind your character.</p><p><b>Controls</b><br>WASD / arrows to move · Shift to run · Space to jump · drag mouse to look around</p><button id="play">ENTER THE STREET</button><p class="small">Internet connection required to load the 3D engine. Scene details are a game-world interpretation, not a surveyed replica.</p></div></div>
+<div class="screen" id="start"><div class="panel"><div class="eyebrow">CITY WALK · MANILA, PHILIPPINES</div><h1>Mabini<br>Street</h1><p>Block 01 is the first photo-reference slice of real Mabini Street, Malate. Walk the first short section now; more real street blocks can be added one at a time.</p><p><b>Controls</b><br>WASD / arrows to move · Shift to run · Space to jump · drag mouse to look around</p><button id="play">ENTER THE STREET</button><p class="small">Uses real Mabini Street / Malate photo references as the first visual anchors. This is an incremental photo-backed prototype, not yet a complete 1:1 reconstruction.</p></div></div>
 <div class="error" id="error"></div>
 <script type="module">
 import * as THREE from 'three';
@@ -45,32 +45,44 @@ function building(x,z,w,d,h,facade,seed){
  return g;
 }
 function tree(x,z,scale=1){const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);box(g,.25,2.1,.25,mat('#59483a'),0,1,0);for(let i=0;i<5;i++){const geo=new THREE.IcosahedronGeometry((1.0-i*.1)*scale,1),m=new THREE.Mesh(geo,mat(i%2?'#47664a':'#38573f'));const o=new THREE.Mesh(geo,m);o.position.set(Math.sin(i*3)*.3,1.8+i*.38,Math.cos(i*4)*.25);o.castShadow=true;g.add(o)}}
+function photoWall(url,x,z,w,h,rotationY=0){
+ const tex=new THREE.TextureLoader();tex.setCrossOrigin('anonymous');
+ tex.load(url,t=>{t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=renderer?.capabilities?.getMaxAnisotropy?.()||1;
+  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));
+  mesh.position.set(x,h/2,z);mesh.rotation.y=rotationY;scene.add(mesh);
+ },undefined,()=>console.warn('Could not load Mabini photo reference',url));
+}
 function makeWorld(){
- scene=new THREE.Scene();scene.background=new THREE.Color('#a9b8bf');scene.fog=new THREE.Fog('#a9b8bf',40,150);
- scene.add(new THREE.HemisphereLight('#dbe6ed','#4a4338',2.0));
- const sun=new THREE.DirectionalLight('#fff0d8',3.1);sun.position.set(-25,45,20);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-70;sun.shadow.camera.right=70;sun.shadow.camera.top=70;sun.shadow.camera.bottom=-70;scene.add(sun);
- // Long street corridor, sidewalks, lane markings
- box(scene,15,.15,180,mats.asphalt,0,-.1,0);box(scene,4,.18,180,mats.sidewalk,-9.5,-.02,0);box(scene,4,.18,180,mats.sidewalk,9.5,-.02,0);
- for(let z=-84;z<88;z+=9)box(scene,.13,.025,4.2,mats.yellow,0,.002,z);
- for(let side of [-1,1]){box(scene,.16,.14,180,mats.concrete,side*7.35,.02,0);
-  for(let i=0;i<12;i++){let z=-78+i*14+(side===1?4:0),w=9+((i*7)%4),h=11+((i*11)%13);building(side*16,z,w,8,h,[mats.cream,mats.white,mats.blue,mats.green,mats.rust][(i+(side===1?2:0))%5],i+side*3)}
-  for(let i=0;i<9;i++)tree(side*(8.7),-72+i*18, .8+(i%3)*.12);
+ scene=new THREE.Scene();scene.background=new THREE.Color('#a9b8bf');scene.fog=new THREE.Fog('#a9b8bf',55,130);
+ scene.add(new THREE.HemisphereLight('#dbe6ed','#4a4338',1.8));
+ const sun=new THREE.DirectionalLight('#fff0d8',2.4);sun.position.set(-25,45,20);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);scene.add(sun);
+ // First playable slice: one short block, with actual photographs as the visual anchors.
+ box(scene,13,.15,58,mats.asphalt,0,-.1,0);
+ box(scene,2.5,.18,58,mats.sidewalk,-7.6,-.02,0);box(scene,2.5,.18,58,mats.sidewalk,7.6,-.02,0);
+ for(let z=-27;z<29;z+=8)box(scene,.13,.025,3.5,mats.yellow,0,.002,z);
+ for(let side of [-1,1])box(scene,.16,.14,58,mats.concrete,side*6.5,.02,0);
+ // The first two photo references are real photographs from Mabini Street / Malate.
+ // They intentionally remain obvious photographic anchors while this block is built out.
+ photoWall('https://commons.wikimedia.org/wiki/Special:FilePath/06127jfHotels_Building_Streets_Mabini_Malate_Manilafvf_12.jpg',-6.4,-1,26,11,Math.PI/2);
+ photoWall('https://commons.wikimedia.org/wiki/Special:FilePath/05261jfStreets_Mabini_Ocampo_Roxas_Boulevard_Malate_Manilafvf_08.jpg',6.4,-1,26,11,-Math.PI/2);
+ // Low-rise street edge and shopfront silhouettes to frame the first photo-backed block.
+ for(let side of [-1,1]){
+  for(let i=0;i<3;i++){
+   let z=-20+i*20,w=8.5,h=[8,11,7][i],fac=[mats.cream,mats.white,mats.blue][(i+(side>0?1:0))%3];
+   building(side*13.2,z,w,5,h,fac,i+side+4);
+  }
+  for(let i=0;i<3;i++)tree(side*5.9,-18+i*19,.78+(i%2)*.1);
  }
- // street lamps, bollards, parked vehicles
- for(let side of [-1,1])for(let z=-70;z<75;z+=19){let x=side*7.8;box(scene,.12,4.6,.12,mats.dark,x,2.3,z);box(scene,.8,.12,.12,mats.dark,x+side*.3,4.55,z);box(scene,.42,.14,.25,mat('#f2d9a1'),x+side*.58,4.48,z)}
- for(let i=0;i<8;i++){let z=-62+i*17,side=i%2?1:-1,x=side*(4.9+(i%3)*.65);const car=new THREE.Group();car.position.set(x,.15,z);scene.add(car);let body=mat(['#aeb3b2','#6d777b','#a58b72','#35464e'][i%4]);box(car,1.75,.65,3.7,body,0,.55,0);box(car,1.42,.53,1.7,mats.glass,0,1.05,-.1);for(let wx of [-.88,.88])for(let wz of [-1.15,1.15]){const wh=new THREE.Mesh(new THREE.CylinderGeometry(.27,.27,.16,16),mats.rubber);wh.rotation.z=Math.PI/2;wh.position.set(wx,.3,wz);car.add(wh)}}
- // scattered storefront signs without tiny generated text
- for(let i=0;i<10;i++){let side=i%2?1:-1,z=-72+i*15;box(scene,2.6,.6,.12,[mats.blue,mats.rust,mats.green][i%3],side*11.35,3.05,z)}
- // character: simple detailed third-person street avatar
- player=new THREE.Group();scene.add(player);
- const body=new THREE.Group();player.add(body);
- box(body,.65,.82,.36,mats.shirt,0,1.45,0);box(body,.24,.25,.25,mats.skin,0,2.02,0);
- const hair=mat('#24201d');const head=new THREE.Mesh(new THREE.SphereGeometry(.19,12,10),mats.skin);head.position.set(0,2.08,0);body.add(head);box(body,.39,.12,.38,hair,0,2.22,0);
- const armL=box(body,.18,.72,.2,mats.shirt,-.43,1.48,0),armR=box(body,.18,.72,.2,mats.shirt,.43,1.48,0);
- const legL=box(body,.25,.75,.27,mats.pants,-.18,.65,0),legR=box(body,.25,.75,.27,mats.pants,.18,.65,0);
+ // Two parked vehicles and street furniture for this first short block.
+ for(let i=0;i<2;i++){let z=-8+i*19,side=i?1:-1,x=side*4.5;const car=new THREE.Group();car.position.set(x,.15,z);scene.add(car);let body=mat(i?'#aeb3b2':'#6d777b');box(car,1.75,.65,3.7,body,0,.55,0);box(car,1.42,.53,1.7,mats.glass,0,1.05,-.1);for(let wx of [-.88,.88])for(let wz of [-1.15,1.15]){const wh=new THREE.Mesh(new THREE.CylinderGeometry(.27,.27,.16,16),mats.rubber);wh.rotation.z=Math.PI/2;wh.position.set(wx,.3,wz);car.add(wh)}}
+ for(let side of [-1,1])for(let z=-20;z<26;z+=18){box(scene,.12,4.3,.12,mats.dark,side*6.1,2.15,z);box(scene,.7,.12,.12,mats.dark,side*5.8,4.2,z);box(scene,.35,.14,.25,mat('#f2d9a1'),side*5.45,4.13,z)}
+ // Controllable third-person avatar.
+ player=new THREE.Group();scene.add(player);const body=new THREE.Group();player.add(body);
+ box(body,.65,.82,.36,mats.shirt,0,1.45,0);const head=new THREE.Mesh(new THREE.SphereGeometry(.19,12,10),mats.skin);head.position.set(0,2.08,0);body.add(head);box(body,.39,.12,.38,mat('#24201d'),0,2.22,0);
+ const armL=box(body,.18,.72,.2,mats.shirt,-.43,1.48,0),armR=box(body,.18,.72,.2,mats.shirt,.43,1.48,0),legL=box(body,.25,.75,.27,mats.pants,-.18,.65,0),legR=box(body,.25,.75,.27,mats.pants,.18,.65,0);
  box(body,.28,.14,.42,mats.rubber,-.18,.12,-.04);box(body,.28,.14,.42,mats.rubber,.18,.12,-.04);
- player.userData={body,legL,legR,armL,armR};player.position.set(0,0,8);
- camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,250);
+ player.userData={body,legL,legR,armL,armR};player.position.set(0,0,22);
+ camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,180);
  renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
  clock=new THREE.Clock();
 }
@@ -78,7 +90,7 @@ function resize(){if(!camera||!renderer)return;camera.aspect=innerWidth/innerHei
 function animate(){requestAnimationFrame(animate);if(!renderer)return;let dt=Math.min(clock.getDelta(),.035),moving=false,speed=keys.has('Shift')?8.0:4.3;
  if(started){let forward=(keys.has('KeyW')||keys.has('ArrowUp')?1:0)-(keys.has('KeyS')||keys.has('ArrowDown')?1:0),side=(keys.has('KeyD')||keys.has('ArrowRight')?1:0)-(keys.has('KeyA')||keys.has('ArrowLeft')?1:0);
  let v=new THREE.Vector3(side,0,-forward);if(v.lengthSq()>0){v.normalize().applyAxisAngle(new THREE.Vector3(0,1,0),heading);player.position.addScaledVector(v,speed*dt);moving=true;player.rotation.y=Math.atan2(v.x,v.z)}
- player.position.x=THREE.MathUtils.clamp(player.position.x,-5.8,5.8);player.position.z=THREE.MathUtils.clamp(player.position.z,-86,86);
+ player.position.x=THREE.MathUtils.clamp(player.position.x,-4.8,4.8);player.position.z=THREE.MathUtils.clamp(player.position.z,-27,27);
  if(keys.has('Space')&&onGround){jumpV=5.3;onGround=false}jumpV-=14*dt;player.position.y+=jumpV*dt;if(player.position.y<0){player.position.y=0;jumpV=0;onGround=true}
  const ud=player.userData,phase=clock.elapsedTime*(keys.has('Shift')?12:8);let swing=moving?Math.sin(phase)*.38:0;ud.legL.rotation.x=swing;ud.legR.rotation.x=-swing;ud.armL.rotation.x=-swing*.8;ud.armR.rotation.x=swing*.8;
  let look=new THREE.Vector3(Math.sin(heading)*Math.cos(pitch),Math.sin(pitch),-Math.cos(heading)*Math.cos(pitch));let target=player.position.clone().add(new THREE.Vector3(0,1.55,0));camera.position.copy(target).addScaledVector(look,-5.8);camera.position.y+=1.5;camera.lookAt(target.clone().addScaledVector(look,8));state.textContent=moving?(keys.has('Shift')?'RUN':'WALK'):'IDLE';
