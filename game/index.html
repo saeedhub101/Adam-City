@@ -1,75 +1,92 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#111820" />
-    <title>Saeed Open World</title>
-  </head>
-  <body>
-    <div id="app">
-      <canvas id="world" aria-label="3D open world game"></canvas>
-      <section id="settings" class="settings">
-        <div class="settings-card">
-          <div class="eyebrow">SAEED OPEN WORLD · EARLY BUILD</div>
-          <h1>استكشف المدينة</h1>
-          <p class="intro">ابدأ في هلسنكي، فنلندا، باستخدام مجسّم ثلاثي الأبعاد مصوّر من صور جوية حقيقية. بيانات النموذج المتاحة تعود إلى عام 2017، ونوسّع المنطقة بعد التحقق من تحميل الخامات والأداء.</p>
-          <label for="quality">Graphics quality</label>
-          <select id="quality">
-            <option value="low">Low · integrated / older devices</option>
-            <option value="medium" selected>Medium · balanced</option>
-            <option value="high">High · dedicated GPU</option>
-            <option value="ultra">Ultra · powerful GPU</option>
-          </select>
-          <button id="start">ابدأ اللعب</button>
-          <p class="fine-print">WASD move · Mouse look · Space jump · Esc unlock mouse<br>Helsinki 3D reality mesh · City of Helsinki · CC BY 4.0</p>
-        </div>
-      </section>
-      <aside id="local-reference" class="local-reference" aria-label="Tabarbour real photo references" hidden>
-        <div class="local-reference-head">
-          <strong>طبربور · مراجع صور المنطقة والمباني</strong>
-          <button id="close-reference" type="button" aria-label="إغلاق الصور">×</button>
-        </div>
-        <details class="google-streetview-demo" open>
-          <summary>Google Street View · تجربة شارع واحد</summary>
-          <p>مشهد شارع حقيقي قرب مركز طبربور لمقارنته بالمجسمات داخل اللعبة.</p>
-          <div id="google-streetview" class="google-streetview-viewer" role="region" aria-label="Google Street View لطبربور"><p id="google-streetview-status">يتطلب عرض Google Street View مفتاح Google Maps Platform API مفعّلًا. بعد ضبط المفتاح سيظهر المشهد هنا.</p></div>
-          <a href="https://www.google.com/maps/@?api=1&amp;map_action=pano&amp;viewpoint=32.00306%2C35.94722&amp;heading=80&amp;pitch=10&amp;fov=80" target="_blank" rel="noreferrer">فتح المشهد في Google Maps إذا لم يظهر داخل اللعبة ↗</a>
-        </details>
-        <div class="local-reference-grid">
-          <a href="https://commons.wikimedia.org/wiki/File:Tabarbour_%D8%B7%D8%A8%D8%B1%D8%A8%D9%88%D8%B1_%D8%B9%D9%8A%D9%86_%D8%B1%D8%A8%D8%A7%D8%B7_-_panoramio.jpg" target="_blank" rel="noreferrer">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Tabarbour_%D8%B7%D8%A8%D8%B1%D8%A8%D9%88%D8%B1_%D8%B9%D9%8A%D9%86_%D8%B1%D8%A8%D8%A7%D8%B7_-_panoramio.jpg" alt="صورة حقيقية قديمة من طبربور، منشورة برخصة المشاع الإبداعي" onerror="this.style.display='none';this.parentElement.classList.add('photo-unavailable')" />
-            <span>صورة حقيقية لطبربور · 2011</span>
-          </a>
-          <a href="https://visitamman.jo/mediahub/11" target="_blank" rel="noreferrer">
-            <img src="https://www.visitamman.jo/assets/images/mediahub/11.jpg" alt="مجموعة صور منطقة طبربور من زوروا عمّان" onerror="this.style.display='none';this.parentElement.classList.add('photo-unavailable')" />
-            <span>صور المنطقة · زوروا عمّان</span>
-          </a>
-          <a class="source-link" href="https://www.mapillary.com/app/?lat=31.9915&lng=35.9445&z=16" target="_blank" rel="noreferrer">
-            <span class="source-link-icon">↗</span>
-            <span>صور الشوارع على Mapillary</span>
-          </a>
-        </div>
-        <p>المتاح علنًا لا يتضمن صورة موثقة لكل واجهة في المنطقة. رابط Mapillary يفتح خريطة الصور الميدانية إن وُجدت تغطية. لا تُستخدم هذه الصور كخامات لواجهات مبانٍ غير مطابقة.</p>
-        <details class="licensed-photo-directory" open>
-          <summary>صور حقيقية مرخّصة جُمعت تلقائيًا <span id="licensed-photo-status">جارٍ تحميل فهرس الصور…</span></summary>
-          <p>يعرض هذا القسم الصور العامة مع اسم المؤلف والرخصة ورابط المصدر. الصور مرجع بصري فقط؛ لن تُلصق صورة على مبنى إلا عندما يمكن التحقق من أنها تخص ذلك المبنى فعلًا.</p>
-          <div id="licensed-photo-gallery" class="licensed-photo-gallery" aria-live="polite"></div>
-        </details>
-        <details class="building-photo-directory" open>
-          <summary>ربط المباني بمراجع الصور <span id="building-photo-count">جارٍ تحميل المباني…</span></summary>
-          <p class="directory-note">لكل مبنى رابط Mapillary عند إحداثياته. إذا تضمنت بيانات OpenStreetMap رابط صورة محددًا فسيُستخدم؛ وإلا فالرابط يعرض صور الشارع القريبة، وليس ضمانًا بوجود صورة مطابقة للمبنى.</p>
-          <div id="building-photo-list" class="building-photo-list" aria-live="polite"></div>
-        </details>
-      </aside>
-      <div id="hud" class="hud hidden">
-        <div class="brand">SAEED <span>OPEN WORLD</span></div>
-        <div class="status"><i></i><span id="status-text">Loading character…</span></div>
-        <div class="controls">WASD <span>MOVE</span> &nbsp; SPACE <span>JUMP</span> &nbsp; CLICK <span>LOOK</span></div>
-        <div id="hint" class="hint">Click the scene to capture mouse</div>
-      </div>
-      <div id="error" class="error hidden"></div>
-    </div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
-</html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#151a20">
+<title>Mabini Street — City Walk</title>
+<style>
+:root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}*{box-sizing:border-box}html,body,#app{width:100%;height:100%;margin:0;overflow:hidden}body{background:#9aa3a8}canvas{display:block;width:100%;height:100%;outline:none}.screen{position:fixed;inset:0;display:grid;place-items:center;padding:22px;background:linear-gradient(100deg,#0c1118e8,#0c1118a6 55%,#0c111866);z-index:5}.panel{width:min(500px,100%);padding:30px;border:1px solid #ffffff25;border-radius:18px;background:#101820ed;box-shadow:0 24px 90px #0008}.eyebrow{font-size:11px;letter-spacing:.2em;font-weight:800;color:#a9c3ce}h1{font-size:clamp(34px,7vw,58px);letter-spacing:-.055em;line-height:.98;margin:16px 0}p{line-height:1.65;color:#c0cbd0}.panel button{width:100%;border:0;border-radius:10px;padding:15px;background:#e4e8e9;color:#101820;font-weight:800;font-size:15px;cursor:pointer}.small{font-size:12px;color:#899aa3}.hud{position:fixed;z-index:2;top:18px;left:18px;right:18px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;text-shadow:0 2px 8px #000}.tag{background:#111820c9;border:1px solid #ffffff24;border-radius:10px;padding:10px 13px;font-size:12px;color:#edf2f3;backdrop-filter:blur(8px)}.hidden{display:none!important}.hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:2;background:#111820c9;border:1px solid #ffffff24;border-radius:10px;padding:10px 14px;color:#f0f2f3;font-size:12px;white-space:nowrap;pointer-events:none}.error{position:fixed;inset:auto 12px 60px;padding:12px;background:#461f22;color:white;z-index:9;display:none}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"}}</script>
+</head>
+<body><div id="app"><canvas id="world"></canvas></div>
+<div class="hud hidden" id="hud"><div class="tag"><b>MABINI STREET</b><br><span style="opacity:.7">MALATE · MANILA</span></div><div class="tag" id="state">WALK</div></div>
+<div class="hint hidden" id="hint">WASD / Arrow keys · Shift run · Mouse drag to look · Space jump · Esc unlock mouse</div>
+<div class="screen" id="start"><div class="panel"><div class="eyebrow">CITY WALK · MANILA, PHILIPPINES</div><h1>Mabini<br>Street</h1><p>A walkable street-level game prototype. Explore the block, move through the street, and look around from behind your character.</p><p><b>Controls</b><br>WASD / arrows to move · Shift to run · Space to jump · drag mouse to look around</p><button id="play">ENTER THE STREET</button><p class="small">Internet connection required to load the 3D engine. Scene details are a game-world interpretation, not a surveyed replica.</p></div></div>
+<div class="error" id="error"></div>
+<script type="module">
+import * as THREE from 'three';
+const canvas=document.querySelector('#world'), start=document.querySelector('#start'),hud=document.querySelector('#hud'),hint=document.querySelector('#hint'),state=document.querySelector('#state'),err=document.querySelector('#error');
+let scene,camera,renderer,player,clock,heading=0,pitch=-.12,started=false,jumpV=0,onGround=true;
+const keys=new Set();
+function mat(color,roughness=0.9){return new THREE.MeshStandardMaterial({color,roughness})}
+const mats={asphalt:mat('#34383a'),sidewalk:mat('#aaa69b'),concrete:mat('#8b8981'),cream:mat('#c6bba5'),white:mat('#c9c5b8'),blue:mat('#657c83'),green:mat('#596e5d'),rust:mat('#88664f'),glass:mat('#40545b',.35),dark:mat('#252a2b'),yellow:mat('#d8b34f'),skin:mat('#b97d57'),shirt:mat('#e0d8c8'),pants:mat('#323b45'),rubber:mat('#17191b')};
+function box(parent,w,h,d,material,x,y,z){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
+function building(x,z,w,d,h,facade,seed){
+ const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
+ box(g,w,h,d,facade,0,h/2,0);box(g,w+.12,.24,d+.12,mats.dark,0,h,0);
+ box(g,w+.3,.32,d+.25,mats.concrete,0,.16,0);
+ const floors=Math.max(2,Math.floor(h/3.05)), cols=Math.max(2,Math.floor(w/1.75));
+ for(let f=0;f<floors;f++){let yy=1.15+f*2.65;if(yy>h-1)continue;
+  for(let c=0;c<cols;c++){let xx=-w/2+(c+.5)*w/cols;
+   box(g,.82,1.28,.055,mats.glass,xx,yy,d/2+.035);
+   box(g,.94,.09,.12,mats.dark,xx,yy-.72,d/2+.06);
+   box(g,.08,1.4,.1,mats.concrete,xx-.48,yy,d/2+.08);
+  }
+  box(g,w,.12,.18,mats.concrete,0,yy-1.0,d/2+.06);
+ }
+ // Ground-floor shopfront and awning
+ box(g,w*.82,1.7,.09,mats.glass,0,1.12,d/2+.08);
+ box(g,w*.92,.16,.55,seed%2?mats.rust:mats.blue,0,2.1,d/2+.24);
+ box(g,w*.94,.1,.12,mats.dark,0,2.25,d/2+.22);
+ // rooftop water tank / small rooftop structures
+ if(seed%2===0){box(g,1.6,1.2,1.6,mats.concrete,w*.22,h+.62,0);box(g,1.1,1.1,1.1,mats.dark,w*.22,h+1.75,0)}
+ return g;
+}
+function tree(x,z,scale=1){const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);box(g,.25,2.1,.25,mat('#59483a'),0,1,0);for(let i=0;i<5;i++){const geo=new THREE.IcosahedronGeometry((1.0-i*.1)*scale,1),m=new THREE.Mesh(geo,mat(i%2?'#47664a':'#38573f'));const o=new THREE.Mesh(geo,m);o.position.set(Math.sin(i*3)*.3,1.8+i*.38,Math.cos(i*4)*.25);o.castShadow=true;g.add(o)}}
+function makeWorld(){
+ scene=new THREE.Scene();scene.background=new THREE.Color('#a9b8bf');scene.fog=new THREE.Fog('#a9b8bf',40,150);
+ scene.add(new THREE.HemisphereLight('#dbe6ed','#4a4338',2.0));
+ const sun=new THREE.DirectionalLight('#fff0d8',3.1);sun.position.set(-25,45,20);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-70;sun.shadow.camera.right=70;sun.shadow.camera.top=70;sun.shadow.camera.bottom=-70;scene.add(sun);
+ // Long street corridor, sidewalks, lane markings
+ box(scene,15,.15,180,mats.asphalt,0,-.1,0);box(scene,4,.18,180,mats.sidewalk,-9.5,-.02,0);box(scene,4,.18,180,mats.sidewalk,9.5,-.02,0);
+ for(let z=-84;z<88;z+=9)box(scene,.13,.025,4.2,mats.yellow,0,.002,z);
+ for(let side of [-1,1]){box(scene,.16,.14,180,mats.concrete,side*7.35,.02,0);
+  for(let i=0;i<12;i++){let z=-78+i*14+(side===1?4:0),w=9+((i*7)%4),h=11+((i*11)%13);building(side*16,z,w,8,h,[mats.cream,mats.white,mats.blue,mats.green,mats.rust][(i+(side===1?2:0))%5],i+side*3)}
+  for(let i=0;i<9;i++)tree(side*(8.7),-72+i*18, .8+(i%3)*.12);
+ }
+ // street lamps, bollards, parked vehicles
+ for(let side of [-1,1])for(let z=-70;z<75;z+=19){let x=side*7.8;box(scene,.12,4.6,.12,mats.dark,x,2.3,z);box(scene,.8,.12,.12,mats.dark,x+side*.3,4.55,z);box(scene,.42,.14,.25,mat('#f2d9a1'),x+side*.58,4.48,z)}
+ for(let i=0;i<8;i++){let z=-62+i*17,side=i%2?1:-1,x=side*(4.9+(i%3)*.65);const car=new THREE.Group();car.position.set(x,.15,z);scene.add(car);let body=mat(['#aeb3b2','#6d777b','#a58b72','#35464e'][i%4]);box(car,1.75,.65,3.7,body,0,.55,0);box(car,1.42,.53,1.7,mats.glass,0,1.05,-.1);for(let wx of [-.88,.88])for(let wz of [-1.15,1.15]){const wh=new THREE.Mesh(new THREE.CylinderGeometry(.27,.27,.16,16),mats.rubber);wh.rotation.z=Math.PI/2;wh.position.set(wx,.3,wz);car.add(wh)}}
+ // scattered storefront signs without tiny generated text
+ for(let i=0;i<10;i++){let side=i%2?1:-1,z=-72+i*15;box(scene,2.6,.6,.12,[mats.blue,mats.rust,mats.green][i%3],side*11.35,3.05,z)}
+ // character: simple detailed third-person street avatar
+ player=new THREE.Group();scene.add(player);
+ const body=new THREE.Group();player.add(body);
+ box(body,.65,.82,.36,mats.shirt,0,1.45,0);box(body,.24,.25,.25,mats.skin,0,2.02,0);
+ const hair=mat('#24201d');const head=new THREE.Mesh(new THREE.SphereGeometry(.19,12,10),mats.skin);head.position.set(0,2.08,0);body.add(head);box(body,.39,.12,.38,hair,0,2.22,0);
+ const armL=box(body,.18,.72,.2,mats.shirt,-.43,1.48,0),armR=box(body,.18,.72,.2,mats.shirt,.43,1.48,0);
+ const legL=box(body,.25,.75,.27,mats.pants,-.18,.65,0),legR=box(body,.25,.75,.27,mats.pants,.18,.65,0);
+ box(body,.28,.14,.42,mats.rubber,-.18,.12,-.04);box(body,.28,.14,.42,mats.rubber,.18,.12,-.04);
+ player.userData={body,legL,legR,armL,armR};player.position.set(0,0,8);
+ camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,250);
+ renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+ clock=new THREE.Clock();
+}
+function resize(){if(!camera||!renderer)return;camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}
+function animate(){requestAnimationFrame(animate);if(!renderer)return;let dt=Math.min(clock.getDelta(),.035),moving=false,speed=keys.has('Shift')?8.0:4.3;
+ if(started){let forward=(keys.has('KeyW')||keys.has('ArrowUp')?1:0)-(keys.has('KeyS')||keys.has('ArrowDown')?1:0),side=(keys.has('KeyD')||keys.has('ArrowRight')?1:0)-(keys.has('KeyA')||keys.has('ArrowLeft')?1:0);
+ let v=new THREE.Vector3(side,0,-forward);if(v.lengthSq()>0){v.normalize().applyAxisAngle(new THREE.Vector3(0,1,0),heading);player.position.addScaledVector(v,speed*dt);moving=true;player.rotation.y=Math.atan2(v.x,v.z)}
+ player.position.x=THREE.MathUtils.clamp(player.position.x,-5.8,5.8);player.position.z=THREE.MathUtils.clamp(player.position.z,-86,86);
+ if(keys.has('Space')&&onGround){jumpV=5.3;onGround=false}jumpV-=14*dt;player.position.y+=jumpV*dt;if(player.position.y<0){player.position.y=0;jumpV=0;onGround=true}
+ const ud=player.userData,phase=clock.elapsedTime*(keys.has('Shift')?12:8);let swing=moving?Math.sin(phase)*.38:0;ud.legL.rotation.x=swing;ud.legR.rotation.x=-swing;ud.armL.rotation.x=-swing*.8;ud.armR.rotation.x=swing*.8;
+ let look=new THREE.Vector3(Math.sin(heading)*Math.cos(pitch),Math.sin(pitch),-Math.cos(heading)*Math.cos(pitch));let target=player.position.clone().add(new THREE.Vector3(0,1.55,0));camera.position.copy(target).addScaledVector(look,-5.8);camera.position.y+=1.5;camera.lookAt(target.clone().addScaledVector(look,8));state.textContent=moving?(keys.has('Shift')?'RUN':'WALK'):'IDLE';
+ }else{camera.position.set(0,5,17);camera.lookAt(0,2,-12)}
+ renderer.render(scene,camera)}
+document.querySelector('#play').addEventListener('click',()=>{started=true;start.classList.add('hidden');hud.classList.remove('hidden');hint.classList.remove('hidden');canvas.focus()});
+addEventListener('keydown',e=>{if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();keys.add(e.code)});addEventListener('keyup',e=>keys.delete(e.code));addEventListener('blur',()=>keys.clear());
+let drag=false,lastX=0,lastY=0;canvas.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointerup',()=>drag=false);canvas.addEventListener('pointercancel',()=>drag=false);canvas.addEventListener('pointermove',e=>{if(!drag||!started)return;heading-= (e.clientX-lastX)*.005;pitch=THREE.MathUtils.clamp(pitch-(e.clientY-lastY)*.003,-.55,.32);lastX=e.clientX;lastY=e.clientY});
+addEventListener('resize',resize);
+try{makeWorld();resize();animate()}catch(e){err.style.display='block';err.textContent='The game could not start: '+e.message;console.error(e)}
+</script></body></html>
