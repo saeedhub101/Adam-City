@@ -4,7 +4,10 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "ermita/scripts/**"
+      - "ermita/scripts/import_osm_and_build_3d.py"
+      - "ermita/scripts/import_dpwh_national_roads.py"
+      - "ermita/scripts/import_real_facade_photos.py"
+      - "ermita/scripts/import_copernicus_terrain.py"
   schedule:
     - cron: "23 2 1 * *"
 
