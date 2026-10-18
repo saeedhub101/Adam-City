@@ -18,7 +18,7 @@
 <label><input id="realModels" type="checkbox" checked> Real building 3D model previews</label>
 <label style="font-weight:800;color:#7de7ff;background:#18334a;padding:5px 8px;border-radius:5px"><input id="basemapBuildings" type="checkbox"> BASEMAP 3D BUILDINGS</label>
 <label><input id="buildings" type="checkbox" checked> OSM 3D buildings</label>
-<label><input id="microsoftBuildings" type="checkbox" checked> Microsoft footprints (comparison)</label>
+<label><input id="microsoftBuildings" type="checkbox" checked> Microsoft 3D buildings (height source shown on click)</label>
 <label><input id="microsoftRoads" type="checkbox"> Microsoft detected roads</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
 <label><input id="terrain" type="checkbox" checked> 3D terrain</label>
@@ -330,9 +330,20 @@ map.on('load',async()=>{
   if(surfaceData.features.length)addDpwRoadSurface(surfaceData);
   if(microsoftBuildingsData.features.length){
    map.addSource('microsoft-building-footprints',{type:'geojson',data:microsoftBuildingsData});
-   map.addLayer({id:'microsoft-building-footprints-fill',type:'fill',source:'microsoft-building-footprints',paint:{'fill-color':'#00b8d9','fill-opacity':0.28}});
+   // Render Microsoft's own footprint geometry as a separate 3D layer. Height is only authoritative when present in source properties; otherwise use an explicitly identified visual estimate.
+   map.addLayer({id:'microsoft-building-footprints-3d',type:'fill-extrusion',source:'microsoft-building-footprints',
+    paint:{
+     'fill-extrusion-color':'#00b8d9',
+     'fill-extrusion-opacity':0.78,
+     'fill-extrusion-base':0,
+     'fill-extrusion-height':['max',2,['coalesce',
+      ['to-number',['get','height']],
+      ['to-number',['get','height_m']],
+      ['case',['has','building:levels'],['*',['to-number',['get','building:levels'],0],3.2],8]
+     ]]
+    }});
    map.addLayer({id:'microsoft-building-footprints-outline',type:'line',source:'microsoft-building-footprints',paint:{'line-color':'#007c91','line-width':['interpolate',['linear'],['zoom'],13,0.5,17,1.6],'line-opacity':0.95}});
-   map.on('click','microsoft-building-footprints-fill',e=>{const f=e.features&&e.features[0];if(!f)return;new maplibregl.Popup().setLngLat(e.lngLat).setHTML('<div style="font:13px system-ui"><b>Microsoft detected footprint</b><div>Source: Microsoft/Bing aerial-image extraction</div><div>Imagery vintage: 2016–2020</div><div>Footprint only; no façade photo or guaranteed height</div></div>').addTo(map)});
+   map.on('click','microsoft-building-footprints-3d',e=>{const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};const h=Number(p.height??p.height_m);const levels=Number(p['building:levels']);const source=Number.isFinite(h)&&h>0?'height attribute in source data':Number.isFinite(levels)&&levels>0?'building:levels attribute in source data':'visual fallback estimate (8 m; not a measured Microsoft height)';const shown=Number.isFinite(h)&&h>0?h+' m':Number.isFinite(levels)&&levels>0?(levels*3.2).toFixed(1)+' m (derived from levels)':'8 m (estimated)';new maplibregl.Popup().setLngLat(e.lngLat).setHTML('<div style="font:13px system-ui"><b>Microsoft building footprint · 3D view</b><div>Source geometry: Microsoft/Bing aerial-image extraction</div><div>Imagery vintage: 2016–2020</div><div>Displayed height: '+esc(shown)+'</div><div>Height basis: '+esc(source)+'</div><div>Microsoft Philippines footprint release does not guarantee a measured height for each building.</div></div>').addTo(map)});
   }
   if(microsoftRoadsData.features.length){
    map.addSource('microsoft-road-detections',{type:'geojson',data:microsoftRoadsData});
@@ -343,7 +354,7 @@ map.on('load',async()=>{
   // Apply the current checkbox states after asynchronous data loading, even if a user unchecked a layer early.
   const setVisibility=(ids,visible)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visible?'visible':'none')});
   setVisibility(['local-buildings-3d','local-building-labels'],document.getElementById('buildings').checked);
-  setVisibility(['microsoft-building-footprints-fill','microsoft-building-footprints-outline'],document.getElementById('microsoftBuildings').checked);
+  setVisibility(['microsoft-building-footprints-3d','microsoft-building-footprints-outline'],document.getElementById('microsoftBuildings').checked);
   setVisibility(['microsoft-road-detections-line'],document.getElementById('microsoftRoads').checked);
   setVisibility(['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'],document.getElementById('realModels').checked);
   setVisibility(basemap3DBuildingLayerIds,document.getElementById('basemapBuildings').checked);
@@ -356,7 +367,7 @@ document.getElementById('landmarks').addEventListener('change',e=>['key-landmark
 document.getElementById('realModels').addEventListener('change',e=>['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('buildings').addEventListener('change',e=>{['local-buildings-3d','local-building-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('basemapBuildings').addEventListener('change',e=>basemap3DBuildingLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
-document.getElementById('microsoftBuildings').addEventListener('change',e=>['microsoft-building-footprints-fill','microsoft-building-footprints-outline'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
+document.getElementById('microsoftBuildings').addEventListener('change',e=>['microsoft-building-footprints-3d','microsoft-building-footprints-outline'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('microsoftRoads').addEventListener('change',e=>{if(map.getLayer('microsoft-road-detections-line'))map.setLayoutProperty('microsoft-road-detections-line','visibility',e.target.checked?'visible':'none')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null)}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
