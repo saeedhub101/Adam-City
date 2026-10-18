@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: ermita-building-footprints
+  group: main-writer
   cancel-in-progress: false
 
 jobs:
@@ -55,20 +55,6 @@ jobs:
           else
             git commit -m "Import clipped public building footprints for Ermita"
             git fetch origin main
-            if ! git rebase origin/main; then
-              # Resolve concurrent generated-file conflicts in favor of this fresh snapshot.
-              conflicts="$(git diff --name-only --diff-filter=U)"
-              if [ -n "$conflicts" ]; then
-                for conflict in $conflicts; do
-                  git checkout --theirs -- "$conflict"
-                  git add -- "$conflict"
-                done
-                GIT_EDITOR=true git rebase --continue
-              else
-                git rebase --abort
-                echo "::error::Rebase failed without resolvable file conflicts."
-                exit 1
-              fi
-            fi
+            git rebase origin/main
             git push origin HEAD:main
           fi

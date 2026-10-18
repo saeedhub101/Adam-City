@@ -1,14 +1,14 @@
 {
-  "status": "success",
+  "status": "partial",
   "area": "Ermita, Manila, Philippines",
   "source": "KartaView public API",
   "mode": "metadata-only; no image files requested or downloaded",
   "queried_grid_cells": 72,
-  "new_photo_metadata_records_added": 4,
+  "new_photo_metadata_records_added": 0,
   "existing_photo_metadata_records_reimported": 0,
-  "total_preserved_photo_metadata_records": 744,
+  "total_preserved_photo_metadata_records": 747,
   "unique_sequences_with_metadata": 135,
-  "geojson_point_features": 744,
+  "geojson_point_features": 747,
   "api_errors": [],
   "outputs": [
     "kartaview/ermita-street-imagery-metadata.csv",
