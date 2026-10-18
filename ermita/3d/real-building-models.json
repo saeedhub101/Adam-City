@@ -11,9 +11,9 @@
       "osm_feature_id": "way/520939293",
       "model_page": "https://sketchfab.com/3d-models/ramon-magsaysay-building-e244e17eea144fc585b40a873c2a1bbd",
       "format": "Local GLB and FBX files committed in ermita/buildings",
-      "integration_status": "local_glb_loaded_as_maplibre_3d_custom_layer",
+      "integration_status": "local_glb_loaded_in_3d_map_with_textured_road_and_sidewalk_overlays",
       "real_building": true,
-      "notes": "18-storey real building; inspect mesh scale and facade before placement.",
+      "notes": "GLB is loaded as a local 3D custom layer at the approximate building anchor and normalized to about 62 m high. Street asphalt and provisional sidewalk textures are applied to approximate strips derived from mapped road centerlines. Visual alignment and surface widths still need checking.",
       "map_preview_added": true,
       "map_preview_note": "Local GLB is loaded as a 3D custom layer at the approximate building location. Height is normalized to about 62 m; footprint, orientation and facade alignment still require visual verification.",
       "downloaded": true,
@@ -26,7 +26,11 @@
         "ermita/buildings/CityStreetRoadAsphaltTwoLaneWorn001_COL_1K.jpeg",
         "ermita/buildings/Mono-Terrazzo-Stack-Architextures.jpeg",
         "ermita/buildings/Painted-CMU-Block-Architextures.jpeg"
-      ]
+      ],
+      "materials_applied": {
+        "road_texture": "ermita/buildings/CityStreetRoadAsphaltTwoLaneWorn001_COL_1K.jpeg",
+        "provisional_sidewalk_texture": "ermita/buildings/Mono-Terrazzo-Stack-Architextures.jpeg"
+      }
     },
     {
       "id": "ermita-center-building",
@@ -70,5 +74,5 @@
       "notes": "Model page describes a 15-storey hotel on Adriatico Street; exact footprint still needs matching."
     }
   ],
-  "next_step": "Visually verify the local Ramon Magsaysay Center mesh alignment and map the local road-asphalt and sidewalk surface textures onto generated street geometry."
+  "next_step": "Visually verify Ramon Magsaysay Center mesh placement, orientation, and base against its actual footprint; refine approximate road/sidewalk widths and replace the provisional sidewalk material if needed."
 }
