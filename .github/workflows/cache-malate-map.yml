@@ -19,19 +19,6 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-      - name: Download Geofabrik Philippines extract for reference
-        run: |
-          mkdir -p reference
-          curl --fail --location --retry 3 --connect-timeout 30 --max-time 900 \
-            https://download.geofabrik.de/asia/philippines-latest.osm.pbf \
-            --output reference/philippines-latest.osm.pbf
-          ls -lh reference/philippines-latest.osm.pbf
-      - name: Keep source extract as a downloadable workflow artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: geofabrik-philippines-osm-pbf
-          path: reference/philippines-latest.osm.pbf
-          retention-days: 14
       - name: Download Metro Manila streets and building footprints
         run: |
           mkdir -p data
@@ -69,6 +56,20 @@ jobs:
           else:
             raise SystemExit('Could not download Metro Manila data from any Overpass mirror: '+'; '.join(errors))
           PY
+      - name: Download Geofabrik Philippines extract for reference (optional)
+        run: |
+          mkdir -p reference
+          curl --fail --location --retry 3 --connect-timeout 30 --max-time 900 \
+            https://download.geofabrik.de/asia/philippines-latest.osm.pbf \
+            --output reference/philippines-latest.osm.pbf
+          ls -lh reference/philippines-latest.osm.pbf
+        continue-on-error: true
+      - name: Keep source extract as a downloadable workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: geofabrik-philippines-osm-pbf
+          path: reference/philippines-latest.osm.pbf
+          retention-days: 14
       - name: Commit cached Metro Manila map to main
         run: |
           if git diff --quiet -- data/manila-osm.json; then
