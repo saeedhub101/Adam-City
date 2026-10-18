@@ -39,7 +39,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ermita/maps/generated ermita/3d/generated ermita/3d/terrain ermita/facades/generated ermita/facades/images
+          git add kartaview ermita/maps/generated ermita/3d/generated ermita/3d/terrain
           if git diff --cached --quiet; then
             echo "No generated data changes to commit."
           else
