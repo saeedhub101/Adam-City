@@ -67,7 +67,7 @@ area(3600103706)->.ermitaArea;
   nwr(area.ermitaArea)["waterway"];
   nwr(area.ermitaArea)["water"];
   nwr(area.ermitaArea)["sport"];
-  /* Route relations are not needed for building geometry; avoid converting unrelated route relations. */
+
   nwr(area.ermitaArea)["boundary"];
   nwr(area.ermitaArea)["entrance"];
   nwr(area.ermitaArea)["door"];
