@@ -1,0 +1,68 @@
+{
+  "status": "success",
+  "created_at_utc": "2026-10-18T18:25:56.697792+00:00",
+  "source_catalog": "https://npdc.gov.ph/downloads/",
+  "assets": [
+    {
+      "filename": "rizal-park-technical-map-2024.jpg",
+      "url": "https://npdc.gov.ph/wp-content/uploads/2024/05/Rizal-Park-Technical-Map-scaled.jpg",
+      "description": "NPDC-published Rizal Park technical map",
+      "expected": "image/jpeg",
+      "local_path": "ermita/rizal-park/source-data/npdc-assets/rizal-park-technical-map-2024.jpg",
+      "downloaded_bytes": 740593,
+      "sha256": "963f4374b63685557909f1836f92c19127aea6d7122a90885ed870da950afc9e",
+      "http_content_type": "image/jpeg",
+      "updated_local_file": true,
+      "redistribution_license": "Not stated in this import record; public download is not treated as an open licence. Verify NPDC permission before republishing the original asset or derivatives.",
+      "use_note": "Reference/source evidence only. Map georeferencing and digitization require a separate documented QA step."
+    },
+    {
+      "filename": "rizal-park-brochure-2021.pdf",
+      "url": "https://npdc.gov.ph/wp-content/uploads/2021/06/Rizal-Park-Brochures.pdf",
+      "description": "NPDC-published Rizal Park brochure",
+      "expected": "application/pdf",
+      "local_path": "ermita/rizal-park/source-data/npdc-assets/rizal-park-brochure-2021.pdf",
+      "downloaded_bytes": 1482117,
+      "sha256": "a8349db42d90bf0b184059c789297485cf5ee1fee72ec97220942765f3968121",
+      "http_content_type": "application/pdf",
+      "updated_local_file": true,
+      "redistribution_license": "Not stated in this import record; public download is not treated as an open licence. Verify NPDC permission before republishing the original asset or derivatives.",
+      "use_note": "Reference/source evidence only. Map georeferencing and digitization require a separate documented QA step."
+    },
+    {
+      "filename": "distribution-and-thematic-mapping-report-2025.pdf",
+      "url": "https://npdc.gov.ph/wp-content/uploads/2025/02/GIS-Group_Distribution-and-Thematic-Mapping-Report.pdf",
+      "description": "NPDC GIS Group distribution and thematic mapping report",
+      "expected": "application/pdf",
+      "local_path": "ermita/rizal-park/source-data/npdc-assets/distribution-and-thematic-mapping-report-2025.pdf",
+      "downloaded_bytes": 32659295,
+      "sha256": "0723171f4d63b442d7bd944bbc15789681a813f61e5253c87e22f51cbf1aff4e",
+      "http_content_type": "application/pdf",
+      "updated_local_file": true,
+      "redistribution_license": "Not stated in this import record; public download is not treated as an open licence. Verify NPDC permission before republishing the original asset or derivatives.",
+      "use_note": "Reference/source evidence only. Map georeferencing and digitization require a separate documented QA step."
+    },
+    {
+      "filename": "western-section-development-project-public-2026.pdf",
+      "url": "https://npdc.gov.ph/wp-content/uploads/2026/08/NPDC-Western-Section-Development-Project-PUBLIC.pdf",
+      "description": "NPDC public Western Section Development Project document",
+      "expected": "application/pdf",
+      "local_path": "ermita/rizal-park/source-data/npdc-assets/western-section-development-project-public-2026.pdf",
+      "downloaded_bytes": 3259521,
+      "sha256": "8caf09ffbf489734d075652cc3a0f16b70a2883b0fb40922ccf02f959fb66cd8",
+      "http_content_type": "application/pdf",
+      "updated_local_file": true,
+      "redistribution_license": "Not stated in this import record; public download is not treated as an open licence. Verify NPDC permission before republishing the original asset or derivatives.",
+      "use_note": "Reference/source evidence only. Map georeferencing and digitization require a separate documented QA step."
+    }
+  ],
+  "not_imported_again": [
+    "The existing NPDC 2024 tree inventory source-export CSV and coordinate-normalization CSV were left unchanged to avoid duplicate imports.",
+    "Tree thematic-map PDFs and additional inventory maps are not downloaded in this batch; the initial batch focuses on the park map and planning references."
+  ],
+  "limitations": [
+    "No open redistribution licence was confirmed from the download listing.",
+    "The technical map is an image document, not a ready-made GIS layer.",
+    "No spatial coordinates were assigned to image features in this import step."
+  ]
+}
