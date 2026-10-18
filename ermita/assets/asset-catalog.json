@@ -4,34 +4,70 @@
   "license": "CC0 assets",
   "assets": [
     {
-      "id": "modular_urban_apartments_facade",
-      "name": "Urban modular facade model",
       "type": "model",
-      "source_url": "https://polyhaven.com/a/modular_urban_apartments_facade",
-      "files": [],
-      "status": "no self-contained GLB model under 80 MiB; skipped"
+      "status": "no compatible asset found after discovery",
+      "tried_ids": [
+        "modular_urban_apartments_facade",
+        "modular_factory_facade",
+        "rollershutter_door",
+        "rollershutter_window_01",
+        "rollershutter_window_02",
+        "rollershutter_window_03",
+        "bleach_bottle",
+        "cement_bag",
+        "combination_wrench",
+        "crowbar_01",
+        "drain_cleaner",
+        "drill_press_01",
+        "dustpan",
+        "garden_gloves_01",
+        "gate_latch_01",
+        "industrial_coffee_table",
+        "industrial_pipe_lamp",
+        "industrial_storage_cart",
+        "ladder_sectioned_01",
+        "metal_stool_02",
+        "metal_stool_03",
+        "metal_toolbox",
+        "modular_airduct_circular_01",
+        "modular_airduct_rectangular_01",
+        "modular_chainlink_fence",
+        "modular_fire_escape",
+        "mounted_fluorescent_lights",
+        "multi_cleaner_bottle",
+        "old_drill_press",
+        "old_military_compressor"
+      ]
     },
     {
-      "id": "rectangular_facade_tiles_02",
-      "name": "High-resolution facade tile PBR material",
+      "id": "brick_wall_04",
+      "name": "Brick Wall 04",
       "type": "texture",
-      "source_url": "https://polyhaven.com/a/rectangular_facade_tiles_02",
+      "source_url": "https://polyhaven.com/a/brick_wall_04",
       "files": [
         {
-          "path": "ermita/assets/textures/rectangular_facade_tiles_02_albedo.jpg",
-          "bytes": 2818495,
-          "sha256": "74aed3c4f535a47d6d68d91d9682b2fead263275bf8b96b52fab0d6f435413d3",
+          "path": "ermita/assets/textures/brick_wall_04_roughness.jpg",
+          "bytes": 2020620,
+          "sha256": "34be9fb6b855744f36d471315c6bc42c7c44cebbb69168486f00a4f6bd2c5e49",
           "status": "downloaded",
-          "channel": "albedo",
-          "resolution_path": "blend/2k/blend/include/textures/rectangular_facade_tiles_02_diff_2k.jpg"
+          "channel": "roughness",
+          "resolution_path": "Rough/2k/jpg"
         },
         {
-          "path": "ermita/assets/textures/rectangular_facade_tiles_02_normal.jpg",
-          "bytes": 3144171,
-          "sha256": "da13d83f54cbe54684ac365af4b6b2046bfb38acb21e6da8c6aa09180c54f608",
+          "path": "ermita/assets/textures/brick_wall_04_albedo.jpg",
+          "bytes": 3585770,
+          "sha256": "2e0dab81509481bbc86aad1a026d01f122e310ae73438ebac6261b0c99334b4f",
+          "status": "downloaded",
+          "channel": "albedo",
+          "resolution_path": "Diffuse/2k/jpg"
+        },
+        {
+          "path": "ermita/assets/textures/brick_wall_04_normal.jpg",
+          "bytes": 4799136,
+          "sha256": "617a31a20839389de8bf91a453f766a7c5fe4678468fc9bffb5b41acb3c2a7c1",
           "status": "downloaded",
           "channel": "normal",
-          "resolution_path": "gltf/2k/gltf/include/textures/rectangular_facade_tiles_02_nor_gl_2k.jpg"
+          "resolution_path": "nor_gl/2k/jpg"
         }
       ],
       "status": "downloaded-or-reused"
