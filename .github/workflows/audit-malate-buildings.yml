@@ -1,0 +1,36 @@
+name: Audit Malate building data
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'maps/malate-map.json'
+      - 'scripts/audit-malate-buildings.py'
+permissions:
+  contents: write
+concurrency:
+  group: malate-building-audit-main
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Audit saved building metadata
+        run: python scripts/audit-malate-buildings.py
+      - name: Commit reusable audit report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+users.noreply.github.com"
+          git add maps/malate-building-audit.json
+          if git diff --cached --quiet; then
+            echo "Building audit report unchanged."
+            exit 0
+          fi
+          git commit -m "Refresh Malate building metadata audit"
+          # Keep the report commit safe if main advanced during the audit.
+          git pull --rebase origin main
+          git push
