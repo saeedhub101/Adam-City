@@ -118,7 +118,7 @@ function makeTaggedFacade(tags,id,height,levels,perimeter){
  const groundH=storefront?Math.min(145,Math.max(86,1024/(floors+1))):Math.min(54,1024/(floors+2));
  const upperH=(1024-groundH)/floors;
  const cols=profile.style==='lowrise'?3:(profile.levels>10?6:4),cw=512/cols;
- for(let r=0;r<floors;r++){
+ if(!['heritage-church','modern-campus-glass','brutalist-civic'].includes(detail.facade))for(let r=0;r<floors;r++){
   const y=groundH+r*upperH;
   g.fillStyle=hex(trimColor);g.fillRect(0,y,512,Math.max(5,upperH*.075));
   g.fillStyle='#00000012';g.fillRect(0,y+Math.max(5,upperH*.075),512,Math.max(2,upperH*.025));
@@ -143,6 +143,39 @@ function makeTaggedFacade(tags,id,height,levels,perimeter){
     g.fillStyle='#353f41';for(let sl=0;sl<4;sl++)g.fillRect(x+ww*.3+sl*ww*.11,ay+3,1,Math.max(2,upperH*.025));
    }
   }
+ }
+ const facadeStyle=String(detail.facade||'');
+ if(facadeStyle==='heritage-church'){
+  // Malate Church reference: pale masonry, strong vertical pilasters, arched openings and a central rose window.
+  g.fillStyle=hex(wallColor);g.fillRect(0,0,512,1024);
+  for(let x=38;x<512;x+=78){g.fillStyle=hex(trimColor);g.fillRect(x,70,12,900);g.fillStyle='#00000010';g.fillRect(x+12,70,4,900)}
+  g.fillStyle=hex(trimColor);g.fillRect(18,64,476,18);g.fillRect(18,960,476,24);
+  for(let x of [92,214,336,420]){
+   const y=290,w=58,h=310;g.fillStyle='#655f55';g.fillRect(x-7,y-7,w+14,h+14);
+   g.fillStyle='#282f30';g.fillRect(x,y,w,h);
+   g.fillStyle='#788f91';g.fillRect(x+5,y+30,w-10,h-35);
+   g.fillStyle='#d8c7a6';g.fillRect(x+w*.46,y+28,3,h-30);
+   g.beginPath();g.arc(x+w/2,y+1,w/2,Math.PI,0);g.fillStyle='#d6c5a5';g.fill();
+  }
+  g.fillStyle='#4a4035';g.fillRect(220,720,72,240);g.fillStyle='#bca98a';g.fillRect(230,730,52,230);
+  g.fillStyle='#d6c5a5';g.beginPath();g.moveTo(18,66);g.lineTo(256,8);g.lineTo(494,66);g.closePath();g.fill();
+  g.fillStyle='#776b58';g.beginPath();g.moveTo(64,64);g.lineTo(256,20);g.lineTo(448,64);g.closePath();g.fill();
+  g.fillStyle='#d7c6a4';g.beginPath();g.arc(256,155,39,0,Math.PI*2);g.fill();g.fillStyle='#4a5b5c';g.beginPath();g.arc(256,155,27,0,Math.PI*2);g.fill();
+  g.strokeStyle='#d7c6a4';g.lineWidth=5;g.beginPath();g.moveTo(256,128);g.lineTo(256,182);g.moveTo(229,155);g.lineTo(283,155);g.stroke();
+ }else if(facadeStyle==='modern-campus-glass'){
+  // DLSU campus tower profile: continuous blue-green glazing, strong white slab lines and a modern podium.
+  g.fillStyle='#d9d9cf';g.fillRect(0,0,512,1024);
+  for(let y=22;y<1024;y+=62){g.fillStyle='#f0eee4';g.fillRect(0,y,512,8);g.fillStyle='#9a9f99';g.fillRect(0,y+8,512,3);
+   for(let x=10;x<512;x+=42){g.fillStyle='#263c43';g.fillRect(x,y+13,33,43);g.fillStyle=rand()>.5?'#5c8791':'#416e7a';g.fillRect(x+3,y+16,27,37);g.fillStyle='#c6d4cf';g.fillRect(x+7,y+18,3,33);}}
+  g.fillStyle='#e5e0d2';g.fillRect(0,0,512,24);g.fillRect(0,986,512,38);
+  g.fillStyle='#4a5859';g.fillRect(0,860,512,126);for(let x=10;x<512;x+=66){g.fillStyle='#8db3b6';g.fillRect(x,882,50,82)}
+ }else if(facadeStyle==='brutalist-civic'){
+  // Manila Film Center reference profile: monumental pale concrete masses and recessed narrow openings.
+  g.fillStyle='#c9c6ba';g.fillRect(0,0,512,1024);
+  for(let y=30;y<1024;y+=86){g.fillStyle='#a5a397';g.fillRect(0,y,512,10);g.fillStyle='#e0ddd2';g.fillRect(0,y+10,512,8);
+   for(let x=24;x<512;x+=58){g.fillStyle='#656964';g.fillRect(x,y+28,31,42);g.fillStyle='#7c9291';g.fillRect(x+4,y+32,23,34);}}
+  g.fillStyle='#b6b3a7';g.beginPath();g.moveTo(0,40);g.lineTo(512,0);g.lineTo(512,62);g.lineTo(0,102);g.closePath();g.fill();
+  g.fillStyle='#8e8d83';g.fillRect(0,938,512,86);
  }
  if(storefront){
   g.fillStyle='#252f31';g.fillRect(0,0,512,groundH);
