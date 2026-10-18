@@ -34,7 +34,9 @@ jobs:
         run: python -m pip install requests osm2geojson shapely pyproj trimesh mapbox-earcut rasterio numpy scipy
       - name: Validate Python syntax
         run: python -m py_compile ermita/scripts/import_osm_and_build_3d.py ermita/scripts/import_dpwh_national_roads.py ermita/scripts/import_real_facade_photos.py ermita/scripts/import_copernicus_terrain.py
+      # OSM import paused after successful bulk import; cached datasets remain available to downstream build steps.
       - name: Download and process OpenStreetMap data
+        if: false
         id: osm
         continue-on-error: true
         run: python ermita/scripts/import_osm_and_build_3d.py
@@ -42,7 +44,9 @@ jobs:
         id: dpwh
         continue-on-error: true
         run: python ermita/scripts/import_dpwh_national_roads.py
+      # KartaView metadata discovery paused after successful expanded import; all downloaded assets and metadata remain in the repository.
       - name: Import KartaView street imagery metadata (no image downloads)
+        if: false
         id: kartaview
         continue-on-error: true
         run: python ermita/scripts/import_real_facade_photos.py
