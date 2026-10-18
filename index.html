@@ -210,7 +210,9 @@ function addArea(el,target,colour){const ns=el.geometry||[];if(ns.length<4)retur
 function addRailway(el){const pts=(el.geometry||[]).map(p=>project(p.lat,p.lon));if(pts.length<2||pts.some(p=>Math.abs(p.x)>3500||Math.abs(p.z)>3500))return;railwayLines.push({pts,tags:el.tags||{}});const elevated=(el.tags?.bridge==='yes'||el.tags?.layer==='1'||el.tags?.railway==='light_rail');const y=elevated?5.2:.2;for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);if(len<.2)continue;const angle=Math.atan2(dx,dz);for(const off of [-.72,.72]){const rail=box(scene,.12,.13,len,(a.x+b.x)/2+Math.cos(angle)*off,y,(a.z+b.z)/2-Math.sin(angle)*off,material(0x333b40),false);rail.rotation.y=angle;}if(elevated){const deck=box(scene,3.2,.3,len,(a.x+b.x)/2,y-.22,(a.z+b.z)/2,material(0x888982),false);deck.rotation.y=angle;for(let t=.15;t<1;t+=Math.min(2/len,.15)){const x=a.x+dx*t,z=a.z+dz*t;box(scene,.35,4.9,.35,x,y/2,z,material(0x777b78),false)}}else if(el.tags?.railway==='light_rail'||el.tags?.railway==='rail'){for(let t=.08;t<1;t+=Math.min(1.3/len,.12)){const x=a.x+dx*t,z=a.z+dz*t;const sleeper=box(scene,2.1,.08,.28,x,.13,z,material(0x5b5146),false);sleeper.rotation.y=angle}}}}
 
 function addSignatureFacade(tags,id,pts,height){
- const isChurch=String(id)==='34751818',isSevenEleven=sevenElevenBuildingIds.has(String(id))||/7\\s*[-‐‑–—]?\\s*eleven|7eleven|7\\s*[- ]?\\s*11/i.test([tags.name,tags.brand,tags.operator,tags.shop].filter(Boolean).join(' '));
+ const isChurch=String(id)==='34751818';
+ const labelText=[tags.name,tags['name:en'],tags.brand,tags.operator,tags.shop].filter(Boolean).join(' ');
+ const isSevenEleven=sevenElevenBuildingIds.has(String(id))||/7\\s*[-‐-–—]?\\s*eleven|7eleven|7\\s*[- ]?\\s*11/i.test(labelText);
  if(!isChurch&&!isSevenEleven)return;
  let edge=null,edgeLen=isChurch?Infinity:0;
  for(let i=0;i<pts.length;i++){const p=pts[i],q=pts[(i+1)%pts.length],len=Math.hypot(q.x-p.x,q.z-p.z);if(isChurch?len<edgeLen:len>edgeLen){edge={p,q,len};edgeLen=len}}
@@ -219,35 +221,105 @@ function addSignatureFacade(tags,id,pts,height){
  const center=pts.reduce((a,p)=>({x:a.x+p.x/pts.length,z:a.z+p.z/pts.length}),{x:0,z:0});
  let nx=-(edge.q.z-edge.p.z)/edge.len,nz=(edge.q.x-edge.p.x)/edge.len;
  if((mid.x-center.x)*nx+(mid.z-center.z)*nz<0){nx=-nx;nz=-nz}
- const width=Math.min(edge.len*.94,isChurch?26:18),panelH=isChurch?Math.min(height,15):Math.min(3.8,Math.max(2.8,height*.72));
- const c=document.createElement('canvas');c.width=768;c.height=1024;const g=c.getContext('2d');
+ const width=Math.min(edge.len*.94,isChurch?26:18);
+ const panelH=isChurch?Math.min(height,15):Math.min(4.2,Math.max(2.8,height*.72));
+ const group=new THREE.Group();
+ group.position.set(mid.x+nx*.24,0,mid.z+nz*.24);
+ group.rotation.y=Math.atan2(-(edge.q.z-edge.p.z),edge.q.x-edge.p.x);
+ const mat=(color,rough=.88)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:0});
+ const stone=mat(0xb9a98d),stoneLight=mat(0xd5c8ad),stoneDark=mat(0x86765e),shadow=mat(0x342f29),glass=mat(0x35545a,.32),glassLight=mat(0x8ca7a5,.28),wood=mat(0x493326),green=mat(0x00843d,.48),orange=mat(0xf58220,.48),red=mat(0xed1c24,.48),white=mat(0xf2eee4),black=mat(0x202525);
+ const addBox=(w,h,d,x,y,z,m)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;group.add(o);return o};
+ const addArch=(x,y,r,tube,m)=>{const o=new THREE.Mesh(new THREE.TorusGeometry(r,tube,8,32,Math.PI),m);o.position.set(x,y,.19);o.rotation.z=Math.PI;group.add(o);return o};
  if(isChurch){
-  g.fillStyle='#d8c7a5';g.fillRect(0,0,768,1024);
-  // Raised stone blocks and weathering make this a landmark facade rather than the generic window texture.
-  for(let y=0;y<1024;y+=34){g.fillStyle=y%68?'#c7b38e':'#e8d9b8';g.fillRect(0,y,768,3)}
-  g.fillStyle='#eee0c5';g.fillRect(35,205,698,775);g.fillStyle='#b9a37c';g.fillRect(54,225,660,755);
-  for(let x=80;x<730;x+=130){g.fillStyle='#e8d7b3';g.fillRect(x,250,22,680);g.fillStyle='#ad9875';g.fillRect(x+22,250,5,680)}
-  g.fillStyle='#d7c6a4';g.beginPath();g.moveTo(22,215);g.lineTo(384,25);g.lineTo(746,215);g.closePath();g.fill();
-  g.fillStyle='#8b7b60';g.beginPath();g.moveTo(100,196);g.lineTo(384,58);g.lineTo(668,196);g.closePath();g.fill();
-  g.fillStyle='#e7d6b1';g.beginPath();g.arc(384,156,63,0,Math.PI*2);g.fill();g.fillStyle='#3e5559';g.beginPath();g.arc(384,156,49,0,Math.PI*2);g.fill();
-  g.strokeStyle='#d7c6a4';g.lineWidth=8;g.beginPath();g.moveTo(384,112);g.lineTo(384,200);g.moveTo(340,156);g.lineTo(428,156);g.stroke();
-  for(const x of [125,250,500,625]){g.fillStyle='#6b5d49';g.fillRect(x-38,390,76,265);g.fillStyle='#334447';g.fillRect(x-28,405,56,235);g.fillStyle='#78959a';g.fillRect(x-21,420,42,210);g.fillStyle='#e7d6b1';g.beginPath();g.arc(x,406,28,Math.PI,0);g.fill();g.fillStyle='#e7d6b1';g.fillRect(x-40,652,80,15)}
-  g.fillStyle='#4b3b2d';g.fillRect(315,670,138,310);g.fillStyle='#d8c7a5';g.fillRect(333,690,102,290);g.fillStyle='#5d6c68';g.fillRect(345,710,78,270);g.fillStyle='#c6b28e';g.fillRect(378,710,10,270);
-  g.fillStyle='#fff0d0';g.fillRect(150,860,468,76);g.fillStyle='#403a30';g.font='bold 38px Arial';g.textAlign='center';g.fillText('MALATE CHURCH',384,910);
+  const w=width,h=panelH;
+  // Rebuild the actual three-tier Malate Church silhouette with projecting side buttresses,
+  // recessed openings, moulded cornices and raised stonework; no billboard or photo plane.
+  addBox(w,h,.38,0,h/2,0,stone);
+  addBox(w*.94,h*.94,.12,0,h/2,.24,stoneLight);
+  for(let tier=1;tier<=2;tier++)addBox(w*.92,.22,.42,0,h*tier/3,.31,stoneDark),addBox(w*.94,.12,.46,0,h*tier/3+.12,.32,stoneLight);
+  addBox(w*.92,.18,.45,0,h*.94,.30,stoneDark);
+  // Broad half-embedded bell-tower buttresses on both sides.
+  for(const s of [-1,1]){
+   const x=s*w*.39;
+   addBox(w*.16,h*.91,.62,x,h*.46,.31,stoneDark);
+   addBox(w*.135,h*.88,.67,x,h*.46,.35,stoneLight);
+   for(const y of [h*.25,h*.57,h*.82]){addBox(w*.14,.13,.72,x,y,.37,stoneDark);addBox(w*.125,.07,.75,x,y+.07,.4,stoneLight)}
+   addBox(w*.13,h*.10,.76,x,h*.91,.40,stoneDark);
+   // Bell openings and dark bell recesses.
+   for(const y of [h*.73,h*.79]){addBox(w*.045,h*.065,.05,x,y,.76,shadow);addBox(w*.012,h*.065,.08,x,y,.80,stoneDark)}
+   for(const y of [h*.16,h*.38,h*.62]){addBox(w*.075,h*.12,.08,x,y,.76,stoneDark);addBox(w*.052,h*.095,.08,x,y,.82,stoneLight)}
+  }
+  // Three storeys of stone piers and carved trim.
+  for(const x of [-w*.27,-w*.14,0,w*.14,w*.27]){addBox(w*.022,h*.80,.16,x,h*.49,.40,stoneDark);addBox(w*.012,h*.80,.18,x-w*.012,h*.49,.49,stoneLight)}
+  // Rose window: deep circular recess, stone ring and radial tracery.
+  const roseY=h*.79,roseR=Math.min(w*.085,h*.105);
+  const rose=new THREE.Mesh(new THREE.CylinderGeometry(roseR,roseR,.16,32),stoneDark);rose.rotation.x=Math.PI/2;rose.position.set(0,roseY,.48);group.add(rose);
+  const roseInner=new THREE.Mesh(new THREE.CylinderGeometry(roseR*.78,roseR*.78,.18,32),glass);roseInner.rotation.x=Math.PI/2;roseInner.position.set(0,roseY,.57);group.add(roseInner);
+  for(let i=0;i<12;i++){const a=i*Math.PI/6;addBox(.035,roseR*1.45,.045,Math.cos(a)*roseR*.35,roseY+Math.sin(a)*roseR*.35,.68,stoneLight)}
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(roseR*1.12,.11,8,40),stoneLight);ring.position.set(0,roseY,.67);group.add(ring);
+  // Trefoil-inspired blind arches and tall recessed windows.
+  for(const x of [-w*.25,-w*.125,w*.125,w*.25]){
+   const ww=w*.065,wh=h*.16,y=h*.56;
+   addBox(ww,wh,.08,x,y,.52,stoneDark);addBox(ww*.72,wh*.90,.08,x,y,.58,glass);
+   addBox(ww*.10,wh*.92,.06,x,y,.64,stoneLight);addBox(ww*.82,.06,.08,x,y-wh*.46,.63,stoneLight);
+   addArch(x,y+wh*.49,ww*.48,.075,stoneLight);
+   addBox(ww*1.55,.11,.14,x,y-wh*.55,.58,stoneLight);
+  }
+  // Main arched portal with deep jambs, double timber doors and stone archivolt.
+  const doorW=w*.19,doorH=h*.30,doorY=doorH/2+.05;
+  addBox(doorW*1.35,doorH*1.08,.18,0,doorY,.53,stoneDark);
+  addBox(doorW,doorH,.15,0,doorY,.65,shadow);
+  addBox(doorW*.45,doorH*.96,.09,-doorW*.23,doorY,.74,wood);addBox(doorW*.45,doorH*.96,.09,doorW*.23,doorY,.74,wood);
+  addBox(.045,doorH*.92,.05,0,doorY,.80,stoneDark);
+  for(const x of [-doorW*.32,-doorW*.16,doorW*.16,doorW*.32])addBox(.025,doorH*.88,.04,x,doorY,.81,stoneLight);
+  addArch(0,doorY+doorH*.49,doorW*.58,.12,stoneLight);
+  addBox(doorW*1.55,.16,.24,0,doorY+doorH*.59,.58,stoneLight);
+  // Upper niche and simple triangular pediment, edged with raised stone trim.
+  const ped=new THREE.Shape();ped.moveTo(-w*.30,h*.91);ped.lineTo(0,h*1.015);ped.lineTo(w*.30,h*.91);ped.closePath();
+  const pg=new THREE.ExtrudeGeometry(ped,{depth:.18,bevelEnabled:false});const pm=new THREE.Mesh(pg,stoneLight);pm.position.z=.34;group.add(pm);
+  const pedInner=new THREE.Shape();pedInner.moveTo(-w*.23,h*.92);pedInner.lineTo(0,h*.99);pedInner.lineTo(w*.23,h*.92);pedInner.closePath();
+  const pig=new THREE.Mesh(new THREE.ShapeGeometry(pedInner),stoneDark);pig.position.set(0,0,.54);group.add(pig);
+  const cross=addBox(.12,h*.055,.10,0,h*1.035,.48,stoneDark);cross.visible=h>7;
+  addBox(w*.40,.12,.22,0,h*.13,.52,stoneLight);
+  // Small carved stone blocks and capitals give the wall physical depth at close range.
+  for(let y=.35;y<h*.9;y+=.65)for(let x=-w*.44;x<w*.44;x+=1.15){addBox(.035,.025,.025,x,y,.47,stoneDark)}
  }else{
-  g.fillStyle='#202a29';g.fillRect(0,0,768,1024);
-  g.fillStyle='#00843d';g.fillRect(0,0,768,88);g.fillStyle='#f58220';g.fillRect(0,88,768,88);g.fillStyle='#ed1c24';g.fillRect(0,176,768,88);
-  g.fillStyle='#fff';g.font='bold 88px Arial';g.textAlign='center';g.fillText('7-ELEVEN',384,355);
-  g.fillStyle='#e9e3d6';g.fillRect(0,390,768,24);
-  for(let i=0;i<4;i++){const x=24+i*188;g.fillStyle='#0b171a';g.fillRect(x,435,160,555);g.fillStyle=i%2?'#426c73':'#759da4';g.fillRect(x+10,445,140,535);g.fillStyle='#c6dcdb';g.fillRect(x+22,455,17,510);g.fillStyle='#253b40';g.fillRect(x+77,435,5,555)}
-  g.fillStyle='#d0c4ad';g.fillRect(0,986,768,38);
+  // A freestanding, walk-up convenience store facade with real depth, framed glazing and canopy.
+  const w=width,h=panelH;
+  addBox(w,h,.42,0,h/2,0,black);
+  addBox(w*.98,h*.91,.12,0,h*.455,.25,stoneLight);
+  const bandY=h*.82,bandH=h*.065;
+  addBox(w*1.01,bandH,.20,0,bandY,.34,green);
+  addBox(w*1.012,bandH*.56,.21,0,bandY-bandH*.78,.35,orange);
+  addBox(w*1.014,bandH*.56,.22,0,bandY-bandH*1.55,.36,red);
+  // Raised fascia sign with the familiar 7-Eleven mark and separate letter forms.
+  addBox(w*.52,h*.19,.12,0,h*.66,.40,white);
+  addBox(w*.49,h*.15,.05,0,h*.66,.49,green);
+  const signCanvas=document.createElement('canvas');signCanvas.width=512;signCanvas.height=128;
+  const sg=signCanvas.getContext('2d');sg.fillStyle='#00843d';sg.fillRect(0,0,512,128);
+  sg.fillStyle='#fff';sg.font='bold 76px Arial';sg.textAlign='center';sg.fillText('7',85,91);
+  sg.fillStyle='#f58220';sg.fillRect(132,19,15,88);sg.fillStyle='#ed1c24';sg.fillRect(151,19,15,88);
+  sg.fillStyle='#fff';sg.font='bold 58px Arial';sg.fillText('ELEVEN',330,88);
+  const st=new THREE.CanvasTexture(signCanvas);st.colorSpace=THREE.SRGBColorSpace;
+  const sign=new THREE.Mesh(new THREE.PlaneGeometry(w*.48,h*.14),new THREE.MeshBasicMaterial({map:st,side:THREE.DoubleSide}));
+  sign.position.set(0,h*.66,.53);group.add(sign);
+  // Ground-floor glass shopfront with aluminium mullions and a distinct sliding entrance.
+  const glassY=h*.32,glassH=h*.48,glassW=w*.19;
+  for(let i=0;i<4;i++){
+   const x=-w*.38+i*w*.255;
+   addBox(glassW,glassH,.09,x,glassY,.42,glass);
+   addBox(glassW*.86,glassH*.92,.035,x,glassY,.49,glassLight);
+   addBox(.045,glassH,.10,x-glassW*.5,glassY,.52,stoneDark);
+   addBox(.045,glassH,.10,x+glassW*.5,glassY,.52,stoneDark);
+   addBox(glassW,.055,.10,x,glassY+glassH*.5,.52,stoneLight);
+   addBox(glassW,.055,.10,x,glassY-glassH*.5,.52,stoneLight);
+   if(i===2){addBox(.06,glassH,.12,x,glassY,.57,stoneDark);addBox(.035,.12,.05,x+glassW*.25,glassY,.61,stoneLight)}
+  }
+  addBox(w*1.04,.13,.36,0,h*.91,.39,stoneDark);
+  addBox(w*1.06,.10,.40,0,h*.94,.41,stoneLight);
+  addBox(w*1.02,.20,.35,0,.12,.37,stoneDark);
  }
- const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
- const mat=new THREE.MeshBasicMaterial({map:tex,side:THREE.DoubleSide});
- const plane=new THREE.Mesh(new THREE.PlaneGeometry(width,panelH),mat);
- plane.position.set(mid.x+nx*.16,isChurch?panelH/2:panelH/2+.15,mid.z+nz*.16);
- plane.rotation.y=Math.atan2(-(edge.q.z-edge.p.z),edge.q.x-edge.p.x);
- activeMapGroup.add(plane);
+ activeMapGroup.add(group);
 }
 function addFootprint(el){
  const ns=el.geometry?.coordinates?.[0]||el.geometry;if(!ns||ns.length<4)return;
