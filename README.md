@@ -1,38 +1,36 @@
-# Saeed Open World
+# Mabini Street — City Walk
 
-A browser-based 3D open-world prototype built with Three.js, JavaScript, and Vite. Development is performed directly on `main`.
+A browser-based Three.js prototype focused on building **A. Mabini Street in Malate, Manila one block at a time**. The current milestone is Block 01: a short playable street section with a third-person character and two real-photo visual references from Wikimedia Commons.
 
-## Current milestone
+## Run it
 
-- Load the player character from `3/saeed.glb`.
-- Ignore the model's embedded animation clips; use runtime movement controls for the initial prototype.
-- Provide graphics-quality presets before entering the world.
-- Prototype a walkable city block, third-person camera, keyboard movement, mouse look, and jump.
-- Keep the implementation modular so later milestones can add vehicles, aircraft, combat, richer Jordan-based geography, and improved environment assets.
+The game is a standalone HTML page and does not need npm or Vite.
 
-## Run locally
-
-Requirements: Node.js 20 or newer.
-
-```bash
-cd game
-npm install
-npm run dev
-```
-
-Open the local URL printed by Vite. The character GLB is loaded from the repository's raw GitHub asset URL, so an internet connection is needed for the current prototype.
+- Open `game/index.html` through a static web host (for example, GitHub Pages once Pages is enabled), or serve the repository locally with any simple static HTTP server.
+- An internet connection is required for Three.js and the Wikimedia Commons photo references.
 
 ## Controls
 
-- W / A / S / D: move
-- Mouse: look around (click the game to capture the pointer)
-- Space: jump
-- Esc: release the mouse
+- **W / A / S / D** or **arrow keys** — move
+- **Shift** — run
+- **Space** — jump
+- **Drag the mouse** — look around
+- **Esc** — release mouse capture if your browser has captured it
 
-## Graphics
+## Incremental build plan
 
-Choose Low, Medium, High, or Ultra before entering. Higher presets increase pixel ratio, shadow quality, and environment detail. Ultra may be demanding on integrated GPUs.
+1. **Block 01 (current):** short playable street segment, first two Mabini/Malate photo references, basic street furniture, and movement/camera.
+2. Add more reference photos for this same stretch and replace placeholder building faces with measured, photo-matched facades.
+3. Extend to the next real block and its intersections only after the first block is better matched.
+4. Add more detail, signage, traffic, and pedestrians in later passes.
 
-## Known prototype limits
+This is an early photo-backed blockout, **not yet a photorealistic 1:1 reconstruction**. The photographs are used as visual anchors while the 3D layout is incrementally refined; they do not magically provide full 360-degree geometry.
 
-This is the foundation, not a finished GTA-scale game. The first city is a procedural blockout rather than a photogrammetric copy of a real Jordanian city. Exact real-world buildings and realistic traffic/vehicles require dedicated geographic and 3D asset integration. The character's embedded clips are deliberately not played; new animation blending and facial performance remain follow-up work.
+## Photo references
+
+- [Hostel 1632, Mabini Street, Malate — Wikimedia Commons](https://commons.wikimedia.org/wiki/File:06127jfHotels_Building_Streets_Mabini_Malate_Manilafvf_12.jpg) — public-domain dedication indicated on the file page.
+- [Mabini/Ocampo/Roxas Boulevard area, Malate — Wikimedia Commons](https://commons.wikimedia.org/wiki/File:05261jfStreets_Mabini_Ocampo_Roxas_Boulevard_Malate_Manilafvf_08.jpg) — released into the public domain by the photographer.
+
+## Current limitations
+
+The first block still includes simple 3D placeholder geometry. Some image URLs may fail if Wikimedia redirects or cross-origin restrictions change. Exact facades, scale, street layout, and turning views will improve as additional real-world references are integrated.
