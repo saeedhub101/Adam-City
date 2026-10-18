@@ -67,7 +67,8 @@ area(3600103706)->.ermitaArea;
   nwr(area.ermitaArea)["waterway"];
   nwr(area.ermitaArea)["water"];
   nwr(area.ermitaArea)["sport"];
-  nwr(area.ermitaArea)["route"];
+  /* Route relations are network/itinerary relations, not building footprints. */
+  /* Excluding them avoids osm2geojson route conversion paths that can raise KeyError("ref"). */
   nwr(area.ermitaArea)["boundary"];
   nwr(area.ermitaArea)["entrance"];
   nwr(area.ermitaArea)["door"];
