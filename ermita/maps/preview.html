@@ -17,6 +17,7 @@
 <label><input id="landmarks" type="checkbox" checked> Key landmarks</label>
 <label><input id="realModels" type="checkbox" checked> Real building 3D model previews</label>
 <label><input id="buildings" type="checkbox" checked> OSM 3D buildings</label>
+<label><input id="basemapBuildings" type="checkbox"> Basemap 3D buildings</label>
 <label><input id="microsoftBuildings" type="checkbox" checked> Microsoft footprints (comparison)</label>
 <label><input id="microsoftRoads" type="checkbox"> Microsoft detected roads</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
@@ -47,7 +48,7 @@ const map=new maplibregl.Map({
 });
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
 map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-right');
-let roadsData=null,buildingsData=null,surfaceData=null,microsoftBuildingsData=null,microsoftRoadsData=null,tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[];
+let roadsData=null,buildingsData=null,surfaceData=null,microsoftBuildingsData=null,microsoftRoadsData=null,tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[],basemap3DBuildingLayerIds=[];
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function popupHtml(p){const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',p.osm_feature_id||p.id]];return '<div style="font:13px system-ui"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+'</div>'}
 function addRealModelMarkers(){
@@ -299,6 +300,10 @@ function addRoads(data){
 }
 map.on('load',async()=>{
  try{
+  // Liberty's basemap has its own 3D building layer, independent of our OSM GeoJSON layer.
+  // Hide it by default so unchecking project building layers really removes visible extrusions.
+  basemap3DBuildingLayerIds=(map.getStyle().layers||[]).filter(l=>l.type==='fill-extrusion'||(/3d.*building|building.*3d|building.*extrusion/i.test(l.id||''))).map(l=>l.id);
+  basemap3DBuildingLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none')});
   map.addSource('terrain-dem',{type:'raster-dem',tiles:['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});
   map.setTerrain({source:'terrain-dem',exaggeration:1.15});
   map.setSky({ 'sky-color':'#8dbbe2','sky-horizon-blend':0.5,'horizon-color':'#e8f1fa','horizon-fog-blend':0.2,'fog-color':'#dce8f3','fog-ground-blend':0.15,'atmosphere-blend':0.8});
@@ -335,14 +340,22 @@ map.on('load',async()=>{
    map.on('click','microsoft-road-detections-line',e=>{const f=e.features&&e.features[0];if(f)new maplibregl.Popup().setLngLat(e.lngLat).setHTML('<div style="font:13px system-ui"><b>Microsoft detected road</b><div>Extracted from Bing/Microsoft aerial imagery</div><div>Compare against OSM; this is a detected road geometry, not an official street name record.</div></div>').addTo(map)});
   }
   addLandmarks();addRealModelMarkers();addSatelliteImagery();addLocalRamonModel(roadsData);
+  // Apply the current checkbox states after asynchronous data loading, even if a user unchecked a layer early.
+  const setVisibility=(ids,visible)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visible?'visible':'none')});
+  setVisibility(['local-buildings-3d','local-building-labels'],document.getElementById('buildings').checked);
+  setVisibility(['microsoft-building-footprints-fill','microsoft-building-footprints-outline'],document.getElementById('microsoftBuildings').checked);
+  setVisibility(['microsoft-road-detections-line'],document.getElementById('microsoftRoads').checked);
+  setVisibility(['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'],document.getElementById('realModels').checked);
+  setVisibility(basemap3DBuildingLayerIds,document.getElementById('basemapBuildings').checked);
   const errors=[roadResult.loadError,buildingResult.loadError,surfaceResult.loadError,microsoftResult.loadError,microsoftRoadResult.loadError].filter(Boolean);
   setStatus(roadsData.features.length.toLocaleString()+' mapped road/path lines · '+buildingsData.features.length.toLocaleString()+' OSM building footprints · '+microsoftBuildingsData.features.length.toLocaleString()+' Microsoft footprints · '+microsoftRoadsData.features.length.toLocaleString()+' Microsoft detected roads · '+surfaceData.features.length.toLocaleString()+' DPWH road records'+(errors.length?' · Some data sources failed; see console.':' · all available layers loaded'));
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
 });
 document.getElementById('imagery').addEventListener('change',e=>setSatelliteImagery(e.target.checked));
 document.getElementById('landmarks').addEventListener('change',e=>['key-landmark-halo','key-landmark-dot','key-landmark-label'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
-document.getElementById('realModels').addEventListener('change',e=>['real-building-model-points','real-building-model-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
-document.getElementById('buildings').addEventListener('change',e=>{if(map.getLayer('local-buildings-3d'))map.setLayoutProperty('local-buildings-3d','visibility',e.target.checked?'visible':'none')});
+document.getElementById('realModels').addEventListener('change',e=>['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
+document.getElementById('buildings').addEventListener('change',e=>{['local-buildings-3d','local-building-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
+document.getElementById('basemapBuildings').addEventListener('change',e=>basemap3DBuildingLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('microsoftBuildings').addEventListener('change',e=>['microsoft-building-footprints-fill','microsoft-building-footprints-outline'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('microsoftRoads').addEventListener('change',e=>{if(map.getLayer('microsoft-road-detections-line'))map.setLayoutProperty('microsoft-road-detections-line','visibility',e.target.checked?'visible':'none')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
