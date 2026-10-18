@@ -1,11 +1,12 @@
 {
   "area_relation_id": 103706,
   "retrieval_endpoint": "https://overpass-api.de/api/interpreter",
-  "retrieved_utc": "2026-10-18T15:09:44Z",
+  "retrieved_utc": "2026-10-18T15:20:35Z",
   "osm_element_count": 7832,
   "geojson_feature_count": 7710,
   "building_feature_count": 1533,
   "poi_and_infrastructure_rows": 5661,
+  "street_sign_and_signal_feature_count": 44,
   "tag_key_feature_counts": {
     "_stn": 5,
     "abandoned:shop": 1,
@@ -513,6 +514,7 @@
     "ermita-transport.csv",
     "ermita-utilities.csv"
   ],
+  "dedicated_sign_layer": "ermita-street-signs-and-signals.geojson",
   "extruded_building_polygon_count": 1487,
   "source": "OpenStreetMap contributors",
   "license": "ODbL 1.0; attribution and share-alike obligations apply",

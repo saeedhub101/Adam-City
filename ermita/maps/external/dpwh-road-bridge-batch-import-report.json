@@ -1,0 +1,93 @@
+{
+  "status": "success",
+  "retrieved_at_utc": "2026-10-18T15:20:41.951047+00:00",
+  "project_area": "Ermita and Rizal Park, Manila; rectangular clip window",
+  "sources_attempted": 4,
+  "sources_imported": 4,
+  "imports": [
+    {
+      "source_id": "dpwh-national-roads",
+      "title": "DPWH National Road Network",
+      "source_url": "https://services1.arcgis.com/IwZZTMxZCmAmFYvF/ArcGIS/rest/services/Road_Classification/FeatureServer/1",
+      "agency": "DPWH RBIA / Statistics Division, Planning Service; geospatial processing by GIAS-SD",
+      "source_vintage": "August 2026 per layer metadata",
+      "retrieved_at_utc": "2026-10-18T15:20:37.605184+00:00",
+      "clip_bbox_wgs84": [
+        120.955,
+        14.555,
+        121.005,
+        14.61
+      ],
+      "geometry": "source geometry clipped to project AOI",
+      "output_crs": "WGS84 longitude/latitude",
+      "feature_count": 286,
+      "output_file": "ermita/maps/external/dpwh-national-roads-ermita.geojson",
+      "attribution": "DPWH RBIA / Statistics Division, Planning Service; geospatial processing by GIAS-SD"
+    },
+    {
+      "source_id": "dpwh-road-surface-type",
+      "title": "DPWH Road Surface Type",
+      "source_url": "https://services1.arcgis.com/IwZZTMxZCmAmFYvF/ArcGIS/rest/services/Surface_Type/FeatureServer/0",
+      "agency": "DPWH RBIA / Statistics Division, Planning Service; geospatial processing by GIAS-SD",
+      "source_vintage": "January 2026 per layer metadata",
+      "retrieved_at_utc": "2026-10-18T15:20:40.222165+00:00",
+      "clip_bbox_wgs84": [
+        120.955,
+        14.555,
+        121.005,
+        14.61
+      ],
+      "geometry": "source geometry clipped to project AOI",
+      "output_crs": "WGS84 longitude/latitude",
+      "feature_count": 990,
+      "output_file": "ermita/maps/external/dpwh-road-surface-type-ermita.geojson",
+      "attribution": "DPWH RBIA / Statistics Division, Planning Service; geospatial processing by GIAS-SD"
+    },
+    {
+      "source_id": "dpwh-number-of-lanes",
+      "title": "DPWH Number of Lanes",
+      "source_url": "https://services1.arcgis.com/IwZZTMxZCmAmFYvF/ArcGIS/rest/services/Number_of_Lanes/FeatureServer/0",
+      "agency": "DPWH RBIA / Statistics Division, Planning Service; geospatial processing by GIAS-SD",
+      "source_vintage": "June 2020 per service metadata",
+      "retrieved_at_utc": "2026-10-18T15:20:41.772239+00:00",
+      "clip_bbox_wgs84": [
+        120.955,
+        14.555,
+        121.005,
+        14.61
+      ],
+      "geometry": "source geometry clipped to project AOI",
+      "output_crs": "WGS84 longitude/latitude",
+      "feature_count": 939,
+      "output_file": "ermita/maps/external/dpwh-number-of-lanes-ermita.geojson",
+      "attribution": "DPWH RBIA / Statistics Division, Planning Service; geospatial processing by GIAS-SD"
+    },
+    {
+      "source_id": "dpwh-bridge-inventory",
+      "title": "DPWH Detailed Bridge Inventory (Bridge Needs Ratio layer)",
+      "source_url": "https://services1.arcgis.com/IwZZTMxZCmAmFYvF/ArcGIS/rest/services/Detailed_Bridge_Inventory_Final/FeatureServer/2",
+      "agency": "DPWH RBIA and Bridge Management System; geospatial data by GIAS-SD",
+      "source_vintage": "October 2025 per layer metadata",
+      "retrieved_at_utc": "2026-10-18T15:20:41.950996+00:00",
+      "clip_bbox_wgs84": [
+        120.955,
+        14.555,
+        121.005,
+        14.61
+      ],
+      "geometry": "source geometry clipped to project AOI",
+      "output_crs": "WGS84 longitude/latitude",
+      "feature_count": 61,
+      "output_file": "ermita/maps/external/dpwh-bridge-inventory-ermita.geojson",
+      "attribution": "DPWH RBIA and Bridge Management System; geospatial data by GIAS-SD"
+    }
+  ],
+  "failures": [],
+  "limitations": [
+    "DPWH national-road geometry is not a complete local-street dataset; use the existing OSM layer for local streets.",
+    "Surface and lane-count layers may be older than the national road network and may not cover every local road.",
+    "Bridge inventory only describes bridges represented by the national-road inventory.",
+    "This import does not claim to provide building footprints, facades, signs, or orthophotos; those are handled by other project data pipelines or require separate source access.",
+    "The clip window is a project area-of-interest rectangle, not an official Ermita administrative boundary."
+  ]
+}
