@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - ".github/workflows/ermita-building-footprints.yml"
       - "ermita/scripts/import_microsoft_building_footprints.py"
 
 permissions:
