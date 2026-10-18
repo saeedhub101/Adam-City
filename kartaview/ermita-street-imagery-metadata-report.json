@@ -1,0 +1,32 @@
+{
+  "status": "partial",
+  "area": "Ermita, Manila, Philippines",
+  "source": "KartaView public API",
+  "mode": "metadata-only; no image files requested or downloaded",
+  "queried_grid_cells": 72,
+  "new_photo_metadata_records_added": 740,
+  "existing_photo_metadata_records_reimported": 0,
+  "total_preserved_photo_metadata_records": 740,
+  "unique_sequences_with_metadata": 135,
+  "geojson_point_features": 740,
+  "api_errors": [
+    {
+      "cell": 1,
+      "error": "400 Client Error: Bad Request for url: https://api.openstreetcam.org/2.0/photo/?lat=14.574934514233098&lng=120.97249397292617&radius=220&zoomLevel=18&join=sequence&orderBy=id&orderDirection=desc&items"
+    },
+    {
+      "cell": 2,
+      "error": "400 Client Error: Bad Request for url: https://api.openstreetcam.org/2.0/photo/?lat=14.577542719544821&lng=120.97249397292617&radius=220&zoomLevel=18&join=sequence&orderBy=id&orderDirection=desc&items"
+    }
+  ],
+  "outputs": [
+    "kartaview/ermita-street-imagery-metadata.csv",
+    "kartaview/ermita-street-imagery-metadata.geojson",
+    "kartaview/ermita-street-imagery-sequences.csv"
+  ],
+  "incremental_policy": "Existing metadata records are not rewritten; only previously unseen photo IDs are appended. The API coverage grid is queried to discover new IDs, but existing records are not re-imported. No existing image files are deleted.",
+  "limitations": [
+    "The public nearby-photo endpoint is bounded by its response size and grid coverage; this is not a guarantee of complete citywide KartaView coverage.",
+    "GPS points and sequence metadata describe capture coverage, not verified road signs or extracted lane/traffic-sign detections."
+  ]
+}
