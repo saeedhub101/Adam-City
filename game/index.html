@@ -7,7 +7,7 @@
 <div class="status" id="status">Loading 3D world…</div>
 <div class="help">WASD / arrow keys to walk · mouse drag to look · Shift to run<br>Prototype environment inspired by A. Mabini Street.</div>
 <div class="controls" id="controls"><button class="f" data-key="w" aria-label="Forward">↑</button><button class="l" data-key="a" aria-label="Turn left">←</button><button class="b" data-key="s" aria-label="Backward">↓</button><button class="r" data-key="d" aria-label="Turn right">→</button></div>
-<div class="cover" id="cover"><div class="card"><div class="eyebrow">THIRD-PERSON STREET EXPLORATION</div><h1>Walk into<br>A. Mabini Street.</h1><p>This is a new 3D game scene, not an embedded Maps page. Explore a connected street with a controllable character, a follow camera, sidewalks, shopfronts and photo-textured building facades.</p><button class="btn" id="start">ENTER ADAM CITY →</button><p class="small">This build uses generated facade textures that render locally, so buildings will not appear blank if external image hosts fail. These are not real photographs or an exact street reconstruction.</p></div></div>
+<div class="cover" id="cover"><div class="card"><div class="eyebrow">THIRD-PERSON STREET EXPLORATION</div><h1>Walk into<br>A. Mabini Street.</h1><p>This is a new 3D game scene, not an embedded Maps page. Explore a connected street with a controllable character, a follow camera, sidewalks, shopfronts and photo-textured building facades.</p><button class="btn" id="start">ENTER ADAM CITY →</button><p class="small">This prototype now attempts to use real Wikimedia Commons photographs from the Mabini/Remedios Street area as facade imagery. Exact building-by-building reconstruction is still in progress.</p></div></div>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
 const host=document.getElementById('game'),status=document.getElementById('status');
@@ -28,18 +28,15 @@ const photoUrls=[
 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=900&q=80'
 ];
 const loader=new THREE.TextureLoader();loader.crossOrigin='anonymous';
-function makeFacadeTexture(seed){const c=document.createElement('canvas');c.width=512;c.height=768;const ctx=c.getContext('2d');let s=seed+7;const rand=()=>{s=(s*9301+49297)%233280;return s/233280};const walls=['#b9aa91','#b5b7ad','#d0c1a8','#9faaa8','#c5b5a0'];ctx.fillStyle=walls[seed%walls.length];ctx.fillRect(0,0,c.width,c.height);
-// weathered plaster variation
-for(let i=0;i<700;i++){ctx.fillStyle='rgba(45,39,30,'+(rand()*.075)+')';ctx.fillRect(rand()*512,rand()*768,2+rand()*35,1+rand()*9)}
-// floors and window grids
-const floors=4+seed%4,cols=3+seed%3;const top=35,bottom=735,fh=(bottom-top)/floors;for(let f=0;f<floors;f++){ctx.fillStyle='rgba(60,51,42,.22)';ctx.fillRect(0,top+f*fh,512,7);for(let j=0;j<cols;j++){const ww=42,wh=58,x=28+j*(512/cols)+rand()*7,y=top+f*fh+23+rand()*13;ctx.fillStyle='#4b5657';ctx.fillRect(x,y,ww,wh);ctx.fillStyle=['#7f9ba0','#a7b9b8','#5d7379','#c0b7a2'][Math.floor(rand()*4)];ctx.fillRect(x+5,y+5,ww-10,wh-10);ctx.fillStyle='#d1c5ad';ctx.fillRect(x+ww/2-2,y,4,wh);ctx.fillRect(x,y+wh/2,ww,3);ctx.fillStyle='#6f6251';ctx.fillRect(x-5,y+wh,ww+10,7);if(rand()>.48){ctx.fillStyle='#8a725b';ctx.fillRect(x-6,y+wh+7,ww+12,5)}}}
-// ground floor shop band, signage and doors
-ctx.fillStyle='#554b41';ctx.fillRect(0,600,512,168);for(let j=0;j<3;j++){let x=18+j*166;ctx.fillStyle='#253d43';ctx.fillRect(x,643,132,92);ctx.fillStyle='#78969a';ctx.fillRect(x+6,650,120,75);ctx.fillStyle='rgba(230,223,198,.7)';ctx.fillRect(x+64,650,3,75)}ctx.fillStyle=['#8d4938','#496d70','#a18451'][seed%3];ctx.fillRect(0,610,512,23);ctx.fillStyle='#f0dfbd';ctx.font='bold 16px sans-serif';ctx.fillText(['SARI-SARI STORE','CARINDERIA','GENERAL MERCHANDISE'][seed%3],14,626);
-// parapet / roof edge
-ctx.fillStyle='#786b5a';ctx.fillRect(0,0,512,22);return new THREE.CanvasTexture(c)}
-const photoMats=Array.from({length:3},(_,i)=>{const tex=makeFacadeTexture(i+1);tex.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshStandardMaterial({map:tex,roughness:1})});
+const photoUrls=[
+'https://commons.wikimedia.org/wiki/Special:FilePath/09938jfMabini_Street_Remedios_Street_Bike_Lanes_Buildings_Malate_Manilafvf_04.jpg?width=1400',
+'https://commons.wikimedia.org/wiki/Special:FilePath/09938jfMabini_Street_Remedios_Street_Bike_Lanes_Buildings_Malate_Manilafvf_01.jpg?width=1400',
+'https://commons.wikimedia.org/wiki/Special:FilePath/05297jfStreets_Mabini_Ocampo_Roxas_Boulevard_Malate_Manilafvf_02.jpg?width=1400'
+];
+const loader=new THREE.TextureLoader();loader.crossOrigin='anonymous';
+const photoMats=await Promise.all(photoUrls.map(url=>new Promise(resolve=>loader.load(url,t=>{t.colorSpace=THREE.SRGBColorSpace;t.wrapS=THREE.ClampToEdgeWrapping;t.wrapT=THREE.ClampToEdgeWrapping;resolve(new THREE.MeshStandardMaterial({map:t,roughness:1})) ,undefined,()=>resolve(new THREE.MeshStandardMaterial({color:0xb9aa91,roughness:1}))))));
 function building(x,z,w,h,depth,i){const group=new THREE.Group();group.position.set(x,0,z);scene.add(group);const body=new THREE.Mesh(new THREE.BoxGeometry(w,h,depth),mat([0xc6b7a0,0xaaa69b,0xd0c4b1,0x8f9694][i%4]));body.position.y=h/2;body.castShadow=true;body.receiveShadow=true;group.add(body);
-const faceMat=photoMats[i%photoMats.length];const face=new THREE.Mesh(new THREE.PlaneGeometry(w*.94,h*.82),faceMat);face.position.set(0,h*.53,depth/2+.012);face.castShadow=false;group.add(face);
+const faceMat=photoMats[i%photoMats.length].clone();faceMat.map=photoMats[i%photoMats.length].map;const face=new THREE.Mesh(new THREE.PlaneGeometry(w*.94,h*.82),faceMat);face.position.set(0,h*.53,depth/2+.012);face.castShadow=false;group.add(face);
 // ground-floor shop windows and awnings make the street feel occupied
 for(let k=0;k<Math.max(2,Math.floor(w/2.3));k++){const wx=-w*.36+k*(w*.72/Math.max(1,Math.floor(w/2.3)-1));const windowMesh=new THREE.Mesh(new THREE.BoxGeometry(.85,1.15,.08),mat(0x34464b,.4));windowMesh.position.set(wx,.95,depth/2+.07);group.add(windowMesh);const awning=new THREE.Mesh(new THREE.BoxGeometry(1.08,.13,.55),mat(i%2?0x9b5441:0x4f7778));awning.position.set(wx,1.65,depth/2+.24);group.add(awning)}
 const roof=new THREE.Mesh(new THREE.BoxGeometry(w+.25,.25,depth+.25),mat(i%2?0x66594f:0x77756c));roof.position.y=h+.12;group.add(roof);
