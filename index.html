@@ -45,6 +45,20 @@ mapStatus.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50
 mapStatus.textContent='Loading saved Malate map…';document.body.appendChild(mapStatus);
 const project=(lat,lon)=>({x:(lon-MAP_CENTER.lon)*107200,z:-(lat-MAP_CENTER.lat)*111100});
 const osmBuildingMats=[0xc9c2b5,0xd8d1c3,0xb8b9b4,0xd1c5b3,0xbfc8c7,0xd4d0c8].map(c=>material(c));
+const facadeMats=[];
+for(const base of ['#d4c8b4','#c5c9c6','#d8d2c5','#bfc7c8','#d6c0a7','#c8c5bd']){
+ const c=document.createElement('canvas');c.width=256;c.height=256;const x=c.getContext('2d');
+ x.fillStyle=base;x.fillRect(0,0,256,256);
+ for(let row=0;row<8;row++)for(let col=0;col<6;col++){
+  const px=9+col*41,py=8+row*31;
+  x.fillStyle='#746f68';x.fillRect(px,py,25,20);
+  x.fillStyle=['#8db0b9','#9bb7bf','#7c9ea9','#b4c9cb'][((row+col)%4)];x.fillRect(px+3,py+3,19,14);
+  x.fillStyle='#e7dfd1';x.fillRect(px-2,py+20,29,3);
+ }
+ x.fillStyle='#b6a994';for(let y=0;y<256;y+=32)x.fillRect(0,y,256,2);
+ const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(1,1);
+ facadeMats.push(new THREE.MeshStandardMaterial({map:tex,roughness:.88,metalness:.02}));
+}
 function addArea(el,target,colour){const ns=el.geometry||[];if(ns.length<4)return;const pts=ns.map(p=>project(p.lat,p.lon));if(pts.some(p=>Math.abs(p.x)>800||Math.abs(p.z)>800))return;target.push(pts);const sh=new THREE.Shape();sh.moveTo(pts[0].x,-pts[0].z);for(let i=1;i<pts.length;i++)sh.lineTo(pts[i].x,-pts[i].z);sh.closePath();const mesh=new THREE.Mesh(new THREE.ShapeGeometry(sh),new THREE.MeshStandardMaterial({color:colour,roughness:.95,side:THREE.DoubleSide}));mesh.rotation.x=-Math.PI/2;mesh.position.y=-.02;scene.add(mesh)}
 function addRailway(el){const pts=(el.geometry||[]).map(p=>project(p.lat,p.lon));if(pts.length<2||pts.some(p=>Math.abs(p.x)>500||Math.abs(p.z)>500))return;railwayLines.push({pts,tags:el.tags||{}});const elevated=(el.tags?.bridge==='yes'||el.tags?.layer==='1'||el.tags?.railway==='light_rail');const y=elevated?5.2:.2;for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);if(len<.2)continue;const angle=Math.atan2(dx,dz);for(const off of [-.72,.72]){const rail=box(scene,.12,.13,len,(a.x+b.x)/2+Math.cos(angle)*off,y,(a.z+b.z)/2-Math.sin(angle)*off,material(0x333b40),false);rail.rotation.y=angle;}if(elevated){const deck=box(scene,3.2,.3,len,(a.x+b.x)/2,y-.22,(a.z+b.z)/2,material(0x888982),false);deck.rotation.y=angle;for(let t=.15;t<1;t+=Math.min(2/len,.15)){const x=a.x+dx*t,z=a.z+dz*t;box(scene,.35,4.9,.35,x,y/2,z,material(0x777b78),false)}}else if(el.tags?.railway==='light_rail'||el.tags?.railway==='rail'){for(let t=.08;t<1;t+=Math.min(1.3/len,.12)){const x=a.x+dx*t,z=a.z+dz*t;const sleeper=box(scene,2.1,.08,.28,x,.13,z,material(0x5b5146),false);sleeper.rotation.y=angle}}}}
 function addFootprint(el){
@@ -60,7 +74,7 @@ function addFootprint(el){
  const geom=new THREE.ExtrudeGeometry(shape,{depth:height,bevelEnabled:false});
  // Shape is drawn in map x/z; rotate its 2D plane upright into the world footprint.
  geom.rotateX(-Math.PI/2);
- const mesh=new THREE.Mesh(geom,osmBuildingMats[Math.abs(Number(el.id)||0)%osmBuildingMats.length]);
+ const mesh=new THREE.Mesh(geom,facadeMats[Math.abs(Number(el.id)||0)%facadeMats.length]);
  mesh.position.y=0;mesh.castShadow=true;mesh.receiveShadow=true;realMapGroup.add(mesh);
  const roof=new THREE.Mesh(new THREE.ShapeGeometry(shape),material(0x77766f));
  roof.rotation.x=-Math.PI/2;roof.position.y=height+.015;realMapGroup.add(roof);
