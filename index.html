@@ -16,12 +16,14 @@
 <label><input id="buildings" type="checkbox" checked> 3D building footprints</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
 <label><input id="terrain" type="checkbox" checked> 3D terrain</label>
+<label><input id="labels" type="checkbox" checked> Building labels</label>
+<button id="sun">Golden-hour light</button>
 <button id="tilt">Tilt / top view</button>
 <button id="reset">Reset view</button>
 </div>
 </header>
 <div id="map" role="application" aria-label="Interactive three-dimensional city map of Ermita Manila"></div>
-<footer>3D visualization, not a surveyed architectural model. OSM building heights are used when present; missing heights are estimated for visualization. Terrain uses global ~30 m elevation data. © OpenStreetMap contributors · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
+<footer>Enhanced 3D visualization using mapped footprints, tagged heights and building types. Untagged heights are estimates; not a surveyed architectural model. Terrain uses global ~30 m elevation data. © OpenStreetMap contributors · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
 <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
 <script>
 (function(){
@@ -38,7 +40,7 @@ const map=new maplibregl.Map({
 });
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
 map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-right');
-let roadsData=null,buildingsData=null,tilted=true;
+let roadsData=null,buildingsData=null,tilted=true,golden=true;
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function popupHtml(p){const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',p.osm_feature_id||p.id]];return '<div style="font:13px system-ui"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+'</div>'}
 function addBuildings(data){
@@ -48,13 +50,31 @@ function addBuildings(data){
  map.addLayer({id:'local-buildings-3d',type:'fill-extrusion',source:'local-buildings',
    filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['any',['has','building',['get','tags']],['has','building:part',['get','tags']]]],
    paint:{
-    'fill-extrusion-color':['interpolate',['linear'],['coalesce',['to-number',['get','building:levels',['get','tags']],0],0],0,'#d9bca1',3,'#c99570',8,'#a96f52',20,'#80513f'],
-    'fill-extrusion-height':['max',3,['coalesce',['to-number',['get','height',['get','tags']]],['*',['to-number',['get','building:levels',['get','tags']],3],3],8]],
-    'fill-extrusion-base':0,'fill-extrusion-opacity':0.94,'fill-extrusion-vertical-gradient':true
+    'fill-extrusion-color':['case',
+      ['has','building:colour',['get','tags']],['get','building:colour',['get','tags']],
+      ['match',['get','building',['get','tags']],
+       'hospital','#d9d7cf','school','#d9c8a7','university','#d8c6a4','church','#c8b9a2',
+       'commercial','#b7bdc5','office','#aebbc8','retail','#d5b99a','apartments','#c8c4bd',
+       'residential','#d9c8b3','industrial','#b9b7b1','hotel','#c5b4a6',
+       '#c8bfb3']],
+    'fill-extrusion-height':['max',2,['coalesce',
+      ['to-number',['get','height',['get','tags']]],
+      ['case',['has','building:levels',['get','tags']],['*',['to-number',['get','building:levels',['get','tags']],0],3.2],
+       ['match',['get','building',['get','tags']],
+       'church',18,'cathedral',24,'hospital',12,'commercial',16,'office',18,'hotel',18,'apartments',12,'industrial',8,'house',6,'residential',7,'garage',3,'shed',3,8]]]],
+    'fill-extrusion-base':['coalesce',['to-number',['get','min_height',['get','tags']]],0],
+    'fill-extrusion-opacity':0.98,'fill-extrusion-vertical-gradient':true
    }});
  map.on('click','local-buildings-3d',e=>{const f=e.features&&e.features[0];if(!f)return;new maplibregl.Popup().setLngLat(e.lngLat).setHTML(popupHtml(f.properties||{})).addTo(map)});
  map.on('mouseenter','local-buildings-3d',()=>map.getCanvas().style.cursor='pointer');
  map.on('mouseleave','local-buildings-3d',()=>map.getCanvas().style.cursor='');
+ if(map.getLayer('local-building-labels'))map.removeLayer('local-building-labels');
+ map.addLayer({id:'local-building-labels',type:'symbol',source:'local-buildings',
+  minzoom:16.2,
+  filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['has','name',['get','tags']]],
+  layout:{'text-field':['get','name',['get','tags']],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],16,10,19,13],'text-max-width':10,'text-allow-overlap':false,'text-ignore-placement':false},
+  paint:{'text-color':'#28323a','text-halo-color':'#fff8e9','text-halo-width':1.5,'text-halo-blur':0.3}});
+
 }
 function addRoads(data){
  if(map.getLayer('project-roads-casing'))map.removeLayer('project-roads-casing');
@@ -68,7 +88,7 @@ function addRoads(data){
 map.on('load',async()=>{
  try{
   map.addSource('terrain-dem',{type:'raster-dem',tiles:['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});
-  map.setTerrain({source:'terrain-dem',exaggeration:1.25});
+  map.setTerrain({source:'terrain-dem',exaggeration:1.15});
   map.setSky({ 'sky-color':'#8dbbe2','sky-horizon-blend':0.5,'horizon-color':'#e8f1fa','horizon-fog-blend':0.2,'fog-color':'#dce8f3','fog-ground-blend':0.15,'atmosphere-blend':0.8});
   const results=await Promise.all([
    fetch(base+'ermita-road-network.geojson').then(r=>{if(!r.ok)throw Error('Road data HTTP '+r.status);return r.json()}),
@@ -82,7 +102,9 @@ map.on('load',async()=>{
 });
 document.getElementById('buildings').addEventListener('change',e=>{if(map.getLayer('local-buildings-3d'))map.setLayoutProperty('local-buildings-3d','visibility',e.target.checked?'visible':'none')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
-document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.25}:null)}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
+document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null)}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
+document.getElementById('labels').addEventListener('change',e=>{if(map.getLayer('local-building-labels'))map.setLayoutProperty('local-building-labels','visibility',e.target.checked?'visible':'none')});
+document.getElementById('sun').addEventListener('click',()=>{golden=!golden;try{map.setLight({anchor:'viewport',position:golden?[1.2,210,35]:[1.2,45,75],color:golden?'#ffe0ad':'#ffffff',intensity:golden?0.45:0.8});document.getElementById('sun').textContent=golden?'Golden-hour light':'Neutral daylight'}catch(err){setStatus('Lighting controls are not supported by this map style.')}});
 document.getElementById('tilt').addEventListener('click',()=>{tilted=!tilted;map.easeTo({pitch:tilted?62:0,bearing:tilted?-18:0,duration:900})});
 document.getElementById('reset').addEventListener('click',()=>map.flyTo({center:center,zoom:15.5,pitch:62,bearing:-18,duration:1200}));
 })();
