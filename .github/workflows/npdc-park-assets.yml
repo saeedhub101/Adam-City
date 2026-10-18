@@ -1,0 +1,45 @@
+name: Import official NPDC Rizal Park map assets
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "ermita/scripts/import_npdc_park_assets.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: npdc-park-assets
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Download source assets and write provenance report
+        run: python ermita/scripts/import_npdc_park_assets.py
+      - name: Commit source assets and report
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ermita/rizal-park/source-data/npdc-assets
+          if git diff --cached --quiet; then
+            echo "No asset changes."
+            exit 0
+          fi
+          git commit -m "Import official NPDC Rizal Park reference maps"
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase -X theirs origin/main || { git rebase --abort || true; sleep $((attempt * 3)); continue; }
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 3))
+          done
+          echo "::error::Could not publish NPDC assets after four safe retries."
+          exit 1
