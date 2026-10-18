@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+"""Generate procedural facade details for Ermita buildings from OSM footprints.
+
+Windows, doors and sign panels are visualization placeholders, not surveyed architecture.
+Named sign panels are indexed in a CSV; this script does not invent logos or exact sign text.
+"""
+import csv, json, math, re
+from pathlib import Path
+
+import trimesh
+from pyproj import Transformer
+from shapely.geometry import shape
+from shapely.ops import transform as geom_transform
+
+ROOT = Path(__file__).resolve().parents[2]
+MAP_FILE = ROOT / "ermita/maps/generated/ermita-building-footprints.geojson"
+OUT_DIR = ROOT / "ermita/3d/generated"
+OUT_GLB = OUT_DIR / "ermita-buildings-facade-details.glb"
+OUT_CSV = OUT_DIR / "facade-signage-index.csv"
+TO_METERS = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True).transform
+
+
+def tags_for(feature):
+    p = feature.get("properties") or {}
+    return p.get("tags") if isinstance(p.get("tags"), dict) else p
+
+
+def height_for(tags):
+    raw = tags.get("height")
+    if raw:
+        m = re.search(r"\d+(?:\.\d+)?", str(raw).replace(",", "."))
+        if m and 1.5 <= float(m.group()) <= 500:
+            return float(m.group())
+    raw = tags.get("building:levels") or tags.get("levels")
+    if raw:
+        m = re.search(r"\d+(?:\.\d+)?", str(raw))
+        if m and 1 <= float(m.group()) <= 150:
+            return float(m.group()) * 3.2
+    return 9.6
+
+
+def box_at(center, extents, angle, color):
+    mesh = trimesh.creation.box(extents=extents)
+    mesh.apply_transform(trimesh.transformations.rotation_matrix(angle, [0, 0, 1]))
+    mesh.apply_translation(center)
+    mesh.visual.face_colors = color
+    return mesh
+
+
+def main():
+    if not MAP_FILE.exists():
+        raise FileNotFoundError(f"Missing {MAP_FILE}; run the OSM import first")
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    collection = json.loads(MAP_FILE.read_text(encoding="utf-8"))
+    prepared = []
+    minx = miny = float("inf")
+    maxx = maxy = float("-inf")
+    maxz = 0.0
+    for feature in collection.get("features", []):
+        try:
+            geom = geom_transform(TO_METERS, shape(feature["geometry"]))
+            polys = [geom] if geom.geom_type == "Polygon" else list(geom.geoms) if geom.geom_type == "MultiPolygon" else []
+            tags = tags_for(feature)
+            height = height_for(tags)
+            for poly in polys:
+                if poly.is_empty or not poly.is_valid or poly.area < 12:
+                    continue
+                prepared.append((poly, height, tags, feature))
+                a,b,c,d = poly.bounds
+                minx,miny,maxx,maxy = min(minx,a),min(miny,b),max(maxx,c),max(maxy,d)
+                maxz = max(maxz,height)
+        except Exception as exc:
+            print(f"Skipping invalid building: {exc}")
+    if not prepared:
+        raise RuntimeError("No valid building polygons available for facade generation")
+    center = ((minx+maxx)/2, (miny+maxy)/2, maxz/2)
+    meshes = []
+    signage = []
+    windows_count = doors_count = panels_count = 0
+
+    for poly, height, tags, feature in prepared:
+        # Floor count is deliberately estimated where not mapped.
+        levels_raw = tags.get("building:levels") or tags.get("levels")
+        try:
+            levels = max(1, min(100, int(float(levels_raw)))) if levels_raw else max(1, round(height/3.2))
+        except (ValueError, TypeError):
+            levels = max(1, round(height/3.2))
+        floor_h = height / levels
+        name = tags.get("name") or tags.get("brand") or tags.get("shop") or tags.get("amenity") or ""
+        fid = (feature.get("properties") or {}).get("osm_feature_id", "")
+        # Only exterior walls; window rows and panels sit just outside the footprint.
+        ring = list(poly.exterior.coords)
+        for a, b in zip(ring[:-1], ring[1:]):
+            dx, dy = b[0]-a[0], b[1]-a[1]
+            length = math.hypot(dx,dy)
+            if length < 4.5:
+                continue
+            ux, uy = dx/length, dy/length
+            nx, ny = -uy, ux
+            angle = math.atan2(dy, dx)
+            # Place 1–2 m from corners and avoid excessive tiny windows.
+            spacing = 2.6
+            count = min(80, max(0, int((length-2.0)/spacing)))
+            if count < 1:
+                continue
+            usable = min(length-1.2, count*spacing)
+            start = (length-usable)/2
+            for floor in range(levels):
+                z = floor*floor_h + min(1.25, floor_h*0.38)
+                wh = min(1.35, max(0.55, floor_h*0.42))
+                if z + wh > height - 0.15:
+                    continue
+                for j in range(count):
+                    along = start + (j+0.5)*usable/count
+                    cx = a[0] + ux*along + nx*0.065 - center[0]
+                    cy = a[1] + uy*along + ny*0.065 - center[1]
+                    cz = z + wh/2 - center[2]
+                    ww = min(1.25, max(0.55, usable/count*0.55))
+                    meshes.append(box_at((cx,cy,cz),(ww,0.10,wh),angle,[42,76,99,255]))
+                    windows_count += 1
+            # Ground-floor door and a generic signboard. Real sign text is not fabricated.
+            if length >= 7:
+                along = length * 0.5
+                cx = a[0] + ux*along + nx*0.075 - center[0]
+                cy = a[1] + uy*along + ny*0.075 - center[1]
+                if height >= 2.4:
+                    meshes.append(box_at((cx,cy,0.95-center[2]),(0.95,0.12,1.9),angle,[83,65,48,255]))
+                    doors_count += 1
+                if name:
+                    sx = a[0] + ux*along + nx*0.10 - center[0]
+                    sy = a[1] + uy*along + ny*0.10 - center[1]
+                    meshes.append(box_at((sx,sy,2.25-center[2]),(min(3.2,max(1.4,len(str(name))*0.12)),0.14,0.48),angle,[190,158,83,255]))
+                    panels_count += 1
+        signage.append({
+            "osm_feature_id": fid, "mapped_name_or_use": name,
+            "building_height_m": round(height,2), "estimated_floor_count": levels,
+            "sign_panel_generated": bool(name),
+            "sign_text_or_logo_verified": False,
+            "source": "OpenStreetMap contributors; ODbL 1.0",
+            "note": "Panel is a generic placeholder; name/use comes from OSM tags when present."
+        })
+    if not meshes:
+        raise RuntimeError("No facade details generated; inspect input footprints")
+    combined = trimesh.util.concatenate(meshes)
+    combined.export(OUT_GLB)
+    with OUT_CSV.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=list(signage[0].keys()))
+        writer.writeheader()
+        writer.writerows(signage)
+    report = {
+        "status": "success", "source": "OpenStreetMap contributors",
+        "license": "ODbL 1.0; attribution and share-alike obligations apply",
+        "output_glb": str(OUT_GLB.relative_to(ROOT)),
+        "output_signage_index": str(OUT_CSV.relative_to(ROOT)),
+        "building_polygon_parts": len(prepared), "window_panels": windows_count,
+        "door_placeholders": doors_count, "named_signboard_placeholders": panels_count,
+        "placement": "EPSG:3857 meters; recentered using the same building extent as the extrusion model",
+        "limitations": [
+            "Windows, doors and signboards are procedural placeholders, not measured architectural features.",
+            "Floor counts are estimated if OSM building:levels is absent.",
+            "Signboard names are drawn from available OSM name/brand/shop/amenity tags; actual typography, logos, colors and wording are not reconstructed.",
+            "No facade photographs, photogrammetry, or street-level imagery are included."
+        ]
+    }
+    (OUT_DIR / "facade-details-report.json").write_text(json.dumps(report, indent=2)+"\n", encoding="utf-8")
+    print(json.dumps(report, indent=2))
+
+
+if __name__ == "__main__":
+    main()
