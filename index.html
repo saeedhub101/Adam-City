@@ -45,7 +45,8 @@ map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-righ
 map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-right');
 let roadsData=null,buildingsData=null,surfaceData=null,tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[];
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function popupHtml(p){const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',p.osm_feature_id||p.id]];return '<div style="font:13px system-ui"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+'</div>'}
+let facadePhotoIndex={};
+function popupHtml(p){const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const id=p.osm_feature_id||p.id;const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',id]];const photos=facadePhotoIndex[id]||[];const photo=photos[0];const photoHtml=photo?'<div style="margin-top:8px;border-top:1px solid #ddd;padding-top:8px"><b>Matched street photo reference</b><img src="https://saeedhub101.github.io/Adam-City/'+esc(photo.image)+'" alt="Street photo reference for '+esc(name)+'" loading="lazy" style="display:block;width:240px;max-width:100%;height:auto;margin-top:5px;border-radius:4px"><div style="font-size:11px;color:#555">'+esc(photo.capture_date||'Capture date unknown')+' · '+esc(photo.distance_to_wall_m===null?'':photo.distance_to_wall_m+' m from footprint')+' · '+esc(photo.visually_verified?'Visually verified':'Candidate match; visual confirmation pending')+'</div><div><a target="_blank" rel="noopener" href="'+esc(photo.source_page||'https://kartaview.org/')+'">Open source photo · © Grab and KartaView Contributors</a></div></div>':'';return '<div style="font:13px system-ui;max-width:260px"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+photoHtml+'</div>'}
 function addBuildings(data){
  if(map.getLayer('local-buildings-3d'))map.removeLayer('local-buildings-3d');
  if(map.getSource('local-buildings'))map.removeSource('local-buildings');
@@ -150,11 +151,13 @@ map.on('load',async()=>{
   const results=await Promise.all([
    fetch(base+'ermita-road-network.geojson').then(r=>{if(!r.ok)throw Error('Road data HTTP '+r.status);return r.json()}),
    fetch(base+'ermita-building-footprints.geojson').then(r=>{if(!r.ok)throw Error('Building data HTTP '+r.status);return r.json()}),
-   fetch('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/external/dpwh-road-surface-type-ermita.geojson').then(r=>{if(!r.ok)throw Error('DPWH road data HTTP '+r.status);return r.json()})
+   fetch('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/external/dpwh-road-surface-type-ermita.geojson').then(r=>{if(!r.ok)throw Error('DPWH road data HTTP '+r.status);return r.json()}),
+   fetch('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/3d/facade-photo-index.json').then(r=>{if(!r.ok)throw Error('Facade photo index HTTP '+r.status);return r.json()})
   ]);
   roadsData={type:'FeatureCollection',features:(results[0].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   buildingsData={type:'FeatureCollection',features:(results[1].features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
   surfaceData={type:'FeatureCollection',features:(results[2].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
+  facadePhotoIndex=results[3].buildings||{};
   addBuildings(buildingsData);addRoads(roadsData);addDpwRoadSurface(surfaceData);addLandmarks();addSatelliteImagery();addLocalAerialImagery();
   setStatus(buildingsData.features.length.toLocaleString()+' local building outlines in 3D · '+roadsData.features.length.toLocaleString()+' mapped road/path lines · '+surfaceData.features.length.toLocaleString()+' official DPWH road records loaded · 6 landmark markers (approximate positions)');
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
