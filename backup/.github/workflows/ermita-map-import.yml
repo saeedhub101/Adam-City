@@ -1,0 +1,48 @@
+name: Import Ermita map data and build 3D model
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/ermita-map-import.yml"
+      - "ermita/scripts/**"
+  schedule:
+    - cron: "23 2 1 * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ermita-map-import
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install geospatial tools
+        run: python -m pip install requests osm2geojson shapely pyproj trimesh mapbox-earcut rasterio numpy scipy
+      - name: Download and process OpenStreetMap data
+        run: python ermita/scripts/import_osm_and_build_3d.py
+      - name: Fetch real public street-level facade photos
+        run: python ermita/scripts/import_real_facade_photos.py
+      - name: Download elevation data and build terrain surface
+        run: python ermita/scripts/import_copernicus_terrain.py
+      - name: Commit imported map data and 3D model
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ermita/maps/generated ermita/3d/generated ermita/3d/terrain ermita/facades/generated ermita/facades/images
+          if git diff --cached --quiet; then
+            echo "No generated data changes to commit."
+          else
+            git commit -m "Import Ermita map data and regenerate detailed 3D buildings"
+            git push
+          fi
