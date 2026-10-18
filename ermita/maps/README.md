@@ -15,6 +15,12 @@ This folder stores source-traceable geographic data for Ermita, Manila, with a d
 - **Street signs and furniture:** see `generated/ermita-street-signs-and-signals.geojson` and `generated/ermita-street_furniture.csv`.
 - **Street names and segments:** see `../streets/`.
 
+## Asset retention rule
+
+For every future import or generated asset, commit the reusable file to this repository whenever its license and size allow, alongside a source/import report and README/source-register entry. See the repository-wide [data asset policy](../../DATA_ASSET_POLICY.md) for the required metadata and validation checklist.
+
+**Satellite imagery exception:** the preview currently streams Esri World Imagery tiles from the provider; those tiles are not in the repository. Esri's terms do not automatically grant redistribution rights, and its dedicated World Imagery export item requires an ArcGIS Online subscription or developer account. We must not bulk-copy ordinary display tiles into GitHub without explicit authorization. For a persistent local aerial image, the next step is to acquire a source whose terms explicitly allow download and redistribution, or use an authorized export and store its source/license evidence with the files.
+
 ## Important distinction: imported vs. reconciled
 
 OSM and Microsoft have both been imported and now have a first-pass geometric comparison, but they have **not** been reconciled into one authoritative footprint layer. Do not concatenate them blindly: outlines may overlap, differ, reflect different dates, or include neighboring areas inside the rectangular crop. Preserve source IDs and provenance, then manually review matches and conflicts before creating a merged derivative.
