@@ -177,7 +177,6 @@ function addLocalRamonModel(roadNetwork){
    this.camera.projectionMatrix=m.multiply(l);
    this.renderer.resetState();
    this.renderer.render(this.scene,this.camera);
-   map.triggerRepaint();
   }
  };
  if(map.getLayer('ramon-magsaysay-local-mesh'))map.removeLayer('ramon-magsaysay-local-mesh');
