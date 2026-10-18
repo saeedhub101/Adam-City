@@ -89,4 +89,7 @@ jobs:
           git add maps/malate-map.json maps/malate-streets.json
           if git diff --cached --quiet; then echo "No map geometry changes."; exit 0; fi
           git commit -m "Expand 3D map to include Ermita and nearby streets"
+          # Another workflow or edit may have advanced main while the OSM query ran.
+          # Rebase this data-only commit onto the latest main before pushing.
+          git pull --rebase origin main
           git push
