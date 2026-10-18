@@ -6,6 +6,12 @@ Goal: build a source-traceable 3D model of Ermita, Manila, with more detail for 
 
 The current reliable base is the actual mapped geometry in OpenStreetMap plus the supplementary Microsoft building-footprint snapshot. The dedicated OSM road/path centerline layer is `../maps/generated/ermita-road-network.geojson` (1,445 mapped ways from the current cached OSM source); its segment index is `../streets/street_segments.csv`. For buildings, use the OSM footprint layer and the 12,132 Microsoft outline candidates as separate source layers, then adjudicate overlaps. Do not present procedural windows, doors, signboards, or generic extrusions as surveyed/photorealistic real buildings. Until verified façade/height data is available, prioritize correct road layout and building footprints, and label extruded heights as estimated or unknown.
 
+## Real-geometry inspection and height evidence
+
+- Open `../maps/preview.html` for an interactive 2D inspection of the actual OSM road centerlines and mapped building polygons before evaluating 3D output.
+- Use `../maps/qa/building-height-evidence.csv` and its report to distinguish explicit source height tags from level counts and unknown heights. Never silently convert levels to meters or fill missing heights with guessed values.
+- Microsoft footprints remain a separate outline candidate layer and are not automatically fused with OSM. The first-pass comparison under `../maps/qa/` must be reviewed before creating a merged building layer.
+
 ## Data already imported or generated
 
 - **OSM map/building features:** `../maps/generated/import-report.json`; 1,533 building/building-part features are reported in the current OSM export.
