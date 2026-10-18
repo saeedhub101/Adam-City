@@ -5362,6 +5362,41 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          120.983667,
+          14.581957
+        ]
+      },
+      "properties": {
+        "photo_id": "2506485337",
+        "sequence_id": "10205865",
+        "sequence_index": "352",
+        "camera_heading_deg": "246.49",
+        "capture_date": "2024-11-19 05:23:03.000",
+        "date_added": "2024-11-19 11:05:52",
+        "date_processed": "2024-11-19 11:12:17",
+        "field_of_view_deg": "",
+        "projection": "PLANE",
+        "gps_accuracy_m": "0.0000",
+        "osm_way_id": "693152271",
+        "image_processing_status": "FINISHED",
+        "image_processing_result": "BLURRED",
+        "sequence_device": "realme RMX3890",
+        "sequence_date_added": "2024-11-19 11:05:51",
+        "sequence_distance_km": "5.55",
+        "sequence_field_of_view_deg": "",
+        "sequence_nw_lat": "14.586602",
+        "sequence_nw_lon": "120.977651",
+        "sequence_se_lat": "14.576861",
+        "sequence_se_lon": "121.008275",
+        "source_page": "https://kartaview.org/map/@14.581957,120.983667,18z",
+        "metadata_source": "KartaView public API; metadata only, image bytes not downloaded"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           120.982561,
           14.581441
         ]
@@ -21349,6 +21384,41 @@
         "sequence_se_lat": "14.432045",
         "sequence_se_lon": "120.990512",
         "source_page": "https://kartaview.org/map/@14.585976,120.973717,18z",
+        "metadata_source": "KartaView public API; metadata only, image bytes not downloaded"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          120.974221,
+          14.584959
+        ]
+      },
+      "properties": {
+        "photo_id": "2530924185",
+        "sequence_id": "10410969",
+        "sequence_index": "797",
+        "camera_heading_deg": "153.62",
+        "capture_date": "2024-12-17 23:27:00.000",
+        "date_added": "2024-12-18 11:33:49",
+        "date_processed": "2024-12-18 11:48:51",
+        "field_of_view_deg": "0",
+        "projection": "PLANE",
+        "gps_accuracy_m": "3.8010",
+        "osm_way_id": "4075790",
+        "image_processing_status": "FINISHED",
+        "image_processing_result": "BLURRED",
+        "sequence_device": "samsung SM-A525F",
+        "sequence_date_added": "2024-12-18 11:33:45",
+        "sequence_distance_km": "34.79",
+        "sequence_field_of_view_deg": "",
+        "sequence_nw_lat": "14.655668",
+        "sequence_nw_lon": "120.946772",
+        "sequence_se_lat": "14.432045",
+        "sequence_se_lon": "120.990512",
+        "source_page": "https://kartaview.org/map/@14.584959,120.974221,18z",
         "metadata_source": "KartaView public API; metadata only, image bytes not downloaded"
       }
     },
