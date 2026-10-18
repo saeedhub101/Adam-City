@@ -134,7 +134,6 @@ function addLocalRamonModel(roadNetwork){
     walkTexture.anisotropy=this.renderer.capabilities.getMaxAnisotropy();
     const walkMat=new THREE.MeshBasicMaterial({map:walkTexture,side:THREE.DoubleSide});
     const sidewalkFeatures=roadNetwork.features.filter(f=>!['motorway','trunk'].includes((f.properties||{}).highway));
-    const sidewalkGeom=makeRibbonGeometry(sidewalkFeatures,hw=>1.6,0,2,0.14);
     // Build offset sidewalk strips on both sides of each street centerline.
     const sidewalkPositions=[],sidewalkUvs=[];
     function addSidewalkLine(a,b,hw,sign){
@@ -150,7 +149,7 @@ function addLocalRamonModel(roadNetwork){
     }
     for(const f of sidewalkFeatures){const p=f.properties||{},tags=p.tags||{},hw=p.highway||tags.highway||'residential',g=f.geometry;if(!g)continue;const lines=g.type==='LineString'?[g.coordinates]:g.type==='MultiLineString'?g.coordinates:[];for(const line of lines)for(let i=1;i<line.length;i++){addSidewalkLine(line[i-1],line[i],hw,1);addSidewalkLine(line[i-1],line[i],hw,-1);}}
     const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32BufferAttribute(sidewalkPositions,3));sg.setAttribute('uv',new THREE.Float32BufferAttribute(sidewalkUvs,2));sg.computeVertexNormals();
-    const sidewalkMesh=new THREE.Mesh(sg,walkMat);sidewalkMesh.frustumCulled=false;this.scene.add(sidewalkMesh);
+    const sidewalkMesh=new THREE.Mesh(sg,walkMat);sidewalkMesh.frustumCulled=false;this.scene.add(sidewalkMesh);setStatus('Local Ramon Magsaysay GLB loading · asphalt texture on mapped roads · terrazzo texture on approximate sidewalk strips.');
    }
    this.loader=new THREE.GLTFLoader();
    this.loader.load(modelUrl,gltf=>{
@@ -174,7 +173,7 @@ function addLocalRamonModel(roadNetwork){
    const m=new THREE.Matrix4().fromArray(args.defaultProjectionData.mainMatrix);
    const l=new THREE.Matrix4().makeTranslation(merc.x,merc.y,merc.z)
     .multiply(new THREE.Matrix4().makeRotationX(Math.PI/2))
-    .scale(new THREE.Vector3(meterScale,-meterScale,meterScale));
+    .scale(new THREE.Vector3(meterScale,meterScale,meterScale));
    this.camera.projectionMatrix=m.multiply(l);
    this.renderer.resetState();
    this.renderer.render(this.scene,this.camera);
