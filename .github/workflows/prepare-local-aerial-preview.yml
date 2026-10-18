@@ -1,0 +1,41 @@
+name: Prepare local aerial image for 3D preview
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/prepare_local_aerial_preview.py"
+      - ".github/workflows/prepare-local-aerial-preview.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prepare-local-aerial-preview
+  cancel-in-progress: false
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install raster conversion dependencies
+        run: python -m pip install --disable-pip-version-check rasterio pillow
+      - name: Convert existing GeoTIFF into web image
+        run: python scripts/prepare_local_aerial_preview.py
+      - name: Save generated image in repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ermita/maps/external/openaerialmap/ermita-5b90f92da0d7280005fab355.jpg ermita/maps/external/openaerialmap/local-aerial-preview-report.json
+          if git diff --cached --quiet; then
+            echo "Local aerial preview is already current."
+            exit 0
+          fi
+          git commit -m "Prepare local aerial image for 3D preview"
+          git push
