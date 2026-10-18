@@ -1,7 +1,7 @@
 {
   "source": "OpenAerialMap / Humanitarian OpenStreetMap Team imagery API",
   "catalog_api": "https://api.imagery.hotosm.org/stac/search",
-  "retrieved_utc": "2026-10-18T19:18:17.879230+00:00",
+  "retrieved_utc": "2026-10-18T19:20:31.893466+00:00",
   "area_of_interest": {
     "name": "Rizal Park / Ermita, Manila, Philippines",
     "bbox_wgs84": [
@@ -19,7 +19,16 @@
       "title": "Arroceros Forest Park",
       "datetime": null,
       "gsd_m": 0.05126,
+      "bbox_wgs84": [
+        120.979078,
+        14.592126,
+        120.984291,
+        14.596839
+      ],
+      "producer_name": "Leonard G. Soriano and Ian Gongona",
+      "providers": null,
       "license": "CC-BY-4.0",
+      "item_page": "https://map.openaerialmap.org/ (search by item ID: 5b90f92da0d7280005fab355)",
       "asset_key": "visual",
       "asset_href": "https://oin-hotosm-temp.s3.amazonaws.com/5b90f8fda0d7280005fab353/0/5b90f8fda0d7280005fab354.tif",
       "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
@@ -36,7 +45,16 @@
       "title": "Intramuros, Manila PHILIPPINES",
       "datetime": null,
       "gsd_m": 0.079221,
+      "bbox_wgs84": [
+        120.959963,
+        14.575982,
+        120.991033,
+        14.606885
+      ],
+      "producer_name": "DATUM PH",
+      "providers": null,
       "license": "CC-BY-SA-4.0",
+      "item_page": "https://map.openaerialmap.org/ (search by item ID: 635a06b55f1fd800066121e3)",
       "asset_key": "visual",
       "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
       "asset_size": 1012871121
@@ -46,7 +64,16 @@
       "title": "Intramuros, Manila PHILIPPINES",
       "datetime": null,
       "gsd_m": 0.0396104,
+      "bbox_wgs84": [
+        120.960256,
+        14.580908,
+        120.982681,
+        14.597167
+      ],
+      "producer_name": "DATUM PH",
+      "providers": null,
       "license": "CC-BY-SA-4.0",
+      "item_page": "https://map.openaerialmap.org/ (search by item ID: 635a05775f1fd800066121e2)",
       "asset_key": "visual",
       "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
       "asset_size": 211896546
@@ -56,7 +83,16 @@
       "title": "Copernicus_DSM_COG_10_N14_00_E120_00_DEM",
       "datetime": "2021-04-22T00:00:00Z",
       "gsd_m": 30,
+      "bbox_wgs84": [
+        119.99986111111112,
+        14.00013888888889,
+        120.99986111111112,
+        15.00013888888889
+      ],
+      "producer_name": null,
+      "providers": null,
       "license": "",
+      "item_page": "https://map.openaerialmap.org/ (search by item ID: Copernicus_DSM_COG_10_N14_00_E120_00_DEM)",
       "asset_key": "data",
       "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
       "asset_size": null
@@ -66,7 +102,16 @@
       "title": "Arroceros Forest Park",
       "datetime": null,
       "gsd_m": 0.05126,
+      "bbox_wgs84": [
+        120.979078,
+        14.592126,
+        120.984291,
+        14.596839
+      ],
+      "producer_name": "Leonard G. Soriano and Ian Gongona",
+      "providers": null,
       "license": "CC-BY-4.0",
+      "item_page": "https://map.openaerialmap.org/ (search by item ID: 5b90f92da0d7280005fab355)",
       "asset_key": "visual",
       "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
       "asset_size": 17188832
@@ -76,7 +121,16 @@
       "title": "ZZZ Landsat Test",
       "datetime": null,
       "gsd_m": 31.353088067834776,
+      "bbox_wgs84": [
+        119.7771810782953,
+        13.382661519444977,
+        121.92320670797218,
+        15.521603742825059
+      ],
+      "producer_name": "USGS",
+      "providers": null,
       "license": "",
+      "item_page": "https://map.openaerialmap.org/ (search by item ID: 59e62b793d6412ef722094ec)",
       "asset_key": "visual",
       "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
       "asset_size": 9424747
