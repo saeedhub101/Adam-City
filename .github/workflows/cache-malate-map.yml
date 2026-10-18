@@ -1,4 +1,4 @@
-name: Update only missing Malate map data and malls
+name: Enrich Malate map data safely
 
 on:
   workflow_dispatch:
@@ -11,175 +11,118 @@ permissions:
   contents: write
 
 jobs:
-  update-missing-data:
+  enrich-map:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-
-      - name: Check saved datasets and import only missing place categories
+      - name: Import missing POIs in small resilient requests
         env:
           PYTHONUNBUFFERED: '1'
         run: |
           python - <<'PY'
-          import json, os, time, urllib.parse, urllib.request
+          import json, time, urllib.parse, urllib.request
           from pathlib import Path
-
-          map_path = Path('maps/malate-map.json')
-          streets_path = Path('maps/malate-streets.json')
-          places_path = Path('maps/malate-places.json')
-          for path in (map_path, streets_path, places_path):
-              if path.exists() and path.stat().st_size:
-                  print(f'KEEP existing dataset: {path} ({path.stat().st_size:,} bytes)')
-              else:
-                  print(f'MISSING dataset: {path}')
-
-          # Never re-import street names or replace the detailed map if already saved.
-          # Airport data is intentionally excluded until the playable map expands.
-          required = {
-              'hospital': 'hospital',
-              'clinic': 'clinic',
-              'doctors': 'doctors',
-              'pharmacy': 'pharmacy',
-              'hotel': 'hotel',
-              'helicopter': 'helicopter landing site / helipad',
-              'fire_station': 'fire station',
-              'police': 'police station',
-              'school': 'school',
-              'university': 'university',
-              'college': 'college',
-              'bus_station': 'bus station',
-              'ferry_terminal': 'ferry terminal',
-              'transit': 'railway / public transport stop',
-              'museum': 'museum',
-              'attraction': 'tourist attraction',
-              'information': 'visitor information',
-              'mall': 'shopping mall',
-              'supermarket': 'supermarket',
-              'convenience': 'convenience store',
-              'restaurant': 'restaurant',
-              'cafe': 'cafe',
-              'bank': 'bank',
-              'atm': 'ATM',
-              'place_of_worship': 'place of worship',
-              'library': 'library',
-              'parking': 'parking area',
-              'toilets': 'public toilet',
-              'park': 'park',
-              'garden': 'garden',
-          }
-          existing = {'region':'Malate, Manila, Philippines','source':'© OpenStreetMap contributors','places':[]}
+          map_path=Path('maps/malate-map.json')
+          streets_path=Path('maps/malate-streets.json')
+          places_path=Path('maps/malate-places.json')
+          for p in (map_path,streets_path):
+              if not p.exists() or not p.stat().st_size: raise SystemExit(f'Required saved map file missing: {p}; refusing destructive rebuild')
+          data={'region':'Malate, Manila, Philippines','source':'© OpenStreetMap contributors','places':[]}
           if places_path.exists() and places_path.stat().st_size:
-              try:
-                  existing = json.loads(places_path.read_text(encoding='utf-8'))
-              except Exception as exc:
-                  raise SystemExit(f'Existing place dataset is unreadable; refusing to overwrite it: {exc}')
-          places = existing.get('places', [])
-          present = {p.get('kind') for p in places}
-          missing = [k for k in required if k not in present]
-          print('Existing place markers:', len(places), 'categories:', sorted(k for k in present if k))
-          if not missing:
-              print('All requested Malate place categories already exist. No Overpass download needed.')
-          else:
-              print('Only missing categories will be queried:', missing)
-              s,w,n,e = 14.55,120.97,14.585,121.005
-              selectors = {
-                'hospital': f'(node({s},{w},{n},{e})[amenity=hospital];way({s},{w},{n},{e})[amenity=hospital];node({s},{w},{n},{e})[healthcare=hospital];way({s},{w},{n},{e})[healthcare=hospital];)',
-                'clinic': f'(node({s},{w},{n},{e})[amenity=clinic];way({s},{w},{n},{e})[amenity=clinic];node({s},{w},{n},{e})[healthcare=clinic];way({s},{w},{n},{e})[healthcare=clinic];)',
-                'doctors': f'(node({s},{w},{n},{e})[amenity=doctors];way({s},{w},{n},{e})[amenity=doctors];)',
-                'pharmacy': f'(node({s},{w},{n},{e})[amenity=pharmacy];way({s},{w},{n},{e})[amenity=pharmacy];)',
-                'hotel': f'(node({s},{w},{n},{e})[tourism~"^(hotel|motel|hostel|guest_house)$"];way({s},{w},{n},{e})[tourism~"^(hotel|motel|hostel|guest_house)$"];way({s},{w},{n},{e})[building=hotel];)',
-                'helicopter': f'(node({s},{w},{n},{e})[aeroway=helipad];way({s},{w},{n},{e})[aeroway=helipad];node({s},{w},{n},{e})[aeroway=heliport];way({s},{w},{n},{e})[aeroway=heliport];node({s},{w},{n},{e})[emergency=landing_site];way({s},{w},{n},{e})[emergency=landing_site];)',
-                'fire_station': f'(node({s},{w},{n},{e})[amenity=fire_station];way({s},{w},{n},{e})[amenity=fire_station];)',
-                'police': f'(node({s},{w},{n},{e})[amenity=police];way({s},{w},{n},{e})[amenity=police];)',
-                'school': f'(node({s},{w},{n},{e})[amenity=school];way({s},{w},{n},{e})[amenity=school];)',
-                'university': f'(node({s},{w},{n},{e})[amenity=university];way({s},{w},{n},{e})[amenity=university];)',
-                'college': f'(node({s},{w},{n},{e})[amenity=college];way({s},{w},{n},{e})[amenity=college];)',
-                'bus_station': f'(node({s},{w},{n},{e})[amenity=bus_station];way({s},{w},{n},{e})[amenity=bus_station];)',
-                'ferry_terminal': f'(node({s},{w},{n},{e})[amenity=ferry_terminal];way({s},{w},{n},{e})[amenity=ferry_terminal];)',
-                'transit': f'(node({s},{w},{n},{e})[railway~"^(station|halt|tram_stop|subway_entrance)$"];way({s},{w},{n},{e})[railway~"^(station|halt|tram_stop|subway_entrance)$"];node({s},{w},{n},{e})[public_transport~"^(station|platform|stop_position)$"];way({s},{w},{n},{e})[public_transport~"^(station|platform)$"];)',
-                'museum': f'(node({s},{w},{n},{e})[tourism=museum];way({s},{w},{n},{e})[tourism=museum];)',
-                'attraction': f'(node({s},{w},{n},{e})[tourism=attraction];way({s},{w},{n},{e})[tourism=attraction];)',
-                'information': f'(node({s},{w},{n},{e})[tourism=information];way({s},{w},{n},{e})[tourism=information];)',
-                'mall': f'(node({s},{w},{n},{e})[shop=mall];way({s},{w},{n},{e})[shop=mall];relation({s},{w},{n},{e})[shop=mall];node({s},{w},{n},{e})[building=retail][name];way({s},{w},{n},{e})[building=retail][name];)',
-                'supermarket': f'(node({s},{w},{n},{e})[shop=supermarket];way({s},{w},{n},{e})[shop=supermarket];)',
-                'convenience': f'(node({s},{w},{n},{e})[shop=convenience];way({s},{w},{n},{e})[shop=convenience];)',
-                'restaurant': f'(node({s},{w},{n},{e})[amenity=restaurant];way({s},{w},{n},{e})[amenity=restaurant];)',
-                'cafe': f'(node({s},{w},{n},{e})[amenity=cafe];way({s},{w},{n},{e})[amenity=cafe];)',
-                'bank': f'(node({s},{w},{n},{e})[amenity=bank];way({s},{w},{n},{e})[amenity=bank];)',
-                'atm': f'(node({s},{w},{n},{e})[amenity=atm];way({s},{w},{n},{e})[amenity=atm];)',
-                'place_of_worship': f'(node({s},{w},{n},{e})[amenity=place_of_worship];way({s},{w},{n},{e})[amenity=place_of_worship];)',
-                'library': f'(node({s},{w},{n},{e})[amenity=library];way({s},{w},{n},{e})[amenity=library];)',
-                'parking': f'(node({s},{w},{n},{e})[amenity=parking];way({s},{w},{n},{e})[amenity=parking];)',
-                'toilets': f'(node({s},{w},{n},{e})[amenity=toilets];way({s},{w},{n},{e})[amenity=toilets];)',
-                'park': f'(node({s},{w},{n},{e})[leisure=park];way({s},{w},{n},{e})[leisure=park];relation({s},{w},{n},{e})[leisure=park];)',
-                'garden': f'(node({s},{w},{n},{e})[leisure=garden];way({s},{w},{n},{e})[leisure=garden];relation({s},{w},{n},{e})[leisure=garden];)',
-              }
-              query='[out:json][timeout:120];(' + ''.join(selectors[k] for k in missing) + ');out body geom;'
-              endpoints=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://overpass.private.coffee/api/interpreter']
-              raw=None; errors=[]
-              for endpoint in endpoints:
+              data=json.loads(places_path.read_text(encoding='utf-8'))
+          places=data.setdefault('places',[])
+          seen={(p.get('osm_type'),p.get('osm_id')) for p in places}
+          s,w,n,e=14.55,120.97,14.585,121.005
+          box=f'({s},{w},{n},{e})'
+          selectors={
+            'hospital':f'nwr{box}[amenity=hospital];nwr{box}[healthcare=hospital];',
+            'clinic':f'nwr{box}[amenity=clinic];nwr{box}[healthcare=clinic];',
+            'doctors':f'nwr{box}[amenity=doctors];','pharmacy':f'nwr{box}[amenity=pharmacy];',
+            'hotel':f'nwr{box}[tourism~"^(hotel|motel|hostel|guest_house)$"];nwr{box}[building=hotel];',
+            'helicopter':f'nwr{box}[aeroway~"^(helipad|heliport)$"];nwr{box}[emergency=landing_site];',
+            'fire_station':f'nwr{box}[amenity=fire_station];','police':f'nwr{box}[amenity=police];',
+            'school':f'nwr{box}[amenity=school];','university':f'nwr{box}[amenity=university];','college':f'nwr{box}[amenity=college];',
+            'bus_station':f'nwr{box}[amenity=bus_station];','ferry_terminal':f'nwr{box}[amenity=ferry_terminal];',
+            'transit':f'nwr{box}[railway~"^(station|halt|tram_stop|subway_entrance|platform)$"];nwr{box}[public_transport~"^(station|platform|stop_position)$"];nwr{box}[highway=bus_stop];',
+            'museum':f'nwr{box}[tourism=museum];','attraction':f'nwr{box}[tourism=attraction];','information':f'nwr{box}[tourism=information];',
+            'mall':f'nwr{box}[shop=mall];nwr{box}[building=retail][name];',
+            'supermarket':f'nwr{box}[shop=supermarket];','convenience':f'nwr{box}[shop=convenience];',
+            'restaurant':f'nwr{box}[amenity=restaurant];','cafe':f'nwr{box}[amenity=cafe];','bank':f'nwr{box}[amenity=bank];','atm':f'nwr{box}[amenity=atm];',
+            'place_of_worship':f'nwr{box}[amenity=place_of_worship];','library':f'nwr{box}[amenity=library];','parking':f'nwr{box}[amenity=parking];','toilets':f'nwr{box}[amenity=toilets];',
+            'park':f'nwr{box}[leisure=park];','garden':f'nwr{box}[leisure=garden];',
+            'tree':f'nwr{box}[natural=tree];','bench':f'nwr{box}[amenity=bench];','waste_basket':f'nwr{box}[amenity=waste_basket];',
+            'bicycle_parking':f'nwr{box}[amenity=bicycle_parking];','drinking_water':f'nwr{box}[amenity=drinking_water];',
+            'traffic_signals':f'nwr{box}[highway=traffic_signals];','crossing':f'nwr{box}[highway=crossing];',
+            'street_lamp':f'nwr{box}[highway=street_lamp];','fire_hydrant':f'nwr{box}[emergency=fire_hydrant];',
+            'bus_stop':f'nwr{box}[highway=bus_stop];','bicycle_rental':f'nwr{box}[amenity=bicycle_rental];',
+            'charging_station':f'nwr{box}[amenity=charging_station];','fuel':f'nwr{box}[amenity=fuel];'
+          }
+          tag_keys={'name','name:en','amenity','healthcare','tourism','building','building:levels','building:part','height','min_height','roof:shape','roof:height','aeroway','emergency','railway','public_transport','operator','brand','addr:housenumber','addr:street','addr:city','addr:postcode','phone','website','opening_hours','wheelchair','shop','leisure','landuse','highway','natural','barrier','surface','lit','crossing','kerb','traffic_calming','maxspeed','oneway','lanes','width','route','ref','bench','shelter','covered','access'}
+          endpoints=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://overpass.private.coffee/api/interpreter']
+          def fetch(kind,selector):
+              query='[out:json][timeout:35];('+selector+');out center tags;'
+              errors=[]
+              for attempt in range(2):
+                for endpoint in endpoints:
                   try:
-                      req=urllib.request.Request(endpoint,data=urllib.parse.urlencode({'data':query}).encode(),headers={'User-Agent':'AdamCityMapCache/2.0 (Malate Manila; © OpenStreetMap contributors)','Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'})
-                      with urllib.request.urlopen(req,timeout=140) as response: raw=json.load(response)
-                      break
-                  except Exception as exc:
-                      errors.append(f'{endpoint}: {exc}')
-                      print(errors[-1])
-                      time.sleep(2)
-              if raw is None:
-                  raise SystemExit('Could not fetch only the missing place categories; saved datasets were preserved. '+'; '.join(errors))
-              tag_keys={'name','name:en','amenity','healthcare','tourism','building','aeroway','emergency','railway','public_transport','operator','brand','addr:housenumber','addr:street','addr:city','addr:postcode','phone','website','opening_hours','wheelchair','helipad','iata','icao','shop','leisure','building','landuse'}
-              seen={(p.get('osm_type'),p.get('osm_id')) for p in places}
-              added=0
-              for el in raw.get('elements',[]):
-                  tags=el.get('tags',{}); typ=el.get('type'); kind=None
-                  if tags.get('amenity')=='hospital' or tags.get('healthcare')=='hospital': kind='hospital'
-                  elif tags.get('amenity')=='clinic' or tags.get('healthcare')=='clinic': kind='clinic'
-                  elif tags.get('amenity') in ('doctors','pharmacy','fire_station','police','school','university','college','bus_station','ferry_terminal'): kind=tags['amenity']
-                  elif tags.get('tourism') in ('hotel','motel','hostel','guest_house') or tags.get('building')=='hotel': kind='hotel'
-                  elif tags.get('aeroway') in ('helipad','heliport') or tags.get('emergency')=='landing_site': kind='helicopter'
-                  elif tags.get('railway') in ('station','halt','tram_stop','subway_entrance') or tags.get('public_transport') in ('station','platform','stop_position'): kind='transit'
-                  elif tags.get('tourism') in ('museum','attraction','information'): kind=tags['tourism']
-                  elif tags.get('shop')=='mall' or (tags.get('building')=='retail' and tags.get('name')): kind='mall'
-                  elif tags.get('shop') in ('supermarket','convenience'): kind=tags['shop']
-                  elif tags.get('amenity') in ('restaurant','cafe','bank','atm','place_of_worship','library','parking','toilets'): kind=tags['amenity']
-                  elif tags.get('leisure') in ('park','garden'): kind=tags['leisure']
-                  if kind not in missing: continue
-                  key=(typ,el.get('id'))
-                  if key in seen: continue
-                  geom=el.get('geometry') or ([{'lat':el['lat'],'lon':el['lon']}] if typ=='node' and 'lat' in el else [])
-                  if not geom: continue
-                  if typ=='node': pt=geom[0]
-                  else: pt={'lat':sum(float(p['lat']) for p in geom)/len(geom),'lon':sum(float(p['lon']) for p in geom)/len(geom)}
-                  places.append({'osm_type':typ,'osm_id':el.get('id'),'kind':kind,'name':tags.get('name') or tags.get('name:en') or kind.replace('_',' ').title(),'lat':round(float(pt['lat']),6),'lon':round(float(pt['lon']),6),'tags':{k:v for k,v in tags.items() if k in tag_keys}})
-                  seen.add(key); added+=1
-              existing['region']='Malate, Manila, Philippines'
-              existing['source']='© OpenStreetMap contributors'
-              existing['generated_utc']=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())
-              existing['places']=places
-              places_path.parent.mkdir(parents=True,exist_ok=True)
-              places_path.write_text(json.dumps(existing,separators=(',',':'),ensure_ascii=False),encoding='utf-8')
-              print('Added',added,'new place markers; total',len(places))
-          # Validate core files; missing map/street caches are reported, not overwritten by a blind full import.
-          if not map_path.exists() or map_path.stat().st_size == 0:
-              raise SystemExit('Missing maps/malate-map.json. This workflow intentionally does not re-import the full map; restore/create it in a separate map-geometry task.')
-          if not streets_path.exists() or streets_path.stat().st_size == 0:
-              raise SystemExit('Missing maps/malate-streets.json. This workflow intentionally does not regenerate existing street names.')
+                    req=urllib.request.Request(endpoint,data=urllib.parse.urlencode({'data':query}).encode(),headers={'User-Agent':'AdamCityMapCache/3.0 (OpenStreetMap data consumer)','Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'})
+                    with urllib.request.urlopen(req,timeout=45) as res: return json.load(res).get('elements',[])
+                  except Exception as ex:
+                    errors.append(f'{endpoint}: {ex}')
+                time.sleep(3+attempt*4)
+              print(f'WARNING skip {kind}; all endpoints failed: {" | ".join(errors[-3:])}')
+              return None
+          def classify(t):
+              a=t.get('amenity'); h=t.get('highway'); sh=t.get('shop'); le=t.get('leisure'); to=t.get('tourism')
+              if a=='hospital' or t.get('healthcare')=='hospital': return 'hospital'
+              if a=='clinic' or t.get('healthcare')=='clinic': return 'clinic'
+              if a in ('doctors','pharmacy','fire_station','police','school','university','college','bus_station','ferry_terminal','restaurant','cafe','bank','atm','place_of_worship','library','parking','toilets','bench','waste_basket','bicycle_parking','drinking_water','bicycle_rental','charging_station','fuel'): return a
+              if to in ('hotel','motel','hostel','guest_house') or t.get('building')=='hotel': return 'hotel'
+              if t.get('aeroway') in ('helipad','heliport') or t.get('emergency')=='landing_site': return 'helicopter'
+              if t.get('railway') in ('station','halt','tram_stop','subway_entrance','platform') or t.get('public_transport') in ('station','platform','stop_position') or h=='bus_stop': return 'transit' if h!='bus_stop' else 'bus_stop'
+              if to in ('museum','attraction','information'): return to
+              if sh=='mall' or (t.get('building')=='retail' and t.get('name')): return 'mall'
+              if sh in ('supermarket','convenience'): return sh
+              if le in ('park','garden'): return le
+              if t.get('natural')=='tree': return 'tree'
+              if h in ('traffic_signals','crossing','street_lamp'): return {'traffic_signals':'traffic_signals','crossing':'crossing','street_lamp':'street_lamp'}[h]
+              if t.get('emergency')=='fire_hydrant': return 'fire_hydrant'
+              return None
+          missing_kinds=set()
+          added=0
+          for kind,selector in selectors.items():
+              # A category is rechecked each run so the cache gradually receives newly mapped OSM features.
+              els=fetch(kind,selector)
+              if els is None:
+                missing_kinds.add(kind); continue
+              cat_added=0
+              for el in els:
+                tags=el.get('tags',{}); actual=classify(tags)
+                if not actual: continue
+                typ=el.get('type'); oid=el.get('id'); key=(typ,oid)
+                if key in seen: continue
+                if typ=='node' and 'lat' in el: lat,lon=el['lat'],el['lon']
+                elif el.get('center'): lat,lon=el['center']['lat'],el['center']['lon']
+                else: continue
+                places.append({'osm_type':typ,'osm_id':oid,'kind':actual,'name':tags.get('name') or tags.get('name:en') or actual.replace('_',' ').title(),'lat':round(float(lat),6),'lon':round(float(lon),6),'tags':{k:v for k,v in tags.items() if k in tag_keys}})
+                seen.add(key); cat_added+=1; added+=1
+              print(f'{kind}: fetched {len(els)}, added {cat_added}')
+          data['region']='Malate, Manila, Philippines'
+          data['source']='© OpenStreetMap contributors'
+          data['generated_utc']=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())
+          data['places']=places
           places_path.parent.mkdir(parents=True,exist_ok=True)
-          if not places_path.exists():
-              places_path.write_text(json.dumps(existing,separators=(',',':'),ensure_ascii=False),encoding='utf-8')
-          print('Final validation OK. Map and street data preserved; only missing place categories were eligible for import.')
+          places_path.write_text(json.dumps(data,separators=(',',':'),ensure_ascii=False),encoding='utf-8')
+          print(f'Place cache total: {len(places)}; newly added: {added}; categories with temporary query failures: {sorted(missing_kinds)}')
+          # Geometry files are preserved byte-for-byte by this task.
+          print(f'Preserved {map_path} ({map_path.stat().st_size:,} bytes) and {streets_path} ({streets_path.stat().st_size:,} bytes)')
           PY
-
-      - name: Commit only changed place dataset
+      - name: Commit changed place cache only
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+users.noreply.github.com"
           git add maps/malate-places.json
-          if git diff --cached --quiet; then
-            echo "Nothing missing or changed; no commit needed."
-            exit 0
-          fi
-          git commit -m "Import only missing Malate place markers"
+          if git diff --cached --quiet; then echo "No new OSM places to commit."; exit 0; fi
+          git commit -m "Expand Malate POIs and street details from OpenStreetMap"
           git push
