@@ -75,12 +75,28 @@ named_buildings = [
      "levels": e["tags"].get("building:levels") or e["tags"].get("levels")}
     for e in buildings if present(e, "name", "name:en")
 ]
-# Persist the exact source features behind the facade-material coverage count.
-# This is derived only from the checked-in map snapshot, so later workflows can
-# reuse the saved output instead of requiring a fresh OSM import.
+# Maintain a cumulative inventory. Previously saved OSM way IDs are trusted as
+# already processed; only unseen IDs are added. Never discard the saved inventory
+# when an import is missing tags or a later map snapshot is incomplete.
 material_keys = ("building:facade:material", "facade:material", "building:material", "material")
-facade_material_buildings = []
+MATERIALS_PATH = Path("maps/malate-facade-materials.json")
+existing_entries = []
+if MATERIALS_PATH.exists():
+    try:
+        previous_materials = json.loads(MATERIALS_PATH.read_text(encoding="utf-8"))
+        existing_entries = previous_materials.get("buildings", [])
+        if not isinstance(existing_entries, list):
+            raise ValueError("buildings must be a list")
+        if any(not isinstance(item, dict) or item.get("osm_way_id") is None for item in existing_entries):
+            raise ValueError("every saved building must have an OSM way ID")
+    except Exception as exc:
+        raise SystemExit(f"Saved facade materials file is invalid; refusing to overwrite it: {exc}")
+
+known_ids = {str(item["osm_way_id"]) for item in existing_entries}
+new_entries = []
 for e in buildings:
+    if e.get("id") is None or str(e["id"]) in known_ids:
+        continue
     tags = e.get("tags", {})
     material_tags = {key: str(tags[key]) for key in material_keys
                      if str(tags.get(key, "")).strip()}
@@ -94,24 +110,27 @@ for e in buildings:
             "lat": round(sum(float(p["lat"]) for p in valid_points) / len(valid_points), 7),
             "lon": round(sum(float(p["lon"]) for p in valid_points) / len(valid_points), 7),
         }
-    facade_material_buildings.append({
+    new_entries.append({
         "osm_way_id": e.get("id"),
         "name": tags.get("name") or tags.get("name:en") or tags.get("official_name"),
         "building": tags.get("building"),
         "material_tags": material_tags,
         "center": center,
-        "osm_url": f"https://www.openstreetmap.org/way/{e.get('id')}" if e.get("id") else None,
+        "osm_url": f"https://www.openstreetmap.org/way/{e.get('id')}",
     })
+    known_ids.add(str(e["id"]))
 
-MATERIALS_PATH = Path("maps/malate-facade-materials.json")
+saved_entries = existing_entries + new_entries
 materials_data = {
     "region": data.get("region") or "Malate + Ermita, Manila, Philippines",
-    "source": "Derived from the checked-in maps/malate-map.json snapshot; © OpenStreetMap contributors",
+    "source": "Cumulative inventory derived from checked-in maps/malate-map.json snapshots; © OpenStreetMap contributors",
     "map_generated_utc": data.get("_cache", {}).get("generated_utc") or data.get("generated_utc"),
     "generated_utc": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
-    "count": len(facade_material_buildings),
+    "count": len(saved_entries),
+    "newly_discovered_this_run": len(new_entries),
+    "new_osm_way_ids_this_run": [item["osm_way_id"] for item in new_entries],
     "tag_keys_checked": list(material_keys),
-    "buildings": facade_material_buildings,
+    "buildings": saved_entries,
 }
 MATERIALS_PATH.write_text(json.dumps(materials_data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
@@ -133,8 +152,9 @@ report = {
     },
     "coverage": coverage,
     "facade_material_buildings_file": str(MATERIALS_PATH),
-    "facade_material_buildings_count": len(facade_material_buildings),
-    "facade_material_buildings": facade_material_buildings,
+    "facade_material_buildings_count": len(saved_entries),
+    "facade_material_buildings_new_this_run": len(new_entries),
+    "facade_material_buildings": saved_entries,
     "renderer_bounds_coverage": {
         label: {
             "count": sum(present(e, *keys) for e in rendered_buildings),
@@ -149,4 +169,4 @@ report = {
     "interpretation": "Missing tags are not proof that a building has no such feature. Use the counts to prioritize verified building-by-building research; do not infer exact facades from footprints alone.",
 }
 OUT_PATH.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-print(json.dumps({"output": str(OUT_PATH), "materials_output": str(MATERIALS_PATH), "facade_material_buildings_count": len(facade_material_buildings), "counts": report["counts"], "coverage": coverage}, indent=2))
+print(json.dumps({"output": str(OUT_PATH), "materials_output": str(MATERIALS_PATH), "facade_material_buildings_count": len(saved_entries), "facade_material_buildings_new_this_run": len(new_entries), "counts": report["counts"], "coverage": coverage}, indent=2))
