@@ -1,4 +1,4 @@
-name: Cache Metro Manila OpenStreetMap data
+name: Cache Manila game map
 
 on:
   workflow_dispatch:
@@ -16,18 +16,19 @@ permissions:
 jobs:
   cache-map:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - name: Download Metro Manila streets and building footprints
+      - name: Download compact Malate game map from OpenStreetMap
         run: |
           mkdir -p data maps buo_maps
           python - <<'PY'
           import json, time, urllib.parse, urllib.request
-          # Metro Manila-wide bounding box: south, west, north, east.
-          bbox=[14.35,120.85,14.78,121.15]
+          # A focused playable area around Malate, Manila. The previous Metro Manila-wide
+          # response was 859 MB and exceeded GitHub's 100 MB per-file limit.
+          bbox=[14.55,120.97,14.585,121.005]
           s,w,n,e=bbox
-          query=f'[out:json][timeout:180];(way({s},{w},{n},{e})[building];way({s},{w},{n},{e})[highway];way({s},{w},{n},{e})[amenity];way({s},{w},{n},{e})[leisure];way({s},{w},{n},{e})[landuse];);out body geom;'
+          query=f'[out:json][timeout:150];(way({s},{w},{n},{e})[building];way({s},{w},{n},{e})[highway];);out body geom;'
           endpoints=[
             'https://overpass-api.de/api/interpreter',
             'https://overpass.kumi.systems/api/interpreter',
@@ -37,51 +38,51 @@ jobs:
           errors=[]
           for endpoint in endpoints:
             try:
-              req=urllib.request.Request(endpoint, data=urllib.parse.urlencode({'data':query}).encode(), headers={'User-Agent':'AdamCityMapCache/1.0 (Metro Manila game map; OSM attribution in game)','Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'})
-              with urllib.request.urlopen(req, timeout=210) as response:
-                data=json.load(response)
-              elements=data.get('elements', [])
-              buildings=sum(1 for e in elements if e.get('tags',{}).get('building'))
-              roads=sum(1 for e in elements if e.get('tags',{}).get('highway'))
-              if buildings < 100 or roads < 100:
-                raise RuntimeError(f'Unexpectedly small Metro Manila map: {buildings} buildings, {roads} roads')
-              data['_cache']={'region':'Metro Manila, Philippines','center':{'lat':14.5995,'lon':120.9842},'bbox':bbox,'fetched_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'source':'OpenStreetMap contributors; Geofabrik Philippines extract retained as workflow artifact','buildings':buildings,'roads':roads,'features':len(elements)}
-              with open('data/manila-osm.json','w',encoding='utf-8') as f:
-                json.dump(data,f,separators=(',',':'),ensure_ascii=False)
-              print(f'Cached Metro Manila: {buildings} buildings, {roads} roads, {len(elements)} total map features')
+              req=urllib.request.Request(endpoint, data=urllib.parse.urlencode({'data':query}).encode(), headers={'User-Agent':'AdamCityMapCache/1.0 (game map; OpenStreetMap attribution)','Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'})
+              with urllib.request.urlopen(req, timeout=180) as response:
+                raw=json.load(response)
+              elements=[]
+              buildings=roads=0
+              keep_tags={'building','building:levels','height','name','amenity','shop','office','tourism','highway','surface','lanes','oneway','service','landuse'}
+              for el in raw.get('elements',[]):
+                tags=el.get('tags',{})
+                is_building='building' in tags
+                is_road='highway' in tags
+                if not (is_building or is_road): continue
+                geom=el.get('geometry',[])
+                if len(geom)<2: continue
+                item={'type':'way','id':el['id'],'tags':{k:v for k,v in tags.items() if k in keep_tags},'geometry':[{'lat':round(p['lat'],5),'lon':round(p['lon'],5)} for p in geom]}
+                elements.append(item)
+                buildings+=int(is_building)
+                roads+=int(is_road)
+              if buildings<100 or roads<50:
+                raise RuntimeError(f'Map too small: {buildings} buildings, {roads} roads')
+              data={'version':0.6,'generator':'Adam City compact OSM map cache','elements':elements,'_cache':{'region':'Malate, Manila, Philippines','center':{'lat':14.565,'lon':120.99},'bbox':bbox,'fetched_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'source':'© OpenStreetMap contributors','buildings':buildings,'roads':roads,'features':len(elements)}}
+              with open('data/manila-osm.json','w',encoding='utf-8') as out:
+                json.dump(data,out,separators=(',',':'),ensure_ascii=False)
+              size=__import__('os').path.getsize('data/manila-osm.json')
+              print(f'Built compact Malate map: {buildings} buildings, {roads} roads, {size/1024/1024:.1f} MB')
+              if size>90*1024*1024:
+                raise RuntimeError(f'Generated map is {size/1024/1024:.1f} MB; refusing to commit near GitHub 100 MB limit')
               break
             except Exception as exc:
               errors.append(f'{endpoint}: {exc}')
               print(errors[-1])
           else:
-            raise SystemExit('Could not download Metro Manila data from any Overpass mirror: '+'; '.join(errors))
+            raise SystemExit('Could not create compact Malate map: '+'; '.join(errors))
           PY
-      - name: Download Geofabrik Philippines extract for reference (optional)
-        run: |
-          mkdir -p reference
-          curl --fail --location --retry 3 --connect-timeout 30 --max-time 900 \
-            https://download.geofabrik.de/asia/philippines-latest.osm.pbf \
-            --output reference/philippines-latest.osm.pbf
-          ls -lh reference/philippines-latest.osm.pbf
-        continue-on-error: true
-      - name: Keep source extract as a downloadable workflow artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: geofabrik-philippines-osm-pbf
-          path: reference/philippines-latest.osm.pbf
-          retention-days: 14
-      - name: Commit cached Metro Manila map to main
+      - name: Save playable map and backup
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+users.noreply.github.com"
           cp data/manila-osm.json maps/manila-map.json
           cp data/manila-osm.json buo_maps/manila-map.json
-          printf '%s\n' '# Playable game maps' '' 'Named map files used by the game. Use descriptive names such as manila-map.json, makati-map.json, malate-map.json, and amman-map.json.' > maps/README.md
-          printf '%s\n' '# Map backups' '' 'Backup copies of named game maps. Keep the same filename as the playable map; before replacing a backup, optionally archive the old version with a date suffix.' > buo_maps/README.md
+          printf '%s\n' '# Playable game maps' '' 'Named playable maps: manila-map.json, makati-map.json, malate-map.json, amman-map.json. Keep individual map files compact enough for GitHub (<100 MB).' > maps/README.md
+          printf '%s\n' '# Map backups' '' 'Backup copies of named game maps. Keep matching filenames in this folder; archive older backups with a date suffix when needed.' > buo_maps/README.md
           git add -f data/manila-osm.json maps/manila-map.json buo_maps/manila-map.json maps/README.md buo_maps/README.md
           if git diff --cached --quiet -- data/manila-osm.json maps/manila-map.json buo_maps/manila-map.json maps/README.md buo_maps/README.md; then
-            echo "Metro Manila map is unchanged."
+            echo "Map is unchanged."
             exit 0
           fi
-          git commit -m "Cache Metro Manila OpenStreetMap game map"
+          git commit -m "Save compact Malate game map and backup"
           git push
