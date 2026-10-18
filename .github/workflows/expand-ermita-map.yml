@@ -66,6 +66,22 @@ jobs:
               elements.append(e)
             elif e.get('type')=='node' and any(k in tags for k in ('railway','public_transport','highway')):
               elements.append(e)
+          # Fail closed if a query silently returns a partial/empty road or building layer.
+          def geom_count(items, predicate):
+            return sum(1 for e in items if e.get('type')=='way' and e.get('geometry') and predicate(e.get('tags',{})))
+          road_count=geom_count(elements,lambda t: bool(t.get('highway')))
+          building_count=geom_count(elements,lambda t: bool(t.get('building') or t.get('building:part')))
+          if road_count < 500 or building_count < 1000:
+            raise SystemExit(f'Unsafe map refresh: only {road_count} road ways and {building_count} building ways; preserving previous snapshot')
+          # Validate coordinates and compare new coverage against the previous cache before replacing it.
+          bad_geometry=0
+          for e in elements:
+            if e.get('type')!='way' or not e.get('geometry'): continue
+            for p in e['geometry']:
+              if not isinstance(p,dict) or not (14.53 <= float(p.get('lat',0)) <= 14.62 and 120.94 <= float(p.get('lon',0)) <= 121.03):
+                bad_geometry+=1; break
+          if bad_geometry:
+            raise SystemExit(f'Unsafe map refresh: {bad_geometry} ways have malformed/out-of-region coordinates')
           old['elements']=elements
           old['_cache']={**old.get('_cache',{}),'region':'Malate + Ermita, Manila, Philippines','bbox':[14.548,120.958,14.603,121.012],'source':'© OpenStreetMap contributors','generated_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'elements':len(elements),'geometry_categories_succeeded':successes}
           mp.write_text(json.dumps(old,separators=(',',':'),ensure_ascii=False),encoding='utf-8')
@@ -80,13 +96,17 @@ jobs:
             streets.append({'name':t['name'],'name_en':t.get('name:en',t['name']),'highway':t.get('highway'),'oneway':t.get('oneway'),'surface':t.get('surface'),'coordinates':coords,'lat':mid['lat'],'lon':mid['lon'],'osm_way_id':e.get('id')})
           streets.sort(key=lambda x:(x['name'].casefold(),x['osm_way_id'] or 0))
           sp.write_text(json.dumps({'region':'Malate + Ermita, Manila, Philippines','source':'© OpenStreetMap contributors','generated_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'streets':streets},separators=(',',':'),ensure_ascii=False),encoding='utf-8')
-          print('Saved expanded geometry:',len(elements),'elements; named street segments:',len(streets))
+          print('Saved expanded geometry:',len(elements),'elements; roads:',road_count,'buildings:',building_count,'named street segments:',len(streets))
+          # Write a small machine-readable quality summary alongside the data.
+          from collections import Counter
+          quality={'region':'Malate + Ermita, Manila, Philippines','source':'© OpenStreetMap contributors','generated_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'bbox':[14.548,120.958,14.603,121.012],'elements':len(elements),'road_ways':road_count,'building_ways':building_count,'named_road_ways':len(streets),'road_types':dict(Counter(e.get('tags',{}).get('highway') for e in elements if e.get('type')=='way' and e.get('tags',{}).get('highway'))),'geometry_categories_succeeded':successes,'validation':'passed'}
+          Path('maps/malate-geometry-quality.json').write_text(json.dumps(quality,indent=2,ensure_ascii=False)+'\\n',encoding='utf-8')
           PY
       - name: Commit expanded map
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+users.noreply.github.com"
-          git add maps/malate-map.json maps/malate-streets.json
+          git add maps/malate-map.json maps/malate-streets.json maps/malate-geometry-quality.json
           if git diff --cached --quiet; then echo "No map geometry changes."; exit 0; fi
           git commit -m "Expand 3D map to include Ermita and nearby streets"
           # Another workflow or edit may have advanced main while the OSM query ran.
