@@ -148,7 +148,7 @@ def incremental_query(since_utc):
     A single area+newer selector is more reliable than appending a newer filter to
     dozens of tag selectors, and also catches newly-added tag categories.
     """
-    stamp = since_utc.replace("Z", "")
+    stamp = since_utc
     return f'''[out:json][timeout:180];
 area(3600103706)->.ermitaArea;
 nwr(area.ermitaArea)[newer:"{stamp}"];
@@ -254,16 +254,29 @@ def main():
         except (ValueError, TypeError):
             since_text = None
         if since_text:
-            osm_delta, endpoint = fetch_osm(incremental_query(since_text))
-            delta_count = len(osm_delta.get("elements", []))
-            merged_elements, applied_count = merge_osm_elements(cached.get("elements", []), osm_delta.get("elements", []))
-            osm_json = dict(cached)
-            osm_json["elements"] = merged_elements
+            try:
+                osm_delta, endpoint = fetch_osm(incremental_query(since_text))
+                delta_count = len(osm_delta.get("elements", []))
+                merged_elements, applied_count = merge_osm_elements(cached.get("elements", []), osm_delta.get("elements", []))
+                osm_json = dict(cached)
+                osm_json["elements"] = merged_elements
+            except Exception as delta_error:
+                # A busy Overpass server can return HTTP 500 for a delta query.
+                # Recover with the full query, but merge into the cache so a partial
+                # response never erases previously imported objects.
+                print(f"WARNING: incremental OSM query failed ({delta_error}); trying full recovery query.")
+                sync_mode = "full_recovery"
+                osm_full, endpoint = fetch_osm()
+                delta_count = len(osm_full.get("elements", []))
+                merged_elements, applied_count = merge_osm_elements(cached.get("elements", []), osm_full.get("elements", []))
+                osm_json = dict(cached)
+                osm_json["elements"] = merged_elements
             osm_json["osm_incremental_sync"] = {
                 "since_utc": since_text,
                 "last_query_started_utc": sync_started,
                 "delta_element_count": delta_count,
                 "applied_element_count": applied_count,
+                "sync_mode": sync_mode,
             }
         else:
             # If checkpoint metadata is invalid, do a full baseline rather than risk gaps.
