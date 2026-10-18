@@ -35,3 +35,13 @@ The public 2024 Google Sheet visibly labels these fields: Tree number, Common Na
 - For OpenStreetMap, preserve attribution and follow ODbL obligations.
 - Google Maps/Street View are kept as references; do not bulk-copy their imagery or map tiles.
 - A link in this file means the source was found, not that the file has been copied into this repository.
+
+
+## Import completed on 2026-10-18
+
+The public Google Sheet's CSV export was downloaded successfully and committed as:
+- `ermita/rizal-park/source-data/npdc-tree-inventory-2024-source-export.csv` (30 source rows)
+- `ermita/rizal-park/source-data/npdc-tree-inventory-2024-coordinate-normalization.csv` (same 30 rows with DMS-to-decimal coordinates and original row JSON preserved)
+- QA notes: `ermita/rizal-park/source-data/README.md`
+
+The full XLSX export was also successfully downloaded for inspection (533,032 bytes), but is not yet mirrored into GitHub. The CSV endpoint returns 30 data rows, so this is a partial sheet export and must not be represented as the complete park-wide inventory.
