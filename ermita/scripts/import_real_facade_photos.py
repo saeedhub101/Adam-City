@@ -132,8 +132,12 @@ def main():
             errors.append({"cell": index, "error": str(exc)[:200]})
         time.sleep(0.15)
 
-    # Keep every previously saved metadata record; refresh records returned by the API.
+    # Do not re-import existing records. Query the public coverage grid to discover new IDs,
+    # then append only IDs that are not already in the local metadata cache.
+    new_records = 0
     for pid, item in discovered.items():
+        if pid in existing:
+            continue
         seq = item.get("sequence") if isinstance(item.get("sequence"), dict) else {}
         row = {
             "photo_id": pid,
@@ -162,9 +166,8 @@ def main():
             "source_page": f"https://kartaview.org/map/@{row_lat(item)},{row_lon(item)},18z",
             "metadata_source": "KartaView public API; metadata only, image bytes not downloaded",
         }
-        # Empty API fields do not erase previously known metadata.
-        prior = existing.get(pid, {})
-        existing[pid] = {key: (value if value not in (None, "") else prior.get(key, "")) for key, value in row.items()}
+        existing[pid] = row
+        new_records += 1
 
     all_rows = sorted(existing.values(), key=lambda r: (str(r.get("sequence_id", "")), int_or_large(r.get("sequence_index")), str(r.get("photo_id", ""))))
     with PHOTOS_CSV.open("w", newline="", encoding="utf-8") as stream:
@@ -216,13 +219,14 @@ def main():
         "source": "KartaView public API",
         "mode": "metadata-only; no image files requested or downloaded",
         "queried_grid_cells": len(cells),
-        "new_or_refreshed_photo_metadata_records": len(discovered),
+        "new_photo_metadata_records_added": new_records,
+        "existing_photo_metadata_records_reimported": 0,
         "total_preserved_photo_metadata_records": len(all_rows),
         "unique_sequences_with_metadata": len(seq_rows),
         "geojson_point_features": len(features),
         "api_errors": errors,
         "outputs": [str(PHOTOS_CSV.relative_to(ROOT)), str(PHOTOS_GEOJSON.relative_to(ROOT)), str(SEQUENCES_CSV.relative_to(ROOT))],
-        "incremental_policy": "Existing records are retained; records returned by the current API search are refreshed, and new photo IDs are appended. No existing image files are deleted.",
+        "incremental_policy": "Existing metadata records are not rewritten; only previously unseen photo IDs are appended. The API coverage grid is queried to discover new IDs, but existing records are not re-imported. No existing image files are deleted.",
         "limitations": ["The public nearby-photo endpoint is bounded by its response size and grid coverage; this is not a guarantee of complete citywide KartaView coverage.", "GPS points and sequence metadata describe capture coverage, not verified road signs or extracted lane/traffic-sign detections."]
     }
     REPORT_FILE.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
