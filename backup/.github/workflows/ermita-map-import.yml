@@ -31,6 +31,8 @@ jobs:
         run: python -m pip install requests osm2geojson shapely pyproj trimesh mapbox-earcut rasterio numpy scipy
       - name: Download and process OpenStreetMap data
         run: python ermita/scripts/import_osm_and_build_3d.py
+      - name: Import official DPWH national roads for Ermita
+        run: python ermita/scripts/import_dpwh_national_roads.py
       - name: Fetch real public street-level facade photos
         run: python ermita/scripts/import_real_facade_photos.py
       - name: Download elevation data and build terrain surface
@@ -39,7 +41,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add kartaview ermita/maps/generated ermita/3d/generated ermita/3d/terrain
+          git add kartaview ermita/maps/generated ermita/maps/external ermita/3d/generated ermita/3d/terrain
           if git diff --cached --quiet; then
             echo "No generated data changes to commit."
           else
