@@ -1,137 +1,155 @@
-name: Build and save Malate map
+name: Update only missing Malate map data
 
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
-      - 'index.html'
       - '.github/workflows/cache-malate-map.yml'
-  schedule:
-    - cron: '17 4 * * 1'
 
 permissions:
   contents: write
 
 jobs:
-  cache-map:
+  update-missing-data:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Download detailed OpenStreetMap data for Malate
+
+      - name: Check saved datasets and import only missing place categories
+        env:
+          PYTHONUNBUFFERED: '1'
         run: |
           python - <<'PY'
-          import json, time, urllib.parse, urllib.request, os
-          bbox=[14.55,120.97,14.585,121.005]
-          s,w,n,e=bbox
-          # Import physical map geometry, transit, greenery, water, and important place markers.
-          query=f'''[out:json][timeout:240];
-          (
-            way({s},{w},{n},{e})[building];
-            way({s},{w},{n},{e})[highway];
-            way({s},{w},{n},{e})[railway];
-            way({s},{w},{n},{e})[natural~"^(water|beach|wood|scrub|grassland|wetland)$"];
-            way({s},{w},{n},{e})[waterway];
-            way({s},{w},{n},{e})[leisure~"^(park|garden|playground|pitch|sports_centre)$"];
-            way({s},{w},{n},{e})[landuse~"^(grass|forest|recreation_ground|park|residential|commercial|retail|industrial)$"];
-            way({s},{w},{n},{e})[aeroway];
-            way({s},{w},{n},{e})[amenity~"^(hospital|clinic|doctors|fire_station|police|school|university|college|bus_station|ferry_terminal|place_of_worship|parking|fuel|pharmacy)$"];
-            way({s},{w},{n},{e})[tourism~"^(hotel|motel|hostel|guest_house|museum|attraction|information)$"];
-            way({s},{w},{n},{e})[public_transport];
-            way({s},{w},{n},{e})[man_made~"^(pier|tower|communications_tower|water_tower|bridge)$"];
-            node({s},{w},{n},{e})[amenity];
-            node({s},{w},{n},{e})[tourism];
-            node({s},{w},{n},{e})[aeroway];
-            node({s},{w},{n},{e})[railway];
-            node({s},{w},{n},{e})[public_transport];
-            node({s},{w},{n},{e})[highway~"^(bus_stop|street_lamp|traffic_signals|crossing|street_crossing)$"];
-            node({s},{w},{n},{e})[man_made~"^(surveillance|street_cabinet|utility_pole|mast|tower|water_tower)$"];
-            node({s},{w},{n},{e})[emergency];
-          );
-          out body geom;'''
-          endpoints=[
-            'https://overpass-api.de/api/interpreter',
-            'https://overpass.kumi.systems/api/interpreter',
-            'https://overpass.private.coffee/api/interpreter',
-            'https://overpass.nchc.org.tw/api/interpreter',
-          ]
-          errors=[]
-          keep_tags={'building','building:levels','building:part','height','min_height','roof:shape','name','name:en','addr:housenumber','addr:street','addr:city','addr:postcode','amenity','shop','office','tourism','historic','craft','healthcare','emergency','aeroway','aerodrome','iata','icao','helipad','highway','surface','lanes','oneway','service','access','foot','bicycle','wheelchair','crossing','crossing:signals','traffic_calming','railway','station','public_transport','route','bridge','layer','natural','water','waterway','width','leisure','landuse','sport','barrier','man_made','power','operator','brand','phone','website','opening_hours','building:material','internet_access','capacity','level','ele','memorial','religion','denomination'}
-          for endpoint in endpoints:
-            try:
-              req=urllib.request.Request(endpoint,data=urllib.parse.urlencode({'data':query}).encode(),headers={'User-Agent':'AdamCityMapCache/1.1 (Malate Manila game; © OpenStreetMap contributors)','Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'})
-              with urllib.request.urlopen(req,timeout=260) as response: raw=json.load(response)
-              elements=[]; counts={'buildings':0,'roads':0,'railways':0,'water_green':0,'places':0}
+          import json, os, time, urllib.parse, urllib.request
+          from pathlib import Path
+
+          map_path = Path('maps/malate-map.json')
+          streets_path = Path('maps/malate-streets.json')
+          places_path = Path('maps/malate-places.json')
+          for path in (map_path, streets_path, places_path):
+              if path.exists() and path.stat().st_size:
+                  print(f'KEEP existing dataset: {path} ({path.stat().st_size:,} bytes)')
+              else:
+                  print(f'MISSING dataset: {path}')
+
+          # Never re-import street names or replace the detailed map if already saved.
+          # Airport data is intentionally excluded until the playable map expands.
+          required = {
+              'hospital': 'hospital',
+              'clinic': 'clinic',
+              'doctors': 'doctors',
+              'pharmacy': 'pharmacy',
+              'hotel': 'hotel',
+              'helicopter': 'helicopter landing site / helipad',
+              'fire_station': 'fire station',
+              'police': 'police station',
+              'school': 'school',
+              'university': 'university',
+              'college': 'college',
+              'bus_station': 'bus station',
+              'ferry_terminal': 'ferry terminal',
+              'transit': 'railway / public transport stop',
+              'museum': 'museum',
+              'attraction': 'tourist attraction',
+              'information': 'visitor information',
+          }
+          existing = {'region':'Malate, Manila, Philippines','source':'© OpenStreetMap contributors','places':[]}
+          if places_path.exists() and places_path.stat().st_size:
+              try:
+                  existing = json.loads(places_path.read_text(encoding='utf-8'))
+              except Exception as exc:
+                  raise SystemExit(f'Existing place dataset is unreadable; refusing to overwrite it: {exc}')
+          places = existing.get('places', [])
+          present = {p.get('kind') for p in places}
+          missing = [k for k in required if k not in present]
+          print('Existing place markers:', len(places), 'categories:', sorted(k for k in present if k))
+          if not missing:
+              print('All requested Malate place categories already exist. No Overpass download needed.')
+          else:
+              print('Only missing categories will be queried:', missing)
+              s,w,n,e = 14.55,120.97,14.585,121.005
+              selectors = {
+                'hospital': f'(node({s},{w},{n},{e})[amenity=hospital];way({s},{w},{n},{e})[amenity=hospital];node({s},{w},{n},{e})[healthcare=hospital];way({s},{w},{n},{e})[healthcare=hospital];)',
+                'clinic': f'(node({s},{w},{n},{e})[amenity=clinic];way({s},{w},{n},{e})[amenity=clinic];node({s},{w},{n},{e})[healthcare=clinic];way({s},{w},{n},{e})[healthcare=clinic];)',
+                'doctors': f'(node({s},{w},{n},{e})[amenity=doctors];way({s},{w},{n},{e})[amenity=doctors];)',
+                'pharmacy': f'(node({s},{w},{n},{e})[amenity=pharmacy];way({s},{w},{n},{e})[amenity=pharmacy];)',
+                'hotel': f'(node({s},{w},{n},{e})[tourism~"^(hotel|motel|hostel|guest_house)$"];way({s},{w},{n},{e})[tourism~"^(hotel|motel|hostel|guest_house)$"];way({s},{w},{n},{e})[building=hotel];)',
+                'helicopter': f'(node({s},{w},{n},{e})[aeroway=helipad];way({s},{w},{n},{e})[aeroway=helipad];node({s},{w},{n},{e})[aeroway=heliport];way({s},{w},{n},{e})[aeroway=heliport];node({s},{w},{n},{e})[emergency=landing_site];way({s},{w},{n},{e})[emergency=landing_site];)',
+                'fire_station': f'(node({s},{w},{n},{e})[amenity=fire_station];way({s},{w},{n},{e})[amenity=fire_station];)',
+                'police': f'(node({s},{w},{n},{e})[amenity=police];way({s},{w},{n},{e})[amenity=police];)',
+                'school': f'(node({s},{w},{n},{e})[amenity=school];way({s},{w},{n},{e})[amenity=school];)',
+                'university': f'(node({s},{w},{n},{e})[amenity=university];way({s},{w},{n},{e})[amenity=university];)',
+                'college': f'(node({s},{w},{n},{e})[amenity=college];way({s},{w},{n},{e})[amenity=college];)',
+                'bus_station': f'(node({s},{w},{n},{e})[amenity=bus_station];way({s},{w},{n},{e})[amenity=bus_station];)',
+                'ferry_terminal': f'(node({s},{w},{n},{e})[amenity=ferry_terminal];way({s},{w},{n},{e})[amenity=ferry_terminal];)',
+                'transit': f'(node({s},{w},{n},{e})[railway~"^(station|halt|tram_stop|subway_entrance)$"];way({s},{w},{n},{e})[railway~"^(station|halt|tram_stop|subway_entrance)$"];node({s},{w},{n},{e})[public_transport~"^(station|platform|stop_position)$"];way({s},{w},{n},{e})[public_transport~"^(station|platform)$"];)',
+                'museum': f'(node({s},{w},{n},{e})[tourism=museum];way({s},{w},{n},{e})[tourism=museum];)',
+                'attraction': f'(node({s},{w},{n},{e})[tourism=attraction];way({s},{w},{n},{e})[tourism=attraction];)',
+                'information': f'(node({s},{w},{n},{e})[tourism=information];way({s},{w},{n},{e})[tourism=information];)',
+              }
+              query='[out:json][timeout:120];(' + ''.join(selectors[k] for k in missing) + ');out body geom;'
+              endpoints=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://overpass.private.coffee/api/interpreter']
+              raw=None; errors=[]
+              for endpoint in endpoints:
+                  try:
+                      req=urllib.request.Request(endpoint,data=urllib.parse.urlencode({'data':query}).encode(),headers={'User-Agent':'AdamCityMapCache/2.0 (Malate Manila; © OpenStreetMap contributors)','Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'})
+                      with urllib.request.urlopen(req,timeout=140) as response: raw=json.load(response)
+                      break
+                  except Exception as exc:
+                      errors.append(f'{endpoint}: {exc}')
+                      print(errors[-1])
+                      time.sleep(2)
+              if raw is None:
+                  raise SystemExit('Could not fetch only the missing place categories; saved datasets were preserved. '+'; '.join(errors))
+              tag_keys={'name','name:en','amenity','healthcare','tourism','building','aeroway','emergency','railway','public_transport','operator','brand','addr:housenumber','addr:street','addr:city','addr:postcode','phone','website','opening_hours','wheelchair','helipad','iata','icao'}
+              seen={(p.get('osm_type'),p.get('osm_id')) for p in places}
+              added=0
               for el in raw.get('elements',[]):
-                tags=el.get('tags',{})
-                is_building='building' in tags or 'building:part' in tags
-                is_road='highway' in tags and el['type']=='way'
-                is_rail='railway' in tags
-                is_water_green=any(k in tags for k in ('natural','waterway','leisure','landuse','aeroway')) or tags.get('man_made') in ('pier','bridge')
-                is_place=(tags.get('amenity') in ('hospital','clinic','doctors','pharmacy','school','university','college','fire_station','police','bus_station','ferry_terminal','place_of_worship','parking','fuel') or tags.get('tourism') in ('hotel','motel','hostel','guest_house','museum','attraction','information') or 'aeroway' in tags or tags.get('emergency') in ('landing_site','access_point') or tags.get('healthcare') in ('hospital','clinic') or tags.get('public_transport') in ('station','platform','stop_position') or tags.get('railway') in ('station','halt','tram_stop','subway_entrance','platform','stop') or tags.get('highway') in ('bus_stop','traffic_signals','street_lamp','crossing') or tags.get('man_made') in ('surveillance','utility_pole','mast','tower','water_tower'))
-                if not (is_building or is_road or is_rail or is_water_green or is_place): continue
-                geom=el.get('geometry',[])
-                if el['type']=='node':
-                  if 'lat' not in el or 'lon' not in el: continue
-                  geom=[{'lat':el['lat'],'lon':el['lon']}]
-                elif len(geom)<2: continue
-                item={'type':el['type'],'id':el['id'],'tags':{k:v for k,v in tags.items() if k in keep_tags},'geometry':[{'lat':round(p['lat'],6),'lon':round(p['lon'],6)} for p in geom]}
-                if el['type']=='way' and geom and geom[0].get('lat')==geom[-1].get('lat') and geom[0].get('lon')==geom[-1].get('lon'): item['closed']=True
-                elements.append(item)
-                counts['buildings']+=int(is_building);counts['roads']+=int(is_road);counts['railways']+=int(is_rail);counts['water_green']+=int(is_water_green);counts['places']+=int(is_place)
-              if counts['buildings']<100 or counts['roads']<50: raise RuntimeError(f"Map too small: {counts}")
-              data={'version':0.6,'generator':'Adam City Malate detailed OSM map importer','elements':elements,'_cache':{'region':'Malate, Manila, Philippines','center':{'lat':14.57168,'lon':120.98445},'bbox':bbox,'fetched_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'source':'© OpenStreetMap contributors','counts':counts,'features':len(elements)}}
-              os.makedirs('maps',exist_ok=True);os.makedirs('buo_maps',exist_ok=True)
-              with open('maps/malate-map.json','w',encoding='utf-8') as out: json.dump(data,out,separators=(',',':'),ensure_ascii=False)
-              places=[]
-              for el in elements:
-                t=el['tags']; kind=None
-                if t.get('amenity')=='hospital' or t.get('healthcare')=='hospital': kind='hospital'
-                elif t.get('aeroway') in ('helipad','heliport') or t.get('emergency')=='landing_site': kind='helicopter'
-                elif t.get('aeroway') in ('aerodrome','airport','terminal','runway','apron'): kind='airport'
-                elif t.get('tourism') in ('hotel','motel','hostel','guest_house') or t.get('building')=='hotel': kind='hotel'
-                elif t.get('railway') in ('station','halt','tram_stop','subway_entrance'): kind='transit'
-                elif t.get('amenity') in ('clinic','doctors','pharmacy','fire_station','police','school','university','college','bus_station','ferry_terminal'): kind=t['amenity']
-                elif t.get('tourism') in ('museum','attraction','information'): kind=t['tourism']
-                if not kind: continue
-                g=el['geometry']; p=g[0] if el['type']=='node' or len(g)==1 else {'lat':sum(x['lat'] for x in g)/len(g),'lon':sum(x['lon'] for x in g)/len(g)}
-                places.append({'osm_type':el['type'],'osm_id':el['id'],'kind':kind,'name':t.get('name') or t.get('name:en') or kind.replace('_',' ').title(),'lat':round(p['lat'],6),'lon':round(p['lon'],6),'tags':t})
-              with open('maps/malate-places.json','w',encoding='utf-8') as out: json.dump({'region':data['_cache']['region'],'source':'© OpenStreetMap contributors','generated_utc':data['_cache']['fetched_utc'],'places':places},out,separators=(',',':'),ensure_ascii=False)
-              print('Imported:',counts,'total elements:',len(elements),'named/typed place markers:',len(places),'map MB:',round(os.path.getsize('maps/malate-map.json')/1024/1024,2))
-              if os.path.getsize('maps/malate-map.json')>90*1024*1024: raise RuntimeError('Map cache exceeded 90 MB safety limit')
-              break
-            except Exception as exc:
-              errors.append(f'{endpoint}: {exc}');print(errors[-1])
-          else: raise SystemExit('Could not fetch detailed Malate map: '+'; '.join(errors))
+                  tags=el.get('tags',{}); typ=el.get('type'); kind=None
+                  if tags.get('amenity')=='hospital' or tags.get('healthcare')=='hospital': kind='hospital'
+                  elif tags.get('amenity')=='clinic' or tags.get('healthcare')=='clinic': kind='clinic'
+                  elif tags.get('amenity') in ('doctors','pharmacy','fire_station','police','school','university','college','bus_station','ferry_terminal'): kind=tags['amenity']
+                  elif tags.get('tourism') in ('hotel','motel','hostel','guest_house') or tags.get('building')=='hotel': kind='hotel'
+                  elif tags.get('aeroway') in ('helipad','heliport') or tags.get('emergency')=='landing_site': kind='helicopter'
+                  elif tags.get('railway') in ('station','halt','tram_stop','subway_entrance') or tags.get('public_transport') in ('station','platform','stop_position'): kind='transit'
+                  elif tags.get('tourism') in ('museum','attraction','information'): kind=tags['tourism']
+                  if kind not in missing: continue
+                  key=(typ,el.get('id'))
+                  if key in seen: continue
+                  geom=el.get('geometry') or ([{'lat':el['lat'],'lon':el['lon']}] if typ=='node' and 'lat' in el else [])
+                  if not geom: continue
+                  if typ=='node': pt=geom[0]
+                  else: pt={'lat':sum(float(p['lat']) for p in geom)/len(geom),'lon':sum(float(p['lon']) for p in geom)/len(geom)}
+                  places.append({'osm_type':typ,'osm_id':el.get('id'),'kind':kind,'name':tags.get('name') or tags.get('name:en') or kind.replace('_',' ').title(),'lat':round(float(pt['lat']),6),'lon':round(float(pt['lon']),6),'tags':{k:v for k,v in tags.items() if k in tag_keys}})
+                  seen.add(key); added+=1
+              existing['region']='Malate, Manila, Philippines'
+              existing['source']='© OpenStreetMap contributors'
+              existing['generated_utc']=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())
+              existing['places']=places
+              places_path.parent.mkdir(parents=True,exist_ok=True)
+              places_path.write_text(json.dumps(existing,separators=(',',':'),ensure_ascii=False),encoding='utf-8')
+              print('Added',added,'new place markers; total',len(places))
+          # Validate core files; missing map/street caches are reported, not overwritten by a blind full import.
+          if not map_path.exists() or map_path.stat().st_size == 0:
+              raise SystemExit('Missing maps/malate-map.json. This workflow intentionally does not re-import the full map; restore/create it in a separate map-geometry task.')
+          if not streets_path.exists() or streets_path.stat().st_size == 0:
+              raise SystemExit('Missing maps/malate-streets.json. This workflow intentionally does not regenerate existing street names.')
+          places_path.parent.mkdir(parents=True,exist_ok=True)
+          if not places_path.exists():
+              places_path.write_text(json.dumps(existing,separators=(',',':'),ensure_ascii=False),encoding='utf-8')
+          print('Final validation OK. Map and street data preserved; only missing place categories were eligible for import.')
           PY
-      - name: Build named street cache
+
+      - name: Commit only changed place dataset
         run: |
-          python - <<'PY'
-          import json,time
-          data=json.load(open('maps/malate-map.json',encoding='utf-8')); streets={}
-          for el in data.get('elements',[]):
-            tags=el.get('tags',{}); name=tags.get('name') or tags.get('name:en')
-            if not name or not tags.get('highway') or el.get('type')!='way': continue
-            geom=el.get('geometry',[])
-            if len(geom)<2: continue
-            key=(str(name).strip(),str(tags.get('highway','')),el.get('id'))
-            mid=geom[len(geom)//2]
-            streets[key]={'name':str(name).strip(),'name_en':tags.get('name:en',str(name).strip()),'highway':tags.get('highway',''),'oneway':tags.get('oneway','no'),'surface':tags.get('surface',''),'coordinates':geom,'lat':round(float(mid['lat']),6),'lon':round(float(mid['lon']),6),'osm_way_id':el.get('id')}
-          result={'region':'Malate, Manila, Philippines','source':'© OpenStreetMap contributors','generated_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'streets':list(streets.values())}
-          if not result['streets']: raise SystemExit('No named streets found; refusing to write empty cache.')
-          json.dump(result,open('maps/malate-streets.json','w',encoding='utf-8'),ensure_ascii=False,separators=(',',':'))
-          print('Saved',len(result['streets']),'named street segments.')
-          PY
-      - name: Save map backup and commit all datasets
-        run: |
-          cp maps/malate-map.json buo_maps/malate-map.json
-          cp maps/malate-places.json buo_maps/malate-places.json
           git config user.name "github-actions[bot]"
           git config user.email "41898282+users.noreply.github.com"
-          printf '%s\n' '# Game maps' '' 'OSM-derived Malate geometry and place markers. © OpenStreetMap contributors.' > maps/README.md
-          printf '%s\n' '# Map backups' '' 'Backups of the location datasets.' > buo_maps/README.md
-          git add -f maps/malate-map.json maps/malate-streets.json maps/malate-places.json buo_maps/malate-map.json buo_maps/malate-places.json maps/README.md buo_maps/README.md
-          git diff --cached --quiet && { echo "No map changes to commit."; exit 0; }
-          git commit -m "Import detailed Malate map, services and aviation markers"
+          git add maps/malate-places.json
+          if git diff --cached --quiet; then
+            echo "Nothing missing or changed; no commit needed."
+            exit 0
+          fi
+          git commit -m "Import only missing Malate place markers"
           git push
