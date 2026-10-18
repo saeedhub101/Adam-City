@@ -15,7 +15,6 @@
 <div class="controls">
 <label><input id="imagery" type="checkbox"> Satellite imagery</label>
 <label><input id="landmarks" type="checkbox" checked> Key landmarks</label>
-<label><input id="kartaPhotos" type="checkbox"> KartaView facade overlays</label>
 <label><input id="buildings" type="checkbox" checked> 3D building footprints</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
 <label><input id="terrain" type="checkbox" checked> 3D terrain</label>
@@ -26,9 +25,8 @@
 </div>
 </header>
 <div id="map" role="application" aria-label="Interactive three-dimensional city map of Ermita Manila"></div>
-<footer>Switchable Esri satellite layer, KartaView photo-based facade panels on matched building walls, mapped 3D street network and highlighted landmarks. Facade panels are approximate photo overlays, not photogrammetric reconstructions; estimated building heights and ~30 m terrain are not survey-grade. © Esri, Maxar, Earthstar Geographics, OpenStreetMap contributors · © Grab and KartaView Contributors · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
+<footer>Switchable Esri satellite layer, mapped 3D street network, official DPWH road records and highlighted landmarks. Estimated building heights and ~30 m terrain are not survey-grade. © Esri, Maxar, Earthstar Geographics, OpenStreetMap contributors · DPWH road data · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
 <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
-<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
 <script>
 (function(){
 const status=document.getElementById('status');
@@ -44,7 +42,7 @@ const map=new maplibregl.Map({
 });
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
 map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-right');
-let roadsData=null,buildingsData=null,tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[],kartaFacadeLayer=null;
+let roadsData=null,buildingsData=null,surfaceData=null,tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[];
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function popupHtml(p){const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',p.osm_feature_id||p.id]];return '<div style="font:13px system-ui"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+'</div>'}
 function addBuildings(data){
@@ -94,46 +92,20 @@ function setSatelliteImagery(enabled){
 }
 
 
-async function addKartaFacadeTextures(){
- if(!window.THREE)throw Error('Three.js failed to load');
- const response=await fetch('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/ermita-real-facade-images.csv');
- if(!response.ok)throw Error('KartaView CSV HTTP '+response.status);
- const csv=await response.text();const rows=[];let row=[],field='',quoted=false;
- for(let n=0;n<csv.length;n++){const c=csv[n];if(quoted){if(c==='"'&&csv[n+1]==='"'){field+='"';n++;}else if(c==='"')quoted=false;else field+=c;}else if(c==='"')quoted=true;else if(c===','){row.push(field);field='';}else if(c==='\n'){row.push(field);rows.push(row);row=[];field='';}else if(c!=='\r')field+=c;}
- if(field.length||row.length){row.push(field);rows.push(row);}
- const headers=rows.shift();
- const photos=rows.filter(r=>r.length===headers.length).map(r=>Object.fromEntries(headers.map((h,j)=>[h,r[j]])))
-  .filter(p=>p.download_status==='downloaded'&&p.local_image&&p.building_osm_id&&p.match_status==='direction_checked'&&Number(p.distance_to_building_wall_m)<=10&&Number(p.heading_difference_deg)<=30&&p.latitude&&p.longitude);
- const buildings=new Map();
- (buildingsData.features||[]).forEach(f=>{const id=f.properties?.osm_feature_id;if(id&&['Polygon','MultiPolygon'].includes(f.geometry?.type))buildings.set(id,f);});
- const THREE=window.THREE;
- const facadeLayer={id:'kartaview-facade-textures',type:'custom',renderingMode:'3d',scene:null,camera:null,renderer:null,materials:[],meshes:[],enabled:false,
-  onAdd(map,gl){this.map=map;this.camera=new THREE.Camera();this.scene=new THREE.Scene();this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});this.renderer.autoClear=false;this.scene.add(new THREE.AmbientLight(0xffffff,1.25));const light=new THREE.DirectionalLight(0xffffff,0.45);light.position.set(0,-1,2);this.scene.add(light);},
-  render(gl,matrix){if(!this.enabled||!this.camera)return;this.camera.projectionMatrix.fromArray(matrix);this.camera.matrixWorld.identity();this.camera.matrixWorldInverse.identity();this.renderer.resetState();this.renderer.render(this.scene,this.camera);},
-  onRemove(){this.materials.forEach(m=>m.dispose());this.meshes.forEach(m=>{m.geometry.dispose();this.scene.remove(m)});if(this.renderer)this.renderer.dispose();}
- };
- kartaFacadeLayer=facadeLayer;
- map.addLayer(facadeLayer);
- function merc(lon,lat,alt=0){return maplibregl.MercatorCoordinate.fromLngLat([lon,lat],alt);}
- function closestWall(feature,lon,lat){
-  const rings=feature.geometry.type==='Polygon'?feature.geometry.coordinates:[].concat(...feature.geometry.coordinates.map(poly=>poly));
-  const photo=merc(lon,lat);let best=null;
-  for(const ring of rings){for(let i=0;i<ring.length-1;i++){const a=merc(ring[i][0],ring[i][1]),b=merc(ring[i+1][0],ring[i+1][1]);const dx=b.x-a.x,dy=b.y-a.y,den=dx*dx+dy*dy;if(!den)continue;const t=Math.max(0,Math.min(1,((photo.x-a.x)*dx+(photo.y-a.y)*dy)/den));const x=a.x+t*dx,y=a.y+t*dy,dist=Math.hypot(photo.x-x,photo.y-y);if(!best||dist<best.dist)best={a,b,t,x,y,dist,ringLat:(ring[i][1]+ring[i+1][1])/2,ringLon:(ring[i][0]+ring[i+1][0])/2};}}
-  if(!best)return null;const scale=merc(best.ringLon,best.ringLat).meterInMercatorCoordinateUnits();const len=Math.hypot(best.b.x-best.a.x,best.b.y-best.a.y)/scale;if(len<2.4)return null;const vx=photo.x-best.x,vy=photo.y-best.y,n=Math.hypot(vx,vy)||1;return {best,scale,len,nx:vx/n,ny:vy/n};
- }
- let loaded=0;
- for(const p of photos){
-  const feature=buildings.get(p.building_osm_id);if(!feature)continue;const wall=closestWall(feature,Number(p.longitude),Number(p.latitude));if(!wall)continue;
-  const {best,scale,len,nx,ny}=wall;const dx=best.b.x-best.a.x,dy=best.b.y-best.a.y,edgeLen=Math.hypot(dx,dy)||1;
-  const width=Math.min(6,len*0.78),height=Math.min(3.2,width*0.78),half=width*scale/2,ux=dx/edgeLen,uy=dy/edgeLen,offset=0.12*scale,cx=best.x+nx*offset,cy=best.y+ny*offset;
-  const x1=cx-ux*half,y1=cy-uy*half,x2=cx+ux*half,y2=cy+uy*half,z=merc(best.ringLon,best.ringLat,1.4).z,zTop=z+height*scale;
-  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute([x1,y1,z,x2,y2,z,x2,y2,zTop,x1,y1,zTop],3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute([0,1,1,1,1,0,0,0],2));geometry.setIndex([0,1,2,0,2,3]);geometry.computeVertexNormals();
-  const texture=new THREE.TextureLoader().load('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/'+p.local_image,()=>map.triggerRepaint());texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;
-  const material=new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide,depthTest:true,depthWrite:false,toneMapped:false});const mesh=new THREE.Mesh(geometry,material);mesh.visible=false;mesh.userData.photo=p;facadeLayer.scene.add(mesh);facadeLayer.meshes.push(mesh);facadeLayer.materials.push(material);loaded++;
- }
- return loaded;
+function addDpwRoadSurface(data){
+ if(map.getLayer('dpwh-road-surface-data'))map.removeLayer('dpwh-road-surface-data');
+ if(map.getSource('dpwh-road-surface-data'))map.removeSource('dpwh-road-surface-data');
+ map.addSource('dpwh-road-surface-data',{type:'geojson',data:data});
+ map.addLayer({id:'dpwh-road-surface-data',type:'line',source:'dpwh-road-surface-data',paint:{'line-color':'#64748b','line-width':8,'line-opacity':0.025}});
+ map.on('click','dpwh-road-surface-data',e=>{
+  const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};
+  const date=v=>{const n=Number(v);return n>0?new Date(n).toLocaleDateString():''};
+  const rows=[['Road',p.ROAD_NAME],['Official surface type',p.SURFACE_TY],['Pavement type',p.PVMT_TYPE],['Road ID',p.ROAD_ID],['Section ID',p.SECTION_ID],['Segment length',p.SEG_LENGTH?String(p.SEG_LENGTH)+' m':''],['Last surface work',p.YR_LAST_SU&&Number(p.YR_LAST_SU)>0?p.YR_LAST_SU:''],['Reconstruction year',p.YR_RECONST&&Number(p.YR_RECONST)>0?p.YR_RECONST:''],['Survey date',date(p.SURV_DATE)]];
+  new maplibregl.Popup().setLngLat(e.lngLat).setHTML('<div style="font:13px system-ui;max-width:260px"><b>DPWH official road record</b>'+rows.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+'</div>').addTo(map);
+ });
+ map.on('mouseenter','dpwh-road-surface-data',()=>map.getCanvas().style.cursor='help');
+ map.on('mouseleave','dpwh-road-surface-data',()=>map.getCanvas().style.cursor='');
 }
-function setKartaPhotos(enabled){const layer=kartaFacadeLayer;if(layer){layer.enabled=enabled;layer.meshes.forEach(m=>m.visible=enabled);map.triggerRepaint();}setStatus(enabled?'KartaView photo overlays enabled on matched building walls':'KartaView facade overlays hidden');}
 
 function addLandmarks(){
  const landmarks={type:'FeatureCollection',features:[
@@ -169,17 +141,17 @@ map.on('load',async()=>{
   map.setSky({ 'sky-color':'#8dbbe2','sky-horizon-blend':0.5,'horizon-color':'#e8f1fa','horizon-fog-blend':0.2,'fog-color':'#dce8f3','fog-ground-blend':0.15,'atmosphere-blend':0.8});
   const results=await Promise.all([
    fetch(base+'ermita-road-network.geojson').then(r=>{if(!r.ok)throw Error('Road data HTTP '+r.status);return r.json()}),
-   fetch(base+'ermita-building-footprints.geojson').then(r=>{if(!r.ok)throw Error('Building data HTTP '+r.status);return r.json()})
+   fetch(base+'ermita-building-footprints.geojson').then(r=>{if(!r.ok)throw Error('Building data HTTP '+r.status);return r.json()}),
+   fetch('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/external/dpwh-road-surface-type-ermita.geojson').then(r=>{if(!r.ok)throw Error('DPWH road data HTTP '+r.status);return r.json()})
   ]);
   roadsData={type:'FeatureCollection',features:(results[0].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   buildingsData={type:'FeatureCollection',features:(results[1].features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
-  addBuildings(buildingsData);addRoads(roadsData);addLandmarks();addSatelliteImagery();
-  const kartaCount=await addKartaFacadeTextures();
-  setStatus(buildingsData.features.length.toLocaleString()+' local building outlines in 3D · '+roadsData.features.length.toLocaleString()+' mapped road/path lines · '+kartaCount.toLocaleString()+' eligible KartaView facade overlays prepared · 6 landmark markers (approximate positions)');
+  surfaceData={type:'FeatureCollection',features:(results[2].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
+  addBuildings(buildingsData);addRoads(roadsData);addDpwRoadSurface(surfaceData);addLandmarks();addSatelliteImagery();
+  setStatus(buildingsData.features.length.toLocaleString()+' local building outlines in 3D · '+roadsData.features.length.toLocaleString()+' mapped road/path lines · '+surfaceData.features.length.toLocaleString()+' official DPWH road records loaded · 6 landmark markers (approximate positions)');
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
 });
 document.getElementById('imagery').addEventListener('change',e=>setSatelliteImagery(e.target.checked));
-document.getElementById('kartaPhotos').addEventListener('change',e=>setKartaPhotos(e.target.checked));
 document.getElementById('landmarks').addEventListener('change',e=>['key-landmark-halo','key-landmark-dot','key-landmark-label'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('buildings').addEventListener('change',e=>{if(map.getLayer('local-buildings-3d'))map.setLayoutProperty('local-buildings-3d','visibility',e.target.checked?'visible':'none')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
