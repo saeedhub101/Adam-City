@@ -1,4 +1,4 @@
-name: Update only missing Malate map data
+name: Update only missing Malate map data and malls
 
 on:
   workflow_dispatch:
@@ -54,6 +54,19 @@ jobs:
               'museum': 'museum',
               'attraction': 'tourist attraction',
               'information': 'visitor information',
+              'mall': 'shopping mall',
+              'supermarket': 'supermarket',
+              'convenience': 'convenience store',
+              'restaurant': 'restaurant',
+              'cafe': 'cafe',
+              'bank': 'bank',
+              'atm': 'ATM',
+              'place_of_worship': 'place of worship',
+              'library': 'library',
+              'parking': 'parking area',
+              'toilets': 'public toilet',
+              'park': 'park',
+              'garden': 'garden',
           }
           existing = {'region':'Malate, Manila, Philippines','source':'© OpenStreetMap contributors','places':[]}
           if places_path.exists() and places_path.stat().st_size:
@@ -88,6 +101,19 @@ jobs:
                 'museum': f'(node({s},{w},{n},{e})[tourism=museum];way({s},{w},{n},{e})[tourism=museum];)',
                 'attraction': f'(node({s},{w},{n},{e})[tourism=attraction];way({s},{w},{n},{e})[tourism=attraction];)',
                 'information': f'(node({s},{w},{n},{e})[tourism=information];way({s},{w},{n},{e})[tourism=information];)',
+                'mall': f'(node({s},{w},{n},{e})[shop=mall];way({s},{w},{n},{e})[shop=mall];relation({s},{w},{n},{e})[shop=mall];node({s},{w},{n},{e})[building=retail][name];way({s},{w},{n},{e})[building=retail][name];)',
+                'supermarket': f'(node({s},{w},{n},{e})[shop=supermarket];way({s},{w},{n},{e})[shop=supermarket];)',
+                'convenience': f'(node({s},{w},{n},{e})[shop=convenience];way({s},{w},{n},{e})[shop=convenience];)',
+                'restaurant': f'(node({s},{w},{n},{e})[amenity=restaurant];way({s},{w},{n},{e})[amenity=restaurant];)',
+                'cafe': f'(node({s},{w},{n},{e})[amenity=cafe];way({s},{w},{n},{e})[amenity=cafe];)',
+                'bank': f'(node({s},{w},{n},{e})[amenity=bank];way({s},{w},{n},{e})[amenity=bank];)',
+                'atm': f'(node({s},{w},{n},{e})[amenity=atm];way({s},{w},{n},{e})[amenity=atm];)',
+                'place_of_worship': f'(node({s},{w},{n},{e})[amenity=place_of_worship];way({s},{w},{n},{e})[amenity=place_of_worship];)',
+                'library': f'(node({s},{w},{n},{e})[amenity=library];way({s},{w},{n},{e})[amenity=library];)',
+                'parking': f'(node({s},{w},{n},{e})[amenity=parking];way({s},{w},{n},{e})[amenity=parking];)',
+                'toilets': f'(node({s},{w},{n},{e})[amenity=toilets];way({s},{w},{n},{e})[amenity=toilets];)',
+                'park': f'(node({s},{w},{n},{e})[leisure=park];way({s},{w},{n},{e})[leisure=park];relation({s},{w},{n},{e})[leisure=park];)',
+                'garden': f'(node({s},{w},{n},{e})[leisure=garden];way({s},{w},{n},{e})[leisure=garden];relation({s},{w},{n},{e})[leisure=garden];)',
               }
               query='[out:json][timeout:120];(' + ''.join(selectors[k] for k in missing) + ');out body geom;'
               endpoints=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://overpass.private.coffee/api/interpreter']
@@ -103,7 +129,7 @@ jobs:
                       time.sleep(2)
               if raw is None:
                   raise SystemExit('Could not fetch only the missing place categories; saved datasets were preserved. '+'; '.join(errors))
-              tag_keys={'name','name:en','amenity','healthcare','tourism','building','aeroway','emergency','railway','public_transport','operator','brand','addr:housenumber','addr:street','addr:city','addr:postcode','phone','website','opening_hours','wheelchair','helipad','iata','icao'}
+              tag_keys={'name','name:en','amenity','healthcare','tourism','building','aeroway','emergency','railway','public_transport','operator','brand','addr:housenumber','addr:street','addr:city','addr:postcode','phone','website','opening_hours','wheelchair','helipad','iata','icao','shop','leisure','building','landuse'}
               seen={(p.get('osm_type'),p.get('osm_id')) for p in places}
               added=0
               for el in raw.get('elements',[]):
@@ -115,6 +141,10 @@ jobs:
                   elif tags.get('aeroway') in ('helipad','heliport') or tags.get('emergency')=='landing_site': kind='helicopter'
                   elif tags.get('railway') in ('station','halt','tram_stop','subway_entrance') or tags.get('public_transport') in ('station','platform','stop_position'): kind='transit'
                   elif tags.get('tourism') in ('museum','attraction','information'): kind=tags['tourism']
+                  elif tags.get('shop')=='mall' or (tags.get('building')=='retail' and tags.get('name')): kind='mall'
+                  elif tags.get('shop') in ('supermarket','convenience'): kind=tags['shop']
+                  elif tags.get('amenity') in ('restaurant','cafe','bank','atm','place_of_worship','library','parking','toilets'): kind=tags['amenity']
+                  elif tags.get('leisure') in ('park','garden'): kind=tags['leisure']
                   if kind not in missing: continue
                   key=(typ,el.get('id'))
                   if key in seen: continue
