@@ -1,0 +1,45 @@
+name: Export real OSM roads and paths
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "ermita/scripts/export_osm_roads.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ermita-osm-road-export
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Export mapped road centerlines from existing OSM cache
+        run: python ermita/scripts/export_osm_roads.py
+      - name: Commit real road geometry and segment index
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ermita/maps/generated/ermita-road-network.geojson ermita/maps/generated/road-network-export-report.json ermita/streets/street_segments.csv
+          if git diff --cached --quiet; then
+            echo "Road network is unchanged."
+            exit 0
+          fi
+          git commit -m "data: export real OSM road and path geometry"
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase -X theirs origin/main || { git rebase --abort || true; sleep $((attempt * 3)); continue; }
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 3))
+          done
+          echo "::error::Could not publish road network after four safe retries."
+          exit 1
