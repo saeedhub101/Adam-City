@@ -1,0 +1,87 @@
+{
+  "source": "OpenAerialMap / Humanitarian OpenStreetMap Team imagery API",
+  "catalog_api": "https://api.imagery.hotosm.org/stac/search",
+  "retrieved_utc": "2026-10-18T19:18:17.879230+00:00",
+  "area_of_interest": {
+    "name": "Rizal Park / Ermita, Manila, Philippines",
+    "bbox_wgs84": [
+      120.972,
+      14.572,
+      120.994,
+      14.593
+    ]
+  },
+  "retention_policy": "Only explicitly CC-BY-4.0 assets; <= 80 MiB; no Esri display tiles.",
+  "license_reference": "https://openaerialmap.org/about/",
+  "downloaded": [
+    {
+      "id": "5b90f92da0d7280005fab355",
+      "title": "Arroceros Forest Park",
+      "datetime": null,
+      "gsd_m": 0.05126,
+      "license": "CC-BY-4.0",
+      "asset_key": "visual",
+      "asset_href": "https://oin-hotosm-temp.s3.amazonaws.com/5b90f8fda0d7280005fab353/0/5b90f8fda0d7280005fab354.tif",
+      "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "asset_size": 17188832,
+      "repository_path": "ermita/maps/external/openaerialmap/ermita-5b90f92da0d7280005fab355.tif",
+      "downloaded_bytes": 17188832,
+      "sha256": "e4d79ed3eac911047b14c63f3adaa990c157aae8d25821398b97777f332544de",
+      "final_url": "https://oin-hotosm-temp.s3.amazonaws.com/5b90f8fda0d7280005fab353/0/5b90f8fda0d7280005fab354.tif"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "635a06b55f1fd800066121e3",
+      "title": "Intramuros, Manila PHILIPPINES",
+      "datetime": null,
+      "gsd_m": 0.079221,
+      "license": "CC-BY-SA-4.0",
+      "asset_key": "visual",
+      "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "asset_size": 1012871121
+    },
+    {
+      "id": "635a05775f1fd800066121e2",
+      "title": "Intramuros, Manila PHILIPPINES",
+      "datetime": null,
+      "gsd_m": 0.0396104,
+      "license": "CC-BY-SA-4.0",
+      "asset_key": "visual",
+      "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "asset_size": 211896546
+    },
+    {
+      "id": "Copernicus_DSM_COG_10_N14_00_E120_00_DEM",
+      "title": "Copernicus_DSM_COG_10_N14_00_E120_00_DEM",
+      "datetime": "2021-04-22T00:00:00Z",
+      "gsd_m": 30,
+      "license": "",
+      "asset_key": "data",
+      "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "asset_size": null
+    },
+    {
+      "id": "5b90f92da0d7280005fab355",
+      "title": "Arroceros Forest Park",
+      "datetime": null,
+      "gsd_m": 0.05126,
+      "license": "CC-BY-4.0",
+      "asset_key": "visual",
+      "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "asset_size": 17188832
+    },
+    {
+      "id": "59e62b793d6412ef722094ec",
+      "title": "ZZZ Landsat Test",
+      "datetime": null,
+      "gsd_m": 31.353088067834776,
+      "license": "",
+      "asset_key": "visual",
+      "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "asset_size": 9424747
+    }
+  ],
+  "warnings": [],
+  "catalog_item_count": 5
+}
