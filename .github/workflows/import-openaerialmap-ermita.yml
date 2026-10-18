@@ -1,0 +1,41 @@
+name: Import openly licensed Ermita aerial imagery
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/import_openaerialmap_ermita.py"
+      - ".github/workflows/import-openaerialmap-ermita.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ermita-open-imagery-import
+  cancel-in-progress: false
+
+jobs:
+  discover-and-import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Search catalog and download one licensed raster
+        run: python scripts/import_openaerialmap_ermita.py
+      - name: Commit imagery and provenance report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ermita/maps/external/openaerialmap/
+          if git diff --cached --quiet; then
+            echo "No imagery/report changes to commit."
+            exit 0
+          fi
+          git commit -m "Import licensed OpenAerialMap imagery and provenance"
+          git push
