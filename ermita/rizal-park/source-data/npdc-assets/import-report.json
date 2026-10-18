@@ -1,6 +1,6 @@
 {
   "status": "success",
-  "created_at_utc": "2026-10-18T18:25:56.697792+00:00",
+  "created_at_utc": "2026-10-18T18:26:43.735618+00:00",
   "source_catalog": "https://npdc.gov.ph/downloads/",
   "assets": [
     {
@@ -13,7 +13,7 @@
       "sha256": "963f4374b63685557909f1836f92c19127aea6d7122a90885ed870da950afc9e",
       "http_content_type": "image/jpeg",
       "updated_local_file": true,
-      "redistribution_license": "Not stated in this import record; public download is not treated as an open licence. Verify NPDC permission before republishing the original asset or derivatives.",
+      "redistribution_license": "NPDC Downloads page states: All content is public domain unless otherwise stated. Check each downloaded document for a specific contrary notice before reuse.",
       "use_note": "Reference/source evidence only. Map georeferencing and digitization require a separate documented QA step."
     },
     {
@@ -26,7 +26,7 @@
       "sha256": "a8349db42d90bf0b184059c789297485cf5ee1fee72ec97220942765f3968121",
       "http_content_type": "application/pdf",
       "updated_local_file": true,
-      "redistribution_license": "Not stated in this import record; public download is not treated as an open licence. Verify NPDC permission before republishing the original asset or derivatives.",
+      "redistribution_license": "NPDC Downloads page states: All content is public domain unless otherwise stated. Check each downloaded document for a specific contrary notice before reuse.",
       "use_note": "Reference/source evidence only. Map georeferencing and digitization require a separate documented QA step."
     },
     {
@@ -39,7 +39,7 @@
       "sha256": "0723171f4d63b442d7bd944bbc15789681a813f61e5253c87e22f51cbf1aff4e",
       "http_content_type": "application/pdf",
       "updated_local_file": true,
-      "redistribution_license": "Not stated in this import record; public download is not treated as an open licence. Verify NPDC permission before republishing the original asset or derivatives.",
+      "redistribution_license": "NPDC Downloads page states: All content is public domain unless otherwise stated. Check each downloaded document for a specific contrary notice before reuse.",
       "use_note": "Reference/source evidence only. Map georeferencing and digitization require a separate documented QA step."
     },
     {
@@ -52,7 +52,7 @@
       "sha256": "8caf09ffbf489734d075652cc3a0f16b70a2883b0fb40922ccf02f959fb66cd8",
       "http_content_type": "application/pdf",
       "updated_local_file": true,
-      "redistribution_license": "Not stated in this import record; public download is not treated as an open licence. Verify NPDC permission before republishing the original asset or derivatives.",
+      "redistribution_license": "NPDC Downloads page states: All content is public domain unless otherwise stated. Check each downloaded document for a specific contrary notice before reuse.",
       "use_note": "Reference/source evidence only. Map georeferencing and digitization require a separate documented QA step."
     }
   ],
@@ -61,7 +61,7 @@
     "Tree thematic-map PDFs and additional inventory maps are not downloaded in this batch; the initial batch focuses on the park map and planning references."
   ],
   "limitations": [
-    "No open redistribution licence was confirmed from the download listing.",
+    "The NPDC Downloads page states that all content is public domain unless otherwise stated; asset-specific contrary notices still need checking.",
     "The technical map is an image document, not a ready-made GIS layer.",
     "No spatial coordinates were assigned to image features in this import step."
   ]
