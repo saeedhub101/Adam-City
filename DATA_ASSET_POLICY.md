@@ -1,40 +1,33 @@
 # Data and generated-asset retention policy
 
-**Project rule:** when we import, download, derive, or generate a reusable project asset, keep the asset in this repository whenever its size, format, and license permit. Do not leave the only copy in a temporary session or rely on an undocumented remote URL.
+**Project objective:** build a highly accurate 3D Ermita, beginning with Malate. This is a study project, not a commercial product.
 
-## Required workflow for every asset
+## Mandatory collection rules
 
-1. Save the actual file under a descriptive project path (usually `ermita/maps/external/`, `ermita/maps/generated/`, `ermita/3d/`, or `ermita/rizal-park/`).
-2. Save a machine-readable import/generation report beside it, including source URL/provider, retrieval/generation date in UTC, source vintage where known, geographic extent/CRS, resolution or scale, transformation steps, checksum where practical, license/terms, attribution, and limitations.
-3. Update the relevant README or source-layer register so the file can be discovered and reused.
-4. Validate geometry/schema, file size, and provenance before wiring the asset into the live preview. Keep original source files where permitted and create separate derived outputs rather than overwriting the source.
-5. Commit generated code, configuration, scripts, small preview assets, and data that can legally be redistributed. Prefer compressed GeoJSON, GeoPackage, Cloud Optimized GeoTIFF, GLB, or other suitable formats where appropriate.
+1. Search the complete repository and inspect existing source files before downloading anything. Reuse existing files and download only missing data or genuinely newer/better coverage.
+2. Do not ask the user about licenses, terms, contacting agencies, requesting APIs, or submitting data requests. Do not contact agencies or require the user to do so.
+3. For any source with data directly downloadable without an account/API key/contact, download it with a workflow or direct script, clip it to the target AOI when appropriate, validate it, and save the actual data in this repository.
+4. If a source is inaccessible or requires an API key, account approval, payment, or human contact, skip it and immediately test another downloadable source. Do not block the project waiting for a request.
+5. Save each downloaded/imported/generated asset in the repository, not only as a temporary workflow artifact. Store a source URL, retrieval time, coverage/CRS, format, checksum when practical, and a concise QA report.
+6. Work on main only. Workflows must be incremental/idempotent: inspect manifests and existing outputs, avoid repeated downloads, and import only missing or updated assets.
+7. Keep source datasets separate until geometry and coverage have been compared. Never silently replace conflicts between OSM, Microsoft, DPWH, elevation, or imagery.
+8. Prioritize streets, building footprints, real facades, roofs, building heights, windows, doors, signs and materials. Trees are lower priority.
+9. Do not claim a source has been downloaded or visually verified unless the file exists in the repository and the check actually succeeded.
 
-## Licensing and hosted imagery exception
+## Existing assets and important limits
 
-Repository retention is a strong default, **not permission to copy any third-party content**. Before committing raster tiles, aerial imagery, basemaps, photographs, models, or datasets, check the source license and redistribution/download terms. Record the result in the report. If redistribution or bulk downloading is not clearly allowed, do not mirror the content into GitHub. Instead, commit the acquisition script/configuration and metadata, keep the source service URL, and identify the access/credential requirements. Prefer an openly licensed or public-domain source that explicitly permits downloading and redistribution when a durable local copy is required.
+- OSM roads/buildings and Microsoft building footprints already exist; inspect and reuse them.
+- Copernicus DEM GLO-30 crop and its GLB terrain mesh already exist. This is regional DSM context, not a high-resolution building-roof survey.
+- DPWH road/bridge layers already exist; inspect and reuse them.
+- KartaView images and metadata already exist. Keep KartaView out of the live map renderer as previously requested; do not download duplicate image IDs.
+- Procedural facade details are placeholders, not measured real facades. Keep this distinction explicit.
 
-### Current Esri World Imagery layer
+## Workflow acceptance checklist
 
-The map currently requests Esri World Imagery tiles at runtime for visual comparison. These are **streamed from Esri and are not stored in this repository**. The Esri terms state that service content is not public domain and that the terms do not automatically grant redistribution rights; the special “World Imagery (for Export)” item is designed for export/offline use and requires an ArcGIS Online subscription or developer account. Do not scrape or bulk-copy ordinary display tiles into the repository. If an authorized export workflow is used later, keep its terms/authorization evidence and export metadata with the imagery.
-
-References checked 2026-10-18:
-- Esri Web Site and Service Terms: https://www.esri.com/en-us/legal/terms/web-site-service
-- World Imagery (for Export): https://www.arcgis.com/home/item.html?id=226d23f076da478bba4589e7eae95952
-
-## Existing project examples
-
-- OpenStreetMap extracts and derived GeoJSON are committed with source/license information; credit © OpenStreetMap contributors and comply with ODbL.
-- Microsoft building footprints are retained as a compressed source extract with import and comparison reports. They are supplemental outlines, not verified current buildings or official cadastral data.
-- Copernicus DEM crop and GLB terrain mesh are retained with a report describing DSM type, resolution, attribution, and limitations.
-- DPWH layers are retained alongside a per-layer source and vintage report.
-
-## Checklist before marking an import complete
-
-- [ ] Actual reusable file is in the repository, or the licensing reason it cannot be stored is documented.
-- [ ] Source URL/provider and retrieval time are recorded.
-- [ ] License/attribution and source vintage are recorded.
-- [ ] Extent, CRS, resolution/scale and transformations are recorded when applicable.
-- [ ] Validation summary and limitations are recorded.
-- [ ] Relevant README/source register is updated.
-- [ ] Preview uses the committed asset when legally and technically appropriate, rather than an undocumented temporary copy.
+- [ ] Existing repository data was inspected before download.
+- [ ] Only missing/new data was fetched.
+- [ ] Actual files are committed to the repository, not just artifacts.
+- [ ] Source, date, extent, CRS/resolution and QA result are recorded.
+- [ ] Data is checked for AOI coverage and alignment.
+- [ ] The viewer/build uses the relevant committed asset when suitable.
+- [ ] Workflow can run again without re-downloading or duplicating existing assets.
