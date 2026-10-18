@@ -16,6 +16,7 @@
 <label><input id="imagery" type="checkbox"> Esri satellite</label>
 <label><input id="localImagery" type="checkbox"> Local aerial photo</label>
 <label><input id="landmarks" type="checkbox" checked> Key landmarks</label>
+<label><input id="stores" type="checkbox" checked> 7-Eleven / McDonald’s / Starbucks</label>
 <label><input id="buildings" type="checkbox" checked> 3D building footprints</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
 <label><input id="terrain" type="checkbox" checked> 3D terrain</label>
@@ -116,6 +117,42 @@ function addDpwRoadSurface(data){
  map.on('mouseleave','dpwh-road-surface-data',()=>map.getCanvas().style.cursor='');
 }
 
+
+function addBrandedStores(data){
+ if(map.getLayer('brand-store-labels'))map.removeLayer('brand-store-labels');
+ if(map.getLayer('brand-store-badges'))map.removeLayer('brand-store-badges');
+ if(map.getSource('brand-stores'))map.removeSource('brand-stores');
+ map.addSource('brand-stores',{type:'geojson',data:data});
+ map.addLayer({id:'brand-store-badges',type:'circle',source:'brand-stores',
+  paint:{
+   'circle-radius':['interpolate',['linear'],['zoom'],13,4,16,10,19,14],
+   'circle-color':['match',['get','brand'],'7-Eleven','#00843d',"McDonald's",'#da291c','Starbucks','#006241','#475569'],
+   'circle-stroke-color':'#ffffff','circle-stroke-width':['interpolate',['linear'],['zoom'],13,0.8,18,2],
+   'circle-opacity':0.98
+  }});
+ map.addLayer({id:'brand-store-labels',type:'symbol',source:'brand-stores',
+  layout:{
+   'text-field':['match',['get','brand'],'7-Eleven','7',"McDonald's",'M','Starbucks','★','•'],
+   'text-font':['Open Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],13,8,16,13,19,17],
+   'text-allow-overlap':true,'text-ignore-placement':true,'text-offset':[0,0]
+  },
+  paint:{'text-color':'#ffffff','text-halo-color':'rgba(0,0,0,0)','text-halo-width':0}});
+ map.addLayer({id:'brand-store-names',type:'symbol',source:'brand-stores',minzoom:16.2,
+  layout:{'text-field':['get','brand'],'text-font':['Open Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],16,10,19,13],
+   'text-offset':[0,1.35],'text-anchor':'top','text-max-width':12,'text-allow-overlap':false},
+  paint:{'text-color':['match',['get','brand'],'7-Eleven','#006b35',"McDonald's",'#b91c1c','Starbucks','#005238','#243447'],
+   'text-halo-color':'#ffffff','text-halo-width':1.7}});
+ map.on('click','brand-store-badges',e=>{
+  const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};
+  const color=p.brand==='7-Eleven'?'#00843d':p.brand==="McDonald's"?'#da291c':'#006241';
+  const rows=[['Branch',p.branch],['Street',p.street],['House number',p.house_number],['OSM ID',p.osm_feature_id]];
+  const body='<div style="font:13px system-ui;max-width:240px"><div style="font-size:16px;font-weight:800;color:'+color+'">'+esc(p.brand)+'</div><div style="margin:4px 0 8px">Mapped storefront · 3D building match is a reconstruction candidate</div>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+'<div style="margin-top:6px"><a target="_blank" rel="noopener" href="https://www.openstreetmap.org/'+esc(p.osm_feature_id||'')+'">Open mapped location</a></div></div>';
+  new maplibregl.Popup().setLngLat(e.lngLat).setHTML(body).addTo(map);
+ });
+ map.on('mouseenter','brand-store-badges',()=>map.getCanvas().style.cursor='pointer');
+ map.on('mouseleave','brand-store-badges',()=>map.getCanvas().style.cursor='');
+}
+
 function addLandmarks(){
  const landmarks={type:'FeatureCollection',features:[
   {type:'Feature',properties:{name:'Rizal Monument',kind:'National monument',detail:'Monument to José Rizal in Rizal Park. Marker location is approximate.'},geometry:{type:'Point',coordinates:[120.97845,14.58325]}},
@@ -152,19 +189,22 @@ map.on('load',async()=>{
    fetch(base+'ermita-road-network.geojson').then(r=>{if(!r.ok)throw Error('Road data HTTP '+r.status);return r.json()}),
    fetch(base+'ermita-building-footprints.geojson').then(r=>{if(!r.ok)throw Error('Building data HTTP '+r.status);return r.json()}),
    fetch('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/external/dpwh-road-surface-type-ermita.geojson').then(r=>{if(!r.ok)throw Error('DPWH road data HTTP '+r.status);return r.json()}),
-   fetch('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/3d/facade-photo-index.json').then(r=>{if(!r.ok)throw Error('Facade photo index HTTP '+r.status);return r.json()})
+   fetch('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/3d/facade-photo-index.json').then(r=>{if(!r.ok)throw Error('Facade photo index HTTP '+r.status);return r.json()}),
+   fetch('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/generated/ermita-branded-stores.geojson').then(r=>{if(!r.ok)throw Error('Branded store data HTTP '+r.status);return r.json()})
   ]);
   roadsData={type:'FeatureCollection',features:(results[0].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   buildingsData={type:'FeatureCollection',features:(results[1].features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
   surfaceData={type:'FeatureCollection',features:(results[2].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   facadePhotoIndex=results[3].buildings||{};
-  addBuildings(buildingsData);addRoads(roadsData);addDpwRoadSurface(surfaceData);addLandmarks();addSatelliteImagery();addLocalAerialImagery();
-  setStatus(buildingsData.features.length.toLocaleString()+' local building outlines in 3D · '+roadsData.features.length.toLocaleString()+' mapped road/path lines · '+surfaceData.features.length.toLocaleString()+' official DPWH road records loaded · 6 landmark markers (approximate positions)');
+  addBuildings(buildingsData);addRoads(roadsData);addDpwRoadSurface(surfaceData);addLandmarks();addBrandedStores(results[4]);addSatelliteImagery();addLocalAerialImagery();
+  const storeFeatures=results[4].features||[];const storeCounts={};storeFeatures.forEach(f=>{const b=f.properties&&f.properties.brand;storeCounts[b]=(storeCounts[b]||0)+1});
+  setStatus(buildingsData.features.length.toLocaleString()+' local building outlines in 3D · '+roadsData.features.length.toLocaleString()+' mapped road/path lines · '+storeFeatures.length+' branded storefront locations shown · 6 landmark markers');
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
 });
 document.getElementById('imagery').addEventListener('change',e=>setSatelliteImagery(e.target.checked));
 document.getElementById('localImagery').addEventListener('change',e=>setLocalAerialImagery(e.target.checked));
 document.getElementById('landmarks').addEventListener('change',e=>['key-landmark-halo','key-landmark-dot','key-landmark-label'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
+document.getElementById('stores').addEventListener('change',e=>['brand-store-badges','brand-store-labels','brand-store-names'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('buildings').addEventListener('change',e=>{if(map.getLayer('local-buildings-3d'))map.setLayoutProperty('local-buildings-3d','visibility',e.target.checked?'visible':'none')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null)}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
