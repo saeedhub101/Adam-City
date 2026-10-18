@@ -16,28 +16,40 @@ permissions:
 jobs:
   cache-map:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - name: Check whether the saved map already exists
-        id: map-cache
-        run: |
-          mkdir -p maps buo_maps
-          if [ -s maps/malate-map.json ] && python -c "import json; d=json.load(open('maps/malate-map.json')); e=d.get('elements',[]); t=[x.get('tags',{}) for x in e]; assert isinstance(e,list) and len(e)>0 and any(x.get('railway') in ('rail','light_rail') for x in t) and any(x.get('natural') in ('water','beach') or x.get('waterway')=='riverbank' for x in t)"; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-            echo "A valid saved Malate map already exists in GitHub. Skipping OpenStreetMap download."
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "Saved Malate map is missing or invalid. It will be downloaded."
-          fi
-      - name: Download Malate streets and building footprints only when missing
-        if: steps.map-cache.outputs.exists == 'false'
+      - name: Download detailed OpenStreetMap data for Malate
         run: |
           python - <<'PY'
           import json, time, urllib.parse, urllib.request, os
           bbox=[14.55,120.97,14.585,121.005]
           s,w,n,e=bbox
-          query=f'[out:json][timeout:180];(way({s},{w},{n},{e})[building];way({s},{w},{n},{e})[highway];way({s},{w},{n},{e})[railway~"^(rail|light_rail|subway|tram)$"];way({s},{w},{n},{e})[natural~"^(water|beach)$"];way({s},{w},{n},{e})[waterway=riverbank];);out body geom;'
+          # Import physical map geometry, transit, greenery, water, and important place markers.
+          query=f'''[out:json][timeout:240];
+          (
+            way({s},{w},{n},{e})[building];
+            way({s},{w},{n},{e})[highway];
+            way({s},{w},{n},{e})[railway];
+            way({s},{w},{n},{e})[natural~"^(water|beach|wood|scrub|grassland|wetland)$"];
+            way({s},{w},{n},{e})[waterway];
+            way({s},{w},{n},{e})[leisure~"^(park|garden|playground|pitch|sports_centre)$"];
+            way({s},{w},{n},{e})[landuse~"^(grass|forest|recreation_ground|park|residential|commercial|retail|industrial)$"];
+            way({s},{w},{n},{e})[aeroway];
+            way({s},{w},{n},{e})[amenity~"^(hospital|clinic|doctors|fire_station|police|school|university|college|bus_station|ferry_terminal|place_of_worship|parking|fuel|pharmacy)$"];
+            way({s},{w},{n},{e})[tourism~"^(hotel|motel|hostel|guest_house|museum|attraction|information)$"];
+            way({s},{w},{n},{e})[public_transport];
+            way({s},{w},{n},{e})[man_made~"^(pier|tower|communications_tower|water_tower|bridge)$"];
+            node({s},{w},{n},{e})[amenity];
+            node({s},{w},{n},{e})[tourism];
+            node({s},{w},{n},{e})[aeroway];
+            node({s},{w},{n},{e})[railway];
+            node({s},{w},{n},{e})[public_transport];
+            node({s},{w},{n},{e})[highway~"^(bus_stop|street_lamp|traffic_signals|crossing|street_crossing)$"];
+            node({s},{w},{n},{e})[man_made~"^(surveillance|street_cabinet|utility_pole|mast|tower|water_tower)$"];
+            node({s},{w},{n},{e})[emergency];
+          );
+          out body geom;'''
           endpoints=[
             'https://overpass-api.de/api/interpreter',
             'https://overpass.kumi.systems/api/interpreter',
@@ -45,71 +57,81 @@ jobs:
             'https://overpass.nchc.org.tw/api/interpreter',
           ]
           errors=[]
+          keep_tags={'building','building:levels','building:part','height','min_height','roof:shape','name','name:en','addr:housenumber','addr:street','addr:city','addr:postcode','amenity','shop','office','tourism','historic','craft','healthcare','emergency','aeroway','aerodrome','iata','icao','helipad','highway','surface','lanes','oneway','service','access','foot','bicycle','wheelchair','crossing','crossing:signals','traffic_calming','railway','station','public_transport','route','bridge','layer','natural','water','waterway','width','leisure','landuse','sport','barrier','man_made','power','operator','brand','phone','website','opening_hours','building:material','internet_access','capacity','level','ele','memorial','religion','denomination'}
           for endpoint in endpoints:
             try:
-              req=urllib.request.Request(endpoint,data=urllib.parse.urlencode({'data':query}).encode(),headers={'User-Agent':'AdamCityMapCache/1.0 (Malate game map; © OpenStreetMap contributors)','Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'})
-              with urllib.request.urlopen(req,timeout=180) as response: raw=json.load(response)
-              elements=[]; buildings=roads=0
-              keep_tags={'building','building:levels','height','name','name:en','amenity','shop','office','tourism','highway','surface','lanes','oneway','service','railway','bridge','layer','natural','water','waterway','width'}
+              req=urllib.request.Request(endpoint,data=urllib.parse.urlencode({'data':query}).encode(),headers={'User-Agent':'AdamCityMapCache/1.1 (Malate Manila game; © OpenStreetMap contributors)','Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'})
+              with urllib.request.urlopen(req,timeout=260) as response: raw=json.load(response)
+              elements=[]; counts={'buildings':0,'roads':0,'railways':0,'water_green':0,'places':0}
               for el in raw.get('elements',[]):
                 tags=el.get('tags',{})
-                is_building='building' in tags; is_road='highway' in tags
-                if not (is_building or is_road): continue
+                is_building='building' in tags or 'building:part' in tags
+                is_road='highway' in tags and el['type']=='way'
+                is_rail='railway' in tags
+                is_water_green=any(k in tags for k in ('natural','waterway','leisure','landuse','aeroway')) or tags.get('man_made') in ('pier','bridge')
+                is_place=(tags.get('amenity') in ('hospital','clinic','doctors','pharmacy','school','university','college','fire_station','police','bus_station','ferry_terminal','place_of_worship','parking','fuel') or tags.get('tourism') in ('hotel','motel','hostel','guest_house','museum','attraction','information') or 'aeroway' in tags or tags.get('emergency') in ('landing_site','access_point') or tags.get('healthcare') in ('hospital','clinic') or tags.get('public_transport') in ('station','platform','stop_position') or tags.get('railway') in ('station','halt','tram_stop','subway_entrance','platform','stop') or tags.get('highway') in ('bus_stop','traffic_signals','street_lamp','crossing') or tags.get('man_made') in ('surveillance','utility_pole','mast','tower','water_tower'))
+                if not (is_building or is_road or is_rail or is_water_green or is_place): continue
                 geom=el.get('geometry',[])
-                if len(geom)<2: continue
-                item={'type':'way','id':el['id'],'tags':{k:v for k,v in tags.items() if k in keep_tags},'geometry':[{'lat':round(p['lat'],5),'lon':round(p['lon'],5)} for p in geom]}
-                elements.append(item); buildings+=int(is_building); roads+=int(is_road)
-              if buildings<100 or roads<50: raise RuntimeError(f'Map too small: {buildings} buildings, {roads} roads')
-              data={'version':0.6,'generator':'Adam City Malate OSM map','elements':elements,'_cache':{'region':'Malate, Manila, Philippines','center':{'lat':14.5717,'lon':120.9854},'bbox':bbox,'fetched_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'source':'© OpenStreetMap contributors','buildings':buildings,'roads':roads,'features':len(elements)}}
+                if el['type']=='node':
+                  if 'lat' not in el or 'lon' not in el: continue
+                  geom=[{'lat':el['lat'],'lon':el['lon']}]
+                elif len(geom)<2: continue
+                item={'type':el['type'],'id':el['id'],'tags':{k:v for k,v in tags.items() if k in keep_tags},'geometry':[{'lat':round(p['lat'],6),'lon':round(p['lon'],6)} for p in geom]}
+                if el['type']=='way' and geom and geom[0].get('lat')==geom[-1].get('lat') and geom[0].get('lon')==geom[-1].get('lon'): item['closed']=True
+                elements.append(item)
+                counts['buildings']+=int(is_building);counts['roads']+=int(is_road);counts['railways']+=int(is_rail);counts['water_green']+=int(is_water_green);counts['places']+=int(is_place)
+              if counts['buildings']<100 or counts['roads']<50: raise RuntimeError(f"Map too small: {counts}")
+              data={'version':0.6,'generator':'Adam City Malate detailed OSM map importer','elements':elements,'_cache':{'region':'Malate, Manila, Philippines','center':{'lat':14.57168,'lon':120.98445},'bbox':bbox,'fetched_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'source':'© OpenStreetMap contributors','counts':counts,'features':len(elements)}}
+              os.makedirs('maps',exist_ok=True);os.makedirs('buo_maps',exist_ok=True)
               with open('maps/malate-map.json','w',encoding='utf-8') as out: json.dump(data,out,separators=(',',':'),ensure_ascii=False)
-              size=os.path.getsize('maps/malate-map.json')
-              print(f'Malate map: {buildings} buildings, {roads} roads, {size/1024/1024:.1f} MB')
-              if size>90*1024*1024: raise RuntimeError(f'Malate map is too large ({size/1024/1024:.1f} MB)')
+              places=[]
+              for el in elements:
+                t=el['tags']; kind=None
+                if t.get('amenity')=='hospital' or t.get('healthcare')=='hospital': kind='hospital'
+                elif t.get('aeroway') in ('helipad','heliport') or t.get('emergency')=='landing_site': kind='helicopter'
+                elif t.get('aeroway') in ('aerodrome','airport','terminal','runway','apron'): kind='airport'
+                elif t.get('tourism') in ('hotel','motel','hostel','guest_house') or t.get('building')=='hotel': kind='hotel'
+                elif t.get('railway') in ('station','halt','tram_stop','subway_entrance'): kind='transit'
+                elif t.get('amenity') in ('clinic','doctors','pharmacy','fire_station','police','school','university','college','bus_station','ferry_terminal'): kind=t['amenity']
+                elif t.get('tourism') in ('museum','attraction','information'): kind=t['tourism']
+                if not kind: continue
+                g=el['geometry']; p=g[0] if el['type']=='node' or len(g)==1 else {'lat':sum(x['lat'] for x in g)/len(g),'lon':sum(x['lon'] for x in g)/len(g)}
+                places.append({'osm_type':el['type'],'osm_id':el['id'],'kind':kind,'name':t.get('name') or t.get('name:en') or kind.replace('_',' ').title(),'lat':round(p['lat'],6),'lon':round(p['lon'],6),'tags':t})
+              with open('maps/malate-places.json','w',encoding='utf-8') as out: json.dump({'region':data['_cache']['region'],'source':'© OpenStreetMap contributors','generated_utc':data['_cache']['fetched_utc'],'places':places},out,separators=(',',':'),ensure_ascii=False)
+              print('Imported:',counts,'total elements:',len(elements),'named/typed place markers:',len(places),'map MB:',round(os.path.getsize('maps/malate-map.json')/1024/1024,2))
+              if os.path.getsize('maps/malate-map.json')>90*1024*1024: raise RuntimeError('Map cache exceeded 90 MB safety limit')
               break
             except Exception as exc:
-              errors.append(f'{endpoint}: {exc}'); print(errors[-1])
-          else: raise SystemExit('Could not fetch Malate map: '+'; '.join(errors))
+              errors.append(f'{endpoint}: {exc}');print(errors[-1])
+          else: raise SystemExit('Could not fetch detailed Malate map: '+'; '.join(errors))
           PY
-      - name: Build street-name cache only when missing
+      - name: Build named street cache
         run: |
-          mkdir -p maps
-          if [ -s maps/malate-streets.json ] && python -c "import json; d=json.load(open('maps/malate-streets.json')); assert isinstance(d.get('streets'), list) and len(d['streets']) > 0"; then
-            echo "A valid street-name cache already exists in GitHub. Skipping street-name import."
-          else
-            echo "Street-name cache is missing or invalid. Building it from the saved OSM map."
-            python - <<'PY'
-          import json, os, time
-          src='maps/malate-map.json'
-          if not os.path.isfile(src): raise SystemExit('Map cache is missing; run the map download workflow first.')
-          data=json.load(open(src,encoding='utf-8'))
-          streets={}
+          python - <<'PY'
+          import json,time
+          data=json.load(open('maps/malate-map.json',encoding='utf-8')); streets={}
           for el in data.get('elements',[]):
-            tags=el.get('tags',{})
-            name=tags.get('name') or tags.get('name:en')
-            if not name or not tags.get('highway'): continue
+            tags=el.get('tags',{}); name=tags.get('name') or tags.get('name:en')
+            if not name or not tags.get('highway') or el.get('type')!='way': continue
             geom=el.get('geometry',[])
             if len(geom)<2: continue
-            key=(str(name).strip(),str(tags.get('highway','')),tuple((round(float(p['lat']),5),round(float(p['lon']),5)) for p in (geom[0],geom[-1])))
-            if key in streets: continue
+            key=(str(name).strip(),str(tags.get('highway','')),el.get('id'))
             mid=geom[len(geom)//2]
-            streets[key]={'name':str(name).strip(),'name_en':tags.get('name:en',str(name).strip()),'highway':tags.get('highway',''),'oneway':tags.get('oneway','no'),'surface':tags.get('surface',''),'coordinates':[{'lat':round(float(p['lat']),5),'lon':round(float(p['lon']),5)} for p in geom],'lat':round(float(mid['lat']),5),'lon':round(float(mid['lon']),5),'osm_way_id':el.get('id')}
+            streets[key]={'name':str(name).strip(),'name_en':tags.get('name:en',str(name).strip()),'highway':tags.get('highway',''),'oneway':tags.get('oneway','no'),'surface':tags.get('surface',''),'coordinates':geom,'lat':round(float(mid['lat']),6),'lon':round(float(mid['lon']),6),'osm_way_id':el.get('id')}
           result={'region':'Malate, Manila, Philippines','source':'© OpenStreetMap contributors','generated_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'streets':list(streets.values())}
-          if not result['streets']: raise SystemExit('No named OSM streets found in the saved map; refusing to write an empty cache.')
+          if not result['streets']: raise SystemExit('No named streets found; refusing to write empty cache.')
           json.dump(result,open('maps/malate-streets.json','w',encoding='utf-8'),ensure_ascii=False,separators=(',',':'))
-          print(f"Saved {len(result['streets'])} named street segments.")
+          print('Saved',len(result['streets']),'named street segments.')
           PY
-          fi
-      - name: Save named map and backup
+      - name: Save map backup and commit all datasets
         run: |
+          cp maps/malate-map.json buo_maps/malate-map.json
+          cp maps/malate-places.json buo_maps/malate-places.json
           git config user.name "github-actions[bot]"
           git config user.email "41898282+users.noreply.github.com"
-          cp maps/malate-map.json buo_maps/malate-map.json
-          printf '%s\n' '# Game maps' '' 'Playable map files are named by location, for example malate-map.json.' > maps/README.md
-          printf '%s\n' '# Map backups' '' 'Backup files use the same location-based filenames as maps/.' > buo_maps/README.md
-          git add -f maps/malate-map.json maps/malate-streets.json buo_maps/malate-map.json maps/README.md buo_maps/README.md
-          if git diff --cached --quiet -- maps/malate-map.json maps/malate-streets.json buo_maps/malate-map.json maps/README.md buo_maps/README.md; then
-            echo "Malate map and backup are unchanged."
-            exit 0
-          fi
-          git commit -m "Save Malate map and backup"
+          printf '%s\n' '# Game maps' '' 'OSM-derived Malate geometry and place markers. © OpenStreetMap contributors.' > maps/README.md
+          printf '%s\n' '# Map backups' '' 'Backups of the location datasets.' > buo_maps/README.md
+          git add -f maps/malate-map.json maps/malate-streets.json maps/malate-places.json buo_maps/malate-map.json buo_maps/malate-places.json maps/README.md buo_maps/README.md
+          git diff --cached --quiet && { echo "No map changes to commit."; exit 0; }
+          git commit -m "Import detailed Malate map, services and aviation markers"
           git push
