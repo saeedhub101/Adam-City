@@ -38,6 +38,7 @@ DSM is the surface (often including roofs and vegetation); DTM represents bare e
 ## Existing street-level image evidence
 
 Repository files:
+- `ermita/3d/facade-photo-review.csv` (246 candidates with blank visual-verification and reviewer-notes columns)
 - `kartaview/ermita-real-facade-images.csv`
 - `kartaview/ermita-real-facade-report.json`
 - `kartaview/ermita-street-imagery-metadata.csv`
