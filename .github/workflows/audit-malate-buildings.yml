@@ -47,7 +47,7 @@ jobs:
           parser.feed(Path("index.html").read_text(encoding="utf-8"))
           if not parser.scripts:
               raise SystemExit("No inline module script found in index.html")
-          Path("/tmp/adam-city-main.mjs").write_text("\\n".join(parser.scripts), encoding="utf-8")
+          Path("/tmp/adam-city-main.mjs").write_text(chr(10).join(parser.scripts), encoding="utf-8")
           PY
           node --check /tmp/adam-city-main.mjs
       - name: Audit saved building metadata
