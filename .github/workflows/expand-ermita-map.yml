@@ -100,7 +100,7 @@ jobs:
           # Write a small machine-readable quality summary alongside the data.
           from collections import Counter
           quality={'region':'Malate + Ermita, Manila, Philippines','source':'© OpenStreetMap contributors','generated_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'bbox':[14.548,120.958,14.603,121.012],'elements':len(elements),'road_ways':road_count,'building_ways':building_count,'named_road_ways':len(streets),'road_types':dict(Counter(e.get('tags',{}).get('highway') for e in elements if e.get('type')=='way' and e.get('tags',{}).get('highway'))),'geometry_categories_succeeded':successes,'validation':'passed'}
-          Path('maps/malate-geometry-quality.json').write_text(json.dumps(quality,indent=2,ensure_ascii=False)+'\\n',encoding='utf-8')
+          Path('maps/malate-geometry-quality.json').write_text(json.dumps(quality,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
           PY
       - name: Commit expanded map
         run: |
