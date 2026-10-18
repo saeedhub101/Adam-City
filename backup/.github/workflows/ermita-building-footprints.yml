@@ -54,6 +54,21 @@ jobs:
             echo "No report changes to commit."
           else
             git commit -m "Import clipped public building footprints for Ermita"
-            git pull --rebase origin main
+            git fetch origin main
+            if ! git rebase origin/main; then
+              # Resolve concurrent generated-file conflicts in favor of this fresh snapshot.
+              conflicts="$(git diff --name-only --diff-filter=U)"
+              if [ -n "$conflicts" ]; then
+                for conflict in $conflicts; do
+                  git checkout --theirs -- "$conflict"
+                  git add -- "$conflict"
+                done
+                GIT_EDITOR=true git rebase --continue
+              else
+                git rebase --abort
+                echo "::error::Rebase failed without resolvable file conflicts."
+                exit 1
+              fi
+            fi
             git push origin HEAD:main
           fi
