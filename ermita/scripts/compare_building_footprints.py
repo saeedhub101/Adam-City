@@ -101,6 +101,7 @@ def main():
         raise RuntimeError(f"Empty polygon layer: OSM={len(osm)}, Microsoft={len(ms)}")
 
     tree = STRtree([r["geometry"] for r in ms])
+    osm_tree = STRtree([r["geometry"] for r in osm])
     ms_matched = set()
     counts = Counter()
     OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -169,9 +170,8 @@ def main():
         for i, m in enumerate(ms):
             if i in ms_matched:
                 continue
-            candidates = tree.query(m["geometry"].buffer(NEAR_METERS))
             best_osm = None
-            for oi in STRtree([r["geometry"] for r in osm]).query(m["geometry"].buffer(NEAR_METERS)):
+            for oi in osm_tree.query(m["geometry"].buffer(NEAR_METERS)):
                 o = osm[int(oi)]
                 iou, containment, distance, intersection = score(o["geometry"], m["geometry"])
                 rank = (iou, containment, -distance)
