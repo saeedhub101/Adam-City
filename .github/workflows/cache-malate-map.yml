@@ -76,8 +76,10 @@ jobs:
           git config user.email "41898282+users.noreply.github.com"
           cp data/manila-osm.json maps/manila-map.json
           cp data/manila-osm.json buo_maps/manila-map.json
-          git add -f data/manila-osm.json maps/manila-map.json buo_maps/manila-map.json
-          if git diff --cached --quiet -- data/manila-osm.json maps/manila-map.json buo_maps/manila-map.json; then
+          printf '%s\n' '# Playable game maps' '' 'Named map files used by the game. Use descriptive names such as manila-map.json, makati-map.json, malate-map.json, and amman-map.json.' > maps/README.md
+          printf '%s\n' '# Map backups' '' 'Backup copies of named game maps. Keep the same filename as the playable map; before replacing a backup, optionally archive the old version with a date suffix.' > buo_maps/README.md
+          git add -f data/manila-osm.json maps/manila-map.json buo_maps/manila-map.json maps/README.md buo_maps/README.md
+          if git diff --cached --quiet -- data/manila-osm.json maps/manila-map.json buo_maps/manila-map.json maps/README.md buo_maps/README.md; then
             echo "Metro Manila map is unchanged."
             exit 0
           fi
