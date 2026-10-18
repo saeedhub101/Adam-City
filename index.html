@@ -94,8 +94,8 @@ function buildingProfile(tags,id,rawHeight,rawLevels){
 function makeTaggedFacade(tags,id,height,levels,perimeter){
  const profile=buildingProfile(tags,id,height,levels),detail=profile.detail;
  const palette=facadePalette[Number.isInteger(Number(detail.palette))?Math.abs(Number(detail.palette))%facadePalette.length:profile.idx];
- const wallColor=osmColour(detail.wall||tags['building:facade:colour']||tags['building:colour']||tags.colour,palette.wall);
- const trimColor=osmColour(detail.trim,tags['building:material']==='brick'?'#e0c4a8':palette.trim);
+ const tagged7Eleven=sevenElevenBuildingIds.has(String(id))||/7\\s*[-‐‑–—]?\\s*eleven|7eleven|7\\s*[- ]?\\s*11/i.test([tags.name,tags['name:en'],tags.brand,tags.operator,tags.shop].filter(Boolean).join(' '));\n const wallColor=tagged7Eleven?0x168447:osmColour(detail.wall||tags['building:facade:colour']||tags['building:colour']||tags.colour,palette.wall);
+ const trimColor=tagged7Eleven?0x08743a:osmColour(detail.trim,tags['building:material']==='brick'?'#e0c4a8':palette.trim);
  const glassColor=osmColour(detail.glass,palette.glass);
  const materialType=String(detail.material||tags['building:facade:material']||tags['building:material']||tags.material||'').toLowerCase();
  const labelText=[tags.name,tags['name:en'],tags.brand,tags.operator,tags.shop].filter(Boolean).join(' ');
@@ -181,7 +181,7 @@ function makeTaggedFacade(tags,id,height,levels,perimeter){
   g.fillStyle='#8e8d83';g.fillRect(0,938,512,86);
  }
  if(storefront){
-  g.fillStyle='#252f31';g.fillRect(0,0,512,groundH);
+  g.fillStyle=isSevenEleven?'#168447':'#252f31';g.fillRect(0,0,512,groundH);
   const label=String(isSevenEleven?'7-ELEVEN':(detail.sign||tags.brand||tags.name||tags['name:en']||tags.shop||'LOCAL SHOP')).toUpperCase().slice(0,30);
   if(isSevenEleven){const stripeH=Math.max(8,groundH*.07);g.fillStyle='#00843d';g.fillRect(0,4,512,stripeH);g.fillStyle='#f58220';g.fillRect(0,4+stripeH,512,stripeH);g.fillStyle='#ed1c24';g.fillRect(0,4+stripeH*2,512,stripeH);g.fillStyle='#fff';g.font='bold 36px Arial';g.textAlign='center';g.fillText(label,256,Math.min(68,groundH*.52))}
   else{g.fillStyle=hex(osmColour(detail.accent||palette.accent,palette.accent));g.fillRect(0,4,512,Math.max(24,groundH*.25));g.fillStyle='#fff3df';g.font='bold 23px Arial';g.textAlign='center';g.fillText(label,256,Math.max(27,groundH*.2))}
@@ -227,7 +227,7 @@ function addSignatureFacade(tags,id,pts,height){
  group.position.set(mid.x+nx*.24,0,mid.z+nz*.24);
  group.rotation.y=Math.atan2(-(edge.q.z-edge.p.z),edge.q.x-edge.p.x);
  const mat=(color,rough=.88)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:0});
- const stone=mat(0xb9a98d),stoneLight=mat(0xd5c8ad),stoneDark=mat(0x86765e),shadow=mat(0x342f29),glass=mat(0x35545a,.32),glassLight=mat(0x8ca7a5,.28),wood=mat(0x493326),green=mat(0x00843d,.48),orange=mat(0xf58220,.48),red=mat(0xed1c24,.48),white=mat(0xf2eee4),black=mat(0x202525);
+ const stone=mat(0xb9a98d),stoneLight=mat(0xd5c8ad),stoneDark=mat(0x86765e),shadow=mat(0x342f29),glass=mat(0x35545a,.32),glassLight=mat(0x8ca7a5,.28),wood=mat(0x493326),green=mat(0x168447,.48),orange=mat(0xf58220,.48),red=mat(0xed1c24,.48),white=mat(0xf2eee4),black=mat(0x202525);
  const addBox=(w,h,d,x,y,z,m)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;group.add(o);return o};
  const addArch=(x,y,r,tube,m)=>{const o=new THREE.Mesh(new THREE.TorusGeometry(r,tube,8,32,Math.PI),m);o.position.set(x,y,.19);o.rotation.z=Math.PI;group.add(o);return o};
  if(isChurch){
@@ -287,7 +287,7 @@ function addSignatureFacade(tags,id,pts,height){
   // A freestanding, walk-up convenience store facade with real depth, framed glazing and canopy.
   const w=width,h=panelH;
   addBox(w,h,.42,0,h/2,0,black);
-  addBox(w*.98,h*.91,.12,0,h*.455,.25,stoneLight);
+  addBox(w*.98,h*.91,.12,0,h*.455,.25,green);
   const bandY=h*.82,bandH=h*.065;
   addBox(w*1.01,bandH,.20,0,bandY,.34,green);
   addBox(w*1.012,bandH*.56,.21,0,bandY-bandH*.78,.35,orange);
