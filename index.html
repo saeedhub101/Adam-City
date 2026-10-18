@@ -85,19 +85,35 @@ function addRoad(el){
  }
 }
 async function loadRealCity(){
- const query='[out:json][timeout:25];(way(14.5688,120.9815,14.5758,120.9900)[building];way(14.5688,120.9815,14.5758,120.9900)[highway];);out body geom;';
- const endpoints=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter'];
+ const query='[out:json][timeout:20];(way(14.5688,120.9815,14.5758,120.9900)[building];way(14.5688,120.9815,14.5758,120.9900)[highway];);out body geom;';
+ // Public Overpass mirrors occasionally rate-limit or fail CORS; try several independent hosts and both request styles.
+ const endpoints=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://overpass.private.coffee/api/interpreter','https://overpass.nchc.org.tw/api/interpreter'];
  let data=null,lastError=null;
- for(const endpoint of endpoints){try{const res=await fetch(endpoint+'?data='+encodeURIComponent(query));if(!res.ok)throw new Error('Map service HTTP '+res.status);data=await res.json();if(data.elements?.length)break;}catch(e){lastError=e;}}
- if(!data?.elements?.length)throw lastError||new Error('No map features returned');
+ for(const endpoint of endpoints){
+  for(const method of ['GET','POST']){
+   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),14000);
+   try{
+    const options=method==='GET'
+      ?{signal:controller.signal,headers:{'Accept':'application/json'}}
+      :{method:'POST',signal:controller.signal,headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8','Accept':'application/json'},body:'data='+encodeURIComponent(query)};
+    const res=await fetch(method==='GET'?endpoint+'?data='+encodeURIComponent(query):endpoint,options);
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const candidate=await res.json();
+    if(Array.isArray(candidate.elements)&&candidate.elements.length){data=candidate;break;}
+    throw new Error('Map service returned no features');
+   }catch(e){lastError=e;console.warn('Map source failed:',endpoint,method,e.message||e);}
+   finally{clearTimeout(timer);}
+  }
+  if(data)break;
+ }
+ if(!data?.elements?.length)throw new Error('All live map sources failed. '+(lastError?.name==='AbortError'?'The map request timed out.':(lastError?.message||'No map features returned.')));
  const elements=data.elements;
  for(const el of elements){if(el.tags?.highway)addRoad(el);else if(el.tags?.building)addFootprint(el);}
- // Road markings follow real mapped carriageways, not a guessed endless street.
  player.position.set(0,0,8);yaw=0;
  mapStatus.remove();
  showToast('REAL MAP LOADED · '+elements.filter(e=>e.tags?.building).length+' mapped building footprints');
 }
-loadRealCity().catch(err=>{console.error('OpenStreetMap data load failed:',err);mapStatus.textContent='Could not load live map data. Check connection and reload.';mapStatus.style.background='#762f27ee';});
+loadRealCity().catch(err=>{console.error('OpenStreetMap data load failed:',err);mapStatus.textContent='Live map unavailable — '+(err?.message||'network error')+' Reload to retry.';mapStatus.style.maxWidth='min(90vw,560px)';mapStatus.style.textAlign='center';mapStatus.style.background='#762f27ee';});
 function tree(x,z){cylinder(scene,.14,.22,2.6,x,1.3,z,material(0x70513a),8);const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.25,1),material(0x477a58));crown.position.set(x,3.2,z);crown.scale.set(1,1.1,1);crown.castShadow=true;scene.add(crown)}
 for(let z=-3;z>-240;z-=20)for(const side of [-1,1])tree(side*7.4,z-4);
 function car(x,z,color,rotation=0){const g=new THREE.Group();box(g,1.8,.72,3.6,0,.62,0,material(color,.4));box(g,1.38,.65,1.75,0,1.25,-.18,material(0x76939b,.32));for(const xx of [-.78,.78])for(const zz of [-1.12,1.12]){const w=cylinder(g,.29,.29,.16,xx,.3,zz,material(0x202326),12);w.rotation.z=Math.PI/2}g.position.set(x,0,z);g.rotation.y=rotation;scene.add(g);return g}
