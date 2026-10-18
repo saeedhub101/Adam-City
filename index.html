@@ -63,6 +63,14 @@ for(const base of ['#d4c8b4','#c5c9c6','#d8d2c5','#bfc7c8','#d6c0a7','#c8c5bd'])
 // Cached, tag-aware Manila facade materials. Cache keys keep the large OSM city lightweight.
 let buildingDetails={};
 const facadeProfileCache=new Map();
+function osmColour(value,fallback){
+ if(typeof value!=='string'||!value.trim())return fallback;
+ const v=value.trim().toLowerCase();
+ const names={white:0xf2eee5,black:0x292c2b,grey:0xb7b7b0,gray:0xb7b7b0,beige:0xd7c7aa,brown:0x8a6248,red:0xa34d42,green:0x63826a,blue:0x668da5,yellow:0xd7bd69,orange:0xc9854d,cream:0xe8ddc9};
+ if(Object.prototype.hasOwnProperty.call(names,v))return names[v];
+ const hex=v.replace(/^#/,'');if(/^[0-9a-f]{6}$/.test(hex))return parseInt(hex,16);
+ return fallback;
+}
 const facadePalette=[
  {wall:'#d6c9b7',trim:'#f0e6d8',glass:'#6f929b',accent:'#a24c3d'},
  {wall:'#c9cfcb',trim:'#edf0e8',glass:'#668994',accent:'#315f6d'},
@@ -82,23 +90,29 @@ function buildingProfile(tags,id,rawHeight,rawLevels){
 function makeTaggedFacade(tags,id,height,levels,perimeter){
  const profile=buildingProfile(tags,id,height,levels),detail=profile.detail;
  const palette=facadePalette[Number.isInteger(Number(detail.palette))?Math.abs(Number(detail.palette))%facadePalette.length:profile.idx];
+ const wallColor=osmColour(detail.wall||tags['building:facade:colour']||tags['building:colour']||tags.colour,palette.wall);
+ const trimColor=osmColour(detail.trim,tags['building:material']==='brick'?'#e0c4a8':palette.trim);
+ const glassColor=osmColour(detail.glass,palette.glass);
+ const materialType=String(detail.material||tags['building:facade:material']||tags['building:material']||tags.material||'').toLowerCase();
  const storefront=['retail','commercial','shop','supermarket','restaurant','cafe','fast_food','bank'].some(k=>tags[k]!==undefined)||['retail','commercial','shop','supermarket'].includes(profile.type);
  const balcony=detail.balconies!==undefined?!!detail.balconies:((Math.abs(Number(id)||0)%5===0)||['apartments','residential','hotel'].includes(profile.type));
  const roofStyle=String(detail.roof||tags['roof:shape']||'flat');
- const key=[profile.type,profile.levels,profile.style,palette.wall,detail.wall||'',detail.trim||'',detail.glass||'',detail.accent||'',detail.sign||'',storefront,balcony,roofStyle,detail.facade||''].join('|');
+ const key=[profile.type,profile.levels,profile.style,wallColor,trimColor,glassColor,materialType,detail.accent||'',detail.sign||'',storefront,balcony,roofStyle,detail.facade||''].join('|');
  if(facadeProfileCache.has(key))return facadeProfileCache.get(key);
  const c=document.createElement('canvas');c.width=256;c.height=512;const g=c.getContext('2d');
- g.fillStyle=detail.wall||palette.wall;g.fillRect(0,0,256,512);
+ g.fillStyle='#'+wallColor.toString(16).padStart(6,'0');g.fillRect(0,0,256,512);
+ if(materialType.includes('brick')){g.strokeStyle='#8f7967';g.lineWidth=1;for(let row=0;row<24;row++){const y=row*22;g.beginPath();g.moveTo(0,y);g.lineTo(256,y);g.stroke();const offset=row%2?0:16;for(let x=offset;x<256;x+=32){g.beginPath();g.moveTo(x,y);g.lineTo(x,y+22);g.stroke();}}}
+ else if(materialType.includes('concrete')){g.fillStyle='#0000000b';for(let y=8;y<512;y+=29)g.fillRect(0,y,256,1);}
  const floors=Math.max(1,Math.min(20,profile.levels)),groundH=storefront?Math.min(70,Math.max(44,512/(floors+1))):Math.min(28,512/(floors+2));
  const upperH=(512-groundH)/floors,cols=profile.style==='lowrise'?3:(profile.levels>10?5:4),cw=256/cols;
  // Warm concrete/plaster panels and floor slabs are typical of the mixed-use street fabric.
  for(let r=0;r<floors;r++){
   const y=groundH+r*upperH;
-  g.fillStyle=detail.trim||palette.trim;g.fillRect(0,y,256,Math.max(2,upperH*.065));
+  g.fillStyle='#'+trimColor.toString(16).padStart(6,'0');g.fillRect(0,y,256,Math.max(2,upperH*.065));
   for(let col=0;col<cols;col++){
    const margin=Math.max(4,cw*.15),ww=cw-2*margin,wy=y+upperH*.17,wh=Math.max(5,upperH*.48);
    g.fillStyle='#5a5b57';g.fillRect(col*cw+margin-2,wy-2,ww+4,wh+4);
-   g.fillStyle=detail.glass||palette.glass;g.fillRect(col*cw+margin,wy,ww,wh);
+   g.fillStyle='#'+glassColor.toString(16).padStart(6,'0');g.fillRect(col*cw+margin,wy,ww,wh);
    g.fillStyle='#b9c6c4';g.fillRect(col*cw+margin+ww*.47,wy,Math.max(1,ww*.06),wh);
    if(balcony&&r%2===0){
     g.fillStyle='#c9c7bd';g.fillRect(col*cw+margin-3,wy+wh+2,ww+6,3);
@@ -129,7 +143,7 @@ function makeTaggedFacade(tags,id,height,levels,perimeter){
   g.fillStyle=palette.trim;g.fillRect(0,0,256,Math.max(4,groundH*.22));
  }
  // Parapet and roof-edge shadow help the silhouette read at street level.
- g.fillStyle=detail.trim||palette.trim;g.fillRect(0,0,256,5);
+ g.fillStyle='#'+trimColor.toString(16).padStart(6,'0');g.fillRect(0,0,256,5);
  const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
  tex.repeat.set(1,1);
@@ -149,14 +163,16 @@ function addFootprint(el){
  shape.closePath();
  const tags=el.tags||{},detail=buildingDetails[String(el.id)]||{},rawLevels=Number(detail.levels||tags['building:levels']||tags.levels||0);
  const levels=rawLevels||({house:2,detached:2,apartments:5,hotel:8,commercial:4,office:6,retail:2,school:3,university:5,hospital:6}[tags.building]||3);
- const height=Number(detail.height||tags.height)||Math.max(3.4,levels*3.15);
+ const taggedHeight=parseFloat(String(detail.height||tags.height||'').replace(/[^0-9.\-]/g,''));
+ const height=Number.isFinite(taggedHeight)&&taggedHeight>0?taggedHeight:Math.max(3.4,levels*3.15);
  const perimeter=pts.reduce((sum,p,i)=>i?sum+Math.hypot(p.x-pts[i-1].x,p.z-pts[i-1].z):sum,0);
  const facade=makeTaggedFacade(tags,el.id,height,levels,perimeter);
  const geom=new THREE.ExtrudeGeometry(shape,{depth:height,bevelEnabled:false});
  // Shape is drawn in map x/z; rotate its 2D plane upright into the world footprint.
  geom.rotateX(-Math.PI/2);
  // ExtrudeGeometry uses material 0 for caps and 1 for the vertical walls.
- const mesh=new THREE.Mesh(geom,[material(Number(detail.roofColor)||0x77766f),facade]);
+ const roofTagColour=detail.roofColor!==undefined?Number(detail.roofColor):osmColour(tags['roof:colour']||tags['building:roof:colour'],0x77766f);
+ const mesh=new THREE.Mesh(geom,[material(roofTagColour||0x77766f),facade]);
  mesh.position.y=0;mesh.castShadow=true;mesh.receiveShadow=true;realMapGroup.add(mesh);
  const roof=new THREE.Mesh(new THREE.ShapeGeometry(shape),material(0x77766f));
  roof.rotation.x=-Math.PI/2;roof.position.y=height+.015;realMapGroup.add(roof);
