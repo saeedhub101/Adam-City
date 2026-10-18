@@ -61,6 +61,7 @@ for(const base of ['#d4c8b4','#c5c9c6','#d8d2c5','#bfc7c8','#d6c0a7','#c8c5bd'])
 }
 
 // Cached, tag-aware Manila facade materials. Cache keys keep the large OSM city lightweight.
+let buildingDetails={};
 const facadeProfileCache=new Map();
 const facadePalette=[
  {wall:'#d6c9b7',trim:'#f0e6d8',glass:'#6f929b',accent:'#a24c3d'},
@@ -196,7 +197,7 @@ async function loadRealCity(){
  // Build road geometry first so collision and street-name lookup are available before buildings.
  for(const el of elements){const tags=el.tags||{};if(el.type==='way'&&['rail','light_rail','subway','tram'].includes(tags.railway))addRailway(el);if(el.type==='way'&&(tags.natural==='water'||tags.waterway==='riverbank'||tags.water==='lake'))addArea(el,waterPolygons,0x3d9db5);if(el.type==='way'&&tags.natural==='beach')addArea(el,beachPolygons,0xdcc58d);if(el.type==='way'&&tags.highway)addRoad(el);}
  // Optional verified per-building corrections live separately from imported OSM data.
- let buildingDetails={};
+ buildingDetails={};
  try{const detailsResponse=await fetch('./maps/malate-building-details.json',{cache:'no-cache'});if(detailsResponse.ok){const detailsData=await detailsResponse.json();if(detailsData&&detailsData.buildings&&typeof detailsData.buildings==='object')buildingDetails=detailsData.buildings;}}catch(err){console.warn('Building detail overrides unavailable; using OSM tags and procedural facade profiles.',err)}
  for(const el of elements)if(el.type==='way'&&(el.tags?.building||el.tags?.['building:part']))addFootprint(el);
  // Emergency and travel markers use clear letter/icon badges: H hospital, HOTEL, helicopter, and airport.
