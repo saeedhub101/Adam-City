@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export real mapped OSM road/path centerlines from the existing Ermita cache.
+"""Export real mapped OSM road/path centerlines from the existing Ermita cache (no synthetic geometry).
 
 No synthetic streets are created and no network request is made. Geometry is
 copied from OSM way node coordinates already stored in ermita-osm-raw.json.
