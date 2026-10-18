@@ -3,9 +3,9 @@
 <style>
 :root{color-scheme:dark}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#9bbdc9;color:#fff;font-family:Inter,system-ui,Arial,sans-serif}#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%;outline:none}.glass{background:linear-gradient(135deg,#101a20eF,#15252bd9);border:1px solid #ffffff35;box-shadow:0 12px 35px #0003;backdrop-filter:blur(12px)}#hud{position:fixed;inset:0;pointer-events:none;display:none}.brand{position:absolute;left:18px;top:18px;padding:13px 16px;border-radius:14px}.brand strong{display:block;font-size:13px;letter-spacing:.16em}.brand span{font-size:10px;color:#b9cbd0}.mission{position:absolute;top:18px;left:50%;transform:translateX(-50%);padding:12px 17px;border-radius:13px;min-width:250px;text-align:center}.map-search{position:absolute;left:18px;top:104px;display:flex;gap:6px;pointer-events:auto;padding:6px;border-radius:10px;max-width:min(340px,calc(100vw - 36px))}.map-search input{width:min(230px,48vw);min-width:120px;background:#071217cc;color:#fff;border:1px solid #ffffff45;border-radius:7px;padding:9px 10px;font:12px system-ui;outline:none}.map-search input:focus{border-color:#ead6ad}.map-search button{background:#ead6ad;color:#172126;border:0;border-radius:7px;padding:0 11px;font-weight:800;cursor:pointer}.street-label{position:absolute;left:50%;top:104px;transform:translateX(-50%);padding:8px 13px;border-radius:10px;text-align:center;min-width:190px;color:#fff;font-size:12px;font-weight:800;letter-spacing:.04em}.street-label small{display:block;font-size:9px;color:#e4c78e;letter-spacing:.14em;margin-bottom:3px}.mission small{color:#d6bd8d;letter-spacing:.15em;font-size:9px;font-weight:800}.mission b{display:block;font-size:14px;margin:4px}.progress{height:4px;background:#ffffff20;border-radius:9px;margin-top:8px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:#e8c98d;transition:width .2s}.stats{position:absolute;right:18px;top:18px;padding:12px 15px;border-radius:13px;text-align:right}.stats b{font-size:18px}.stats small{display:block;color:#b9cbd0;font-size:10px}.help{position:absolute;left:18px;bottom:18px;padding:10px 13px;border-radius:12px;color:#d5e0e2;font-size:11px;line-height:1.5}.help b{color:white}.crosshair{position:absolute;left:50%;top:50%;width:5px;height:5px;border-radius:50%;background:#fff9;box-shadow:0 0 0 3px #0002;transform:translate(-50%,-50%)}.toast{position:absolute;left:50%;bottom:95px;transform:translateX(-50%);padding:11px 16px;border-radius:11px;background:#101a20eF;font-size:12px;opacity:0;transition:opacity .25s;white-space:nowrap}.toast.show{opacity:1}.cover{position:fixed;z-index:5;inset:0;display:grid;place-items:center;padding:20px;background:linear-gradient(110deg,#0d171df2,#12232ad9 55%,#17282b99)}.panel{width:min(650px,100%);padding:clamp(23px,5vw,42px);border-radius:22px}.eyebrow{font-size:10px;letter-spacing:.22em;color:#e4c78e;font-weight:850}.cover h1{font-size:clamp(42px,8vw,76px);line-height:.92;letter-spacing:-.055em;margin:15px 0}.cover p{max-width:500px;color:#c4d2d6;line-height:1.7;font-size:14px}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:24px}.btn{pointer-events:auto;border:0;border-radius:10px;padding:14px 19px;font-weight:850;background:#ead6ad;color:#192126;cursor:pointer}.btn.secondary{background:#ffffff12;color:#fff;border:1px solid #ffffff35}.footnote{font-size:10px!important;color:#8fa6ad!important}.touch{display:none;position:fixed;z-index:3;bottom:18px;right:18px;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,44px);gap:5px}.touch button{background:#101a20c9;border:1px solid #ffffff55;color:white;border-radius:12px;font-size:20px;touch-action:none}.touch .up{grid-column:2}.touch .left{grid-column:1;grid-row:2}.touch .down{grid-column:2;grid-row:2}.touch .right{grid-column:3;grid-row:2}.hidden{display:none!important}@media(max-width:650px){.mission{top:90px;min-width:220px}.map-search{top:148px;left:10px}.map-search input{width:48vw}.stats{top:18px}.brand{top:18px}.help{left:10px;bottom:10px;max-width:180px;font-size:10px}.touch{display:grid;right:10px;bottom:10px}.cover h1{font-size:48px}.panel{padding:23px}}
 </style></head><body><div id="game"></div>
-<div id="hud"><div class="brand glass"><strong>ADAM CITY</strong><span>MALATE, MANILA · STREET STORIES</span></div><div class="mission glass"><small>YOUR FIRST WALK</small><b id="objective">Find the hotel corner</b><div class="progress"><i id="bar"></i></div></div><div class="map-search glass"><input id="mapSearchInput" type="search" placeholder="Find street, mall, café…" aria-label="Search streets and places"><button id="mapSearchButton" type="button">GO</button></div><div class="street-label glass" id="streetLabel"><small>CURRENT STREET</small><span id="streetName">Finding street…</span></div><div class="stats glass"><b id="score">0 / 4</b><small>LANDMARKS DISCOVERED</small></div><div class="help glass"><b>WASD / arrows</b> move · <b>Shift</b> sprint<br>Drag to look · Find the glowing markers</div><div class="crosshair"></div><div id="toast" class="toast"></div></div>
+<div id="hud"><div class="brand glass"><strong>ADAM CITY</strong><span>MALATE, MANILA · STREET STORIES</span></div><div class="mission glass"><small>YOUR FIRST WALK</small><b id="objective">Find the hotel corner</b><div class="progress"><i id="bar"></i></div></div><div class="map-search glass"><input id="mapSearchInput" type="search" placeholder="Find street, mall, café…" aria-label="Search streets and places"><button id="mapSearchButton" type="button">GO</button></div><div class="street-label glass" id="streetLabel"><small>CURRENT STREET</small><span id="streetName">Finding street…</span></div><div class="stats glass"><b id="score">0 / 4</b><small>LANDMARKS DISCOVERED</small></div><div class="help glass"><b>WASD / arrows</b> move faster · <b>Shift</b> run<br>Drag to look · Find the glowing markers</div><div class="crosshair"></div><div id="toast" class="toast"></div></div>
 <div class="touch" id="touch"><button class="up" data-key="w">↑</button><button class="left" data-key="a">←</button><button class="down" data-key="s">↓</button><button class="right" data-key="d">→</button></div>
-<div class="cover" id="cover"><div class="panel glass"><div class="eyebrow">A WALKABLE 3D CITY · CHAPTER 01</div><h1>Malate,<br>Manila.</h1><p>Explore a stylized street-level reconstruction inspired by the Mabini Street and Pedro Gil hotel district. Walk the block, discover four landmarks, and find the hidden street details.</p><div class="actions"><button class="btn" id="start">START EXPLORING ↗</button><button class="btn secondary" id="how">HOW TO PLAY</button></div><p id="hint" class="footnote">Keyboard: WASD / arrow keys · Shift to sprint · Drag the scene to look around. On mobile, use the on-screen pad.</p><p class="footnote">Buildings are original game models informed by public street references, not surveyed replicas.</p></div></div>
+<div class="cover" id="cover"><div class="panel glass"><div class="eyebrow">A WALKABLE 3D CITY · CHAPTER 01</div><h1>Malate,<br>Manila.</h1><p>Explore a stylized street-level reconstruction inspired by the Mabini Street and Pedro Gil hotel district. Walk the block, discover four landmarks, and find the hidden street details.</p><div class="actions"><button class="btn" id="start">START EXPLORING ↗</button><button class="btn secondary" id="how">HOW TO PLAY</button></div><p id="hint" class="footnote">Keyboard: WASD / arrow keys · Shift to run faster · Drag the scene to look around. On mobile, use the on-screen pad.</p><p class="footnote">Buildings are original game models informed by public street references, not surveyed replicas.</p></div></div>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
 const host=document.querySelector('#game'),cover=document.querySelector('#cover'),hud=document.querySelector('#hud'),statusText=document.querySelector('#objective'),scoreText=document.querySelector('#score'),bar=document.querySelector('#bar'),toast=document.querySelector('#toast');
@@ -95,60 +95,78 @@ function makeTaggedFacade(tags,id,height,levels,perimeter){
  const trimColor=osmColour(detail.trim,tags['building:material']==='brick'?'#e0c4a8':palette.trim);
  const glassColor=osmColour(detail.glass,palette.glass);
  const materialType=String(detail.material||tags['building:facade:material']||tags['building:material']||tags.material||'').toLowerCase();
- const isSevenEleven=sevenElevenBuildingIds.has(String(id))||/7\s*[-‐‑–—]?\s*eleven|7eleven|7\s*[- ]?\s*11/i.test([tags.name,tags['name:en'],tags.brand,tags['brand:en'],tags.operator,tags.official_name].filter(Boolean).join(' '));
+ const labelText=[tags.name,tags['name:en'],tags.brand,tags.operator,tags.shop].filter(Boolean).join(' ');
+ const isSevenEleven=sevenElevenBuildingIds.has(String(id))||/7\\s*[-‐‑–—]?\\s*eleven|7eleven|7\\s*[- ]?\\s*11/i.test(labelText);
  const storefront=isSevenEleven||['retail','commercial','shop','supermarket','restaurant','cafe','fast_food','bank'].some(k=>tags[k]!==undefined)||['retail','commercial','shop','supermarket'].includes(profile.type);
  const balcony=detail.balconies!==undefined?!!detail.balconies:((Math.abs(Number(id)||0)%5===0)||['apartments','residential','hotel'].includes(profile.type));
- const roofStyle=String(detail.roof||tags['roof:shape']||'flat');
- const key=[profile.type,profile.levels,profile.style,wallColor,trimColor,glassColor,materialType,detail.accent||'',detail.sign||'',storefront,isSevenEleven,balcony,roofStyle,detail.facade||''].join('|');
+ const key=[profile.type,profile.levels,profile.style,wallColor,trimColor,glassColor,materialType,detail.accent||'',detail.sign||'',storefront,isSevenEleven,balcony,detail.roof||tags['roof:shape']||'flat',detail.facade||''].join('|');
  if(facadeProfileCache.has(key))return facadeProfileCache.get(key);
- const c=document.createElement('canvas');c.width=256;c.height=512;const g=c.getContext('2d');
- g.fillStyle='#'+wallColor.toString(16).padStart(6,'0');g.fillRect(0,0,256,512);
- if(materialType.includes('brick')){g.strokeStyle='#8f7967';g.lineWidth=1;for(let row=0;row<24;row++){const y=row*22;g.beginPath();g.moveTo(0,y);g.lineTo(256,y);g.stroke();const offset=row%2?0:16;for(let x=offset;x<256;x+=32){g.beginPath();g.moveTo(x,y);g.lineTo(x,y+22);g.stroke();}}}
- else if(materialType.includes('concrete')){g.fillStyle='#0000000b';for(let y=8;y<512;y+=29)g.fillRect(0,y,256,1);}
- const floors=Math.max(1,Math.min(20,profile.levels)),groundH=storefront?Math.min(70,Math.max(44,512/(floors+1))):Math.min(28,512/(floors+2));
- const upperH=(512-groundH)/floors,cols=profile.style==='lowrise'?3:(profile.levels>10?5:4),cw=256/cols;
- // Warm concrete/plaster panels and floor slabs are typical of the mixed-use street fabric.
+ // High-resolution, varied facade atlas: plaster, slab shadows, recessed windows, balcony rails and shopfronts.
+ const c=document.createElement('canvas');c.width=512;c.height=1024;const g=c.getContext('2d');
+ const hex=v=>'#'+Number(v).toString(16).padStart(6,'0');
+ g.fillStyle=hex(wallColor);g.fillRect(0,0,512,1024);
+ const seed=Math.abs(Number(id)||7919);let randState=(seed%2147483646)+1;
+ const rand=()=>{randState=(randState*48271)%2147483647;return randState/2147483647};
+ if(materialType.includes('brick')){
+  for(let row=0;row<44;row++){const y=row*23;g.fillStyle=row%2?'#9d8976':'#b19b86';g.fillRect(0,y,512,1);const off=row%2?0:19;for(let x=off;x<512;x+=39){g.fillStyle='#8b7767';g.fillRect(x,y,1,23)}}
+ }else{
+  // Subtle weathering and concrete panel joints break the clean toy-like surfaces.
+  for(let n=0;n<190;n++){g.fillStyle=rand()>.5?'#ffffff0a':'#00000008';g.fillRect(rand()*512,rand()*1024,2+rand()*35,1+rand()*7)}
+  for(let x=rand()*35;x<512;x+=64+rand()*16){g.fillStyle='#00000009';g.fillRect(x,0,1,1024)}
+ }
+ const floors=Math.max(1,Math.min(24,profile.levels));
+ const groundH=storefront?Math.min(145,Math.max(86,1024/(floors+1))):Math.min(54,1024/(floors+2));
+ const upperH=(1024-groundH)/floors;
+ const cols=profile.style==='lowrise'?3:(profile.levels>10?6:4),cw=512/cols;
  for(let r=0;r<floors;r++){
   const y=groundH+r*upperH;
-  g.fillStyle='#'+trimColor.toString(16).padStart(6,'0');g.fillRect(0,y,256,Math.max(2,upperH*.065));
+  g.fillStyle=hex(trimColor);g.fillRect(0,y,512,Math.max(5,upperH*.075));
+  g.fillStyle='#00000012';g.fillRect(0,y+Math.max(5,upperH*.075),512,Math.max(2,upperH*.025));
   for(let col=0;col<cols;col++){
-   const margin=Math.max(4,cw*.15),ww=cw-2*margin,wy=y+upperH*.17,wh=Math.max(5,upperH*.48);
-   g.fillStyle='#5a5b57';g.fillRect(col*cw+margin-2,wy-2,ww+4,wh+4);
-   g.fillStyle='#'+glassColor.toString(16).padStart(6,'0');g.fillRect(col*cw+margin,wy,ww,wh);
-   g.fillStyle='#b9c6c4';g.fillRect(col*cw+margin+ww*.47,wy,Math.max(1,ww*.06),wh);
+   const margin=Math.max(8,cw*(.11+rand()*.045)),ww=cw-2*margin;
+   const winY=y+upperH*(.16+rand()*.06),wh=Math.max(12,upperH*(.43+rand()*.1)),x=col*cw+margin;
+   // Deep dark reveal, reflective blue-green glass and asymmetric highlights.
+   g.fillStyle='#77766e';g.fillRect(x-5,winY-5,ww+10,wh+10);
+   g.fillStyle='#343c3d';g.fillRect(x-2,winY-2,ww+4,wh+4);
+   g.fillStyle=hex(glassColor);g.fillRect(x,winY,ww,wh);
+   g.fillStyle='#d5ded8';g.globalAlpha=.55;g.fillRect(x+ww*.14,winY+2,Math.max(2,ww*.08),wh-4);g.globalAlpha=1;
+   g.fillStyle='#263b42';g.fillRect(x+ww*.5,winY,Math.max(2,ww*.035),wh);
+   if(rand()>.48){g.fillStyle='#d2c8b6';g.fillRect(x-5,winY+wh+3,ww+10,5)}
    if(balcony&&r%2===0){
-    g.fillStyle='#c9c7bd';g.fillRect(col*cw+margin-3,wy+wh+2,ww+6,3);
-    g.fillStyle='#8b9693';g.fillRect(col*cw+margin-2,wy+wh+5,ww+4,2);
-    for(let rail=0;rail<4;rail++){g.fillRect(col*cw+margin+rail*ww/3,wy+wh+3,1,7)}
+    const by=winY+wh+5;g.fillStyle='#a9a69b';g.fillRect(x-7,by,ww+14,4);
+    g.fillStyle='#626e6d';g.fillRect(x-7,by+4,ww+14,3);
+    for(let rail=0;rail<=Math.max(3,Math.floor(ww/13));rail++){const rx=x-7+rail*(ww+14)/Math.max(3,Math.floor(ww/13));g.fillStyle='#d4d1c7';g.fillRect(rx,by+3,1,Math.min(17,upperH*.12))}
    }
-   // Occasional compact window AC units, rather than perfectly uniform glass grids.
-   if((Math.abs(Number(id)||0)+r*7+col*3)%6===0){
-    g.fillStyle='#e6e0d4';g.fillRect(col*cw+margin+ww*.22,wy+wh+3,ww*.55,5);
-    g.fillStyle='#818987';g.fillRect(col*cw+margin+ww*.28,wy+wh+4,ww*.43,3);
+   if((seed+r*7+col*3)%4===0){
+    const ay=winY+wh+7;g.fillStyle='#d9d5ca';g.fillRect(x+ww*.2,ay,ww*.62,Math.max(7,upperH*.075));
+    g.fillStyle='#777e7b';g.fillRect(x+ww*.25,ay+2,ww*.52,Math.max(3,upperH*.045));
+    g.fillStyle='#353f41';for(let sl=0;sl<4;sl++)g.fillRect(x+ww*.3+sl*ww*.11,ay+3,1,Math.max(2,upperH*.025));
    }
   }
  }
  if(storefront){
-  g.fillStyle='#313a3b';g.fillRect(0,0,256,groundH);
-  const label=String(isSevenEleven?'7-ELEVEN':(detail.sign||tags.brand||tags.name||tags['name:en']||'LOCAL SHOP')).toUpperCase().slice(0,25);
-  if(isSevenEleven){const stripeH=Math.max(5,groundH*.09);g.fillStyle='#00843d';g.fillRect(0,3,256,stripeH);g.fillStyle='#f58220';g.fillRect(0,3+stripeH,256,stripeH);g.fillStyle='#ed1c24';g.fillRect(0,3+stripeH*2,256,stripeH);g.fillStyle='#ffffff';g.font='bold 18px Arial';g.textAlign='center';g.fillText(label,128,Math.min(42,groundH*.55));}
-  else{g.fillStyle=detail.accent||palette.accent;g.fillRect(0,3,256,Math.max(12,groundH*.27));g.fillStyle='#f7edda';g.font='bold 11px Arial';g.textAlign='center';g.fillText(label,128,Math.max(14,groundH*.21));}
-  const bays=3;
+  g.fillStyle='#252f31';g.fillRect(0,0,512,groundH);
+  const label=String(isSevenEleven?'7-ELEVEN':(detail.sign||tags.brand||tags.name||tags['name:en']||tags.shop||'LOCAL SHOP')).toUpperCase().slice(0,30);
+  if(isSevenEleven){const stripeH=Math.max(8,groundH*.07);g.fillStyle='#00843d';g.fillRect(0,4,512,stripeH);g.fillStyle='#f58220';g.fillRect(0,4+stripeH,512,stripeH);g.fillStyle='#ed1c24';g.fillRect(0,4+stripeH*2,512,stripeH);g.fillStyle='#fff';g.font='bold 36px Arial';g.textAlign='center';g.fillText(label,256,Math.min(68,groundH*.52))}
+  else{g.fillStyle=hex(osmColour(detail.accent||palette.accent,palette.accent));g.fillRect(0,4,512,Math.max(24,groundH*.25));g.fillStyle='#fff3df';g.font='bold 23px Arial';g.textAlign='center';g.fillText(label,256,Math.max(27,groundH*.2))}
+  const bays=4,bw=512/bays;
   for(let b=0;b<bays;b++){
-   const x=b*256/bays+5,bw=256/bays-10,yy=groundH*.34,bh=groundH*.59;
-   g.fillStyle='#243b42';g.fillRect(x,yy,bw,bh);
-   g.fillStyle='#89aeb5';g.fillRect(x+3,yy+3,bw-6,bh*.55);
-   g.fillStyle='#c2b7a4';g.fillRect(x,yy+bh-5,bw,5);
+   const x=b*bw+8,ww=bw-16,yy=groundH*.34,bh=groundH*.58;
+   g.fillStyle='#131d20';g.fillRect(x-3,yy-3,ww+6,bh+6);
+   g.fillStyle=b%3===0?'#759ba4':'#41626a';g.fillRect(x,yy,ww,bh);
+   g.fillStyle='#b8d0d0';g.fillRect(x+ww*.12,yy+4,ww*.13,bh-8);
+   g.fillStyle='#283c40';g.fillRect(x+ww*.51,yy,3,bh);
+   g.fillStyle='#d2c8b6';g.fillRect(x,yy+bh-7,ww,7);
   }
- } else {
-  g.fillStyle=palette.trim;g.fillRect(0,0,256,Math.max(4,groundH*.22));
+  // A projecting canopy gives shops a street-level shadow line.
+  g.fillStyle='#d0c4ad';g.fillRect(0,groundH-7,512,7);
+ }else{
+  g.fillStyle=hex(trimColor);g.fillRect(0,0,512,Math.max(7,groundH*.2));
  }
- // Parapet and roof-edge shadow help the silhouette read at street level.
- g.fillStyle='#'+trimColor.toString(16).padStart(6,'0');g.fillRect(0,0,256,5);
- const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
- tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
- tex.repeat.set(1,1);
- const mat=new THREE.MeshStandardMaterial({map:tex,roughness:.91,metalness:.01});
+ // Roof parapet, drainage streaks and subtle weathering.
+ g.fillStyle=hex(trimColor);g.fillRect(0,0,512,8);g.fillStyle='#00000010';g.fillRect(0,8,512,3);
+ const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
+ const mat=new THREE.MeshStandardMaterial({map:tex,roughness:.92,metalness:.015});
  facadeProfileCache.set(key,mat);return mat;
 }
 
@@ -175,8 +193,21 @@ function addFootprint(el){
  const roofTagColour=detail.roofColor!==undefined?Number(detail.roofColor):osmColour(tags['roof:colour']||tags['building:roof:colour'],0x77766f);
  const mesh=new THREE.Mesh(geom,[material(roofTagColour||0x77766f),facade]);
  mesh.position.y=0;mesh.castShadow=true;mesh.receiveShadow=true;realMapGroup.add(mesh);
- const roof=new THREE.Mesh(new THREE.ShapeGeometry(shape),material(0x77766f));
+ const roof=new THREE.Mesh(new THREE.ShapeGeometry(shape),material(osmColour(tags['roof:colour']||tags['building:roof:colour'],0x77766f)));
  roof.rotation.x=-Math.PI/2;roof.position.y=height+.015;realMapGroup.add(roof);
+ // Small rooftop utility rooms, water tanks and ventilation boxes add believable Manila rooflines.
+ const roofCenter=pts.reduce((a,p)=>({x:a.x+p.x/pts.length,z:a.z+p.z/pts.length}),{x:0,z:0});
+ const spanX=Math.max(...pts.map(p=>p.x))-Math.min(...pts.map(p=>p.x)),spanZ=Math.max(...pts.map(p=>p.z))-Math.min(...pts.map(p=>p.z));
+ const roofMat=material(materialType==='metal'?0x7b8583:0x99978d),roofH=Math.max(0.55,Math.min(1.8,height*.07));
+ if(spanX>4&&spanZ>4&&height>7){
+  const utilityW=Math.min(spanX*.28,Math.max(1.2,spanX*.22)),utilityD=Math.min(spanZ*.28,Math.max(1.2,spanZ*.22));
+  const utility=box(realMapGroup,utilityW,roofH,utilityD,roofCenter.x,height+roofH/2,roofCenter.z,roofMat);
+  utility.rotation.y=(Number(el.id)%7)*.08;
+  if((Number(el.id)||0)%3===0){
+   const tank=cylinder(realMapGroup,Math.min(0.65,spanX*.08),Math.min(0.65,spanX*.08),Math.max(.8,Math.min(1.7,height*.08)),roofCenter.x+utilityW*.65,height+1,roofCenter.z,material(0x9ca6a1),12);
+   tank.position.y=height+Math.max(.8,Math.min(1.7,height*.08))/2;
+  }
+ }
  if(tags.name||tags['name:en']){
   const c=document.createElement('canvas');c.width=512;c.height=96;const g=c.getContext('2d');
   g.fillStyle='#142126';g.fillRect(0,0,512,96);g.fillStyle='#f4e5c4';g.font='bold 28px Arial';g.textAlign='center';
@@ -280,7 +311,7 @@ const markers=[];const markerInfo=[['Riviera Mansion Hotel',14,-8],['Metropolita
 for(const [name,x,z] of markerInfo){const g=new THREE.Group();g.position.set(x>0?6.5:-6.5,0,z);scene.add(g);const ring=new THREE.Mesh(new THREE.TorusGeometry(.75,.07,8,28),material(0xf1ca79,.35));ring.rotation.x=Math.PI/2;ring.position.y=.08;g.add(ring);const orb=new THREE.Mesh(new THREE.OctahedronGeometry(.42),new THREE.MeshStandardMaterial({color:0xffd27c,emissive:0x7b4a10,emissiveIntensity:1.5,roughness:.3}));orb.position.y=1.45;g.add(orb);const beam=new THREE.Mesh(new THREE.CylinderGeometry(.025,.22,1.2,10,1,true),new THREE.MeshBasicMaterial({color:0xf2cb80,transparent:true,opacity:.18,side:THREE.DoubleSide}));beam.position.y=.8;g.add(beam);markers.push({name,g,orb,found:false})}
 function showToast(t){toast.textContent=t;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2500)}
 let previous=performance.now();function animate(now){requestAnimationFrame(animate);if(namedStreets.length){let near=null,nd=Infinity;for(const s of namedStreets){for(const p of (s.coordinates||[{lat:s.lat,lon:s.lon}])){const q=project(p.lat,p.lon),d=segmentDistance(player.position.x,player.position.z,q,q);if(d<nd){nd=d;near=s}}}streetNameNode.textContent=near&&nd<45?near.name:'Unnamed street';}const dt=Math.min((now-previous)/1000,.04);previous=now;const forward=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0),strafe=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),moving=forward!==0||strafe!==0;
-if(started&&moving){const speed=(keys.shift?6.2:3.5)*dt,fw=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw)),rt=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));const dx=fw.x*forward*speed+rt.x*strafe*speed,dz=fw.z*forward*speed+rt.z*strafe*speed;const nx=THREE.MathUtils.clamp(player.position.x+dx,-145,145),nz=THREE.MathUtils.clamp(player.position.z+dz,-225,225);if(!blockedAt(nx,nz)){player.position.x=nx;player.position.z=nz}else{if(!blockedAt(nx,player.position.z))player.position.x=nx;if(!blockedAt(player.position.x,nz))player.position.z=nz}player.rotation.y=yaw;phase+=dt*(keys.shift?12:8)}
+if(started&&moving){const speed=(keys.shift?11.5:6.2)*dt,fw=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw)),rt=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));const moveLen=Math.hypot(forward,strafe)||1,dx=(fw.x*forward+rt.x*strafe)/moveLen*speed,dz=(fw.z*forward+rt.z*strafe)/moveLen*speed;const nx=THREE.MathUtils.clamp(player.position.x+dx,-145,145),nz=THREE.MathUtils.clamp(player.position.z+dz,-225,225);if(!blockedAt(nx,nz)){player.position.x=nx;player.position.z=nz}else{if(!blockedAt(nx,player.position.z))player.position.x=nx;if(!blockedAt(player.position.x,nz))player.position.z=nz}player.rotation.y=yaw;phase+=dt*(keys.shift?12:8)}
 for(const l of legs){const sw=moving&&started?Math.sin(phase+(l.side===1?Math.PI:0))*.62:0;l.mesh.rotation.x=sw;l.foot.rotation.x=sw*.7;l.mesh.position.y=.62+(moving&&started?Math.max(0,sw)*.06:0)}for(const a of arms)a.mesh.rotation.x=moving&&started?-Math.sin(phase+(a.side===1?Math.PI:0))*.45:0;torso.position.y=1.48+(moving&&started?Math.abs(Math.sin(phase*2))*.025:0);
 for(const m of markers){m.orb.rotation.y+=dt*1.3;m.orb.position.y=1.45+Math.sin(now*.002+m.g.position.z)*.13;if(started&&!m.found&&player.position.distanceTo(m.g.position)<2.4){m.found=true;score++;scoreText.textContent=score+' / 4';bar.style.width=(score/4*100)+'%';m.g.visible=false;showToast('LANDMARK FOUND · '+m.name);statusText.textContent=score===4?'All landmarks discovered!':'Find the next glowing landmark';if(score===4)showToast('BLOCK COMPLETE · You explored the hotel district!')}}updateCamera();renderer.render(scene,camera)}
 requestAnimationFrame(animate);
