@@ -1,0 +1,32 @@
+{
+  "status": "success",
+  "created_by": "ermita/scripts/compare_building_footprints.py",
+  "osm_source": "ermita/maps/generated/ermita-building-footprints.geojson",
+  "microsoft_source": "ermita/maps/external/ermita-microsoft-building-footprints.geojsonl.gz",
+  "output_csv": "ermita/maps/qa/building-footprint-comparison.csv",
+  "project_crs": "EPSG:32651",
+  "near_candidate_threshold_m": 8.0,
+  "osm_polygon_count": 1528,
+  "microsoft_polygon_count": 12132,
+  "osm_to_best_counterpart_classification_counts": {
+    "strong_match_iou_ge_0.50": 109,
+    "partial_or_conflicting_overlap": 956,
+    "nearby_no_material_overlap": 419,
+    "osm_only": 44
+  },
+  "microsoft_candidate_classification_counts": {
+    "microsoft_only_candidate": 11496,
+    "microsoft_unselected_overlap_candidate": 40,
+    "microsoft_near_osm_candidate": 87
+  },
+  "total_output_rows": 13151,
+  "limitations": [
+    "OSM source export contains points and other features; only polygon/multipolygon features tagged building or building:part are compared.",
+    "Microsoft source imagery vintage is 2016\u20132020; OSM edit dates vary and may be newer.",
+    "The AOI is a rectangle and can include neighboring areas.",
+    "IoU and distance are screening metrics, not survey accuracy or ground truth.",
+    "A Microsoft-only candidate is not automatically a missing or valid building.",
+    "Best-counterpart matching is not one-to-one: inspect conflicts and overlapping building parts manually.",
+    "Original OSM and Microsoft files are not modified or merged."
+  ]
+}
