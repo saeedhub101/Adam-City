@@ -1,0 +1,34 @@
+name: Audit mapped building height evidence
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "ermita/scripts/audit_building_height_evidence.py"
+      - "ermita/maps/generated/ermita-building-footprints.geojson"
+      - ".github/workflows/ermita-building-height-audit.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Audit source-tagged height evidence
+        run: python ermita/scripts/audit_building_height_evidence.py
+      - name: Commit audit outputs
+        run: |
+          if git diff --quiet -- ermita/maps/qa/building-height-evidence.csv ermita/maps/qa/building-height-evidence-report.json; then
+            echo "No audit changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ermita/maps/qa/building-height-evidence.csv ermita/maps/qa/building-height-evidence-report.json
+          git commit -m "Refresh building height evidence audit"
+          git push
