@@ -24,9 +24,9 @@ for(let z=8;z>-190;z-=8){const dash=new THREE.Mesh(new THREE.BoxGeometry(.12,.02
 // Small photo-based facade textures, applied to actual 3D building faces.
 // Direct static photo URLs; avoid Wikimedia HTML redirects in WebGL texture loading.
 const photoFiles=[
-'https://upload.wikimedia.org/wikipedia/commons/a/a7/09938jfMabini_Street_Remedios_Street_Bike_Lanes_Buildings_Malate_Manilafvf_04.jpg',
-'https://upload.wikimedia.org/wikipedia/commons/a/a7/09938jfMabini_Street_Remedios_Street_Bike_Lanes_Buildings_Malate_Manilafvf_04.jpg',
-'https://upload.wikimedia.org/wikipedia/commons/a/a7/09938jfMabini_Street_Remedios_Street_Bike_Lanes_Buildings_Malate_Manilafvf_04.jpg'
+'https://commons.wikimedia.org/wiki/Special:FilePath/09938jfMabini_Street_Remedios_Street_Bike_Lanes_Buildings_Malate_Manilafvf_04.jpg?width=1280',
+'https://commons.wikimedia.org/wiki/Special:FilePath/09938jfMabini_Street_Remedios_Street_Bike_Lanes_Buildings_Malate_Manilafvf_04.jpg?width=1280',
+'https://commons.wikimedia.org/wiki/Special:FilePath/09938jfMabini_Street_Remedios_Street_Bike_Lanes_Buildings_Malate_Manilafvf_04.jpg?width=1280'
 ]
 const loader=new THREE.TextureLoader();loader.setCrossOrigin('anonymous');
 let photoLoaded=0,photoFailed=0;
