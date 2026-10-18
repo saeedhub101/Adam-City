@@ -56,7 +56,7 @@ jobs:
           await page.waitForTimeout(10000);
           await page.screenshot({path:'game-screenshot.png'});
           console.log('Page title:',await page.title());
-          console.log('Photo texture status:',await page.locator('#status').textContent().catch(()=>await page.locator('#status-text').textContent().catch(()=> 'status element missing')));
+          console.log('Photo texture status:',await page.locator('#status, #status-text').first().textContent().catch(()=> 'status element missing'));
           console.log('Page errors:',JSON.stringify(errors.slice(0,30)));
           await browser.close();
           EOF
