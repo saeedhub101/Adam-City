@@ -1,0 +1,69 @@
+name: Restore Ermita building footprints from saved artifact
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/ermita-restore-building-footprints.yml"
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: ermita-building-footprints
+  cancel-in-progress: false
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Download the already-created building footprint artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ermita-microsoft-building-footprints
+          repository: saeedhub101/Adam-City
+          run-id: 39143956874
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: restored-artifact
+      - name: Put artifact files into the repository and push to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEST="ermita/maps/external"
+          mkdir -p "$DEST"
+          DATA="$(find restored-artifact -type f -name 'ermita-microsoft-building-footprints.geojsonl.gz' -print -quit)"
+          REPORT="$(find restored-artifact -type f -name 'microsoft-building-footprints-import-report.json' -print -quit || true)"
+          test -n "$DATA"
+          cp "$DATA" "$DEST/ermita-microsoft-building-footprints.geojsonl.gz"
+          if [ -n "$REPORT" ]; then cp "$REPORT" "$DEST/microsoft-building-footprints-import-report.json"; fi
+          ls -lh "$DEST/ermita-microsoft-building-footprints.geojsonl.gz"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$DEST/ermita-microsoft-building-footprints.geojsonl.gz"
+          if [ -f "$DEST/microsoft-building-footprints-import-report.json" ]; then git add "$DEST/microsoft-building-footprints-import-report.json"; fi
+          if git diff --cached --quiet; then
+            echo "Artifact contents already match main."
+            exit 0
+          fi
+          git commit -m "Restore Ermita building footprints from saved workflow artifact"
+          git fetch origin main
+          if ! git rebase origin/main; then
+            conflicts="$(git diff --name-only --diff-filter=U)"
+            if [ -n "$conflicts" ]; then
+              for conflict in $conflicts; do
+                git checkout --theirs -- "$conflict"
+                git add -- "$conflict"
+              done
+              GIT_EDITOR=true git rebase --continue
+            else
+              git rebase --abort
+              exit 1
+            fi
+          fi
+          git push origin HEAD:main
