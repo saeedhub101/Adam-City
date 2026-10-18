@@ -1,31 +1,78 @@
 # Ermita building-data source investigation
 
-Checked: 2026-10-18. Area of interest: Ermita / Rizal Park, Manila (approx. 120.965–121.005 E, 14.560–14.605 N).
+**Last checked:** 2026-10-18  
+**Area of interest:** Ermita / Rizal Park, Manila (approx. 120.965–121.005 E, 14.560–14.605 N). These bounds are an initial search window, not a validated clipping polygon.
 
-## Results
+## Executive result
 
-| Source | What it may provide | Can we download automatically now? | Status / next action |
+The repository already contains a street-imagery index and local KartaView image files. The latest repository audit reports **740 unique API photos discovered, 246 photos matched to candidate buildings, and 238 images downloaded/stored**. That is not the same as 238 visually verified facade matches. The existing CSV stores camera-heading and position fields, but an image close to a footprint may face away from it or show another building. The KartaView image layer must remain out of the live map unless explicitly re-enabled; existing data can still be reviewed offline as evidence. KartaView terms identify imagery as CC BY-SA 4.0 and require the attribution **© Grab and KartaView Contributors**.
+
+No source checked so far proves a single government package exists that contains every Ermita building's exact facade, windows, doors, signs, roof shape, and measured height. Access differs by source and by individual layer.
+
+## Findings by source
+
+| Source | Relevant output | Current access finding | Action/status |
 |---|---|---|---|
-| NAMRIA / Geoportal Philippines — https://geoportal.gov.ph/ | Official GIS layers; some may include building footprints, imagery, or reference features | Not confirmed for a specific Ermita building layer. The portal's layer inventory and layer-specific terms must be checked; a viewer is not a downloadable dataset. | No file downloaded. Identify exact Manila building/imagery layers and verify access and redistribution terms. |
-| LiPAD / Phil-LiDAR — https://lipad.dream.upd.edu.ph/ | DSM/DTM, selected orthophotos and classified LiDAR LAZ; potentially useful for roof forms and building heights | Not fully: the official guide says data access requires registration and administrator approval; selected layers also require owner permission/EULA. | Blocked pending an approved account/request. Submit a data request for Manila/Ermita and specify orthophotos, DSM, and classified LAZ. |
-| Manila City Government / building-permit and planning records — https://www.foi.gov.ph/ | Potential building plans, floor plans, elevations, façade drawings, addresses and official building names | No public bulk download found/verified. Likely a records request per office or dataset. | No file downloaded. Request public GIS building footprints and, where releasable, architectural elevations/façade records for Rizal Park and surrounding Ermita blocks. |
-| National Museum of the Philippines — https://www.nationalmuseum.gov.ph/ | Heritage-building documentation, photographs, and selected architectural records | No citywide downloadable building model verified. Collection-specific material may be available online or by request. | No bulk file downloaded. Use for named heritage buildings and document item-level rights. |
-| NAMRIA downloads — https://namria.gov.ph/downloads.aspx | Published topographic maps and selected mapping products | Public map downloads exist, but these are not equivalent to a detailed building/façade database. | No suitable detailed Ermita building dataset found in the download catalogue. |
-| Microsoft Open Buildings Philippines (supplemental, NOT a Philippine government source) — https://github.com/microsoft/IdMyPhBuildingFootprints | National-scale building footprint polygons extracted from imagery (2016–2020) | Public download exists, but the Philippines archive is about 1.1 GB compressed and requires a separate area-clipping pipeline. | Not downloaded into this repository yet. Useful fallback for footprint comparison, not façades/windows/logos. ODbL terms apply. |
-| Thinking Machines Open Buildings — https://github.com/thinkingmachines/ph-open-buildings | Manually traced footprints and roof/building attributes in selected Philippine city tiles | Public dataset, but its documented city coverage does not include Manila/Ermita. | Not a viable direct coverage source for this project unless new tiles are added. |
+| Geoportal Philippines | Government GIS layers, potentially imagery, footprints, reference layers | The official viewer and 3D app are online. A viewer or map tile is not proof that the underlying layer can be bulk-downloaded or redistributed. GeoServer exposes published map services, but a suitable Ermita building/DSM layer and its terms have not yet been verified. | Search the layer catalogue; record exact layer name, owner, metadata, service/download URL, spatial coverage, resolution, update date, and licence before using it. No new dataset downloaded. |
+| NAMRIA | LiDAR DSM/DTM, LiDAR orthophoto, IfSAR DSM/DTM/ORI, topographic products | NAMRIA publishes a product and ordering process for specialized elevation and orthophoto products. Current availability, fee schedule, AOI coverage, resolution, vertical datum, source date, and republication terms must be confirmed directly. | Send an AOI-specific request/quote; prioritize LiDAR DSM + DTM + orthophoto, then IfSAR if LiDAR is unavailable. No product purchased/downloaded. |
+| LiPAD / Phil-LiDAR | DEM/DTM, orthophotos, classified LAZ, resource/flood maps | The official portal states it is under maintenance and requests should use its manual requester-registration and data-request forms. Requests may require a formal letter, AOI shapefile, and additional documents; approval is not automatic. | Request Manila/Ermita coverage and permission for intended project use. No account approval or data delivery confirmed. |
+| OpenDronePH / PhilSA | Drone photos, orthomosaics and derivatives | Open-access repository, but users and donors must register; the original donor may impose restrictions. Uses must acknowledge the donor and OpenDronePH. Ermita coverage is unconfirmed. | Register and search for relevant Manila imagery; check donor-level terms before copying any files into GitHub. |
+| PHL-Microsat | Satellite imagery and derivative products | The data portal has a Terms and Conditions of Use Agreement; access must not be treated as unrestricted redistribution. | Consider only imagery with adequate spatial resolution and suitable dates; inspect the TCUA and product-specific terms first. |
+| KartaView | Street photos, image position, camera heading and sequences | Repository has an existing metadata index and 238 image files reported as downloaded. Terms state CC BY-SA 4.0 with attribution. | Keep the imagery out of the active map renderer as requested. Use existing indexed images as candidate references, and require visual human review before assigning a photo to a building. Do not re-download existing IDs. |
+| Manila City Government / eFOI | Building footprints, address records, plans/elevations and public-building records | No verified citywide public bulk package found. Individual records or GIS layers may require a formal request and may have release restrictions. | Request public/releasable GIS data and facade/elevation drawings for named public or heritage buildings. |
+| National Museum of the Philippines | Selected heritage photographs and architectural records | No citywide 3D package verified; rights vary by collection item. | Investigate named landmarks and record item-specific reuse permissions. |
 
-## Important limits
+## What counts as a useful height/roof dataset
 
-- **No new government geospatial data files were downloaded in this investigation.** The relevant government sources do not expose a verified, openly downloadable Ermita package containing all required layers; LiPAD specifically requires an approved account for the relevant datasets.
-- A DSM/orthophoto can help infer roof shape and building height, but does not itself supply detailed façade geometry, windows, signs, or logos.
-- Façades, windows, logos, and building numbers will likely require licensed street-level photos, official architectural drawings, or a documented photogrammetry/modeling workflow. Do not scrape Google Maps/Street View or redistribute imagery without permission.
-- Do not commit a nationwide 1.1 GB archive to this repository. If the supplemental Microsoft dataset is pursued, download it in a workflow, clip to the Ermita bounding box, validate it, and only store the small clipped derivative with attribution/licence notes.
-- Coordinates are approximate and should be replaced by the project's authoritative AOI polygon before clipping datasets.
+Ask the provider for all of the following, not just the phrase “3D map”:
 
-## Request checklist
+- DSM and DTM raster, preferably GeoTIFF; native pixel size and horizontal/vertical CRS and datum.
+- Acquisition date and sensor/platform; processing method and accuracy/quality report.
+- LiDAR classified point cloud (LAZ/LAS) if available, including classification definitions and point density.
+- Orthophoto/orthomosaic covering the AOI, its ground sampling distance, and its license.
+- Building/roof vector layers, if supplied, and whether heights are measured, derived from DSM-minus-DTM, or merely inferred.
+- Terms covering local storage, derivative 3D models, public display, and redistribution through GitHub/Pages.
 
-1. Ask LiPAD for approved access covering the Ermita/Rizal Park AOI: orthophotos, DSM, classified LAZ, and any building/roof resource layers.
-2. Search Geoportal Philippines for individual building-footprint and imagery layers; save each layer's metadata, owner, resolution, access status, and licence before download.
-3. Submit a Manila City records request for public building footprints/addresses and releasable architectural elevations for major public/heritage buildings.
-4. Request heritage documentation from the National Museum/NHCP for named landmark buildings.
-5. Track each actual download, source date, licence, geographic coverage, and processing steps in `ermita/3d/source-manifest.csv`.
+DSM is the surface (often including roofs and vegetation); DTM represents bare earth. Neither automatically supplies detailed facade windows, signage, or exact building identity. Copernicus DEM GLO-30 already in the project is regional context, not a substitute for a high-resolution city survey.
+
+## Existing street-level image evidence
+
+Repository files:
+- `kartaview/ermita-real-facade-images.csv`
+- `kartaview/ermita-real-facade-report.json`
+- `kartaview/ermita-street-imagery-metadata.csv`
+- `kartaview/ermita-street-imagery-metadata.geojson`
+- `kartaview/images/`
+
+Reported audit totals: 740 API photos found, 246 candidate building matches, 238 local image files. The prior audit was an index/file-presence audit, **not a pixel-level confirmation**. The next practical step is a human-review sheet containing building ID/name, photo ID, photo date, camera coordinates, heading, building bearing, distance, image URL/local path, license and reviewer decision. Only verified matches should inform facade colors/windows/signs. Do not use these photos as a live map layer or automatically project them onto walls.
+
+KartaView source terms: https://kartaview.org/terms  
+License: https://creativecommons.org/licenses/by-sa/4.0/
+
+## Sources checked
+
+- Geoportal Philippines: https://geoportal.gov.ph/
+- Geoportal Philippines in 3D: https://geoportal.gov.ph/gpapps/pgin3d
+- Geoportal GeoServer tile/service catalogue: https://geoserver.geoportal.gov.ph/geoserver/gwc/demo
+- NAMRIA products/downloads: https://www.namria.gov.ph/downloads.aspx
+- NAMRIA specialized product service and fee information: https://www.namria.gov.ph/kiosk/namria03.htm
+- LiPAD portal and current manual request instructions: https://lipad.dream.upd.edu.ph/?id=14
+- LiPAD help: https://lipad-fmc.dream.upd.edu.ph/help/
+- OpenDronePH / PhilSA: https://philsa.gov.ph/open-drone-ph/
+- PHL-Microsat use terms: https://data.phl-microsat.upd.edu.ph/license/
+- Manila records request portal: https://www.foi.gov.ph/
+- National Museum of the Philippines: https://www.nationalmuseum.gov.ph/
+
+## Completion status and limits
+
+- [x] Identified existing local facade-image index and files.
+- [x] Checked published terms and access instructions for KartaView, LiPAD, NAMRIA, OpenDronePH, and PHL-Microsat.
+- [x] Updated the source manifest with status, legal/access checks, and next actions.
+- [ ] Geoportal layer-by-layer inventory with a verified building/orthophoto/elevation layer for Ermita.
+- [ ] LiPAD requester registration, approval, and dataset delivery.
+- [ ] NAMRIA confirmation/quote and actual product delivery.
+- [ ] OpenDronePH registration and confirmation of relevant AOI coverage.
+- [ ] Human visual validation of the 246 candidate facade-photo matches.
+- [ ] Actual licensed high-resolution DSM/DTM/orthophoto imported into the repository.
+
+Do not mark the remaining items complete until an actual source file, metadata record, or written provider response is present.
