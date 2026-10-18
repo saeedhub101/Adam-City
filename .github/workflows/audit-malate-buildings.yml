@@ -50,6 +50,7 @@ jobs:
           Path("/tmp/adam-city-main.mjs").write_text(chr(10).join(parser.scripts), encoding="utf-8")
           PY
           node --check /tmp/adam-city-main.mjs
+      # The audit also reports tag coverage for the game's actual 3.5 km render bounds.
       - name: Audit saved building metadata
         run: python scripts/audit-malate-buildings.py
       - name: Commit reusable audit report
