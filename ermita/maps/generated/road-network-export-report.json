@@ -1,0 +1,37 @@
+{
+  "status": "success",
+  "source_file": "ermita/maps/generated/ermita-osm-raw.json",
+  "road_geojson": "ermita/maps/generated/ermita-road-network.geojson",
+  "street_segments_csv": "ermita/streets/street_segments.csv",
+  "source_element_count": 8040,
+  "road_path_way_count": 1445,
+  "skipped_degenerate_way_count": 0,
+  "highway_class_counts": {
+    "construction": 3,
+    "corridor": 4,
+    "footway": 451,
+    "path": 6,
+    "pedestrian": 13,
+    "primary": 83,
+    "primary_link": 8,
+    "residential": 29,
+    "secondary": 61,
+    "secondary_link": 6,
+    "service": 534,
+    "steps": 62,
+    "tertiary": 87,
+    "tertiary_link": 6,
+    "trunk": 21,
+    "trunk_link": 5,
+    "unclassified": 66
+  },
+  "named_way_count": 366,
+  "unnamed_way_count": 1079,
+  "geometry": "Original OSM way node coordinates represented as LineString; no synthetic or straightened roads.",
+  "limitations": [
+    "This exports existing cached OSM geometry and does not fetch live updates.",
+    "OSM coverage may omit real roads or tags; blank name means the source way is unnamed, not that a name was invented.",
+    "Highway includes roads, paths, pedestrian ways, service roads and other OSM highway classes; filter by properties.highway for a specific display.",
+    "Road lines are centerlines, not road-surface polygons or lane-level surveyed geometry."
+  ]
+}
