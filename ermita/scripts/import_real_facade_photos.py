@@ -23,8 +23,8 @@ API = "https://api.openstreetcam.org/2.0/photo/"
 USER_AGENT = "Adam-City-Ermita-KartaView-Metadata/1.0 (open mapping research)"
 TO_METERS = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True).transform
 TO_LONLAT = Transformer.from_crs("EPSG:3857", "EPSG:4326", always_xy=True).transform
-MAX_API_CELLS = 500
-CELL_STEP_M = 180.0
+MAX_API_CELLS = 1200
+CELL_STEP_M = 120.0
 TIMEOUT = (15, 45)
 
 PHOTO_FIELDS = [
@@ -150,11 +150,15 @@ def main():
             errors.append({"cell": index, "error": str(exc)[:200]})
         time.sleep(0.15)
 
-    # Enrich existing records with newly exposed fields while preserving prior values.
+    # Strict incremental policy: retain every existing photo row unchanged and only
+    # append IDs not already stored. This avoids re-importing/re-writing current records.
     new_records = 0
-    enriched_records = 0
+    skipped_existing_records = 0
     for pid, item in discovered.items():
         old_row = existing.get(pid, {})
+        if old_row:
+            skipped_existing_records += 1
+            continue
         seq = item.get("sequence") if isinstance(item.get("sequence"), dict) else {}
         row = {
             "photo_id": pid,
@@ -193,10 +197,7 @@ def main():
             if value not in (None, ""):
                 merged[key] = value
         existing[pid] = merged
-        if old_row:
-            enriched_records += 1
-        else:
-            new_records += 1
+        new_records += 1
 
     all_rows = sorted(existing.values(), key=lambda r: (str(r.get("sequence_id", "")), int_or_large(r.get("sequence_index")), str(r.get("photo_id", ""))))
     with PHOTOS_CSV.open("w", newline="", encoding="utf-8") as stream:
@@ -246,18 +247,18 @@ def main():
         "status": "success" if not errors else "partial",
         "area": "Ermita, Manila, Philippines",
         "source": "KartaView public API",
-        "mode": "expanded spatial metadata discovery with pagination and raw source records; existing image downloads preserved",
+        "mode": "expanded incremental discovery (1200-cell ceiling, 120 m grid, pagination); existing photo records are preserved unchanged",
         "queried_grid_cells": len(cells),
         "pagination_pages_per_cell_max": 50,
         "new_photo_metadata_records_added": new_records,
-        "existing_photo_metadata_records_enriched": enriched_records,
+        "existing_photo_metadata_records_skipped_without_reimport": skipped_existing_records,
         "total_preserved_photo_metadata_records": len(all_rows),
         "unique_sequences_with_metadata": len(seq_rows),
         "geojson_point_features": len(features),
         "api_errors": errors,
         "outputs": [str(PHOTOS_CSV.relative_to(ROOT)), str(PHOTOS_GEOJSON.relative_to(ROOT)), str(SEQUENCES_CSV.relative_to(ROOT))],
-        "incremental_policy": "New IDs are appended; existing IDs are enriched with newly available non-empty fields; prior values are retained when the API omits them. No existing image files are deleted.",
-        "limitations": ["Coverage is limited to the area derived from imported building footprints, the public API response, and 500 sampled spatial cells; this is broader and paginated but cannot guarantee the provider exposes every city photo.", "Image URLs and raw API records are indexed when exposed by the API; image binaries are not automatically downloaded by this metadata script.", "GPS points and sequence metadata describe capture coverage, not verified road signs or extracted lane/traffic-sign detections."]
+        "incremental_policy": "Only unseen photo IDs are appended. Existing photo rows and downloaded image files are left unchanged; IDs already present are skipped.",
+        "limitations": ["Coverage is limited to the area derived from imported building footprints, the public API response, and up to 1200 sampled spatial cells; this expanded search cannot guarantee the provider exposes every city photo.", "Image URLs and raw API records are indexed when exposed by the API; image binaries are not automatically downloaded by this metadata script.", "GPS points and sequence metadata describe capture coverage, not verified road signs or extracted lane/traffic-sign detections."]
     }
     REPORT_FILE.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
