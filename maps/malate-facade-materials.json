@@ -1,0 +1,145 @@
+{
+  "region": "Malate + Ermita, Manila, Philippines",
+  "source": "Derived from the checked-in maps/malate-map.json snapshot; © OpenStreetMap contributors",
+  "map_generated_utc": "2026-10-18T09:37:50Z",
+  "generated_utc": "2026-10-18T10:17:53Z",
+  "count": 10,
+  "tag_keys_checked": [
+    "building:facade:material",
+    "facade:material",
+    "building:material",
+    "material"
+  ],
+  "buildings": [
+    {
+      "osm_way_id": 22480419,
+      "name": "Velasco Hall",
+      "building": "university",
+      "material_tags": {
+        "building:material": "concrete"
+      },
+      "center": {
+        "lat": 14.5654488,
+        "lon": 120.9932
+      },
+      "osm_url": "https://www.openstreetmap.org/way/22480419"
+    },
+    {
+      "osm_way_id": 90308376,
+      "name": "1322 Golden Empire Tower",
+      "building": "yes",
+      "material_tags": {
+        "building:material": "wood"
+      },
+      "center": {
+        "lat": 14.5762867,
+        "lon": 120.9798073
+      },
+      "osm_url": "https://www.openstreetmap.org/way/90308376"
+    },
+    {
+      "osm_way_id": 165296463,
+      "name": "La Sallian Dormitory Center",
+      "building": "yes",
+      "material_tags": {
+        "building:material": "concrete"
+      },
+      "center": {
+        "lat": 14.567948,
+        "lon": 120.995193
+      },
+      "osm_url": "https://www.openstreetmap.org/way/165296463"
+    },
+    {
+      "osm_way_id": 244384560,
+      "name": "Citigold Building",
+      "building": "commercial",
+      "material_tags": {
+        "building:material": "concrete"
+      },
+      "center": {
+        "lat": 14.5768112,
+        "lon": 120.9964555
+      },
+      "osm_url": "https://www.openstreetmap.org/way/244384560"
+    },
+    {
+      "osm_way_id": 290089452,
+      "name": null,
+      "building": "apartments",
+      "material_tags": {
+        "building:material": "concrete"
+      },
+      "center": {
+        "lat": 14.5561712,
+        "lon": 120.9937694
+      },
+      "osm_url": "https://www.openstreetmap.org/way/290089452"
+    },
+    {
+      "osm_way_id": 290091683,
+      "name": null,
+      "building": "yes",
+      "material_tags": {
+        "building:material": "concrete"
+      },
+      "center": {
+        "lat": 14.5672802,
+        "lon": 120.9945516
+      },
+      "osm_url": "https://www.openstreetmap.org/way/290091683"
+    },
+    {
+      "osm_way_id": 533298891,
+      "name": "Avida Towers Prime Taft 2",
+      "building": "residential",
+      "material_tags": {
+        "building:material": "glass"
+      },
+      "center": {
+        "lat": 14.5576831,
+        "lon": 120.9959933
+      },
+      "osm_url": "https://www.openstreetmap.org/way/533298891"
+    },
+    {
+      "osm_way_id": 533298892,
+      "name": "Studio Zen",
+      "building": "residential",
+      "material_tags": {
+        "building:material": "metal"
+      },
+      "center": {
+        "lat": 14.5583382,
+        "lon": 120.9959318
+      },
+      "osm_url": "https://www.openstreetmap.org/way/533298892"
+    },
+    {
+      "osm_way_id": 1068096004,
+      "name": "San Fernando de Dilao Parish",
+      "building": "church",
+      "material_tags": {
+        "building:material": "plaster"
+      },
+      "center": {
+        "lat": 14.5793382,
+        "lon": 120.994489
+      },
+      "osm_url": "https://www.openstreetmap.org/way/1068096004"
+    },
+    {
+      "osm_way_id": 179242289,
+      "name": "Guzman College",
+      "building": "education",
+      "material_tags": {
+        "building:material": "concrete"
+      },
+      "center": {
+        "lat": 14.5999214,
+        "lon": 120.9849817
+      },
+      "osm_url": "https://www.openstreetmap.org/way/179242289"
+    }
+  ]
+}\n
