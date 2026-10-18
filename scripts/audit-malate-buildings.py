@@ -89,6 +89,12 @@ if MATERIALS_PATH.exists():
             raise ValueError("buildings must be a list")
         if any(not isinstance(item, dict) or item.get("osm_way_id") is None for item in existing_entries):
             raise ValueError("every saved building must have an OSM way ID")
+        saved_ids = [str(item["osm_way_id"]) for item in existing_entries]
+        if len(saved_ids) != len(set(saved_ids)):
+            raise ValueError("duplicate OSM way IDs found in saved inventory")
+        if any(not isinstance(item.get("material_tags"), dict) or not item["material_tags"]
+               for item in existing_entries):
+            raise ValueError("every saved building must have at least one material tag")
     except Exception as exc:
         raise SystemExit(f"Saved facade materials file is invalid; refusing to overwrite it: {exc}")
 
