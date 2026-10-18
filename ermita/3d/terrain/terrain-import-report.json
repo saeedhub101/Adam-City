@@ -1,0 +1,29 @@
+{
+  "status": "success",
+  "source_dataset": "Copernicus DEM GLO-30 Public",
+  "source_url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N14_00_E120_00_DEM/Copernicus_DSM_COG_10_N14_00_E120_00_DEM.tif",
+  "nominal_resolution_m": 30,
+  "bbox_wgs84": [
+    120.965,
+    14.56,
+    121.005,
+    14.605
+  ],
+  "crop_shape_rows_cols": [
+    162,
+    126
+  ],
+  "valid_elevation_cells": 20412,
+  "elevation_min_m": -9.131637573242188,
+  "elevation_max_m": 32.69767379760742,
+  "source_model_type": "Digital Surface Model (DSM), not bare-earth DTM",
+  "terrain_mesh": "ermita-terrain-surface.glb",
+  "cropped_geotiff": "ermita-copernicus-dem-cropped.tif",
+  "retrieved_utc": "2026-10-18T13:38:09Z",
+  "attribution": "Produced using Copernicus WorldDEM-30/90 \u00a9 DLR e.V. 2010-2014 and \u00a9 Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved.",
+  "limitations": [
+    "Coarse regional elevation; not suitable for engineering or flood-safety decisions.",
+    "DSM elevations may include buildings and vegetation.",
+    "No high-resolution orthophoto was imported by this script."
+  ]
+}
