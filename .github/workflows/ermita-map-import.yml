@@ -33,7 +33,7 @@ jobs:
         run: python ermita/scripts/import_osm_and_build_3d.py
       - name: Import official DPWH national roads for Ermita
         run: python ermita/scripts/import_dpwh_national_roads.py
-      - name: Fetch real public street-level facade photos
+      - name: Import KartaView street imagery metadata (no image downloads)
         run: python ermita/scripts/import_real_facade_photos.py
       - name: Download elevation data and build terrain surface
         run: python ermita/scripts/import_copernicus_terrain.py
