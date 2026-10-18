@@ -57,7 +57,12 @@ def main():
         candidate = {
             "id": item.get("id"), "title": p.get("title") or p.get("constellation") or item.get("id"),
             "datetime": p.get("datetime"), "gsd_m": p.get("gsd"),
-            "license": license_value, "asset_key": None if asset is None else next(
+            "bbox_wgs84": item.get("bbox"),
+            "producer_name": p.get("oam:producer_name"),
+            "providers": item.get("providers"),
+            "license": license_value,
+            "item_page": "https://map.openaerialmap.org/#/120.98193347454071,14.59435053656079,17/square/132303122000100/" + str(item.get("id")),
+            "asset_key": None if asset is None else next(
                 (k for k in ("visual","image","data","analytic") if assets.get(k) is asset), None),
             "asset_href": None if asset is None else asset.get("href"),
             "asset_type": None if asset is None else asset.get("type"),
