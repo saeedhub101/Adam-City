@@ -96,7 +96,7 @@ function makeTaggedFacade(tags,id,height,levels,perimeter){
  const glassColor=osmColour(detail.glass,palette.glass);
  const materialType=String(detail.material||tags['building:facade:material']||tags['building:material']||tags.material||'').toLowerCase();
  const labelText=[tags.name,tags['name:en'],tags.brand,tags.operator,tags.shop].filter(Boolean).join(' ');
- const isSevenEleven=sevenElevenBuildingIds.has(String(id))||/7\\s*[-‐‑–—]?\\s*eleven|7eleven|7\\s*[- ]?\\s*11/i.test(labelText);
+ const isSevenEleven=sevenElevenBuildingIds.has(String(id))||/7\s*[-‐‑–—]?\s*eleven|7eleven|7\s*[- ]?\s*11/i.test(labelText);
  const storefront=isSevenEleven||['retail','commercial','shop','supermarket','restaurant','cafe','fast_food','bank'].some(k=>tags[k]!==undefined)||['retail','commercial','shop','supermarket'].includes(profile.type);
  const balcony=detail.balconies!==undefined?!!detail.balconies:((Math.abs(Number(id)||0)%5===0)||['apartments','residential','hotel'].includes(profile.type));
  const key=[profile.type,profile.levels,profile.style,wallColor,trimColor,glassColor,materialType,detail.accent||'',detail.sign||'',storefront,isSevenEleven,balcony,detail.roof||tags['roof:shape']||'flat',detail.facade||''].join('|');
