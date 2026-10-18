@@ -85,7 +85,7 @@ function makeTaggedFacade(tags,id,height,levels,perimeter){
  const storefront=['retail','commercial','shop','supermarket','restaurant','cafe','fast_food','bank'].some(k=>tags[k]!==undefined)||['retail','commercial','shop','supermarket'].includes(profile.type);
  const balcony=detail.balconies!==undefined?!!detail.balconies:((Math.abs(Number(id)||0)%5===0)||['apartments','residential','hotel'].includes(profile.type));
  const roofStyle=String(detail.roof||tags['roof:shape']||'flat');
- const key=[profile.type,profile.levels,profile.style,palette.wall,storefront,balcony,roofStyle,detail.facade||''].join('|');
+ const key=[profile.type,profile.levels,profile.style,palette.wall,detail.wall||'',detail.trim||'',detail.glass||'',detail.accent||'',detail.sign||'',storefront,balcony,roofStyle,detail.facade||''].join('|');
  if(facadeProfileCache.has(key))return facadeProfileCache.get(key);
  const c=document.createElement('canvas');c.width=256;c.height=512;const g=c.getContext('2d');
  g.fillStyle=detail.wall||palette.wall;g.fillRect(0,0,256,512);
@@ -132,7 +132,7 @@ function makeTaggedFacade(tags,id,height,levels,perimeter){
  g.fillStyle=detail.trim||palette.trim;g.fillRect(0,0,256,5);
  const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
- tex.repeat.set(Math.max(1,Math.min(8,perimeter/9)),Math.max(1,Math.min(6,height/9)));
+ tex.repeat.set(1,1);
  const mat=new THREE.MeshStandardMaterial({map:tex,roughness:.91,metalness:.01});
  facadeProfileCache.set(key,mat);return mat;
 }
