@@ -86,7 +86,7 @@ function addRoad(el){
 }
 async function loadRealCity(){
  // Read the checked-in map snapshot. The game no longer depends on live Overpass servers at startup.
- const response=await fetch('./data/malate-osm.json',{cache:'no-cache'});
+ const response=await fetch('./data/manila-osm.json',{cache:'no-cache'});
  if(!response.ok)throw new Error('Saved map file not available yet (HTTP '+response.status+').');
  const data=await response.json();
  if(!Array.isArray(data.elements)||!data.elements.length)throw new Error('Saved map file contains no map features.');
