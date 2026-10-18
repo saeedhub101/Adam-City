@@ -1,3 +1,4 @@
+# Trigger footprint import using the latest conflict-safe workflow.
 #!/usr/bin/env python3
 """Fetch Microsoft's public Philippines building footprints and clip to Ermita AOI."""
 import gzip
