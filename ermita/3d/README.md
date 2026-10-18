@@ -2,6 +2,10 @@
 
 Goal: build a source-traceable 3D model of Ermita, Manila, with more detail for Rizal Park. Geometry should come from documented geographic sources, not an AI-generated guess.
 
+## Priority: real geographic geometry before decorative 3D detail
+
+The current reliable base is the actual mapped geometry in OpenStreetMap plus the supplementary Microsoft building-footprint snapshot. The dedicated OSM road/path centerline layer is `../maps/generated/ermita-road-network.geojson` (1,445 mapped ways from the current cached OSM source); its segment index is `../streets/street_segments.csv`. For buildings, use the OSM footprint layer and the 12,132 Microsoft outline candidates as separate source layers, then adjudicate overlaps. Do not present procedural windows, doors, signboards, or generic extrusions as surveyed/photorealistic real buildings. Until verified façade/height data is available, prioritize correct road layout and building footprints, and label extruded heights as estimated or unknown.
+
 ## Data already imported or generated
 
 - **OSM map/building features:** `../maps/generated/import-report.json`; 1,533 building/building-part features are reported in the current OSM export.
