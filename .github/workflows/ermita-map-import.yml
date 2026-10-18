@@ -32,6 +32,8 @@ jobs:
       - name: Install geospatial tools
         continue-on-error: true
         run: python -m pip install requests osm2geojson shapely pyproj trimesh mapbox-earcut rasterio numpy scipy
+      - name: Validate Python syntax
+        run: python -m py_compile ermita/scripts/import_osm_and_build_3d.py ermita/scripts/import_dpwh_national_roads.py ermita/scripts/import_real_facade_photos.py ermita/scripts/import_copernicus_terrain.py
       - name: Download and process OpenStreetMap data
         id: osm
         continue-on-error: true
