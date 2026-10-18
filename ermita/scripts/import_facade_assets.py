@@ -38,10 +38,10 @@ def choose_file(files, kind):
         if size <= 0 or size > MAX_FILE:
             continue
         if kind == "model":
-            if not any(ext in p for ext in (".glb", ".gltf")):
+            if ".glb" not in p:
                 continue
             # Prefer a self-contained GLB; otherwise choose a compact glTF file.
-            score = (0 if ".glb" in p else 1, 0 if "1k" in p else 1, size)
+            score = (0 if "1k" in p else 1, size)
         else:
             if not any(ext in p for ext in (".jpg", ".jpeg", ".png", ".webp")):
                 continue
@@ -100,9 +100,9 @@ def main():
             if kind == "model":
                 chosen = choose_file(leaves, "model")
                 if not chosen:
-                    entry["status"] = "no web-ready model under 80 MiB; skipped"
+                    entry["status"] = "no self-contained GLB model under 80 MiB; skipped"
                 else:
-                    suffix = ".glb" if ".glb" in chosen["path"].lower() else ".gltf"
+                    suffix = ".glb"
                     result = download(chosen, MODEL_DIR / f"{slug}{suffix}")
                     entry["files"].append(result)
                     entry["status"] = "downloaded-or-reused"
