@@ -217,6 +217,49 @@ def main():
         "source": "https://www.openstreetmap.org/copyright", "features": buildings,
     }
     (MAP_DIR / "ermita-building-footprints.geojson").write_text(json.dumps(building_collection, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+
+    # Export building attributes as a first-class dataset, not only embedded in generic tags.
+    building_detail_keys = [
+        "building", "building:part", "name", "official_name", "alt_name",
+        "building:use", "building:levels", "building:levels:underground",
+        "building:min_level", "height", "min_height", "min_level",
+        "roof:shape", "roof:height", "roof:levels", "roof:material",
+        "roof:colour", "roof:color", "roof:angle", "roof:direction",
+        "building:material", "building:colour", "building:color",
+        "addr:housenumber", "addr:street", "addr:suburb", "addr:city",
+        "addr:postcode", "addr:full", "start_date", "architect",
+        "heritage", "historic", "wikidata", "wikipedia", "website",
+        "access", "entrance", "building:condition"
+    ]
+    building_detail_fields = ["osm_feature_id", "name", "geometry_type", *building_detail_keys, "all_tags_json", "source", "license"]
+    building_detail_path = MAP_DIR / "ermita-building-details.csv"
+    with building_detail_path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=building_detail_fields)
+        writer.writeheader()
+        for feature in buildings:
+            tags = tags_for(feature)
+            geom = feature.get("geometry") or {}
+            row = {
+                "osm_feature_id": fid(feature),
+                "name": tags.get("name", ""),
+                "geometry_type": geom.get("type", ""),
+                "all_tags_json": json.dumps(tags, ensure_ascii=False, sort_keys=True),
+                "source": "OpenStreetMap contributors",
+                "license": "ODbL 1.0",
+            }
+            row.update({key: tags.get(key, "") for key in building_detail_keys})
+            writer.writerow(row)
+    building_detail_geojson = {
+        "type": "FeatureCollection",
+        "name": "Ermita building details and building parts from OpenStreetMap",
+        "source": "https://www.openstreetmap.org/copyright",
+        "license": "OpenStreetMap contributors, ODbL 1.0",
+        "features": buildings,
+    }
+    (MAP_DIR / "ermita-building-details.geojson").write_text(
+        json.dumps(building_detail_geojson, ensure_ascii=False, separators=(",", ":")) + "\\n",
+        encoding="utf-8",
+    )
     poi_path = MAP_DIR / "ermita-places-businesses-infrastructure.csv"
     fields = ["osm_feature_id","name","feature_type","feature_value","cuisine","opening_hours","phone","website","addr_street","addr_housenumber","source","license"]
     with poi_path.open("w", newline="", encoding="utf-8") as f:
@@ -366,7 +409,7 @@ def main():
         "retrieved_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "osm_element_count": len(osm_json.get("elements", [])), "geojson_feature_count": len(all_features),
         "building_feature_count": len(buildings), "poi_and_infrastructure_rows": len(rows),
-        "street_sign_and_signal_feature_count": len(sign_features),
+        "building_detail_csv": "ermita-building-details.csv", "building_detail_geojson": "ermita-building-details.geojson",\n        "building_detail_feature_count": len(buildings),\n        "building_detail_tag_presence_counts": {key: sum(1 for feature in buildings if key in tags_for(feature)) for key in building_detail_keys},\n        "street_sign_and_signal_feature_count": len(sign_features),
         "tag_key_feature_counts": {key: sum(1 for feature in all_features if key in tags_for(feature)) for key in sorted({key for feature in all_features for key in tags_for(feature).keys()})},
         "themed_csvs": sorted(f"ermita-{theme}.csv" for theme in themes),
         "dedicated_sign_layer": "ermita-street-signs-and-signals.geojson",
