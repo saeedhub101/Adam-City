@@ -75,6 +75,46 @@ named_buildings = [
      "levels": e["tags"].get("building:levels") or e["tags"].get("levels")}
     for e in buildings if present(e, "name", "name:en")
 ]
+# Persist the exact source features behind the facade-material coverage count.
+# This is derived only from the checked-in map snapshot, so later workflows can
+# reuse the saved output instead of requiring a fresh OSM import.
+material_keys = ("building:facade:material", "facade:material", "building:material", "material")
+facade_material_buildings = []
+for e in buildings:
+    tags = e.get("tags", {})
+    material_tags = {key: str(tags[key]) for key in material_keys
+                     if str(tags.get(key, "")).strip()}
+    if not material_tags:
+        continue
+    geometry = e.get("geometry") or []
+    valid_points = [p for p in geometry if isinstance(p, dict) and "lat" in p and "lon" in p]
+    center = None
+    if valid_points:
+        center = {
+            "lat": round(sum(float(p["lat"]) for p in valid_points) / len(valid_points), 7),
+            "lon": round(sum(float(p["lon"]) for p in valid_points) / len(valid_points), 7),
+        }
+    facade_material_buildings.append({
+        "osm_way_id": e.get("id"),
+        "name": tags.get("name") or tags.get("name:en") or tags.get("official_name"),
+        "building": tags.get("building"),
+        "material_tags": material_tags,
+        "center": center,
+        "osm_url": f"https://www.openstreetmap.org/way/{e.get('id')}" if e.get("id") else None,
+    })
+
+MATERIALS_PATH = Path("maps/malate-facade-materials.json")
+materials_data = {
+    "region": data.get("region") or "Malate + Ermita, Manila, Philippines",
+    "source": "Derived from the checked-in maps/malate-map.json snapshot; © OpenStreetMap contributors",
+    "map_generated_utc": data.get("_cache", {}).get("generated_utc") or data.get("generated_utc"),
+    "generated_utc": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+    "count": len(facade_material_buildings),
+    "tag_keys_checked": list(material_keys),
+    "buildings": facade_material_buildings,
+}
+MATERIALS_PATH.write_text(json.dumps(materials_data, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+
 report = {
     "region": data.get("region") or "Malate + Ermita, Manila, Philippines",
     "source": "© OpenStreetMap contributors; audit computed from the checked-in map snapshot",
@@ -92,6 +132,9 @@ report = {
         "building_features_within_renderer_bounds": len(rendered_buildings) + len(rendered_parts),
     },
     "coverage": coverage,
+    "facade_material_buildings_file": str(MATERIALS_PATH),
+    "facade_material_buildings_count": len(facade_material_buildings),
+    "facade_material_buildings": facade_material_buildings,
     "renderer_bounds_coverage": {
         label: {
             "count": sum(present(e, *keys) for e in rendered_buildings),
@@ -106,4 +149,4 @@ report = {
     "interpretation": "Missing tags are not proof that a building has no such feature. Use the counts to prioritize verified building-by-building research; do not infer exact facades from footprints alone.",
 }
 OUT_PATH.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-print(json.dumps({"output": str(OUT_PATH), "counts": report["counts"], "coverage": coverage}, indent=2))
+print(json.dumps({"output": str(OUT_PATH), "materials_output": str(MATERIALS_PATH), "facade_material_buildings_count": len(facade_material_buildings), "counts": report["counts"], "coverage": coverage}, indent=2))
