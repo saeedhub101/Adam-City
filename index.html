@@ -94,7 +94,8 @@ function buildingProfile(tags,id,rawHeight,rawLevels){
 function makeTaggedFacade(tags,id,height,levels,perimeter){
  const profile=buildingProfile(tags,id,height,levels),detail=profile.detail;
  const palette=facadePalette[Number.isInteger(Number(detail.palette))?Math.abs(Number(detail.palette))%facadePalette.length:profile.idx];
- const tagged7Eleven=sevenElevenBuildingIds.has(String(id))||/7\s*[-‐‑–—]?\s*eleven|7eleven|7\s*[- ]?\s*11/i.test([tags.name,tags['name:en'],tags.brand,tags.operator,tags.shop].filter(Boolean).join(' '));\n const wallColor=tagged7Eleven?0x168447:osmColour(detail.wall||tags['building:facade:colour']||tags['building:colour']||tags.colour,palette.wall);
+ const tagged7Eleven=sevenElevenBuildingIds.has(String(id))||/7\s*[-‐‑–—]?\s*eleven|7eleven|7\s*[- ]?\s*11/i.test([tags.name,tags['name:en'],tags.brand,tags.operator,tags.shop].filter(Boolean).join(' '));
+ const wallColor=tagged7Eleven?0x168447:osmColour(detail.wall||tags['building:facade:colour']||tags['building:colour']||tags.colour,palette.wall);
  const trimColor=tagged7Eleven?0x08743a:osmColour(detail.trim,tags['building:material']==='brick'?'#e0c4a8':palette.trim);
  const glassColor=osmColour(detail.glass,palette.glass);
  const materialType=String(detail.material||tags['building:facade:material']||tags['building:material']||tags.material||'').toLowerCase();
