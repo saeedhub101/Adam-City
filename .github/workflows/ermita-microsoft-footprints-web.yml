@@ -37,5 +37,6 @@ jobs:
             echo "No Microsoft footprint changes to commit."
           else
             git commit -m "Prepare Microsoft footprints for map comparison"
+            git pull --rebase origin main
             git push origin main
           fi
