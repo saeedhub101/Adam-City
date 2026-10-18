@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: repository-backup-main
+  group: main-writer
   cancel-in-progress: false
 
 jobs:
@@ -47,4 +47,6 @@ jobs:
             exit 0
           fi
           git commit -m "Create repository backup in backup/"
+          git fetch origin main
+          git rebase origin/main
           git push origin HEAD:main
