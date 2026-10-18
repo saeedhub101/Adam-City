@@ -31,7 +31,9 @@ jobs:
         run: python -m pip install requests osm2geojson shapely pyproj trimesh mapbox-earcut rasterio numpy
       - name: Download and process OpenStreetMap data
         run: python ermita/scripts/import_osm_and_build_3d.py
-      - name: Download elevation data and build terrain surface\n        run: python ermita/scripts/import_copernicus_terrain.py\n      - name: Commit imported map data and 3D model
+      - name: Download elevation data and build terrain surface
+        run: python ermita/scripts/import_copernicus_terrain.py
+      - name: Commit imported map data and 3D model
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
