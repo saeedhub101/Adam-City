@@ -13,7 +13,8 @@
 <header>
 <div><h1>Adam City · Ermita 3D</h1><p>Interactive 3D buildings, terrain, mapped streets · Manila, Philippines</p><div class="status" id="status">Loading 3D scene and local mapping data…</div></div>
 <div class="controls">
-<label><input id="imagery" type="checkbox"> Satellite imagery</label>
+<label><input id="imagery" type="checkbox"> Esri satellite</label>
+<label><input id="localImagery" type="checkbox"> Local aerial photo</label>
 <label><input id="landmarks" type="checkbox" checked> Key landmarks</label>
 <label><input id="buildings" type="checkbox" checked> 3D building footprints</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
@@ -91,6 +92,13 @@ function setSatelliteImagery(enabled){
  setStatus(enabled?'Satellite imagery enabled · imagery dates and resolution vary by tile':'Street basemap enabled · local 3D buildings and landmark layer remain available');
 }
 
+function addLocalAerialImagery(){
+ const imageUrl='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/external/openaerialmap/ermita-5b90f92da0d7280005fab355.jpg';
+ map.addSource('local-aerial-image-source',{type:'image',url:imageUrl,coordinates:[[120.979078,14.596839],[120.984291,14.596839],[120.984291,14.592126],[120.979078,14.592126]]});
+ map.addLayer({id:'local-aerial-image',type:'raster',source:'local-aerial-image-source',layout:{visibility:'none'},paint:{'raster-opacity':1,'raster-fade-duration':0}},'local-buildings-3d');
+}
+function setLocalAerialImagery(enabled){if(map.getLayer('local-aerial-image'))map.setLayoutProperty('local-aerial-image','visibility',enabled?'visible':'none');}
+
 
 function addDpwRoadSurface(data){
  if(map.getLayer('dpwh-road-surface-data'))map.removeLayer('dpwh-road-surface-data');
@@ -147,11 +155,12 @@ map.on('load',async()=>{
   roadsData={type:'FeatureCollection',features:(results[0].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   buildingsData={type:'FeatureCollection',features:(results[1].features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
   surfaceData={type:'FeatureCollection',features:(results[2].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
-  addBuildings(buildingsData);addRoads(roadsData);addDpwRoadSurface(surfaceData);addLandmarks();addSatelliteImagery();
+  addBuildings(buildingsData);addRoads(roadsData);addDpwRoadSurface(surfaceData);addLandmarks();addSatelliteImagery();addLocalAerialImagery();
   setStatus(buildingsData.features.length.toLocaleString()+' local building outlines in 3D · '+roadsData.features.length.toLocaleString()+' mapped road/path lines · '+surfaceData.features.length.toLocaleString()+' official DPWH road records loaded · 6 landmark markers (approximate positions)');
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
 });
 document.getElementById('imagery').addEventListener('change',e=>setSatelliteImagery(e.target.checked));
+document.getElementById('localImagery').addEventListener('change',e=>setLocalAerialImagery(e.target.checked));
 document.getElementById('landmarks').addEventListener('change',e=>['key-landmark-halo','key-landmark-dot','key-landmark-label'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('buildings').addEventListener('change',e=>{if(map.getLayer('local-buildings-3d'))map.setLayoutProperty('local-buildings-3d','visibility',e.target.checked?'visible':'none')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
