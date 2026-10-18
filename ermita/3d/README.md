@@ -38,15 +38,15 @@ The current reliable base is the actual mapped geometry in OpenStreetMap plus th
 - Procedural windows, doors and signboards are placeholders. Their presence is not evidence of measured facade geometry, exact lettering, or true logos.
 - KartaView images are not automatically calibrated or projected onto building walls.
 - Copernicus terrain is regional context, not street-level survey data and not suitable for engineering, drainage design, or flood-safety decisions.
-- High-resolution LiDAR/DTM and aerial imagery for this exact AOI have not yet been verified as accessible under terms that permit project redistribution.
+- High-resolution LiDAR/DTM and aerial imagery for this exact AOI have not yet been found in the current inventory; search existing repository contents first, then use automatic downloads and skip sources that require manual contact.
 
-## Candidate and request-based sources
+## Sources to download automatically (do not contact agencies or wait for requests)
 
 1. OpenStreetMap / Geofabrik: https://download.geofabrik.de/asia/philippines.html and https://www.openstreetmap.org/copyright
-2. Geoportal Philippines: https://geoportal.gov.ph/ — inspect individual layer metadata; a viewer is not proof of download rights.
-3. NAMRIA elevation, topographic and orthophoto products: https://www.namria.gov.ph/downloads.aspx — confirm coverage, resolution, cost and reuse terms per product.
-4. LiPAD / Phil-LiDAR: https://lipad.dream.upd.edu.ph/ — request/check tiles for the AOI and confirm account eligibility and terms.
-5. OpenDronePH: https://philsa.gov.ph/open-drone-ph/ — registration is required and donor restrictions may apply.
+2. Geoportal Philippines: https://geoportal.gov.ph/ — inspect the full layer catalogue and download accessible layers through scripts/workflows; if a layer is not directly accessible, skip it and test another source.
+3. NAMRIA elevation, topographic and orthophoto products: https://www.namria.gov.ph/downloads.aspx — search the repository first, then download publicly accessible files; if a product requires a request/payment/account, skip it and move to another source.
+4. LiPAD / Phil-LiDAR: https://lipad.dream.upd.edu.ph/ — check for direct public downloads; skip any data requiring approval or manual requests.
+5. OpenDronePH: https://philsa.gov.ph/open-drone-ph/ — use datasets directly downloadable without registration; otherwise skip and continue.
 6. Microsoft/Bing Open Building Footprints: https://github.com/microsoft/IdMyPhBuildingFootprints — already imported for this AOI; do not download it again merely to repeat the same import.
 
 ## Modelling and licensing rules
@@ -55,16 +55,16 @@ The current reliable base is the actual mapped geometry in OpenStreetMap plus th
 - Do not label estimated heights as measured.
 - Do not infer roof, facade, or interior geometry from a 2D footprint alone.
 - Keep DEM/terrain separate from building geometry.
-- Do not mix datasets with incompatible reuse conditions; preserve source-specific attribution and review ODbL share-alike obligations for derived databases.
+- Keep source attribution and provenance metadata with every dataset and derivative.
 - Keep original source files unchanged. Record every cleaned/merged derivative and its QA counts.
 - Check repository size limits; use appropriate external artifact storage for large permitted source archives.
 
 
 ## Active source acquisition (2026-10-18)
 
-The current source-by-source access audit is in `building-data-source-investigation.md`; the source status register is `source-manifest.csv`; ready-to-send provider requests are in `data-acquisition-request-pack.md`.
+The source audit is in `building-data-source-investigation.md`; the source status register is `source-manifest.csv`. Do not submit provider requests: use direct downloads/workflows only and skip blocked sources.
 
 - **Street-level facade references:** the repository already reports 238 local KartaView images and 246 candidate building matches. Use `facade-photo-review.csv` to record visual verification for all 246 candidates; blank verification cells mean the facade has not yet been visually confirmed. This is candidate evidence, not verified facade mapping. Keep KartaView out of the live map renderer as requested; do not download duplicate photo IDs. KartaView imagery requires CC BY-SA 4.0 compliance and attribution: © Grab and KartaView Contributors.
-- **DSM/DTM/LiDAR/orthophotos:** LiPAD currently directs requests through registration and manual data-request forms. NAMRIA lists specialized LiDAR and IfSAR products, but exact Ermita coverage, current quote, resolution, acquisition date, and reuse terms must be confirmed before acquisition.
+- **DSM/DTM/LiDAR/orthophotos:** inspect all existing terrain and source files first. Download any directly accessible data with workflows; skip portals that require manual requests, account approval, or contact.
 - **OpenDronePH:** requires registration and donor-specific reuse checks; Manila coverage is not yet confirmed.
 - **Repository status:** this pass updated source documentation and request templates. It did not obtain a LiPAD approval, purchase NAMRIA products, submit external forms, or download new government datasets. Never mark those steps complete without actual data/approval evidence.
