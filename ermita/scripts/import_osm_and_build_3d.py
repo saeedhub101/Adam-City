@@ -1,3 +1,4 @@
+# Build syntax validation trigger
 #!/usr/bin/env python3
 """Fetch open OpenStreetMap features for Ermita, Manila and build a basic 3D GLB.
 
