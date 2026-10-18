@@ -21,7 +21,7 @@ jobs:
           PYTHONUNBUFFERED: '1'
         run: |
           python - <<'PY'
-          import json, time, urllib.parse, urllib.request
+          import json, re, time, urllib.parse, urllib.request
           from pathlib import Path
           map_path=Path('maps/malate-map.json')
           streets_path=Path('maps/malate-streets.json')
@@ -47,6 +47,7 @@ jobs:
             'transit':f'nwr{box}[railway~"^(station|halt|tram_stop|subway_entrance|platform)$"];nwr{box}[public_transport~"^(station|platform|stop_position)$"];nwr{box}[highway=bus_stop];',
             'museum':f'nwr{box}[tourism=museum];','attraction':f'nwr{box}[tourism=attraction];','information':f'nwr{box}[tourism=information];',
             'mall':f'nwr{box}[shop=mall];nwr{box}[building=retail][name];',
+            'seven_eleven':f'nwr{box}[brand~"(?i)7.?eleven"];nwr{box}[name~"(?i)7.?eleven"];nwr{box}[operator~"(?i)7.?eleven"];nwr{box}[brand="7-11"];nwr{box}[name="7-11"];',
             'supermarket':f'nwr{box}[shop=supermarket];','convenience':f'nwr{box}[shop=convenience];',
             'restaurant':f'nwr{box}[amenity=restaurant];','cafe':f'nwr{box}[amenity=cafe];','bank':f'nwr{box}[amenity=bank];','atm':f'nwr{box}[amenity=atm];',
             'place_of_worship':f'nwr{box}[amenity=place_of_worship];','library':f'nwr{box}[amenity=library];','parking':f'nwr{box}[amenity=parking];','toilets':f'nwr{box}[amenity=toilets];',
@@ -74,6 +75,8 @@ jobs:
               print(f'WARNING skip {kind}; all endpoints failed: {" | ".join(errors[-3:])}')
               return None
           def classify(t):
+              seven_eleven_text=' '.join(str(t.get(k,'')) for k in ('name','name:en','brand','brand:en','operator','official_name'))
+              if re.search(r'7\\s*[-‐‑–—]?\\s*eleven|7eleven|7\\s*[- ]?\\s*11',seven_eleven_text,re.I): return 'convenience'
               a=t.get('amenity'); h=t.get('highway'); sh=t.get('shop'); le=t.get('leisure'); to=t.get('tourism')
               if a=='hospital' or t.get('healthcare')=='hospital': return 'hospital'
               if a=='clinic' or t.get('healthcare')=='clinic': return 'clinic'
