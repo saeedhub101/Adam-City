@@ -49,8 +49,8 @@ function addFootprint(el){
  const ns=el.geometry?.coordinates?.[0];if(!ns||ns.length<4)return;
  const pts=ns.map(([lon,lat])=>project(lat,lon));
  if(pts.some(p=>Math.abs(p.x)>145||Math.abs(p.z)>225))return;
- const shape=new THREE.Shape();shape.moveTo(pts[0].x,pts[0].z);
- for(let i=1;i<pts.length;i++)shape.lineTo(pts[i].x,pts[i].z);
+ const shape=new THREE.Shape();shape.moveTo(pts[0].x,-pts[0].z);
+ for(let i=1;i<pts.length;i++)shape.lineTo(pts[i].x,-pts[i].z);
  shape.closePath();
  const tags=el.tags||{},levels=Number(tags['building:levels']||tags.levels||0);
  const height=Number(tags.height)||Math.max(4,(levels||({house:2,apartments:5,hotel:8,commercial:4,office:6,retail:2}[tags.building]||3))*3.1);
@@ -64,7 +64,7 @@ function addFootprint(el){
  if(tags.name||tags['name:en']){
   const c=document.createElement('canvas');c.width=512;c.height=96;const g=c.getContext('2d');
   g.fillStyle='#142126';g.fillRect(0,0,512,96);g.fillStyle='#f4e5c4';g.font='bold 28px Arial';g.textAlign='center';
-  g.fillText(String(tags.name||tags['name:en']).slice(0, thirty=30),256,59);
+  g.fillText(String(tags.name||tags['name:en']).slice(0,30),256,59);
   const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
   const sign=new THREE.Mesh(new THREE.PlaneGeometry(Math.min(pts.reduce((a,p,i)=>i?a+Math.hypot(p.x-pts[i-1].x,p.z-pts[i-1].z):0,0),12),1.9),new THREE.MeshBasicMaterial({map:tex,transparent:false,side:THREE.DoubleSide}));
   sign.position.set(pts.reduce((a,p)=>a+p.x,0)/pts.length,height*.55,pts.reduce((a,p)=>a+p.z,0)/pts.length);
