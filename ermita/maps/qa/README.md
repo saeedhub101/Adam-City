@@ -35,3 +35,12 @@ Microsoft-side categories in the report are 11,496 Microsoft-only candidates, 40
 - Small IoU can reflect different segmentation or roof/ground outline conventions, not necessarily a bad feature.
 - Do not automatically import Microsoft-only candidates into OSM or promote this table to a canonical merged layer.
 - Verify a representative sample against permitted current aerial imagery, official survey data, or field observations.
+
+
+## Building-height evidence audit
+
+- `building-height-evidence.csv` inventories OSM polygon building/building-part features and preserves source-tagged `height`, `building:levels`, `min_height`, and `roof:shape` separately.
+- `height_tagged` means the source has a `height` tag; it is not a guarantee of a field-verified measurement.
+- `levels_only_no_height_inferred` deliberately does not convert storeys to meters.
+- `height_unknown` means the source provides no explicit height tag. Do not replace unknown values with visually plausible guesses.
+- Refresh using `python ermita/scripts/audit_building_height_evidence.py` or the `ermita-building-height-audit.yml` GitHub Actions workflow.
