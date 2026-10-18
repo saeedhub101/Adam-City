@@ -1,16 +1,124 @@
 {
   "region": "Malate + Ermita, Manila, Philippines",
   "source": "© OpenStreetMap contributors; audit computed from the checked-in map snapshot",
-  "generated_utc": "2026-10-18T10:08:15Z",
+  "generated_utc": "2026-10-18T10:08:33Z",
   "map_generated_utc": "2026-10-18T09:37:50Z",
   "counts": {
     "map_elements": 34442,
     "ways_with_geometry": 33504,
     "building_ways": 21145,
     "building_part_ways": 2,
-    "building_features_including_parts": 21147
+    "building_features_including_parts": 21147,
+    "building_ways_with_geometry": 21145,
+    "building_ways_within_renderer_bounds": 21145,
+    "building_parts_within_renderer_bounds": 2,
+    "building_features_within_renderer_bounds": 21147
   },
   "coverage": {
+    "height": {
+      "count": 124,
+      "percent": 0.59,
+      "keys_checked": [
+        "height"
+      ]
+    },
+    "levels": {
+      "count": 1343,
+      "percent": 6.35,
+      "keys_checked": [
+        "building:levels",
+        "levels"
+      ]
+    },
+    "name": {
+      "count": 943,
+      "percent": 4.46,
+      "keys_checked": [
+        "name",
+        "name:en",
+        "official_name"
+      ]
+    },
+    "roof_shape": {
+      "count": 164,
+      "percent": 0.78,
+      "keys_checked": [
+        "roof:shape"
+      ]
+    },
+    "facade": {
+      "count": 10,
+      "percent": 0.05,
+      "keys_checked": [
+        "building:facade:material",
+        "facade:material",
+        "building:material",
+        "material"
+      ]
+    },
+    "facade_colour": {
+      "count": 0,
+      "percent": 0.0,
+      "keys_checked": [
+        "building:facade:colour",
+        "building:colour",
+        "colour"
+      ]
+    },
+    "roof_colour": {
+      "count": 4,
+      "percent": 0.02,
+      "keys_checked": [
+        "roof:colour",
+        "building:roof:colour"
+      ]
+    },
+    "roof_material": {
+      "count": 1,
+      "percent": 0.0,
+      "keys_checked": [
+        "roof:material",
+        "building:roof:material"
+      ]
+    },
+    "architecture": {
+      "count": 3,
+      "percent": 0.01,
+      "keys_checked": [
+        "building:architecture"
+      ]
+    },
+    "building_colour": {
+      "count": 0,
+      "percent": 0.0,
+      "keys_checked": [
+        "building:colour",
+        "building:colour:colour",
+        "colour"
+      ]
+    },
+    "address": {
+      "count": 760,
+      "percent": 3.59,
+      "keys_checked": [
+        "addr:housenumber",
+        "addr:street"
+      ]
+    },
+    "building_use": {
+      "count": 387,
+      "percent": 1.83,
+      "keys_checked": [
+        "building:use",
+        "building:function",
+        "shop",
+        "amenity",
+        "office",
+        "tourism"
+      ]
+    }
+  },
+  "renderer_bounds_coverage": {
     "height": {
       "count": 124,
       "percent": 0.59,
