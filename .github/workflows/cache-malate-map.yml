@@ -23,7 +23,7 @@ jobs:
         id: map-cache
         run: |
           mkdir -p maps buo_maps
-          if [ -s maps/malate-map.json ] && python -c "import json; d=json.load(open('maps/malate-map.json')); assert isinstance(d.get('elements'), list) and len(d['elements']) > 0"; then
+          if [ -s maps/malate-map.json ] && python -c "import json; d=json.load(open('maps/malate-map.json')); e=d.get('elements',[]); t=[x.get('tags',{}) for x in e]; assert isinstance(e,list) and len(e)>0 and any(x.get('railway') in ('rail','light_rail') for x in t) and any(x.get('natural') in ('water','beach') or x.get('waterway')=='riverbank' for x in t)"; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
             echo "A valid saved Malate map already exists in GitHub. Skipping OpenStreetMap download."
           else
@@ -37,7 +37,7 @@ jobs:
           import json, time, urllib.parse, urllib.request, os
           bbox=[14.55,120.97,14.585,121.005]
           s,w,n,e=bbox
-          query=f'[out:json][timeout:150];(way({s},{w},{n},{e})[building];way({s},{w},{n},{e})[highway];);out body geom;'
+          query=f'[out:json][timeout:180];(way({s},{w},{n},{e})[building];way({s},{w},{n},{e})[highway];way({s},{w},{n},{e})[railway~"^(rail|light_rail|subway|tram)$"];way({s},{w},{n},{e})[natural~"^(water|beach)$"];way({s},{w},{n},{e})[waterway=riverbank];);out body geom;'
           endpoints=[
             'https://overpass-api.de/api/interpreter',
             'https://overpass.kumi.systems/api/interpreter',
@@ -50,7 +50,7 @@ jobs:
               req=urllib.request.Request(endpoint,data=urllib.parse.urlencode({'data':query}).encode(),headers={'User-Agent':'AdamCityMapCache/1.0 (Malate game map; © OpenStreetMap contributors)','Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'})
               with urllib.request.urlopen(req,timeout=180) as response: raw=json.load(response)
               elements=[]; buildings=roads=0
-              keep_tags={'building','building:levels','height','name','name:en','amenity','shop','office','tourism','highway','surface','lanes','oneway','service'}
+              keep_tags={'building','building:levels','height','name','name:en','amenity','shop','office','tourism','highway','surface','lanes','oneway','service','railway','bridge','layer','natural','water','waterway','width'}
               for el in raw.get('elements',[]):
                 tags=el.get('tags',{})
                 is_building='building' in tags; is_road='highway' in tags
