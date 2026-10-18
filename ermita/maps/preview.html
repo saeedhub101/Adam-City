@@ -59,9 +59,9 @@ function addBuildings(data){
        '#c8bfb3']],
     'fill-extrusion-height':['max',2,['coalesce',
       ['to-number',['get','height',['get','tags']]],
-      ['*',['to-number',['get','building:levels',['get','tags']],0],3.2],
-      ['match',['get','building',['get','tags']],
-       'church',18,'cathedral',24,'hospital',12,'commercial',16,'office',18,'hotel',18,'apartments',12,'industrial',8,'house',6,'residential',7,'garage',3,'shed',3,8]]],
+      ['case',['has','building:levels',['get','tags']],['*',['to-number',['get','building:levels',['get','tags']],0],3.2],
+       ['match',['get','building',['get','tags']],
+       'church',18,'cathedral',24,'hospital',12,'commercial',16,'office',18,'hotel',18,'apartments',12,'industrial',8,'house',6,'residential',7,'garage',3,'shed',3,8]]]],
     'fill-extrusion-base':['coalesce',['to-number',['get','min_height',['get','tags']]],0],
     'fill-extrusion-opacity':0.98,'fill-extrusion-vertical-gradient':true
    }});
