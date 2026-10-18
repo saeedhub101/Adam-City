@@ -38,12 +38,12 @@ def choose_file(files, kind):
         if size <= 0 or size > MAX_FILE:
             continue
         if kind == "model":
-            if ".glb" not in p:
+            if "glb" not in p.split("/") and not p.endswith(".glb"):
                 continue
             # Prefer a self-contained GLB; otherwise choose a compact glTF file.
             score = (0 if "1k" in p else 1, size)
         else:
-            if not any(ext in p for ext in (".jpg", ".jpeg", ".png", ".webp")):
+            if not any(token in p.split("/") for token in ("jpg", "jpeg", "png", "webp")) and not any(ext in p for ext in (".jpg", ".jpeg", ".png", ".webp")):
                 continue
             if not any(term in p for term in ("diff", "albedo", "color", "basecolor", "nor_gl", "normal", "rough")):
                 continue
