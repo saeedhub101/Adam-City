@@ -25,9 +25,9 @@ for(let z=8;z>-190;z-=8){const dash=new THREE.Mesh(new THREE.BoxGeometry(.12,.02
 // Direct static photo URLs; avoid Wikimedia HTML redirects in WebGL texture loading.
 const photoFiles=[
 'https://upload.wikimedia.org/wikipedia/commons/a/a7/09938jfMabini_Street_Remedios_Street_Bike_Lanes_Buildings_Malate_Manilafvf_04.jpg',
-'https://upload.wikimedia.org/wikipedia/commons/a/a7/09938jfMabini_Street_Remedios_Street_Bike_Lanes_Buildings_Malate_Manilafvf_01.jpg',
-'https://upload.wikimedia.org/wikipedia/commons/5/5b/05297jfStreets_Mabini_Ocampo_Roxas_Boulevard_Malate_Manilafvf_02.jpg'
-];
+'https://upload.wikimedia.org/wikipedia/commons/a/a7/09938jfMabini_Street_Remedios_Street_Bike_Lanes_Buildings_Malate_Manilafvf_04.jpg',
+'https://upload.wikimedia.org/wikipedia/commons/a/a7/09938jfMabini_Street_Remedios_Street_Bike_Lanes_Buildings_Malate_Manilafvf_04.jpg'
+]
 const loader=new THREE.TextureLoader();loader.setCrossOrigin('anonymous');
 let photoLoaded=0,photoFailed=0;
 const photoMats=await Promise.all(photoFiles.map(url=>new Promise(resolve=>{
