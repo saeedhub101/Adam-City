@@ -2,23 +2,23 @@
   "status": "success",
   "area": "Ermita, Manila, Philippines",
   "source": "KartaView public API",
-  "mode": "expanded spatial metadata discovery with pagination and raw source records; existing image downloads preserved",
-  "queried_grid_cells": 195,
+  "mode": "expanded incremental discovery (1200-cell ceiling, 120 m grid, pagination); existing photo records are preserved unchanged",
+  "queried_grid_cells": 440,
   "pagination_pages_per_cell_max": 50,
-  "new_photo_metadata_records_added": 1621,
-  "existing_photo_metadata_records_enriched": 263,
-  "total_preserved_photo_metadata_records": 2368,
-  "unique_sequences_with_metadata": 143,
-  "geojson_point_features": 2368,
+  "new_photo_metadata_records_added": 2628,
+  "existing_photo_metadata_records_skipped_without_reimport": 1107,
+  "total_preserved_photo_metadata_records": 4996,
+  "unique_sequences_with_metadata": 155,
+  "geojson_point_features": 4996,
   "api_errors": [],
   "outputs": [
     "kartaview/ermita-street-imagery-metadata.csv",
     "kartaview/ermita-street-imagery-metadata.geojson",
     "kartaview/ermita-street-imagery-sequences.csv"
   ],
-  "incremental_policy": "New IDs are appended; existing IDs are enriched with newly available non-empty fields; prior values are retained when the API omits them. No existing image files are deleted.",
+  "incremental_policy": "Only unseen photo IDs are appended. Existing photo rows and downloaded image files are left unchanged; IDs already present are skipped.",
   "limitations": [
-    "Coverage is limited to the area derived from imported building footprints, the public API response, and 500 sampled spatial cells; this is broader and paginated but cannot guarantee the provider exposes every city photo.",
+    "Coverage is limited to the area derived from imported building footprints, the public API response, and up to 1200 sampled spatial cells; this expanded search cannot guarantee the provider exposes every city photo.",
     "Image URLs and raw API records are indexed when exposed by the API; image binaries are not automatically downloaded by this metadata script.",
     "GPS points and sequence metadata describe capture coverage, not verified road signs or extracted lane/traffic-sign detections."
   ]
