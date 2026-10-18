@@ -26,8 +26,10 @@
 </div>
 </header>
 <div id="map" role="application" aria-label="Interactive three-dimensional city map of Ermita Manila"></div>
-<footer>Switchable Esri satellite layer, mapped 3D street network, official DPWH road records and highlighted landmarks. Estimated building heights and ~30 m terrain are not survey-grade. © Esri, Maxar, Earthstar Geographics, OpenStreetMap contributors · DPWH road data · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
+<footer>Local Ramon Magsaysay Center GLB mesh, switchable Esri satellite layer, mapped 3D street network, official DPWH road records and highlighted landmarks. Estimated building heights and ~30 m terrain are not survey-grade. © Esri, Maxar, Earthstar Geographics, OpenStreetMap contributors · DPWH road data · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
 <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/three@0.169.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.169.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 (function(){
 const status=document.getElementById('status');
@@ -67,6 +69,54 @@ function addRealModelMarkers(){
  map.on('mouseenter','real-building-model-points',()=>map.getCanvas().style.cursor='pointer');
  map.on('mouseleave','real-building-model-points',()=>map.getCanvas().style.cursor='');
 }
+
+function addLocalRamonModel(){
+ if(!window.THREE || !THREE.GLTFLoader){setStatus('Local building model could not start: 3D model libraries unavailable.');return;}
+ const modelUrl='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/ramon_magsaysay_building.glb';
+ const origin=[120.98245,14.5719];
+ const merc=maplibregl.MercatorCoordinate.fromLngLat({lng:origin[0],lat:origin[1]},0);
+ const meterScale=merc.meterInMercatorCoordinateUnits();
+ const customLayer={
+  id:'ramon-magsaysay-local-mesh',type:'custom',renderingMode:'3d',
+  onAdd:function(map,gl){
+   this.camera=new THREE.Camera();this.scene=new THREE.Scene();
+   this.scene.add(new THREE.AmbientLight(0xffffff,1.65));
+   const sun=new THREE.DirectionalLight(0xffffff,2.1);sun.position.set(-40,-60,100);this.scene.add(sun);
+   this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});
+   this.renderer.autoClear=false;
+   this.loader=new THREE.GLTFLoader();
+   this.loader.load(modelUrl,gltf=>{
+    this.model=gltf.scene;
+    const bounds=new THREE.Box3().setFromObject(this.model);
+    const size=bounds.getSize(new THREE.Vector3());
+    const center=bounds.getCenter(new THREE.Vector3());
+    const maxDim=Math.max(size.x,size.y,size.z)||1;
+    // The building is 18 storeys; normalize model height to an approximate 62 m.
+    const factor=62/maxDim;
+    this.model.scale.setScalar(factor);
+    this.model.position.set(-center.x*factor,-bounds.min.y*factor,-center.z*factor);
+    this.scene.add(this.model);
+    this.loaded=true;
+    setStatus('Ramon Magsaysay Center local GLB loaded · approximate 62 m model height · position/footprint alignment still needs visual verification.');
+    map.triggerRepaint();
+   },undefined,err=>setStatus('Local Ramon Magsaysay GLB failed to load: '+(err&&err.message||'network error')));
+  },
+  render:function(gl,args){
+   if(!this.renderer)return;
+   const m=new THREE.Matrix4().fromArray(args.defaultProjectionData.mainMatrix);
+   const l=new THREE.Matrix4().makeTranslation(merc.x,merc.y,merc.z)
+    .multiply(new THREE.Matrix4().makeRotationX(Math.PI/2))
+    .scale(new THREE.Vector3(meterScale,-meterScale,meterScale));
+   this.camera.projectionMatrix=m.multiply(l);
+   this.renderer.resetState();
+   this.renderer.render(this.scene,this.camera);
+   map.triggerRepaint();
+  }
+ };
+ if(map.getLayer('ramon-magsaysay-local-mesh'))map.removeLayer('ramon-magsaysay-local-mesh');
+ map.addLayer(customLayer);
+}
+
 function addBuildings(data){
  if(map.getLayer('local-buildings-3d'))map.removeLayer('local-buildings-3d');
  if(map.getSource('local-buildings'))map.removeSource('local-buildings');
@@ -169,7 +219,7 @@ map.on('load',async()=>{
   roadsData={type:'FeatureCollection',features:(results[0].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   buildingsData={type:'FeatureCollection',features:(results[1].features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
   surfaceData={type:'FeatureCollection',features:(results[2].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
-  addBuildings(buildingsData);addRoads(roadsData);addDpwRoadSurface(surfaceData);addLandmarks();addRealModelMarkers();addSatelliteImagery();
+  addBuildings(buildingsData);addRoads(roadsData);addDpwRoadSurface(surfaceData);addLandmarks();addRealModelMarkers();addSatelliteImagery();addLocalRamonModel();
   setStatus(buildingsData.features.length.toLocaleString()+' local building outlines in 3D · '+roadsData.features.length.toLocaleString()+' mapped road/path lines · '+surfaceData.features.length.toLocaleString()+' official DPWH road records loaded · 6 landmark markers (approximate positions)');
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
 });
