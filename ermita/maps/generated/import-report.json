@@ -1,0 +1,19 @@
+{
+  "area_relation_id": 103706,
+  "retrieval_endpoint": "https://overpass-api.de/api/interpreter",
+  "retrieved_utc": "2026-10-18T13:22:12Z",
+  "osm_element_count": 6991,
+  "geojson_feature_count": 6957,
+  "building_feature_count": 1312,
+  "poi_and_infrastructure_rows": 5644,
+  "extruded_building_polygon_count": 1306,
+  "source": "OpenStreetMap contributors",
+  "license": "ODbL 1.0; attribution and share-alike obligations apply",
+  "limitations": [
+    "Only objects mapped in OSM are present; missing objects are not evidence of absence.",
+    "This pipeline does not import or derive data from Google Street View or Google Maps.",
+    "Street signs and traffic signal data may be incomplete.",
+    "Building heights may be estimates where OSM has no height or level tags.",
+    "The GLB is an extrusion model, not photogrammetry or a surveyed city model."
+  ]
+}
