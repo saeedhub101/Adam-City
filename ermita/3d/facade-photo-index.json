@@ -1,0 +1,3605 @@
+{
+  "source": "Repository facade-photo review index; candidates are location/heading matches, not guaranteed visual identifications.",
+  "generated_from": "ermita/3d/facade-photo-review.csv",
+  "method": "Only rows whose local image exists in the repository; sorted by distance to building wall and heading difference.",
+  "building_count": 132,
+  "photo_count": 238,
+  "buildings": {
+    "way/822413216": [
+      {
+        "photo_id": "2506564233",
+        "image": "kartaview/images/2506564233.jpg",
+        "latitude": 14.580004,
+        "longitude": 120.980277,
+        "distance_to_wall_m": 0.46,
+        "camera_heading_deg": 329.86,
+        "heading_difference_deg": 1.8,
+        "capture_date": "2024-11-19 02:14:38.000",
+        "source_page": "https://kartaview.org/map/@14.580004,120.980277,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "1703939625",
+        "image": "kartaview/images/1703939625.jpg",
+        "latitude": 14.58003,
+        "longitude": 120.980181,
+        "distance_to_wall_m": 10.1,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2022-10-09 03:58:02.000",
+        "source_page": "https://kartaview.org/map/@14.58003,120.980181,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      }
+    ],
+    "way/642781531": [
+      {
+        "photo_id": "1718194953",
+        "image": "kartaview/images/1718194953.jpg",
+        "latitude": 14.588069,
+        "longitude": 120.986269,
+        "distance_to_wall_m": 3.84,
+        "camera_heading_deg": 69.96,
+        "heading_difference_deg": 1.4,
+        "capture_date": "2019-05-02 23:52:20.000",
+        "source_page": "https://kartaview.org/map/@14.588069,120.986269,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/91233257": [
+      {
+        "photo_id": "2488521673",
+        "image": "kartaview/images/2488521673.jpg",
+        "latitude": 14.582136,
+        "longitude": 120.985673,
+        "distance_to_wall_m": 3.92,
+        "camera_heading_deg": 123.5,
+        "heading_difference_deg": 3.6,
+        "capture_date": "2024-10-30 07:04:13.000",
+        "source_page": "https://kartaview.org/map/@14.582136,120.985673,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/308695382": [
+      {
+        "photo_id": "2488518665",
+        "image": "kartaview/images/2488518665.jpg",
+        "latitude": 14.576875,
+        "longitude": 120.981667,
+        "distance_to_wall_m": 4.52,
+        "camera_heading_deg": 329.97,
+        "heading_difference_deg": 6.5,
+        "capture_date": "2024-10-30 06:22:01.000",
+        "source_page": "https://kartaview.org/map/@14.576875,120.981667,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2506563625",
+        "image": "kartaview/images/2506563625.jpg",
+        "latitude": 14.576842,
+        "longitude": 120.981593,
+        "distance_to_wall_m": 6.29,
+        "camera_heading_deg": 337.36,
+        "heading_difference_deg": 40.6,
+        "capture_date": "2024-11-19 02:12:05.000",
+        "source_page": "https://kartaview.org/map/@14.576842,120.981593,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/89774335": [
+      {
+        "photo_id": "2488519305",
+        "image": "kartaview/images/2488519305.jpg",
+        "latitude": 14.577527,
+        "longitude": 120.979708,
+        "distance_to_wall_m": 4.38,
+        "camera_heading_deg": 253.55,
+        "heading_difference_deg": 10.9,
+        "capture_date": "2024-10-30 06:24:47.000",
+        "source_page": "https://kartaview.org/map/@14.577527,120.979708,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/27650470": [
+      {
+        "photo_id": "1281083517",
+        "image": "kartaview/images/1281083517.jpg",
+        "latitude": 14.575894,
+        "longitude": 120.98728,
+        "distance_to_wall_m": 0.35,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2019-05-04 03:28:52.000",
+        "source_page": "https://kartaview.org/map/@14.575894,120.98728,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      }
+    ],
+    "way/542698878": [
+      {
+        "photo_id": "2488520905",
+        "image": "kartaview/images/2488520905.jpg",
+        "latitude": 14.581502,
+        "longitude": 120.982568,
+        "distance_to_wall_m": 8.56,
+        "camera_heading_deg": 64.07,
+        "heading_difference_deg": 1.7,
+        "capture_date": "2024-10-30 06:57:35.000",
+        "source_page": "https://kartaview.org/map/@14.581502,120.982568,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/267205335": [
+      {
+        "photo_id": "1725813993",
+        "image": "kartaview/images/1725813993.jpg",
+        "latitude": 14.574668,
+        "longitude": 120.981439,
+        "distance_to_wall_m": 1.55,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2022-09-04 07:01:09.000",
+        "source_page": "https://kartaview.org/map/@14.574668,120.981439,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      }
+    ],
+    "way/288126519": [
+      {
+        "photo_id": "2513162729",
+        "image": "kartaview/images/2513162729.jpg",
+        "latitude": 14.576981,
+        "longitude": 120.987666,
+        "distance_to_wall_m": 6.93,
+        "camera_heading_deg": 146.61,
+        "heading_difference_deg": 21.9,
+        "capture_date": "2024-11-23 05:33:57.000",
+        "source_page": "https://kartaview.org/map/@14.576981,120.987666,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2562602057",
+        "image": "kartaview/images/2562602057.jpg",
+        "latitude": 14.577024,
+        "longitude": 120.987683,
+        "distance_to_wall_m": 9.62,
+        "camera_heading_deg": 153.72,
+        "heading_difference_deg": 3,
+        "capture_date": "2025-04-29 06:54:58.000",
+        "source_page": "https://kartaview.org/map/@14.577024,120.987683,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508545497",
+        "image": "kartaview/images/2508545497.jpg",
+        "latitude": 14.577063,
+        "longitude": 120.987635,
+        "distance_to_wall_m": 16.21,
+        "camera_heading_deg": 146.64,
+        "heading_difference_deg": 1,
+        "capture_date": "2024-11-20 03:46:35.000",
+        "source_page": "https://kartaview.org/map/@14.577063,120.987635,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508498649",
+        "image": "kartaview/images/2508498649.jpg",
+        "latitude": 14.576027,
+        "longitude": 120.988123,
+        "distance_to_wall_m": 14.18,
+        "camera_heading_deg": 74.63,
+        "heading_difference_deg": 43.6,
+        "capture_date": "2024-11-19 23:12:36.000",
+        "source_page": "https://kartaview.org/map/@14.576027,120.988123,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2505351865",
+        "image": "kartaview/images/2505351865.jpg",
+        "latitude": 14.575984,
+        "longitude": 120.988141,
+        "distance_to_wall_m": 17.91,
+        "camera_heading_deg": 59.69,
+        "heading_difference_deg": 42.5,
+        "capture_date": "2024-11-19 00:29:39.000",
+        "source_page": "https://kartaview.org/map/@14.575984,120.988141,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/823330151": [
+      {
+        "photo_id": "2506561673",
+        "image": "kartaview/images/2506561673.jpg",
+        "latitude": 14.577374,
+        "longitude": 120.980198,
+        "distance_to_wall_m": 9.81,
+        "camera_heading_deg": 160.11,
+        "heading_difference_deg": 5.3,
+        "capture_date": "2024-11-19 02:05:23.000",
+        "source_page": "https://kartaview.org/map/@14.577374,120.980198,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1355324836": [
+      {
+        "photo_id": "1280016681",
+        "image": "kartaview/images/1280016681.jpg",
+        "latitude": 14.588217,
+        "longitude": 120.986675,
+        "distance_to_wall_m": 2.94,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2019-03-14 01:00:15.000",
+        "source_page": "https://kartaview.org/map/@14.588217,120.986675,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "1718194937",
+        "image": "kartaview/images/1718194937.jpg",
+        "latitude": 14.58815,
+        "longitude": 120.986712,
+        "distance_to_wall_m": 4.42,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2022-10-09 06:43:58.000",
+        "source_page": "https://kartaview.org/map/@14.58815,120.986712,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      }
+    ],
+    "way/90125136": [
+      {
+        "photo_id": "1239582917",
+        "image": "kartaview/images/1239582917.jpg",
+        "latitude": 14.580619,
+        "longitude": 120.980874,
+        "distance_to_wall_m": 3.32,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2019-04-10 01:19:07.000",
+        "source_page": "https://kartaview.org/map/@14.580619,120.980874,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      }
+    ],
+    "way/1061988733": [
+      {
+        "photo_id": "1725814009",
+        "image": "kartaview/images/1725814009.jpg",
+        "latitude": 14.575211,
+        "longitude": 120.982429,
+        "distance_to_wall_m": 3.92,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2022-09-04 05:30:47.000",
+        "source_page": "https://kartaview.org/map/@14.575211,120.982429,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "1725814057",
+        "image": "kartaview/images/1725814057.jpg",
+        "latitude": 14.575525,
+        "longitude": 120.983019,
+        "distance_to_wall_m": 5.57,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2022-09-04 05:30:33.000",
+        "source_page": "https://kartaview.org/map/@14.575525,120.983019,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      }
+    ],
+    "way/308695405": [
+      {
+        "photo_id": "1239583101",
+        "image": "kartaview/images/1239583101.jpg",
+        "latitude": 14.574908,
+        "longitude": 120.981334,
+        "distance_to_wall_m": 4.12,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2019-05-04 05:09:25.000",
+        "source_page": "https://kartaview.org/map/@14.574908,120.981334,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      }
+    ],
+    "way/542686883": [
+      {
+        "photo_id": "2508484729",
+        "image": "kartaview/images/2508484729.jpg",
+        "latitude": 14.588049,
+        "longitude": 120.984953,
+        "distance_to_wall_m": 3.74,
+        "camera_heading_deg": 161.57,
+        "heading_difference_deg": 47.5,
+        "capture_date": "2024-11-19 22:39:08.000",
+        "source_page": "https://kartaview.org/map/@14.588049,120.984953,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/90123664": [
+      {
+        "photo_id": "1394393297",
+        "image": "kartaview/images/1394393297.jpg",
+        "latitude": 14.579706,
+        "longitude": 120.982499,
+        "distance_to_wall_m": 5.35,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2019-05-04 04:43:10.000",
+        "source_page": "https://kartaview.org/map/@14.579706,120.982499,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      }
+    ],
+    "way/308702712": [
+      {
+        "photo_id": "2506625129",
+        "image": "kartaview/images/2506625129.jpg",
+        "latitude": 14.579784,
+        "longitude": 120.988845,
+        "distance_to_wall_m": 8.31,
+        "camera_heading_deg": 241.39,
+        "heading_difference_deg": 26,
+        "capture_date": "2024-11-19 08:14:13.000",
+        "source_page": "https://kartaview.org/map/@14.579784,120.988845,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/308700529": [
+      {
+        "photo_id": "1703940905",
+        "image": "kartaview/images/1703940905.jpg",
+        "latitude": 14.580082,
+        "longitude": 120.980157,
+        "distance_to_wall_m": 5.73,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2022-10-09 03:58:03.000",
+        "source_page": "https://kartaview.org/map/@14.580082,120.980157,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      }
+    ],
+    "way/90128945": [
+      {
+        "photo_id": "1703939609",
+        "image": "kartaview/images/1703939609.jpg",
+        "latitude": 14.580858,
+        "longitude": 120.979818,
+        "distance_to_wall_m": 5.74,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2022-10-09 03:58:14.000",
+        "source_page": "https://kartaview.org/map/@14.580858,120.979818,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "1703940921",
+        "image": "kartaview/images/1703940921.jpg",
+        "latitude": 14.580905,
+        "longitude": 120.979798,
+        "distance_to_wall_m": 6.02,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2022-10-09 03:58:15.000",
+        "source_page": "https://kartaview.org/map/@14.580905,120.979798,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2505349401",
+        "image": "kartaview/images/2505349401.jpg",
+        "latitude": 14.581233,
+        "longitude": 120.979839,
+        "distance_to_wall_m": 37.41,
+        "camera_heading_deg": 240.71,
+        "heading_difference_deg": 41.4,
+        "capture_date": "2024-11-19 00:20:14.000",
+        "source_page": "https://kartaview.org/map/@14.581233,120.979839,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/90132745": [
+      {
+        "photo_id": "2506561113",
+        "image": "kartaview/images/2506561113.jpg",
+        "latitude": 14.580293,
+        "longitude": 120.980499,
+        "distance_to_wall_m": 8.88,
+        "camera_heading_deg": 224.06,
+        "heading_difference_deg": 24.4,
+        "capture_date": "2024-11-19 02:02:28.000",
+        "source_page": "https://kartaview.org/map/@14.580293,120.980499,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2512973257",
+        "image": "kartaview/images/2512973257.jpg",
+        "latitude": 14.579979,
+        "longitude": 120.98023,
+        "distance_to_wall_m": 20.11,
+        "camera_heading_deg": 341.5,
+        "heading_difference_deg": 15.5,
+        "capture_date": "2024-11-24 05:31:29.000",
+        "source_page": "https://kartaview.org/map/@14.579979,120.98023,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/308702713": [
+      {
+        "photo_id": "2488521865",
+        "image": "kartaview/images/2488521865.jpg",
+        "latitude": 14.581631,
+        "longitude": 120.98678,
+        "distance_to_wall_m": 13.18,
+        "camera_heading_deg": 114.91,
+        "heading_difference_deg": 3.2,
+        "capture_date": "2024-10-30 07:04:41.000",
+        "source_page": "https://kartaview.org/map/@14.581631,120.98678,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/30106330": [
+      {
+        "photo_id": "2562597513",
+        "image": "kartaview/images/2562597513.jpg",
+        "latitude": 14.595428,
+        "longitude": 120.978047,
+        "distance_to_wall_m": 3.25,
+        "camera_heading_deg": 231.64,
+        "heading_difference_deg": 54.2,
+        "capture_date": "2025-04-29 06:39:25.000",
+        "source_page": "https://kartaview.org/map/@14.595428,120.978047,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/367262432": [
+      {
+        "photo_id": "2512972601",
+        "image": "kartaview/images/2512972601.jpg",
+        "latitude": 14.57817,
+        "longitude": 120.982879,
+        "distance_to_wall_m": 8.4,
+        "camera_heading_deg": 271.41,
+        "heading_difference_deg": 29,
+        "capture_date": "2024-11-24 05:29:57.000",
+        "source_page": "https://kartaview.org/map/@14.57817,120.982879,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2512972585",
+        "image": "kartaview/images/2512972585.jpg",
+        "latitude": 14.578186,
+        "longitude": 120.982984,
+        "distance_to_wall_m": 19.62,
+        "camera_heading_deg": 261.05,
+        "heading_difference_deg": 18.6,
+        "capture_date": "2024-11-24 05:29:55.000",
+        "source_page": "https://kartaview.org/map/@14.578186,120.982984,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/822386820": [
+      {
+        "photo_id": "1239583537",
+        "image": "kartaview/images/1239583537.jpg",
+        "latitude": 14.578828,
+        "longitude": 120.978247,
+        "distance_to_wall_m": 6.27,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2019-03-15 01:22:48.000",
+        "source_page": "https://kartaview.org/map/@14.578828,120.978247,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      }
+    ],
+    "way/267205329": [
+      {
+        "photo_id": "2506563257",
+        "image": "kartaview/images/2506563257.jpg",
+        "latitude": 14.574723,
+        "longitude": 120.982389,
+        "distance_to_wall_m": 8.18,
+        "camera_heading_deg": 301.8,
+        "heading_difference_deg": 31.2,
+        "capture_date": "2024-11-19 02:09:54.000",
+        "source_page": "https://kartaview.org/map/@14.574723,120.982389,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/308695395": [
+      {
+        "photo_id": "2506562121",
+        "image": "kartaview/images/2506562121.jpg",
+        "latitude": 14.575255,
+        "longitude": 120.981258,
+        "distance_to_wall_m": 7.57,
+        "camera_heading_deg": 154.18,
+        "heading_difference_deg": 35.2,
+        "capture_date": "2024-11-19 02:06:36.000",
+        "source_page": "https://kartaview.org/map/@14.575255,120.981258,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2521753145",
+        "image": "kartaview/images/2521753145.jpg",
+        "latitude": 14.575254,
+        "longitude": 120.981277,
+        "distance_to_wall_m": 8.08,
+        "camera_heading_deg": 154.63,
+        "heading_difference_deg": 49.9,
+        "capture_date": "2024-12-02 07:49:25.000",
+        "source_page": "https://kartaview.org/map/@14.575254,120.981277,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/89846393": [
+      {
+        "photo_id": "1601885321",
+        "image": "kartaview/images/1601885321.jpg",
+        "latitude": 14.581413,
+        "longitude": 120.980631,
+        "distance_to_wall_m": 6.61,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2019-04-10 01:18:27.000",
+        "source_page": "https://kartaview.org/map/@14.581413,120.980631,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      }
+    ],
+    "way/823330146": [
+      {
+        "photo_id": "2488518729",
+        "image": "kartaview/images/2488518729.jpg",
+        "latitude": 14.577119,
+        "longitude": 120.981469,
+        "distance_to_wall_m": 13.07,
+        "camera_heading_deg": 324.46,
+        "heading_difference_deg": 9.7,
+        "capture_date": "2024-10-30 06:22:11.000",
+        "source_page": "https://kartaview.org/map/@14.577119,120.981469,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/90139548": [
+      {
+        "photo_id": "2506560569",
+        "image": "kartaview/images/2506560569.jpg",
+        "latitude": 14.582024,
+        "longitude": 120.983699,
+        "distance_to_wall_m": 9.25,
+        "camera_heading_deg": 241.18,
+        "heading_difference_deg": 29,
+        "capture_date": "2024-11-19 02:01:06.000",
+        "source_page": "https://kartaview.org/map/@14.582024,120.983699,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/163678964": [
+      {
+        "photo_id": "1239581989",
+        "image": "kartaview/images/1239581989.jpg",
+        "latitude": 14.575003,
+        "longitude": 120.980376,
+        "distance_to_wall_m": 7.11,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2019-05-04 05:09:51.000",
+        "source_page": "https://kartaview.org/map/@14.575003,120.980376,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508550633",
+        "image": "kartaview/images/2508550633.jpg",
+        "latitude": 14.574893,
+        "longitude": 120.980436,
+        "distance_to_wall_m": 13.33,
+        "camera_heading_deg": 337.93,
+        "heading_difference_deg": 26.3,
+        "capture_date": "2024-11-20 04:07:44.000",
+        "source_page": "https://kartaview.org/map/@14.574893,120.980436,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/90125253": [
+      {
+        "photo_id": "1725716409",
+        "image": "kartaview/images/1725716409.jpg",
+        "latitude": 14.579733,
+        "longitude": 120.981461,
+        "distance_to_wall_m": 8.38,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2019-05-04 04:42:37.000",
+        "source_page": "https://kartaview.org/map/@14.579733,120.981461,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      }
+    ],
+    "way/823295200": [
+      {
+        "photo_id": "2521752393",
+        "image": "kartaview/images/2521752393.jpg",
+        "latitude": 14.578228,
+        "longitude": 120.983112,
+        "distance_to_wall_m": 13.83,
+        "camera_heading_deg": 257.01,
+        "heading_difference_deg": 13.5,
+        "capture_date": "2024-12-02 07:47:13.000",
+        "source_page": "https://kartaview.org/map/@14.578228,120.983112,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1464534438": [
+      {
+        "photo_id": "2508427161",
+        "image": "kartaview/images/2508427161.jpg",
+        "latitude": 14.588461,
+        "longitude": 120.984639,
+        "distance_to_wall_m": 5.77,
+        "camera_heading_deg": 143.82,
+        "heading_difference_deg": 56.1,
+        "capture_date": "2024-11-19 23:17:59.000",
+        "source_page": "https://kartaview.org/map/@14.588461,120.984639,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1081128732": [
+      {
+        "photo_id": "2508379897",
+        "image": "kartaview/images/2508379897.jpg",
+        "latitude": 14.593118,
+        "longitude": 120.980145,
+        "distance_to_wall_m": 15.04,
+        "camera_heading_deg": 341.95,
+        "heading_difference_deg": 10.1,
+        "capture_date": "2024-11-20 00:46:52.000",
+        "source_page": "https://kartaview.org/map/@14.593118,120.980145,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2509623481",
+        "image": "kartaview/images/2509623481.jpg",
+        "latitude": 14.593106,
+        "longitude": 120.980142,
+        "distance_to_wall_m": 16.37,
+        "camera_heading_deg": 342.45,
+        "heading_difference_deg": 11.4,
+        "capture_date": "2024-11-21 04:04:13.000",
+        "source_page": "https://kartaview.org/map/@14.593106,120.980142,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2506489961",
+        "image": "kartaview/images/2506489961.jpg",
+        "latitude": 14.593074,
+        "longitude": 120.980174,
+        "distance_to_wall_m": 20.65,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 14.9,
+        "capture_date": "2024-11-19 05:57:51.000",
+        "source_page": "https://kartaview.org/map/@14.593074,120.980174,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2506566057",
+        "image": "kartaview/images/2506566057.jpg",
+        "latitude": 14.59301,
+        "longitude": 120.98019,
+        "distance_to_wall_m": 28.23,
+        "camera_heading_deg": 340.56,
+        "heading_difference_deg": 4.9,
+        "capture_date": "2024-11-19 02:21:01.000",
+        "source_page": "https://kartaview.org/map/@14.59301,120.98019,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/277969166": [
+      {
+        "photo_id": "1392342709",
+        "image": "kartaview/images/1392342709.jpg",
+        "latitude": 14.583733,
+        "longitude": 120.988114,
+        "distance_to_wall_m": 9.65,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2019-03-14 00:59:33.000",
+        "source_page": "https://kartaview.org/map/@14.583733,120.988114,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2505347849",
+        "image": "kartaview/images/2505347849.jpg",
+        "latitude": 14.583716,
+        "longitude": 120.988334,
+        "distance_to_wall_m": 34.22,
+        "camera_heading_deg": 250.72,
+        "heading_difference_deg": 24.1,
+        "capture_date": "2024-11-19 00:14:44.000",
+        "source_page": "https://kartaview.org/map/@14.583716,120.988334,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2506484489",
+        "image": "kartaview/images/2506484489.jpg",
+        "latitude": 14.583664,
+        "longitude": 120.988336,
+        "distance_to_wall_m": 35.44,
+        "camera_heading_deg": 252.89,
+        "heading_difference_deg": 31.6,
+        "capture_date": "2024-11-19 05:18:12.000",
+        "source_page": "https://kartaview.org/map/@14.583664,120.988336,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/136842220": [
+      {
+        "photo_id": "2488519833",
+        "image": "kartaview/images/2488519833.jpg",
+        "latitude": 14.58,
+        "longitude": 120.977912,
+        "distance_to_wall_m": 9.31,
+        "camera_heading_deg": 63.82,
+        "heading_difference_deg": 41.9,
+        "capture_date": "2024-10-30 06:50:23.000",
+        "source_page": "https://kartaview.org/map/@14.58,120.977912,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/277972874": [
+      {
+        "photo_id": "2506685305",
+        "image": "kartaview/images/2506685305.jpg",
+        "latitude": 14.578715,
+        "longitude": 120.992051,
+        "distance_to_wall_m": 7.91,
+        "camera_heading_deg": 300.19,
+        "heading_difference_deg": 49.3,
+        "capture_date": "2024-11-19 09:43:29.000",
+        "source_page": "https://kartaview.org/map/@14.578715,120.992051,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/437538319": [
+      {
+        "photo_id": "2488522649",
+        "image": "kartaview/images/2488522649.jpg",
+        "latitude": 14.57814,
+        "longitude": 120.989816,
+        "distance_to_wall_m": 10.07,
+        "camera_heading_deg": 160.57,
+        "heading_difference_deg": 42.8,
+        "capture_date": "2024-10-30 07:06:32.000",
+        "source_page": "https://kartaview.org/map/@14.57814,120.989816,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/823330147": [
+      {
+        "photo_id": "2488518761",
+        "image": "kartaview/images/2488518761.jpg",
+        "latitude": 14.576919,
+        "longitude": 120.981378,
+        "distance_to_wall_m": 15.19,
+        "camera_heading_deg": 351.78,
+        "heading_difference_deg": 17.9,
+        "capture_date": "2024-10-30 06:22:50.000",
+        "source_page": "https://kartaview.org/map/@14.576919,120.981378,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/308587994": [
+      {
+        "photo_id": "2506563177",
+        "image": "kartaview/images/2506563177.jpg",
+        "latitude": 14.57399,
+        "longitude": 120.982052,
+        "distance_to_wall_m": 12.83,
+        "camera_heading_deg": 30.29,
+        "heading_difference_deg": 31.7,
+        "capture_date": "2024-11-19 02:09:43.000",
+        "source_page": "https://kartaview.org/map/@14.57399,120.982052,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/277974131": [
+      {
+        "photo_id": "2488523097",
+        "image": "kartaview/images/2488523097.jpg",
+        "latitude": 14.577462,
+        "longitude": 120.991343,
+        "distance_to_wall_m": 16.34,
+        "camera_heading_deg": 68.71,
+        "heading_difference_deg": 14.3,
+        "capture_date": "2024-10-30 07:08:05.000",
+        "source_page": "https://kartaview.org/map/@14.577462,120.991343,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/89777068": [
+      {
+        "photo_id": "2506561353",
+        "image": "kartaview/images/2506561353.jpg",
+        "latitude": 14.579582,
+        "longitude": 120.979245,
+        "distance_to_wall_m": 16.64,
+        "camera_heading_deg": 202.77,
+        "heading_difference_deg": 13.5,
+        "capture_date": "2024-11-19 02:03:51.000",
+        "source_page": "https://kartaview.org/map/@14.579582,120.979245,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/90311603": [
+      {
+        "photo_id": "2508551705",
+        "image": "kartaview/images/2508551705.jpg",
+        "latitude": 14.580029,
+        "longitude": 120.978002,
+        "distance_to_wall_m": 14.99,
+        "camera_heading_deg": 57.47,
+        "heading_difference_deg": 22.4,
+        "capture_date": "2024-11-20 04:12:02.000",
+        "source_page": "https://kartaview.org/map/@14.580029,120.978002,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/308702665": [
+      {
+        "photo_id": "2508496553",
+        "image": "kartaview/images/2508496553.jpg",
+        "latitude": 14.580881,
+        "longitude": 120.987986,
+        "distance_to_wall_m": 12.69,
+        "camera_heading_deg": 231.12,
+        "heading_difference_deg": 33.9,
+        "capture_date": "2024-11-19 23:04:21.000",
+        "source_page": "https://kartaview.org/map/@14.580881,120.987986,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/89829076": [
+      {
+        "photo_id": "2508497353",
+        "image": "kartaview/images/2508497353.jpg",
+        "latitude": 14.578263,
+        "longitude": 120.982846,
+        "distance_to_wall_m": 16.45,
+        "camera_heading_deg": 240.84,
+        "heading_difference_deg": 15.7,
+        "capture_date": "2024-11-19 23:06:26.000",
+        "source_page": "https://kartaview.org/map/@14.578263,120.982846,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/90308565": [
+      {
+        "photo_id": "2512972953",
+        "image": "kartaview/images/2512972953.jpg",
+        "latitude": 14.57775,
+        "longitude": 120.981185,
+        "distance_to_wall_m": 9.24,
+        "camera_heading_deg": 337.03,
+        "heading_difference_deg": 51.9,
+        "capture_date": "2024-11-24 05:30:49.000",
+        "source_page": "https://kartaview.org/map/@14.57775,120.981185,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/840746270": [
+      {
+        "photo_id": "2530711129",
+        "image": "kartaview/images/2530711129.jpg",
+        "latitude": 14.577103,
+        "longitude": 120.987811,
+        "distance_to_wall_m": 18.22,
+        "camera_heading_deg": 327.27,
+        "heading_difference_deg": 7.9,
+        "capture_date": "2024-12-15 02:42:30.000",
+        "source_page": "https://kartaview.org/map/@14.577103,120.987811,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2562594409",
+        "image": "kartaview/images/2562594409.jpg",
+        "latitude": 14.577093,
+        "longitude": 120.987777,
+        "distance_to_wall_m": 18.1,
+        "camera_heading_deg": 337.55,
+        "heading_difference_deg": 10.2,
+        "capture_date": "2025-04-29 06:29:53.000",
+        "source_page": "https://kartaview.org/map/@14.577093,120.987777,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508377977",
+        "image": "kartaview/images/2508377977.jpg",
+        "latitude": 14.576985,
+        "longitude": 120.987814,
+        "distance_to_wall_m": 31.15,
+        "camera_heading_deg": 328.16,
+        "heading_difference_deg": 17,
+        "capture_date": "2024-11-20 00:42:27.000",
+        "source_page": "https://kartaview.org/map/@14.576985,120.987814,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/90301311": [
+      {
+        "photo_id": "2488520617",
+        "image": "kartaview/images/2488520617.jpg",
+        "latitude": 14.580654,
+        "longitude": 120.981499,
+        "distance_to_wall_m": 10.27,
+        "camera_heading_deg": 13.88,
+        "heading_difference_deg": 50.3,
+        "capture_date": "2024-10-30 06:53:57.000",
+        "source_page": "https://kartaview.org/map/@14.580654,120.981499,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/308695386": [
+      {
+        "photo_id": "2488518409",
+        "image": "kartaview/images/2488518409.jpg",
+        "latitude": 14.575627,
+        "longitude": 120.982101,
+        "distance_to_wall_m": 10.06,
+        "camera_heading_deg": 353.1,
+        "heading_difference_deg": 53.5,
+        "capture_date": "2024-10-30 06:21:22.000",
+        "source_page": "https://kartaview.org/map/@14.575627,120.982101,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/179404080": [
+      {
+        "photo_id": "2512974809",
+        "image": "kartaview/images/2512974809.jpg",
+        "latitude": 14.588935,
+        "longitude": 120.984817,
+        "distance_to_wall_m": 16.95,
+        "camera_heading_deg": 37.02,
+        "heading_difference_deg": 20.6,
+        "capture_date": "2024-11-24 05:35:09.000",
+        "source_page": "https://kartaview.org/map/@14.588935,120.984817,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508457337",
+        "image": "kartaview/images/2508457337.jpg",
+        "latitude": 14.588911,
+        "longitude": 120.984745,
+        "distance_to_wall_m": 25.27,
+        "camera_heading_deg": 39.22,
+        "heading_difference_deg": 22.9,
+        "capture_date": "2024-11-19 22:27:48.000",
+        "source_page": "https://kartaview.org/map/@14.588911,120.984745,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/90301215": [
+      {
+        "photo_id": "1720362233",
+        "image": "kartaview/images/1720362233.jpg",
+        "latitude": 14.581519,
+        "longitude": 120.981482,
+        "distance_to_wall_m": 13.23,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2022-10-07 02:13:56.000",
+        "source_page": "https://kartaview.org/map/@14.581519,120.981482,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508558457",
+        "image": "kartaview/images/2508558457.jpg",
+        "latitude": 14.581854,
+        "longitude": 120.981214,
+        "distance_to_wall_m": 15.89,
+        "camera_heading_deg": 58.71,
+        "heading_difference_deg": 32.2,
+        "capture_date": "2024-11-20 04:15:14.000",
+        "source_page": "https://kartaview.org/map/@14.581854,120.981214,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2506564601",
+        "image": "kartaview/images/2506564601.jpg",
+        "latitude": 14.581778,
+        "longitude": 120.981188,
+        "distance_to_wall_m": 20.61,
+        "camera_heading_deg": 56.47,
+        "heading_difference_deg": 9.2,
+        "capture_date": "2024-11-19 02:17:47.000",
+        "source_page": "https://kartaview.org/map/@14.581778,120.981188,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2512973641",
+        "image": "kartaview/images/2512973641.jpg",
+        "latitude": 14.58179,
+        "longitude": 120.981131,
+        "distance_to_wall_m": 26.11,
+        "camera_heading_deg": 55.05,
+        "heading_difference_deg": 19.2,
+        "capture_date": "2024-11-24 05:32:19.000",
+        "source_page": "https://kartaview.org/map/@14.58179,120.981131,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/482698427": [
+      {
+        "photo_id": "2505387801",
+        "image": "kartaview/images/2505387801.jpg",
+        "latitude": 14.593109,
+        "longitude": 120.979923,
+        "distance_to_wall_m": 17.27,
+        "camera_heading_deg": 346.46,
+        "heading_difference_deg": 22.2,
+        "capture_date": "2024-11-19 03:08:05.000",
+        "source_page": "https://kartaview.org/map/@14.593109,120.979923,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2521771913",
+        "image": "kartaview/images/2521771913.jpg",
+        "latitude": 14.593026,
+        "longitude": 120.979777,
+        "distance_to_wall_m": 21.96,
+        "camera_heading_deg": 342.9,
+        "heading_difference_deg": 19.3,
+        "capture_date": "2024-12-02 08:59:35.000",
+        "source_page": "https://kartaview.org/map/@14.593026,120.979777,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2506627161",
+        "image": "kartaview/images/2506627161.jpg",
+        "latitude": 14.592963,
+        "longitude": 120.979769,
+        "distance_to_wall_m": 29.25,
+        "camera_heading_deg": 347.05,
+        "heading_difference_deg": 16.4,
+        "capture_date": "2024-11-19 08:19:06.000",
+        "source_page": "https://kartaview.org/map/@14.592963,120.979769,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2530170857",
+        "image": "kartaview/images/2530170857.jpg",
+        "latitude": 14.592994,
+        "longitude": 120.979958,
+        "distance_to_wall_m": 30.63,
+        "camera_heading_deg": 343.06,
+        "heading_difference_deg": 10.2,
+        "capture_date": "2024-12-15 06:25:03.000",
+        "source_page": "https://kartaview.org/map/@14.592994,120.979958,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2039669465",
+        "image": "kartaview/images/2039669465.jpg",
+        "latitude": 14.592994,
+        "longitude": 120.979992,
+        "distance_to_wall_m": 32.53,
+        "camera_heading_deg": 346.09,
+        "heading_difference_deg": 19.2,
+        "capture_date": "2024-08-11 05:28:09.000",
+        "source_page": "https://kartaview.org/map/@14.592994,120.979992,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2530713321",
+        "image": "kartaview/images/2530713321.jpg",
+        "latitude": 14.592959,
+        "longitude": 120.979943,
+        "distance_to_wall_m": 33.61,
+        "camera_heading_deg": 350.56,
+        "heading_difference_deg": 12,
+        "capture_date": "2024-12-15 02:48:44.000",
+        "source_page": "https://kartaview.org/map/@14.592959,120.979943,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2562596953",
+        "image": "kartaview/images/2562596953.jpg",
+        "latitude": 14.592859,
+        "longitude": 120.979807,
+        "distance_to_wall_m": 41.23,
+        "camera_heading_deg": 341.68,
+        "heading_difference_deg": 14.9,
+        "capture_date": "2025-04-29 06:38:15.000",
+        "source_page": "https://kartaview.org/map/@14.592859,120.979807,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/642776986": [
+      {
+        "photo_id": "2506685465",
+        "image": "kartaview/images/2506685465.jpg",
+        "latitude": 14.579359,
+        "longitude": 120.990872,
+        "distance_to_wall_m": 15.19,
+        "camera_heading_deg": 303.3,
+        "heading_difference_deg": 35.2,
+        "capture_date": "2024-11-19 09:43:52.000",
+        "source_page": "https://kartaview.org/map/@14.579359,120.990872,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2506624745",
+        "image": "kartaview/images/2506624745.jpg",
+        "latitude": 14.57931,
+        "longitude": 120.990939,
+        "distance_to_wall_m": 23.22,
+        "camera_heading_deg": 297.32,
+        "heading_difference_deg": 14.6,
+        "capture_date": "2024-11-19 08:13:04.000",
+        "source_page": "https://kartaview.org/map/@14.57931,120.990939,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/308702694": [
+      {
+        "photo_id": "2488520425",
+        "image": "kartaview/images/2488520425.jpg",
+        "latitude": 14.579988,
+        "longitude": 120.980667,
+        "distance_to_wall_m": 14.51,
+        "camera_heading_deg": 21.42,
+        "heading_difference_deg": 38.7,
+        "capture_date": "2024-10-30 06:53:32.000",
+        "source_page": "https://kartaview.org/map/@14.579988,120.980667,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/267205339": [
+      {
+        "photo_id": "2488518153",
+        "image": "kartaview/images/2488518153.jpg",
+        "latitude": 14.57453,
+        "longitude": 120.98257,
+        "distance_to_wall_m": 20.57,
+        "camera_heading_deg": 320.62,
+        "heading_difference_deg": 12.4,
+        "capture_date": "2024-10-30 06:20:48.000",
+        "source_page": "https://kartaview.org/map/@14.57453,120.98257,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1464534433": [
+      {
+        "photo_id": "2508495593",
+        "image": "kartaview/images/2508495593.jpg",
+        "latitude": 14.588623,
+        "longitude": 120.984591,
+        "distance_to_wall_m": 15.48,
+        "camera_heading_deg": 148.87,
+        "heading_difference_deg": 38.5,
+        "capture_date": "2024-11-19 23:02:07.000",
+        "source_page": "https://kartaview.org/map/@14.588623,120.984591,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508901545",
+        "image": "kartaview/images/2508901545.jpg",
+        "latitude": 14.588614,
+        "longitude": 120.984672,
+        "distance_to_wall_m": 16.99,
+        "camera_heading_deg": 158.15,
+        "heading_difference_deg": 39.5,
+        "capture_date": "2024-11-20 07:13:21.000",
+        "source_page": "https://kartaview.org/map/@14.588614,120.984672,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/308695408": [
+      {
+        "photo_id": "2508497497",
+        "image": "kartaview/images/2508497497.jpg",
+        "latitude": 14.577729,
+        "longitude": 120.981893,
+        "distance_to_wall_m": 17.25,
+        "camera_heading_deg": 170.02,
+        "heading_difference_deg": 31.2,
+        "capture_date": "2024-11-19 23:06:46.000",
+        "source_page": "https://kartaview.org/map/@14.577729,120.981893,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/642781529": [
+      {
+        "photo_id": "1392342757",
+        "image": "kartaview/images/1392342757.jpg",
+        "latitude": 14.58854,
+        "longitude": 120.986649,
+        "distance_to_wall_m": 15.58,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2019-05-03 03:48:43.000",
+        "source_page": "https://kartaview.org/map/@14.58854,120.986649,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "1280016693",
+        "image": "kartaview/images/1280016693.jpg",
+        "latitude": 14.588539,
+        "longitude": 120.98665,
+        "distance_to_wall_m": 15.65,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2019-05-02 23:48:43.000",
+        "source_page": "https://kartaview.org/map/@14.588539,120.98665,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "1280018673",
+        "image": "kartaview/images/1280018673.jpg",
+        "latitude": 14.588553,
+        "longitude": 120.986656,
+        "distance_to_wall_m": 16.83,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2019-05-03 03:48:44.000",
+        "source_page": "https://kartaview.org/map/@14.588553,120.986656,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508909561",
+        "image": "kartaview/images/2508909561.jpg",
+        "latitude": 14.58813,
+        "longitude": 120.986746,
+        "distance_to_wall_m": 25.03,
+        "camera_heading_deg": 341.83,
+        "heading_difference_deg": 28.9,
+        "capture_date": "2024-11-20 07:44:16.000",
+        "source_page": "https://kartaview.org/map/@14.58813,120.986746,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/308701697": [
+      {
+        "photo_id": "1720369225",
+        "image": "kartaview/images/1720369225.jpg",
+        "latitude": 14.581029,
+        "longitude": 120.981743,
+        "distance_to_wall_m": 15.79,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2022-10-07 02:13:43.000",
+        "source_page": "https://kartaview.org/map/@14.581029,120.981743,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      }
+    ],
+    "way/437537870": [
+      {
+        "photo_id": "2488522265",
+        "image": "kartaview/images/2488522265.jpg",
+        "latitude": 14.580165,
+        "longitude": 120.988702,
+        "distance_to_wall_m": 17,
+        "camera_heading_deg": 151.62,
+        "heading_difference_deg": 34,
+        "capture_date": "2024-10-30 07:05:45.000",
+        "source_page": "https://kartaview.org/map/@14.580165,120.988702,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1061988717": [
+      {
+        "photo_id": "2508456905",
+        "image": "kartaview/images/2508456905.jpg",
+        "latitude": 14.590583,
+        "longitude": 120.9836,
+        "distance_to_wall_m": 21.59,
+        "camera_heading_deg": 1.68,
+        "heading_difference_deg": 11.6,
+        "capture_date": "2024-11-19 22:25:59.000",
+        "source_page": "https://kartaview.org/map/@14.590583,120.9836,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508495161",
+        "image": "kartaview/images/2508495161.jpg",
+        "latitude": 14.590579,
+        "longitude": 120.983604,
+        "distance_to_wall_m": 21.94,
+        "camera_heading_deg": 341.55,
+        "heading_difference_deg": 30.3,
+        "capture_date": "2024-11-19 22:55:07.000",
+        "source_page": "https://kartaview.org/map/@14.590579,120.983604,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1462527704": [
+      {
+        "photo_id": "2508484585",
+        "image": "kartaview/images/2508484585.jpg",
+        "latitude": 14.588344,
+        "longitude": 120.985667,
+        "distance_to_wall_m": 21.87,
+        "camera_heading_deg": 239.08,
+        "heading_difference_deg": 11.2,
+        "capture_date": "2024-11-19 22:38:46.000",
+        "source_page": "https://kartaview.org/map/@14.588344,120.985667,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/16554354": [
+      {
+        "photo_id": "2508496889",
+        "image": "kartaview/images/2508496889.jpg",
+        "latitude": 14.579926,
+        "longitude": 120.986037,
+        "distance_to_wall_m": 22.12,
+        "camera_heading_deg": 253.65,
+        "heading_difference_deg": 10.4,
+        "capture_date": "2024-11-19 23:05:18.000",
+        "source_page": "https://kartaview.org/map/@14.579926,120.986037,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508375465",
+        "image": "kartaview/images/2508375465.jpg",
+        "latitude": 14.580157,
+        "longitude": 120.986,
+        "distance_to_wall_m": 29.58,
+        "camera_heading_deg": 200.74,
+        "heading_difference_deg": 40.4,
+        "capture_date": "2024-11-20 00:28:43.000",
+        "source_page": "https://kartaview.org/map/@14.580157,120.986,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/308587996": [
+      {
+        "photo_id": "2506562697",
+        "image": "kartaview/images/2506562697.jpg",
+        "latitude": 14.574369,
+        "longitude": 120.982803,
+        "distance_to_wall_m": 14.26,
+        "camera_heading_deg": 324.73,
+        "heading_difference_deg": 52.8,
+        "capture_date": "2024-11-19 02:08:58.000",
+        "source_page": "https://kartaview.org/map/@14.574369,120.982803,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/89846391": [
+      {
+        "photo_id": "2508558329",
+        "image": "kartaview/images/2508558329.jpg",
+        "latitude": 14.581221,
+        "longitude": 120.980178,
+        "distance_to_wall_m": 18.83,
+        "camera_heading_deg": 28.56,
+        "heading_difference_deg": 44.3,
+        "capture_date": "2024-11-20 04:14:55.000",
+        "source_page": "https://kartaview.org/map/@14.581221,120.980178,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508552105",
+        "image": "kartaview/images/2508552105.jpg",
+        "latitude": 14.581197,
+        "longitude": 120.980138,
+        "distance_to_wall_m": 23.94,
+        "camera_heading_deg": 63.86,
+        "heading_difference_deg": 5.8,
+        "capture_date": "2024-11-20 04:13:02.000",
+        "source_page": "https://kartaview.org/map/@14.581197,120.980138,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508552073",
+        "image": "kartaview/images/2508552073.jpg",
+        "latitude": 14.581112,
+        "longitude": 120.979975,
+        "distance_to_wall_m": 44.44,
+        "camera_heading_deg": 59.67,
+        "heading_difference_deg": 6.3,
+        "capture_date": "2024-11-20 04:12:56.000",
+        "source_page": "https://kartaview.org/map/@14.581112,120.979975,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/74866702": [
+      {
+        "photo_id": "2506560377",
+        "image": "kartaview/images/2506560377.jpg",
+        "latitude": 14.582604,
+        "longitude": 120.984481,
+        "distance_to_wall_m": 13.69,
+        "camera_heading_deg": 179.42,
+        "heading_difference_deg": 58.4,
+        "capture_date": "2024-11-19 02:00:37.000",
+        "source_page": "https://kartaview.org/map/@14.582604,120.984481,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "1280956197",
+        "image": "kartaview/images/1280956197.jpg",
+        "latitude": 14.582356,
+        "longitude": 120.984553,
+        "distance_to_wall_m": 21.96,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2019-03-15 01:14:40.000",
+        "source_page": "https://kartaview.org/map/@14.582356,120.984553,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2488521193",
+        "image": "kartaview/images/2488521193.jpg",
+        "latitude": 14.581983,
+        "longitude": 120.983724,
+        "distance_to_wall_m": 26.82,
+        "camera_heading_deg": 64.16,
+        "heading_difference_deg": 26.3,
+        "capture_date": "2024-10-30 06:59:22.000",
+        "source_page": "https://kartaview.org/map/@14.581983,120.983724,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2506487897",
+        "image": "kartaview/images/2506487897.jpg",
+        "latitude": 14.583145,
+        "longitude": 120.984129,
+        "distance_to_wall_m": 38.62,
+        "camera_heading_deg": 151.44,
+        "heading_difference_deg": 40.1,
+        "capture_date": "2024-11-19 05:51:21.000",
+        "source_page": "https://kartaview.org/map/@14.583145,120.984129,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/277981561": [
+      {
+        "photo_id": "2506625337",
+        "image": "kartaview/images/2506625337.jpg",
+        "latitude": 14.579167,
+        "longitude": 120.987724,
+        "distance_to_wall_m": 22.38,
+        "camera_heading_deg": 236.34,
+        "heading_difference_deg": 15.1,
+        "capture_date": "2024-11-19 08:14:39.000",
+        "source_page": "https://kartaview.org/map/@14.579167,120.987724,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/277974481": [
+      {
+        "photo_id": "2508375817",
+        "image": "kartaview/images/2508375817.jpg",
+        "latitude": 14.578155,
+        "longitude": 120.987171,
+        "distance_to_wall_m": 17.21,
+        "camera_heading_deg": 141.47,
+        "heading_difference_deg": 44.6,
+        "capture_date": "2024-11-20 00:30:28.000",
+        "source_page": "https://kartaview.org/map/@14.578155,120.987171,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508545353",
+        "image": "kartaview/images/2508545353.jpg",
+        "latitude": 14.578169,
+        "longitude": 120.98702,
+        "distance_to_wall_m": 34.1,
+        "camera_heading_deg": 151.48,
+        "heading_difference_deg": 55.3,
+        "capture_date": "2024-11-20 03:46:17.000",
+        "source_page": "https://kartaview.org/map/@14.578169,120.98702,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/90610851": [
+      {
+        "photo_id": "2506625481",
+        "image": "kartaview/images/2506625481.jpg",
+        "latitude": 14.578742,
+        "longitude": 120.986889,
+        "distance_to_wall_m": 18.1,
+        "camera_heading_deg": 318.94,
+        "heading_difference_deg": 41.4,
+        "capture_date": "2024-11-19 08:15:02.000",
+        "source_page": "https://kartaview.org/map/@14.578742,120.986889,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/145657655": [
+      {
+        "photo_id": "2508498825",
+        "image": "kartaview/images/2508498825.jpg",
+        "latitude": 14.576427,
+        "longitude": 120.989178,
+        "distance_to_wall_m": 20.15,
+        "camera_heading_deg": 54.69,
+        "heading_difference_deg": 32.5,
+        "capture_date": "2024-11-19 23:13:00.000",
+        "source_page": "https://kartaview.org/map/@14.576427,120.989178,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2505352073",
+        "image": "kartaview/images/2505352073.jpg",
+        "latitude": 14.576437,
+        "longitude": 120.989137,
+        "distance_to_wall_m": 21.33,
+        "camera_heading_deg": 68.46,
+        "heading_difference_deg": 33.6,
+        "capture_date": "2024-11-19 00:30:08.000",
+        "source_page": "https://kartaview.org/map/@14.576437,120.989137,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/542684795": [
+      {
+        "photo_id": "2508854425",
+        "image": "kartaview/images/2508854425.jpg",
+        "latitude": 14.588983,
+        "longitude": 120.984781,
+        "distance_to_wall_m": 21.49,
+        "camera_heading_deg": 213.42,
+        "heading_difference_deg": 48.1,
+        "capture_date": "2024-11-20 09:07:12.000",
+        "source_page": "https://kartaview.org/map/@14.588983,120.984781,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508457305",
+        "image": "kartaview/images/2508457305.jpg",
+        "latitude": 14.588865,
+        "longitude": 120.984596,
+        "distance_to_wall_m": 25.75,
+        "camera_heading_deg": 101.03,
+        "heading_difference_deg": 6.1,
+        "capture_date": "2024-11-19 22:27:42.000",
+        "source_page": "https://kartaview.org/map/@14.588865,120.984596,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/314235477": [
+      {
+        "photo_id": "1280015345",
+        "image": "kartaview/images/1280015345.jpg",
+        "latitude": 14.582097,
+        "longitude": 120.981139,
+        "distance_to_wall_m": 19.38,
+        "camera_heading_deg": null,
+        "heading_difference_deg": 0,
+        "capture_date": "2019-03-14 03:23:24.000",
+        "source_page": "https://kartaview.org/map/@14.582097,120.981139,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "nearby_not_direction_verified",
+        "visually_verified": false
+      }
+    ],
+    "way/541686693": [
+      {
+        "photo_id": "2506486089",
+        "image": "kartaview/images/2506486089.jpg",
+        "latitude": 14.584804,
+        "longitude": 120.979633,
+        "distance_to_wall_m": 20.8,
+        "camera_heading_deg": 331.41,
+        "heading_difference_deg": 33.9,
+        "capture_date": "2024-11-19 05:26:17.000",
+        "source_page": "https://kartaview.org/map/@14.584804,120.979633,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/179404253": [
+      {
+        "photo_id": "2505711769",
+        "image": "kartaview/images/2505711769.jpg",
+        "latitude": 14.588937,
+        "longitude": 120.984764,
+        "distance_to_wall_m": 19.99,
+        "camera_heading_deg": 36.06,
+        "heading_difference_deg": 38.9,
+        "capture_date": "2024-11-19 06:36:34.000",
+        "source_page": "https://kartaview.org/map/@14.588937,120.984764,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/91245385": [
+      {
+        "photo_id": "2508497209",
+        "image": "kartaview/images/2508497209.jpg",
+        "latitude": 14.578866,
+        "longitude": 120.984051,
+        "distance_to_wall_m": 21.43,
+        "camera_heading_deg": 240.88,
+        "heading_difference_deg": 32.7,
+        "capture_date": "2024-11-19 23:06:07.000",
+        "source_page": "https://kartaview.org/map/@14.578866,120.984051,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/89769721": [
+      {
+        "photo_id": "2488519481",
+        "image": "kartaview/images/2488519481.jpg",
+        "latitude": 14.577585,
+        "longitude": 120.978933,
+        "distance_to_wall_m": 23.37,
+        "camera_heading_deg": 325.66,
+        "heading_difference_deg": 23.8,
+        "capture_date": "2024-10-30 06:26:12.000",
+        "source_page": "https://kartaview.org/map/@14.577585,120.978933,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/818631744": [
+      {
+        "photo_id": "2506484937",
+        "image": "kartaview/images/2506484937.jpg",
+        "latitude": 14.582879,
+        "longitude": 120.985979,
+        "distance_to_wall_m": 16.98,
+        "camera_heading_deg": 244.72,
+        "heading_difference_deg": 55.9,
+        "capture_date": "2024-11-19 05:20:31.000",
+        "source_page": "https://kartaview.org/map/@14.582879,120.985979,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/542684904": [
+      {
+        "photo_id": "2505386169",
+        "image": "kartaview/images/2505386169.jpg",
+        "latitude": 14.588939,
+        "longitude": 120.98473,
+        "distance_to_wall_m": 21.67,
+        "camera_heading_deg": 214.25,
+        "heading_difference_deg": 54.3,
+        "capture_date": "2024-11-19 03:03:22.000",
+        "source_page": "https://kartaview.org/map/@14.588939,120.98473,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2505711673",
+        "image": "kartaview/images/2505711673.jpg",
+        "latitude": 14.58886,
+        "longitude": 120.984522,
+        "distance_to_wall_m": 26.94,
+        "camera_heading_deg": 117.61,
+        "heading_difference_deg": 8,
+        "capture_date": "2024-11-19 06:36:26.000",
+        "source_page": "https://kartaview.org/map/@14.58886,120.984522,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/308701695": [
+      {
+        "photo_id": "2506485657",
+        "image": "kartaview/images/2506485657.jpg",
+        "latitude": 14.581011,
+        "longitude": 120.981736,
+        "distance_to_wall_m": 22.72,
+        "camera_heading_deg": 323.09,
+        "heading_difference_deg": 29.3,
+        "capture_date": "2024-11-19 05:23:49.000",
+        "source_page": "https://kartaview.org/map/@14.581011,120.981736,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/90308394": [
+      {
+        "photo_id": "2506563769",
+        "image": "kartaview/images/2506563769.jpg",
+        "latitude": 14.577785,
+        "longitude": 120.981171,
+        "distance_to_wall_m": 27.69,
+        "camera_heading_deg": 342.68,
+        "heading_difference_deg": 7.5,
+        "capture_date": "2024-11-19 02:12:23.000",
+        "source_page": "https://kartaview.org/map/@14.577785,120.981171,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/818631743": [
+      {
+        "photo_id": "2505348265",
+        "image": "kartaview/images/2505348265.jpg",
+        "latitude": 14.582872,
+        "longitude": 120.985897,
+        "distance_to_wall_m": 20.68,
+        "camera_heading_deg": 253.47,
+        "heading_difference_deg": 43.4,
+        "capture_date": "2024-11-19 00:15:47.000",
+        "source_page": "https://kartaview.org/map/@14.582872,120.985897,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/277974483": [
+      {
+        "photo_id": "2562594601",
+        "image": "kartaview/images/2562594601.jpg",
+        "latitude": 14.578175,
+        "longitude": 120.987204,
+        "distance_to_wall_m": 24.87,
+        "camera_heading_deg": 329.34,
+        "heading_difference_deg": 24.1,
+        "capture_date": "2025-04-29 06:30:57.000",
+        "source_page": "https://kartaview.org/map/@14.578175,120.987204,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2530711241",
+        "image": "kartaview/images/2530711241.jpg",
+        "latitude": 14.578179,
+        "longitude": 120.987139,
+        "distance_to_wall_m": 24.64,
+        "camera_heading_deg": 325.8,
+        "heading_difference_deg": 44.5,
+        "capture_date": "2024-12-15 02:42:44.000",
+        "source_page": "https://kartaview.org/map/@14.578179,120.987139,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/309181788": [
+      {
+        "photo_id": "2506699257",
+        "image": "kartaview/images/2506699257.jpg",
+        "latitude": 14.579917,
+        "longitude": 120.989913,
+        "distance_to_wall_m": 22.52,
+        "camera_heading_deg": 298.2,
+        "heading_difference_deg": 37.4,
+        "capture_date": "2024-11-19 09:44:20.000",
+        "source_page": "https://kartaview.org/map/@14.579917,120.989913,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/15868300": [
+      {
+        "photo_id": "2505711161",
+        "image": "kartaview/images/2505711161.jpg",
+        "latitude": 14.589813,
+        "longitude": 120.98385,
+        "distance_to_wall_m": 18.87,
+        "camera_heading_deg": 125.96,
+        "heading_difference_deg": 57.2,
+        "capture_date": "2024-11-19 06:35:32.000",
+        "source_page": "https://kartaview.org/map/@14.589813,120.98385,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2505645817",
+        "image": "kartaview/images/2505645817.jpg",
+        "latitude": 14.590379,
+        "longitude": 120.98401,
+        "distance_to_wall_m": 25.54,
+        "camera_heading_deg": 174.91,
+        "heading_difference_deg": 46.3,
+        "capture_date": "2024-11-19 05:54:18.000",
+        "source_page": "https://kartaview.org/map/@14.590379,120.98401,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508495305",
+        "image": "kartaview/images/2508495305.jpg",
+        "latitude": 14.590573,
+        "longitude": 120.983523,
+        "distance_to_wall_m": 28.04,
+        "camera_heading_deg": 154.18,
+        "heading_difference_deg": 25.4,
+        "capture_date": "2024-11-19 22:59:59.000",
+        "source_page": "https://kartaview.org/map/@14.590573,120.983523,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1061988726": [
+      {
+        "photo_id": "2508494889",
+        "image": "kartaview/images/2508494889.jpg",
+        "latitude": 14.590273,
+        "longitude": 120.985651,
+        "distance_to_wall_m": 24.23,
+        "camera_heading_deg": 311.69,
+        "heading_difference_deg": 33.2,
+        "capture_date": "2024-11-19 22:54:25.000",
+        "source_page": "https://kartaview.org/map/@14.590273,120.985651,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/91233254": [
+      {
+        "photo_id": "2506488169",
+        "image": "kartaview/images/2506488169.jpg",
+        "latitude": 14.581388,
+        "longitude": 120.985153,
+        "distance_to_wall_m": 29.95,
+        "camera_heading_deg": 68.24,
+        "heading_difference_deg": 7.5,
+        "capture_date": "2024-11-19 05:51:58.000",
+        "source_page": "https://kartaview.org/map/@14.581388,120.985153,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1464753442": [
+      {
+        "photo_id": "2508559433",
+        "image": "kartaview/images/2508559433.jpg",
+        "latitude": 14.588847,
+        "longitude": 120.984752,
+        "distance_to_wall_m": 20.86,
+        "camera_heading_deg": 34.22,
+        "heading_difference_deg": 53.9,
+        "capture_date": "2024-11-20 04:19:06.000",
+        "source_page": "https://kartaview.org/map/@14.588847,120.984752,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1461856790": [
+      {
+        "photo_id": "2506685609",
+        "image": "kartaview/images/2506685609.jpg",
+        "latitude": 14.579828,
+        "longitude": 120.990031,
+        "distance_to_wall_m": 22.28,
+        "camera_heading_deg": 304.72,
+        "heading_difference_deg": 47.1,
+        "capture_date": "2024-11-19 09:44:15.000",
+        "source_page": "https://kartaview.org/map/@14.579828,120.990031,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1120247725": [
+      {
+        "photo_id": "2528963721",
+        "image": "kartaview/images/2528963721.jpg",
+        "latitude": 14.588367,
+        "longitude": 120.981165,
+        "distance_to_wall_m": 30.38,
+        "camera_heading_deg": 157.12,
+        "heading_difference_deg": 6.9,
+        "capture_date": "2024-12-13 11:56:05.000",
+        "source_page": "https://kartaview.org/map/@14.588367,120.981165,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2521771273",
+        "image": "kartaview/images/2521771273.jpg",
+        "latitude": 14.587892,
+        "longitude": 120.980941,
+        "distance_to_wall_m": 28.07,
+        "camera_heading_deg": 17.09,
+        "heading_difference_deg": 43.8,
+        "capture_date": "2024-12-02 08:58:12.000",
+        "source_page": "https://kartaview.org/map/@14.587892,120.980941,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2530170313",
+        "image": "kartaview/images/2530170313.jpg",
+        "latitude": 14.587935,
+        "longitude": 120.980916,
+        "distance_to_wall_m": 28.1,
+        "camera_heading_deg": 15.59,
+        "heading_difference_deg": 45.3,
+        "capture_date": "2024-12-15 06:24:12.000",
+        "source_page": "https://kartaview.org/map/@14.587935,120.980916,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2562599977",
+        "image": "kartaview/images/2562599977.jpg",
+        "latitude": 14.588383,
+        "longitude": 120.981221,
+        "distance_to_wall_m": 31.12,
+        "camera_heading_deg": 154.18,
+        "heading_difference_deg": 21.9,
+        "capture_date": "2025-04-29 06:47:34.000",
+        "source_page": "https://kartaview.org/map/@14.588383,120.981221,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2039668857",
+        "image": "kartaview/images/2039668857.jpg",
+        "latitude": 14.58789,
+        "longitude": 120.980937,
+        "distance_to_wall_m": 28.58,
+        "camera_heading_deg": 12.77,
+        "heading_difference_deg": 48.2,
+        "capture_date": "2024-08-11 05:26:56.000",
+        "source_page": "https://kartaview.org/map/@14.58789,120.980937,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2521750393",
+        "image": "kartaview/images/2521750393.jpg",
+        "latitude": 14.588381,
+        "longitude": 120.98126,
+        "distance_to_wall_m": 30.9,
+        "camera_heading_deg": 150.66,
+        "heading_difference_deg": 33.5,
+        "capture_date": "2024-12-02 07:40:28.000",
+        "source_page": "https://kartaview.org/map/@14.588381,120.98126,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2513161129",
+        "image": "kartaview/images/2513161129.jpg",
+        "latitude": 14.588415,
+        "longitude": 120.981157,
+        "distance_to_wall_m": 35.94,
+        "camera_heading_deg": 148.71,
+        "heading_difference_deg": 16.4,
+        "capture_date": "2024-11-23 05:29:48.000",
+        "source_page": "https://kartaview.org/map/@14.588415,120.981157,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508531225",
+        "image": "kartaview/images/2508531225.jpg",
+        "latitude": 14.588422,
+        "longitude": 120.981231,
+        "distance_to_wall_m": 35.55,
+        "camera_heading_deg": 154.31,
+        "heading_difference_deg": 24.1,
+        "capture_date": "2024-11-20 03:42:00.000",
+        "source_page": "https://kartaview.org/map/@14.588422,120.981231,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2506559689",
+        "image": "kartaview/images/2506559689.jpg",
+        "latitude": 14.588423,
+        "longitude": 120.981233,
+        "distance_to_wall_m": 35.66,
+        "camera_heading_deg": 149.55,
+        "heading_difference_deg": 29.2,
+        "capture_date": "2024-11-19 01:58:53.000",
+        "source_page": "https://kartaview.org/map/@14.588423,120.981233,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508374201",
+        "image": "kartaview/images/2508374201.jpg",
+        "latitude": 14.588429,
+        "longitude": 120.981217,
+        "distance_to_wall_m": 36.43,
+        "camera_heading_deg": 148.02,
+        "heading_difference_deg": 27.9,
+        "capture_date": "2024-11-20 00:25:48.000",
+        "source_page": "https://kartaview.org/map/@14.588429,120.981217,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2509622649",
+        "image": "kartaview/images/2509622649.jpg",
+        "latitude": 14.587809,
+        "longitude": 120.980916,
+        "distance_to_wall_m": 35.14,
+        "camera_heading_deg": 14.12,
+        "heading_difference_deg": 46.8,
+        "capture_date": "2024-11-21 04:01:55.000",
+        "source_page": "https://kartaview.org/map/@14.587809,120.980916,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/685336375": [
+      {
+        "photo_id": "2508902473",
+        "image": "kartaview/images/2508902473.jpg",
+        "latitude": 14.583155,
+        "longitude": 120.987108,
+        "distance_to_wall_m": 26.57,
+        "camera_heading_deg": 159.78,
+        "heading_difference_deg": 29.2,
+        "capture_date": "2024-11-20 07:15:59.000",
+        "source_page": "https://kartaview.org/map/@14.583155,120.987108,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508496281",
+        "image": "kartaview/images/2508496281.jpg",
+        "latitude": 14.58322,
+        "longitude": 120.987077,
+        "distance_to_wall_m": 33.73,
+        "camera_heading_deg": 167.61,
+        "heading_difference_deg": 13.5,
+        "capture_date": "2024-11-19 23:03:45.000",
+        "source_page": "https://kartaview.org/map/@14.58322,120.987077,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/188207766": [
+      {
+        "photo_id": "2506564857",
+        "image": "kartaview/images/2506564857.jpg",
+        "latitude": 14.582915,
+        "longitude": 120.983132,
+        "distance_to_wall_m": 25.59,
+        "camera_heading_deg": 52.59,
+        "heading_difference_deg": 37.3,
+        "capture_date": "2024-11-19 02:18:19.000",
+        "source_page": "https://kartaview.org/map/@14.582915,120.983132,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508558681",
+        "image": "kartaview/images/2508558681.jpg",
+        "latitude": 14.582948,
+        "longitude": 120.983118,
+        "distance_to_wall_m": 27.41,
+        "camera_heading_deg": 59.15,
+        "heading_difference_deg": 38.7,
+        "capture_date": "2024-11-20 04:15:43.000",
+        "source_page": "https://kartaview.org/map/@14.582948,120.983118,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/308587993": [
+      {
+        "photo_id": "2508497833",
+        "image": "kartaview/images/2508497833.jpg",
+        "latitude": 14.575062,
+        "longitude": 120.983354,
+        "distance_to_wall_m": 26.63,
+        "camera_heading_deg": 149.9,
+        "heading_difference_deg": 32.5,
+        "capture_date": "2024-11-19 23:07:34.000",
+        "source_page": "https://kartaview.org/map/@14.575062,120.983354,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/95490554": [
+      {
+        "photo_id": "2508559273",
+        "image": "kartaview/images/2508559273.jpg",
+        "latitude": 14.587694,
+        "longitude": 120.983914,
+        "distance_to_wall_m": 28.56,
+        "camera_heading_deg": 34.74,
+        "heading_difference_deg": 25.3,
+        "capture_date": "2024-11-20 04:18:15.000",
+        "source_page": "https://kartaview.org/map/@14.587694,120.983914,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/449823057": [
+      {
+        "photo_id": "2508485289",
+        "image": "kartaview/images/2508485289.jpg",
+        "latitude": 14.583374,
+        "longitude": 120.987027,
+        "distance_to_wall_m": 24.68,
+        "camera_heading_deg": 139.69,
+        "heading_difference_deg": 48.5,
+        "capture_date": "2024-11-19 22:41:08.000",
+        "source_page": "https://kartaview.org/map/@14.583374,120.987027,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508428137",
+        "image": "kartaview/images/2508428137.jpg",
+        "latitude": 14.58337,
+        "longitude": 120.987092,
+        "distance_to_wall_m": 26.27,
+        "camera_heading_deg": 156.73,
+        "heading_difference_deg": 47.4,
+        "capture_date": "2024-11-19 23:23:05.000",
+        "source_page": "https://kartaview.org/map/@14.58337,120.987092,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/277972879": [
+      {
+        "photo_id": "2506624553",
+        "image": "kartaview/images/2506624553.jpg",
+        "latitude": 14.578741,
+        "longitude": 120.991979,
+        "distance_to_wall_m": 31.5,
+        "camera_heading_deg": 304.56,
+        "heading_difference_deg": 18.1,
+        "capture_date": "2024-11-19 08:12:39.000",
+        "source_page": "https://kartaview.org/map/@14.578741,120.991979,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1244826100": [
+      {
+        "photo_id": "2508495929",
+        "image": "kartaview/images/2508495929.jpg",
+        "latitude": 14.585356,
+        "longitude": 120.986126,
+        "distance_to_wall_m": 34.22,
+        "camera_heading_deg": 172.65,
+        "heading_difference_deg": 14.7,
+        "capture_date": "2024-11-19 23:02:50.000",
+        "source_page": "https://kartaview.org/map/@14.585356,120.986126,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508427705",
+        "image": "kartaview/images/2508427705.jpg",
+        "latitude": 14.585413,
+        "longitude": 120.986061,
+        "distance_to_wall_m": 40.6,
+        "camera_heading_deg": 160.56,
+        "heading_difference_deg": 15.4,
+        "capture_date": "2024-11-19 23:22:03.000",
+        "source_page": "https://kartaview.org/map/@14.585413,120.986061,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/392742362": [
+      {
+        "photo_id": "2530925049",
+        "image": "kartaview/images/2530925049.jpg",
+        "latitude": 14.57775,
+        "longitude": 120.978338,
+        "distance_to_wall_m": 27.83,
+        "camera_heading_deg": 155.12,
+        "heading_difference_deg": 48.9,
+        "capture_date": "2024-12-17 23:28:20.000",
+        "source_page": "https://kartaview.org/map/@14.57775,120.978338,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2576515273",
+        "image": "kartaview/images/2576515273.jpg",
+        "latitude": 14.577783,
+        "longitude": 120.97831,
+        "distance_to_wall_m": 30.35,
+        "camera_heading_deg": 151.46,
+        "heading_difference_deg": 44.2,
+        "capture_date": "2025-06-11 02:02:24.000",
+        "source_page": "https://kartaview.org/map/@14.577783,120.97831,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2520289385",
+        "image": "kartaview/images/2520289385.jpg",
+        "latitude": 14.577773,
+        "longitude": 120.978347,
+        "distance_to_wall_m": 30.65,
+        "camera_heading_deg": 152.52,
+        "heading_difference_deg": 51.2,
+        "capture_date": "2024-11-30 09:39:57.000",
+        "source_page": "https://kartaview.org/map/@14.577773,120.978347,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508824729",
+        "image": "kartaview/images/2508824729.jpg",
+        "latitude": 14.577813,
+        "longitude": 120.978358,
+        "distance_to_wall_m": 35.36,
+        "camera_heading_deg": 153.18,
+        "heading_difference_deg": 49.3,
+        "capture_date": "2024-11-20 09:13:53.000",
+        "source_page": "https://kartaview.org/map/@14.577813,120.978358,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2488488585",
+        "image": "kartaview/images/2488488585.jpg",
+        "latitude": 14.577788,
+        "longitude": 120.9784,
+        "distance_to_wall_m": 34.92,
+        "camera_heading_deg": 156.56,
+        "heading_difference_deg": 54.9,
+        "capture_date": "2024-10-29 03:59:50.000",
+        "source_page": "https://kartaview.org/map/@14.577788,120.9784,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508856697",
+        "image": "kartaview/images/2508856697.jpg",
+        "latitude": 14.577832,
+        "longitude": 120.978344,
+        "distance_to_wall_m": 36.86,
+        "camera_heading_deg": 151.55,
+        "heading_difference_deg": 47.4,
+        "capture_date": "2024-11-20 09:16:06.000",
+        "source_page": "https://kartaview.org/map/@14.577832,120.978344,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2505350041",
+        "image": "kartaview/images/2505350041.jpg",
+        "latitude": 14.577809,
+        "longitude": 120.978388,
+        "distance_to_wall_m": 36.37,
+        "camera_heading_deg": 149.78,
+        "heading_difference_deg": 57.9,
+        "capture_date": "2024-11-19 00:23:48.000",
+        "source_page": "https://kartaview.org/map/@14.577809,120.978388,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2488972505",
+        "image": "kartaview/images/2488972505.jpg",
+        "latitude": 14.577825,
+        "longitude": 120.978377,
+        "distance_to_wall_m": 37.48,
+        "camera_heading_deg": 151.5,
+        "heading_difference_deg": 53.2,
+        "capture_date": "2024-08-23 00:37:08.000",
+        "source_page": "https://kartaview.org/map/@14.577825,120.978377,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2506632137",
+        "image": "kartaview/images/2506632137.jpg",
+        "latitude": 14.577862,
+        "longitude": 120.978332,
+        "distance_to_wall_m": 39.76,
+        "camera_heading_deg": 151.92,
+        "heading_difference_deg": 43.6,
+        "capture_date": "2024-11-19 08:42:50.000",
+        "source_page": "https://kartaview.org/map/@14.577862,120.978332,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2493372329",
+        "image": "kartaview/images/2493372329.jpg",
+        "latitude": 14.577893,
+        "longitude": 120.978323,
+        "distance_to_wall_m": 42.97,
+        "camera_heading_deg": 150.78,
+        "heading_difference_deg": 42.2,
+        "capture_date": "2024-11-02 00:05:24.000",
+        "source_page": "https://kartaview.org/map/@14.577893,120.978323,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/179221811": [
+      {
+        "photo_id": "2488483897",
+        "image": "kartaview/images/2488483897.jpg",
+        "latitude": 14.595031,
+        "longitude": 120.981051,
+        "distance_to_wall_m": 31.97,
+        "camera_heading_deg": 239,
+        "heading_difference_deg": 37.3,
+        "capture_date": "2024-10-29 03:45:22.000",
+        "source_page": "https://kartaview.org/map/@14.595031,120.981051,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2488967721",
+        "image": "kartaview/images/2488967721.jpg",
+        "latitude": 14.594965,
+        "longitude": 120.981055,
+        "distance_to_wall_m": 34.08,
+        "camera_heading_deg": 235.06,
+        "heading_difference_deg": 53.9,
+        "capture_date": "2024-08-23 00:20:53.000",
+        "source_page": "https://kartaview.org/map/@14.594965,120.981055,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508391337",
+        "image": "kartaview/images/2508391337.jpg",
+        "latitude": 14.595013,
+        "longitude": 120.981077,
+        "distance_to_wall_m": 35.12,
+        "camera_heading_deg": 234.95,
+        "heading_difference_deg": 44.2,
+        "capture_date": "2024-11-20 01:40:59.000",
+        "source_page": "https://kartaview.org/map/@14.595013,120.981077,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2509635833",
+        "image": "kartaview/images/2509635833.jpg",
+        "latitude": 14.594999,
+        "longitude": 120.981093,
+        "distance_to_wall_m": 37.15,
+        "camera_heading_deg": 235.35,
+        "heading_difference_deg": 45.8,
+        "capture_date": "2024-11-21 04:53:40.000",
+        "source_page": "https://kartaview.org/map/@14.594999,120.981093,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2493370073",
+        "image": "kartaview/images/2493370073.jpg",
+        "latitude": 14.594994,
+        "longitude": 120.981101,
+        "distance_to_wall_m": 38.14,
+        "camera_heading_deg": 235.5,
+        "heading_difference_deg": 46.2,
+        "capture_date": "2024-11-02 00:00:17.000",
+        "source_page": "https://kartaview.org/map/@14.594994,120.981101,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2520286601",
+        "image": "kartaview/images/2520286601.jpg",
+        "latitude": 14.594993,
+        "longitude": 120.98116,
+        "distance_to_wall_m": 44.61,
+        "camera_heading_deg": 235.81,
+        "heading_difference_deg": 44.3,
+        "capture_date": "2024-11-30 09:33:03.000",
+        "source_page": "https://kartaview.org/map/@14.594993,120.98116,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2521749497",
+        "image": "kartaview/images/2521749497.jpg",
+        "latitude": 14.59494,
+        "longitude": 120.981144,
+        "distance_to_wall_m": 44.38,
+        "camera_heading_deg": 234.32,
+        "heading_difference_deg": 54,
+        "capture_date": "2024-12-02 07:38:42.000",
+        "source_page": "https://kartaview.org/map/@14.59494,120.981144,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/818631738": [
+      {
+        "photo_id": "2488521273",
+        "image": "kartaview/images/2488521273.jpg",
+        "latitude": 14.582247,
+        "longitude": 120.983828,
+        "distance_to_wall_m": 38.43,
+        "camera_heading_deg": 53.19,
+        "heading_difference_deg": 5.2,
+        "capture_date": "2024-10-30 07:00:50.000",
+        "source_page": "https://kartaview.org/map/@14.582247,120.983828,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1244826098": [
+      {
+        "photo_id": "2508485033",
+        "image": "kartaview/images/2508485033.jpg",
+        "latitude": 14.585483,
+        "longitude": 120.986082,
+        "distance_to_wall_m": 29.84,
+        "camera_heading_deg": 156.56,
+        "heading_difference_deg": 50,
+        "capture_date": "2024-11-19 22:40:01.000",
+        "source_page": "https://kartaview.org/map/@14.585483,120.986082,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508901977",
+        "image": "kartaview/images/2508901977.jpg",
+        "latitude": 14.585479,
+        "longitude": 120.986061,
+        "distance_to_wall_m": 31.97,
+        "camera_heading_deg": 157.68,
+        "heading_difference_deg": 53.1,
+        "capture_date": "2024-11-20 07:14:10.000",
+        "source_page": "https://kartaview.org/map/@14.585479,120.986061,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1457029927": [
+      {
+        "photo_id": "2505388089",
+        "image": "kartaview/images/2505388089.jpg",
+        "latitude": 14.595855,
+        "longitude": 120.980287,
+        "distance_to_wall_m": 34.38,
+        "camera_heading_deg": 8.47,
+        "heading_difference_deg": 27.5,
+        "capture_date": "2024-11-19 03:08:31.000",
+        "source_page": "https://kartaview.org/map/@14.595855,120.980287,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2530171193",
+        "image": "kartaview/images/2530171193.jpg",
+        "latitude": 14.595847,
+        "longitude": 120.980273,
+        "distance_to_wall_m": 34.79,
+        "camera_heading_deg": 9.63,
+        "heading_difference_deg": 25.8,
+        "capture_date": "2024-12-15 06:25:29.000",
+        "source_page": "https://kartaview.org/map/@14.595847,120.980273,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2530713577",
+        "image": "kartaview/images/2530713577.jpg",
+        "latitude": 14.595843,
+        "longitude": 120.980287,
+        "distance_to_wall_m": 35.69,
+        "camera_heading_deg": 7.57,
+        "heading_difference_deg": 25.9,
+        "capture_date": "2024-12-15 02:49:15.000",
+        "source_page": "https://kartaview.org/map/@14.595843,120.980287,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/818631731": [
+      {
+        "photo_id": "2506485337",
+        "image": "kartaview/images/2506485337.jpg",
+        "latitude": 14.581957,
+        "longitude": 120.983667,
+        "distance_to_wall_m": 39,
+        "camera_heading_deg": 246.49,
+        "heading_difference_deg": 7.4,
+        "capture_date": "2024-11-19 05:23:03.000",
+        "source_page": "https://kartaview.org/map/@14.581957,120.983667,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2505348713",
+        "image": "kartaview/images/2505348713.jpg",
+        "latitude": 14.581964,
+        "longitude": 120.983687,
+        "distance_to_wall_m": 41.36,
+        "camera_heading_deg": 243,
+        "heading_difference_deg": 10.7,
+        "capture_date": "2024-11-19 00:17:48.000",
+        "source_page": "https://kartaview.org/map/@14.581964,120.983687,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/90164299": [
+      {
+        "photo_id": "2528964889",
+        "image": "kartaview/images/2528964889.jpg",
+        "latitude": 14.581901,
+        "longitude": 120.981074,
+        "distance_to_wall_m": 33.14,
+        "camera_heading_deg": 241.25,
+        "heading_difference_deg": 41,
+        "capture_date": "2024-12-13 11:59:30.000",
+        "source_page": "https://kartaview.org/map/@14.581901,120.981074,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1175528040": [
+      {
+        "photo_id": "2506625673",
+        "image": "kartaview/images/2506625673.jpg",
+        "latitude": 14.580212,
+        "longitude": 120.986136,
+        "distance_to_wall_m": 34.6,
+        "camera_heading_deg": 328.15,
+        "heading_difference_deg": 36.3,
+        "capture_date": "2024-11-19 08:15:29.000",
+        "source_page": "https://kartaview.org/map/@14.580212,120.986136,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2562595033",
+        "image": "kartaview/images/2562595033.jpg",
+        "latitude": 14.580204,
+        "longitude": 120.986051,
+        "distance_to_wall_m": 37.44,
+        "camera_heading_deg": 340.28,
+        "heading_difference_deg": 38.6,
+        "capture_date": "2025-04-29 06:32:42.000",
+        "source_page": "https://kartaview.org/map/@14.580204,120.986051,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/268207673": [
+      {
+        "photo_id": "2513162537",
+        "image": "kartaview/images/2513162537.jpg",
+        "latitude": 14.578081,
+        "longitude": 120.987087,
+        "distance_to_wall_m": 30.93,
+        "camera_heading_deg": 152.52,
+        "heading_difference_deg": 56.8,
+        "capture_date": "2024-11-23 05:33:29.000",
+        "source_page": "https://kartaview.org/map/@14.578081,120.987087,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2562601785",
+        "image": "kartaview/images/2562601785.jpg",
+        "latitude": 14.578134,
+        "longitude": 120.987072,
+        "distance_to_wall_m": 33.72,
+        "camera_heading_deg": 163.9,
+        "heading_difference_deg": 58.1,
+        "capture_date": "2025-04-29 06:53:00.000",
+        "source_page": "https://kartaview.org/map/@14.578134,120.987072,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/130532101": [
+      {
+        "photo_id": "2521752137",
+        "image": "kartaview/images/2521752137.jpg",
+        "latitude": 14.578808,
+        "longitude": 120.984017,
+        "distance_to_wall_m": 41.82,
+        "camera_heading_deg": 224.89,
+        "heading_difference_deg": 2.4,
+        "capture_date": "2024-12-02 07:46:15.000",
+        "source_page": "https://kartaview.org/map/@14.578808,120.984017,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/87741366": [
+      {
+        "photo_id": "2508378617",
+        "image": "kartaview/images/2508378617.jpg",
+        "latitude": 14.582178,
+        "longitude": 120.984993,
+        "distance_to_wall_m": 32.39,
+        "camera_heading_deg": 337.98,
+        "heading_difference_deg": 51.4,
+        "capture_date": "2024-11-20 00:44:11.000",
+        "source_page": "https://kartaview.org/map/@14.582178,120.984993,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/542684068": [
+      {
+        "photo_id": "2508909481",
+        "image": "kartaview/images/2508909481.jpg",
+        "latitude": 14.58741,
+        "longitude": 120.98696,
+        "distance_to_wall_m": 35.41,
+        "camera_heading_deg": 342.74,
+        "heading_difference_deg": 36.9,
+        "capture_date": "2024-11-20 07:44:06.000",
+        "source_page": "https://kartaview.org/map/@14.58741,120.98696,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508494585",
+        "image": "kartaview/images/2508494585.jpg",
+        "latitude": 14.587372,
+        "longitude": 120.986963,
+        "distance_to_wall_m": 38.23,
+        "camera_heading_deg": 342.49,
+        "heading_difference_deg": 36.7,
+        "capture_date": "2024-11-19 22:53:12.000",
+        "source_page": "https://kartaview.org/map/@14.587372,120.986963,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/87754850": [
+      {
+        "photo_id": "2508551209",
+        "image": "kartaview/images/2508551209.jpg",
+        "latitude": 14.578049,
+        "longitude": 120.97872,
+        "distance_to_wall_m": 42.59,
+        "camera_heading_deg": 330.17,
+        "heading_difference_deg": 4.4,
+        "capture_date": "2024-11-20 04:09:18.000",
+        "source_page": "https://kartaview.org/map/@14.578049,120.97872,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2488519497",
+        "image": "kartaview/images/2488519497.jpg",
+        "latitude": 14.578044,
+        "longitude": 120.978725,
+        "distance_to_wall_m": 43.35,
+        "camera_heading_deg": 357.62,
+        "heading_difference_deg": 23.4,
+        "capture_date": "2024-10-30 06:49:12.000",
+        "source_page": "https://kartaview.org/map/@14.578044,120.978725,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1524502725": [
+      {
+        "photo_id": "2506490521",
+        "image": "kartaview/images/2506490521.jpg",
+        "latitude": 14.594926,
+        "longitude": 120.981168,
+        "distance_to_wall_m": 42.42,
+        "camera_heading_deg": 60.51,
+        "heading_difference_deg": 7,
+        "capture_date": "2024-11-19 06:00:18.000",
+        "source_page": "https://kartaview.org/map/@14.594926,120.981168,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/762430574": [
+      {
+        "photo_id": "2508901705",
+        "image": "kartaview/images/2508901705.jpg",
+        "latitude": 14.587598,
+        "longitude": 120.9851,
+        "distance_to_wall_m": 35.54,
+        "camera_heading_deg": 156.26,
+        "heading_difference_deg": 42.7,
+        "capture_date": "2024-11-20 07:13:39.000",
+        "source_page": "https://kartaview.org/map/@14.587598,120.9851,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508427289",
+        "image": "kartaview/images/2508427289.jpg",
+        "latitude": 14.587637,
+        "longitude": 120.985096,
+        "distance_to_wall_m": 37.95,
+        "camera_heading_deg": 159.44,
+        "heading_difference_deg": 39.9,
+        "capture_date": "2024-11-19 23:18:16.000",
+        "source_page": "https://kartaview.org/map/@14.587637,120.985096,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508495689",
+        "image": "kartaview/images/2508495689.jpg",
+        "latitude": 14.58765,
+        "longitude": 120.985058,
+        "distance_to_wall_m": 42.37,
+        "camera_heading_deg": 158.31,
+        "heading_difference_deg": 39.9,
+        "capture_date": "2024-11-19 23:02:20.000",
+        "source_page": "https://kartaview.org/map/@14.58765,120.985058,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/164560135": [
+      {
+        "photo_id": "2512974649",
+        "image": "kartaview/images/2512974649.jpg",
+        "latitude": 14.587568,
+        "longitude": 120.983853,
+        "distance_to_wall_m": 33.86,
+        "camera_heading_deg": 34.65,
+        "heading_difference_deg": 51.3,
+        "capture_date": "2024-11-24 05:34:54.000",
+        "source_page": "https://kartaview.org/map/@14.587568,120.983853,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/179404248": [
+      {
+        "photo_id": "2508495433",
+        "image": "kartaview/images/2508495433.jpg",
+        "latitude": 14.589786,
+        "longitude": 120.984086,
+        "distance_to_wall_m": 42.7,
+        "camera_heading_deg": 151.89,
+        "heading_difference_deg": 8,
+        "capture_date": "2024-11-19 23:00:27.000",
+        "source_page": "https://kartaview.org/map/@14.589786,120.984086,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1462420893": [
+      {
+        "photo_id": "2508494665",
+        "image": "kartaview/images/2508494665.jpg",
+        "latitude": 14.588273,
+        "longitude": 120.986675,
+        "distance_to_wall_m": 42.03,
+        "camera_heading_deg": 343.61,
+        "heading_difference_deg": 11.9,
+        "capture_date": "2024-11-19 22:53:22.000",
+        "source_page": "https://kartaview.org/map/@14.588273,120.986675,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/89760235": [
+      {
+        "photo_id": "2039682473",
+        "image": "kartaview/images/2039682473.jpg",
+        "latitude": 14.579345,
+        "longitude": 120.977685,
+        "distance_to_wall_m": 34.22,
+        "camera_heading_deg": 331.35,
+        "heading_difference_deg": 51.8,
+        "capture_date": "2024-08-11 05:25:05.000",
+        "source_page": "https://kartaview.org/map/@14.579345,120.977685,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/28788554": [
+      {
+        "photo_id": "2508545145",
+        "image": "kartaview/images/2508545145.jpg",
+        "latitude": 14.580103,
+        "longitude": 120.985929,
+        "distance_to_wall_m": 44.44,
+        "camera_heading_deg": 180,
+        "heading_difference_deg": 1.5,
+        "capture_date": "2024-11-20 03:44:49.000",
+        "source_page": "https://kartaview.org/map/@14.580103,120.985929,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2513162297",
+        "image": "kartaview/images/2513162297.jpg",
+        "latitude": 14.580091,
+        "longitude": 120.985884,
+        "distance_to_wall_m": 43.48,
+        "camera_heading_deg": 149.31,
+        "heading_difference_deg": 22.6,
+        "capture_date": "2024-11-23 05:33:00.000",
+        "source_page": "https://kartaview.org/map/@14.580091,120.985884,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2562601417",
+        "image": "kartaview/images/2562601417.jpg",
+        "latitude": 14.580101,
+        "longitude": 120.985909,
+        "distance_to_wall_m": 44.32,
+        "camera_heading_deg": 157.56,
+        "heading_difference_deg": 18.1,
+        "capture_date": "2025-04-29 06:52:01.000",
+        "source_page": "https://kartaview.org/map/@14.580101,120.985909,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/822386814": [
+      {
+        "photo_id": "2488519321",
+        "image": "kartaview/images/2488519321.jpg",
+        "latitude": 14.57738,
+        "longitude": 120.979505,
+        "distance_to_wall_m": 39.37,
+        "camera_heading_deg": 228.89,
+        "heading_difference_deg": 27.5,
+        "capture_date": "2024-10-30 06:25:17.000",
+        "source_page": "https://kartaview.org/map/@14.57738,120.979505,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/130532100": [
+      {
+        "photo_id": "2488516297",
+        "image": "kartaview/images/2488516297.jpg",
+        "latitude": 14.574086,
+        "longitude": 120.983596,
+        "distance_to_wall_m": 40.85,
+        "camera_heading_deg": 75.96,
+        "heading_difference_deg": 25,
+        "capture_date": "2024-10-30 05:45:10.000",
+        "source_page": "https://kartaview.org/map/@14.574086,120.983596,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2521753881",
+        "image": "kartaview/images/2521753881.jpg",
+        "latitude": 14.574041,
+        "longitude": 120.983635,
+        "distance_to_wall_m": 41.29,
+        "camera_heading_deg": 69.41,
+        "heading_difference_deg": 27.9,
+        "capture_date": "2024-12-02 07:54:51.000",
+        "source_page": "https://kartaview.org/map/@14.574041,120.983635,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2505351145",
+        "image": "kartaview/images/2505351145.jpg",
+        "latitude": 14.574032,
+        "longitude": 120.983638,
+        "distance_to_wall_m": 41.86,
+        "camera_heading_deg": 63.62,
+        "heading_difference_deg": 23.4,
+        "capture_date": "2024-11-19 00:26:54.000",
+        "source_page": "https://kartaview.org/map/@14.574032,120.983638,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/308702717": [
+      {
+        "photo_id": "2488522057",
+        "image": "kartaview/images/2488522057.jpg",
+        "latitude": 14.581051,
+        "longitude": 120.987797,
+        "distance_to_wall_m": 38.4,
+        "camera_heading_deg": 116.82,
+        "heading_difference_deg": 37.7,
+        "capture_date": "2024-10-30 07:05:08.000",
+        "source_page": "https://kartaview.org/map/@14.581051,120.987797,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/818631737": [
+      {
+        "photo_id": "2512973913",
+        "image": "kartaview/images/2512973913.jpg",
+        "latitude": 14.582999,
+        "longitude": 120.983234,
+        "distance_to_wall_m": 39.83,
+        "camera_heading_deg": 60.99,
+        "heading_difference_deg": 38.2,
+        "capture_date": "2024-11-24 05:32:41.000",
+        "source_page": "https://kartaview.org/map/@14.582999,120.983234,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2574145049",
+        "image": "kartaview/images/2574145049.jpg",
+        "latitude": 14.583033,
+        "longitude": 120.984157,
+        "distance_to_wall_m": 39.17,
+        "camera_heading_deg": 309.07,
+        "heading_difference_deg": 50.3,
+        "capture_date": "2025-06-07 07:55:50.000",
+        "source_page": "https://kartaview.org/map/@14.583033,120.984157,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/482698430": [
+      {
+        "photo_id": "2508559049",
+        "image": "kartaview/images/2508559049.jpg",
+        "latitude": 14.585363,
+        "longitude": 120.98314,
+        "distance_to_wall_m": 44.28,
+        "camera_heading_deg": 331.39,
+        "heading_difference_deg": 17.6,
+        "capture_date": "2024-11-20 04:17:46.000",
+        "source_page": "https://kartaview.org/map/@14.585363,120.98314,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/822386810": [
+      {
+        "photo_id": "2530168297",
+        "image": "kartaview/images/2530168297.jpg",
+        "latitude": 14.575918,
+        "longitude": 120.979635,
+        "distance_to_wall_m": 36.39,
+        "camera_heading_deg": 332.01,
+        "heading_difference_deg": 58.3,
+        "capture_date": "2024-12-15 06:19:43.000",
+        "source_page": "https://kartaview.org/map/@14.575918,120.979635,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2510764921",
+        "image": "kartaview/images/2510764921.jpg",
+        "latitude": 14.575866,
+        "longitude": 120.979626,
+        "distance_to_wall_m": 42.11,
+        "camera_heading_deg": 331.17,
+        "heading_difference_deg": 56.2,
+        "capture_date": "2024-11-22 04:17:45.000",
+        "source_page": "https://kartaview.org/map/@14.575866,120.979626,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2509777449",
+        "image": "kartaview/images/2509777449.jpg",
+        "latitude": 14.575874,
+        "longitude": 120.979601,
+        "distance_to_wall_m": 42.67,
+        "camera_heading_deg": 334.18,
+        "heading_difference_deg": 57.1,
+        "capture_date": "2024-11-21 08:30:28.000",
+        "source_page": "https://kartaview.org/map/@14.575874,120.979601,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/818768621": [
+      {
+        "photo_id": "2508544905",
+        "image": "kartaview/images/2508544905.jpg",
+        "latitude": 14.582048,
+        "longitude": 120.984782,
+        "distance_to_wall_m": 43.89,
+        "camera_heading_deg": 151.82,
+        "heading_difference_deg": 23.5,
+        "capture_date": "2024-11-20 03:44:15.000",
+        "source_page": "https://kartaview.org/map/@14.582048,120.984782,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/28788391": [
+      {
+        "photo_id": "2562595513",
+        "image": "kartaview/images/2562595513.jpg",
+        "latitude": 14.583364,
+        "longitude": 120.984426,
+        "distance_to_wall_m": 42.49,
+        "camera_heading_deg": 318.81,
+        "heading_difference_deg": 31.6,
+        "capture_date": "2025-04-29 06:33:40.000",
+        "source_page": "https://kartaview.org/map/@14.583364,120.984426,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2506626153",
+        "image": "kartaview/images/2506626153.jpg",
+        "latitude": 14.583387,
+        "longitude": 120.984226,
+        "distance_to_wall_m": 41.61,
+        "camera_heading_deg": 329.92,
+        "heading_difference_deg": 42.7,
+        "capture_date": "2024-11-19 08:16:28.000",
+        "source_page": "https://kartaview.org/map/@14.583387,120.984226,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/288089773": [
+      {
+        "photo_id": "2562595865",
+        "image": "kartaview/images/2562595865.jpg",
+        "latitude": 14.585306,
+        "longitude": 120.983204,
+        "distance_to_wall_m": 39.75,
+        "camera_heading_deg": 335.19,
+        "heading_difference_deg": 47.2,
+        "capture_date": "2025-04-29 06:35:08.000",
+        "source_page": "https://kartaview.org/map/@14.585306,120.983204,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2512974313",
+        "image": "kartaview/images/2512974313.jpg",
+        "latitude": 14.585323,
+        "longitude": 120.983168,
+        "distance_to_wall_m": 39.71,
+        "camera_heading_deg": 331.33,
+        "heading_difference_deg": 57.5,
+        "capture_date": "2024-11-24 05:33:58.000",
+        "source_page": "https://kartaview.org/map/@14.585323,120.983168,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2506488809",
+        "image": "kartaview/images/2506488809.jpg",
+        "latitude": 14.5853,
+        "longitude": 120.983155,
+        "distance_to_wall_m": 42.73,
+        "camera_heading_deg": 335.4,
+        "heading_difference_deg": 53.4,
+        "capture_date": "2024-11-19 05:54:53.000",
+        "source_page": "https://kartaview.org/map/@14.5853,120.983155,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508378985",
+        "image": "kartaview/images/2508378985.jpg",
+        "latitude": 14.585277,
+        "longitude": 120.983191,
+        "distance_to_wall_m": 43.38,
+        "camera_heading_deg": 328.28,
+        "heading_difference_deg": 54.2,
+        "capture_date": "2024-11-20 00:44:57.000",
+        "source_page": "https://kartaview.org/map/@14.585277,120.983191,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1081204563": [
+      {
+        "photo_id": "2506558825",
+        "image": "kartaview/images/2506558825.jpg",
+        "latitude": 14.595782,
+        "longitude": 120.980173,
+        "distance_to_wall_m": 40.38,
+        "camera_heading_deg": 189.36,
+        "heading_difference_deg": 44.5,
+        "capture_date": "2024-11-19 01:56:58.000",
+        "source_page": "https://kartaview.org/map/@14.595782,120.980173,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/314226156": [
+      {
+        "photo_id": "2039668329",
+        "image": "kartaview/images/2039668329.jpg",
+        "latitude": 14.584107,
+        "longitude": 120.977642,
+        "distance_to_wall_m": 42.65,
+        "camera_heading_deg": 60.71,
+        "heading_difference_deg": 33.6,
+        "capture_date": "2024-08-11 05:26:07.000",
+        "source_page": "https://kartaview.org/map/@14.584107,120.977642,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1244826095": [
+      {
+        "photo_id": "2506489097",
+        "image": "kartaview/images/2506489097.jpg",
+        "latitude": 14.587376,
+        "longitude": 120.982022,
+        "distance_to_wall_m": 42.51,
+        "camera_heading_deg": 335.74,
+        "heading_difference_deg": 48.9,
+        "capture_date": "2024-11-19 05:55:40.000",
+        "source_page": "https://kartaview.org/map/@14.587376,120.982022,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2562596185",
+        "image": "kartaview/images/2562596185.jpg",
+        "latitude": 14.587352,
+        "longitude": 120.982074,
+        "distance_to_wall_m": 43.08,
+        "camera_heading_deg": 331.85,
+        "heading_difference_deg": 44.3,
+        "capture_date": "2025-04-29 06:36:20.000",
+        "source_page": "https://kartaview.org/map/@14.587352,120.982074,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2508379257",
+        "image": "kartaview/images/2508379257.jpg",
+        "latitude": 14.587374,
+        "longitude": 120.982008,
+        "distance_to_wall_m": 43.39,
+        "camera_heading_deg": 327.03,
+        "heading_difference_deg": 59.4,
+        "capture_date": "2024-11-20 00:45:32.000",
+        "source_page": "https://kartaview.org/map/@14.587374,120.982008,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/1120247726": [
+      {
+        "photo_id": "2506565401",
+        "image": "kartaview/images/2506565401.jpg",
+        "latitude": 14.587363,
+        "longitude": 120.981968,
+        "distance_to_wall_m": 42.48,
+        "camera_heading_deg": 334.58,
+        "heading_difference_deg": 48.7,
+        "capture_date": "2024-11-19 02:19:29.000",
+        "source_page": "https://kartaview.org/map/@14.587363,120.981968,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2506626649",
+        "image": "kartaview/images/2506626649.jpg",
+        "latitude": 14.587354,
+        "longitude": 120.98197,
+        "distance_to_wall_m": 42.98,
+        "camera_heading_deg": 333.94,
+        "heading_difference_deg": 48,
+        "capture_date": "2024-11-19 08:18:01.000",
+        "source_page": "https://kartaview.org/map/@14.587354,120.98197,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/822386807": [
+      {
+        "photo_id": "2039682137",
+        "image": "kartaview/images/2039682137.jpg",
+        "latitude": 14.575809,
+        "longitude": 120.979689,
+        "distance_to_wall_m": 42.94,
+        "camera_heading_deg": 330.05,
+        "heading_difference_deg": 49.5,
+        "capture_date": "2024-08-11 05:22:35.000",
+        "source_page": "https://kartaview.org/map/@14.575809,120.979689,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2521769305",
+        "image": "kartaview/images/2521769305.jpg",
+        "latitude": 14.575812,
+        "longitude": 120.979659,
+        "distance_to_wall_m": 43.85,
+        "camera_heading_deg": 330.99,
+        "heading_difference_deg": 52.8,
+        "capture_date": "2024-12-02 08:53:09.000",
+        "source_page": "https://kartaview.org/map/@14.575812,120.979659,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/818631734": [
+      {
+        "photo_id": "2528964601",
+        "image": "kartaview/images/2528964601.jpg",
+        "latitude": 14.583097,
+        "longitude": 120.983085,
+        "distance_to_wall_m": 44.07,
+        "camera_heading_deg": 250.26,
+        "heading_difference_deg": 50.3,
+        "capture_date": "2024-12-13 11:58:22.000",
+        "source_page": "https://kartaview.org/map/@14.583097,120.983085,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ],
+    "way/267171369": [
+      {
+        "photo_id": "2506632313",
+        "image": "kartaview/images/2506632313.jpg",
+        "latitude": 14.575755,
+        "longitude": 120.979473,
+        "distance_to_wall_m": 43.52,
+        "camera_heading_deg": 151.92,
+        "heading_difference_deg": 53.4,
+        "capture_date": "2024-11-19 08:43:14.000",
+        "source_page": "https://kartaview.org/map/@14.575755,120.979473,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2576515593",
+        "image": "kartaview/images/2576515593.jpg",
+        "latitude": 14.575746,
+        "longitude": 120.979491,
+        "distance_to_wall_m": 43.5,
+        "camera_heading_deg": 152.36,
+        "heading_difference_deg": 55.9,
+        "capture_date": "2025-06-11 02:03:00.000",
+        "source_page": "https://kartaview.org/map/@14.575746,120.979491,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      },
+      {
+        "photo_id": "2530925257",
+        "image": "kartaview/images/2530925257.jpg",
+        "latitude": 14.575767,
+        "longitude": 120.979476,
+        "distance_to_wall_m": 44.92,
+        "camera_heading_deg": 149.35,
+        "heading_difference_deg": 55.6,
+        "capture_date": "2024-12-17 23:28:46.000",
+        "source_page": "https://kartaview.org/map/@14.575767,120.979476,18z",
+        "attribution": "© Grab and KartaView Contributors",
+        "match_status": "direction_checked",
+        "visually_verified": false
+      }
+    ]
+  }
+}
