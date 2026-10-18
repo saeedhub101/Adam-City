@@ -1,4 +1,4 @@
-name: Cache Manila game map
+name: Build and save Malate map
 
 on:
   workflow_dispatch:
@@ -19,13 +19,12 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - name: Download compact Malate game map from OpenStreetMap
+      - name: Download only Malate streets and building footprints
         run: |
-          mkdir -p data maps buo_maps
+          mkdir -p maps buo_maps
           python - <<'PY'
-          import json, time, urllib.parse, urllib.request
-          # A focused playable area around Malate, Manila. The previous Metro Manila-wide
-          # response was 859 MB and exceeded GitHub's 100 MB per-file limit.
+          import json, time, urllib.parse, urllib.request, os
+          # Focused Malate play area around Mabini Street / Pedro Gil.
           bbox=[14.55,120.97,14.585,121.005]
           s,w,n,e=bbox
           query=f'[out:json][timeout:150];(way({s},{w},{n},{e})[building];way({s},{w},{n},{e})[highway];);out body geom;'
@@ -38,51 +37,40 @@ jobs:
           errors=[]
           for endpoint in endpoints:
             try:
-              req=urllib.request.Request(endpoint, data=urllib.parse.urlencode({'data':query}).encode(), headers={'User-Agent':'AdamCityMapCache/1.0 (game map; OpenStreetMap attribution)','Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'})
-              with urllib.request.urlopen(req, timeout=180) as response:
-                raw=json.load(response)
-              elements=[]
-              buildings=roads=0
-              keep_tags={'building','building:levels','height','name','amenity','shop','office','tourism','highway','surface','lanes','oneway','service','landuse'}
+              req=urllib.request.Request(endpoint,data=urllib.parse.urlencode({'data':query}).encode(),headers={'User-Agent':'AdamCityMapCache/1.0 (Malate game map; © OpenStreetMap contributors)','Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'})
+              with urllib.request.urlopen(req,timeout=180) as response: raw=json.load(response)
+              elements=[]; buildings=roads=0
+              keep_tags={'building','building:levels','height','name','name:en','amenity','shop','office','tourism','highway','surface','lanes','oneway','service'}
               for el in raw.get('elements',[]):
                 tags=el.get('tags',{})
-                is_building='building' in tags
-                is_road='highway' in tags
+                is_building='building' in tags; is_road='highway' in tags
                 if not (is_building or is_road): continue
                 geom=el.get('geometry',[])
                 if len(geom)<2: continue
                 item={'type':'way','id':el['id'],'tags':{k:v for k,v in tags.items() if k in keep_tags},'geometry':[{'lat':round(p['lat'],5),'lon':round(p['lon'],5)} for p in geom]}
-                elements.append(item)
-                buildings+=int(is_building)
-                roads+=int(is_road)
-              if buildings<100 or roads<50:
-                raise RuntimeError(f'Map too small: {buildings} buildings, {roads} roads')
-              data={'version':0.6,'generator':'Adam City compact OSM map cache','elements':elements,'_cache':{'region':'Malate, Manila, Philippines','center':{'lat':14.565,'lon':120.99},'bbox':bbox,'fetched_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'source':'© OpenStreetMap contributors','buildings':buildings,'roads':roads,'features':len(elements)}}
-              with open('data/manila-osm.json','w',encoding='utf-8') as out:
-                json.dump(data,out,separators=(',',':'),ensure_ascii=False)
-              size=__import__('os').path.getsize('data/manila-osm.json')
-              print(f'Built compact Malate map: {buildings} buildings, {roads} roads, {size/1024/1024:.1f} MB')
-              if size>90*1024*1024:
-                raise RuntimeError(f'Generated map is {size/1024/1024:.1f} MB; refusing to commit near GitHub 100 MB limit')
+                elements.append(item); buildings+=int(is_building); roads+=int(is_road)
+              if buildings<100 or roads<50: raise RuntimeError(f'Map too small: {buildings} buildings, {roads} roads')
+              data={'version':0.6,'generator':'Adam City Malate OSM map','elements':elements,'_cache':{'region':'Malate, Manila, Philippines','center':{'lat':14.5717,'lon':120.9854},'bbox':bbox,'fetched_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'source':'© OpenStreetMap contributors','buildings':buildings,'roads':roads,'features':len(elements)}}
+              with open('maps/malate-map.json','w',encoding='utf-8') as out: json.dump(data,out,separators=(',',':'),ensure_ascii=False)
+              size=os.path.getsize('maps/malate-map.json')
+              print(f'Malate map: {buildings} buildings, {roads} roads, {size/1024/1024:.1f} MB')
+              if size>90*1024*1024: raise RuntimeError(f'Malate map is too large ({size/1024/1024:.1f} MB)')
               break
             except Exception as exc:
-              errors.append(f'{endpoint}: {exc}')
-              print(errors[-1])
-          else:
-            raise SystemExit('Could not create compact Malate map: '+'; '.join(errors))
+              errors.append(f'{endpoint}: {exc}'); print(errors[-1])
+          else: raise SystemExit('Could not fetch Malate map: '+'; '.join(errors))
           PY
-      - name: Save playable map and backup
+      - name: Save named map and backup
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+users.noreply.github.com"
-          cp data/manila-osm.json maps/manila-map.json
-          cp data/manila-osm.json buo_maps/manila-map.json
-          printf '%s\n' '# Playable game maps' '' 'Named playable maps: manila-map.json, makati-map.json, malate-map.json, amman-map.json. Keep individual map files compact enough for GitHub (<100 MB).' > maps/README.md
-          printf '%s\n' '# Map backups' '' 'Backup copies of named game maps. Keep matching filenames in this folder; archive older backups with a date suffix when needed.' > buo_maps/README.md
-          git add -f data/manila-osm.json maps/manila-map.json buo_maps/manila-map.json maps/README.md buo_maps/README.md
-          if git diff --cached --quiet -- data/manila-osm.json maps/manila-map.json buo_maps/manila-map.json maps/README.md buo_maps/README.md; then
-            echo "Map is unchanged."
+          cp maps/malate-map.json buo_maps/malate-map.json
+          printf '%s\n' '# Game maps' '' 'Playable map files are named by location, for example malate-map.json.' > maps/README.md
+          printf '%s\n' '# Map backups' '' 'Backup files use the same location-based filenames as maps/.' > buo_maps/README.md
+          git add -f maps/malate-map.json buo_maps/malate-map.json maps/README.md buo_maps/README.md
+          if git diff --cached --quiet -- maps/malate-map.json buo_maps/malate-map.json maps/README.md buo_maps/README.md; then
+            echo "Malate map is unchanged."
             exit 0
           fi
-          git commit -m "Save compact Malate game map and backup"
+          git commit -m "Save Malate game map and backup"
           git push
