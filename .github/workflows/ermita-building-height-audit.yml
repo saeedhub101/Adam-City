@@ -23,7 +23,7 @@ jobs:
         run: python ermita/scripts/audit_building_height_evidence.py
       - name: Commit audit outputs
         run: |
-          if git diff --quiet -- ermita/maps/qa/building-height-evidence.csv ermita/maps/qa/building-height-evidence-report.json; then
+          if [ -z "$(git status --porcelain -- ermita/maps/qa/building-height-evidence.csv ermita/maps/qa/building-height-evidence-report.json)" ]; then
             echo "No audit changes."
             exit 0
           fi
