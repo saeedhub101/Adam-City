@@ -268,7 +268,7 @@ def main():
             "source": "https://www.openstreetmap.org/copyright",
             "license": "OpenStreetMap contributors, ODbL 1.0",
             "features": sign_features,
-        }, ensure_ascii=False, separators=(",", ":")) + "\\n",
+        }, ensure_ascii=False, separators=(",", ":")) + "\n",
         encoding="utf-8",
     )
 
