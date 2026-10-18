@@ -257,7 +257,7 @@ def main():
         "features": buildings,
     }
     (MAP_DIR / "ermita-building-details.geojson").write_text(
-        json.dumps(building_detail_geojson, ensure_ascii=False, separators=(",", ":")) + "\\n",
+        json.dumps(building_detail_geojson, ensure_ascii=False, separators=(",", ":")) + "\n",
         encoding="utf-8",
     )
     poi_path = MAP_DIR / "ermita-places-businesses-infrastructure.csv"
