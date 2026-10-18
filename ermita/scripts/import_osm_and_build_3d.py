@@ -19,118 +19,12 @@ MAP_DIR.mkdir(parents=True, exist_ok=True)
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
 # The project query uses OSM relation 103706 for Ermita. Relation area ID adds 3,600,000,000.
+# Import every tagged or geometric OSM object in the Ermita boundary, not only
+# a fixed list of known tag keys. This captures newly mapped categories too.
 QUERY = r"""
 [out:json][timeout:180];
 area(3600103706)->.ermitaArea;
-(
-  nwr(area.ermitaArea)["highway"];
-  nwr(area.ermitaArea)["building"];
-  nwr(area.ermitaArea)["building:part"];
-  nwr(area.ermitaArea)["healthcare"];
-  nwr(area.ermitaArea)["education"];
-  nwr(area.ermitaArea)["public_transport"];
-  nwr(area.ermitaArea)["bus"];
-  nwr(area.ermitaArea)["bicycle"];
-  nwr(area.ermitaArea)["sidewalk"];
-  nwr(area.ermitaArea)["kerb"];
-  nwr(area.ermitaArea)["tactile_paving"];
-  nwr(area.ermitaArea)["street_lamp"];
-  nwr(area.ermitaArea)["traffic_sign"];
-  nwr(area.ermitaArea)["parking"];
-  nwr(area.ermitaArea)["bench"];
-  nwr(area.ermitaArea)["waste_basket"];
-  nwr(area.ermitaArea)["drinking_water"];
-  nwr(area.ermitaArea)["fountain"];
-  nwr(area.ermitaArea)["species"];
-  nwr(area.ermitaArea)["leaf_type"];
-  nwr(area.ermitaArea)["leaf_cycle"];
-  nwr(area.ermitaArea)["height"];
-  nwr(area.ermitaArea)["building:levels"];
-  nwr(area.ermitaArea)["roof:shape"];
-  nwr(area.ermitaArea)["roof:material"];
-  nwr(area.ermitaArea)["roof:colour"];
-  nwr(area.ermitaArea)["amenity"];
-  nwr(area.ermitaArea)["shop"];
-  nwr(area.ermitaArea)["tourism"];
-  nwr(area.ermitaArea)["historic"];
-  nwr(area.ermitaArea)["leisure"];
-  nwr(area.ermitaArea)["natural"];
-  nwr(area.ermitaArea)["barrier"];
-  nwr(area.ermitaArea)["man_made"];
-  nwr(area.ermitaArea)["landuse"];
-  nwr(area.ermitaArea)["public_transport"];
-  nwr(area.ermitaArea)["railway"];
-  nwr(area.ermitaArea)["emergency"];
-  nwr(area.ermitaArea)["office"];
-  nwr(area.ermitaArea)["craft"];
-  nwr(area.ermitaArea)["power"];
-  nwr(area.ermitaArea)["waterway"];
-  nwr(area.ermitaArea)["water"];
-  nwr(area.ermitaArea)["sport"];
-
-  /* Building facade, roof, floor, and address detail */
-  nwr(area.ermitaArea)["building:architecture"];
-  nwr(area.ermitaArea)["building:colour"];
-  nwr(area.ermitaArea)["building:material"];
-  nwr(area.ermitaArea)["building:min_level"];
-  nwr(area.ermitaArea)["min_height"];
-  nwr(area.ermitaArea)["min_level"];
-  nwr(area.ermitaArea)["roof:height"];
-  nwr(area.ermitaArea)["roof:levels"];
-  nwr(area.ermitaArea)["roof:orientation"];
-  nwr(area.ermitaArea)["roof:direction"];
-  nwr(area.ermitaArea)["addr:floor"];
-  nwr(area.ermitaArea)["addr:unit"];
-  nwr(area.ermitaArea)["addr:postcode"];
-  nwr(area.ermitaArea)["addr:housename"];
-
-  /* Road geometry, sidewalks, crossing details, and wayfinding */
-  nwr(area.ermitaArea)["lanes"];
-  nwr(area.ermitaArea)["maxspeed"];
-  nwr(area.ermitaArea)["oneway"];
-  nwr(area.ermitaArea)["surface"];
-  nwr(area.ermitaArea)["width"];
-  nwr(area.ermitaArea)["incline"];
-  nwr(area.ermitaArea)["sidewalk:left"];
-  nwr(area.ermitaArea)["sidewalk:right"];
-  nwr(area.ermitaArea)["cycleway"];
-  nwr(area.ermitaArea)["crossing:markings"];
-  nwr(area.ermitaArea)["crossing:signals"];
-  nwr(area.ermitaArea)["traffic_signals"];
-  nwr(area.ermitaArea)["destination"];
-  nwr(area.ermitaArea)["destination:ref"];
-  nwr(area.ermitaArea)["lane_markings"];
-
-  /* Indoor access and street-level infrastructure */
-  nwr(area.ermitaArea)["indoor"];
-  nwr(area.ermitaArea)["level"];
-  nwr(area.ermitaArea)["level:ref"];
-  nwr(area.ermitaArea)["room"];
-  nwr(area.ermitaArea)["stairs"];
-  nwr(area.ermitaArea)["elevator"];
-  nwr(area.ermitaArea)["lift"];
-  nwr(area.ermitaArea)["manhole"];
-  nwr(area.ermitaArea)["drain"];
-  nwr(area.ermitaArea)["fire_hydrant"];
-  nwr(area.ermitaArea)["street_cabinet"];
-  nwr(area.ermitaArea)["recycling"];
-  nwr(area.ermitaArea)["waste_disposal"];
-  nwr(area.ermitaArea)["tree"];
-  nwr(area.ermitaArea)["tree_lined"];
-
-  nwr(area.ermitaArea)["boundary"];
-  nwr(area.ermitaArea)["entrance"];
-  nwr(area.ermitaArea)["door"];
-  nwr(area.ermitaArea)["crossing"];
-  nwr(area.ermitaArea)["traffic_calming"];
-  nwr(area.ermitaArea)["internet_access"];
-  nwr(area.ermitaArea)["wheelchair"];
-  nwr(area.ermitaArea)["toilets"];
-  nwr(area.ermitaArea)["addr:housenumber"];
-  nwr(area.ermitaArea)["addr:street"];
-  nwr(area.ermitaArea)["memorial"];
-  nwr(area.ermitaArea)["historic"];
-);
+nwr(area.ermitaArea);
 out center geom tags;
 """
 ENDPOINTS = [
