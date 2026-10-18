@@ -198,7 +198,7 @@ function addFootprint(el){
  // Small rooftop utility rooms, water tanks and ventilation boxes add believable Manila rooflines.
  const roofCenter=pts.reduce((a,p)=>({x:a.x+p.x/pts.length,z:a.z+p.z/pts.length}),{x:0,z:0});
  const spanX=Math.max(...pts.map(p=>p.x))-Math.min(...pts.map(p=>p.x)),spanZ=Math.max(...pts.map(p=>p.z))-Math.min(...pts.map(p=>p.z));
- const roofMat=material(materialType==='metal'?0x7b8583:0x99978d),roofH=Math.max(0.55,Math.min(1.8,height*.07));
+ const roofMat=material(String(tags['building:material']||tags.material||'').toLowerCase()==='metal'?0x7b8583:0x99978d),roofH=Math.max(0.55,Math.min(1.8,height*.07));
  if(spanX>4&&spanZ>4&&height>7){
   const utilityW=Math.min(spanX*.28,Math.max(1.2,spanX*.22)),utilityD=Math.min(spanZ*.28,Math.max(1.2,spanZ*.22));
   const utility=box(realMapGroup,utilityW,roofH,utilityD,roofCenter.x,height+roofH/2,roofCenter.z,roofMat);
