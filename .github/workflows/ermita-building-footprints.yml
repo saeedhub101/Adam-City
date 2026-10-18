@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: main-writer
+  group: ermita-building-footprints
   cancel-in-progress: false
 
 jobs:
