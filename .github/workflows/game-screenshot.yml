@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
     paths:
+      - "index.html"
       - "game/**"
-      - "scripts/download_helsinki_mesh.py"
       - ".github/workflows/game-screenshot.yml"
   workflow_dispatch:
 
@@ -15,10 +15,7 @@ permissions:
 jobs:
   build-and-screenshot:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    defaults:
-      run:
-        working-directory: game
+    timeout-minutes: 10
     steps:
       - name: Check out main
         uses: actions/checkout@v4
@@ -30,105 +27,45 @@ jobs:
         with:
           node-version: 22
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Cache Helsinki source tile
-        uses: actions/cache@v4
-        with:
-          path: game/public/models/helsinki
-          key: helsinki-2017-678492x2-lod16-v1
-
-      - name: Download official Helsinki reality-mesh tile and textures
-        working-directory: .
-        run: python scripts/download_helsinki_mesh.py
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build production bundle
-        run: npm run build
-
-      - name: Install Chromium for screenshot
+      - name: Install browser test tools
         run: |
-          npm install --no-save playwright
+          npm init -y
+          npm install --no-save playwright three
           npx playwright install --with-deps chromium
 
-      - name: Start Vite preview server
+      - name: Serve the actual GitHub Pages entry point
         run: |
-          npm run preview -- --host 127.0.0.1 > /tmp/saeed-vite-preview.log 2>&1 &
-          for i in $(seq 1 60); do
-            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then
-              echo "Preview server is ready"
-              exit 0
-            fi
-            sleep 2
+          python3 -m http.server 4173 --directory . > /tmp/adam-city-server.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then exit 0; fi
+            sleep 1
           done
-          cat /tmp/saeed-vite-preview.log
+          cat /tmp/adam-city-server.log
           exit 1
 
-      - name: Open game and capture screenshot
+      - name: Capture game and report photo texture status
         run: |
-          mkdir -p artifacts
           cat > capture-game.mjs <<'EOF'
           import { chromium } from 'playwright';
-
-          const browser = await chromium.launch({
-            headless: true,
-            args: [
-              '--use-gl=angle',
-              '--use-angle=swiftshader',
-              '--enable-webgl',
-              '--ignore-gpu-blocklist',
-              '--disable-dev-shm-usage'
-            ]
-          });
-
-          const page = await browser.newPage({
-            viewport: { width: 1600, height: 900 },
-            deviceScaleFactor: 1
-          });
-
-          const errors = [];
-          page.on('pageerror', error => errors.push(error.message));
-          page.on('console', message => {
-            if (message.type() === 'error') errors.push(message.text());
-          });
-
-          await page.goto('http://127.0.0.1:4173/', { waitUntil: 'networkidle', timeout: 90000 });
-          await page.locator('#quality').selectOption('high');
-          await page.locator('#start').click();
-          await page.waitForTimeout(2500);
-
-          try {
-            await page.waitForFunction(() => {
-              const status = document.querySelector('#status-text')?.textContent || '';
-              return status.includes('مجسّم مصوّر') || status.includes('تعذّر تحميل مجسّم هلسنكي') || status.includes('الشخصية جاهزة') || status.includes('could not load');
-            }, { timeout: 180000 });
-          } catch {
-            console.log('Timed out waiting for character status.');
-          }
-
-          await page.waitForTimeout(1800);
-          await page.screenshot({
-            path: 'artifacts/game-screenshot.png',
-            fullPage: false,
-            animations: 'disabled'
-          });
-
-          console.log('Character status:', await page.locator('#status-text').textContent().catch(() => 'missing'));
-          console.log('Page errors:', JSON.stringify(errors.slice(0, 20)));
-          console.log('Screenshot saved to artifacts/game-screenshot.png');
+          const browser = await chromium.launch({headless:true,args:['--use-gl=angle','--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist','--disable-dev-shm-usage']});
+          const page = await browser.newPage({viewport:{width:1600,height:900},deviceScaleFactor:1});
+          const errors=[];
+          page.on('pageerror',e=>errors.push(e.message));
+          page.on('console',m=>{if(m.type()==='error') errors.push(m.text())});
+          await page.goto('http://127.0.0.1:4173/',{waitUntil:'networkidle',timeout:90000});
+          await page.waitForTimeout(10000);
+          await page.screenshot({path:'game-screenshot.png'});
+          console.log('Page title:',await page.title());
+          console.log('Photo texture status:',await page.locator('#status').textContent().catch(()=>await page.locator('#status-text').textContent().catch(()=> 'status element missing')));
+          console.log('Page errors:',JSON.stringify(errors.slice(0,30)));
           await browser.close();
           EOF
           node capture-game.mjs
 
-      - name: Upload screenshot as a single-file artifact
+      - name: Upload screenshot
         uses: actions/upload-artifact@v4
         with:
-          name: game-screenshot
-          path: game/artifacts/game-screenshot.png
+          name: adam-city-screenshot
+          path: game-screenshot.png
           if-no-files-found: error
           retention-days: 14
