@@ -13,7 +13,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: main-writer
+  group: ermita-restore-building-footprints
   cancel-in-progress: false
 
 jobs:
