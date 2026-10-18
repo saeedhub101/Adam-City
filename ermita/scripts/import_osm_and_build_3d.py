@@ -89,12 +89,67 @@ ENDPOINTS = [
 ]
 HEADERS = {"User-Agent": "Adam-City-Ermita-Research/1.0 (open data research; GitHub Actions)"}
 
-def fetch_osm():
+
+SYNC_STATE_PATH = MAP_DIR / "ermita-osm-sync-state.json"
+
+def add_newer_filters(query, since_utc):
+    """Restrict every selector to objects changed since the saved sync checkpoint."""
+    stamp = since_utc.replace("Z", "")
+    return re.sub(
+        r'(nwr\\(area\\.ermitaArea\\)\\[[^\\n]+?\\])\\s*;',
+        lambda match: f'{match.group(1)}[newer:"{stamp}"];',
+        query,
+    )
+
+def merge_osm_elements(existing, changed):
+    """Merge changed OSM objects by stable type/id; never erase cached data on partial responses."""
+    merged = {(item.get("type"), item.get("id")): item for item in existing}
+    applied = 0
+    for item in changed:
+        key = (item.get("type"), item.get("id"))
+        if key[0] is None or key[1] is None:
+            continue
+        # Overpass can omit deleted/invisible objects from a normal selector response.
+        # If a returned object has no usable tags or geometry, preserve the previous cached version.
+        if not item.get("tags") and not item.get("geometry") and not item.get("center"):
+            continue
+        merged[key] = item
+        applied += 1
+    return list(merged.values()), applied
+
+def read_cached_osm():
+    raw_path = MAP_DIR / "ermita-osm-raw.json"
+    if not raw_path.exists():
+        return None
+    try:
+        data = json.loads(raw_path.read_text(encoding="utf-8"))
+        return data if isinstance(data.get("elements"), list) else None
+    except (OSError, json.JSONDecodeError):
+        return None
+
+def previous_sync_time():
+    if SYNC_STATE_PATH.exists():
+        try:
+            state = json.loads(SYNC_STATE_PATH.read_text(encoding="utf-8"))
+            if state.get("last_sync_utc"):
+                return state["last_sync_utc"]
+        except (OSError, json.JSONDecodeError):
+            pass
+    report_path = MAP_DIR / "import-report.json"
+    if report_path.exists():
+        try:
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+            return report.get("retrieved_utc")
+        except (OSError, json.JSONDecodeError):
+            pass
+    return None
+
+def fetch_osm(query=QUERY):
     last_error = None
     for endpoint in ENDPOINTS:
         for attempt in range(3):
             try:
-                response = requests.post(endpoint, data={"data": QUERY}, headers=HEADERS, timeout=(30, 240))
+                response = requests.post(endpoint, data={"data": query}, headers=HEADERS, timeout=(30, 240))
                 response.raise_for_status()
                 data = response.json()
                 if "elements" not in data:
@@ -128,7 +183,44 @@ def height_for(tags):
     return 9.6, "default 3-storey estimate; unverified"
 
 def main():
-    osm_json, endpoint = fetch_osm()
+    # Reuse the committed raw cache and ask Overpass only for objects edited since
+    # the last successful sync. A one-day overlap makes retries/checkpoint boundaries safe.
+    cached = read_cached_osm()
+    last_sync = previous_sync_time()
+    sync_started = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    sync_mode = "incremental"
+    delta_count = 0
+    applied_count = 0
+    if cached and last_sync:
+        try:
+            from datetime import datetime, timedelta, timezone
+            since = datetime.fromisoformat(last_sync.replace("Z", "+00:00")) - timedelta(days=1)
+            since_text = since.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        except (ValueError, TypeError):
+            since_text = None
+        if since_text:
+            osm_delta, endpoint = fetch_osm(add_newer_filters(QUERY, since_text))
+            delta_count = len(osm_delta.get("elements", []))
+            merged_elements, applied_count = merge_osm_elements(cached.get("elements", []), osm_delta.get("elements", []))
+            osm_json = dict(cached)
+            osm_json["elements"] = merged_elements
+            osm_json["osm_incremental_sync"] = {
+                "since_utc": since_text,
+                "last_query_started_utc": sync_started,
+                "delta_element_count": delta_count,
+                "applied_element_count": applied_count,
+            }
+        else:
+            # If checkpoint metadata is invalid, do a full baseline rather than risk gaps.
+            sync_mode = "full_recovery"
+            osm_json, endpoint = fetch_osm()
+            applied_count = len(osm_json.get("elements", []))
+    else:
+        # First run / missing cache: establish a complete baseline.
+        sync_mode = "full_baseline"
+        osm_json, endpoint = fetch_osm()
+        applied_count = len(osm_json.get("elements", []))
+
     (MAP_DIR / "ermita-osm-raw.json").write_text(json.dumps(osm_json, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
     geojson = osm2geojson.json2geojson(osm_json)
     geojson["name"] = "Ermita, Manila - OpenStreetMap features"
@@ -303,6 +395,12 @@ def main():
         writer.writerow(["limitation", "Extruded building volumes only; no textures or photogrammetry"])
     report = {
         "area_relation_id": 103706, "retrieval_endpoint": endpoint,
+        "sync_mode": sync_mode,
+        "sync_started_utc": sync_started,
+        "sync_since_utc": since_text if sync_mode == "incremental" else None,
+        "delta_element_count": delta_count,
+        "added_or_updated_element_count": applied_count,
+        "incremental_policy": "Cached OSM elements are merged by type/id; unchanged elements are reused and missing/deleted responses do not erase cached records.",
         "retrieved_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "osm_element_count": len(osm_json.get("elements", [])), "geojson_feature_count": len(all_features),
         "building_feature_count": len(buildings), "poi_and_infrastructure_rows": len(rows),
@@ -328,6 +426,14 @@ def main():
         "Heights use OSM tags where available and documented estimates otherwise. "
         "See building-height-methods.csv and the map import report. Source: OpenStreetMap contributors, "
         "ODbL 1.0; attribution and share-alike obligations apply.\n", encoding="utf-8")
+    # Advance the checkpoint only after every output has been generated successfully.
+    (SYNC_STATE_PATH).write_text(json.dumps({
+        "last_sync_utc": sync_started,
+        "mode": sync_mode,
+        "area_relation_id": 103706,
+        "source": "OpenStreetMap contributors",
+        "policy": "Incremental changes merged by OSM type/id; cached records are retained on partial responses."
+    }, indent=2) + "\\n", encoding="utf-8")
     print(json.dumps(report, indent=2))
 
 if __name__ == "__main__":
