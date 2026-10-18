@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "purpose": "Real, location-specific buildings in Malate and Ermita. A listing is not considered integrated until its model file is committed locally and geospatial alignment is verified.",
+  "models": [
+    {
+      "id": "ramon-magsaysay-center",
+      "name": "Ramon Magsaysay Center",
+      "district": "Malate",
+      "latitude": 14.5719,
+      "longitude": 120.98245,
+      "osm_feature_id": "way/520939293",
+      "model_page": "https://sketchfab.com/3d-models/ramon-magsaysay-building-e244e17eea144fc585b40a873c2a1bbd",
+      "format": "Sketchfab downloadable 3D model; file not yet in repository",
+      "integration_status": "identified_not_downloaded",
+      "real_building": true,
+      "notes": "18-storey real building; inspect mesh scale and facade before placement."
+    },
+    {
+      "id": "ermita-center-building",
+      "name": "Ermita Center Building",
+      "district": "Ermita",
+      "latitude": 14.57563,
+      "longitude": 120.98041,
+      "osm_feature_id": "way/103494322",
+      "model_page": "https://embed-3dwarehouse-classic.sketchup.com/model/3743b62280dd9fa53530340d5a9e139f/Ermita-Center-Building",
+      "format": "3D Warehouse downloadable model; file not yet in repository",
+      "integration_status": "identified_not_downloaded",
+      "real_building": true,
+      "notes": "Existing commercial/office building on Roxas Boulevard."
+    },
+    {
+      "id": "www-residences-malate",
+      "name": "WWW Residences",
+      "district": "Malate",
+      "latitude": null,
+      "longitude": null,
+      "osm_feature_id": null,
+      "model_page": "https://embed-3dwarehouse-classic.sketchup.com/model/74e2138c-8c27-478f-91c8-02ec46b43f03/WWW-Residences-Malate-Manila",
+      "format": "3D Warehouse downloadable model; file not yet in repository",
+      "integration_status": "identified_not_downloaded",
+      "real_building": true,
+      "notes": "Model page says the exterior is close to the existing building but not complete; exact OSM footprint still needs matching."
+    },
+    {
+      "id": "midland-plaza-hotel",
+      "name": "Midland Plaza Hotel",
+      "district": "Malate / Ermita boundary area",
+      "latitude": null,
+      "longitude": null,
+      "osm_feature_id": null,
+      "model_page": "https://embed-3dwarehouse-classic.sketchup.com/model/21ed3233aca85a293530a9e139f/The-Midland-Plaza-Hotel",
+      "format": "3D Warehouse downloadable model; file not yet in repository",
+      "integration_status": "identified_not_downloaded",
+      "real_building": true,
+      "notes": "Model page describes a 15-storey hotel on Adriatico Street; exact footprint still needs matching."
+    }
+  ]
+}
