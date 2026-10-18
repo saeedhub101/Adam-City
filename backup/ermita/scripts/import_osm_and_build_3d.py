@@ -305,9 +305,11 @@ def main():
         "area_relation_id": 103706, "retrieval_endpoint": endpoint,
         "retrieved_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "osm_element_count": len(osm_json.get("elements", [])), "geojson_feature_count": len(all_features),
-        "building_feature_count": len(buildings), "poi_and_infrastructure_rows": len(rows),\n        "street_sign_and_signal_feature_count": len(sign_features),
+        "building_feature_count": len(buildings), "poi_and_infrastructure_rows": len(rows),
+        "street_sign_and_signal_feature_count": len(sign_features),
         "tag_key_feature_counts": {key: sum(1 for feature in all_features if key in tags_for(feature)) for key in sorted({key for feature in all_features for key in tags_for(feature).keys()})},
-        "themed_csvs": sorted(f"ermita-{theme}.csv" for theme in themes),\n        "dedicated_sign_layer": "ermita-street-signs-and-signals.geojson",
+        "themed_csvs": sorted(f"ermita-{theme}.csv" for theme in themes),
+        "dedicated_sign_layer": "ermita-street-signs-and-signals.geojson",
         "extruded_building_polygon_count": built, "source": "OpenStreetMap contributors",
         "license": "ODbL 1.0; attribution and share-alike obligations apply",
         "limitations": [

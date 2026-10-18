@@ -9,9 +9,14 @@
   "buildings_checked": 1468,
   "grid_cells_queried": 72,
   "unique_api_photos_found": 740,
-  "photos_matched_to_buildings": 245,
-  "photos_downloaded": 237,
-  "api_errors": [],
+  "photos_matched_to_buildings": 246,
+  "photos_downloaded": 238,
+  "api_errors": [
+    {
+      "cell": 1,
+      "error": "400 Client Error: Bad Request for url: https://api.openstreetcam.org/2.0/photo/?lat=14.574934514233098&lng=120.97249397292617&radius=220&zoomLevel=18&join=sequence&orderBy=id&orderDirection=desc&items"
+    }
+  ],
   "csv": "kartaview/ermita-real-facade-images.csv",
   "image_directory": "kartaview/images",
   "limitations": [
