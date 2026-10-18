@@ -19,12 +19,22 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - name: Download only Malate streets and building footprints
+      - name: Check whether the saved map already exists
+        id: map-cache
         run: |
           mkdir -p maps buo_maps
+          if [ -s maps/malate-map.json ] && python -c "import json; d=json.load(open('maps/malate-map.json')); assert isinstance(d.get('elements'), list) and len(d['elements']) > 0"; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "A valid saved Malate map already exists in GitHub. Skipping OpenStreetMap download."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "Saved Malate map is missing or invalid. It will be downloaded."
+          fi
+      - name: Download Malate streets and building footprints only when missing
+        if: steps.map-cache.outputs.exists == 'false'
+        run: |
           python - <<'PY'
           import json, time, urllib.parse, urllib.request, os
-          # Focused Malate play area around Mabini Street / Pedro Gil.
           bbox=[14.55,120.97,14.585,121.005]
           s,w,n,e=bbox
           query=f'[out:json][timeout:150];(way({s},{w},{n},{e})[building];way({s},{w},{n},{e})[highway];);out body geom;'
@@ -69,8 +79,8 @@ jobs:
           printf '%s\n' '# Map backups' '' 'Backup files use the same location-based filenames as maps/.' > buo_maps/README.md
           git add -f maps/malate-map.json buo_maps/malate-map.json maps/README.md buo_maps/README.md
           if git diff --cached --quiet -- maps/malate-map.json buo_maps/malate-map.json maps/README.md buo_maps/README.md; then
-            echo "Malate map is unchanged."
+            echo "Malate map and backup are unchanged."
             exit 0
           fi
-          git commit -m "Save Malate game map and backup"
+          git commit -m "Save Malate map and backup"
           git push
