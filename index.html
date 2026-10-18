@@ -13,6 +13,8 @@
 <header>
 <div><h1>Adam City · Ermita 3D</h1><p>Interactive 3D buildings, terrain, mapped streets · Manila, Philippines</p><div class="status" id="status">Loading 3D scene and local mapping data…</div></div>
 <div class="controls">
+<label><input id="imagery" type="checkbox"> Satellite imagery</label>
+<label><input id="landmarks" type="checkbox" checked> Key landmarks</label>
 <label><input id="buildings" type="checkbox" checked> 3D building footprints</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
 <label><input id="terrain" type="checkbox" checked> 3D terrain</label>
@@ -23,7 +25,7 @@
 </div>
 </header>
 <div id="map" role="application" aria-label="Interactive three-dimensional city map of Ermita Manila"></div>
-<footer>Enhanced 3D visualization using mapped footprints, tagged heights and building types. Untagged heights are estimates; not a surveyed architectural model. Terrain uses global ~30 m elevation data. © OpenStreetMap contributors · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
+<footer>Switchable satellite imagery (Esri World Imagery) with mapped 3D footprints, estimated heights where tags are missing, and highlighted landmarks. Imagery age/coverage varies; not a surveyed architectural model. Terrain uses global ~30 m elevation data. © Esri, Maxar, Earthstar Geographics, OpenStreetMap contributors · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
 <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
 <script>
 (function(){
@@ -40,7 +42,7 @@ const map=new maplibregl.Map({
 });
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
 map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-right');
-let roadsData=null,buildingsData=null,tilted=true,golden=true;
+let roadsData=null,buildingsData=null,tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[];
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function popupHtml(p){const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',p.osm_feature_id||p.id]];return '<div style="font:13px system-ui"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+'</div>'}
 function addBuildings(data){
@@ -76,6 +78,35 @@ function addBuildings(data){
   paint:{'text-color':'#28323a','text-halo-color':'#fff8e9','text-halo-width':1.5,'text-halo-blur':0.3}});
 
 }
+function addSatelliteImagery(){
+ const layers=(map.getStyle().layers||[]).filter(l=>l.id!=='satellite-imagery'&&!l.id.startsWith('local-')&&!l.id.startsWith('project-')&&!l.id.startsWith('key-landmark-'));
+ baseLayerVisibility=layers.map(l=>({id:l.id,visibility:l.layout&&l.layout.visibility==='none'?'none':'visible'}));
+ map.addSource('satellite-imagery-source',{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,attribution:'Tiles © Esri — Sources: Esri, Maxar, Earthstar Geographics, and the GIS User Community'});
+ map.addLayer({id:'satellite-imagery',type:'raster',source:'satellite-imagery-source',layout:{visibility:'none'},paint:{'raster-opacity':1,'raster-fade-duration':150}},'local-buildings-3d');
+}
+function setSatelliteImagery(enabled){
+ imageryOn=enabled;
+ if(map.getLayer('satellite-imagery'))map.setLayoutProperty('satellite-imagery','visibility',enabled?'visible':'none');
+ baseLayerVisibility.forEach(l=>{if(map.getLayer(l.id))map.setLayoutProperty(l.id,'visibility',enabled?'none':l.visibility)});
+ setStatus(enabled?'Satellite imagery enabled · imagery dates and resolution vary by tile':'Street basemap enabled · local 3D buildings and landmark layer remain available');
+}
+function addLandmarks(){
+ const landmarks={type:'FeatureCollection',features:[
+  {type:'Feature',properties:{name:'Rizal Monument',kind:'National monument',detail:'Monument to José Rizal in Rizal Park. Marker location is approximate.'},geometry:{type:'Point',coordinates:[120.97845,14.58325]}},
+  {type:'Feature',properties:{name:'Quirino Grandstand',kind:'Ceremonial grandstand',detail:'Landmark at the western edge of Rizal Park. Marker location is approximate.'},geometry:{type:'Point',coordinates:[120.9791,14.58155]}},
+  {type:'Feature',properties:{name:'National Museum of Fine Arts',kind:'Museum',detail:'National Museum complex, Manila. Marker location is approximate.'},geometry:{type:'Point',coordinates:[120.98055,14.58925]}},
+  {type:'Feature',properties:{name:'National Museum of Anthropology',kind:'Museum',detail:'National Museum complex, Manila. Marker location is approximate.'},geometry:{type:'Point',coordinates:[120.9798,14.58735]}},
+  {type:'Feature',properties:{name:'Manila Ocean Park',kind:'Marine park',detail:'Waterfront attraction near Rizal Park. Marker location is approximate.'},geometry:{type:'Point',coordinates:[120.97765,14.57995]}},
+  {type:'Feature',properties:{name:'Rizal Park / Luneta',kind:'Historic public park',detail:'Major historic urban park in central Manila. Park marker is approximate.'},geometry:{type:'Point',coordinates:[120.98125,14.5834]}}
+ ]};
+ map.addSource('key-landmarks',{type:'geojson',data:landmarks});
+ map.addLayer({id:'key-landmark-halo',type:'circle',source:'key-landmarks',paint:{'circle-radius':['interpolate',['linear'],['zoom'],12,4,17,7],'circle-color':'#fff7da','circle-opacity':0.95,'circle-stroke-color':'#20364a','circle-stroke-width':2}});
+ map.addLayer({id:'key-landmark-dot',type:'circle',source:'key-landmarks',paint:{'circle-radius':['interpolate',['linear'],['zoom'],12,2.5,17,4.5],'circle-color':'#e34e35','circle-stroke-color':'#ffffff','circle-stroke-width':1}});
+ map.addLayer({id:'key-landmark-label',type:'symbol',source:'key-landmarks',minzoom:14.2,layout:{'text-field':['get','name'],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],14,10,18,14],'text-offset':[0,1.25],'text-anchor':'top','text-max-width':14,'text-allow-overlap':false},paint:{'text-color':'#172b3b','text-halo-color':'#fff','text-halo-width':2}});
+ map.on('click','key-landmark-dot',e=>{const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};new maplibregl.Popup().setLngLat(e.lngLat).setHTML('<div style="font:13px system-ui"><b>'+esc(p.name)+'</b><div>'+esc(p.kind)+'</div><p style="color:#46515b;margin-top:5px">'+esc(p.detail)+'</p></div>').addTo(map)});
+ map.on('mouseenter','key-landmark-dot',()=>map.getCanvas().style.cursor='pointer');
+ map.on('mouseleave','key-landmark-dot',()=>map.getCanvas().style.cursor='');
+}
 function addRoads(data){
  if(map.getLayer('project-roads-casing'))map.removeLayer('project-roads-casing');
  if(map.getLayer('project-roads'))map.removeLayer('project-roads');
@@ -96,10 +127,12 @@ map.on('load',async()=>{
   ]);
   roadsData={type:'FeatureCollection',features:(results[0].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   buildingsData={type:'FeatureCollection',features:(results[1].features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
-  addBuildings(buildingsData);addRoads(roadsData);
-  setStatus(buildingsData.features.length.toLocaleString()+' local building outlines extruded into 3D · '+roadsData.features.length.toLocaleString()+' real mapped road/path lines · rotate with right mouse or Ctrl-drag');
+  addBuildings(buildingsData);addRoads(roadsData);addLandmarks();addSatelliteImagery();
+  setStatus(buildingsData.features.length.toLocaleString()+' local building outlines in 3D · '+roadsData.features.length.toLocaleString()+' mapped road/path lines · 6 landmark markers (approximate positions)');
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
 });
+document.getElementById('imagery').addEventListener('change',e=>setSatelliteImagery(e.target.checked));
+document.getElementById('landmarks').addEventListener('change',e=>['key-landmark-halo','key-landmark-dot','key-landmark-label'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('buildings').addEventListener('change',e=>{if(map.getLayer('local-buildings-3d'))map.setLayoutProperty('local-buildings-3d','visibility',e.target.checked?'visible':'none')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null)}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
