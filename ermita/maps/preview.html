@@ -15,6 +15,7 @@
 <div class="controls">
 <label><input id="imagery" type="checkbox"> Satellite imagery</label>
 <label><input id="landmarks" type="checkbox" checked> Key landmarks</label>
+<label><input id="realModels" type="checkbox" checked> Real building 3D model previews</label>
 <label><input id="buildings" type="checkbox" checked> 3D building footprints</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
 <label><input id="terrain" type="checkbox" checked> 3D terrain</label>
@@ -45,6 +46,27 @@ map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-right');
 let roadsData=null,buildingsData=null,surfaceData=null,tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[];
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function popupHtml(p){const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',p.osm_feature_id||p.id]];return '<div style="font:13px system-ui"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+'</div>'}
+function addRealModelMarkers(){
+ const models={type:'FeatureCollection',features:[
+  {type:'Feature',geometry:{type:'Point',coordinates:[120.98245,14.5719]},properties:{id:'ramon-magsaysay-center',name:'Ramon Magsaysay Center',district:'Malate',page:'https://sketchfab.com/3d-models/ramon-magsaysay-building-e244e17eea144fc585b40a873c2a1bbd',embed:'https://sketchfab.com/models/e244e17eea144fc585b40a873c2a1bbd/embed?autostart=0&ui_infos=1',kind:'Sketchfab · interactive 3D model'}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[120.98041,14.57563]},properties:{id:'ermita-center-building',name:'Ermita Center Building',district:'Ermita',page:'https://embed-3dwarehouse-classic.sketchup.com/model/3743b62280dd9fa53530340d5a9e139f/Ermita-Center-Building',embed:'https://embed-3dwarehouse-classic.sketchup.com/model/3743b62280dd9fa53530340d5a9e139f/Ermita-Center-Building',kind:'3D Warehouse model page'}}
+ ]};
+ if(map.getLayer('real-building-model-labels'))map.removeLayer('real-building-model-labels');
+ if(map.getLayer('real-building-model-points'))map.removeLayer('real-building-model-points');
+ if(map.getSource('real-building-models'))map.removeSource('real-building-models');
+ map.addSource('real-building-models',{type:'geojson',data:models});
+ map.addLayer({id:'real-building-model-points',type:'circle',source:'real-building-models',paint:{'circle-radius':['interpolate',['linear'],['zoom'],12,5,16,9,19,12],'circle-color':'#7c3aed','circle-stroke-color':'#ffffff','circle-stroke-width':2}});
+ map.addLayer({id:'real-building-model-labels',type:'symbol',source:'real-building-models',layout:{'text-field':['get','name'],'text-font':['Open Sans Bold'],'text-size':12,'text-offset':[0,1.4],'text-anchor':'top','text-allow-overlap':true},paint:{'text-color':'#5b21b6','text-halo-color':'#ffffff','text-halo-width':1.5}});
+ map.on('click','real-building-model-points',e=>{
+  const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};
+  const embed=p.id==='ramon-magsaysay-center'
+   ? '<iframe title="Interactive 3D model of '+esc(p.name)+'" src="'+esc(p.embed)+'" style="width:300px;max-width:75vw;height:230px;border:0;border-radius:6px" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen loading="lazy"></iframe>'
+   : '<div style="padding:10px;background:#f1f5f9;border-radius:6px">Open the original 3D Warehouse model page to inspect its interactive viewer. The source page is linked below.</div>';
+  new maplibregl.Popup({maxWidth:'340px'}).setLngLat(e.lngLat).setHTML('<div style="font:13px system-ui;max-width:310px"><b style="font-size:15px">'+esc(p.name)+'</b><div>'+esc(p.district)+' · real named building</div><div style="margin:6px 0;color:#92400e">Remote model preview — not yet downloaded or physically placed as a mesh in the city.</div>'+embed+'<div style="margin-top:8px"><a target="_blank" rel="noopener" href="'+esc(p.page)+'">Open original 3D model page</a></div></div>').addTo(map);
+ });
+ map.on('mouseenter','real-building-model-points',()=>map.getCanvas().style.cursor='pointer');
+ map.on('mouseleave','real-building-model-points',()=>map.getCanvas().style.cursor='');
+}
 function addBuildings(data){
  if(map.getLayer('local-buildings-3d'))map.removeLayer('local-buildings-3d');
  if(map.getSource('local-buildings'))map.removeSource('local-buildings');
@@ -147,12 +169,13 @@ map.on('load',async()=>{
   roadsData={type:'FeatureCollection',features:(results[0].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   buildingsData={type:'FeatureCollection',features:(results[1].features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
   surfaceData={type:'FeatureCollection',features:(results[2].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
-  addBuildings(buildingsData);addRoads(roadsData);addDpwRoadSurface(surfaceData);addLandmarks();addSatelliteImagery();
+  addBuildings(buildingsData);addRoads(roadsData);addDpwRoadSurface(surfaceData);addLandmarks();addRealModelMarkers();addSatelliteImagery();
   setStatus(buildingsData.features.length.toLocaleString()+' local building outlines in 3D · '+roadsData.features.length.toLocaleString()+' mapped road/path lines · '+surfaceData.features.length.toLocaleString()+' official DPWH road records loaded · 6 landmark markers (approximate positions)');
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
 });
 document.getElementById('imagery').addEventListener('change',e=>setSatelliteImagery(e.target.checked));
 document.getElementById('landmarks').addEventListener('change',e=>['key-landmark-halo','key-landmark-dot','key-landmark-label'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
+document.getElementById('realModels').addEventListener('change',e=>['real-building-model-points','real-building-model-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('buildings').addEventListener('change',e=>{if(map.getLayer('local-buildings-3d'))map.setLayoutProperty('local-buildings-3d','visibility',e.target.checked?'visible':'none')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null)}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
