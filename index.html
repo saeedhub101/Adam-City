@@ -23,18 +23,12 @@ for(const side of [-1,1]){const walk=new THREE.Mesh(new THREE.BoxGeometry(4,.22,
 for(let z=8;z>-190;z-=8){const dash=new THREE.Mesh(new THREE.BoxGeometry(.12,.025,3.1),lineMat);dash.position.set(0,.04,z);scene.add(dash)}
 // Small photo-based facade textures, applied to actual 3D building faces.
 const photoUrls=[
-'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=900&q=80',
-'https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=900&q=80',
-'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=900&q=80'
-];
-const loader=new THREE.TextureLoader();loader.crossOrigin='anonymous';
-const photoUrls=[
 'https://commons.wikimedia.org/wiki/Special:FilePath/09938jfMabini_Street_Remedios_Street_Bike_Lanes_Buildings_Malate_Manilafvf_04.jpg?width=1400',
 'https://commons.wikimedia.org/wiki/Special:FilePath/09938jfMabini_Street_Remedios_Street_Bike_Lanes_Buildings_Malate_Manilafvf_01.jpg?width=1400',
 'https://commons.wikimedia.org/wiki/Special:FilePath/05297jfStreets_Mabini_Ocampo_Roxas_Boulevard_Malate_Manilafvf_02.jpg?width=1400'
 ];
 const loader=new THREE.TextureLoader();loader.crossOrigin='anonymous';
-const photoMats=await Promise.all(photoUrls.map(url=>new Promise(resolve=>loader.load(url,t=>{t.colorSpace=THREE.SRGBColorSpace;t.wrapS=THREE.ClampToEdgeWrapping;t.wrapT=THREE.ClampToEdgeWrapping;resolve(new THREE.MeshStandardMaterial({map:t,roughness:1})) ,undefined,()=>resolve(new THREE.MeshStandardMaterial({color:0xb9aa91,roughness:1}))))));
+const photoMats=await Promise.all(photoUrls.map(url=>new Promise(resolve=>loader.load(url,t=>{t.colorSpace=THREE.SRGBColorSpace;t.wrapS=THREE.ClampToEdgeWrapping;t.wrapT=THREE.ClampToEdgeWrapping;resolve(new THREE.MeshStandardMaterial({map:t,roughness:1}));},undefined,()=>resolve(new THREE.MeshStandardMaterial({color:0xb9aa91,roughness:1}))))));
 function building(x,z,w,h,depth,i){const group=new THREE.Group();group.position.set(x,0,z);scene.add(group);const body=new THREE.Mesh(new THREE.BoxGeometry(w,h,depth),mat([0xc6b7a0,0xaaa69b,0xd0c4b1,0x8f9694][i%4]));body.position.y=h/2;body.castShadow=true;body.receiveShadow=true;group.add(body);
 const faceMat=photoMats[i%photoMats.length].clone();faceMat.map=photoMats[i%photoMats.length].map;const face=new THREE.Mesh(new THREE.PlaneGeometry(w*.94,h*.82),faceMat);face.position.set(0,h*.53,depth/2+.012);face.castShadow=false;group.add(face);
 // ground-floor shop windows and awnings make the street feel occupied
