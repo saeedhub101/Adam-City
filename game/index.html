@@ -61,17 +61,14 @@ function makeWorld(){
  box(scene,2.5,.18,58,mats.sidewalk,-7.6,-.02,0);box(scene,2.5,.18,58,mats.sidewalk,7.6,-.02,0);
  for(let z=-27;z<29;z+=8)box(scene,.13,.025,3.5,mats.yellow,0,.002,z);
  for(let side of [-1,1])box(scene,.16,.14,58,mats.concrete,side*6.5,.02,0);
- // The first two photo references are real photographs from Mabini Street / Malate.
- // They intentionally remain obvious photographic anchors while this block is built out.
- photoWall('https://commons.wikimedia.org/wiki/Special:FilePath/06127jfHotels_Building_Streets_Mabini_Malate_Manilafvf_12.jpg',-6.4,-1,26,11,Math.PI/2);
- photoWall('https://commons.wikimedia.org/wiki/Special:FilePath/05261jfStreets_Mabini_Ocampo_Roxas_Boulevard_Malate_Manilafvf_08.jpg',6.4,-1,26,11,-Math.PI/2);
- // Low-rise street edge and shopfront silhouettes to frame the first photo-backed block.
+ // Replace the generic building boxes with real Mabini / Malate streetscape photographs.
+ // Each image becomes a long street-facing facade beyond the sidewalk, not a wall across the road.
+ // The chosen Commons photos depict actual streets and hotels around Mabini Street.
+ photoWall('https://commons.wikimedia.org/wiki/Special:FilePath/05808jfTowers_Hotel_Streets_Buildings_Malate_Manilafvf_05.jpg',-10.2,-1,27,8.8,Math.PI/2);
+ photoWall('https://commons.wikimedia.org/wiki/Special:FilePath/05117jfStreets_Harrison_Plaza_Mabini_Ocampo_Streets_Buildings_Malate_Manilafvf_12.jpg',10.2,-1,27,8.8,-Math.PI/2);
+ // A few street trees sit on the sidewalk edge without hiding the photographic frontage.
  for(let side of [-1,1]){
-  for(let i=0;i<3;i++){
-   let z=-20+i*20,w=8.5,h=[8,11,7][i],fac=[mats.cream,mats.white,mats.blue][(i+(side>0?1:0))%3];
-   building(side*13.2,z,w,5,h,fac,i+side+4);
-  }
-  for(let i=0;i<3;i++)tree(side*5.9,-18+i*19,.78+(i%2)*.1);
+  for(let i=0;i<3;i++)tree(side*7.55,-18+i*18,.65+(i%2)*.08);
  }
  // Two parked vehicles and street furniture for this first short block.
  for(let i=0;i<2;i++){let z=-8+i*19,side=i?1:-1,x=side*4.5;const car=new THREE.Group();car.position.set(x,.15,z);scene.add(car);let body=mat(i?'#aeb3b2':'#6d777b');box(car,1.75,.65,3.7,body,0,.55,0);box(car,1.42,.53,1.7,mats.glass,0,1.05,-.1);for(let wx of [-.88,.88])for(let wz of [-1.15,1.15]){const wh=new THREE.Mesh(new THREE.CylinderGeometry(.27,.27,.16,16),mats.rubber);wh.rotation.z=Math.PI/2;wh.position.set(wx,.3,wz);car.add(wh)}}
