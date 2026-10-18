@@ -28,16 +28,26 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install geospatial tools
+        continue-on-error: true
         run: python -m pip install requests osm2geojson shapely pyproj trimesh mapbox-earcut rasterio numpy scipy
       - name: Download and process OpenStreetMap data
+        id: osm
+        continue-on-error: true
         run: python ermita/scripts/import_osm_and_build_3d.py
       - name: Import official DPWH national roads for Ermita
+        id: dpwh
+        continue-on-error: true
         run: python ermita/scripts/import_dpwh_national_roads.py
       - name: Import KartaView street imagery metadata (no image downloads)
+        id: kartaview
+        continue-on-error: true
         run: python ermita/scripts/import_real_facade_photos.py
       - name: Download elevation data and build terrain surface
+        id: terrain
+        continue-on-error: true
         run: python ermita/scripts/import_copernicus_terrain.py
       - name: Commit imported map data and 3D model
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -50,4 +60,21 @@ jobs:
             git fetch origin main
             git rebase -X theirs origin/main
             git push origin HEAD:main
+          fi
+
+      - name: Report independent import stage results
+        if: always()
+        env:
+          OSM_OUTCOME: ${{ steps.osm.outcome }}
+          DPWH_OUTCOME: ${{ steps.dpwh.outcome }}
+          KARTAVIEW_OUTCOME: ${{ steps.kartaview.outcome }}
+          TERRAIN_OUTCOME: ${{ steps.terrain.outcome }}
+        run: |
+          echo "OSM: ${OSM_OUTCOME}"
+          echo "DPWH: ${DPWH_OUTCOME}"
+          echo "KartaView metadata: ${KARTAVIEW_OUTCOME}"
+          echo "Terrain: ${TERRAIN_OUTCOME}"
+          if [ "${OSM_OUTCOME}" != "success" ] || [ "${DPWH_OUTCOME}" != "success" ] || [ "${KARTAVIEW_OUTCOME}" != "success" ] || [ "${TERRAIN_OUTCOME}" != "success" ]; then
+            echo "::error::One or more import stages failed. Other stages were allowed to run independently; inspect each step above."
+            exit 1
           fi
