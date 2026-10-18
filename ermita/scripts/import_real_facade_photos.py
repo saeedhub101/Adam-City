@@ -23,8 +23,8 @@ from shapely.ops import transform as geom_transform
 
 ROOT = Path(__file__).resolve().parents[2]
 BUILDINGS_FILE = ROOT / "ermita/maps/generated/ermita-building-footprints.geojson"
-OUT_DIR = ROOT / "ermita/facades/generated"
-IMAGE_DIR = ROOT / "ermita/facades/images"
+OUT_DIR = ROOT / "kartaview"
+IMAGE_DIR = OUT_DIR / "images"
 CSV_FILE = OUT_DIR / "ermita-real-facade-images.csv"
 REPORT_FILE = OUT_DIR / "ermita-real-facade-report.json"
 API = "https://api.openstreetcam.org/2.0/photo/"
