@@ -34,6 +34,28 @@ area(3600103706)->.ermitaArea;
   nwr(area.ermitaArea)["barrier"];
   nwr(area.ermitaArea)["man_made"];
   nwr(area.ermitaArea)["landuse"];
+  nwr(area.ermitaArea)["public_transport"];
+  nwr(area.ermitaArea)["railway"];
+  nwr(area.ermitaArea)["emergency"];
+  nwr(area.ermitaArea)["office"];
+  nwr(area.ermitaArea)["craft"];
+  nwr(area.ermitaArea)["power"];
+  nwr(area.ermitaArea)["waterway"];
+  nwr(area.ermitaArea)["water"];
+  nwr(area.ermitaArea)["sport"];
+  nwr(area.ermitaArea)["route"];
+  nwr(area.ermitaArea)["boundary"];
+  nwr(area.ermitaArea)["entrance"];
+  nwr(area.ermitaArea)["door"];
+  nwr(area.ermitaArea)["crossing"];
+  nwr(area.ermitaArea)["traffic_calming"];
+  nwr(area.ermitaArea)["internet_access"];
+  nwr(area.ermitaArea)["wheelchair"];
+  nwr(area.ermitaArea)["toilets"];
+  nwr(area.ermitaArea)["addr:housenumber"];
+  nwr(area.ermitaArea)["addr:street"];
+  nwr(area.ermitaArea)["memorial"];
+  nwr(area.ermitaArea)["historic"];
 );
 out center geom tags;
 """
@@ -123,6 +145,70 @@ def main():
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader()
         writer.writerows(rows)
+
+    # Preserve every returned feature and its complete tag set in a searchable table.
+    all_path = MAP_DIR / "ermita-all-feature-tags.csv"
+    all_fields = ["osm_feature_id", "name", "geometry_type", "latitude", "longitude", "tags_json", "source", "license"]
+    with all_path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=all_fields)
+        writer.writeheader()
+        for feature in all_features:
+            props = feature.get("properties") or {}
+            tags = tags_for(feature)
+            geom = feature.get("geometry") or {}
+            coords = geom.get("coordinates")
+            # Point coordinates are exact; other geometry centroids are computed in lon/lat.
+            lat, lon = "", ""
+            try:
+                g = shape(geom)
+                p = g if g.geom_type == "Point" else g.representative_point()
+                lon, lat = p.x, p.y
+            except Exception:
+                pass
+            writer.writerow({
+                "osm_feature_id": fid(feature),
+                "name": tags.get("name", props.get("name", "")),
+                "geometry_type": geom.get("type", ""),
+                "latitude": lat, "longitude": lon,
+                "tags_json": json.dumps(tags, ensure_ascii=False, sort_keys=True),
+                "source": "OpenStreetMap contributors", "license": "ODbL 1.0",
+            })
+
+    # Emit dedicated themed indexes to make the imported data easy to use later.
+    themes = {
+        "transport": {"highway", "public_transport", "railway", "route", "crossing", "traffic_calming"},
+        "accessibility": {"wheelchair", "entrance", "door", "toilets", "tactile_paving", "ramp"},
+        "utilities": {"power", "man_made", "waterway", "water", "barrier"},
+        "environment": {"natural", "landuse", "leisure"},
+        "public_services": {"amenity", "emergency", "healthcare", "office", "education"},
+        "heritage": {"historic", "memorial", "tourism"},
+        "businesses": {"shop", "craft", "office", "amenity"},
+    }
+    for theme, tag_keys in themes.items():
+        path = MAP_DIR / f"ermita-{theme}.csv"
+        with path.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=all_fields)
+            writer.writeheader()
+            for feature in all_features:
+                tags = tags_for(feature)
+                if not tag_keys.intersection(tags.keys()):
+                    continue
+                geom = feature.get("geometry") or {}
+                try:
+                    g = shape(geom)
+                    p = g if g.geom_type == "Point" else g.representative_point()
+                    lon, lat = p.x, p.y
+                except Exception:
+                    lon, lat = "", ""
+                props = feature.get("properties") or {}
+                writer.writerow({
+                    "osm_feature_id": fid(feature),
+                    "name": tags.get("name", props.get("name", "")),
+                    "geometry_type": geom.get("type", ""),
+                    "latitude": lat, "longitude": lon,
+                    "tags_json": json.dumps(tags, ensure_ascii=False, sort_keys=True),
+                    "source": "OpenStreetMap contributors", "license": "ODbL 1.0",
+                })
 
     # Extrude mapped building polygons. This is a basic visualization, not surveyed architecture.
     to_meters = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True).transform
