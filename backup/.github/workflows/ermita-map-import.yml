@@ -48,6 +48,6 @@ jobs:
             git commit -m "Import Ermita map data and regenerate detailed 3D buildings"
             # Integrate any commits added to main while data was being generated.
             git fetch origin main
-            git rebase origin/main
+            git rebase -X theirs origin/main
             git push origin HEAD:main
           fi
