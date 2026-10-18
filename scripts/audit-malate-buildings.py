@@ -113,7 +113,7 @@ materials_data = {
     "tag_keys_checked": list(material_keys),
     "buildings": facade_material_buildings,
 }
-MATERIALS_PATH.write_text(json.dumps(materials_data, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+MATERIALS_PATH.write_text(json.dumps(materials_data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 report = {
     "region": data.get("region") or "Malate + Ermita, Manila, Philippines",
