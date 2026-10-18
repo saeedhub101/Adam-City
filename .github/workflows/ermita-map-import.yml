@@ -31,6 +31,8 @@ jobs:
         run: python -m pip install requests osm2geojson shapely pyproj trimesh mapbox-earcut rasterio numpy
       - name: Download and process OpenStreetMap data
         run: python ermita/scripts/import_osm_and_build_3d.py
+      - name: Generate procedural facade windows doors and signboard placeholders
+        run: python ermita/scripts/generate_facade_details.py
       - name: Download elevation data and build terrain surface
         run: python ermita/scripts/import_copernicus_terrain.py
       - name: Commit imported map data and 3D model
@@ -41,6 +43,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No generated data changes to commit."
           else
-            git commit -m "Import Ermita OSM map data and regenerate 3D model"
+            git commit -m "Import Ermita map data and regenerate detailed 3D buildings"
             git push
           fi
