@@ -1,0 +1,67 @@
+name: Cache Malate OpenStreetMap data
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - '.github/workflows/cache-malate-map.yml'
+  schedule:
+    - cron: '17 4 * * 1'
+
+permissions:
+  contents: write
+
+jobs:
+  cache-map:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download mapped Malate streets and building footprints
+        run: |
+          mkdir -p data
+          QUERY='[out:json][timeout:25];(way(14.5688,120.9815,14.5758,120.9900)[building];way(14.5688,120.9815,14.5758,120.9900)[highway];);out body geom;'
+          python - <<'PY'
+          import json, time, urllib.parse, urllib.request
+          query='[out:json][timeout:25];(way(14.5688,120.9815,14.5758,120.9900)[building];way(14.5688,120.9815,14.5758,120.9900)[highway];);out body geom;'
+          endpoints=[
+            'https://overpass-api.de/api/interpreter',
+            'https://overpass.kumi.systems/api/interpreter',
+            'https://overpass.private.coffee/api/interpreter',
+            'https://overpass.nchc.org.tw/api/interpreter',
+          ]
+          errors=[]
+          for endpoint in endpoints:
+            try:
+              req=urllib.request.Request(endpoint, data=urllib.parse.urlencode({'data':query}).encode(), headers={'User-Agent':'AdamCityMapCache/1.0 (OpenStreetMap data cache)','Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'})
+              with urllib.request.urlopen(req, timeout=45) as response:
+                data=json.load(response)
+              elements=data.get('elements', [])
+              buildings=sum(1 for e in elements if e.get('tags',{}).get('building'))
+              roads=sum(1 for e in elements if e.get('tags',{}).get('highway'))
+              if buildings < 10 or roads < 10:
+                raise RuntimeError(f'Unexpectedly small map: {buildings} buildings, {roads} roads')
+              data['_cache']={'center':{'lat':14.5717,'lon':120.9854},'bbox':[14.5688,120.9815,14.5758,120.9900],'fetched_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'source':'OpenStreetMap contributors via Overpass API','buildings':buildings,'roads':roads}
+              with open('data/malate-osm.json','w',encoding='utf-8') as f:
+                json.dump(data,f,separators=(',',':'),ensure_ascii=False)
+              print(f'Cached {buildings} buildings and {roads} roads from {endpoint}')
+              break
+            except Exception as e:
+              errors.append(f'{endpoint}: {e}')
+              print(errors[-1])
+          else:
+            raise SystemExit('Could not download map data from any Overpass mirror: '+'; '.join(errors))
+          PY
+      - name: Commit cached map data to main
+        run: |
+          if git diff --quiet -- data/malate-osm.json; then
+            echo "Cached map is unchanged."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/malate-osm.json
+          git commit -m "Cache Malate OpenStreetMap data for offline loading"
+          git push
