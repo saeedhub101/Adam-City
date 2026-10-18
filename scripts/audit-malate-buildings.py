@@ -53,6 +53,21 @@ for label, keys in tag_groups.items():
     }
 
 types = Counter(str(e["tags"].get("building", "unspecified")) for e in buildings)
+def in_renderer_bounds(el):
+    geometry = el.get("geometry")
+    if not isinstance(geometry, list) or len(geometry) < 4:
+        return False
+    for point in geometry:
+        if not isinstance(point, dict) or "lat" not in point or "lon" not in point:
+            return False
+        x = (float(point["lon"]) - 120.9851) * 107200
+        z = -(float(point["lat"]) - 14.5767) * 111100
+        if abs(x) > 3500 or abs(z) > 3500:
+            return False
+    return True
+
+rendered_buildings = [e for e in buildings if in_renderer_bounds(e)]
+rendered_parts = [e for e in parts if in_renderer_bounds(e)]
 named_buildings = [
     {"osm_way_id": e.get("id"), "name": e["tags"].get("name") or e["tags"].get("name:en"),
      "building": e["tags"].get("building"),
@@ -71,8 +86,20 @@ report = {
         "building_ways": len(buildings),
         "building_part_ways": len(parts),
         "building_features_including_parts": len(all_building_features),
+        "building_ways_with_geometry": sum(bool(e.get("geometry")) for e in buildings),
+        "building_ways_within_renderer_bounds": len(rendered_buildings),
+        "building_parts_within_renderer_bounds": len(rendered_parts),
+        "building_features_within_renderer_bounds": len(rendered_buildings) + len(rendered_parts),
     },
     "coverage": coverage,
+    "renderer_bounds_coverage": {
+        label: {
+            "count": sum(present(e, *keys) for e in rendered_buildings),
+            "percent": round(100 * sum(present(e, *keys) for e in rendered_buildings) / len(rendered_buildings), 2) if rendered_buildings else 0,
+            "keys_checked": list(keys),
+        }
+        for label, keys in tag_groups.items()
+    },
     "building_type_counts": dict(sorted(types.items(), key=lambda item: (-item[1], item[0]))),
     "named_buildings_sample": named_buildings[:250],
     "named_buildings_total": len(named_buildings),
