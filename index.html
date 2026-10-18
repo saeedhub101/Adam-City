@@ -7,7 +7,7 @@
 <div class="status" id="status">Loading 3D world…</div>
 <div class="help">WASD / arrow keys to walk · mouse drag to look · Shift to run<br>Photo-referenced street reconstruction of A. Mabini Street, Malate.</div>
 <div class="controls" id="controls"><button class="f" data-key="w" aria-label="Forward">↑</button><button class="l" data-key="a" aria-label="Turn left">←</button><button class="b" data-key="s" aria-label="Backward">↓</button><button class="r" data-key="d" aria-label="Turn right">→</button></div>
-<div class="cover" id="cover"><div class="card"><div class="eyebrow">THIRD-PERSON STREET EXPLORATION</div><h1>Walk to<br>Pedro Gil & Mabini.</h1><p>This is a new 3D game scene, not an embedded Maps page. Explore a connected street with a controllable character, a follow camera, sidewalks, shopfronts and photo-textured building facades.</p><button class="btn" id="start">ENTER ADAM CITY →</button><p class="small">Focus area: the Pedro Gil and A. Mabini Street end of Malate, using multiple real street-photo references of nearby hotels and buildings. Photo-referenced reconstruction; not yet an exact surveyed 1:1 model.</p></div></div>
+<div class="cover" id="cover"><div class="card"><div class="eyebrow">THIRD-PERSON STREET EXPLORATION</div><h1>Walk to<br>Pedro Gil & Mabini.</h1><p>A custom 3D reconstruction of the Pedro Gil × A. Mabini hotel corner, with individually generated facade patterns informed by real street photographs.</p><button class="btn" id="start">ENTER ADAM CITY →</button><p class="small">Reference area: the hotel cluster at Mabini Street and Pedro Gil / General Malvar / Del Pilar. Facades are custom approximations, not claimed as exact surveyed replicas.</p></div></div>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
 const host=document.getElementById('game'),status=document.getElementById('status');
@@ -21,28 +21,45 @@ const sidewalkMat=mat(0xb7b0a0),curbMat=mat(0x777874),lineMat=mat(0xd9c9a0);
 for(const side of [-1,1]){const walk=new THREE.Mesh(new THREE.BoxGeometry(4.1,.22,220),sidewalkMat);walk.position.set(side*9.6,.12,-75);walk.receiveShadow=true;scene.add(walk);const curb=new THREE.Mesh(new THREE.BoxGeometry(.22,.3,220),curbMat);curb.position.set(side*7.45,.16,-75);scene.add(curb)}
 // Faint lane markings
 for(let z=8;z>-190;z-=8){const dash=new THREE.Mesh(new THREE.BoxGeometry(.12,.025,3.1),lineMat);dash.position.set(0,.04,z);scene.add(dash)}
-// Small photo-based facade textures, applied to actual 3D building faces.
-// Direct static photo URLs; avoid Wikimedia HTML redirects in WebGL texture loading.
-const photoFiles=[
-'https://commons.wikimedia.org/wiki/Special:FilePath/05853jfTowers_Hotel_Mabini_Streets_Buildings_Malate_Manilafvf_07.jpg?width=1280',
-'https://commons.wikimedia.org/wiki/Special:FilePath/05853jfTowers_Hotel_Mabini_Streets_Buildings_Malate_Manilafvf_08.jpg?width=1280',
-'https://commons.wikimedia.org/wiki/Special:FilePath/05912jfHotels_Buildings_Streets_Malate_Manilafvf_01.jpg?width=1280',
-'https://commons.wikimedia.org/wiki/Special:FilePath/05912jfHotels_Buildings_Streets_Malate_Manilafvf_04.jpg?width=1280',
-'https://commons.wikimedia.org/wiki/Special:FilePath/06127jfHotels_Building_Streets_Mabini_Malate_Manilafvf_12.jpg?width=1280',
-'https://commons.wikimedia.org/wiki/Special:FilePath/09938jfMabini_Street_Remedios_Street_Bike_Lanes_Buildings_Malate_Manilafvf_04.jpg?width=1280'
-]
-const loader=new THREE.TextureLoader();loader.setCrossOrigin('anonymous');
-let photoLoaded=0,photoFailed=0;
-const photoMats=await Promise.all(photoFiles.map(url=>new Promise(resolve=>{
- loader.load(url,t=>{
-  photoLoaded++;t.colorSpace=THREE.SRGBColorSpace;
-  resolve(new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));
- },undefined,()=>{
-  photoFailed++;
-  resolve(new THREE.MeshBasicMaterial({color:0x6f7473,side:THREE.DoubleSide}));
- });
-})));
-function building(x,z,w,h,depth,i){const group=new THREE.Group();group.position.set(x,0,z);scene.add(group);const palette=[0xc6b7a0,0xaaa69b,0xd0c4b1,0x8f9694,0xb7b4a8,0xd4c9b9];const shell=new THREE.Mesh(new THREE.BoxGeometry(w,h,depth),mat(palette[i%palette.length]));shell.position.y=h/2;shell.castShadow=true;shell.receiveShadow=true;group.add(shell);const faceMat=photoMats[i%photoMats.length];const face=new THREE.Mesh(new THREE.PlaneGeometry(w*.995,h*.99),faceMat);face.position.set(0,h*.5,depth/2+.035);group.add(face);const sideMat=mat(palette[(i+2)%palette.length]);const side=new THREE.Mesh(new THREE.PlaneGeometry(depth,h),sideMat);side.rotation.y=Math.PI/2;side.position.set(-w/2-.01,h/2,0);group.add(side);const roof=new THREE.Mesh(new THREE.BoxGeometry(w+.3,.22,depth+.3),mat([0x66594f,0x77756c,0x514f4b][i%3]));roof.position.y=h+.11;group.add(roof);const parapetH=1.1+(i%3)*.35;const parapet=new THREE.Mesh(new THREE.BoxGeometry(w*.9,parapetH,.18),mat(palette[(i+1)%palette.length]));parapet.position.set(0,h+.2+parapetH/2,depth/2-.05);group.add(parapet);}
+// Photo references for the Pedro Gil x Mabini corner: Wikimedia Commons / Judgefloro.
+// These references identify the real hotel cluster; do not stretch a full street photo over a facade.
+const facadePalette=[
+{wall:'#d7d0c3',glass:'#526e79',trim:'#eee5d5',sign:'#873d2e'},
+{wall:'#c6c3ba',glass:'#3f5964',trim:'#e8e1d7',sign:'#bd332c'},
+{wall:'#d8c9b2',glass:'#52656a',trim:'#f0e5d1',sign:'#2b4c68'},
+{wall:'#b8b5aa',glass:'#314f5c',trim:'#ded9ce',sign:'#a84232'},
+{wall:'#d1c9bb',glass:'#5a6b70',trim:'#f2eadb',sign:'#6e342c'},
+{wall:'#d8d6cf',glass:'#415c67',trim:'#f4eee5',sign:'#315b70'}
+];
+function facadeTexture(i,w,h){
+ const p=facadePalette[i%facadePalette.length],c=document.createElement('canvas');c.width=512;c.height=1024;const g=c.getContext('2d');
+ g.fillStyle=p.wall;g.fillRect(0,0,512,1024);
+ const floors=Math.max(3,Math.round(h/3)),cols=Math.max(3,Math.round(w/1.7)),ground=112,fh=(1024-32-ground)/floors;
+ for(let r=0;r<floors;r++){const y=32+r*fh;g.fillStyle=p.trim;g.fillRect(0,y,512,Math.max(5,fh*.07));const cw=512/cols;
+ for(let k=0;k<cols;k++){const x=k*cw+cw*.13,ww=cw*.68,wh=fh*.54,wy=y+fh*.18;
+ g.fillStyle='#77766f';g.fillRect(x-3,wy-3,ww+6,wh+6);g.fillStyle=p.glass;g.fillRect(x,wy,ww,wh);
+ g.fillStyle='#b9c2c0';g.fillRect(x+ww*.46,wy,Math.max(2,ww*.05),wh);
+ if((r+k+i)%3===0){g.fillStyle='#b9b9b0';g.fillRect(x-4,wy+wh+2,ww+8,5);g.fillStyle='#667579';g.fillRect(x+ww*.12,wy+wh*.17,ww*.76,wh*.55);}
+ }
+ if(i%3!==1&&r%2===0){g.strokeStyle='#697678';g.lineWidth=3;g.beginPath();g.moveTo(0,y+fh*.84);g.lineTo(512,y+fh*.84);g.stroke();}
+ }
+ g.fillStyle='#343b3c';g.fillRect(0,912,512,112);g.fillStyle=p.sign;g.fillRect(10,925,492,30);g.fillStyle='#fff8e9';g.textAlign='center';g.font='bold 20px Arial';
+ g.fillText(['HOTEL','MABINI','ROOMS','HOSTEL 1632','MALATE','COMMERCIAL'][i%6],256,947);
+ for(let k=0;k<Math.max(2,Math.round(cols/2));k++){const n=Math.max(2,Math.round(cols/2)),dw=512/n*.58,dx=k*512/n+(512/n-dw)/2;g.fillStyle='#263b41';g.fillRect(dx,965,dw,59);g.strokeStyle='#c5c2b9';g.strokeRect(dx,965,dw,59);}
+ const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t;
+}
+function building(x,z,w,h,depth,i){const group=new THREE.Group();group.position.set(x,0,z);scene.add(group);const palette=[0xc6b7a0,0xaaa69b,0xd0c4b1,0x8f9694,0xb7b4a8,0xd4c9b9];const shell=new THREE.Mesh(new THREE.BoxGeometry(w,h,depth),mat(palette[i%palette.length]));shell.position.y=h/2;shell.castShadow=true;shell.receiveShadow=true;group.add(shell);const faceMat=photoMats[i%photoMats.length];const face=new THREE.Mesh(new THREE.PlaneGeometry(w*.995,h*.99),faceMat);face.position.set(0,h*.5,depth/2+.035);group.add(face);const sideMat=mat(palette[(i+2)%palette.length]);const side=new THREE.Mesh(new THREE.PlaneGeometry(depth,h),sideMat);side.rotation.y=Math.PI/2;side.position.set(-w/2-.01,h/2,0);group.add(side);const roof=new THREE.Mesh(new THREE.BoxGeometry(w+.3,.22,depth+.3),mat([0x66594f,0x77756c,0x514f4b][i%3]));roof.position.y=h+.11;group.add(roof);const parapetH=1.1+(i%3)*.35;const parapet=new THREE.Mesh(new THREE.BoxGeometry(w*.9,parapetH,.18),mat(palette[(i+1)%palette.length]));parapet.position.set(0,h+.2+parapetH/2,depth/2-.05);group.add(parapet);}function building(x,z,w,h,depth,i){
+ const group=new THREE.Group();group.position.set(x,0,z);scene.add(group);const p=facadePalette[i%facadePalette.length];
+ const shellMat=mat([0xc0b9ac,0xa9aaa5,0xc9bba8,0x9b9f9d][i%4]);
+ const shell=new THREE.Mesh(new THREE.BoxGeometry(w,h,depth),shellMat);shell.position.y=h/2;shell.castShadow=true;shell.receiveShadow=true;group.add(shell);
+ const frontMat=new THREE.MeshStandardMaterial({map:facadeTexture(i,w,h),roughness:.88});
+ const front=new THREE.Mesh(new THREE.PlaneGeometry(w,h),frontMat);front.position.set(0,h/2,depth/2+.04);group.add(front);
+ const side=new THREE.Mesh(new THREE.PlaneGeometry(depth,h),shellMat);side.rotation.y=Math.PI/2;side.position.set(-w/2-.02,h/2,0);group.add(side);
+ const roof=new THREE.Mesh(new THREE.BoxGeometry(w+.3,.22,depth+.3),mat(i%2?0x625d55:0x77736b));roof.position.y=h+.11;group.add(roof);
+ const ph=.7+(i%4)*.22;const parapet=new THREE.Mesh(new THREE.BoxGeometry(w*.94,ph,.16),shellMat);parapet.position.set(0,h+.22+ph/2,depth/2-.06);group.add(parapet);
+ if(i%3===0){const pent=new THREE.Mesh(new THREE.BoxGeometry(w*.42,1.8,depth*.45),shellMat);pent.position.set(w*.16,h+1.05,-depth*.05);group.add(pent);}
+ if(i%4===2){const tank=new THREE.Mesh(new THREE.CylinderGeometry(.48,.48,.9,12),mat(0x777d78));tank.position.set(-w*.2,h+1,0);group.add(tank);}
+}
 let seed=14;function rnd(){seed=(seed*9301+49297)%233280;return seed/233280}
 for(let z=6,i=0;z>-190;z-=9,i++){for(const side of [-1,1]){const w=6.5+rnd()*4.5,h=10+rnd()*19,d=7+rnd()*4;building(side*(11.7+w/2),z,w,h,d,i+(side===1?3:0));if(rnd()>.48){const pole=new THREE.Mesh(new THREE.CylinderGeometry(.06,.09,4.6,8),mat(0x454746));pole.position.set(side*6.9,2.3,z-3);scene.add(pole);const lamp=new THREE.Mesh(new THREE.SphereGeometry(.2,8,8),mat(0xf3dba0));lamp.position.set(side*6.9,4.6,z-3);scene.add(lamp)}}}
 // Street trees and parked vehicles add scale and life.
@@ -64,5 +81,5 @@ renderer.domElement.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX
 document.querySelectorAll('[data-key]').forEach(b=>{const k=b.dataset.key;const on=e=>{e.preventDefault();keys[k]=true},off=e=>{e.preventDefault();keys[k]=false};b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointercancel',off);b.addEventListener('pointerleave',off)});
 let last=performance.now();function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.04);last=now;let f=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0),s=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0);const moving=!!(f||s);if(moving){const speed=(keys.shift?7.2:3.6)*dt;const forward=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));const right=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));player.position.addScaledVector(forward,f*speed);player.position.addScaledVector(right,s*speed);player.position.x=THREE.MathUtils.clamp(player.position.x,-5.8,5.8);player.position.z=THREE.MathUtils.clamp(player.position.z,-185,8);player.rotation.y=yaw;walkPhase+=dt*(keys.shift?13:9);status.textContent=keys.shift?'RUNNING':'WALKING';}else status.textContent='PEDRO GIL · MALATE, MANILA';for(const l of legs){l.mesh.rotation.x=moving?Math.sin(walkPhase+(l.side===1?Math.PI:0))*.65:0;l.foot.rotation.x=l.mesh.rotation.x*.65;l.mesh.position.y=.62+(moving?Math.max(0,Math.sin(walkPhase+(l.side===1?Math.PI:0)))*.08:0)}for(const a of arms)a.mesh.rotation.x=moving?-Math.sin(walkPhase+(a.side===1?Math.PI:0))*.5:0;torso.position.y=1.48+(moving?Math.abs(Math.sin(walkPhase*2))*.025:0);camUpdate();renderer.render(scene,camera)}
 requestAnimationFrame(animate);addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});document.getElementById('start').addEventListener('click',()=>document.getElementById('cover').remove());
-status.textContent=photoLoaded>0?('REAL STREET PHOTOS LOADED · '+photoLoaded+'/3'):'PHOTO LOAD FAILED · '+photoFailed+'/3'; 
+status.textContent='CUSTOM FACADE MODELS · PEDRO GIL / MABINI'; 
 </script></body></html>
