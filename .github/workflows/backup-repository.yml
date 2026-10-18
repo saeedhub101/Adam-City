@@ -1,0 +1,50 @@
+name: Backup repository into backup directory
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: repository-backup-main
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Copy all tracked files into backup/
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p backup
+          while IFS= read -r -d '' file; do
+            mkdir -p "backup/$(dirname "$file")"
+            cp -p -- "$file" "backup/$file"
+          done < <(git ls-files -z -- . ':!:backup/**')
+          printf '%s\n' "Backup created from commit $(git rev-parse HEAD)" > backup/BACKUP_INFO.txt
+          printf '%s\n' "This directory contains copies of tracked repository files as they existed when this workflow ran." >> backup/BACKUP_INFO.txt
+
+      - name: Commit backup to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add backup/
+          if git diff --cached --quiet; then
+            echo "Backup is already up to date."
+            exit 0
+          fi
+          git commit -m "Create repository backup in backup/"
+          git push origin HEAD:main
