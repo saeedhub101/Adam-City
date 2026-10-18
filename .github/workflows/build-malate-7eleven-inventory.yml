@@ -1,0 +1,36 @@
+name: Build Malate 7-Eleven inventory
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'maps/malate-map.json'
+      - 'maps/malate-places.json'
+      - 'scripts/build-malate-7eleven-inventory.py'
+      - '.github/workflows/build-malate-7eleven-inventory.yml'
+permissions:
+  contents: write
+concurrency:
+  group: malate-7eleven-inventory-main
+  cancel-in-progress: false
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Validate inventory builder
+        run: python -m py_compile scripts/build-malate-7eleven-inventory.py
+      - name: Build cumulative inventory from saved map data
+        run: python scripts/build-malate-7eleven-inventory.py
+      - name: Commit inventory
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+users.noreply.github.com"
+          git add maps/malate-7eleven-stores.json
+          if git diff --cached --quiet; then echo "7-Eleven inventory unchanged."; exit 0; fi
+          git commit -m "Refresh Malate 7-Eleven store inventory"
+          git pull --rebase origin main
+          git push
