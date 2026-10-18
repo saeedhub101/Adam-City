@@ -1,0 +1,69 @@
+{
+  "region": "Malate + Ermita, Manila, Philippines",
+  "source": "Cumulative inventory matched from saved OpenStreetMap snapshot and POI cache; © OpenStreetMap contributors",
+  "map_generated_utc": "2026-10-18T09:37:50Z",
+  "generated_utc": "2026-10-18T10:30:25Z",
+  "count": 3,
+  "newly_discovered_this_run": 3,
+  "building_osm_way_ids": [
+    288132506,
+    406882752,
+    601203688
+  ],
+  "stores": [
+    {
+      "osm_type": "way",
+      "osm_id": 288132506,
+      "source": "malate-map.json",
+      "name": "7-Eleven",
+      "kind": "building",
+      "is_building": true,
+      "lat": 14.5539277,
+      "lon": 120.99786,
+      "tags": {
+        "addr:street": "Senator Gil J. Puyat Avenue",
+        "brand": "7-Eleven",
+        "building": "yes",
+        "name": "7-Eleven",
+        "shop": "convenience",
+        "website": "https://www.7-eleven.com.ph/"
+      }
+    },
+    {
+      "osm_type": "way",
+      "osm_id": 406882752,
+      "source": "malate-map.json",
+      "name": "7-Eleven",
+      "kind": "building",
+      "is_building": true,
+      "lat": 14.5667833,
+      "lon": 120.9921691,
+      "tags": {
+        "addr:city": "Manila",
+        "brand": "7-Eleven",
+        "building": "commercial",
+        "name": "7-Eleven",
+        "shop": "convenience"
+      }
+    },
+    {
+      "osm_type": "way",
+      "osm_id": 601203688,
+      "source": "malate-map.json",
+      "name": "7-Eleven",
+      "kind": "building",
+      "is_building": true,
+      "lat": 14.5696397,
+      "lon": 120.9861198,
+      "tags": {
+        "addr:city": "Manila",
+        "addr:street": "M. Adriatico Street",
+        "brand": "7-Eleven",
+        "building": "yes",
+        "name": "7-Eleven",
+        "shop": "convenience"
+      }
+    }
+  ],
+  "coverage_note": "Only mapped features explicitly tagged with a 7-Eleven-like name, brand, or operator are included. This is not a complete real-world branch list."
+}
