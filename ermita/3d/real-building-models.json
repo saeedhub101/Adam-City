@@ -10,12 +10,23 @@
       "longitude": 120.98245,
       "osm_feature_id": "way/520939293",
       "model_page": "https://sketchfab.com/3d-models/ramon-magsaysay-building-e244e17eea144fc585b40a873c2a1bbd",
-      "format": "Sketchfab downloadable 3D model; file not yet in repository",
-      "integration_status": "interactive_source_preview_added_to_map_file_not_downloaded",
+      "format": "Local GLB and FBX files committed in ermita/buildings",
+      "integration_status": "local_glb_loaded_as_maplibre_3d_custom_layer",
       "real_building": true,
       "notes": "18-storey real building; inspect mesh scale and facade before placement.",
       "map_preview_added": true,
-      "map_preview_note": "A map marker opens the source's interactive model preview. This is not yet a local GLB/GLTF mesh placed on the building footprint."
+      "map_preview_note": "Local GLB is loaded as a 3D custom layer at the approximate building location. Height is normalized to about 62 m; footprint, orientation and facade alignment still require visual verification.",
+      "downloaded": true,
+      "local_files": [
+        "ermita/buildings/ramon_magsaysay_building.glb",
+        "ermita/buildings/Ramon Magsaysay Building.fbx",
+        "ermita/buildings/ramon-magsaysay-building.zip"
+      ],
+      "materials": [
+        "ermita/buildings/CityStreetRoadAsphaltTwoLaneWorn001_COL_1K.jpeg",
+        "ermita/buildings/Mono-Terrazzo-Stack-Architextures.jpeg",
+        "ermita/buildings/Painted-CMU-Block-Architextures.jpeg"
+      ]
     },
     {
       "id": "ermita-center-building",
@@ -59,5 +70,5 @@
       "notes": "Model page describes a 15-storey hotel on Adriatico Street; exact footprint still needs matching."
     }
   ],
-  "next_step": "Obtain actual model binaries and convert/place them at verified footprints. Sketchfab's download API endpoint is not accessible without its authenticated download flow; the current site links to the source viewer only."
+  "next_step": "Visually verify the local Ramon Magsaysay Center mesh alignment and map the local road-asphalt and sidewalk surface textures onto generated street geometry."
 }
