@@ -63,8 +63,10 @@ def photo_id(row):
 
 
 def image_url(row):
-    value = first(row, "photoUrl", "photo_url", "imageUrl", "image_url",
-                  "thumbUrl", "thumb_url", "url")
+    value = first(row, "fileurlProc", "fileUrlProc", "fileurl", "fileUrl",
+                  "photoUrl", "photo_url", "imageUrl", "image_url",
+                  "fileurlTh", "fileUrlTh", "fileurlLTh", "fileUrlLTh",
+                  "thumbUrl", "thumb_url", "url", "filepath")
     if isinstance(value, dict):
         value = first(value, "url", "href", "src")
     if isinstance(value, str) and value.startswith("https://"):
