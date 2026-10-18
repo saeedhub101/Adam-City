@@ -61,7 +61,7 @@ def main():
             "producer_name": p.get("oam:producer_name"),
             "providers": item.get("providers"),
             "license": license_value,
-            "item_page": "https://map.openaerialmap.org/#/120.98193347454071,14.59435053656079,17/square/132303122000100/" + str(item.get("id")),
+            "item_page": "https://map.openaerialmap.org/ (search by item ID: " + str(item.get("id")) + ")",
             "asset_key": None if asset is None else next(
                 (k for k in ("visual","image","data","analytic") if assets.get(k) is asset), None),
             "asset_href": None if asset is None else asset.get("href"),
