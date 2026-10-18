@@ -64,12 +64,12 @@ for(const base of ['#d4c8b4','#c5c9c6','#d8d2c5','#bfc7c8','#d6c0a7','#c8c5bd'])
 let buildingDetails={};
 const facadeProfileCache=new Map();
 function osmColour(value,fallback){
- if(typeof value!=='string'||!value.trim())return fallback;
+ if(typeof value!=='string'||!value.trim())return typeof fallback==='string'?parseInt(fallback.replace(/^#/,'')||'77766f',16):fallback;
  const v=value.trim().toLowerCase();
  const names={white:0xf2eee5,black:0x292c2b,grey:0xb7b7b0,gray:0xb7b7b0,beige:0xd7c7aa,brown:0x8a6248,red:0xa34d42,green:0x63826a,blue:0x668da5,yellow:0xd7bd69,orange:0xc9854d,cream:0xe8ddc9};
  if(Object.prototype.hasOwnProperty.call(names,v))return names[v];
  const hex=v.replace(/^#/,'');if(/^[0-9a-f]{6}$/.test(hex))return parseInt(hex,16);
- return fallback;
+ return typeof fallback==='string'?parseInt(fallback.replace(/^#/,'')||'77766f',16):fallback;
 }
 const facadePalette=[
  {wall:'#d6c9b7',trim:'#f0e6d8',glass:'#6f929b',accent:'#a24c3d'},
