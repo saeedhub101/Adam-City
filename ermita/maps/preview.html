@@ -15,6 +15,7 @@
 <div class="controls">
 <label><input id="imagery" type="checkbox"> Satellite imagery</label>
 <label><input id="landmarks" type="checkbox" checked> Key landmarks</label>
+<label><input id="kartaPhotos" type="checkbox"> KartaView street photos</label>
 <label><input id="buildings" type="checkbox" checked> 3D building footprints</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
 <label><input id="terrain" type="checkbox" checked> 3D terrain</label>
@@ -25,7 +26,7 @@
 </div>
 </header>
 <div id="map" role="application" aria-label="Interactive three-dimensional city map of Ermita Manila"></div>
-<footer>Switchable satellite imagery (Esri World Imagery) with mapped 3D footprints, estimated heights where tags are missing, and highlighted landmarks. Imagery age/coverage varies; not a surveyed architectural model. Terrain uses global ~30 m elevation data. © Esri, Maxar, Earthstar Geographics, OpenStreetMap contributors · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
+<footer>Switchable Esri satellite layer, locally stored KartaView street-level photos, mapped 3D footprints and highlighted landmarks. KartaView images are street-level, not aerial orthophotos; estimated building heights and ~30 m terrain are not survey-grade. © Esri, Maxar, Earthstar Geographics, OpenStreetMap contributors · © Grab and KartaView Contributors · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
 <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
 <script>
 (function(){
@@ -90,6 +91,26 @@ function setSatelliteImagery(enabled){
  baseLayerVisibility.forEach(l=>{if(map.getLayer(l.id))map.setLayoutProperty(l.id,'visibility',enabled?'none':l.visibility)});
  setStatus(enabled?'Satellite imagery enabled · imagery dates and resolution vary by tile':'Street basemap enabled · local 3D buildings and landmark layer remain available');
 }
+
+async function addKartaViewPhotos(){
+ const response=await fetch('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/ermita-real-facade-images.csv');
+ if(!response.ok)throw Error('KartaView CSV HTTP '+response.status);
+ const csv=await response.text();const rows=[];let row=[],field='',quoted=false;
+ for(let n=0;n<csv.length;n++){const c=csv[n];if(quoted){if(c==='"'&&csv[n+1]==='"'){field+='"';n++;}else if(c==='"')quoted=false;else field+=c;}else if(c==='"')quoted=true;else if(c===','){row.push(field);field='';}else if(c==='\n'){row.push(field);rows.push(row);row=[];field='';}else if(c!=='\r')field+=c;}
+ if(field.length||row.length){row.push(field);rows.push(row);}
+ const headers=rows.shift();
+ const features=rows.filter(r=>r.length===headers.length).map(r=>Object.fromEntries(headers.map((h,j)=>[h,r[j]]))).filter(r=>r.download_status==='downloaded'&&r.local_image&&r.latitude&&r.longitude).map(r=>({type:'Feature',geometry:{type:'Point',coordinates:[Number(r.longitude),Number(r.latitude)]},properties:{photo_id:r.photo_id,building_name:r.building_name||'',building_osm_id:r.building_osm_id||'',distance:r.distance_to_building_wall_m||'',heading_diff:r.heading_difference_deg||'',match_status:r.match_status||'not verified',capture_date:r.capture_date||'Not recorded',local_image:r.local_image,source_page:r.source_page||'https://kartaview.org/map/',license:r.license||'CC BY-SA 4.0'}}));
+ map.addSource('kartaview-photos',{type:'geojson',data:{type:'FeatureCollection',features},cluster:true,clusterRadius:36,clusterMaxZoom:17});
+ map.addLayer({id:'kartaview-photo-clusters',type:'circle',source:'kartaview-photos',filter:['has','point_count'],paint:{'circle-color':'#176b8a','circle-radius':['step',['get','point_count'],14,10,18,30,23,75,28],'circle-stroke-color':'#fff','circle-stroke-width':2},layout:{visibility:'none'}});
+ map.addLayer({id:'kartaview-photo-count',type:'symbol',source:'kartaview-photos',filter:['has','point_count'],layout:{'text-field':['get','point_count_abbreviated'],'text-size':12,'text-font':['Open Sans Regular'],'visibility':'none'},paint:{'text-color':'#fff'}});
+ map.addLayer({id:'kartaview-photo-points',type:'circle',source:'kartaview-photos',filter:['!',['has','point_count']],paint:{'circle-radius':['interpolate',['linear'],['zoom'],13,4,18,7],'circle-color':'#20a4b8','circle-stroke-color':'#fff','circle-stroke-width':1.5},layout:{visibility:'none'}});
+ map.on('click','kartaview-photo-clusters',e=>{const f=map.queryRenderedFeatures(e.point,{layers:['kartaview-photo-clusters']})[0];if(!f)return;map.getSource('kartaview-photos').getClusterExpansionZoom(f.properties.cluster_id,(err,z)=>{if(!err)map.easeTo({center:f.geometry.coordinates,zoom:z+0.1});});});
+ map.on('click','kartaview-photo-points',e=>{const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};const img='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/'+p.local_image;const safe=v=>esc(v||'Not recorded');const html='<div style="font:13px/1.45 system-ui;max-width:260px"><b>KartaView street-level photo</b><div>'+safe(p.building_name||p.building_osm_id)+'</div><a href="'+img+'" target="_blank" rel="noopener"><img src="'+img+'" alt="KartaView photo" loading="lazy" style="display:block;width:240px;max-height:170px;object-fit:cover;border-radius:5px"></a><div><b>Date:</b> '+safe(p.capture_date)+'</div><div><b>Distance to building:</b> '+safe(p.distance)+' m</div><div><b>Match:</b> '+safe(p.match_status)+(p.heading_diff?' ('+safe(p.heading_diff)+'° heading difference)':'')+'</div><div><a href="'+safe(p.source_page)+'" target="_blank" rel="noopener">Open KartaView source</a></div><small>© Grab and KartaView Contributors · CC BY-SA 4.0. Nearby photos are not guaranteed exact facade matches.</small></div>';new maplibregl.Popup({maxWidth:'290px'}).setLngLat(f.geometry.coordinates).setHTML(html).addTo(map);});
+ ['kartaview-photo-clusters','kartaview-photo-count','kartaview-photo-points'].forEach(id=>{map.on('mouseenter',id,()=>map.getCanvas().style.cursor='pointer');map.on('mouseleave',id,()=>map.getCanvas().style.cursor='');});
+ return features.length;
+}
+function setKartaPhotos(enabled){['kartaview-photo-clusters','kartaview-photo-count','kartaview-photo-points'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',enabled?'visible':'none');});}
+
 function addLandmarks(){
  const landmarks={type:'FeatureCollection',features:[
   {type:'Feature',properties:{name:'Rizal Monument',kind:'National monument',detail:'Monument to José Rizal in Rizal Park. Marker location is approximate.'},geometry:{type:'Point',coordinates:[120.97845,14.58325]}},
@@ -128,10 +149,12 @@ map.on('load',async()=>{
   roadsData={type:'FeatureCollection',features:(results[0].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   buildingsData={type:'FeatureCollection',features:(results[1].features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
   addBuildings(buildingsData);addRoads(roadsData);addLandmarks();addSatelliteImagery();
-  setStatus(buildingsData.features.length.toLocaleString()+' local building outlines in 3D · '+roadsData.features.length.toLocaleString()+' mapped road/path lines · 6 landmark markers (approximate positions)');
+  const kartaCount=await addKartaViewPhotos();
+  setStatus(buildingsData.features.length.toLocaleString()+' local building outlines in 3D · '+roadsData.features.length.toLocaleString()+' mapped road/path lines · '+kartaCount.toLocaleString()+' locally stored KartaView photos · 6 landmark markers (approximate positions)');
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
 });
 document.getElementById('imagery').addEventListener('change',e=>setSatelliteImagery(e.target.checked));
+document.getElementById('kartaPhotos').addEventListener('change',e=>setKartaPhotos(e.target.checked));
 document.getElementById('landmarks').addEventListener('change',e=>['key-landmark-halo','key-landmark-dot','key-landmark-label'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('buildings').addEventListener('change',e=>{if(map.getLayer('local-buildings-3d'))map.setLayoutProperty('local-buildings-3d','visibility',e.target.checked?'visible':'none')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
