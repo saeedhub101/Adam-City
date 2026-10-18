@@ -2,6 +2,10 @@ name: Import Ermita map data and build 3D model
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/ermita-map-import.yml"
+      - "ermita/scripts/**"
   schedule:
     - cron: "23 2 1 * *"
 
