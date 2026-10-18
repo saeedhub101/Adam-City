@@ -40,6 +40,7 @@ function building({x,z,w,h,d,floors=5,idx=0,label='Mabini Rooms',style='flat'}){
 // REAL MAP DATA: pull actual street lines and building footprints from OpenStreetMap.
 const MAP_CENTER={lat:14.57432,lon:120.98291}; // Pedro Gil Street, Malate — spawn/map projection center
 const realMapGroup=new THREE.Group();scene.add(realMapGroup);
+const buildingFootprints=[],roadCenterlines=[];
 const mapStatus=document.createElement('div');
 mapStatus.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);padding:10px 14px;border-radius:9px;background:#102027dd;color:#fff;font:12px system-ui;z-index:4;pointer-events:none';
 mapStatus.textContent='Loading saved Malate map…';document.body.appendChild(mapStatus);
@@ -49,6 +50,7 @@ function addFootprint(el){
  const ns=el.geometry?.coordinates?.[0]||el.geometry;if(!ns||ns.length<4)return;
  const pts=ns.map(p=>Array.isArray(p)?project(p[1],p[0]):project(p.lat,p.lon));
  if(pts.some(p=>Math.abs(p.x)>145||Math.abs(p.z)>225))return;
+ buildingFootprints.push(pts);
  const shape=new THREE.Shape();shape.moveTo(pts[0].x,-pts[0].z);
  for(let i=1;i<pts.length;i++)shape.lineTo(pts[i].x,-pts[i].z);
  shape.closePath();
@@ -76,7 +78,8 @@ function addRoad(el){
  const pts=(el.geometry||[]).map(n=>project(n.lat,n.lon));
  if(pts.length<2||pts.some(p=>Math.abs(p.x)>165||Math.abs(p.z)>245))return;
  const tags=el.tags||{},kind=tags.highway||'road';
- const width=Number(tags.width)||({'primary':10,'secondary':9,'tertiary':8,'residential':6,'service':4,'footway':1.8,'path':1.5}[kind]||5);
+ roadCenterlines.push({pts,kind});
+ const width=Number(tags.width)||({'primary':10,'secondary':8,'tertiary':7,'residential':5.5,'unclassified':5,'service':3.5,'living_street':5,'footway':1.6,'pedestrian':2.5,'path':1.5}[kind]||4.5);
  const roadMat=material(kind==='footway'?0xbcb5a7:kind==='primary'||kind==='secondary'?0x41474a:0x55595a);
  for(let i=1;i<pts.length;i++){
   const a=pts[i-1],b=pts[i],dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);if(len<.2)continue;
@@ -92,7 +95,9 @@ async function loadRealCity(){
  if(!Array.isArray(data.elements)||!data.elements.length)throw new Error('Saved map file contains no map features.');
  const elements=data.elements;
  for(const el of elements){if(el.tags?.highway)addRoad(el);else if(el.tags?.building)addFootprint(el);}
- player.position.set(0,0,8);yaw=0;
+ const spawn={x:0,z:8};let best=null,bestD=Infinity;
+ for(const road of roadCenterlines){for(let i=1;i<road.pts.length;i++){const a=road.pts[i-1],b=road.pts[i],dx=b.x-a.x,dz=b.z-a.z,l2=dx*dx+dz*dz;if(!l2)continue;const t=THREE.MathUtils.clamp(((spawn.x-a.x)*dx+(spawn.z-a.z)*dz)/l2,0,1),q={x:a.x+t*dx,z:a.z+t*dz},d=Math.hypot(q.x-spawn.x,q.z-spawn.z);if(d<bestD){bestD=d;best={a,b,q}}}}
+ if(best&&bestD<18){player.position.set(best.q.x,0,best.q.z);yaw=Math.atan2(-(best.b.x-best.a.x),-(best.b.z-best.a.z));}else{player.position.set(0,0,8);yaw=0;}
  mapStatus.remove();
  const info=data._cache||{};
  showToast('MALATE MAP LOADED · '+(info.buildings||elements.filter(e=>e.tags?.building).length)+' buildings');
@@ -104,6 +109,9 @@ function car(x,z,color,rotation=0){const g=new THREE.Group();box(g,1.8,.72,3.6,0
 car(-4.7,-13,0x9e4c39);car(4.8,-38,0xd7d4c9,Math.PI);car(-4.7,-71,0x2f5f75);
 for(let z=-5;z>-230;z-=25){const pole=cylinder(scene,.07,.1,5.8,sideCoord(z),2.9,z,material(0x4c5554),8);box(scene,1.7,.09,.09,sideCoord(z)+.65,5.6,z,material(0x4c5554),false)}
 function sideCoord(z){return z%2?7.2:-7.2}
+function pointInFootprint(x,z,poly){let inside=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if(((a.z>z)!==(b.z>z))&&(x<(b.x-a.x)*(z-a.z)/(b.z-a.z+1e-9)+a.x))inside=!inside;}return inside}
+function segmentDistance(x,z,a,b){const dx=b.x-a.x,dz=b.z-a.z,l2=dx*dx+dz*dz;if(!l2)return Math.hypot(x-a.x,z-a.z);const t=THREE.MathUtils.clamp(((x-a.x)*dx+(z-a.z)*dz)/l2,0,1);return Math.hypot(x-(a.x+t*dx),z-(a.z+t*dz))}
+function blockedAt(x,z){for(const poly of buildingFootprints){if(pointInFootprint(x,z,poly))return true;for(let i=0;i<poly.length;i++)if(segmentDistance(x,z,poly[i],poly[(i+1)%poly.length])<.72)return true;}return false}
 // overhead cable spans create a recognizable dense urban street silhouette
 for(let z=-8;z>-230;z-=25){const wire=new THREE.Mesh(new THREE.CylinderGeometry(.018,.018,15,5),material(0x313a3c));wire.rotation.z=Math.PI/2;wire.position.set(0,5.45,z);scene.add(wire)}
 // A third-person character with animated limbs.
@@ -121,7 +129,7 @@ const markers=[];const markerInfo=[['Riviera Mansion Hotel',14,-8],['Metropolita
 for(const [name,x,z] of markerInfo){const g=new THREE.Group();g.position.set(x>0?6.5:-6.5,0,z);scene.add(g);const ring=new THREE.Mesh(new THREE.TorusGeometry(.75,.07,8,28),material(0xf1ca79,.35));ring.rotation.x=Math.PI/2;ring.position.y=.08;g.add(ring);const orb=new THREE.Mesh(new THREE.OctahedronGeometry(.42),new THREE.MeshStandardMaterial({color:0xffd27c,emissive:0x7b4a10,emissiveIntensity:1.5,roughness:.3}));orb.position.y=1.45;g.add(orb);const beam=new THREE.Mesh(new THREE.CylinderGeometry(.025,.22,1.2,10,1,true),new THREE.MeshBasicMaterial({color:0xf2cb80,transparent:true,opacity:.18,side:THREE.DoubleSide}));beam.position.y=.8;g.add(beam);markers.push({name,g,orb,found:false})}
 function showToast(t){toast.textContent=t;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2500)}
 let previous=performance.now();function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-previous)/1000,.04);previous=now;const forward=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0),strafe=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),moving=forward!==0||strafe!==0;
-if(started&&moving){const speed=(keys.shift?7.4:4.1)*dt,fw=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw)),rt=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));player.position.addScaledVector(fw,forward*speed);player.position.addScaledVector(rt,strafe*speed);player.position.x=THREE.MathUtils.clamp(player.position.x,-6.4,6.4);player.position.z=THREE.MathUtils.clamp(player.position.z,-250,9);player.rotation.y=yaw;phase+=dt*(keys.shift?14:9)}
+if(started&&moving){const speed=(keys.shift?6.2:3.5)*dt,fw=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw)),rt=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));const dx=fw.x*forward*speed+rt.x*strafe*speed,dz=fw.z*forward*speed+rt.z*strafe*speed;const nx=THREE.MathUtils.clamp(player.position.x+dx,-145,145),nz=THREE.MathUtils.clamp(player.position.z+dz,-225,225);if(!blockedAt(nx,nz)){player.position.x=nx;player.position.z=nz}else{if(!blockedAt(nx,player.position.z))player.position.x=nx;if(!blockedAt(player.position.x,nz))player.position.z=nz}player.rotation.y=yaw;phase+=dt*(keys.shift?12:8)}
 for(const l of legs){const sw=moving&&started?Math.sin(phase+(l.side===1?Math.PI:0))*.62:0;l.mesh.rotation.x=sw;l.foot.rotation.x=sw*.7;l.mesh.position.y=.62+(moving&&started?Math.max(0,sw)*.06:0)}for(const a of arms)a.mesh.rotation.x=moving&&started?-Math.sin(phase+(a.side===1?Math.PI:0))*.45:0;torso.position.y=1.48+(moving&&started?Math.abs(Math.sin(phase*2))*.025:0);
 for(const m of markers){m.orb.rotation.y+=dt*1.3;m.orb.position.y=1.45+Math.sin(now*.002+m.g.position.z)*.13;if(started&&!m.found&&player.position.distanceTo(m.g.position)<2.4){m.found=true;score++;scoreText.textContent=score+' / 4';bar.style.width=(score/4*100)+'%';m.g.visible=false;showToast('LANDMARK FOUND · '+m.name);statusText.textContent=score===4?'All landmarks discovered!':'Find the next glowing landmark';if(score===4)showToast('BLOCK COMPLETE · You explored the hotel district!')}}updateCamera();renderer.render(scene,camera)}
 requestAnimationFrame(animate);
