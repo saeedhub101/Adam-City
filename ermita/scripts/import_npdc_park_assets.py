@@ -69,7 +69,7 @@ def main():
             "sha256": digest,
             "http_content_type": content_type,
             "updated_local_file": changed,
-            "redistribution_license": "Not stated in this import record; public download is not treated as an open licence. Verify NPDC permission before republishing the original asset or derivatives.",
+            "redistribution_license": "NPDC Downloads page states: All content is public domain unless otherwise stated. Check each downloaded document for a specific contrary notice before reuse.",
             "use_note": "Reference/source evidence only. Map georeferencing and digitization require a separate documented QA step.",
         })
         print(f"{item['filename']}: {len(data):,} bytes sha256={digest}")
@@ -83,7 +83,7 @@ def main():
             "Tree thematic-map PDFs and additional inventory maps are not downloaded in this batch; the initial batch focuses on the park map and planning references.",
         ],
         "limitations": [
-            "No open redistribution licence was confirmed from the download listing.",
+            "The NPDC Downloads page states that all content is public domain unless otherwise stated; asset-specific contrary notices still need checking.",
             "The technical map is an image document, not a ready-made GIS layer.",
             "No spatial coordinates were assigned to image features in this import step.",
         ],
