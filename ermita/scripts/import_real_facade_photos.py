@@ -1,46 +1,46 @@
 #!/usr/bin/env python3
-"""Download public KartaView street-level photos near Ermita buildings.
-
-Images are real street photographs, not automatically reconstructed wall textures.
-Each match includes distance and heading checks so nearby photos are not presented
-as verified facade views without supporting geometry.
-"""
+"""Incrementally import KartaView street-imagery metadata for Ermita, without downloading images."""
 from __future__ import annotations
 
 import csv
 import json
 import math
-import os
-import re
 import time
 from pathlib import Path
-from urllib.parse import urlparse
 
 import requests
 from pyproj import Transformer
-from shapely.geometry import Point, shape
-from shapely.ops import transform as geom_transform
+from shapely.geometry import shape
 
 ROOT = Path(__file__).resolve().parents[2]
 BUILDINGS_FILE = ROOT / "ermita/maps/generated/ermita-building-footprints.geojson"
 OUT_DIR = ROOT / "kartaview"
-IMAGE_DIR = OUT_DIR / "images"
-CSV_FILE = OUT_DIR / "ermita-real-facade-images.csv"
-REPORT_FILE = OUT_DIR / "ermita-real-facade-report.json"
+PHOTOS_CSV = OUT_DIR / "ermita-street-imagery-metadata.csv"
+PHOTOS_GEOJSON = OUT_DIR / "ermita-street-imagery-metadata.geojson"
+SEQUENCES_CSV = OUT_DIR / "ermita-street-imagery-sequences.csv"
+REPORT_FILE = OUT_DIR / "ermita-street-imagery-metadata-report.json"
 API = "https://api.openstreetcam.org/2.0/photo/"
-USER_AGENT = "Adam-City-Ermita-Facade-Importer/1.0 (open mapping research)"
+USER_AGENT = "Adam-City-Ermita-KartaView-Metadata/1.0 (open mapping research)"
 TO_METERS = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True).transform
 TO_LONLAT = Transformer.from_crs("EPSG:3857", "EPSG:4326", always_xy=True).transform
 MAX_API_CELLS = 120
-MAX_IMAGES = 250
-MAX_DISTANCE_M = 45.0
-MAX_DOWNLOAD_BYTES = 12 * 1024 * 1024
+CELL_STEP_M = 300.0
 TIMEOUT = (15, 45)
+
+PHOTO_FIELDS = [
+    "photo_id", "sequence_id", "sequence_index", "latitude", "longitude",
+    "camera_heading_deg", "capture_date", "date_added", "date_processed",
+    "field_of_view_deg", "projection", "gps_accuracy_m", "osm_way_id",
+    "image_processing_status", "image_processing_result", "sequence_device",
+    "sequence_date_added", "sequence_distance_km", "sequence_field_of_view_deg",
+    "sequence_nw_lat", "sequence_nw_lon", "sequence_se_lat", "sequence_se_lon",
+    "source_page", "metadata_source",
+]
 
 
 def first(record, *keys):
     for key in keys:
-        value = record.get(key)
+        value = record.get(key) if isinstance(record, dict) else None
         if value not in (None, ""):
             return value
     return ""
@@ -58,43 +58,18 @@ def photo_rows(payload):
     return rows if isinstance(rows, list) else []
 
 
-def photo_id(row):
-    return str(first(row, "id", "photoId", "photo_id", "photoID"))
+def read_existing():
+    rows = {}
+    if PHOTOS_CSV.exists():
+        with PHOTOS_CSV.open(newline="", encoding="utf-8") as stream:
+            for row in csv.DictReader(stream):
+                pid = str(row.get("photo_id", "")).strip()
+                if pid:
+                    rows[pid] = row
+    return rows
 
 
-def image_url(row):
-    value = first(row, "fileurlProc", "fileUrlProc", "fileurl", "fileUrl",
-                  "photoUrl", "photo_url", "imageUrl", "image_url",
-                  "fileurlTh", "fileUrlTh", "fileurlLTh", "fileUrlLTh",
-                  "thumbUrl", "thumb_url", "url", "filepath")
-    if isinstance(value, dict):
-        value = first(value, "url", "href", "src")
-    if isinstance(value, str) and value.startswith("https://"):
-        return value
-    return ""
-
-
-def parse_float(value):
-    try:
-        number = float(value)
-        return number if math.isfinite(number) else None
-    except (TypeError, ValueError):
-        return None
-
-
-def bearing_deg(lat1, lon1, lat2, lon2):
-    p1, p2 = math.radians(lat1), math.radians(lat2)
-    dl = math.radians(lon2 - lon1)
-    y = math.sin(dl) * math.cos(p2)
-    x = math.cos(p1) * math.sin(p2) - math.sin(p1) * math.cos(p2) * math.cos(dl)
-    return (math.degrees(math.atan2(y, x)) + 360) % 360
-
-
-def angle_delta(a, b):
-    return abs((a - b + 180) % 360 - 180)
-
-
-def fetch_cell(session, lat, lon):
+def query_metadata(session, lat, lon):
     params = {
         "lat": lat, "lng": lon, "radius": 220, "zoomLevel": 18,
         "join": "sequence", "orderBy": "id", "orderDirection": "desc",
@@ -105,209 +80,168 @@ def fetch_cell(session, lat, lon):
     return photo_rows(response.json())
 
 
-def download_image(session, url, destination):
-    if not url or urlparse(url).scheme != "https":
-        return False, "no_public_image_url"
-    try:
-        with session.get(url, stream=True, timeout=TIMEOUT) as response:
-            response.raise_for_status()
-            ctype = response.headers.get("Content-Type", "").lower()
-            if not ctype.startswith("image/"):
-                return False, "response_not_image"
-            length = parse_float(response.headers.get("Content-Length"))
-            if length and length > MAX_DOWNLOAD_BYTES:
-                return False, "image_too_large"
-            data = bytearray()
-            for chunk in response.iter_content(64 * 1024):
-                if not chunk:
-                    continue
-                data.extend(chunk)
-                if len(data) > MAX_DOWNLOAD_BYTES:
-                    return False, "image_too_large"
-        # Preserve original bytes. Source images are CC BY-SA 4.0; attribution is
-        # recorded in the CSV and report. No fabricated facade textures are created.
-        suffix = ".jpg"
-        if "png" in ctype:
-            suffix = ".png"
-        elif "webp" in ctype:
-            suffix = ".webp"
-        destination = destination.with_suffix(suffix)
-        destination.write_bytes(data)
-        return True, str(destination.relative_to(ROOT))
-    except Exception as exc:
-        return False, "download_error:" + str(exc)[:180]
-
-
 def main():
     if not BUILDINGS_FILE.exists():
         raise FileNotFoundError(f"Missing {BUILDINGS_FILE}; run the OSM import first")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    IMAGE_DIR.mkdir(parents=True, exist_ok=True)
-    collection = json.loads(BUILDINGS_FILE.read_text(encoding="utf-8"))
-    buildings = []
-    minx = miny = float("inf")
-    maxx = maxy = float("-inf")
-    for feature in collection.get("features", []):
+    buildings = json.loads(BUILDINGS_FILE.read_text(encoding="utf-8")).get("features", [])
+    bounds = []
+    for feature in buildings:
         try:
-            geom = geom_transform(TO_METERS, shape(feature["geometry"]))
-            polys = [geom] if geom.geom_type == "Polygon" else list(geom.geoms) if geom.geom_type == "MultiPolygon" else []
-            props = feature.get("properties") or {}
-            tags = props.get("tags") if isinstance(props.get("tags"), dict) else props
-            for poly in polys:
-                if poly.is_empty or not poly.is_valid or poly.area < 12:
-                    continue
-                minx, miny, maxx, maxy = min(minx, poly.bounds[0]), min(miny, poly.bounds[1]), max(maxx, poly.bounds[2]), max(maxy, poly.bounds[3])
-                buildings.append({
-                    "poly": poly,
-                    "id": str(props.get("osm_feature_id") or f"{props.get('type','way')}/{props.get('id','unknown')}"),
-                    "name": first(tags, "name", "brand", "addr:housenumber"),
-                })
-        except Exception as exc:
-            print(f"Skipping invalid footprint: {exc}")
-    if not buildings:
-        raise RuntimeError("No valid building polygons found")
+            geom = shape(feature["geometry"])
+            if not geom.is_empty:
+                bounds.append(geom.bounds)
+        except Exception:
+            continue
+    if not bounds:
+        raise RuntimeError("No valid building footprints found to define the Ermita search area")
 
-    # Query a bounded 300 m grid instead of issuing thousands of per-building calls.
-    step = 300.0
-    xs = []
-    x = minx + step / 2
+    min_lon = min(b[0] for b in bounds)
+    min_lat = min(b[1] for b in bounds)
+    max_lon = max(b[2] for b in bounds)
+    max_lat = max(b[3] for b in bounds)
+    minx, miny = TO_METERS(min_lon, min_lat)
+    maxx, maxy = TO_METERS(max_lon, max_lat)
+    xs, ys = [], []
+    x = minx + CELL_STEP_M / 2
     while x <= maxx and len(xs) < MAX_API_CELLS:
         xs.append(x)
-        x += step
-    ys = []
-    y = miny + step / 2
+        x += CELL_STEP_M
+    y = miny + CELL_STEP_M / 2
     while y <= maxy and len(ys) < MAX_API_CELLS:
         ys.append(y)
-        y += step
+        y += CELL_STEP_M
     cells = [(x, y) for x in xs for y in ys]
     if len(cells) > MAX_API_CELLS:
         stride = math.ceil(len(cells) / MAX_API_CELLS)
         cells = cells[::stride][:MAX_API_CELLS]
 
+    existing = read_existing()
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT})
-    candidates = {}
+    discovered = {}
     errors = []
     for index, (x, y) in enumerate(cells, 1):
         lon, lat = TO_LONLAT(x, y)
         try:
-            for row in fetch_cell(session, lat, lon):
-                pid = photo_id(row)
-                if pid and pid not in candidates:
-                    candidates[pid] = row
+            for item in query_metadata(session, lat, lon):
+                pid = str(first(item, "id", "photoId", "photo_id", "photoID"))
+                if pid and pid not in discovered:
+                    discovered[pid] = item
         except Exception as exc:
             errors.append({"cell": index, "error": str(exc)[:200]})
         time.sleep(0.15)
 
-    matches = []
-    for pid, row in candidates.items():
-        lat = parse_float(first(row, "lat", "latitude", "gpsLatitude"))
-        lon = parse_float(first(row, "lng", "lon", "longitude", "gpsLongitude"))
-        if lat is None or lon is None:
-            continue
-        point = Point(*TO_METERS(lon, lat))
-        heading = parse_float(first(row, "heading", "gpsHeading", "bearing", "cameraHeading"))
-        best = None
-        for building in buildings:
-            poly = building["poly"]
-            distance = point.distance(poly.boundary)
-            if distance > MAX_DISTANCE_M:
-                continue
-            wall_point = poly.boundary.interpolate(poly.boundary.project(point))
-            wall_lon, wall_lat = TO_LONLAT(wall_point.x, wall_point.y)
-            wanted = bearing_deg(lat, lon, wall_lat, wall_lon)
-            delta = angle_delta(heading, wanted) if heading is not None else None
-            # When a heading exists, require the camera to face roughly toward the wall.
-            if delta is not None and delta > 60:
-                continue
-            score = distance + (delta * 0.2 if delta is not None else 8.0)
-            if best is None or score < best["score"]:
-                best = {
-                    "building": building, "distance": distance,
-                    "heading_delta": delta, "score": score,
-                }
-        if best is None:
-            continue
-        url = image_url(row)
-        matches.append({
-            "photo_id": pid, "row": row, "lat": lat, "lon": lon,
-            "heading": heading, "url": url, **best,
-        })
-
-    matches.sort(key=lambda item: item["score"])
-    matches = matches[:MAX_IMAGES]
-    output_rows = []
-    downloaded = 0
-    for item in matches:
-        row = item["row"]
-        pid = item["photo_id"]
-        saved_path = ""
-        status = "metadata_only"
-        if item["url"]:
-            safe_id = re.sub(r"[^A-Za-z0-9_-]", "_", pid)[:80] or "photo"
-            ok, result = download_image(session, item["url"], IMAGE_DIR / f"{safe_id}.jpg")
-            if ok:
-                downloaded += 1
-                saved_path = result
-                status = "downloaded"
-            else:
-                status = result
-        seq = first(row, "sequenceId", "sequence_id", "sequenceID")
-        timestamp = first(row, "shotDate", "dateAdded", "date_added", "capturedAt", "timestamp")
-        delta = item["heading_delta"]
-        output_rows.append({
+    # Keep every previously saved metadata record; refresh records returned by the API.
+    for pid, item in discovered.items():
+        seq = item.get("sequence") if isinstance(item.get("sequence"), dict) else {}
+        row = {
             "photo_id": pid,
-            "building_osm_id": item["building"]["id"],
-            "building_name": item["building"]["name"],
-            "distance_to_building_wall_m": round(item["distance"], 2),
-            "camera_heading_deg": item["heading"] if item["heading"] is not None else "",
-            "heading_difference_deg": round(delta, 1) if delta is not None else "",
-            "match_status": "direction_checked" if delta is not None else "nearby_not_direction_verified",
-            "latitude": item["lat"], "longitude": item["lon"],
-            "capture_date": timestamp, "sequence_id": seq,
-            "image_url": item["url"],
-            "local_image": saved_path, "download_status": status,
-            "source": "KartaView / © Grab and KartaView Contributors",
-            "license": "CC BY-SA 4.0",
-            "source_page": f"https://kartaview.org/map/@{item['lat']},{item['lon']},18z",
-        })
+            "sequence_id": str(first(item, "sequenceId", "sequence_id", "sequenceID") or first(seq, "id", "sequenceId")),
+            "sequence_index": first(item, "sequenceIndex", "sequence_index", "sequenceIndexInSequence"),
+            "latitude": first(item, "lat", "latitude", "gpsLatitude"),
+            "longitude": first(item, "lng", "lon", "longitude", "gpsLongitude"),
+            "camera_heading_deg": first(item, "heading", "gpsHeading", "bearing", "cameraHeading"),
+            "capture_date": first(item, "shotDate", "captureDate", "timestamp", "dateCaptured"),
+            "date_added": first(item, "dateAdded", "date_added"),
+            "date_processed": first(item, "dateProcessed", "date_processed"),
+            "field_of_view_deg": first(item, "fieldOfView", "field_of_view"),
+            "projection": first(item, "projection"),
+            "gps_accuracy_m": first(item, "gpsAccuracy", "gps_accuracy"),
+            "osm_way_id": first(item, "wayId", "way_id"),
+            "image_processing_status": first(item, "autoImgProcessingStatus", "imageProcessingStatus"),
+            "image_processing_result": first(item, "autoImgProcessingResult"),
+            "sequence_device": first(seq, "deviceName", "device_name"),
+            "sequence_date_added": first(seq, "dateAdded", "date_added"),
+            "sequence_distance_km": first(seq, "distance"),
+            "sequence_field_of_view_deg": first(seq, "fieldOfView", "field_of_view"),
+            "sequence_nw_lat": first(seq, "nwLat", "nw_lat"),
+            "sequence_nw_lon": first(seq, "nwLng", "nw_lng"),
+            "sequence_se_lat": first(seq, "seLat", "se_lat"),
+            "sequence_se_lon": first(seq, "seLng", "se_lng"),
+            "source_page": f"https://kartaview.org/map/@{row_lat(item)},{row_lon(item)},18z",
+            "metadata_source": "KartaView public API; metadata only, image bytes not downloaded",
+        }
+        # Empty API fields do not erase previously known metadata.
+        prior = existing.get(pid, {})
+        existing[pid] = {key: (value if value not in (None, "") else prior.get(key, "")) for key, value in row.items()}
 
-    fields = [
-        "photo_id", "building_osm_id", "building_name", "distance_to_building_wall_m",
-        "camera_heading_deg", "heading_difference_deg", "match_status", "latitude",
-        "longitude", "capture_date", "sequence_id", "image_url", "local_image",
-        "download_status", "source", "license", "source_page",
-    ]
-    with CSV_FILE.open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(stream, fieldnames=fields)
+    all_rows = sorted(existing.values(), key=lambda r: (str(r.get("sequence_id", "")), int_or_large(r.get("sequence_index")), str(r.get("photo_id", ""))))
+    with PHOTOS_CSV.open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.DictWriter(stream, fieldnames=PHOTO_FIELDS)
         writer.writeheader()
-        writer.writerows(output_rows)
+        writer.writerows(all_rows)
+
+    features = []
+    sequence_points = {}
+    for row in all_rows:
+        try:
+            lon, lat = float(row["longitude"]), float(row["latitude"])
+        except (TypeError, ValueError):
+            continue
+        if not (math.isfinite(lon) and math.isfinite(lat) and -180 <= lon <= 180 and -90 <= lat <= 90):
+            continue
+        props = {key: row.get(key, "") for key in PHOTO_FIELDS if key not in ("latitude", "longitude")}
+        features.append({"type": "Feature", "geometry": {"type": "Point", "coordinates": [lon, lat]}, "properties": props})
+        sid = str(row.get("sequence_id", "")).strip()
+        if sid:
+            sequence_points.setdefault(sid, []).append((int_or_large(row.get("sequence_index")), lon, lat, row))
+    geojson = {"type": "FeatureCollection", "name": "KartaView street imagery metadata - Ermita", "features": features}
+    PHOTOS_GEOJSON.write_text(json.dumps(geojson, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    seq_fields = ["sequence_id", "photo_metadata_points", "first_capture_date", "last_capture_date", "device_name", "distance_km", "field_of_view_deg", "nw_lat", "nw_lon", "se_lat", "se_lon", "track_geojson_available", "source_page"]
+    seq_rows = []
+    for sid, points in sorted(sequence_points.items()):
+        points.sort(key=lambda p: p[0])
+        rows = [p[3] for p in points]
+        dates = sorted(str(r.get("capture_date") or r.get("date_added") or "") for r in rows if r.get("capture_date") or r.get("date_added"))
+        seq_rows.append({
+            "sequence_id": sid, "photo_metadata_points": len(points),
+            "first_capture_date": dates[0] if dates else "", "last_capture_date": dates[-1] if dates else "",
+            "device_name": first(rows[0], "sequence_device"), "distance_km": first(rows[0], "sequence_distance_km"),
+            "field_of_view_deg": first(rows[0], "sequence_field_of_view_deg"),
+            "nw_lat": first(rows[0], "sequence_nw_lat"), "nw_lon": first(rows[0], "sequence_nw_lon"),
+            "se_lat": first(rows[0], "sequence_se_lat"), "se_lon": first(rows[0], "sequence_se_lon"),
+            "track_geojson_available": "yes" if len(points) >= 2 else "no",
+            "source_page": f"https://kartaview.org/map/@{points[0][2]},{points[0][1]},16z",
+        })
+    with SEQUENCES_CSV.open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.DictWriter(stream, fieldnames=seq_fields)
+        writer.writeheader()
+        writer.writerows(seq_rows)
 
     report = {
-        "status": "success",
+        "status": "success" if not errors else "partial",
         "area": "Ermita, Manila, Philippines",
-        "source": "KartaView public street-level imagery API",
-        "source_terms": "https://kartaview.org/terms",
-        "image_license": "CC BY-SA 4.0",
-        "attribution_required": "© Grab and KartaView Contributors",
-        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "buildings_checked": len(buildings),
-        "grid_cells_queried": len(cells),
-        "unique_api_photos_found": len(candidates),
-        "photos_matched_to_buildings": len(output_rows),
-        "photos_downloaded": downloaded,
+        "source": "KartaView public API",
+        "mode": "metadata-only; no image files requested or downloaded",
+        "queried_grid_cells": len(cells),
+        "new_or_refreshed_photo_metadata_records": len(discovered),
+        "total_preserved_photo_metadata_records": len(all_rows),
+        "unique_sequences_with_metadata": len(seq_rows),
+        "geojson_point_features": len(features),
         "api_errors": errors,
-        "csv": str(CSV_FILE.relative_to(ROOT)),
-        "image_directory": str(IMAGE_DIR.relative_to(ROOT)),
-        "limitations": [
-            "Coverage depends on publicly available KartaView imagery; an empty result means no matching public images were found by this search.",
-            "A nearby photo is not proof of an exact facade match; the CSV records distance and heading-check status.",
-            "Street photographs are not automatically UV-mapped onto 3D building walls. Accurate facade texturing requires camera calibration and multi-view reconstruction.",
-            "Images retain their KartaView CC BY-SA 4.0 license and required attribution."
-        ],
+        "outputs": [str(PHOTOS_CSV.relative_to(ROOT)), str(PHOTOS_GEOJSON.relative_to(ROOT)), str(SEQUENCES_CSV.relative_to(ROOT))],
+        "incremental_policy": "Existing records are retained; records returned by the current API search are refreshed, and new photo IDs are appended. No existing image files are deleted.",
+        "limitations": ["The public nearby-photo endpoint is bounded by its response size and grid coverage; this is not a guarantee of complete citywide KartaView coverage.", "GPS points and sequence metadata describe capture coverage, not verified road signs or extracted lane/traffic-sign detections."]
     }
     REPORT_FILE.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
+
+
+def row_lat(item):
+    return first(item, "lat", "latitude", "gpsLatitude") or 0
+
+
+def row_lon(item):
+    return first(item, "lng", "lon", "longitude", "gpsLongitude") or 0
+
+
+def int_or_large(value):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return 10**18
 
 
 if __name__ == "__main__":
