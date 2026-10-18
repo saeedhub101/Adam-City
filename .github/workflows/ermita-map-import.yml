@@ -38,7 +38,6 @@ jobs:
       - name: Download elevation data and build terrain surface
         run: python ermita/scripts/import_copernicus_terrain.py
       - name: Check Google Street View coverage (metadata only)
-        if: ${{ secrets.GOOGLE_MAPS_API_KEY != '' }}
         env:
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
         run: python google/import_streetview_coverage.py
