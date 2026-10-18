@@ -96,7 +96,7 @@ def add_newer_filters(query, since_utc):
     """Restrict every selector to objects changed since the saved sync checkpoint."""
     stamp = since_utc.replace("Z", "")
     return re.sub(
-        r'(nwr\\(area\\.ermitaArea\\)\\[[^\\n]+?\\])\\s*;',
+        r'(nwr\(area\.ermitaArea\)\[[^\n]+?\])\s*;',
         lambda match: f'{match.group(1)}[newer:"{stamp}"];',
         query,
     )
@@ -433,7 +433,7 @@ def main():
         "area_relation_id": 103706,
         "source": "OpenStreetMap contributors",
         "policy": "Incremental changes merged by OSM type/id; cached records are retained on partial responses."
-    }, indent=2) + "\\n", encoding="utf-8")
+    }, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2))
 
 if __name__ == "__main__":
