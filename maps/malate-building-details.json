@@ -1,0 +1,23 @@
+{
+  "region": "Malate + Ermita, Manila, Philippines",
+  "schema_version": 1,
+  "purpose": "Verified per-building corrections only. Imported OpenStreetMap data remains in malate-map.json and is never overwritten by this file.",
+  "source_policy": "Only add a building override when its OSM way ID and the correction are supported by a reliable source such as an attributable field photo, official building source, or compatible open map data. Record the source and verification date for every entry.",
+  "fields": {
+    "height": "Verified height in metres",
+    "levels": "Verified number of above-ground levels",
+    "type": "Corrected OSM building type",
+    "style": "Optional facade profile hint",
+    "facade": "Optional facade profile variant",
+    "wall": "Optional wall color as CSS hex",
+    "trim": "Optional trim color as CSS hex",
+    "glass": "Optional glazing color as CSS hex",
+    "accent": "Optional signage/accent color as CSS hex",
+    "palette": "Optional integer palette index",
+    "roof": "Verified roof shape",
+    "roofColor": "Optional numeric Three.js hex color",
+    "balconies": "Whether balconies are present",
+    "sign": "Verified storefront sign text"
+  },
+  "buildings": {}
+}
