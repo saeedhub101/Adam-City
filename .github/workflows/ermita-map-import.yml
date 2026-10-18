@@ -44,5 +44,8 @@ jobs:
             echo "No generated data changes to commit."
           else
             git commit -m "Import Ermita map data and regenerate detailed 3D buildings"
-            git push
+            # Integrate any commits added to main while data was being generated.
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
           fi
