@@ -1,21 +1,21 @@
-# Data directory
+# Data inventory
 
-This folder contains the first structured data imports for the Ermita project.
+This folder contains shared data guidance and cross-category indexes. Category-specific tables live in their own folders.
 
-## Files
+## Categories
+- Maps: maps/
+- Buildings: buildings/buildings.csv
+- Stores and businesses: stores/stores.csv
+- Street geometry: streets/street_segments.csv
+- Street-name index: streets/street_names.csv
+- Street signs: signs/street_signs.csv
+- Existing starter place records: initial-place-records.csv
+- Prioritized workflow: collection-roadmap.md
 
-- [initial-place-records.csv](initial-place-records.csv) — sourced starter records for park landmarks, roads, heritage institutions, and the district boundary. It includes source URLs and verification caveats. These are not all geocoded yet.
-- [../rizal-park/tree-species-reference.csv](../rizal-park/tree-species-reference.csv) — common-name lists transcribed from NPDC's published Rizal Park tree-species reference. Scientific names are intentionally blank unless individually verified; this is a species reference, not a census of individual trees.
+## Current collection status
+The street-name index and building table contain initial **candidate** records backed by cited institutional sources. Their geometry, coordinates and full coverage have not yet been imported. The stores and street-sign tables are schemas awaiting sourced records. Empty templates are not completed datasets.
 
-## Data status
+## Required data hygiene
+Keep stable record IDs. Preserve source spellings, and put normalized/alternate names in separate fields. Never invent coordinates, addresses, opening hours or licence information. Use explicit statuses to distinguish candidates from verified records. Record source date and licence for each imported dataset.
 
-These records are an initial researched batch, not a complete inventory of Ermita. Road geometry, building footprints, coordinates for individual landmarks, business/service records, transit stops, and individual tree inventory rows still need to be extracted and checked.
-
-## Source and reuse rules
-
-- NPDC park and tree sources: https://npdc.gov.ph/downloads/ and https://npdc.gov.ph/inventory-of-trees-2/
-- NHCP historical registry: https://philhistoricsites.nhcp.gov.ph/database/
-- OpenStreetMap Ermita relation 103706: https://www.openstreetmap.org/relation/103706
-- OSM copyright and ODbL attribution: https://www.openstreetmap.org/copyright
-
-Preserve a source URL, retrieval/verification date, source identifier, and license for every future imported feature. Google Maps and Street View can be used for visual checking and permitted links, but do not bulk-copy or redistribute Google map imagery or proprietary map data.
+For OpenStreetMap-derived data, credit OpenStreetMap contributors and comply with the ODbL: https://www.openstreetmap.org/copyright.
