@@ -1,3 +1,3 @@
 # Map backups
 
-Backup files use the same location-based filenames as maps/.
+Backups of the location datasets.
