@@ -2,16 +2,18 @@ name: Restore Ermita building footprints from saved artifact
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - ".github/workflows/ermita-restore-building-footprints.yml"
+    inputs:
+      run_id:
+        description: 'Workflow run ID containing the artifact ermita-microsoft-building-footprints'
+        required: true
+        type: string
 
 permissions:
   actions: read
   contents: write
 
 concurrency:
-  group: ermita-building-footprints
+  group: main-writer
   cancel-in-progress: false
 
 jobs:
@@ -28,7 +30,7 @@ jobs:
         with:
           name: ermita-microsoft-building-footprints
           repository: saeedhub101/Adam-City
-          run-id: 39143956874
+          run-id: ${{ inputs.run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: restored-artifact
       - name: Put artifact files into the repository and push to main
@@ -53,17 +55,5 @@ jobs:
           fi
           git commit -m "Restore Ermita building footprints from saved workflow artifact"
           git fetch origin main
-          if ! git rebase origin/main; then
-            conflicts="$(git diff --name-only --diff-filter=U)"
-            if [ -n "$conflicts" ]; then
-              for conflict in $conflicts; do
-                git checkout --theirs -- "$conflict"
-                git add -- "$conflict"
-              done
-              GIT_EDITOR=true git rebase --continue
-            else
-              git rebase --abort
-              exit 1
-            fi
-          fi
+          git rebase origin/main
           git push origin HEAD:main
