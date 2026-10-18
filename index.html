@@ -324,6 +324,8 @@ function addSignatureFacade(tags,id,pts,height){
  activeMapGroup.add(group);
 }
 function addFootprint(el){
+ // Building geometry is intentionally disabled while the street map is being corrected.
+ return;
  const ns=el.geometry?.coordinates?.[0]||el.geometry;if(!ns||ns.length<4)return;
  const pts=ns.map(p=>Array.isArray(p)?project(p[1],p[0]):project(p.lat,p.lon));
  if(pts.some(p=>Math.abs(p.x)>3500||Math.abs(p.z)>3500))return;
@@ -446,7 +448,7 @@ for(let z=-5;z>-230;z-=25){const pole=cylinder(scene,.07,.1,5.8,sideCoord(z),2.9
 function sideCoord(z){return z%2?7.2:-7.2}
 function pointInFootprint(x,z,poly){let inside=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if(((a.z>z)!==(b.z>z))&&(x<(b.x-a.x)*(z-a.z)/(b.z-a.z+1e-9)+a.x))inside=!inside;}return inside}
 function segmentDistance(x,z,a,b){const dx=b.x-a.x,dz=b.z-a.z,l2=dx*dx+dz*dz;if(!l2)return Math.hypot(x-a.x,z-a.z);const t=THREE.MathUtils.clamp(((x-a.x)*dx+(z-a.z)*dz)/l2,0,1);return Math.hypot(x-(a.x+t*dx),z-(a.z+t*dz))}
-function blockedAt(x,z){for(const road of roadCenterlines){const roadWidth=({'primary':7,'secondary':6,'tertiary':5,'residential':4,'unclassified':3.8,'service':2.5,'living_street':4,'footway':1.4,'pedestrian':2.2,'path':1.2}[road.kind]||3.5);for(let i=1;i<road.pts.length;i++)if(segmentDistance(x,z,road.pts[i-1],road.pts[i])<roadWidth*.5+.45)return false;}const cx=chunkCoord(x),cz=chunkCoord(z);for(let ix=cx-1;ix<=cx+1;ix++)for(let iz=cz-1;iz<=cz+1;iz++){const polys=buildingFootprintsByChunk.get(ix+','+iz)||[];for(const poly of polys){if(pointInFootprint(x,z,poly))return true;for(let i=0;i<poly.length;i++)if(segmentDistance(x,z,poly[i],poly[(i+1)%poly.length])<.72)return true}}return false}
+function blockedAt(x,z){for(const road of roadCenterlines){const roadWidth=({'primary':7,'secondary':6,'tertiary':5,'residential':4,'unclassified':3.8,'service':2.5,'living_street':4,'footway':1.4,'pedestrian':2.2,'path':1.2}[road.kind]||3.5);for(let i=1;i<road.pts.length;i++)if(segmentDistance(x,z,road.pts[i-1],road.pts[i])<roadWidth*.5+.45)return false;}return false; // Ignore stale building footprints until street alignment is verified. const cx=chunkCoord(x),cz=chunkCoord(z);for(let ix=cx-1;ix<=cx+1;ix++)for(let iz=cz-1;iz<=cz+1;iz++){const polys=buildingFootprintsByChunk.get(ix+','+iz)||[];for(const poly of polys){if(pointInFootprint(x,z,poly))return true;for(let i=0;i<poly.length;i++)if(segmentDistance(x,z,poly[i],poly[(i+1)%poly.length])<.72)return true}}return false}
 // overhead cable spans create a recognizable dense urban street silhouette
 for(let z=-8;z>-230;z-=25){const wire=new THREE.Mesh(new THREE.CylinderGeometry(.018,.018,15,5),material(0x313a3c));wire.rotation.z=Math.PI/2;wire.position.set(0,5.45,z);scene.add(wire)}
 // A third-person character with animated limbs.
