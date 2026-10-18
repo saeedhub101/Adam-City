@@ -68,6 +68,56 @@ area(3600103706)->.ermitaArea;
   nwr(area.ermitaArea)["water"];
   nwr(area.ermitaArea)["sport"];
 
+  /* Building facade, roof, floor, and address detail */
+  nwr(area.ermitaArea)["building:architecture"];
+  nwr(area.ermitaArea)["building:colour"];
+  nwr(area.ermitaArea)["building:material"];
+  nwr(area.ermitaArea)["building:min_level"];
+  nwr(area.ermitaArea)["min_height"];
+  nwr(area.ermitaArea)["min_level"];
+  nwr(area.ermitaArea)["roof:height"];
+  nwr(area.ermitaArea)["roof:levels"];
+  nwr(area.ermitaArea)["roof:orientation"];
+  nwr(area.ermitaArea)["roof:direction"];
+  nwr(area.ermitaArea)["addr:floor"];
+  nwr(area.ermitaArea)["addr:unit"];
+  nwr(area.ermitaArea)["addr:postcode"];
+  nwr(area.ermitaArea)["addr:housename"];
+
+  /* Road geometry, sidewalks, crossing details, and wayfinding */
+  nwr(area.ermitaArea)["lanes"];
+  nwr(area.ermitaArea)["maxspeed"];
+  nwr(area.ermitaArea)["oneway"];
+  nwr(area.ermitaArea)["surface"];
+  nwr(area.ermitaArea)["width"];
+  nwr(area.ermitaArea)["incline"];
+  nwr(area.ermitaArea)["sidewalk:left"];
+  nwr(area.ermitaArea)["sidewalk:right"];
+  nwr(area.ermitaArea)["cycleway"];
+  nwr(area.ermitaArea)["crossing:markings"];
+  nwr(area.ermitaArea)["crossing:signals"];
+  nwr(area.ermitaArea)["traffic_signals"];
+  nwr(area.ermitaArea)["destination"];
+  nwr(area.ermitaArea)["destination:ref"];
+  nwr(area.ermitaArea)["lane_markings"];
+
+  /* Indoor access and street-level infrastructure */
+  nwr(area.ermitaArea)["indoor"];
+  nwr(area.ermitaArea)["level"];
+  nwr(area.ermitaArea)["level:ref"];
+  nwr(area.ermitaArea)["room"];
+  nwr(area.ermitaArea)["stairs"];
+  nwr(area.ermitaArea)["elevator"];
+  nwr(area.ermitaArea)["lift"];
+  nwr(area.ermitaArea)["manhole"];
+  nwr(area.ermitaArea)["drain"];
+  nwr(area.ermitaArea)["fire_hydrant"];
+  nwr(area.ermitaArea)["street_cabinet"];
+  nwr(area.ermitaArea)["recycling"];
+  nwr(area.ermitaArea)["waste_disposal"];
+  nwr(area.ermitaArea)["tree"];
+  nwr(area.ermitaArea)["tree_lined"];
+
   nwr(area.ermitaArea)["boundary"];
   nwr(area.ermitaArea)["entrance"];
   nwr(area.ermitaArea)["door"];
@@ -92,14 +142,19 @@ HEADERS = {"User-Agent": "Adam-City-Ermita-Research/1.0 (open data research; Git
 
 SYNC_STATE_PATH = MAP_DIR / "ermita-osm-sync-state.json"
 
-def add_newer_filters(query, since_utc):
-    """Restrict every selector to objects changed since the saved sync checkpoint."""
-    stamp = since_utc.replace("Z", "")
-    return re.sub(
-        r'(nwr\(area\.ermitaArea\)\[[^\n]+?\])\s*;',
-        lambda match: f'{match.group(1)}[newer:"{stamp}"];',
-        query,
-    )
+def incremental_query(since_utc):
+    """Fetch every object in the area edited since the checkpoint in one compact query.
+
+    A single area+newer selector is more reliable than appending a newer filter to
+    dozens of tag selectors, and also catches newly-added tag categories.
+    """
+    stamp = since_utc
+    return f'''[out:json][timeout:180];
+area(3600103706)->.ermitaArea;
+nwr(area.ermitaArea)[newer:"{stamp}"];
+out center geom tags;
+'''
+
 
 def merge_osm_elements(existing, changed):
     """Merge changed OSM objects by stable type/id; never erase cached data on partial responses."""
@@ -199,16 +254,29 @@ def main():
         except (ValueError, TypeError):
             since_text = None
         if since_text:
-            osm_delta, endpoint = fetch_osm(add_newer_filters(QUERY, since_text))
-            delta_count = len(osm_delta.get("elements", []))
-            merged_elements, applied_count = merge_osm_elements(cached.get("elements", []), osm_delta.get("elements", []))
-            osm_json = dict(cached)
-            osm_json["elements"] = merged_elements
+            try:
+                osm_delta, endpoint = fetch_osm(incremental_query(since_text))
+                delta_count = len(osm_delta.get("elements", []))
+                merged_elements, applied_count = merge_osm_elements(cached.get("elements", []), osm_delta.get("elements", []))
+                osm_json = dict(cached)
+                osm_json["elements"] = merged_elements
+            except Exception as delta_error:
+                # A busy Overpass server can return HTTP 500 for a delta query.
+                # Recover with the full query, but merge into the cache so a partial
+                # response never erases previously imported objects.
+                print(f"WARNING: incremental OSM query failed ({delta_error}); trying full recovery query.")
+                sync_mode = "full_recovery"
+                osm_full, endpoint = fetch_osm()
+                delta_count = len(osm_full.get("elements", []))
+                merged_elements, applied_count = merge_osm_elements(cached.get("elements", []), osm_full.get("elements", []))
+                osm_json = dict(cached)
+                osm_json["elements"] = merged_elements
             osm_json["osm_incremental_sync"] = {
                 "since_utc": since_text,
                 "last_query_started_utc": sync_started,
                 "delta_element_count": delta_count,
                 "applied_element_count": applied_count,
+                "sync_mode": sync_mode,
             }
         else:
             # If checkpoint metadata is invalid, do a full baseline rather than risk gaps.
