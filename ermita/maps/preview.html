@@ -3,57 +3,89 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Ermita, Manila — Real Roads & Building Footprints</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<title>Adam City 3D — Ermita, Manila</title>
+<link href="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.css" rel="stylesheet">
 <style>
-:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;color:#18212b}header{padding:14px 18px;background:#fff;border-bottom:1px solid #d7dee7;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}h1{font-size:18px;margin:0 0 3px}p{margin:0;color:#526171}.controls{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.controls label{display:flex;gap:6px;align-items:center;white-space:nowrap}#map{height:calc(100vh - 108px);min-height:480px;background:#e9edf0}.status{font-size:12px;color:#526171;margin-top:4px}.legend{background:#fff;padding:8px 10px;border-radius:5px;box-shadow:0 1px 5px #0002;line-height:1.8}.swatch{display:inline-block;width:18px;height:4px;margin-right:5px;vertical-align:middle}.footprint{display:inline-block;width:12px;height:10px;margin-right:6px;background:#b96c4c66;border:1px solid #a64d2b;vertical-align:middle}.leaflet-popup-content{max-width:280px;overflow-wrap:anywhere}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;color:#17212b}body{display:flex;flex-direction:column}header{z-index:2;padding:12px 16px;background:#101c2b;color:#fff;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 2px 12px #0003}h1{font-size:18px;margin:0 0 3px}p{margin:0;color:#c7d5e5;font-size:12px}.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.controls label{display:flex;gap:6px;align-items:center;white-space:nowrap;font-size:12px}button{border:1px solid #61758b;background:#22354b;color:white;padding:7px 10px;border-radius:6px;cursor:pointer}#map{flex:1;min-height:400px;background:#dce5ed}.status{font-size:12px;color:#a9c6df;margin-top:4px}footer{padding:7px 12px;background:#101c2b;color:#c7d5e5;font-size:11px}a{color:#85cbff}.maplibregl-ctrl button{color:#17212b}.badge{color:#9be4bb}
 </style>
 </head>
 <body>
 <header>
-<div><h1>Ermita, Manila — real mapped geometry</h1><p>OpenStreetMap roads and mapped building outlines · no generated street geometry</p><div class="status" id="status">Loading source layers…</div></div>
+<div><h1>Adam City · Ermita 3D</h1><p>Interactive 3D buildings, terrain, mapped streets · Manila, Philippines</p><div class="status" id="status">Loading 3D scene and local mapping data…</div></div>
 <div class="controls">
-<label><input id="roads" type="checkbox" checked> Roads & paths</label>
-<label><input id="buildings" type="checkbox" checked> Building footprints</label>
-<label><input id="names" type="checkbox"> Road names</label>
-<label><input id="points" type="checkbox"> Building points / other mapped objects</label>
+<label><input id="buildings" type="checkbox" checked> 3D building footprints</label>
+<label><input id="roads" type="checkbox" checked> Project road network</label>
+<label><input id="terrain" type="checkbox" checked> 3D terrain</label>
+<button id="tilt">Tilt / top view</button>
+<button id="reset">Reset view</button>
 </div>
 </header>
-<div id="map" role="application" aria-label="Interactive map of Ermita Manila"></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<div id="map" role="application" aria-label="Interactive three-dimensional city map of Ermita Manila"></div>
+<footer>3D visualization, not a surveyed architectural model. OSM building heights are used when present; missing heights are estimated for visualization. Terrain uses global ~30 m elevation data. © OpenStreetMap contributors · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
+<script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
 <script>
 (function(){
+const status=document.getElementById('status');
+function setStatus(s){status.textContent=s}
+if(!window.maplibregl){setStatus('Could not load the 3D map library. Check your connection and reload.');return}
 const base='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/generated/';
-const map=L.map('map').setView([14.5825,120.9825],15);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:20,attribution:'© OpenStreetMap contributors'}).addTo(map);
-const groups={roads:L.layerGroup().addTo(map),buildings:L.layerGroup().addTo(map),points:L.layerGroup()};
-let roadFeatures=[];
-function esc(v){return String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
-function popup(props,id){const t=props.tags||{};const fields=[['Name',props.name||t.name],['Type',props.highway||t.building||t.amenity||t.shop||t.tourism],['Levels',t['building:levels']],['Height',t.height],['Address',[(t['addr:housenumber']||''), (t['addr:street']||'')].filter(Boolean).join(' ')],['OSM ID',props.osm_feature_id||id]];return '<b>'+esc(props.name||t.name||props.highway||t.building||'Mapped feature')+'</b><br>'+fields.filter(x=>x[1]).map(x=>'<b>'+esc(x[0])+':</b> '+esc(x[1])).join('<br>')+(props.source_url?'<br><a target="_blank" rel="noopener" href="'+esc(props.source_url)+'">Open OSM feature</a>':'');}
-function roadStyle(f){const h=f.properties?.highway||'';const major=['motorway','trunk','primary','secondary'].includes(h);return {color:major?'#d46a39':(['tertiary','residential','unclassified'].includes(h)?'#e0a34c':'#6c8192'),weight:major?3.5:(['tertiary','residential','unclassified'].includes(h)?2.4:1.2),opacity:.88};}
-function drawRoads(){groups.roads.clearLayers();const showNames=document.getElementById('names').checked;L.geoJSON({type:'FeatureCollection',features:roadFeatures},{style:roadStyle,onEachFeature:(f,l)=>{l.bindPopup(popup(f.properties||{},f.id));if(showNames&&(f.properties?.name||f.properties?.['name:en'])){const c=l.getBounds().getCenter();L.marker(c,{interactive:false,icon:L.divIcon({className:'',html:'<span style="font-size:10px;color:#243344;text-shadow:0 1px 2px white,1px 0 white,-1px 0 white">'+esc(f.properties.name||f.properties['name:en'])+'</span>',iconSize:[110,12]})}).addTo(groups.roads);}}}).addTo(groups.roads);}
-function setStatus(s){document.getElementById('status').textContent=s;}
-Promise.all([
-fetch(base+'ermita-road-network.geojson').then(r=>{if(!r.ok)throw Error('Road layer HTTP '+r.status);return r.json()}),
-fetch(base+'ermita-building-footprints.geojson').then(r=>{if(!r.ok)throw Error('Building layer HTTP '+r.status);return r.json()})
-]).then(([roads,bldg])=>{
-roadFeatures=(roads.features||[]).filter(f=>f.geometry&&f.geometry.type==='LineString');
-drawRoads();
-let polygons=0,points=0;
-const polygonFeatures=[];
-for(const f of (bldg.features||[])){if(!f.geometry)continue;const t=f.properties?.tags||{};if(['Polygon','MultiPolygon'].includes(f.geometry.type)&&(t.building||t['building:part'])){polygonFeatures.push(f);polygons++;}else if(f.geometry.type==='Point'){points++;}}
-L.geoJSON({type:'FeatureCollection',features:polygonFeatures},{style:()=>({color:'#9b492a',weight:1,fillColor:'#d48b67',fillOpacity:.42}),onEachFeature:(f,l)=>l.bindPopup(popup(f.properties||{},f.id))}).addTo(groups.buildings);
-const pts=L.geoJSON({type:'FeatureCollection',features:(bldg.features||[]).filter(f=>f.geometry?.type==='Point')},{pointToLayer:(f,ll)=>L.circleMarker(ll,{radius:4,color:'#7540a1',fillColor:'#a783c5',fillOpacity:.8,weight:1}),onEachFeature:(f,l)=>l.bindPopup(popup(f.properties||{},f.id))}).addTo(groups.points);
-const bounds=L.featureGroup([groups.roads,groups.buildings,groups.points]).getBounds();if(bounds.isValid())map.fitBounds(bounds.pad(.04));
-setStatus(roadFeatures.length.toLocaleString()+' road/path centerlines · '+polygons.toLocaleString()+' polygon building footprints · '+points.toLocaleString()+' mapped point features');
-}).catch(e=>setStatus('Layer load failed: '+e.message+' — use the source-file links below.'));
-document.getElementById('roads').addEventListener('change',e=>{if(e.target.checked)map.addLayer(groups.roads);else map.removeLayer(groups.roads)});
-document.getElementById('buildings').addEventListener('change',e=>{if(e.target.checked)map.addLayer(groups.buildings);else map.removeLayer(groups.buildings)});
-document.getElementById('points').addEventListener('change',e=>{if(e.target.checked)map.addLayer(groups.points);else map.removeLayer(groups.points)});
-document.getElementById('names').addEventListener('change',drawRoads);
-const legend=L.control({position:'bottomleft'});legend.onAdd=()=>{const d=L.DomUtil.create('div','legend');d.innerHTML='<div><span class="swatch" style="background:#d46a39"></span>Major mapped roads</div><div><span class="swatch" style="background:#6c8192"></span>Local roads / paths</div><div><span class="footprint"></span>OSM building polygon</div>';return d};legend.addTo(map);
+const center=[120.9825,14.5825];
+const map=new maplibregl.Map({
+ container:'map',
+ style:'https://tiles.openfreemap.org/styles/liberty',
+ center:center,zoom:15.5,pitch:62,bearing:-18,
+ antialias:true,canvasContextAttributes:{antialias:true}
+});
+map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
+map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-right');
+let roadsData=null,buildingsData=null,tilted=true;
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function popupHtml(p){const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',p.osm_feature_id||p.id]];return '<div style="font:13px system-ui"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+'</div>'}
+function addBuildings(data){
+ if(map.getLayer('local-buildings-3d'))map.removeLayer('local-buildings-3d');
+ if(map.getSource('local-buildings'))map.removeSource('local-buildings');
+ map.addSource('local-buildings',{type:'geojson',data:data});
+ map.addLayer({id:'local-buildings-3d',type:'fill-extrusion',source:'local-buildings',
+   filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['any',['has','building'],['has','building:part']]],
+   paint:{
+    'fill-extrusion-color':['interpolate',['linear'],['coalesce',['to-number',['get','building:levels',['get','tags']],0],0],0,'#d9bca1',3,'#c99570',8,'#a96f52',20,'#80513f'],
+    'fill-extrusion-height':['max',3,['coalesce',['to-number',['get','height',['get','tags']],0],['*',['to-number',['get','building:levels',['get','tags']],0],3],8]],
+    'fill-extrusion-base':0,'fill-extrusion-opacity':0.94,'fill-extrusion-vertical-gradient':true
+   }});
+ map.on('click','local-buildings-3d',e=>{const f=e.features&&e.features[0];if(!f)return;new maplibregl.Popup().setLngLat(e.lngLat).setHTML(popupHtml(f.properties||{})).addTo(map)});
+ map.on('mouseenter','local-buildings-3d',()=>map.getCanvas().style.cursor='pointer');
+ map.on('mouseleave','local-buildings-3d',()=>map.getCanvas().style.cursor='');
+}
+function addRoads(data){
+ if(map.getLayer('project-roads-casing'))map.removeLayer('project-roads-casing');
+ if(map.getLayer('project-roads'))map.removeLayer('project-roads');
+ if(map.getSource('project-roads'))map.removeSource('project-roads');
+ map.addSource('project-roads',{type:'geojson',data:data});
+ map.addLayer({id:'project-roads-casing',type:'line',source:'project-roads',paint:{'line-color':'#f8f2e7','line-width':['interpolate',['linear'],['zoom'],12,1,17,5],'line-opacity':0.8}});
+ map.addLayer({id:'project-roads',type:'line',source:'project-roads',paint:{'line-color':['match',['get','highway'],'motorway','#f05e46','trunk','#f0784f','primary','#ed9862','secondary','#e7b76e','tertiary','#f0d6a5','#8ba2b5'],'line-width':['interpolate',['linear'],['zoom'],12,0.6,17,2.8],'line-opacity':0.96}});
+ map.on('click','project-roads',e=>{const f=e.features&&e.features[0];if(f)new maplibregl.Popup().setLngLat(e.lngLat).setHTML(popupHtml(f.properties||{})).addTo(map)});
+}
+map.on('load',async()=>{
+ try{
+  map.addSource('terrain-dem',{type:'raster-dem',tiles:['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});
+  map.setTerrain({source:'terrain-dem',exaggeration:1.25});
+  map.setSky({ 'sky-color':'#8dbbe2','sky-horizon-blend':0.5,'horizon-color':'#e8f1fa','horizon-fog-blend':0.2,'fog-color':'#dce8f3','fog-ground-blend':0.15,'atmosphere-blend':0.8});
+  const results=await Promise.all([
+   fetch(base+'ermita-road-network.geojson').then(r=>{if(!r.ok)throw Error('Road data HTTP '+r.status);return r.json()}),
+   fetch(base+'ermita-building-footprints.geojson').then(r=>{if(!r.ok)throw Error('Building data HTTP '+r.status);return r.json()})
+  ]);
+  roadsData={type:'FeatureCollection',features:(results[0].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
+  buildingsData={type:'FeatureCollection',features:(results[1].features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
+  addBuildings(buildingsData);addRoads(roadsData);
+  setStatus(buildingsData.features.length.toLocaleString()+' local building outlines extruded into 3D · '+roadsData.features.length.toLocaleString()+' real mapped road/path lines · rotate with right mouse or Ctrl-drag');
+ }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
+});
+document.getElementById('buildings').addEventListener('change',e=>{if(map.getLayer('local-buildings-3d'))map.setLayoutProperty('local-buildings-3d','visibility',e.target.checked?'visible':'none')});
+document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
+document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.25}:null)}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
+document.getElementById('tilt').addEventListener('click',()=>{tilted=!tilted;map.easeTo({pitch:tilted?62:0,bearing:tilted?-18:0,duration:900})});
+document.getElementById('reset').addEventListener('click',()=>map.flyTo({center:center,zoom:15.5,pitch:62,bearing:-18,duration:1200}));
 })();
 </script>
-<footer style="padding:10px 16px;background:#fff;color:#526171;font-size:12px">Sources: <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors (ODbL)</a>. Building heights and names appear only where mapped in source tags; footprints are not cadastral or facade-verified. Base map © OpenStreetMap contributors. <a href="https://github.com/saeedhub101/Adam-City/blob/main/ermita/maps/generated/ermita-road-network.geojson">Road GeoJSON</a> · <a href="https://github.com/saeedhub101/Adam-City/blob/main/ermita/maps/generated/ermita-building-footprints.geojson">OSM building data</a> · <a href="https://github.com/saeedhub101/Adam-City/blob/main/ermita/maps/qa/building-footprint-comparison-report.json">Footprint comparison QA</a></footer>
 </body>
 </html>
