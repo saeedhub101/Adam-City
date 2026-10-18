@@ -228,9 +228,36 @@ function addBuildings(data){
     'fill-extrusion-base':['coalesce',['to-number',['get','min_height',['get','tags']]],0],
     'fill-extrusion-opacity':0.98,'fill-extrusion-vertical-gradient':true
    }});
+ // Emphasize mapped high-rises without fabricating extra buildings or heights.
+ if(map.getLayer('local-highrises-3d'))map.removeLayer('local-highrises-3d');
+ map.addLayer({id:'local-highrises-3d',type:'fill-extrusion',source:'local-buildings',
+   filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['any',
+    ['>=',['to-number',['get','height',['get','tags']],0],45],
+    ['>=',['to-number',['get','building:levels',['get','tags']],0],15]]],
+   paint:{
+    'fill-extrusion-color':['case',
+      ['has','building:colour',['get','tags']],['get','building:colour',['get','tags']],
+      ['match',['get','building',['get','tags']],
+       'apartments','#b7c9d9','residential','#b9c8d4','office','#a8bdcf',
+       'commercial','#a9bfd1','hotel','#c6b5a5','#b6c5d1']],
+    'fill-extrusion-height':['max',3,['coalesce',
+      ['to-number',['get','height',['get','tags']]],
+      ['*',['to-number',['get','building:levels',['get','tags']],15],3.2]]],
+    'fill-extrusion-base':['coalesce',['to-number',['get','min_height',['get','tags']]],0],
+    'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true
+   }});
+ // Some mapped buildings are points rather than footprints; display them instead of silently dropping them.
+ if(map.getLayer('local-building-points'))map.removeLayer('local-building-points');
+ map.addLayer({id:'local-building-points',type:'circle',source:'local-buildings',
+   filter:['all',['==',['geometry-type'],'Point'],['any',['has','building',['get','tags']],['has','building:part',['get','tags']]]],
+   paint:{'circle-radius':['interpolate',['linear'],['zoom'],13,2,16,5,19,8],
+    'circle-color':'#7c3aed','circle-stroke-color':'#ffffff','circle-stroke-width':1.5}});
+ map.on('click','local-building-points',e=>{const f=e.features&&e.features[0];if(f)new maplibregl.Popup().setLngLat(e.lngLat).setHTML(popupHtml(f.properties||{})).addTo(map)});
  map.on('click','local-buildings-3d',e=>{const f=e.features&&e.features[0];if(!f)return;new maplibregl.Popup().setLngLat(e.lngLat).setHTML(popupHtml(f.properties||{})).addTo(map)});
- map.on('mouseenter','local-buildings-3d',()=>map.getCanvas().style.cursor='pointer');
- map.on('mouseleave','local-buildings-3d',()=>map.getCanvas().style.cursor='');
+ for(const id of ['local-buildings-3d','local-highrises-3d','local-building-points']){
+  map.on('mouseenter',id,()=>map.getCanvas().style.cursor='pointer');
+  map.on('mouseleave',id,()=>map.getCanvas().style.cursor='');
+ }
  if(map.getLayer('local-building-labels'))map.removeLayer('local-building-labels');
  map.addLayer({id:'local-building-labels',type:'symbol',source:'local-buildings',
   minzoom:16.2,
@@ -312,7 +339,7 @@ map.on('load',async()=>{
    loadGeoJSON('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/external/dpwh-road-surface-type-ermita.geojson','DPWH road data')
   ]);
   roadsData={type:'FeatureCollection',features:(roadResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
-  buildingsData={type:'FeatureCollection',features:(buildingResult.features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
+  buildingsData={type:'FeatureCollection',features:(buildingResult.features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon','Point'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
   surfaceData={type:'FeatureCollection',features:(surfaceResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   addRoads(roadsData);
   if(buildingsData.features.length)addBuildings(buildingsData);
