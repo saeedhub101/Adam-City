@@ -103,7 +103,7 @@ async function addKartaFacadeTextures(){
  if(field.length||row.length){row.push(field);rows.push(row);}
  const headers=rows.shift();
  const photos=rows.filter(r=>r.length===headers.length).map(r=>Object.fromEntries(headers.map((h,j)=>[h,r[j]])))
-  .filter(p=>p.download_status==='downloaded'&&p.local_image&&p.building_osm_id&&p.match_status==='direction_checked'&&Number(p.distance_to_building_wall_m)<=6&&Number(p.heading_difference_deg)<=15&&p.latitude&&p.longitude);
+  .filter(p=>p.download_status==='downloaded'&&p.local_image&&p.building_osm_id&&p.match_status==='direction_checked'&&Number(p.distance_to_building_wall_m)<=10&&Number(p.heading_difference_deg)<=30&&p.latitude&&p.longitude);
  const buildings=new Map();
  (buildingsData.features||[]).forEach(f=>{const id=f.properties?.osm_feature_id;if(id&&['Polygon','MultiPolygon'].includes(f.geometry?.type))buildings.set(id,f);});
  const THREE=window.THREE;
