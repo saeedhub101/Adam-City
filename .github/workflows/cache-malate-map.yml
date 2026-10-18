@@ -76,7 +76,7 @@ jobs:
               return None
           def classify(t):
               seven_eleven_text=' '.join(str(t.get(k,'')) for k in ('name','name:en','brand','brand:en','operator','official_name'))
-              if re.search(r'7\\s*[-‐‑–—]?\\s*eleven|7eleven|7\\s*[- ]?\\s*11',seven_eleven_text,re.I): return 'convenience'
+              if re.search(r'7\s*[-‐‑–—]?\s*eleven|7eleven|7\s*[- ]?\s*11',seven_eleven_text,re.I): return 'convenience'
               a=t.get('amenity'); h=t.get('highway'); sh=t.get('shop'); le=t.get('leisure'); to=t.get('tourism')
               if a=='hospital' or t.get('healthcare')=='hospital': return 'hospital'
               if a=='clinic' or t.get('healthcare')=='clinic': return 'clinic'
