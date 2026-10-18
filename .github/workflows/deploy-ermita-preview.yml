@@ -1,0 +1,53 @@
+name: Deploy Ermita map preview to GitHub Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "ermita/maps/preview.html"
+      - "ermita/maps/generated/ermita-road-network.geojson"
+      - "ermita/maps/generated/ermita-building-footprints.geojson"
+      - ".github/workflows/deploy-ermita-preview.yml"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: ermita-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+      - name: Prepare static map site
+        run: |
+          set -e
+          mkdir -p _site
+          cp ermita/maps/preview.html _site/index.html
+          cat > _site/README.txt <<'EOF'
+          Ermita, Manila — interactive mapped roads and building footprints.
+          Data source and project files: https://github.com/saeedhub101/Adam-City
+          The map loads public GeoJSON from this repository's main branch.
+          EOF
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload website artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Publish website
+        id: deployment
+        uses: actions/deploy-pages@v4
