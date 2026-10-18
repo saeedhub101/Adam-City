@@ -49,7 +49,7 @@
           "path": "ermita/assets/textures/brick_wall_04_roughness.jpg",
           "bytes": 2020620,
           "sha256": "34be9fb6b855744f36d471315c6bc42c7c44cebbb69168486f00a4f6bd2c5e49",
-          "status": "downloaded",
+          "status": "kept-existing",
           "channel": "roughness",
           "resolution_path": "Rough/2k/jpg"
         },
@@ -57,7 +57,7 @@
           "path": "ermita/assets/textures/brick_wall_04_albedo.jpg",
           "bytes": 3585770,
           "sha256": "2e0dab81509481bbc86aad1a026d01f122e310ae73438ebac6261b0c99334b4f",
-          "status": "downloaded",
+          "status": "kept-existing",
           "channel": "albedo",
           "resolution_path": "Diffuse/2k/jpg"
         },
@@ -65,7 +65,7 @@
           "path": "ermita/assets/textures/brick_wall_04_normal.jpg",
           "bytes": 4799136,
           "sha256": "617a31a20839389de8bf91a453f766a7c5fe4678468fc9bffb5b41acb3c2a7c1",
-          "status": "downloaded",
+          "status": "kept-existing",
           "channel": "normal",
           "resolution_path": "nor_gl/2k/jpg"
         }
