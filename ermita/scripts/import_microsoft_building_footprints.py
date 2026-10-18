@@ -81,7 +81,10 @@ def main():
                         if clipped.is_empty:
                             continue
                         feature["geometry"] = mapping(clipped)
-                        props = feature.setdefault("properties", {})
+                        props = feature.get("properties")
+                        if not isinstance(props, dict):
+                            props = {}
+                            feature["properties"] = props
                         # Deduplicate within the downloaded source snapshot by stable source ID;
                         # fall back to clipped geometry when no source ID is available.
                         source_id = feature.get("id") or props.get("id") or props.get("building_id") or props.get("osm_id")
