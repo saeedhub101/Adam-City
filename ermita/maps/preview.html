@@ -46,10 +46,10 @@ function addBuildings(data){
  if(map.getSource('local-buildings'))map.removeSource('local-buildings');
  map.addSource('local-buildings',{type:'geojson',data:data});
  map.addLayer({id:'local-buildings-3d',type:'fill-extrusion',source:'local-buildings',
-   filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['any',['has','building'],['has','building:part']]],
+   filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['any',['has','building',['get','tags']],['has','building:part',['get','tags']]]],
    paint:{
     'fill-extrusion-color':['interpolate',['linear'],['coalesce',['to-number',['get','building:levels',['get','tags']],0],0],0,'#d9bca1',3,'#c99570',8,'#a96f52',20,'#80513f'],
-    'fill-extrusion-height':['max',3,['coalesce',['to-number',['get','height',['get','tags']],0],['*',['to-number',['get','building:levels',['get','tags']],0],3],8]],
+    'fill-extrusion-height':['max',3,['coalesce',['to-number',['get','height',['get','tags']]],['*',['to-number',['get','building:levels',['get','tags']],3],3],8]],
     'fill-extrusion-base':0,'fill-extrusion-opacity':0.94,'fill-extrusion-vertical-gradient':true
    }});
  map.on('click','local-buildings-3d',e=>{const f=e.features&&e.features[0];if(!f)return;new maplibregl.Popup().setLngLat(e.lngLat).setHTML(popupHtml(f.properties||{})).addTo(map)});
