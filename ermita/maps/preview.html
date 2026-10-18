@@ -162,9 +162,32 @@ function addLocalRamonModel(roadNetwork){
     const factor=62/maxDim;
     this.model.scale.setScalar(factor);
     this.model.position.set(-center.x*factor,-bounds.min.y*factor,-center.z*factor);
+    // Apply the repository's supplied wall/facade material to the building meshes.
+    const facadeTexture=this.loader.manager ? new THREE.TextureLoader(this.loader.manager).load('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/Painted-CMU-Block-Architextures.jpeg',()=>map.triggerRepaint()) : new THREE.TextureLoader().load('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/Painted-CMU-Block-Architextures.jpeg',()=>map.triggerRepaint());
+    facadeTexture.wrapS=facadeTexture.wrapT=THREE.RepeatWrapping;
+    facadeTexture.repeat.set(2,2);
+    facadeTexture.encoding=THREE.sRGBEncoding;
+    this.model.traverse(obj=>{
+     if(!obj.isMesh)return;
+     const applyMaterial=mat=>{
+      const m=mat.clone();m.map=facadeTexture;m.color.set(0xffffff);m.needsUpdate=true;return m;
+     };
+     obj.material=Array.isArray(obj.material)?obj.material.map(applyMaterial):applyMaterial(obj.material);
+    });
     this.scene.add(this.model);
+    // Provisional plaza pad using the supplied courtyard tile image; final footprint/rotation needs aerial verification.
+    const courtyardTexture=new THREE.TextureLoader().load('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/courtyard.png',()=>map.triggerRepaint());
+    courtyardTexture.wrapS=courtyardTexture.wrapT=THREE.RepeatWrapping;
+    courtyardTexture.repeat.set(3,3);
+    courtyardTexture.encoding=THREE.sRGBEncoding;
+    const courtyardMat=new THREE.MeshBasicMaterial({map:courtyardTexture,side:THREE.DoubleSide});
+    const courtyard=new THREE.Mesh(new THREE.PlaneGeometry(32,28),courtyardMat);
+    courtyard.rotation.x=-Math.PI/2;
+    courtyard.position.set(0,0.08,0);
+    courtyard.frustumCulled=false;
+    this.scene.add(courtyard);
     this.loaded=true;
-    setStatus('Ramon Magsaysay Center local GLB loaded · approximate 62 m model height · position/footprint alignment still needs visual verification.');
+    setStatus('Ramon Magsaysay Center GLB loaded with supplied wall texture and courtyard tile. Plaza dimensions and facade texture mapping are provisional; visual alignment still needs verification.');
     map.triggerRepaint();
    },undefined,err=>setStatus('Local Ramon Magsaysay GLB failed to load: '+(err&&err.message||'network error')));
   },
