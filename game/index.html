@@ -11,12 +11,16 @@
 <div class="nav hidden" id="nav"><button id="prev">← Previous</button><button id="next">Next photo →</button></div>
 <script>
 const photos=[
- {url:'https://commons.wikimedia.org/wiki/Special:FilePath/06127jfHotels_Building_Streets_Mabini_Malate_Manilafvf_12.jpg',title:'Hostel 1632 · Mabini Street',source:'Wikimedia Commons · Judgefloro · public domain'},
- {url:'https://commons.wikimedia.org/wiki/Special:FilePath/05261jfStreets_Mabini_Ocampo_Roxas_Boulevard_Malate_Manilafvf_08.jpg',title:'Mabini / Ocampo area · Malate',source:'Wikimedia Commons · Judgefloro · photo of the Malate / Roxas Boulevard area'},
- {url:'https://commons.wikimedia.org/wiki/Special:FilePath/05117jfStreets_Harrison_Plaza_Mabini_Ocampo_Streets_Buildings_Malate_Manilafvf_12.jpg',title:'Mabini / Ocampo / Harrison area',source:'Wikimedia Commons · Judgefloro · public domain'}
+ {file:'06127jfHotels_Building_Streets_Mabini_Malate_Manilafvf_12.jpg',title:'Hostel 1632 · Mabini Street',source:'Wikimedia Commons · Judgefloro · public domain'},
+ {file:'05853jfTowers_Hotel_Mabini_Streets_Buildings_Malate_Manilafvf_08.jpg',title:'Mabini Street hotels · Malate',source:'Wikimedia Commons · Judgefloro · public domain'},
+ {file:'05117jfStreets_Harrison_Plaza_Mabini_Ocampo_Streets_Buildings_Malate_Manilafvf_12.jpg',title:'Mabini / Ocampo / Harrison area',source:'Wikimedia Commons · Judgefloro · public domain'}
 ];
 const img=document.querySelector('#photo'),caption=document.querySelector('#caption'),block=document.querySelector('#block'),intro=document.querySelector('#intro'),controls=document.querySelector('#controls'),nav=document.querySelector('#nav');let idx=0,started=false,pan=50,zoom=1.02,drag=false,lastX=0;
-function show(){img.style.opacity='.2';const p=photos[idx];const next=new Image();next.onload=()=>{img.src=p.url;img.style.opacity='1';};next.onerror=()=>{img.style.opacity='1';caption.textContent='Could not load this photo. Open the source link below to view it.'};next.src=p.url;caption.innerHTML=p.title+'<br><span style="color:#aeb9be">'+p.source+'</span><br><a style="color:#f0d6a9" target="_blank" rel="noreferrer" href="'+p.url+'">Open original photograph ↗</a>';block.textContent='PHOTO '+String(idx+1).padStart(2,'0')+' / '+photos.length;document.querySelector('.progress span')?.style.setProperty('width',((idx+1)/photos.length*100)+'%');}
+function show(){img.style.opacity='.2';const p=photos[idx];const urls=[
+ 'https://commons.wikimedia.org/wiki/Special:Redirect/file/'+encodeURIComponent(p.file),
+ 'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(p.file),
+ 'https://images.weserv.nl/?url='+encodeURIComponent('commons.wikimedia.org/wiki/Special:FilePath/'+p.file)
+];let attempt=0;function loadNext(){if(attempt>=urls.length){img.style.opacity='1';caption.innerHTML=p.title+'<br><span style="color:#aeb9be">Image failed to load in this browser. Open the original photo page instead.</span><br><a style="color:#f0d6a9" target="_blank" rel="noreferrer" href="https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(p.file).replace(/%2F/g,'/')+'">Open photo page ↗</a>';return;}const candidate=urls[attempt++];const next=new Image();next.onload=()=>{img.src=candidate;img.style.opacity='1'};next.onerror=loadNext;next.src=candidate;}loadNext();caption.innerHTML=p.title+'<br><span style="color:#aeb9be">'+p.source+'</span><br><a style="color:#f0d6a9" target="_blank" rel="noreferrer" href="https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(p.file).replace(/%2F/g,'/')+'">Open original photograph ↗</a>';block.textContent='PHOTO '+String(idx+1).padStart(2,'0')+' / '+photos.length;document.querySelector('.progress span')?.style.setProperty('width',((idx+1)/photos.length*100)+'%');}
 function step(n){idx=(idx+n+photos.length)%photos.length;pan=50;zoom=1.02;img.style.objectPosition=pan+'% 50%';img.style.transform='scale('+zoom+')';show()}
 function movePan(d){pan=Math.max(0,Math.min(100,pan+d));img.style.objectPosition=pan+'% 50%'}
 function moveZoom(d){zoom=Math.max(1,Math.min(2.5,zoom+d));img.style.transform='scale('+zoom+')'}
