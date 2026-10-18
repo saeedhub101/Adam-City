@@ -5,6 +5,7 @@ on:
   push:
     branches: [main]
     paths:
+      - "index.html"
       - "ermita/maps/preview.html"
       - "ermita/maps/generated/ermita-road-network.geojson"
       - "ermita/maps/generated/ermita-building-footprints.geojson"
