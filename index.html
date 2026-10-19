@@ -140,7 +140,22 @@ function addLocalRamonModel(roadNetwork){
     const walkMat=new THREE.MeshBasicMaterial({map:walkTexture,side:THREE.DoubleSide});
     const sidewalkFeatures=roadNetwork.features.filter(f=>!['motorway','trunk'].includes((f.properties||{}).highway));
     // Build offset sidewalk strips on both sides of each street centerline.
-    const sidewalkPositions=[],sidewalkUvs=[];
+    const sidewalkPositions=[],sidewalkUvs=[],curbPositions=[];
+    function addCurbLine(a,b,hw,sign){
+     const cosLat=Math.cos(origin[1]*Math.PI/180);
+     const p={x:(a[0]-origin[0])*111320*cosLat,z:(a[1]-origin[1])*111132};
+     const q={x:(b[0]-origin[0])*111320*cosLat,z:(b[1]-origin[1])*111132};
+     const dx=q.x-p.x,dz=q.z-p.z,len=Math.hypot(dx,dz);if(len<0.2)return;
+     const nx=-dz/len,nz=dx/len,centerOffset=roadWidth(hw)/2+0.10;
+     const inner=centerOffset-0.09,outer=centerOffset+0.09;
+     const ax=p.x+nx*inner*sign,az=p.z+nz*inner*sign,bx=q.x+nx*inner*sign,bz=q.z+nz*inner*sign;
+     const cx=p.x+nx*outer*sign,cz=p.z+nz*outer*sign,dx2=q.x+nx*outer*sign,dz2=q.z+nz*outer*sign;
+     const low=0.11,high=0.29;
+     // Raised curb top plus the street-facing and sidewalk-facing vertical sides.
+     curbPositions.push(ax,high,az,cx,high,cz,bx,high,bz,bx,high,bz,cx,high,cz,dx2,high,dz2);
+     curbPositions.push(ax,low,az,bx,low,bz,ax,high,az,ax,high,az,bx,low,bz,bx,high,bz);
+     curbPositions.push(cx,low,cz,cx,high,cz,dx2,low,dz2,dx2,low,dz2,cx,high,cz,dx2,high,dz2);
+    }
     function addSidewalkLine(a,b,hw,sign){
      const cosLat=Math.cos(origin[1]*Math.PI/180);
      const p={x:(a[0]-origin[0])*111320*cosLat,z:(a[1]-origin[1])*111132};
@@ -152,9 +167,12 @@ function addLocalRamonModel(roadNetwork){
      sidewalkPositions.push(x1,.14,z1,x2,.14,z2,x3,.14,z3,x3,.14,z3,x2,.14,z2,x4,.14,z4);
      sidewalkUvs.push(0,0,0,1,u,0,u,0,0,1,u,1);
     }
-    for(const f of sidewalkFeatures){const p=f.properties||{},tags=p.tags||{},hw=p.highway||tags.highway||'residential',g=f.geometry;if(!g)continue;const lines=g.type==='LineString'?[g.coordinates]:g.type==='MultiLineString'?g.coordinates:[];for(const line of lines)for(let i=1;i<line.length;i++){addSidewalkLine(line[i-1],line[i],hw,1);addSidewalkLine(line[i-1],line[i],hw,-1);}}
+    for(const f of sidewalkFeatures){const p=f.properties||{},tags=p.tags||{},hw=p.highway||tags.highway||'residential',g=f.geometry;if(!g)continue;const lines=g.type==='LineString'?[g.coordinates]:g.type==='MultiLineString'?g.coordinates:[];for(const line of lines)for(let i=1;i<line.length;i++){addSidewalkLine(line[i-1],line[i],hw,1);addSidewalkLine(line[i-1],line[i],hw,-1);addCurbLine(line[i-1],line[i],hw,1);addCurbLine(line[i-1],line[i],hw,-1);}}
+    const cg=new THREE.BufferGeometry();cg.setAttribute('position',new THREE.Float32BufferAttribute(curbPositions,3));cg.computeVertexNormals();
+    const curbMat=new THREE.MeshStandardMaterial({color:0xb7b8b5,roughness:0.92,metalness:0,side:THREE.DoubleSide});
+    const curbMesh=new THREE.Mesh(cg,curbMat);curbMesh.frustumCulled=false;this.scene.add(curbMesh);
     const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32BufferAttribute(sidewalkPositions,3));sg.setAttribute('uv',new THREE.Float32BufferAttribute(sidewalkUvs,2));sg.computeVertexNormals();
-    const sidewalkMesh=new THREE.Mesh(sg,walkMat);sidewalkMesh.frustumCulled=false;this.scene.add(sidewalkMesh);setStatus('Local Ramon Magsaysay GLB loading · asphalt texture on mapped roads · terrazzo texture on approximate sidewalk strips.');
+    const sidewalkMesh=new THREE.Mesh(sg,walkMat);sidewalkMesh.frustumCulled=false;this.scene.add(sidewalkMesh);setStatus('City-wide road mesh active: asphalt on mapped roads, terrazzo sidewalks and raised concrete curbs on both sides of mapped streets throughout the loaded road network.');
    }
    this.loader=new THREE.GLTFLoader();
    this.loader.load(modelUrl,gltf=>{
