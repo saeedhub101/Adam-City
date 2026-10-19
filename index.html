@@ -52,7 +52,7 @@ const buildingColor=['coalesce',tag('building:colour'),tag('building:color'),tag
 function setVis(ids,on){ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')})}
 map.on('load',async()=>{
  try{
-  const pairs=await Promise.all(Object.entries(urls).map(async([k,u])=>{const r=await fetch(u);if(!r.ok)throw Error(k+' HTTP '+r.status);if(k==='housenumbers'){const lines=(await r.text()).split(/\\r?\\n/).filter(Boolean);return[k,lines.map(line=>JSON.parse(line))]}return[k,await r.json()]}));
+  const pairs=await Promise.all(Object.entries(urls).map(async([k,u])=>{const r=await fetch(u);if(!r.ok)throw Error(k+' HTTP '+r.status);if(k==='housenumbers'){const lines=(await r.text()).split(/\r?\n/).filter(Boolean);return[k,lines.map(line=>JSON.parse(line))]}return[k,await r.json()]}));
   const d=Object.fromEntries(pairs);
   // Publish the original OSM polygons separately from the newer OpenMapTiles-derived footprints.
   d.buildings.features=d.buildings.features.filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&f.properties?.tags?.building);
