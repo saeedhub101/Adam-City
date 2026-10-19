@@ -14,8 +14,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: ermita-non-osm-source-imports
-  cancel-in-progress: false
+  group: ermita-map-import
+  cancel-in-progress: true
 
 jobs:
   collect-non-osm-sources:
