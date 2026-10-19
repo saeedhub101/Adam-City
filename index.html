@@ -728,6 +728,9 @@ function addBridgeAndStairLayers(){
  setStatus('Bridge/stair extraction active: merging Basemap transportation features with OSM project data; bridge colors use tagged material, and stair treads are drawn where mapped stair lines exist.');
 }
 
+function bringRoadLayersToFront(){
+ for(const id of ['visible-road-casing','visible-road-asphalt','visible-sidewalk-left','visible-sidewalk-right','visible-road-curb-left','visible-road-curb-right','project-roads-casing','project-roads','project-road-labels'])if(map.getLayer(id))map.moveLayer(id);
+}
 function addVisibleRoadAndSidewalkOverlays(data){
  if(!data||!Array.isArray(data.features)||!data.features.length)throw Error('OSM road network is empty; road/sidewalk overlays were not created.');
  const sourceId='visible-road-sidewalk-overlay';
@@ -739,25 +742,23 @@ function addVisibleRoadAndSidewalkOverlays(data){
  if(map.getLayer('visible-road-curb-right'))map.removeLayer('visible-road-curb-right');
  if(map.getSource(sourceId))map.removeSource(sourceId);
  map.addSource(sourceId,{type:'geojson',data:data});
- const width=['interpolate',['linear'],['zoom'],12,2.5,14,4.5,16,8,18,14,19,18];
- // Keep these visible MapLibre layers above custom Three.js meshes: the custom mesh had been
- // inserted later in the style and could visually cover the older road centerline layers.
+ // Strong opaque road surfaces; screen widths are tuned for the zoom levels used in the game.
  const drivableFilter=['all',['has','highway'],['!in',['get','highway'],['literal',['footway','path','steps','corridor','pedestrian']]]];
- map.addLayer({id:'visible-road-casing',type:'line',source:sourceId,filter:drivableFilter,layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#c9c2b5','line-width':width,'line-opacity':0.98}});
- map.addLayer({id:'visible-road-asphalt',type:'line',source:sourceId,filter:drivableFilter,layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#555b61','line-width':['interpolate',['linear'],['zoom'],12,1.1,14,2.2,16,4.3,18,7.8,19,10.5],'line-opacity':1}});
- // Sidewalk strips are deliberately offset from the mapped road centerline so they remain
- // visible even when source data only contains road lines, not explicit sidewalk polygons.
- const sideWidth=['interpolate',['linear'],['zoom'],13,0.8,15,2.1,17,3.5,19,5];
- const sideOffset=['interpolate',['linear'],['zoom'],13,2,15,5,17,8,19,12];
  const sidewalkFilter=['all',['has','highway'],['!in',['get','highway'],['literal',['motorway','motorway_link','trunk','trunk_link','footway','path','steps','corridor','pedestrian']]],['!=',['get','sidewalk'],'no']];
+ map.addLayer({id:'visible-road-casing',type:'line',source:sourceId,filter:drivableFilter,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#b8b2a7','line-width':['interpolate',['linear'],['zoom'],12,3,14,7,16,13,18,21,19,26],'line-opacity':1}});
+ map.addLayer({id:'visible-road-asphalt',type:'line',source:sourceId,filter:drivableFilter,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#41474d','line-width':['interpolate',['linear'],['zoom'],12,2,14,5,16,10,18,17,19,21],'line-opacity':1}});
+ // Estimated sidewalk strips are intentionally distinct from asphalt.
+ const sideWidth=['interpolate',['linear'],['zoom'],12,1.2,14,2.5,16,4.5,18,7,19,8];
+ const sideOffset=['interpolate',['linear'],['zoom'],12,2.5,14,5,16,9,18,15,19,19];
  for(const [id,offset] of [['visible-sidewalk-left',1],['visible-sidewalk-right',-1]]){
-  map.addLayer({id,type:'line',source:sourceId,filter:sidewalkFilter,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#d8d2c6','line-width':sideWidth,'line-offset':['*',offset,sideOffset],'line-opacity':0.96}});
+  map.addLayer({id,type:'line',source:sourceId,filter:sidewalkFilter,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#e3ddd0','line-width':sideWidth,'line-offset':['*',offset,sideOffset],'line-opacity':1}});
  }
  for(const [id,offset] of [['visible-road-curb-left',1],['visible-road-curb-right',-1]]){
-  map.addLayer({id,type:'line',source:sourceId,filter:sidewalkFilter,layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#8b8c87','line-width':['interpolate',['linear'],['zoom'],14,0.4,17,1.1,19,1.5],'line-offset':['*',offset,['interpolate',['linear'],['zoom'],13,2.8,15,5.2,17,8.5,19,12]],'line-opacity':0.95}});
+  map.addLayer({id,type:'line',source:sourceId,filter:sidewalkFilter,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#777873','line-width':['interpolate',['linear'],['zoom'],13,0.8,16,1.5,19,2.2],'line-offset':['*',offset,['interpolate',['linear'],['zoom'],12,2.8,14,5.5,16,9.5,18,15.5,19,19.5]],'line-opacity':1}});
  }
  const visible=document.getElementById('roads')?.checked!==false;
  ['visible-sidewalk-left','visible-sidewalk-right','visible-road-casing','visible-road-asphalt','visible-road-curb-left','visible-road-curb-right'].forEach(id=>map.setLayoutProperty(id,'visibility',visible?'visible':'none'));
+ bringRoadLayersToFront();
 }
 
 function addRoads(data){
@@ -818,6 +819,7 @@ map.on('load',async()=>{
   const setVisibility=(ids,visible)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visible?'visible':'none')});
   setVisibility(['local-buildings-3d','local-building-labels','all-building-facade-textures'],document.getElementById('buildings').checked);
     setVisibility(['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'],document.getElementById('realModels').checked);
+  bringRoadLayersToFront();
   const errors=[roadResult.loadError,buildingResult.loadError,surfaceResult.loadError].filter(Boolean);
   setStatus(roadsData.features.length.toLocaleString()+' OSM road/path lines · '+buildingsData.features.length.toLocaleString()+' OSM building footprints · '+surfaceData.features.length.toLocaleString()+' DPWH road-surface records'+(roadOverlayError?' · Road overlay error: '+roadOverlayError:'. Sidewalk strips are estimated from road centerlines where surveyed edges are unavailable.')+(errors.length?' · Some data sources failed; see console.':' · layers loaded'));
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
