@@ -3,941 +3,109 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Adam City 3D — Ermita / Malate source comparison</title>
-<link href="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.css" rel="stylesheet">
+<title>Adam City | Source Lab — Malate & Ermita</title>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.css">
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;color:#17212b}body{display:flex;flex-direction:column}header{z-index:2;padding:12px 16px;background:#101c2b;color:#fff;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 2px 12px #0003}h1{font-size:18px;margin:0 0 3px}p{margin:0;color:#c7d5e5;font-size:12px}.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.controls label{display:flex;gap:6px;align-items:center;white-space:nowrap;font-size:12px}button{border:1px solid #61758b;background:#22354b;color:white;padding:7px 10px;border-radius:6px;cursor:pointer}#map{flex:1;min-height:400px;background:#dce5ed}.status{font-size:12px;color:#a9c6df;margin-top:4px}footer{padding:7px 12px;background:#101c2b;color:#c7d5e5;font-size:11px}a{color:#85cbff}.maplibregl-ctrl button{color:#17212b}.badge{color:#9be4bb}
+:root{color-scheme:dark;--bg:#0b1119;--panel:#121c28;--line:#27384a;--muted:#9fb1c4;--text:#edf5ff;--cyan:#39c8ff;--amber:#ffb52e;--violet:#cf85ff;--green:#62e6a7}
+*{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font:14px/1.45 Inter,system-ui,Segoe UI,sans-serif}body{display:grid;grid-template-rows:auto 1fr;overflow:hidden}
+.top{padding:13px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px;background:#0b1119}.eyebrow{font-size:10px;letter-spacing:.2em;color:var(--cyan);font-weight:800;text-transform:uppercase}.title{font-size:21px;font-weight:750;letter-spacing:-.03em}.sub{color:var(--muted);font-size:12px}.top-actions{display:flex;gap:8px;flex-wrap:wrap}button{border:1px solid #3c536b;background:#1a2a3b;color:var(--text);border-radius:8px;padding:8px 11px;font:inherit;font-size:12px;cursor:pointer}button:hover{border-color:var(--cyan)}
+.layout{min-height:0;display:grid;grid-template-columns:315px 1fr}.panel{overflow:auto;background:var(--panel);border-right:1px solid var(--line);padding:15px}.section{margin-bottom:18px}.section h2{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#b5c8dc;margin:0 0 9px}.hint{font-size:11px;color:var(--muted);margin:5px 0 10px}.source{border:1px solid var(--line);border-radius:10px;padding:10px;margin:8px 0;background:#0e1722}.source-head{display:flex;gap:8px;align-items:flex-start}.source input{margin:3px 0 0;accent-color:var(--cyan);width:15px;height:15px}.source label{font-weight:700;font-size:13px;cursor:pointer}.desc{font-size:11px;color:var(--muted);margin:3px 0 0 23px}.count{display:inline-block;color:#07111a;background:#c4d8e9;border-radius:4px;padding:1px 5px;font-size:10px;font-weight:800;margin-left:5px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}.status{padding:10px;border:1px solid var(--line);border-radius:8px;background:#0b131d;color:#bcd0e3;font-size:11px;white-space:pre-wrap;overflow-wrap:anywhere}.status.error{color:#ffb2a8;border-color:#85473f}.legend{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;color:var(--muted)}.legend span{display:flex;align-items:center}.map-wrap{min-height:0;position:relative}#map{position:absolute;inset:0}.map-tag{position:absolute;z-index:3;top:13px;left:13px;max-width:calc(100% - 26px);padding:9px 12px;background:#0b1119e8;border:1px solid #31465b;border-radius:9px;backdrop-filter:blur(8px);font-size:11px;color:#d9e9f8;pointer-events:none}.map-tag b{color:white}.bottom{position:absolute;z-index:3;bottom:13px;left:13px;background:#0b1119e8;border:1px solid #31465b;border-radius:8px;padding:7px 10px;color:#b8cada;font-size:10px;max-width:calc(100% - 26px)}.maplibregl-popup-content{color:#17212b;border-radius:8px}.source.active{border-color:#4a718f;background:#132333}
+@media(max-width:760px){body{overflow:auto;grid-template-rows:auto auto}.top{align-items:flex-start}.title{font-size:18px}.layout{grid-template-columns:1fr;grid-template-rows:auto minmax(55vh,1fr)}.panel{border-right:0;border-bottom:1px solid var(--line);max-height:38vh}.map-wrap{min-height:55vh}.top-actions button{padding:7px 8px}}
 </style>
 </head>
 <body>
-<header>
-<div><h1>Adam City · Ermita / Malate 3D comparison</h1><p>Toggle each independent building and road source to compare coverage · Manila, Philippines</p><div class="status" id="status">Loading 3D scene and local mapping data…</div></div>
-<div class="controls">
-<label><input id="imagery" type="checkbox"> Satellite imagery</label>
-<label><input id="oamPark" type="checkbox"> High-res park orthophoto</label>
-<label><input id="landmarks" type="checkbox" checked> Key landmarks</label>
-<label><input id="streets" type="checkbox" checked> Street surfaces / sidewalks</label>
-<label><input id="buildings" type="checkbox" checked> OSM project buildings (3D)</label>
-<label><input id="ofmBuildings" type="checkbox"> OpenFreeMap buildings</label>
-<label><input id="googleBuildings" type="checkbox"> Google Open Buildings</label>
-<label><input id="microsoftBuildings" type="checkbox"> Microsoft buildings</label>
-<label><input id="basemap3d" type="checkbox" checked> Live basemap buildings</label>
-<label><input id="roads" type="checkbox" checked> OSM project streets</label>
-<label><input id="ofmRoadCompare" type="checkbox"> OpenFreeMap streets</label>
-<label><input id="msRoadCompare" type="checkbox"> Microsoft road detections</label>
-<label><input id="terrain" type="checkbox" checked> 3D terrain</label>
-<label><input id="localHillshade" type="checkbox"> Local SRTM relief</label>
-<label><input id="vegetation" type="checkbox" checked> Grass / vegetation</label>
-<label><input id="labels" type="checkbox" checked> Building labels</label>
-<button id="sun">Golden-hour light</button>
-<button id="tilt">Tilt / top view</button>
-<button id="reset">Reset view</button>
+<header class="top"><div><div class="eyebrow">Adam City / Data comparison lab</div><div class="title">Malate + Ermita <span style="color:var(--cyan)">/ 3D source lab</span></div><div class="sub">A separate comparison interface · each dataset loads independently · original files remain untouched</div></div><div class="top-actions"><button id="fitShared">Fit shared data area</button><button id="fitDistrict">Fit Malate + Ermita</button><button id="topView">Top / 3D view</button></div></header>
+<div class="layout">
+<aside class="panel">
+ <section class="section"><h2>01 / Building footprints</h2><p class="hint">Turn sources on one at a time to compare their outlines. Google and Microsoft detections are footprints, not facade or measured-height data.</p>
+  <div class="source"><div class="source-head"><input id="ofmBuildings" type="checkbox"><div><label for="ofmBuildings"><span class="dot" style="background:var(--cyan)"></span>OpenFreeMap / Buildings</label><div class="desc">Cached OpenMapTiles features · 3D where height tags exist <span id="nOfmB" class="count">loading</span></div></div></div></div>
+  <div class="source"><div class="source-head"><input id="osmBuildings" type="checkbox"><div><label for="osmBuildings"><span class="dot" style="background:var(--green)"></span>Project buildings / OSM</label><div class="desc">Saved project footprints · height extrusion</div></div></div></div>
+  <div class="source"><div class="source-head"><input id="googleBuildings" type="checkbox"><div><label for="googleBuildings"><span class="dot" style="background:var(--amber)"></span>Google Open Buildings v3</label><div class="desc">Satellite-detected polygons · bright amber outlines</div></div></div></div>
+  <div class="source"><div class="source-head"><input id="microsoftBuildings" type="checkbox"><div><label for="microsoftBuildings"><span class="dot" style="background:var(--violet)"></span>Microsoft building footprints</label><div class="desc">Microsoft / IdMyPhBuildingFootprints · purple outlines</div></div></div></div>
+  <div class="source"><div class="source-head"><input id="basemapBuildings" type="checkbox"><div><label for="basemapBuildings"><span class="dot" style="background:#dbe5ef"></span>OpenFreeMap live 3D basemap</label><div class="desc">Context layer only; not the cached comparison dataset</div></div></div></div>
+ </section>
+ <section class="section"><h2>02 / Street networks</h2><p class="hint">Road layers use separate line styles and can be compared independently.</p>
+  <div class="source"><div class="source-head"><input id="ofmRoads" type="checkbox"><div><label for="ofmRoads"><span class="dot" style="background:var(--cyan)"></span>OpenFreeMap / Streets</label><div class="desc">Cached transportation layer <span id="nOfmR" class="count">loading</span></div></div></div></div>
+  <div class="source"><div class="source-head"><input id="osmRoads" type="checkbox"><div><label for="osmRoads"><span class="dot" style="background:var(--green)"></span>Project streets / OSM</label><div class="desc">Saved project road network</div></div></div></div>
+  <div class="source"><div class="source-head"><input id="microsoftRoads" type="checkbox"><div><label for="microsoftRoads"><span class="dot" style="background:var(--violet)"></span>Microsoft road detections</label><div class="desc">Separate Microsoft road-detection file</div></div></div></div>
+ </section>
+ <section class="section"><h2>03 / View</h2><div class="source-head"><input id="imagery" type="checkbox"><label for="imagery">Satellite imagery context</label></div><div class="source-head" style="margin-top:9px"><input id="terrain" type="checkbox" checked><label for="terrain">Terrain / elevation</label></div><p class="hint">Use the map's zoom and rotate controls. The first view focuses on the geographic overlap of the saved Google and Microsoft footprints.</p></section>
+ <section class="section"><h2>Legend</h2><div class="legend"><span><i class="dot" style="background:var(--cyan)"></i>OpenFreeMap</span><span><i class="dot" style="background:var(--green)"></i>Project / OSM</span><span><i class="dot" style="background:var(--amber)"></i>Google</span><span><i class="dot" style="background:var(--violet)"></i>Microsoft</span></div></section>
+ <section class="section"><h2>Source load report</h2><div id="status" class="status">Starting map…</div></section>
+</aside>
+<main class="map-wrap"><div id="map" role="application" aria-label="Independent 3D map source comparison for Malate and Ermita, Manila"></div><div class="map-tag"><b>MANILA, PHILIPPINES</b><br>Shared footprint area: Ermita / Rizal Park · zoom in to inspect individual outlines</div><div class="bottom">Source data is filtered to the saved Ermita overlap for direct comparison. The cached OpenFreeMap import is tile-derived and currently has limited geographic coverage; it is not a complete Malate extract.</div></main>
 </div>
-</header>
-<div id="map" role="application" aria-label="Interactive three-dimensional city map of Ermita and Malate Manila with independent source comparison layers"></div>
-<footer>Independent comparison layers: cached OpenFreeMap building and transportation data, OSM project buildings and roads, Microsoft road detections and Microsoft satellite building footprints, plus Google Open Buildings. Independent Google Open Buildings v3 footprints are available as a comparison overlay; ESA WorldCover vegetation, terrain, DPWH roads and Microsoft road detections are stored separately. Heights without verified measurements are estimates. © Esri, Maxar, Earthstar Geographics · Google Research Open Buildings v3 (CC BY 4.0) · ESA WorldCover (CC BY 4.0) · Microsoft IdMyPhBuildingFootprints (ODbL) · OpenAerialMap CC-BY-4.0 imagery: Leonard G. Soriano and Ian Gongona · DPWH · OpenStreetMap contributors (existing basemap attribution only; no new OSM import) · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
 <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
-<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
-<script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-<script src="https://unpkg.com/three@0.128.0/examples/js/libs/fflate.min.js"></script>
-<script src="https://unpkg.com/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
 <script>
-(function(){
-const status=document.getElementById('status');
-function setStatus(s){status.textContent=s}
-if(!window.maplibregl){setStatus('Could not load the 3D map library. Check your connection and reload.');return}
-const base='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/generated/';
-const center=[120.9825,14.5825];
-// Hard-limit navigation and visible project extent to the Ermita–Malate working area.
-// This prevents the global style's optional buildings from being explored as if they were imported project data.
-const projectBounds=[[120.965,14.555],[121.005,14.605]];
-const map=new maplibregl.Map({
- container:'map',
- style:'https://tiles.openfreemap.org/styles/liberty',
- bounds:projectBounds, fitBoundsOptions:{padding:24,maxZoom:15.5}, maxBounds:projectBounds,
- minZoom:13.5,maxZoom:19,center:center,zoom:15.5,pitch:62,bearing:-18,
- antialias:true,canvasContextAttributes:{antialias:true}
-});
-map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
-map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-right');
-let roadsData=null,buildingsData=null,osmBuildingsData=null,surfaceData=null,basemapBuildingsSignature='',tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[],base3dLayerIds=[],baseBuildingLayerIds=[];
-function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function popupHtml(p){const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',p.osm_feature_id||p.id]];return '<div style="font:13px system-ui"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+'</div>'}
-function addStreetMesh(roadNetwork){
- if(!window.THREE){setStatus('Street mesh could not start: 3D libraries unavailable.');return;}
- const origin=[120.98245,14.5719];
- const merc=maplibregl.MercatorCoordinate.fromLngLat({lng:origin[0],lat:origin[1]},0);
- const meterScale=merc.meterInMercatorCoordinateUnits();
- const customLayer={
-  id:'streets-road-mesh',type:'custom',renderingMode:'3d',
-  onAdd:function(map,gl){
-   this.camera=new THREE.Camera();this.scene=new THREE.Scene();
-   this.scene.add(new THREE.AmbientLight(0xffffff,1.65));
-   const sun=new THREE.DirectionalLight(0xffffff,2.1);sun.position.set(-40,-60,100);this.scene.add(sun);
-   this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});
-   this.renderer.autoClear=false;
-   // Real asphalt and sidewalk textures applied to map-derived road centerlines.
-   function makeRibbonGeometry(features,widthFor,sideOffset,repeatMeters,y){
-    const positions=[],uvs=[];
-    const originLat=origin[1],cosLat=Math.cos(originLat*Math.PI/180);
-    const xy=c=>({x:(c[0]-origin[0])*111320*cosLat,z:(c[1]-origin[1])*111132});
-    function segment(a,b,width,offsetSign){
-     const p=xy(a),q=xy(b),dx=q.x-p.x,dz=q.z-p.z,len=Math.hypot(dx,dz);
-     if(len<0.2)return;
-     const nx=-dz/len,nz=dx/len,off=sideOffset*offsetSign;
-     const ax=p.x+nx*off,az=p.z+nz*off,bx=q.x+nx*off,bz=q.z+nz*off;
-     const half=width/2;
-     const x1=ax+nx*half,z1=az+nz*half,x2=ax-nx*half,z2=az-nz*half;
-     const x3=bx+nx*half,z3=bz+nz*half,x4=bx-nx*half,z4=bz-nz*half;
-     const u=len/repeatMeters;
-     positions.push(x1,y,z1,x2,y,z2,x3,y,z3,x3,y,z3,x2,y,z2,x4,y,z4);
-     uvs.push(0,0,0,1,u,0,u,0,0,1,u,1);
-    }
-    for(const f of (features||[])){
-     const p=f.properties||{},tags=p.tags||{};
-     const hw=p.highway||tags.highway||'residential';
-     const roadWidth=widthFor(hw,p,tags);
-     const geom=f.geometry;if(!geom)continue;
-     const lines=geom.type==='LineString'?[geom.coordinates]:geom.type==='MultiLineString'?geom.coordinates:[];
-     for(const line of lines)for(let i=1;i<line.length;i++){
-      if(sideOffset===0)segment(line[i-1],line[i],roadWidth,0);
-      else {segment(line[i-1],line[i],widthFor(hw,p,tags),1);segment(line[i-1],line[i],widthFor(hw,p,tags),-1);}
-     }
-    }
-    const g=new THREE.BufferGeometry();
-    g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
-    g.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
-    g.computeVertexNormals();
-    return g;
-   }
-   function roadWidth(hw){
-    return ({motorway:15,motorway_link:8,trunk:12,trunk_link:7,primary:10,primary_link:7,secondary:8,secondary_link:6,tertiary:7,tertiary_link:5,residential:6,unclassified:5,living_street:4,service:3.5,footway:1.8,path:1.5,pedestrian:3})[hw]||5;
-   }
-   if(roadNetwork&&roadNetwork.features){
-    const loader=new THREE.TextureLoader();
-    const roadTexture=loader.load('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/CityStreetRoadAsphaltTwoLaneWorn001_COL_1K.jpeg',()=>map.triggerRepaint());
-    roadTexture.wrapS=roadTexture.wrapT=THREE.RepeatWrapping;roadTexture.encoding=THREE.sRGBEncoding;
-    roadTexture.anisotropy=this.renderer.capabilities.getMaxAnisotropy();
-    const roadMat=new THREE.MeshBasicMaterial({map:roadTexture,side:THREE.DoubleSide});
-    const roadGeom=makeRibbonGeometry(roadNetwork.features,hw=>roadWidth(hw),0,7,0.10);
-    const roadMesh=new THREE.Mesh(roadGeom,roadMat);roadMesh.frustumCulled=false;this.scene.add(roadMesh);
-    const walkTexture=loader.load('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/Mono-Terrazzo-Stack-Architextures.jpeg',()=>map.triggerRepaint());
-    walkTexture.wrapS=walkTexture.wrapT=THREE.RepeatWrapping;walkTexture.encoding=THREE.sRGBEncoding;
-    walkTexture.anisotropy=this.renderer.capabilities.getMaxAnisotropy();
-    const walkMat=new THREE.MeshBasicMaterial({map:walkTexture,side:THREE.DoubleSide});
-    const sidewalkFeatures=roadNetwork.features.filter(f=>!['motorway','trunk'].includes((f.properties||{}).highway));
-    // Build offset sidewalk strips on both sides of each street centerline.
-    const sidewalkPositions=[],sidewalkUvs=[],curbPositions=[];
-    function addCurbLine(a,b,hw,sign){
-     const cosLat=Math.cos(origin[1]*Math.PI/180);
-     const p={x:(a[0]-origin[0])*111320*cosLat,z:(a[1]-origin[1])*111132};
-     const q={x:(b[0]-origin[0])*111320*cosLat,z:(b[1]-origin[1])*111132};
-     const dx=q.x-p.x,dz=q.z-p.z,len=Math.hypot(dx,dz);if(len<0.2)return;
-     const nx=-dz/len,nz=dx/len,centerOffset=roadWidth(hw)/2+0.10;
-     const inner=centerOffset-0.09,outer=centerOffset+0.09;
-     const ax=p.x+nx*inner*sign,az=p.z+nz*inner*sign,bx=q.x+nx*inner*sign,bz=q.z+nz*inner*sign;
-     const cx=p.x+nx*outer*sign,cz=p.z+nz*outer*sign,dx2=q.x+nx*outer*sign,dz2=q.z+nz*outer*sign;
-     const low=0.11,high=0.29;
-     // Raised curb top plus the street-facing and sidewalk-facing vertical sides.
-     curbPositions.push(ax,high,az,cx,high,cz,bx,high,bz,bx,high,bz,cx,high,cz,dx2,high,dz2);
-     curbPositions.push(ax,low,az,bx,low,bz,ax,high,az,ax,high,az,bx,low,bz,bx,high,bz);
-     curbPositions.push(cx,low,cz,cx,high,cz,dx2,low,dz2,dx2,low,dz2,cx,high,cz,dx2,high,dz2);
-    }
-    function addSidewalkLine(a,b,hw,sign){
-     const cosLat=Math.cos(origin[1]*Math.PI/180);
-     const p={x:(a[0]-origin[0])*111320*cosLat,z:(a[1]-origin[1])*111132};
-     const q={x:(b[0]-origin[0])*111320*cosLat,z:(b[1]-origin[1])*111132};
-     const dx=q.x-p.x,dz=q.z-p.z,len=Math.hypot(dx,dz);if(len<0.2)return;
-     const nx=-dz/len,nz=dx/len,off=roadWidth(hw)/2+1.05;
-     const ax=p.x+nx*off*sign,az=p.z+nz*off*sign,bx=q.x+nx*off*sign,bz=q.z+nz*off*sign,half=.8,u=len/2;
-     const x1=ax+nx*half,z1=az+nz*half,x2=ax-nx*half,z2=az-nz*half,x3=bx+nx*half,z3=bz+nz*half,x4=bx-nx*half,z4=bz-nz*half;
-     sidewalkPositions.push(x1,.14,z1,x2,.14,z2,x3,.14,z3,x3,.14,z3,x2,.14,z2,x4,.14,z4);
-     sidewalkUvs.push(0,0,0,1,u,0,u,0,0,1,u,1);
-    }
-    for(const f of sidewalkFeatures){const p=f.properties||{},tags=p.tags||{},hw=p.highway||tags.highway||'residential',g=f.geometry;if(!g)continue;const lines=g.type==='LineString'?[g.coordinates]:g.type==='MultiLineString'?g.coordinates:[];for(const line of lines)for(let i=1;i<line.length;i++){addSidewalkLine(line[i-1],line[i],hw,1);addSidewalkLine(line[i-1],line[i],hw,-1);addCurbLine(line[i-1],line[i],hw,1);addCurbLine(line[i-1],line[i],hw,-1);}}
-    const cg=new THREE.BufferGeometry();cg.setAttribute('position',new THREE.Float32BufferAttribute(curbPositions,3));cg.computeVertexNormals();
-    const curbMat=new THREE.MeshStandardMaterial({color:0xb7b8b5,roughness:0.92,metalness:0,side:THREE.DoubleSide});
-    const curbMesh=new THREE.Mesh(cg,curbMat);curbMesh.frustumCulled=false;this.scene.add(curbMesh);
-    const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32BufferAttribute(sidewalkPositions,3));sg.setAttribute('uv',new THREE.Float32BufferAttribute(sidewalkUvs,2));sg.computeVertexNormals();
-    const sidewalkMesh=new THREE.Mesh(sg,walkMat);sidewalkMesh.frustumCulled=false;this.scene.add(sidewalkMesh);setStatus('City-wide road mesh active: asphalt on mapped roads, terrazzo sidewalks and raised concrete curbs on both sides of mapped streets throughout the loaded road network.');
-   }
-  },
-  render:function(gl,args){
-   if(!this.renderer)return;
-   const m=new THREE.Matrix4().fromArray(args.defaultProjectionData.mainMatrix);
-   const l=new THREE.Matrix4().makeTranslation(merc.x,merc.y,merc.z)
-    .multiply(new THREE.Matrix4().makeRotationX(Math.PI/2))
-    .scale(new THREE.Vector3(meterScale,meterScale,meterScale));
-   this.camera.projectionMatrix=m.multiply(l);
-   this.renderer.resetState();
-   this.renderer.render(this.scene,this.camera);
-  }
- };
- if(map.getLayer('streets-road-mesh'))map.removeLayer('streets-road-mesh');
- map.addLayer(customLayer);
-}
-
-function addTexturedBuildingMeshes(data,roadNetwork){
- if(!window.THREE || !data || !Array.isArray(data.features))return;
- const layerId='all-building-facade-textures';
- if(map.getLayer(layerId))map.removeLayer(layerId);
- const origin=[120.9825,14.5825];
- const merc=maplibregl.MercatorCoordinate.fromLngLat({lng:origin[0],lat:origin[1]},0);
- const meterScale=merc.meterInMercatorCoordinateUnits();
- const detailSource={
-  name:'Manila Residences Bocobo',
-  osmId:'way/90123959',
-  referenceUrl:'https://philippinerealtygroup.com/manila-residences-bocobo',
-  imageUrl:'https://philippinerealtygroup.com/wp-content/images/PRG_Developments/manila-residences-bocobo/0_Manila-Residences-Bocobo-Manila-City-Metro-Manila-Philippines.jpg',
-  reference:'Internet photo visually reviewed 2026-10-19: cream podium, dark horizontal balcony/window bands and orange vertical accents. The photo is a reference for a modeled facade, not used as a stretched wall texture.'
- };
- const xy=c=>({x:(c[0]-origin[0])*111319.49*Math.cos(origin[1]*Math.PI/180),z:(c[1]-origin[1])*110574.27});
- const heightOf=p=>{
-   const t=p.tags||p;
-   const normalized=Number(p.adam_height_m);
-   if(Number.isFinite(normalized)&&normalized>=2&&normalized<=500)return normalized;
-   const basemapH=Number(p.basemap_render_height);
-   if(Number.isFinite(basemapH)&&basemapH>=2&&basemapH<=500)return basemapH;
-   const raw=String(t.height||'').trim(),match=raw.match(/[0-9]+(?:[.,][0-9]+)?/);
-   let h=match?Number(match[0].replace(',','.')):NaN;
-   if(Number.isFinite(h)&&(/\b(ft|feet|foot)\b/i.test(raw)||raw.includes("'")))h*=0.3048;
-   if(Number.isFinite(h)&&h>=2&&h<=500)return Math.ceil(h);
-   const levels=parseFloat(String(t['building:levels']||t.levels||'').replace(',','.'));
-   if(Number.isFinite(levels)&&levels>=1&&levels<=150)return Math.ceil(levels*3.66);
-   return 5;
-  };
-  const trimPos=[],bandPos=[],balconyPos=[],doorPos=[],roofRimPos=[];
- function quad(arr,a,b,c,d){arr.push(a.x,a.y,a.z,b.x,b.y,b.z,c.x,c.y,c.z,c.x,c.y,c.z,b.x,b.y,b.z,d.x,d.y,d.z);}
- function point(p,n,offset,y){return {x:p.x+n.x*offset,y:y,z:p.z+n.z*offset};}
- function faceQuad(arr,a,b,n,offset,y0,y1,u0,u1){
-  const aa=point(a,n,offset,y0),bb=point(b,n,offset,y0),cc=point(a,n,offset,y1),dd=point(b,n,offset,y1);
-  const dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz)||1;
-  const p1={x:aa.x+dx*u0,y:y0,z:aa.z+dz*u0},p2={x:aa.x+dx*u1,y:y0,z:aa.z+dz*u1};
-  const p3={x:aa.x+dx*u0,y:y1,z:aa.z+dz*u0},p4={x:aa.x+dx*u1,y:y1,z:aa.z+dz*u1};
-  quad(arr,p1,p2,p3,p4);
- }
- function boxBand(a,b,n,y,thickness,offset,arr){
-  const aa=point(a,n,offset,y),bb=point(b,n,offset,y),cc=point(a,n,offset,y+thickness),dd=point(b,n,offset,y+thickness);
-  quad(arr,aa,bb,cc,dd);
- }
- function geom(positions){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));g.computeVertexNormals();return g;}
- const cosLat=Math.cos(origin[1]*Math.PI/180);
- let detailed=0,doorCount=0;
- // Facade meshes are expensive on phones. Keep all building footprints/extrusions,
- // and add only restrained facade bands/entrances; no window geometry is generated.
- const featureCenter=f=>{
-  const g=f.geometry;if(!g)return origin;
-  let ring=null;
-  if(g.type==='Polygon')ring=g.coordinates&&g.coordinates[0];
-  else if(g.type==='MultiPolygon')ring=g.coordinates&&g.coordinates[0]&&g.coordinates[0][0];
-  if(!ring||!ring.length)return origin;
-  let x=0,y=0,n=0;for(const c of ring){if(Array.isArray(c)&&c.length>=2){x+=c[0];y+=c[1];n++;}}
-  return n?[x/n,y/n]:origin;
- };
- const detailFeatures=[...data.features].sort((a,b)=>{
-  const aid=String(a.properties?.osm_feature_id||((a.properties?.type&&a.properties?.id)?a.properties.type+'/'+a.properties.id:''));
-  const bid=String(b.properties?.osm_feature_id||((b.properties?.type&&b.properties?.id)?b.properties.type+'/'+b.properties.id:''));
-  if(aid==='way/90123959')return -1;if(bid==='way/90123959')return 1;
-  const ca=featureCenter(a),cb=featureCenter(b);
-  const da=Math.hypot((ca[0]-origin[0])*111320*Math.cos(origin[1]*Math.PI/180),(ca[1]-origin[1])*110574);
-  const db=Math.hypot((cb[0]-origin[0])*111320*Math.cos(origin[1]*Math.PI/180),(cb[1]-origin[1])*110574);
-  return da-db;
- }).slice(0,40);
- for(const f of detailFeatures){
-  if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
-  const featureGround=document.getElementById('terrain').checked?(terrainElevationForFeature(f)||0):0;
-  const p=f.properties||{};
-  const tags=p.tags||{},id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:'')),name=String(tags.name||tags['official_name']||'');
-  const special=id===detailSource.osmId;
-  const h=heightOf(p),levels=Math.max(1,Math.min(34,Math.round(h/(special?3.0:3.2))));
-  const polygons=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
-  for(const poly of polygons){
-   const startLengths=[trimPos.length,bandPos.length,balconyPos.length,doorPos.length,roofRimPos.length];
-   const ring=poly&&poly[0];if(!ring||ring.length<4)continue;
-   const pts=ring.map(xy);
-   let area=0;for(let i=0;i<pts.length-1;i++)area+=pts[i].x*pts[i+1].z-pts[i+1].x*pts[i].z;
-   let frontEdge=-1,frontDistance=Infinity;
-   if(special&&roadNetwork&&Array.isArray(roadNetwork.features)){
-    for(let ei=1;ei<pts.length;ei++){
-     const mid={x:(pts[ei-1].x+pts[ei].x)/2,z:(pts[ei-1].z+pts[ei].z)/2};
-     let best=Infinity;
-     for(const rf of roadNetwork.features){
-      const rp=rf.properties||{};if(!/jorge bocobo/i.test(String(rp.name||'')))continue;
-      const rg=rf.geometry;if(!rg)continue;const lines=rg.type==='LineString'?[rg.coordinates]:rg.type==='MultiLineString'?rg.coordinates:[];
-      for(const line of lines)for(let ri=1;ri<line.length;ri++){
-       const ra=xy(line[ri-1]),rb=xy(line[ri]),vx=rb.x-ra.x,vz=rb.z-ra.z,wx=mid.x-ra.x,wz=mid.z-ra.z,t=Math.max(0,Math.min(1,(wx*vx+wz*vz)/(vx*vx+vz*vz||1)));
-       best=Math.min(best,Math.hypot(mid.x-ra.x-t*vx,mid.z-ra.z-t*vz));
-      }
-     }
-     if(best<frontDistance){frontDistance=best;frontEdge=ei;}
-    }
-   }
-   for(let i=1;i<pts.length;i++){
-    const specialFront=special&&i===frontEdge;
-    const a=pts[i-1],b=pts[i],dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);
-    if(len<3||len>250)continue;
-    // Facade normals are derived from polygon winding for correctly oriented trim.
-    const n=area>=0?{x:dz/len,z:-dx/len}:{x:-dz/len,z:dx/len};
-    const count=Math.max(1,Math.min(28,Math.floor(len/(special?2.4:3.0))));
-    const cell=len/count;
-    const isCommercial=['retail','commercial','office','hotel','hospital'].includes(tags.building);
-    for(let floor=0;floor<levels;floor++){
-     const base=floor*(h/levels),floorH=h/levels;
-     const y0=base+Math.max(.42,floorH*.18),y1=Math.min(h-.18,base+floorH*.78);
-     if(y1-y0<.45)continue;
-     for(let j=0;j<count;j++){
-      const inset=Math.min(.12,cell*.08),u0=(j*cell+inset)/len,u1=((j+1)*cell-inset)/len;
-      if(u1-u0<.05)continue;
-      if(specialFront){
-       // Street-facing wall only: cream concrete framing, black ribbon glazing and thin balcony slab, derived from the inspected tower photo.
-       boxBand(a,b,n,base+floorH-.14,.12,.19,bandPos);
-       if(floor%3===0)boxBand(a,b,n,base+floorH-.02,.09,.29,balconyPos);
-      }else if(floorH>2.6){
-       boxBand(a,b,n,base+floorH-.07,.055,.15,trimPos);
-      }
-     }
-     // A single door/shop entrance is added to the longest ground-floor wall, not every edge.
-     if(floor===0&&len>7&&i===1){
-      const u0=Math.max(.08,.5-.45/len),u1=Math.min(.92,.5+.45/len);
-      faceQuad(doorPos,a,b,n,.16,.08,Math.min(floorH* .92,2.65),u0,u1);doorCount++;
-     }
-    }
-    // Thin vertical accent strips on the photo-checked Cityland tower.
-    if(specialFront){
-     for(let k=1;k<4;k++){
-      const u=k/4,aa={x:a.x+dx*u,y:0,z:a.z+dz*u},bb={x:a.x+dx*u,y:h,z:a.z+dz*u};
-      const half=.12,low={x:aa.x+n.x*.24,y:0,z:aa.z+n.z*.24},lowR={x:aa.x+n.x*.24+n.x*half,y:0,z:aa.z+n.z*.24+n.z*half};
-      const high={x:aa.x+n.x*.24,y:h,z:aa.z+n.z*.24},highR={x:aa.x+n.x*.24+n.x*half,y:h,z:aa.z+n.z*.24+n.z*half};
-      quad(bandPos,low,lowR,high,highR);
-     }
-    }
-   }
-   // Roof edge/parapet trim makes rooflines visible against the extrusion.
-   if(pts.length>3){
-    for(let i=1;i<pts.length;i++){
-     const a=pts[i-1],b=pts[i],dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);if(len<3||len>250)continue;
-     const n=area>=0?{x:dz/len,z:-dx/len}:{x:-dz/len,z:dx/len};
-     boxBand(a,b,n,h-.20,.20,.16,roofRimPos);
-    }
-   }
-   if(featureGround){
-    const arrays=[trimPos,bandPos,balconyPos,doorPos,roofRimPos];
-    for(let ai=0;ai<arrays.length;ai++){const arr=arrays[ai];for(let j=startLengths[ai]+1;j<arr.length;j+=3)arr[j]+=featureGround;}
-   }
-   detailed++;
-  }
- }
- const layer={
-  id:layerId,type:'custom',renderingMode:'3d',
-  onAdd:function(map,gl){
-   this.camera=new THREE.Camera();this.scene=new THREE.Scene();
-   this.scene.add(new THREE.AmbientLight(0xffffff,1.8));
-   const sun=new THREE.DirectionalLight(0xffffff,1.8);sun.position.set(-80,-100,180);this.scene.add(sun);
-   this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});this.renderer.autoClear=false;
-   const add=(positions,color,roughness=0.78)=>{if(!positions.length)return;const m=new THREE.Mesh(geom(positions),new THREE.MeshStandardMaterial({color,roughness,metalness:0.02,side:THREE.DoubleSide}));m.frustumCulled=false;this.scene.add(m);};
-   add(trimPos,0xf0e7d6,.68);
-   add(bandPos,0xc96b42,.62);
-   add(balconyPos,0xe6dfd0,.8);
-   add(doorPos,0x102332,.22);
-   add(roofRimPos,0xd7d0c4,.8);
-   this.visible=true;
-   setStatus('Facade pass active: '+detailed.toLocaleString()+' OSM building footprints with all modeled windows removed, '+doorCount.toLocaleString()+' entrances and roof/floor trim.');
-  },
-  render:function(gl,args){
-   if(!this.renderer)return;
-   const m=new THREE.Matrix4().fromArray(args.defaultProjectionData.mainMatrix);
-   const l=new THREE.Matrix4().makeTranslation(merc.x,merc.y,merc.z).multiply(new THREE.Matrix4().makeRotationX(Math.PI/2)).scale(new THREE.Vector3(meterScale,meterScale,meterScale));
-   this.camera.projectionMatrix=m.multiply(l);
-   this.renderer.resetState();this.renderer.render(this.scene,this.camera);
-  }
- };
- if(map.getLayer(layerId))map.removeLayer(layerId);
- map.addLayer(layer);
-}
-function syncLocalHeightsFromBasemap(){
- // IMPORTANT: querySourceFeatures only returns vector tiles currently loaded in the viewport.
- // Never use that partial tile collection as the complete building dataset or replace OSM geometry with it.
- if(!osmBuildingsData||!Array.isArray(osmBuildingsData.features)||!map.getSource('openmaptiles'))return;
- let tiles=[];
- try{tiles=map.querySourceFeatures('openmaptiles',{sourceLayer:'building'})||[];}catch(e){return;}
- if(!tiles.length)return;
- const idKeys=f=>{
-  const p=f.properties||{},v=[];
-  for(const k of ['osm_id','osm_way_id','osm_feature_id','id','original_id']){
-   const x=p[k];if(x!==undefined&&x!==null&&String(x)!=='')v.push(String(x).replace(/^(way|relation|node)\//,''));
-  }
-  if(f.id!==undefined&&f.id!==null)v.push(String(f.id).replace(/^(way|relation|node)\//,''));
-  return [...new Set(v)];
- };
- const center=f=>{
-  const coords=[];const walk=g=>{if(!g)return;if(g.type==='Point'){coords.push(g.coordinates);return;}if(g.type==='GeometryCollection'){(g.geometries||[]).forEach(walk);return;}const flatten=a=>{if(!Array.isArray(a))return;if(a.length>=2&&typeof a[0]==='number'&&typeof a[1]==='number')coords.push(a);else a.forEach(flatten)};flatten(g.coordinates);};walk(f.geometry);
-  if(!coords.length)return null;
-  let x=0,y=0;for(const p of coords){x+=p[0];y+=p[1];}return [x/coords.length,y/coords.length];
- };
- const toMeters=(a,b)=>{const lat=(a[1]+b[1])*Math.PI/360;return Math.hypot((a[0]-b[0])*111320*Math.cos(lat),(a[1]-b[1])*110574);};
- const osmIndex=new Map(),osmCenters=[];
- for(const f of osmBuildingsData.features){
-  if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
-  const p=f.properties||{};
-  for(const k of idKeys(f)){if(!osmIndex.has(k))osmIndex.set(k,f);}
-  const ctr=center(f);if(ctr)osmCenters.push({f,ctr});
- }
- let changed=false;const seen=new Set();
- for(const tile of tiles){
-  if(!tile.geometry||!['Polygon','MultiPolygon'].includes(tile.geometry.type))continue;
-  const tp=tile.properties||{},h=Number(tp.render_height),base=Number(tp.render_min_height||0);
-  if(!Number.isFinite(h)||h<2||h>500)continue;
-  const ctr=center(tile);if(!ctr)continue;
-  const key=idKeys(tile).sort().join(',')+'|'+ctr.map(v=>v.toFixed(5)).join(',');
-  if(seen.has(key))continue;seen.add(key);
-  let osm=null;
-  for(const k of idKeys(tile)){if(osmIndex.has(k)){osm=osmIndex.get(k);break;}}
-  if(!osm){
-   let best=null,dist=Infinity;
-   for(const candidate of osmCenters){const d=toMeters(ctr,candidate.ctr);if(d<dist){dist=d;best=candidate.f;}}
-   if(best&&dist<=15)osm=best;
-  }
-  if(!osm)continue;
-  const p=osm.properties||(osm.properties={});
-  if(Number(p.basemap_render_height)!==h||Number(p.basemap_render_min_height||0)!==base){
-   p.basemap_render_height=h;p.basemap_render_min_height=base;p.basemap_height_match='matched-openmaptiles';
-   changed=true;
-  }
- }
- if(!changed)return;
- // Keep every cached OSM footprint and its original geometry; only enrich matching features with height evidence.
- buildingsData=osmBuildingsData;
- if(map.getSource('local-buildings'))map.getSource('local-buildings').setData(buildingsData);
- if(buildingsData.features.length&&window.THREE)addTexturedBuildingMeshes(buildingsData,roadsData);
- setStatus('OSM buildings preserved: '+buildingsData.features.length.toLocaleString()+' cached footprints; Basemap heights are supplemental only.');
-}
-function terrainElevationForFeature(f){
- const g=f&&f.geometry;if(!g)return null;
- let ring=null;
- if(g.type==='Polygon')ring=g.coordinates&&g.coordinates[0];
- else if(g.type==='MultiPolygon')ring=g.coordinates&&g.coordinates[0]&&g.coordinates[0][0];
- if(!ring||!ring.length)return null;
- let lon=0,lat=0,n=0;
- for(const p of ring){if(Array.isArray(p)&&p.length>=2&&Number.isFinite(p[0])&&Number.isFinite(p[1])){lon+=p[0];lat+=p[1];n++;}}
- if(!n)return null;
- try{const z=map.queryTerrainElevation([lon/n,lat/n]);return Number.isFinite(z)?z:null;}catch(e){return null;}
-}
-let terrainAlignmentSignature='';
-function applyTerrainAlignment(){
- if(!buildingsData||!Array.isArray(buildingsData.features)||!map.getSource('local-buildings'))return;
- const terrainOn=document.getElementById('terrain').checked,parts=[];let changed=false;
- for(const f of buildingsData.features){
-  const p=f.properties||(f.properties={});
-  let z=terrainOn?terrainElevationForFeature(f):0;
-  if(!Number.isFinite(z))z=0;
-  z=Math.round(z*10)/10;
-  parts.push(String(p.basemap_source_id||p.osm_feature_id||f.id||'building')+':'+z);
-  if(Number(p.terrain_base_m)!==z)changed=true;
-  p.terrain_base_m=z;
- }
- const sig=parts.join(',');
- if(sig===terrainAlignmentSignature&&!changed)return;
- terrainAlignmentSignature=sig;
- map.getSource('local-buildings').setData(buildingsData);
- if(buildingsData.features.length&&window.THREE)addTexturedBuildingMeshes(buildingsData,roadsData);
-}
-function normalizeBuildingHeights(data){
-   for(const f of (data.features||[])){
-    const p=f.properties||(f.properties={}),t=p.tags||p;
-    const id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:''));
-    let h=NaN;
-    if(id==='way/90123959')h=102;
-    const base=Number(p.basemap_render_height);
-    if(!Number.isFinite(h)&&Number.isFinite(base)&&base>=2&&base<=500)h=base;
-    if(!Number.isFinite(h)){
-     const raw=String(t.height||'').trim(),match=raw.match(/[0-9]+(?:[.,][0-9]+)?/);
-     let v=match?Number(match[0].replace(',','.')):NaN;
-     if(Number.isFinite(v)&&(/\b(ft|feet|foot)\b/i.test(raw)||raw.includes("'")))v*=0.3048;
-     if(Number.isFinite(v)&&v>=2&&v<=500)h=Math.ceil(v);
-    }
-    if(!Number.isFinite(h)){
-     const levels=Number(String(t['building:levels']||t.levels||'').replace(',','.'));
-     if(Number.isFinite(levels)&&levels>=1&&levels<=150)h=Math.ceil(levels*3.66);
-    }
-    p.adam_height_m=Number.isFinite(h)?h:5;
-    // Store a numeric height in OSM tags too, so the original extrusion expression remains compatible.
-    if(p.tags&&typeof p.tags==='object')p.tags.height=String(p.adam_height_m);
-   }
-}
-
-function addBuildings(data){
- if(map.getLayer('local-buildings-3d'))map.removeLayer('local-buildings-3d');
- if(map.getSource('local-buildings'))map.removeSource('local-buildings');
- map.addSource('local-buildings',{type:'geojson',data:data});
- map.addLayer({id:'local-buildings-3d',type:'fill-extrusion',source:'local-buildings',
-   filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['any',['has','building',['get','tags']],['has','building:part',['get','tags']]]],
-   paint:{
-    'fill-extrusion-color':['case',
-      ['has','building:colour',['get','tags']],['get','building:colour',['get','tags']],
-      ['match',['get','building',['get','tags']],
-       'hospital','#d9d7cf','school','#d9c8a7','university','#d8c6a4','church','#c8b9a2',
-       'commercial','#b7bdc5','office','#aebbc8','retail','#d5b99a','apartments','#c8c4bd',
-       'residential','#d9c8b3','industrial','#b9b7b1','hotel','#c5b4a6',
-       '#c8bfb3']],
-    // Match OpenMapTiles/Liberty height fallback: height, then levels × 3.66 m, then 5 m.
-    // This keeps local OSM extrusions much closer to the Basemap when source tags are missing.
-    'fill-extrusion-height':['+', ['to-number',['get','terrain_base_m'],0], ['max',2,['coalesce',
-       ['to-number',['get','basemap_render_height']],
-       ['to-number',['get','height',['get','tags']]],
-       ['*',['to-number',['get','building:levels',['get','tags']]],3.66],
-       5]]],
-    'fill-extrusion-base':['+', ['to-number',['get','terrain_base_m'],0], ['max',0,['floor',['coalesce',
-      ['to-number',['get','min_height',['get','tags']]],
-      ['*',['to-number',['get','min_level',['get','tags']]],3.66],
-      0]]]],
-    'fill-extrusion-opacity':0.98,'fill-extrusion-vertical-gradient':true
-   }});
- map.on('click','local-buildings-3d',e=>{const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};let extra='';if(String(p.osm_feature_id||'')==='way/90123959')extra='<div style="margin-top:8px"><b>Facade reference photo:</b><br><a target="_blank" rel="noopener" href="https://philippinerealtygroup.com/manila-residences-bocobo"><img alt="Manila Residences Bocobo facade reference" src="https://philippinerealtygroup.com/wp-content/images/PRG_Developments/manila-residences-bocobo/0_Manila-Residences-Bocobo-Manila-City-Metro-Manila-Philippines.jpg" style="display:block;max-width:260px;width:100%;height:auto;margin:6px 0"></a><div>Inspected online reference; the street-facing facade is modeled with cream podium, dark window/balcony bands and orange vertical accents. Photo is a reference, not stretched across the wall.</div></div>';new maplibregl.Popup().setLngLat(e.lngLat).setHTML(popupHtml(p)+extra).addTo(map)});
- map.on('mouseenter','local-buildings-3d',()=>map.getCanvas().style.cursor='pointer');
- map.on('mouseleave','local-buildings-3d',()=>map.getCanvas().style.cursor='');
- if(map.getLayer('local-building-labels'))map.removeLayer('local-building-labels');
- map.addLayer({id:'local-building-labels',type:'symbol',source:'local-buildings',
-  minzoom:16.2,
-  filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['has','name',['get','tags']]],
-  layout:{'text-field':['get','name',['get','tags']],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],16,10,19,13],'text-max-width':10,'text-allow-overlap':false,'text-ignore-placement':false},
-  paint:{'text-color':'#28323a','text-halo-color':'#fff8e9','text-halo-width':1.5,'text-halo-blur':0.3}});
- if(map.getLayer('seven-eleven-facade-sign'))map.removeLayer('seven-eleven-facade-sign');
- map.addLayer({id:'seven-eleven-facade-sign',type:'symbol',source:'local-buildings',minzoom:15.2,
-  filter:['==',['get','name',['get','tags']],'7-Eleven'],
-  layout:{'text-field':'7 ELEVEN','text-font':['Open Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],15,10,18,17],'text-max-width':8,'text-allow-overlap':true,'text-ignore-placement':true},
-  paint:{'text-color':'#ffffff','text-halo-color':'#087d3b','text-halo-width':5,'text-halo-blur':0}});
- if(map.getLayer('robinsons-mall-facade-sign'))map.removeLayer('robinsons-mall-facade-sign');
- map.addLayer({id:'robinsons-mall-facade-sign',type:'symbol',source:'local-buildings',minzoom:14.8,
-  filter:['==',['get','name',['get','tags']],'Robinsons Manila'],
-  layout:{'text-field':'ROBINSONS','text-font':['Open Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],15,11,18,20],'text-max-width':12,'text-allow-overlap':true,'text-ignore-placement':true},
-  paint:{'text-color':'#c82432','text-halo-color':'#ffffff','text-halo-width':3,'text-halo-blur':0}});
- 
-}
-function addSatelliteImagery(){
- const layers=(map.getStyle().layers||[]).filter(l=>l.id!=='satellite-imagery'&&!base3dLayerIds.includes(l.id)&&!l.id.startsWith('local-')&&!l.id.startsWith('project-')&&!l.id.startsWith('key-landmark-'));
- baseLayerVisibility=layers.map(l=>({id:l.id,visibility:l.layout&&l.layout.visibility==='none'?'none':'visible'}));
- map.addSource('satellite-imagery-source',{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,attribution:'Tiles © Esri — Sources: Esri, Maxar, Earthstar Geographics, and the GIS User Community'});
- map.addLayer({id:'satellite-imagery',type:'raster',source:'satellite-imagery-source',layout:{visibility:'none'},paint:{'raster-opacity':1,'raster-fade-duration':150}},'local-buildings-3d');
-}
-function setSatelliteImagery(enabled){
- imageryOn=enabled;
- if(map.getLayer('satellite-imagery'))map.setLayoutProperty('satellite-imagery','visibility',enabled?'visible':'none');
- baseLayerVisibility.forEach(l=>{if(map.getLayer(l.id))map.setLayoutProperty(l.id,'visibility',enabled?'none':l.visibility)});
- setStatus(enabled?'Satellite imagery enabled · imagery dates and resolution vary by tile':'Street basemap enabled · local 3D buildings and landmark layer remain available');
-}
-
-
-function addDpwRoadSurface(data){
- if(map.getLayer('dpwh-road-surface-data'))map.removeLayer('dpwh-road-surface-data');
- if(map.getSource('dpwh-road-surface-data'))map.removeSource('dpwh-road-surface-data');
- map.addSource('dpwh-road-surface-data',{type:'geojson',data:data});
- map.addLayer({id:'dpwh-road-surface-data',type:'line',source:'dpwh-road-surface-data',layout:{'line-cap':'round','line-join':'round','line-elevation-reference':'ground'},paint:{'line-color':'#d0a15c','line-width':['interpolate',['linear'],['zoom'],13,1,16,2,19,3],'line-opacity':0.58,'line-dasharray':[2,1]}});
- map.on('click','dpwh-road-surface-data',e=>{
-  const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};
-  const date=v=>{const n=Number(v);return n>0?new Date(n).toLocaleDateString():''};
-  const rows=[['Road',p.ROAD_NAME],['Official surface type',p.SURFACE_TY],['Pavement type',p.PVMT_TYPE],['Road ID',p.ROAD_ID],['Section ID',p.SECTION_ID],['Segment length',p.SEG_LENGTH?String(p.SEG_LENGTH)+' m':''],['Last surface work',p.YR_LAST_SU&&Number(p.YR_LAST_SU)>0?p.YR_LAST_SU:''],['Reconstruction year',p.YR_RECONST&&Number(p.YR_RECONST)>0?p.YR_RECONST:''],['Survey date',date(p.SURV_DATE)]];
-  new maplibregl.Popup().setLngLat(e.lngLat).setHTML('<div style="font:13px system-ui;max-width:260px"><b>DPWH official road record</b>'+rows.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=='').map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+'</div>').addTo(map);
- });
- map.on('mouseenter','dpwh-road-surface-data',()=>map.getCanvas().style.cursor='help');
- map.on('mouseleave','dpwh-road-surface-data',()=>map.getCanvas().style.cursor='');
-}
-
-function addLandmarks(){
- const landmarks={type:'FeatureCollection',features:[
-  {type:'Feature',properties:{name:'Rizal Monument',kind:'National monument',detail:'Monument to José Rizal in Rizal Park. Marker location is approximate.'},geometry:{type:'Point',coordinates:[120.97845,14.58325]}},
-  {type:'Feature',properties:{name:'Quirino Grandstand',kind:'Ceremonial grandstand',detail:'Landmark at the western edge of Rizal Park. Marker location is approximate.'},geometry:{type:'Point',coordinates:[120.9791,14.58155]}},
-  {type:'Feature',properties:{name:'National Museum of Fine Arts',kind:'Museum',detail:'National Museum complex, Manila. Marker location is approximate.'},geometry:{type:'Point',coordinates:[120.98055,14.58925]}},
-  {type:'Feature',properties:{name:'National Museum of Anthropology',kind:'Museum',detail:'National Museum complex, Manila. Marker location is approximate.'},geometry:{type:'Point',coordinates:[120.9798,14.58735]}},
-  {type:'Feature',properties:{name:'Manila Ocean Park',kind:'Marine park',detail:'Waterfront attraction near Rizal Park. Marker location is approximate.'},geometry:{type:'Point',coordinates:[120.97765,14.57995]}},
-  {type:'Feature',properties:{name:'Rizal Park / Luneta',kind:'Historic public park',detail:'Major historic urban park in central Manila. Park marker is approximate.'},geometry:{type:'Point',coordinates:[120.98125,14.5834]}}
- ]};
- map.addSource('key-landmarks',{type:'geojson',data:landmarks});
- map.addLayer({id:'key-landmark-halo',type:'circle',source:'key-landmarks',paint:{'circle-radius':['interpolate',['linear'],['zoom'],12,4,17,7],'circle-color':'#fff7da','circle-opacity':0.95,'circle-stroke-color':'#20364a','circle-stroke-width':2}});
- map.addLayer({id:'key-landmark-dot',type:'circle',source:'key-landmarks',paint:{'circle-radius':['interpolate',['linear'],['zoom'],12,2.5,17,4.5],'circle-color':'#e34e35','circle-stroke-color':'#ffffff','circle-stroke-width':1}});
- map.addLayer({id:'key-landmark-label',type:'symbol',source:'key-landmarks',minzoom:14.2,layout:{'text-field':['get','name'],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],14,10,18,14],'text-offset':[0,1.25],'text-anchor':'top','text-max-width':14,'text-allow-overlap':false},paint:{'text-color':'#172b3b','text-halo-color':'#fff','text-halo-width':2}});
- map.on('click','key-landmark-dot',e=>{const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};new maplibregl.Popup().setLngLat(e.lngLat).setHTML('<div style="font:13px system-ui"><b>'+esc(p.name)+'</b><div>'+esc(p.kind)+'</div><p style="color:#46515b;margin-top:5px">'+esc(p.detail)+'</p></div>').addTo(map)});
- map.on('mouseenter','key-landmark-dot',()=>map.getCanvas().style.cursor='pointer');
- map.on('mouseleave','key-landmark-dot',()=>map.getCanvas().style.cursor='');
-}
-function addBridgeAndStairLayers(){
- const sourceId='basemap-bridges-stairs';
- const empty={type:'FeatureCollection',features:[]};
- if(!map.getSource(sourceId))map.addSource(sourceId,{type:'geojson',data:empty});
- if(!map.getLayer('project-bridges-casing'))map.addLayer({id:'project-bridges-casing',type:'line',source:sourceId,filter:['==',['get','kind'],'bridge'],layout:{'line-cap':'round','line-join':'round','line-elevation-reference':'ground'},paint:{'line-color':'#343b43','line-width':['interpolate',['linear'],['zoom'],13,3,16,10,19,19],'line-opacity':0.98}});
- if(!map.getLayer('project-bridges-deck'))map.addLayer({id:'project-bridges-deck',type:'line',source:sourceId,filter:['==',['get','kind'],'bridge'],layout:{'line-cap':'butt','line-join':'round','line-elevation-reference':'ground'},paint:{'line-color':['match',['get','material_type'],'wood','#95613b','steel','#59636f','concrete','#b8b9b6','unknown','#a9adb2','#a9adb2'],'line-width':['interpolate',['linear'],['zoom'],13,1.5,16,7,19,14],'line-opacity':1}});
- if(!map.getLayer('project-bridges-railings-left'))map.addLayer({id:'project-bridges-railings-left',type:'line',source:sourceId,filter:['==',['get','kind'],'bridge'],layout:{'line-cap':'round','line-join':'round','line-elevation-reference':'ground'},paint:{'line-color':'#e3e6e8','line-width':['interpolate',['linear'],['zoom'],15,0.5,19,1.8],'line-offset':['interpolate',['linear'],['zoom'],15,3,19,7],'line-opacity':0.95}});
- if(!map.getLayer('project-bridges-railings-right'))map.addLayer({id:'project-bridges-railings-right',type:'line',source:sourceId,filter:['==',['get','kind'],'bridge'],layout:{'line-cap':'round','line-join':'round','line-elevation-reference':'ground'},paint:{'line-color':'#e3e6e8','line-width':['interpolate',['linear'],['zoom'],15,0.5,19,1.8],'line-offset':['interpolate',['linear'],['zoom'],15,-3,19,-7],'line-opacity':0.95}});
- if(!map.getLayer('project-stairs-treads'))map.addLayer({id:'project-stairs-treads',type:'line',source:sourceId,filter:['==',['get','kind'],'stair-tread'],layout:{'line-cap':'butt','line-elevation-reference':'ground'},paint:{'line-color':'#ddd8cf','line-width':['interpolate',['linear'],['zoom'],14,0.7,17,1.5,19,2.2],'line-opacity':1}});
- if(!map.getLayer('project-stairs-outline'))map.addLayer({id:'project-stairs-outline',type:'line',source:sourceId,filter:['==',['get','kind'],'stairs'],layout:{'line-cap':'round','line-join':'round','line-elevation-reference':'ground'},paint:{'line-color':'#5b626b','line-width':['interpolate',['linear'],['zoom'],13,1,16,4,19,7],'line-opacity':0.9}});
- const cache=new Map();
- const materialOf=p=>{
-  const raw=String(p.material||p['bridge:material']||p['material:bridge']||p['building:material']||p.surface||'').toLowerCase();
-  if(/wood|timber|wooden/.test(raw))return 'wood';
-  if(/steel|metal|iron/.test(raw))return 'steel';
-  if(/concrete|cement|reinforced/.test(raw))return 'concrete';
-  return 'unknown';
- };
- const lineParts=g=>g&&g.type==='LineString'?[g.coordinates]:g&&g.type==='MultiLineString'?g.coordinates:[];
- const keyOf=f=>String(f.id??f.properties?.osm_feature_id??f.properties?.osm_id??f.properties?.id??JSON.stringify(f.geometry?.coordinates||[]).slice(0,180));
- function extractBasemap(){
-  let tiles=[];try{tiles=map.querySourceFeatures('openmaptiles',{sourceLayer:'transportation'})||[];}catch(e){return;}
-  for(const f of tiles){
-   const g=f.geometry,p=f.properties||{},layer=f.layer||{},srcLayer=String(layer['source-layer']||f.sourceLayer||'');
-   if(!g||!['LineString','MultiLineString'].includes(g.type))continue;
-   const brunnel=String(p.brunnel||p.structure||'').toLowerCase();
-   const clazz=String(p.class||p.highway||'').toLowerCase();
-   const subclass=String(p.subclass||'').toLowerCase();
-   const isBridge=brunnel==='bridge'||p.bridge===true||String(p.bridge||'').toLowerCase()==='yes'||String(p['bridge:structure']||'')!=='';
-   const isStairs=clazz==='steps'||subclass==='steps'||String(p.highway||'').toLowerCase()==='steps'||String(p.ramp||'').toLowerCase()==='stairs';
-   if(!isBridge&&!isStairs)continue;
-   const mat=materialOf(p);
-   const key='basemap:'+srcLayer+':'+keyOf(f)+':'+(isBridge?'b':'s');
-   const props={...p,kind:isBridge?'bridge':'stairs',material_type:mat,source:'Basemap vector tiles',source_layer:srcLayer||'transportation',feature_id:key};
-   cache.set(key,{type:'Feature',id:key,geometry:g,properties:props});
-  }
- }
- function normalizeOsm(){
-  for(const f of (roadsData?.features||[])){
-   const p=f.properties||{},t=p.tags||{},g=f.geometry;
-   if(!g||!['LineString','MultiLineString'].includes(g.type))continue;
-   const bridge=String(t.bridge||p.bridge||'').toLowerCase();
-   const hw=String(t.highway||p.highway||'').toLowerCase();
-   const isBridge=bridge!==''&&bridge!=='no'||String(t.man_made||'').toLowerCase()==='bridge';
-   const isStairs=hw==='steps'||String(t.ramp||'').toLowerCase()==='stair';
-   if(!isBridge&&!isStairs)continue;
-   const merged={...p,...t};
-   const mat=materialOf(merged);
-   const id=String(p.osm_feature_id||p.id||t.id||keyOf(f));
-   const key='osm:'+id+':'+(isBridge?'b':'s');
-   cache.set(key,{type:'Feature',id:key,geometry:g,properties:{...merged,kind:isBridge?'bridge':'stairs',material_type:mat,source:'OSM project data',feature_id:id}});
-  }
- }
- function makeTreads(features){
-  const result=[];
-  const metersPerLon=111320*Math.cos(map.getCenter().lat*Math.PI/180),metersPerLat=111132;
-  for(const f of features){
-   if(f.properties?.kind!=='stairs')continue;
-   for(const line of lineParts(f.geometry)){
-    for(let i=1;i<line.length;i++){
-     const a=line[i-1],b=line[i],dx=(b[0]-a[0])*metersPerLon,dy=(b[1]-a[1])*metersPerLat,len=Math.hypot(dx,dy);
-     if(len<0.25)continue;
-     const nx=-dy/len,ny=dx/len,count=Math.min(180,Math.max(1,Math.floor(len/0.32)));
-     for(let j=0;j<=count;j++){
-      const t=j/count,lon=a[0]+(b[0]-a[0])*t,lat=a[1]+(b[1]-a[1])*t,half=0.52;
-      result.push({type:'Feature',id:'tread:'+f.id+':'+i+':'+j,geometry:{type:'LineString',coordinates:[[lon+nx*half/metersPerLon,lat+ny*half/metersPerLat],[lon-nx*half/metersPerLon,lat-ny*half/metersPerLat]]},properties:{kind:'stair-tread',source:f.properties.source||'OSM/Basemap',parent_id:f.id}});
-     }
-    }
-   }
-  }
-  return result;
- }
- let lastSignature='';
- function refresh(){
-  extractBasemap();normalizeOsm();
-  const features=[...cache.values()];
-  const treadFeatures=makeTreads(features);
-  const merged={type:'FeatureCollection',features:[...features,...treadFeatures]};
-  const sig=features.map(f=>String(f.id)).sort().join('|')+'#'+treadFeatures.length;
-  if(sig===lastSignature)return;
-  lastSignature=sig;
-  map.getSource(sourceId).setData(merged);
- }
- refresh();
- map.on('idle',refresh);
- map.on('moveend',refresh);
- setStatus('Bridge/stair extraction active: merging Basemap transportation features with OSM project data; bridge colors use tagged material, and stair treads are drawn where mapped stair lines exist.');
-}
-
-function bringRoadLayersToFront(){
- for(const id of ['visible-road-casing','visible-road-asphalt','visible-sidewalk-left','visible-sidewalk-right','visible-road-curb-left','visible-road-curb-right','project-roads-casing','project-roads','project-road-labels'])if(map.getLayer(id))map.moveLayer(id);
-}
-function addVisibleRoadAndSidewalkOverlays(data){
- if(!data||!Array.isArray(data.features)||!data.features.length)throw Error('OSM road network is empty; road/sidewalk overlays were not created.');
- const sourceId='visible-road-sidewalk-overlay';
- if(map.getLayer('visible-sidewalk-left'))map.removeLayer('visible-sidewalk-left');
- if(map.getLayer('visible-sidewalk-right'))map.removeLayer('visible-sidewalk-right');
- if(map.getLayer('visible-road-casing'))map.removeLayer('visible-road-casing');
- if(map.getLayer('visible-road-asphalt'))map.removeLayer('visible-road-asphalt');
- if(map.getLayer('visible-road-curb-left'))map.removeLayer('visible-road-curb-left');
- if(map.getLayer('visible-road-curb-right'))map.removeLayer('visible-road-curb-right');
- if(map.getSource(sourceId))map.removeSource(sourceId);
- map.addSource(sourceId,{type:'geojson',data:data});
- // Strong opaque road surfaces; screen widths are tuned for the zoom levels used in the game.
- const drivableFilter=['all',['has','highway'],['!',['in',['get','highway'],['literal',['footway','path','steps','corridor','pedestrian']]]]];
- const sidewalkFilter=['all',['has','highway'],['!',['in',['get','highway'],['literal',['motorway','motorway_link','trunk','trunk_link','footway','path','steps','corridor','pedestrian']]]],['!=',['get','sidewalk'],'no']];
- map.addLayer({id:'visible-road-casing',type:'line',source:sourceId,filter:drivableFilter,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#b8b2a7','line-width':['interpolate',['linear'],['zoom'],12,3,14,7,16,13,18,21,19,26],'line-opacity':1}});
- map.addLayer({id:'visible-road-asphalt',type:'line',source:sourceId,filter:drivableFilter,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#41474d','line-width':['interpolate',['linear'],['zoom'],12,2,14,5,16,10,18,17,19,21],'line-opacity':1}});
- // Estimated sidewalk strips are intentionally distinct from asphalt.
- const sideWidth=['interpolate',['linear'],['zoom'],12,1.2,14,2.5,16,4.5,18,7,19,8];
- const sideOffset=['interpolate',['linear'],['zoom'],12,2.5,14,5,16,9,18,15,19,19];
- for(const [id,offset] of [['visible-sidewalk-left',1],['visible-sidewalk-right',-1]]){
-  map.addLayer({id,type:'line',source:sourceId,filter:sidewalkFilter,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#e3ddd0','line-width':sideWidth,'line-offset':['*',offset,sideOffset],'line-opacity':1}});
- }
- for(const [id,offset] of [['visible-road-curb-left',1],['visible-road-curb-right',-1]]){
-  map.addLayer({id,type:'line',source:sourceId,filter:sidewalkFilter,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#777873','line-width':['interpolate',['linear'],['zoom'],13,0.8,16,1.5,19,2.2],'line-offset':['*',offset,['interpolate',['linear'],['zoom'],12,2.8,14,5.5,16,9.5,18,15.5,19,19.5]],'line-opacity':1}});
- }
- const visible=document.getElementById('roads')?.checked!==false;
- ['visible-sidewalk-left','visible-sidewalk-right','visible-road-casing','visible-road-asphalt','visible-road-curb-left','visible-road-curb-right'].forEach(id=>map.setLayoutProperty(id,'visibility',visible?'visible':'none'));
- bringRoadLayersToFront();
-}
-
-function addRoads(data){
- if(map.getLayer('project-roads-casing'))map.removeLayer('project-roads-casing');
- if(map.getLayer('project-roads'))map.removeLayer('project-roads');
- if(map.getSource('project-roads'))map.removeSource('project-roads');
- map.addSource('project-roads',{type:'geojson',data:data});
- map.addLayer({id:'project-roads-casing',type:'line',source:'project-roads',layout:{'line-elevation-reference':'ground'},paint:{'line-color':'#d9d3c8','line-width':['interpolate',['linear'],['zoom'],12,2,15,7,17,12,19,18],'line-opacity':0.96}});
- map.addLayer({id:'project-roads',type:'line',source:'project-roads',layout:{'line-elevation-reference':'ground'},paint:{'line-color':['match',['get','highway'],'motorway','#f05e46','trunk','#f0784f','primary','#ed9862','secondary','#e7b76e','tertiary','#f0d6a5','#8ba2b5'],'line-width':['interpolate',['linear'],['zoom'],12,1,15,4,17,7,19,11],'line-opacity':0.99}});
- map.addLayer({id:'project-road-labels',type:'symbol',source:'project-roads',minzoom:15.2,filter:['all',['has','name'],['!=',['get','name'],'']],layout:{'symbol-placement':'line','symbol-elevation-reference':'ground','text-field':['get','name'],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],15,10,18,13],'text-max-angle':35,'text-padding':4,'text-keep-upright':true},paint:{'text-color':'#273847','text-halo-color':'#fffaf0','text-halo-width':1.6,'text-halo-blur':0.4}});
- map.on('click','project-roads',e=>{const f=e.features&&e.features[0];if(f)new maplibregl.Popup().setLngLat(e.lngLat).setHTML(popupHtml(f.properties||{})).addTo(map)});
-}
-
-// Brand overlays are matched by real store coordinates to the building polygons
-// rendered by Liberty's live vector tiles. OSM IDs differ between tile schemas, so
-// do not rely on feature IDs being exposed consistently by the vector-tile provider.
-const brandTargets=[
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9818161,lat:14.5775371},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9798948,lat:14.5810136},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9814709,lat:14.5817069},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9804487,lat:14.5767385},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9811771,lat:14.5736793},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9806253,lat:14.5752391},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9806082,lat:14.5801527},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9837588,lat:14.5905333},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.989763,lat:14.5769223},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9796944,lat:14.5766164},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9823264,lat:14.5890294},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9825826,lat:14.5745395},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9862622,lat:14.5818841},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9812157,lat:14.577413},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9832055,lat:14.573986},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9809411,lat:14.5784554},
- {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.982569,lat:14.5794266},
- {brand:'Robinsons Manila',label:'ROBINSONS',color:'#d7d1c7',lon:120.9838040308,lat:14.5762581692}
-];
-function brandPointInRing(point,ring){
- let inside=false;const x=point[0],y=point[1];
- for(let i=0,j=ring.length-1;i<ring.length;j=i++){
-  const xi=ring[i][0],yi=ring[i][1],xj=ring[j][0],yj=ring[j][1];
-  if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi+1e-15)+xi))inside=!inside;
- }
- return inside;
-}
-function brandPointInGeometry(point,g){
- if(!g)return false;
- const polys=g.type==='Polygon'?[g.coordinates]:g.type==='MultiPolygon'?g.coordinates:[];
- return polys.some(poly=>poly.length&&brandPointInRing(point,poly[0])&&!poly.slice(1).some(r=>brandPointInRing(point,r)));
-}
-function updateBasemapBrandBuildings(){
- if(!map.isStyleLoaded()||!map.getSource('openmaptiles'))return;
- let tiles=[];try{tiles=map.querySourceFeatures('openmaptiles',{sourceLayer:'building'})||[];}catch(e){return;}
- const unique=new Map();
- for(const f of tiles){
-  if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
-  const p=f.properties||{},geom=f.geometry;
-  const coords=[];const walk=a=>{if(!Array.isArray(a))return;if(a.length>=2&&typeof a[0]==='number'&&typeof a[1]==='number')coords.push(a);else a.forEach(walk)};walk(geom.coordinates);
-  if(!coords.length)continue;
-  const center=[coords.reduce((s,c)=>s+c[0],0)/coords.length,coords.reduce((s,c)=>s+c[1],0)/coords.length];
-  const key=String(f.id??'')+'|'+center.map(n=>n.toFixed(6)).join(',');
-  if(!unique.has(key))unique.set(key,{f,center});
- }
- const buildings=[...unique.values()],matched=new Map(),used=new Set();
- const distance=(a,b)=>{const lat=(a[1]+b[1])*Math.PI/360;return Math.hypot((a[0]-b[0])*111320*Math.cos(lat),(a[1]-b[1])*110574);};
- for(const target of brandTargets){
-  const point=[target.lon,target.lat];
-  let candidates=buildings.filter(b=>brandPointInGeometry(point,b.f.geometry));
-  if(!candidates.length)candidates=buildings.filter(b=>distance(point,b.center)<=28).sort((a,b)=>distance(point,a.center)-distance(point,b.center)).slice(0,1);
-  for(const b of candidates){
-   const p=b.f.properties||{},id=String(b.f.id??'')+'|'+b.center.join(',');
-   // Avoid a nearby shop target repainting the same large tower twice.
-   if(used.has(id)&&target.brand==='7-Eleven')continue;
-   used.add(id);
-   const height=Number(p.render_height||p.height||p.height_m||12);
-   const k=target.brand+':'+id;
-   matched.set(k,{type:'Feature',id:k,geometry:b.f.geometry,properties:{brand:target.brand,label:target.label,color:target.color,height:Number.isFinite(height)&&height>2?height:12,base:Number(p.render_min_height||0)}});
-  }
- }
- const data={type:'FeatureCollection',name:'Brand overlays spatially matched to live Liberty building polygons',features:[...matched.values()]};
- const src=map.getSource('basemap-branded-building-overlays');if(src)src.setData(data);
- if(!src)return;
- if(!map.getLayer('basemap-branded-building-extrusions'))map.addLayer({id:'basemap-branded-building-extrusions',type:'fill-extrusion',source:'basemap-branded-building-overlays',paint:{'fill-extrusion-color':['get','color'],'fill-extrusion-height':['get','height'],'fill-extrusion-base':['get','base'],'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':false}});
- if(!map.getLayer('basemap-branded-building-signs'))map.addLayer({id:'basemap-branded-building-signs',type:'symbol',source:'basemap-branded-building-overlays',minzoom:14.8,layout:{'text-field':['get','label'],'text-font':['Open Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],15,10,18,19],'text-max-width':12,'text-allow-overlap':true,'text-ignore-placement':true},paint:{'text-color':['match',['get','brand'],'7-Eleven','#ffffff','#c92732'],'text-halo-color':['match',['get','brand'],'7-Eleven','#168641','#ffffff'],'text-halo-width':3}});
- if(matched.size)setStatus('Live building geometry matched by store location: '+[...matched.values()].filter(f=>f.properties.brand==='7-Eleven').length+' 7-Eleven building overlays and '+[...matched.values()].filter(f=>f.properties.brand==='Robinsons Manila').length+' Robinsons overlay(s).');
-}
-
-
-// Independent source comparison overlays. These do not replace or merge the source datasets.
-async function setupSourceComparisons(){
- const root='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/';
- async function loadJsonl(path,label){
-  const r=await fetch(root+path);if(!r.ok)throw Error(label+' HTTP '+r.status);
-  const raw=await r.text();const features=[];
-  for(const line of raw.split(/\r?\n/)){if(!line.trim())continue;try{const f=JSON.parse(line);if(f&&f.type==='Feature'&&f.geometry)features.push(f)}catch(e){}}
-  return {type:'FeatureCollection',features};
- }
- function addVisibilityHandler(id,layers,label){
-  const el=document.getElementById(id);
-  el.addEventListener('change',e=>{for(const layer of layers)if(map.getLayer(layer))map.setLayoutProperty(layer,'visibility',e.target.checked?'visible':'none');setStatus(label+(e.target.checked?' shown.':' hidden.'));});
- }
- try{
-  const data=await loadJsonl('ermita/maps/sources/openfreemap/layers/building.geojsonl','OpenFreeMap buildings');
-  map.addSource('openfreemap-cached-buildings',{type:'geojson',data});
-  map.addLayer({id:'openfreemap-cached-buildings-3d',type:'fill-extrusion',source:'openfreemap-cached-buildings',layout:{visibility:document.getElementById('ofmBuildings').checked?'visible':'none'},paint:{
-   'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'], '#b9c3ce'],
-   'fill-extrusion-height':['max',2,['coalesce',['to-number',['get','render_height']],['to-number',['get','height']],['*',['to-number',['get','render_min_height']],0],8]],
-   'fill-extrusion-base':['max',0,['coalesce',['to-number',['get','render_min_height']],0]],
-   'fill-extrusion-opacity':0.82
-  }});
-  map.addLayer({id:'openfreemap-cached-buildings-outline',type:'line',source:'openfreemap-cached-buildings',layout:{visibility:document.getElementById('ofmBuildings').checked?'visible':'none'},paint:{'line-color':'#1679cf','line-width':['interpolate',['linear'],['zoom'],13,0.6,17,1.6,19,2.2],'line-opacity':0.95}});
-  addVisibilityHandler('ofmBuildings',['openfreemap-cached-buildings-3d','openfreemap-cached-buildings-outline'],'OpenFreeMap cached building footprints');
-  setStatus('OpenFreeMap comparison loaded: '+data.features.length.toLocaleString()+' cached building features.');
- }catch(err){console.error('OpenFreeMap building comparison failed:',err);setStatus('OpenFreeMap building comparison failed to load: '+err.message);}
- try{
-  const data=await loadJsonl('ermita/maps/sources/openfreemap/layers/transportation.geojsonl','OpenFreeMap streets');
-  const features=data.features.filter(f=>['LineString','MultiLineString'].includes(f.geometry?.type));
-  map.addSource('openfreemap-cached-roads',{type:'geojson',data:{type:'FeatureCollection',features}});
-  map.addLayer({id:'openfreemap-cached-roads-casing',type:'line',source:'openfreemap-cached-roads',layout:{visibility:document.getElementById('ofmRoadCompare').checked?'visible':'none','line-cap':'round','line-join':'round'},paint:{'line-color':'#1d6fca','line-width':['interpolate',['linear'],['zoom'],12,1.4,15,3.5,18,7],'line-opacity':0.55}});
-  map.addLayer({id:'openfreemap-cached-roads-line',type:'line',source:'openfreemap-cached-roads',layout:{visibility:document.getElementById('ofmRoadCompare').checked?'visible':'none','line-cap':'round','line-join':'round'},paint:{'line-color':'#168bff','line-width':['interpolate',['linear'],['zoom'],12,0.7,15,1.7,18,4],'line-opacity':0.95}});
-  addVisibilityHandler('ofmRoadCompare',['openfreemap-cached-roads-casing','openfreemap-cached-roads-line'],'OpenFreeMap streets');
-  setStatus('OpenFreeMap street comparison loaded: '+features.length.toLocaleString()+' cached line features.');
- }catch(err){console.error('OpenFreeMap street comparison failed:',err);setStatus('OpenFreeMap street comparison failed to load: '+err.message);}
- try{
-  const r=await fetch(root+'ermita/maps/external/ermita-microsoft-road-detections.geojson');if(!r.ok)throw Error('Microsoft roads HTTP '+r.status);
-  const data=await r.json();const features=(data.features||[]).filter(f=>['LineString','MultiLineString'].includes(f.geometry?.type));
-  map.addSource('microsoft-road-detections',{type:'geojson',data:{type:'FeatureCollection',features}});
-  map.addLayer({id:'microsoft-road-detections-casing',type:'line',source:'microsoft-road-detections',layout:{visibility:document.getElementById('msRoadCompare').checked?'visible':'none','line-cap':'round','line-join':'round'},paint:{'line-color':'#9b32d7','line-width':['interpolate',['linear'],['zoom'],12,2,15,4.5,18,8],'line-opacity':0.55}});
-  map.addLayer({id:'microsoft-road-detections-line',type:'line',source:'microsoft-road-detections',layout:{visibility:document.getElementById('msRoadCompare').checked?'visible':'none','line-cap':'round','line-join':'round'},paint:{'line-color':'#d04cff','line-width':['interpolate',['linear'],['zoom'],12,0.8,15,2,18,4],'line-opacity':0.95}});
-  addVisibilityHandler('msRoadCompare',['microsoft-road-detections-casing','microsoft-road-detections-line'],'Microsoft road detections');
-  setStatus('Microsoft road comparison loaded: '+features.length.toLocaleString()+' line features.');
- }catch(err){console.error('Microsoft road comparison failed:',err);setStatus('Microsoft road comparison failed to load: '+err.message);}
-}
-
+(()=> {
+const $=id=>document.getElementById(id), status=$('status');
+const root='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/';
+const paths={
+ ofmB:'ermita/maps/sources/openfreemap/layers/building.geojsonl',
+ ofmR:'ermita/maps/sources/openfreemap/layers/transportation.geojsonl',
+ osmB:'ermita/maps/generated/ermita-building-footprints.geojson',
+ osmR:'ermita/maps/generated/ermita-road-network.geojson',
+ google:'ermita/maps/sources/google-open-buildings/google-open-buildings-v3-ermita.geojson',
+ microsoft:'ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson',
+ msRoad:'ermita/maps/external/ermita-microsoft-road-detections.geojson'
+};
+// This is the real shared data extent recorded in the repository source reports (WGS84 lon,lat).
+const sharedBounds=[[120.972,14.572],[120.994,14.593]];
+const districtBounds=[[120.965,14.555],[121.005,14.605]];
+const inBounds=(c,b=sharedBounds)=>Array.isArray(c)&&c.length>=2&&c[0]>=b[0][0]&&c[0]<=b[1][0]&&c[1]>=b[0][1]&&c[1]<=b[1][1];
+function walkCoords(g,out=[]){if(!g)return out;const visit=a=>{if(!Array.isArray(a))return;if(a.length>=2&&typeof a[0]==='number'&&typeof a[1]==='number')out.push(a);else a.forEach(visit)};visit(g.coordinates);return out}
+function centerOf(f){const cs=walkCoords(f.geometry);if(!cs.length)return null;let x=0,y=0;for(const c of cs){x+=c[0];y+=c[1]}return [x/cs.length,y/cs.length]}
+function clean(fc,b=sharedBounds){const seen=new Set(),features=[];for(const f of (fc.features||[])){if(!f.geometry)continue;const c=centerOf(f);if(!inBounds(c,b))continue;const key=f.geometry.type+':'+JSON.stringify(walkCoords(f).map(c=>c.map(v=>Number(v.toFixed(5)))));if(seen.has(key))continue;seen.add(key);features.push(f)}return {type:'FeatureCollection',features}}
+async function json(path){const r=await fetch(root+path);if(!r.ok)throw Error('HTTP '+r.status+' for '+path);return await r.json()}
+async function jsonl(path){const r=await fetch(root+path);if(!r.ok)throw Error('HTTP '+r.status+' for '+path);const raw=await r.text(),features=[];for(const line of raw.split(/\r?\n/)){if(!line.trim())continue;try{const f=JSON.parse(line);if(f.type==='Feature'&&f.geometry)features.push(f)}catch(e){}}return {type:'FeatureCollection',features}}
+const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[120.983,14.5825],zoom:15.2,pitch:58,bearing:-12,minZoom:12,maxZoom:20,maxBounds:districtBounds,antialias:true});
+map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-right');
+const state={loaded:{},errors:[]};
+function note(msg,isError=false){const all=[msg,...state.errors].join('\n');status.textContent=all;status.classList.toggle('error',isError||state.errors.length>0)}
+function addGeo(id,data){if(map.getSource(id))map.getSource(id).setData(data);else map.addSource(id,{type:'geojson',data})}
+function addFootprints(name,data,color,checked,extrude=false){const src=name+'-source',fill=name+'-fill',line=name+'-line';addGeo(src,data);if(extrude){map.addLayer({id:fill,type:'fill-extrusion',source:src,layout:{visibility:checked?'visible':'none'},paint:{'fill-extrusion-color':color,'fill-extrusion-height':['max',3,['coalesce',['to-number',['get','render_height']],['to-number',['get','height']],['*',['to-number',['get','building:levels']],3.2],6]],'fill-extrusion-base':['max',0,['coalesce',['to-number',['get','render_min_height']],0]],'fill-extrusion-opacity':0.72}})}else{map.addLayer({id:fill,type:'fill',source:src,layout:{visibility:checked?'visible':'none'},paint:{'fill-color':color,'fill-opacity':0.26,'fill-outline-color':color}})}map.addLayer({id:line,type:'line',source:src,layout:{visibility:checked?'visible':'none','line-join':'round'},paint:{'line-color':color,'line-width':['interpolate',['linear'],['zoom'],12,1.2,15,2.4,18,3.4],'line-opacity':1}});return [fill,line]}
+function addRoadLayer(name,data,color,checked,width=3){addGeo(name+'-source',data);map.addLayer({id:name+'-casing',type:'line',source:name+'-source',layout:{visibility:checked?'visible':'none','line-cap':'round','line-join':'round'},paint:{'line-color':'#06101a','line-width':['interpolate',['linear'],['zoom'],12,width+1.5,16,width+3,19,width+4],'line-opacity':0.95}});map.addLayer({id:name+'-line',type:'line',source:name+'-source',layout:{visibility:checked?'visible':'none','line-cap':'round','line-join':'round'},paint:{'line-color':color,'line-width':['interpolate',['linear'],['zoom'],12,width*.55,16,width,19,width*1.35],'line-opacity':1}});return [name+'-casing',name+'-line']}
+function bind(id,layers){$(id).addEventListener('change',e=>{for(const l of layers)if(map.getLayer(l))map.setLayoutProperty(l,'visibility',e.target.checked?'visible':'none');document.querySelector('#'+id).closest('.source')?.classList.toggle('active',e.target.checked)})}
+function lineFeatures(fc){return {type:'FeatureCollection',features:(fc.features||[]).filter(f=>['LineString','MultiLineString'].includes(f.geometry?.type))}}
+function polygonFeatures(fc){return {type:'FeatureCollection',features:(fc.features||[]).filter(f=>['Polygon','MultiPolygon'].includes(f.geometry?.type))}}
+function showError(label,e){state.errors.push(label+': '+(e.message||String(e)));note('Some layers did not load. Other sources remain available.')}
+async function loadOne(label,fn){try{const fc=await fn();state.loaded[label]=fc.features?.length||0;return fc}catch(e){showError(label,e);return {type:'FeatureCollection',features:[]}}}
 map.on('load',async()=>{
- setupSourceComparisons();
- try{
-  // Keep the complete Liberty/OpenStreetMap building coverage visible. The
-  // project's locally cached footprint GeoJSON is only a supplemental subset,
-  // so hiding every basemap building layer makes the city look clipped/incomplete.
-  const styleLayers=map.getStyle().layers||[];
-  baseBuildingLayerIds=styleLayers.filter(l=>/building/i.test((l.id||'')+' '+(l['source-layer']||''))).map(l=>l.id);
-  base3dLayerIds=styleLayers.filter(l=>/building/i.test((l.id||'')+' '+(l['source-layer']||''))&&(l.type==='fill-extrusion'||/3d|extrusion/i.test(l.id||''))).map(l=>l.id);
-  // Basemap buildings remain enabled on first load; the checkbox can still toggle
-  // the 3D extrusion layers without suppressing the 2D building coverage.
-  map.addSource('terrain-dem',{type:'raster-dem',tiles:['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});
-  map.setTerrain({source:'terrain-dem',exaggeration:1.15});
-  map.addSource('basemap-branded-building-overlays',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
-  map.on('idle',()=>{if(!basemapBrandRefreshQueued){basemapBrandRefreshQueued=true;updateBasemapBrandBuildings();basemapBrandRefreshQueued=false;}});
-  map.setSky({ 'sky-color':'#8dbbe2','sky-horizon-blend':0.5,'horizon-color':'#e8f1fa','horizon-fog-blend':0.2,'fog-color':'#dce8f3','fog-ground-blend':0.15,'atmosphere-blend':0.8});
-  // Load each dataset independently: a missing DPWH/buildings file must never suppress the road layer.
-  const empty={type:'FeatureCollection',features:[]};
-  async function loadGeoJSON(url,label){
-   try{const r=await fetch(url);if(!r.ok)throw Error(label+' HTTP '+r.status);return await r.json();}
-   catch(err){console.error(label+' failed:',err);return {...empty,loadError:String(err.message||err)};}
-  }
-  const [roadResult,buildingResult,surfaceResult,vegetationResult,googleBuildingResult,microsoftBuildingResult]=await Promise.all([
-   loadGeoJSON(base+'ermita-road-network.geojson','Road network'),
-   loadGeoJSON(base+'ermita-building-footprints.geojson','Building footprints'),
-   loadGeoJSON('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/external/dpwh-road-surface-type-ermita.geojson','DPWH road data'),
-   loadGeoJSON('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/sources/landcover/vegetation-grass-classes-ermita.geojson','ESA WorldCover vegetation'),
-   loadGeoJSON('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/sources/google-open-buildings/google-open-buildings-v3-ermita.geojson','Google Open Buildings v3'),
-   loadGeoJSON('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson','Microsoft satellite building footprints')
-  ]);
-  roadsData={type:'FeatureCollection',features:(roadResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
-  const sevenElevenFootprints=new Set(['way/308701704','way/90301215','way/267205333','way/103494320']);
-  buildingsData={type:'FeatureCollection',features:(buildingResult.features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']||String(f.properties?.osm_feature_id||'')==='way/48894714'))};
-  for(const f of buildingsData.features){
-   const p=f.properties||(f.properties={}),tags=p.tags||(p.tags={}),id=String(p.osm_feature_id||'');
-   if(sevenElevenFootprints.has(id)){
-    tags.name='7-Eleven';
-    tags.brand='7-Eleven';
-    tags['building:colour']='#168641';
-    tags['facade:brand']='7-Eleven';
-    tags['facade:style']='green fascia, orange-red-green horizontal bands, white 7-Eleven sign';
-   }
-   if(id==='way/48894714'){
-    tags.name='Robinsons Manila';
-    tags.shop='mall';
-    tags.building=tags.building||'retail';
-    tags['building:levels']=tags['building:levels']||'4';
-    tags.height=tags.height||'18';
-    tags['building:colour']='#d7d1c7';
-    tags['facade:brand']='Robinsons Manila';
-    tags['facade:style']='Robinsons Place Manila mall facade, light neutral cladding, red Robinsons signage';
-   }
-  }
-  osmBuildingsData=buildingsData;
-  // Reconcile this one photo-checked landmark against the current OSM feature ID, not a nearby guess.
-  const bocobo=buildingsData.features.find(f=>String(f.properties?.osm_feature_id||'')==='way/90123959');
-  if(bocobo){bocobo.properties.tags=bocobo.properties.tags||{};bocobo.properties.tags.name='Manila Residences Bocobo';bocobo.properties.tags['building:levels']='34';bocobo.properties.tags.height='102';bocobo.properties.tags['building:colour']='#e5d5bd';bocobo.properties.tags['facade:reference']='Photo reviewed: Philippine Realty Group listing';}
-  // Keep the original OSM dataset for attributes, then let live Basemap vector-tile geometry/heights replace the rendered building features.
-  normalizeBuildingHeights(buildingsData);
-  surfaceData={type:'FeatureCollection',features:(surfaceResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
-  try{
-   map.addSource('oam-park-orthophoto',{type:'image',url:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/external/openaerialmap/ermita-5b90f92da0d7280005fab355.jpg',coordinates:[[120.979060723937,14.596850060355752],[120.9843077431096,14.596850060355752],[120.9843077431096,14.59211535406543],[120.979060723937,14.59211535406543]]});
-   map.addLayer({id:'oam-park-orthophoto-layer',type:'raster',source:'oam-park-orthophoto',layout:{visibility:document.getElementById('oamPark').checked?'visible':'none'},paint:{'raster-opacity':0.94,'raster-resampling':'linear'}});
-  }catch(err){console.error('OpenAerialMap park orthophoto failed:',err);}
-  try{
-   map.addSource('esa-vegetation-source',{type:'geojson',data:vegetationResult});
-   map.addLayer({id:'esa-vegetation-fill',type:'fill',source:'esa-vegetation-source',paint:{'fill-color':['match',['get','class_name'],'grassland','#75b84f','tree_cover','#267448','shrubland','#6d9852','cropland','#b4a95b','herbaceous_wetland','#4d9b85','mangroves','#287b65','bare_sparse_vegetation','#b9a47a','#8bb36a'],'fill-opacity':['match',['get','class_name'],'grassland',0.78,'tree_cover',0.48,'shrubland',0.55,0.62],'fill-outline-color':'#315d36'}});
-   if(!document.getElementById('vegetation').checked)map.setLayoutProperty('esa-vegetation-fill','visibility','none');
-  }catch(err){console.error('ESA vegetation layer failed:',err);}
-  try{
-   map.addSource('local-srtm-hillshade',{type:'image',url:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/sources/terrain/srtm-1arcsec-ermita-hillshade.png',coordinates:[[120.972,14.593],[120.994,14.593],[120.994,14.572],[120.972,14.572]]});
-   map.addLayer({id:'local-srtm-hillshade-layer',type:'raster',source:'local-srtm-hillshade',layout:{visibility:document.getElementById('localHillshade').checked?'visible':'none'},paint:{'raster-opacity':0.34,'raster-resampling':'linear'}});
-  }catch(err){console.error('Local SRTM hillshade failed:',err);}
-  try{
-   map.addSource('google-open-buildings-source',{type:'geojson',data:googleBuildingResult});
-   map.addLayer({id:'google-open-buildings-fill',type:'fill',source:'google-open-buildings-source',layout:{visibility:document.getElementById('googleBuildings').checked?'visible':'none'},paint:{'fill-color':['case',['>=',['to-number',['get','confidence'],0],0.8],'#ffb000','#32d5c4'],'fill-opacity':0.10,'fill-outline-color':['case',['>=',['to-number',['get','confidence'],0],0.8],'#ffb000','#1e8f88']}});
-   map.addLayer({id:'google-open-buildings-outline',type:'line',source:'google-open-buildings-source',layout:{visibility:document.getElementById('googleBuildings').checked?'visible':'none'},paint:{'line-color':['case',['>=',['to-number',['get','confidence'],0],0.8],'#ff9e00','#087f78'],'line-width':['interpolate',['linear'],['zoom'],13,0.5,16,1.4,19,2.4],'line-opacity':0.9}});
-   map.on('click','google-open-buildings-fill',e=>{const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};new maplibregl.Popup().setLngLat(e.lngLat).setHTML('<div style="font:13px system-ui"><b>Google Open Buildings v3</b><div>Detection confidence: '+esc(p.confidence)+'</div><div>Estimated footprint area: '+esc(p.area_in_meters)+' m²</div><div>Source vintage: May 2023</div><div>Satellite-detected footprint only; not a measured building height or facade model.</div></div>').addTo(map)});
-  }catch(err){console.error('Google Open Buildings layer failed:',err);}
-  try{
-   map.addSource('microsoft-satellite-buildings-source',{type:'geojson',data:microsoftBuildingResult});
-   map.addLayer({id:'microsoft-satellite-buildings-fill',type:'fill',source:'microsoft-satellite-buildings-source',layout:{visibility:document.getElementById('microsoftBuildings').checked?'visible':'none'},paint:{'fill-color':'#bd70ff','fill-opacity':0.08,'fill-outline-color':'#a14de0'}});
-   map.addLayer({id:'microsoft-satellite-buildings-outline',type:'line',source:'microsoft-satellite-buildings-source',layout:{visibility:document.getElementById('microsoftBuildings').checked?'visible':'none'},paint:{'line-color':'#a14de0','line-width':['interpolate',['linear'],['zoom'],13,0.45,16,1.1,19,2],'line-opacity':0.88}});
-   map.on('click','microsoft-satellite-buildings-fill',e=>{const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};new maplibregl.Popup().setLngLat(e.lngLat).setHTML('<div style="font:13px system-ui"><b>Microsoft satellite-detected building footprint</b><div>Source feature ID: '+esc(p.source_feature_id||f.id||'not supplied')+'</div><div>Imagery vintage: 2016–2020</div><div>Source license: ODbL</div><div>Footprint only; no measured height or facade attributes are implied.</div></div>').addTo(map)});
-  }catch(err){console.error('Microsoft building footprint layer failed:',err);}
-  addRoads(roadsData);
-  // Create road/sidewalk overlays before optional 3D features so unrelated layer errors cannot hide them.
-  let roadOverlayError='';
-  try{addVisibleRoadAndSidewalkOverlays(roadsData);}catch(err){roadOverlayError=String(err.message||err);console.error('Road/sidewalk overlay failed:',err);}
-  if(buildingsData.features.length){addBuildings(buildingsData);}
-  if(surfaceData.features.length){try{addDpwRoadSurface(surfaceData);}catch(err){console.error('DPWH road surface layer failed:',err);}}
-  // Sync from the same OpenFreeMap vector-tile heights used by the visible basemap; retry as tiles load.
-  syncLocalHeightsFromBasemap();
-  applyTerrainAlignment();
-  map.once('idle',applyTerrainAlignment);
-  map.on('idle',()=>{syncLocalHeightsFromBasemap();applyTerrainAlignment();});
-  // Keep optional layers isolated: failure in a 3D mesh or bridge parser must not prevent road rendering.
-  for(const [label,fn] of [['landmarks',addLandmarks],['street mesh',()=>addStreetMesh(roadsData)],['satellite imagery',addSatelliteImagery],['bridges and stairs',addBridgeAndStairLayers]]){
-   try{fn();}catch(err){console.error(label+' failed:',err);}
-  }
-  // Apply the current checkbox states after asynchronous data loading, even if a user unchecked a layer early.
-  const setVisibility=(ids,visible)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visible?'visible':'none')});
-  setVisibility(['local-buildings-3d','local-building-labels','all-building-facade-textures'],document.getElementById('buildings').checked);
-  setVisibility(['streets-road-mesh'],document.getElementById('streets').checked);
-  bringRoadLayersToFront();
-  const errors=[roadResult.loadError,buildingResult.loadError,surfaceResult.loadError,vegetationResult.loadError,googleBuildingResult.loadError,microsoftBuildingResult.loadError].filter(Boolean);
-  setStatus(roadsData.features.length.toLocaleString()+' existing local road/path lines · '+buildingsData.features.length.toLocaleString()+' existing local building footprints · '+(googleBuildingResult.features||[]).length.toLocaleString()+' Google satellite-detected footprints · '+(microsoftBuildingResult.features||[]).length.toLocaleString()+' Microsoft satellite-detected footprints · '+surfaceData.features.length.toLocaleString()+' DPWH road-surface records'+(roadOverlayError?' · Road overlay error: '+roadOverlayError:'. Sidewalk strips are estimated from road centerlines where surveyed edges are unavailable.')+(errors.length?' · Some data sources failed; see console.':' · layers loaded'));
- }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
+ // Hide style-provided buildings initially: they must not be mistaken for a source comparison.
+ for(const l of (map.getStyle().layers||[])){if(/building/i.test(l.id+' '+(l['source-layer']||''))&&(l.type==='fill-extrusion'||l.type==='fill'))try{map.setLayoutProperty(l.id,'visibility','none')}catch{}}
+ const tasks=await Promise.all([
+ loadOne('OpenFreeMap buildings',()=>jsonl(paths.ofmB)),
+ loadOne('OpenFreeMap streets',()=>jsonl(paths.ofmR)),
+ loadOne('Project buildings',()=>json(paths.osmB)),
+ loadOne('Project streets',()=>json(paths.osmR)),
+ loadOne('Google Open Buildings',()=>json(paths.google)),
+ loadOne('Microsoft footprints',()=>json(paths.microsoft)),
+ loadOne('Microsoft roads',()=>json(paths.msRoad))
+ ]);
+ const [ofmB0,ofmR0,osmB0,osmR0,g0,m0,msr0]=tasks;
+ const ofmB=polygonFeatures(clean(ofmB0)),ofmR=lineFeatures(clean(ofmR0)),osmB=polygonFeatures(clean(osmB0)),osmR=lineFeatures(clean(osmR0)),google=polygonFeatures(clean(g0)),microsoft=polygonFeatures(clean(m0)),msRoad=lineFeatures(clean(msr0));
+ $('nOfmB').textContent=ofmB.features.length.toLocaleString();$('nOfmR').textContent=ofmR.features.length.toLocaleString();
+ const layers={};
+ layers.ofmB=addFootprints('ofm-buildings',ofmB,'#39c8ff',$('ofmBuildings').checked,true);
+ layers.osmB=addFootprints('osm-buildings',osmB,'#62e6a7',$('osmBuildings').checked,true);
+ layers.google=addFootprints('google-buildings',google,'#ffb52e',$('googleBuildings').checked,false);
+ layers.microsoft=addFootprints('microsoft-buildings',microsoft,'#cf85ff',$('microsoftBuildings').checked,false);
+ layers.ofmR=addRoadLayer('ofm-streets',ofmR,'#39c8ff',$('ofmRoads').checked,3.4);
+ layers.osmR=addRoadLayer('osm-streets',osmR,'#62e6a7',$('osmRoads').checked,2.5);
+ layers.msRoad=addRoadLayer('microsoft-streets',msRoad,'#cf85ff',$('microsoftRoads').checked,2.7);
+ for(const id of ['ofmBuildings','osmBuildings','googleBuildings','microsoftBuildings','ofmRoads','osmRoads','microsoftRoads'])bind(id,layers[({ofmBuildings:'ofmB',osmBuildings:'osmB',googleBuildings:'google',microsoftBuildings:'microsoft',ofmRoads:'ofmR',osmRoads:'osmR',microsoftRoads:'msRoad'})[id]]||[]);
+ // Basemap building toggle is separate from source data and stays off unless requested.
+ $('basemapBuildings').addEventListener('change',e=>{for(const l of (map.getStyle().layers||[])){if(/building/i.test(l.id+' '+(l['source-layer']||''))&&(l.type==='fill-extrusion'||l.type==='fill'))try{map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}catch{}}});
+ const roadLayers=[...layers.ofmR,...layers.osmR,...layers.msRoad];
+ $('imagery').addEventListener('change',e=>{const rasterId='satellite-context';if(e.target.checked&&!map.getLayer(rasterId)){map.addSource('satellite-context-source',{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,attribution:'Esri World Imagery'});map.addLayer({id:rasterId,type:'raster',source:'satellite-context-source',paint:{'raster-opacity':0.72}},(map.getStyle().layers||[]).find(l=>l.type==='symbol')?.id)}else if(map.getLayer(rasterId))map.setLayoutProperty(rasterId,'visibility',e.target.checked?'visible':'none')});
+ $('terrain').addEventListener('change',e=>{try{if(!map.getSource('terrain-source'))map.addSource('terrain-source',{type:'raster-dem',tiles:['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});map.setTerrain(e.target.checked?{source:'terrain-source',exaggeration:1.15}:null)}catch(err){showError('Terrain',err)}});
+ $('fitShared').onclick=()=>map.fitBounds(sharedBounds,{padding:45,duration:700});$('fitDistrict').onclick=()=>map.fitBounds(districtBounds,{padding:35,duration:700});let pitched=true;$('topView').onclick=()=>{pitched=!pitched;map.easeTo({pitch:pitched?58:0,bearing:pitched?-12:0,duration:650});$('topView').textContent=pitched?'Top / 3D view':'Return to 3D view'};
+ // Bring each source's outline layers above the basemap; transparent fills can never hide the footprint edges.
+ for(const id of ['ofm-buildings-fill','ofm-buildings-line','osm-buildings-fill','osm-buildings-line','google-buildings-fill','google-buildings-line','microsoft-buildings-fill','microsoft-buildings-line','ofm-streets-casing','ofm-streets-line','osm-streets-casing','osm-streets-line','microsoft-streets-casing','microsoft-streets-line'])if(map.getLayer(id))map.moveLayer(id);
+ const report=Object.entries(state.loaded).map(([k,v])=>k+': '+v.toLocaleString()).join('\n');
+ note(report+'\n\nOpenFreeMap source coverage is Ermita-focused, not full Malate. Data are filtered to the shared source area for a fair overlay.');map.fitBounds(sharedBounds,{padding:45,duration:0});
 });
-document.getElementById('imagery').addEventListener('change',e=>setSatelliteImagery(e.target.checked));
-document.getElementById('streets').addEventListener('change',e=>{if(map.getLayer('streets-road-mesh'))map.setLayoutProperty('streets-road-mesh','visibility',e.target.checked?'visible':'none');setStatus(e.target.checked?'Streets enabled: asphalt, terrazzo sidewalks and raised concrete curbs generated from the loaded OSM road network.':'Streets hidden.');});
-document.getElementById('landmarks').addEventListener('change',e=>['key-landmark-halo','key-landmark-dot','key-landmark-label'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
-document.getElementById('buildings').addEventListener('change',e=>{['local-buildings-3d','local-building-labels','all-building-facade-textures'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
-document.getElementById('basemap3d').addEventListener('change',e=>{base3dLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'Basemap 3D buildings enabled for comparison with OSM. Turn off OSM 3D buildings to inspect the basemap alone.':'Basemap 3D buildings hidden; OSM layer remains independently controlled.')});
-document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels','visible-sidewalk-left','visible-sidewalk-right','visible-road-casing','visible-road-asphalt','visible-road-curb-left','visible-road-curb-right'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'OSM road network enabled. Sidewalk and curb strips are estimates unless explicitly mapped.':'OSM road network, asphalt, estimated sidewalks and curbs hidden.');});
-document.getElementById('googleBuildings').addEventListener('change',e=>{['google-open-buildings-fill','google-open-buildings-outline'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});if(e.target.checked){if(map.getLayer('google-open-buildings-fill'))map.moveLayer('google-open-buildings-fill');if(map.getLayer('google-open-buildings-outline'))map.moveLayer('google-open-buildings-outline');}setStatus(e.target.checked?'Google Open Buildings v3 footprints enabled; orange outlines have confidence ≥ 0.80.':'Google building-footprint comparison hidden.');});
-document.getElementById('microsoftBuildings').addEventListener('change',e=>{['microsoft-satellite-buildings-fill','microsoft-satellite-buildings-outline'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});if(e.target.checked){if(map.getLayer('microsoft-satellite-buildings-fill'))map.moveLayer('microsoft-satellite-buildings-fill');if(map.getLayer('microsoft-satellite-buildings-outline'))map.moveLayer('microsoft-satellite-buildings-outline');}setStatus(e.target.checked?'Microsoft satellite-derived footprint layer enabled; outlines show building detections only.':'Microsoft building-footprint comparison hidden.');});
-document.getElementById('oamPark').addEventListener('change',e=>{if(map.getLayer('oam-park-orthophoto-layer'))map.setLayoutProperty('oam-park-orthophoto-layer','visibility',e.target.checked?'visible':'none');setStatus(e.target.checked?'Licensed 5 cm OpenAerialMap orthophoto shown for the north-edge park coverage only.':'OpenAerialMap park orthophoto hidden.');});
-document.getElementById('localHillshade').addEventListener('change',e=>{if(map.getLayer('local-srtm-hillshade-layer'))map.setLayoutProperty('local-srtm-hillshade-layer','visibility',e.target.checked?'visible':'none');setStatus(e.target.checked?'Local SRTM-derived hillshade overlay enabled.':'Local SRTM hillshade hidden.');});
-document.getElementById('vegetation').addEventListener('change',e=>{if(map.getLayer('esa-vegetation-fill'))map.setLayoutProperty('esa-vegetation-fill','visibility',e.target.checked?'visible':'none');setStatus(e.target.checked?'ESA WorldCover vegetation overlay enabled (10 m, 2021).':'Grass / vegetation overlay hidden.');});
-document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null);terrainAlignmentSignature='';map.once('idle',applyTerrainAlignment);setStatus(e.target.checked?'Terrain enabled; aligning building bases and road surfaces to ground elevation…':'Terrain disabled; resetting building bases to flat ground…')}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
-document.getElementById('labels').addEventListener('change',e=>{if(map.getLayer('local-building-labels'))map.setLayoutProperty('local-building-labels','visibility',e.target.checked?'visible':'none')});
-document.getElementById('sun').addEventListener('click',()=>{golden=!golden;try{map.setLight({anchor:'viewport',position:golden?[1.2,210,35]:[1.2,45,75],color:golden?'#ffe0ad':'#ffffff',intensity:golden?0.45:0.8});document.getElementById('sun').textContent=golden?'Golden-hour light':'Neutral daylight'}catch(err){setStatus('Lighting controls are not supported by this map style.')}});
-document.getElementById('tilt').addEventListener('click',()=>{tilted=!tilted;map.easeTo({pitch:tilted?62:0,bearing:tilted?-18:0,duration:900})});
-document.getElementById('reset').addEventListener('click',()=>map.fitBounds(projectBounds,{padding:24,maxZoom:15.5,pitch:62,bearing:-18,duration:1200}));
+map.on('error',e=>{if(e?.error?.message)console.warn('Map layer/network error:',e.error.message)});
 })();
 </script>
-</body>
-</html>
+</body></html>
