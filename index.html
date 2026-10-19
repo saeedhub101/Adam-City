@@ -16,7 +16,8 @@
 <label><input id="imagery" type="checkbox"> Satellite imagery</label>
 <label><input id="landmarks" type="checkbox" checked> Key landmarks</label>
 <label><input id="streets" type="checkbox" checked> Streets</label>
-<label><input id="buildings" type="checkbox" checked> OSM 3D buildings</label>
+<label><input id="buildings" type="checkbox" checked> Existing 3D buildings</label>
+<label><input id="googleBuildings" type="checkbox"> Google building footprints</label>
 <label><input id="basemap3d" type="checkbox" checked> Basemap 3D buildings</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
 <label><input id="terrain" type="checkbox" checked> 3D terrain</label>
@@ -779,11 +780,12 @@ map.on('load',async()=>{
    try{const r=await fetch(url);if(!r.ok)throw Error(label+' HTTP '+r.status);return await r.json();}
    catch(err){console.error(label+' failed:',err);return {...empty,loadError:String(err.message||err)};}
   }
-  const [roadResult,buildingResult,surfaceResult,vegetationResult]=await Promise.all([
+  const [roadResult,buildingResult,surfaceResult,vegetationResult,googleBuildingResult]=await Promise.all([
    loadGeoJSON(base+'ermita-road-network.geojson','Road network'),
    loadGeoJSON(base+'ermita-building-footprints.geojson','Building footprints'),
    loadGeoJSON('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/external/dpwh-road-surface-type-ermita.geojson','DPWH road data'),
-   loadGeoJSON('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/sources/landcover/vegetation-grass-classes-ermita.geojson','ESA WorldCover vegetation')
+   loadGeoJSON('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/sources/landcover/vegetation-grass-classes-ermita.geojson','ESA WorldCover vegetation'),
+   loadGeoJSON('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/sources/google-open-buildings/google-open-buildings-v3-ermita.geojson','Google Open Buildings v3')
   ]);
   roadsData={type:'FeatureCollection',features:(roadResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   const sevenElevenFootprints=new Set(['way/308701704','way/90301215','way/267205333','way/103494320']);
@@ -820,6 +822,12 @@ map.on('load',async()=>{
    map.addLayer({id:'esa-vegetation-fill',type:'fill',source:'esa-vegetation-source',paint:{'fill-color':['match',['get','class_name'],'grassland','#75b84f','tree_cover','#267448','shrubland','#6d9852','cropland','#b4a95b','herbaceous_wetland','#4d9b85','mangroves','#287b65','bare_sparse_vegetation','#b9a47a','#8bb36a'],'fill-opacity':['match',['get','class_name'],'grassland',0.78,'tree_cover',0.48,'shrubland',0.55,0.62],'fill-outline-color':'#315d36'}});
    if(!document.getElementById('vegetation').checked)map.setLayoutProperty('esa-vegetation-fill','visibility','none');
   }catch(err){console.error('ESA vegetation layer failed:',err);}
+  try{
+   map.addSource('google-open-buildings-source',{type:'geojson',data:googleBuildingResult});
+   map.addLayer({id:'google-open-buildings-fill',type:'fill',source:'google-open-buildings-source',layout:{visibility:document.getElementById('googleBuildings').checked?'visible':'none'},paint:{'fill-color':['case',['>=',['to-number',['get','confidence'],0],0.8],'#ffb000','#32d5c4'],'fill-opacity':0.10,'fill-outline-color':['case',['>=',['to-number',['get','confidence'],0],0.8],'#ffb000','#1e8f88']}});
+   map.addLayer({id:'google-open-buildings-outline',type:'line',source:'google-open-buildings-source',layout:{visibility:document.getElementById('googleBuildings').checked?'visible':'none'},paint:{'line-color':['case',['>=',['to-number',['get','confidence'],0],0.8],'#ff9e00','#087f78'],'line-width':['interpolate',['linear'],['zoom'],13,0.5,16,1.4,19,2.4],'line-opacity':0.9}});
+   map.on('click','google-open-buildings-fill',e=>{const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};new maplibregl.Popup().setLngLat(e.lngLat).setHTML('<div style="font:13px system-ui"><b>Google Open Buildings v3</b><div>Detection confidence: '+esc(p.confidence)+'</div><div>Estimated footprint area: '+esc(p.area_in_meters)+' m²</div><div>Source vintage: May 2023</div><div>Satellite-detected footprint only; not a measured building height or facade model.</div></div>').addTo(map)});
+  }catch(err){console.error('Google Open Buildings layer failed:',err);}
   addRoads(roadsData);
   // Create road/sidewalk overlays before optional 3D features so unrelated layer errors cannot hide them.
   let roadOverlayError='';
@@ -840,7 +848,7 @@ map.on('load',async()=>{
   setVisibility(['local-buildings-3d','local-building-labels','all-building-facade-textures'],document.getElementById('buildings').checked);
   setVisibility(['streets-road-mesh'],document.getElementById('streets').checked);
   bringRoadLayersToFront();
-  const errors=[roadResult.loadError,buildingResult.loadError,surfaceResult.loadError,vegetationResult.loadError].filter(Boolean);
+  const errors=[roadResult.loadError,buildingResult.loadError,surfaceResult.loadError,vegetationResult.loadError,googleBuildingResult.loadError].filter(Boolean);
   setStatus(roadsData.features.length.toLocaleString()+' OSM road/path lines · '+buildingsData.features.length.toLocaleString()+' OSM building footprints · '+surfaceData.features.length.toLocaleString()+' DPWH road-surface records'+(roadOverlayError?' · Road overlay error: '+roadOverlayError:'. Sidewalk strips are estimated from road centerlines where surveyed edges are unavailable.')+(errors.length?' · Some data sources failed; see console.':' · layers loaded'));
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
 });
@@ -850,6 +858,7 @@ document.getElementById('landmarks').addEventListener('change',e=>['key-landmark
 document.getElementById('buildings').addEventListener('change',e=>{['local-buildings-3d','local-building-labels','all-building-facade-textures'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('basemap3d').addEventListener('change',e=>{base3dLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'Basemap 3D buildings enabled for comparison with OSM. Turn off OSM 3D buildings to inspect the basemap alone.':'Basemap 3D buildings hidden; OSM layer remains independently controlled.')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels','visible-sidewalk-left','visible-sidewalk-right','visible-road-casing','visible-road-asphalt','visible-road-curb-left','visible-road-curb-right'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'OSM road network enabled. Sidewalk and curb strips are estimates unless explicitly mapped.':'OSM road network, asphalt, estimated sidewalks and curbs hidden.');});
+document.getElementById('googleBuildings').addEventListener('change',e=>{['google-open-buildings-fill','google-open-buildings-outline'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'Google Open Buildings v3 footprints enabled; orange outlines have confidence ≥ 0.80.':'Google building-footprint comparison hidden.');});
 document.getElementById('vegetation').addEventListener('change',e=>{if(map.getLayer('esa-vegetation-fill'))map.setLayoutProperty('esa-vegetation-fill','visibility',e.target.checked?'visible':'none');setStatus(e.target.checked?'ESA WorldCover vegetation overlay enabled (10 m, 2021).':'Grass / vegetation overlay hidden.');});
 document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null);terrainAlignmentSignature='';map.once('idle',applyTerrainAlignment);setStatus(e.target.checked?'Terrain enabled; aligning building bases and road surfaces to ground elevation…':'Terrain disabled; resetting building bases to flat ground…')}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
 document.getElementById('labels').addEventListener('change',e=>{if(map.getLayer('local-building-labels'))map.setLayoutProperty('local-building-labels','visibility',e.target.checked?'visible':'none')});
