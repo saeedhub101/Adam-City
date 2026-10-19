@@ -1,13 +1,15 @@
-# OpenFreeMap / OpenMapTiles — layer catalogue
+# OpenFreeMap / OpenMapTiles — incremental layer catalogue
 
 - Area: Ermita, Fifth District, Manila, Capital District, Metro Manila, 1000, Philippines
+- Source maximum zoom: 14; effective requested maximum: 14
+- Import mode: incremental; valid local PBF files are reused and never downloaded again.
+- Existing GeoJSONL layer files are preserved; records are appended only for newly downloaded valid tiles.
 - Raw tiles: vector-tiles/{z}/{x}/{y}.pbf
-- Decoded layer records: one GeoJSON Feature per line; geometry coordinates are WGS84 longitude/latitude.
-- Every record includes _source.tile and _source.layer so it can be traced to the original PBF tile.
-- Tile coordinates and exact source URL are recorded in source-metadata.json and tile-index.json.
+- Decoded records: one GeoJSON Feature per line; coordinates are WGS84 longitude/latitude.
+- Every record includes _source.tile and _source.layer to trace it to the original PBF tile.
 - Attribution: OpenFreeMap © OpenMapTiles Data from OpenStreetMap.
 
-| Layer | Features extracted | File |
+| Layer | Total features in repository | File |
 |---|---:|---|
 | aerodrome_label | 7 | layers/aerodrome_label.geojsonl |
 | aeroway | 281 | layers/aeroway.geojsonl |
@@ -26,10 +28,12 @@
 | water_name | 41 | layers/water_name.geojsonl |
 | waterway | 541 | layers/waterway.geojsonl |
 
-## Notes
+## Incremental import report
 
-- Raw PBF tiles are retained unchanged for exact reprocessing.
-- Tile coverage is the rectangular bounding box returned for Ermita; boundary geometry is saved separately.
+- Existing valid tiles reused: 9
+- New valid tiles downloaded: 0
+- Unsupported zoom tiles skipped: 34
+- Empty/failed tiles: 0
+- Review import-report.json and tile-index.json for per-tile status.
+- To retry previously empty tiles intentionally, set RETRY_EMPTY_TILES=1.
 - Vector tiles are zoom-dependent generalized map data, not a complete raw OpenStreetMap database.
-- If a layer has zero features, its file is still present and the zero count is recorded.
-- Review import-report.json for errors and tile-index.json for each tile status.

@@ -15,11 +15,15 @@
     120.9710994,
     120.9930963
   ],
-  "min_zoom": 10,
-  "max_zoom": 16,
+  "requested_zoom_range": [
+    10,
+    16
+  ],
+  "source_maxzoom": 14,
+  "effective_maxzoom": 14,
   "tile_count_planned": 43,
   "tile_limit": 3000,
-  "download_limit_bytes": 52428800,
+  "download_limit_bytes_per_run": 52428800,
   "layers": [
     "aerodrome_label",
     "aeroway",
@@ -38,5 +42,5 @@
     "water_name",
     "waterway"
   ],
-  "retrieved_utc": "2026-10-19T17:30:51Z"
+  "retrieved_utc": "2026-10-19T17:37:37Z"
 }

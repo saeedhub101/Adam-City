@@ -2,14 +2,18 @@
   "source": "OpenFreeMap / OpenMapTiles",
   "area": "Ermita, Fifth District, Manila, Capital District, Metro Manila, 1000, Philippines",
   "tile_template": "https://tiles.openfreemap.org/planet/20261011_080001_pt/{z}/{x}/{y}.pbf",
-  "zoom_range": [
+  "requested_zoom_range": [
     10,
     16
   ],
+  "source_maxzoom": 14,
+  "effective_maxzoom": 14,
   "planned_tiles": 43,
-  "downloaded_tiles": 43,
-  "empty_tiles": 0,
-  "total_pbf_bytes": 2438222,
+  "existing_tiles_reused": 9,
+  "new_tiles_downloaded": 0,
+  "empty_or_failed_tiles": 0,
+  "unsupported_zoom_tiles": 34,
+  "new_pbf_bytes": 0,
   "layer_feature_counts": {
     "aerodrome_label": 7,
     "aeroway": 281,
@@ -47,6 +51,8 @@
     "waterway": "ermita/maps/sources/openfreemap/layers/waterway.geojsonl"
   },
   "errors": [],
+  "incremental_mode": true,
+  "retry_empty_tiles_enabled": false,
   "raw_tile_index": "tile-index.json",
-  "retrieved_utc": "2026-10-19T17:30:55Z"
+  "retrieved_utc": "2026-10-19T17:37:38Z"
 }
