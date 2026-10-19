@@ -25,16 +25,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Verify index.html exists
-        run: test -f index.html
+      - name: Prepare only the homepage
+        run: |
+          test -f index.html
+          mkdir -p site
+          cp index.html site/index.html
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload site files
+      - name: Upload homepage artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: site
 
       - name: Deploy to GitHub Pages
         id: deployment
