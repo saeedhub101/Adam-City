@@ -378,10 +378,10 @@ function addBuildings(data){
        '#c8bfb3']],
     // Match OpenMapTiles/Liberty height fallback: height, then levels × 3.66 m, then 5 m.
     // This keeps local OSM extrusions much closer to the Basemap when source tags are missing.
-    'fill-extrusion-height':['max',2,['ceil',['coalesce',
+    'fill-extrusion-height':['case',['==',['get','osm_feature_id'],'way/90123959'],102,['max',2,['ceil',['coalesce',
       ['to-number',['get','height',['get','tags']]],
       ['*',['to-number',['get','building:levels',['get','tags']]],3.66],
-      5]]],
+      5]]]],
     'fill-extrusion-base':['max',0,['floor',['coalesce',
       ['to-number',['get','min_height',['get','tags']]],
       ['*',['to-number',['get','min_level',['get','tags']]],3.66],
