@@ -373,7 +373,6 @@ function addTexturedBuildingMeshes(data,roadNetwork){
    const sun=new THREE.DirectionalLight(0xffffff,1.8);sun.position.set(-80,-100,180);this.scene.add(sun);
    this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});this.renderer.autoClear=false;
    const add=(positions,color,roughness=0.78)=>{if(!positions.length)return;const m=new THREE.Mesh(geom(positions),new THREE.MeshStandardMaterial({color,roughness,metalness:0.02,side:THREE.DoubleSide}));m.frustumCulled=false;this.scene.add(m);};
-   add(windowPos,0x172a3a,.24);
    add(trimPos,0xf0e7d6,.68);
    add(bandPos,0xc96b42,.62);
    add(balconyPos,0xe6dfd0,.8);
