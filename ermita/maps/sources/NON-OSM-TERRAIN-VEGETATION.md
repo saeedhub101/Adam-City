@@ -40,8 +40,17 @@ New import jobs do not query OpenStreetMap. Existing project files and the curre
 
 ## Additional independent building source under import
 
-- Microsoft/Bing satellite-derived Philippines footprints are being processed separately from Google Open Buildings v3.
-- The source archive is about 1.1 GB compressed for the entire Philippines, so the workflow keeps it in temporary CI storage and writes only polygons intersecting the Ermita/Rizal Park project bounds into `sources/microsoft-satellite-buildings/`.
+- Microsoft/Bing satellite-derived Philippines footprints have been imported separately from Google Open Buildings v3.
+- The source archive was 1,189,283,353 bytes compressed for the entire Philippines. It stayed in temporary CI storage; only **1,765 polygons** intersecting the Ermita/Rizal Park project bounds were committed under `sources/microsoft-satellite-buildings/` (about 1.04 MB).
 - The original retired importer remains untouched; this is a separate, area-clipped import path. The new source is independent of OSM data, although Microsoft licenses the database under ODbL.
 - Dataset information and license: https://github.com/microsoft/IdMyPhBuildingFootprints
 
+
+
+## Cross-source building identity audit
+
+- A spatial crosswalk was generated at `ermita/maps/qa/non-osm-building-footprint-crosswalk.csv`.
+- Matching used polygon intersection-over-union of at least 0.25 and centroid separation no greater than 18 m.
+- Current audit: **1,032 probable Google/Microsoft matches**, **6,411 Google-only or geometry-conflict detections**, and **733 Microsoft-only or geometry-conflict detections**.
+- These are candidate identity matches, not a declaration that either geometry is always correct. Both original source files remain unchanged, and the crosswalk records disagreements rather than replacing one footprint with the other.
+- Full report: `ermita/maps/qa/non-osm-building-footprint-reconciliation-report.json`.
