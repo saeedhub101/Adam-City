@@ -1,59 +1,16 @@
-name: Restore Ermita building footprints from saved artifact
+name: RETIRED — Microsoft footprint artifact restore
 
 on:
   workflow_dispatch:
-    inputs:
-      run_id:
-        description: 'Workflow run ID containing the artifact ermita-microsoft-building-footprints'
-        required: true
-        type: string
 
 permissions:
-  actions: read
-  contents: write
-
-concurrency:
-  group: ermita-restore-building-footprints
-  cancel-in-progress: false
+  contents: read
 
 jobs:
-  restore:
+  retired:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out main
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 0
-      - name: Download the already-created building footprint artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ermita-microsoft-building-footprints
-          repository: saeedhub101/Adam-City
-          run-id: ${{ inputs.run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path: restored-artifact
-      - name: Put artifact files into the repository and push to main
-        shell: bash
+      - name: Confirm source is disabled
         run: |
-          set -euo pipefail
-          DEST="ermita/maps/external"
-          mkdir -p "$DEST"
-          DATA="$(find restored-artifact -type f -name 'ermita-microsoft-building-footprints.geojsonl.gz' -print -quit)"
-          REPORT="$(find restored-artifact -type f -name 'microsoft-building-footprints-import-report.json' -print -quit || true)"
-          test -n "$DATA"
-          cp "$DATA" "$DEST/ermita-microsoft-building-footprints.geojsonl.gz"
-          if [ -n "$REPORT" ]; then cp "$REPORT" "$DEST/microsoft-building-footprints-import-report.json"; fi
-          ls -lh "$DEST/ermita-microsoft-building-footprints.geojsonl.gz"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "$DEST/ermita-microsoft-building-footprints.geojsonl.gz"
-          if [ -f "$DEST/microsoft-building-footprints-import-report.json" ]; then git add "$DEST/microsoft-building-footprints-import-report.json"; fi
-          if git diff --cached --quiet; then
-            echo "Artifact contents already match main."
-            exit 0
-          fi
-          git commit -m "Restore Ermita building footprints from saved workflow artifact"
-          git fetch origin main
-          git rebase origin/main
-          git push origin HEAD:main
+          echo "Microsoft footprint restoration is retired by project decision."
+          echo "This workflow will not retrieve artifacts or restore deleted data."
