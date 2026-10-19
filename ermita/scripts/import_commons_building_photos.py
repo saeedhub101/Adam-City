@@ -44,9 +44,20 @@ def safe_name(value: str) -> str:
     return value[:90] or "commons-image"
 
 def api(params):
-    response = SESSION.get(API, params={"format": "json", **params}, timeout=45)
-    response.raise_for_status()
-    return response.json()
+    last_error = None
+    for attempt in range(4):
+        response = SESSION.get(API, params={"format": "json", **params}, timeout=45)
+        if response.status_code == 429 and attempt < 3:
+            try:
+                wait = float(response.headers.get("Retry-After", 2 ** (attempt + 1)))
+            except Exception:
+                wait = 2 ** (attempt + 1)
+            time.sleep(min(max(wait, 2), 20))
+            last_error = RuntimeError("Wikimedia Commons rate limit (429); retrying")
+            continue
+        response.raise_for_status()
+        return response.json()
+    raise last_error or RuntimeError("Wikimedia Commons query failed after retries")
 
 def title_matches(query: str, title: str) -> bool:
     """Reject Commons search spillover whose file title does not name the target."""
@@ -93,9 +104,16 @@ def main():
         except Exception:
             pass
 
+    # Skip queries that already have saved images; only search new/unresolved targets.
+    completed_queries = {
+        item.get("query") for item in existing.values()
+        if item.get("query") and item.get("local_path") and (ROOT / item["local_path"]).is_file()
+    }
     found = {}
     errors = []
     for query, match_type in QUERIES:
+        if query in completed_queries:
+            continue
         try:
             data = api({
                 "action": "query",
@@ -145,7 +163,7 @@ def main():
                         "match_type": match_type,
                         "download_status": "pending",
                     }
-            time.sleep(0.15)
+            time.sleep(1.2)
         except Exception as exc:
             errors.append({"query": query, "error": str(exc)[:300]})
 
@@ -155,7 +173,11 @@ def main():
     for item in ordered[:24]:
         old = existing.get(item["commons_page"])
         if old and old.get("local_path") and (ROOT / old["local_path"]).is_file():
+            new_query = item.get("query")
+            new_match_type = item.get("match_type")
             item.update(old)
+            item["query"] = new_query
+            item["match_type"] = new_match_type
             item["download_status"] = "already_saved"
             images.append(item)
             continue
@@ -196,6 +218,32 @@ def main():
         if page not in selected and item.get("local_path") and (ROOT / item["local_path"]).is_file():
             images.append(item)
 
+    # Correctly label older catalog entries whose previous broad search query
+    # accidentally associated them with an unrelated place. Keep every file.
+    for item in images:
+        title = str(item.get("title", "")).lower()
+        original_type = item.get("match_type", "unverified")
+        item.setdefault("original_search_match_type", original_type)
+        if any(term in title for term in ("bayambang", "basista", "san carlos city", "cebu waterfront", "compania maritima")):
+            item["match_type"] = "nonlocal_reference"
+            item["location_status"] = "outside_target_area"
+            item["use_as_target_facade_reference"] = False
+            item["location_note"] = "Image is from another Philippine city/area; retained in the library but must not be assigned to an Ermita/Malate building."
+        elif "intramuros" in title or "metropolitan theater" in title or "manila city hall" in title:
+            item["match_type"] = "manila_context_reference"
+            item["location_status"] = "outside_or_unverified_target_area"
+            item["use_as_target_facade_reference"] = False
+            item["location_note"] = "Manila-context architecture reference, not a verified facade match inside the current project AOI."
+        elif any(term in title for term in ("ermita", "malate", "philippine general hospital", "pgh cancer institute", "national museum of the philippines", "university of the philippines manila", "up manila")):
+            item["location_status"] = "likely_target_area_candidate"
+            item["use_as_target_facade_reference"] = True
+            item["exact_building_identity_verified"] = False
+            item["location_note"] = "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
+        else:
+            item["location_status"] = "unverified"
+            item["use_as_target_facade_reference"] = False
+            item["location_note"] = "Location/building identity has not been verified for the project AOI."
+
     catalog = {
         "project": "Adam-City",
         "area": "Ermita and Malate, Manila, Philippines",
@@ -206,7 +254,7 @@ def main():
         "image_count": len(images),
         "downloaded_this_run": sum(x.get("download_status") == "downloaded" for x in images),
         "errors": errors,
-        "matching_note": "building_candidate means the search query names a candidate building/landmark, not that visual identity has been independently verified. area_reference is neighborhood-level only. Verify each image before using it as a texture.",
+        "matching_note": "Every image is retained with license metadata. location_status and use_as_target_facade_reference separate likely local candidates from nearby-city or nonlocal reference images. No image is automatically projected onto a facade.",
         "images": images,
     }
     CATALOG.parent.mkdir(parents=True, exist_ok=True)
