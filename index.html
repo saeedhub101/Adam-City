@@ -611,7 +611,7 @@ function addDpwRoadSurface(data){
  if(map.getLayer('dpwh-road-surface-data'))map.removeLayer('dpwh-road-surface-data');
  if(map.getSource('dpwh-road-surface-data'))map.removeSource('dpwh-road-surface-data');
  map.addSource('dpwh-road-surface-data',{type:'geojson',data:data});
- map.addLayer({id:'dpwh-road-surface-data',type:'line',source:'dpwh-road-surface-data',layout:{'line-elevation-reference':'ground'},paint:{'line-color':'#64748b','line-width':8,'line-opacity':0.025}});
+ map.addLayer({id:'dpwh-road-surface-data',type:'line',source:'dpwh-road-surface-data',layout:{'line-cap':'round','line-join':'round','line-elevation-reference':'ground'},paint:{'line-color':'#d0a15c','line-width':['interpolate',['linear'],['zoom'],13,1,16,2,19,3],'line-opacity':0.58,'line-dasharray':[2,1]}});
  map.on('click','dpwh-road-surface-data',e=>{
   const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};
   const date=v=>{const n=Number(v);return n>0?new Date(n).toLocaleDateString():''};
@@ -729,6 +729,7 @@ function addBridgeAndStairLayers(){
 }
 
 function addVisibleRoadAndSidewalkOverlays(data){
+ if(!data||!Array.isArray(data.features)||!data.features.length)throw Error('OSM road network is empty; road/sidewalk overlays were not created.');
  const sourceId='visible-road-sidewalk-overlay';
  if(map.getLayer('visible-sidewalk-left'))map.removeLayer('visible-sidewalk-left');
  if(map.getLayer('visible-sidewalk-right'))map.removeLayer('visible-sidewalk-right');
@@ -741,17 +742,19 @@ function addVisibleRoadAndSidewalkOverlays(data){
  const width=['interpolate',['linear'],['zoom'],12,2.5,14,4.5,16,8,18,14,19,18];
  // Keep these visible MapLibre layers above custom Three.js meshes: the custom mesh had been
  // inserted later in the style and could visually cover the older road centerline layers.
- map.addLayer({id:'visible-road-casing',type:'line',source:sourceId,layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#c9c2b5','line-width':width,'line-opacity':1}});
- map.addLayer({id:'visible-road-asphalt',type:'line',source:sourceId,layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#555b61','line-width':['interpolate',['linear'],['zoom'],12,1.4,14,2.8,16,5.4,18,10,19,13],'line-opacity':1}});
+ const drivableFilter=['all',['has','highway'],['!in',['get','highway'],['literal',['footway','path','steps','corridor','pedestrian']]]];
+ map.addLayer({id:'visible-road-casing',type:'line',source:sourceId,filter:drivableFilter,layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#c9c2b5','line-width':width,'line-opacity':0.98}});
+ map.addLayer({id:'visible-road-asphalt',type:'line',source:sourceId,filter:drivableFilter,layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#555b61','line-width':['interpolate',['linear'],['zoom'],12,1.1,14,2.2,16,4.3,18,7.8,19,10.5],'line-opacity':1}});
  // Sidewalk strips are deliberately offset from the mapped road centerline so they remain
  // visible even when source data only contains road lines, not explicit sidewalk polygons.
  const sideWidth=['interpolate',['linear'],['zoom'],13,0.8,15,2.1,17,3.5,19,5];
  const sideOffset=['interpolate',['linear'],['zoom'],13,2,15,5,17,8,19,12];
+ const sidewalkFilter=['all',['has','highway'],['!in',['get','highway'],['literal',['motorway','motorway_link','trunk','trunk_link','footway','path','steps','corridor','pedestrian']]],['!=',['get','sidewalk'],'no']];
  for(const [id,offset] of [['visible-sidewalk-left',1],['visible-sidewalk-right',-1]]){
-  map.addLayer({id,type:'line',source:sourceId,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#d8d2c6','line-width':sideWidth,'line-offset':['*',offset,sideOffset],'line-opacity':1}});
+  map.addLayer({id,type:'line',source:sourceId,filter:sidewalkFilter,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#d8d2c6','line-width':sideWidth,'line-offset':['*',offset,sideOffset],'line-opacity':0.96}});
  }
  for(const [id,offset] of [['visible-road-curb-left',1],['visible-road-curb-right',-1]]){
-  map.addLayer({id,type:'line',source:sourceId,layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#8b8c87','line-width':['interpolate',['linear'],['zoom'],14,0.4,17,1.1,19,1.5],'line-offset':['*',offset,['interpolate',['linear'],['zoom'],13,3,15,6,17,10,19,14]],'line-opacity':0.95}});
+  map.addLayer({id,type:'line',source:sourceId,filter:sidewalkFilter,layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#8b8c87','line-width':['interpolate',['linear'],['zoom'],14,0.4,17,1.1,19,1.5],'line-offset':['*',offset,['interpolate',['linear'],['zoom'],13,2.8,15,5.2,17,8.5,19,12]],'line-opacity':0.95}});
  }
  const visible=document.getElementById('roads')?.checked!==false;
  ['visible-sidewalk-left','visible-sidewalk-right','visible-road-casing','visible-road-asphalt','visible-road-curb-left','visible-road-curb-right'].forEach(id=>map.setLayoutProperty(id,'visibility',visible?'visible':'none'));
@@ -797,20 +800,26 @@ map.on('load',async()=>{
   normalizeBuildingHeights(buildingsData);
   surfaceData={type:'FeatureCollection',features:(surfaceResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   addRoads(roadsData);
-  if(buildingsData.features.length){addBuildings(buildingsData);addTexturedBuildingMeshes(buildingsData,roadsData);}
-  if(surfaceData.features.length)addDpwRoadSurface(surfaceData);
+  // Create road/sidewalk overlays before optional 3D features so unrelated layer errors cannot hide them.
+  let roadOverlayError='';
+  try{addVisibleRoadAndSidewalkOverlays(roadsData);}catch(err){roadOverlayError=String(err.message||err);console.error('Road/sidewalk overlay failed:',err);}
+  if(buildingsData.features.length){addBuildings(buildingsData);}
+  if(surfaceData.features.length){try{addDpwRoadSurface(surfaceData);}catch(err){console.error('DPWH road surface layer failed:',err);}}
   // Sync from the same OpenFreeMap vector-tile heights used by the visible basemap; retry as tiles load.
   syncLocalHeightsFromBasemap();
   applyTerrainAlignment();
   map.once('idle',applyTerrainAlignment);
   map.on('idle',()=>{syncLocalHeightsFromBasemap();applyTerrainAlignment();});
-  addLandmarks();addRealModelMarkers();addSatelliteImagery();addLocalRamonModel(roadsData);addBridgeAndStairLayers();addVisibleRoadAndSidewalkOverlays(roadsData);
+  // Keep optional layers isolated: failure in a 3D mesh or bridge parser must not prevent road rendering.
+  for(const [label,fn] of [['landmarks',addLandmarks],['real building model markers',addRealModelMarkers],['satellite imagery',addSatelliteImagery],['local 3D landmark mesh',()=>addLocalRamonModel(roadsData)],['bridges and stairs',addBridgeAndStairLayers]]){
+   try{fn();}catch(err){console.error(label+' failed:',err);}
+  }
   // Apply the current checkbox states after asynchronous data loading, even if a user unchecked a layer early.
   const setVisibility=(ids,visible)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visible?'visible':'none')});
   setVisibility(['local-buildings-3d','local-building-labels','all-building-facade-textures'],document.getElementById('buildings').checked);
     setVisibility(['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'],document.getElementById('realModels').checked);
   const errors=[roadResult.loadError,buildingResult.loadError,surfaceResult.loadError].filter(Boolean);
-  setStatus(roadsData.features.length.toLocaleString()+' mapped road/path lines · '+buildingsData.features.length.toLocaleString()+' OSM building footprints with facade detail · '+surfaceData.features.length.toLocaleString()+' DPWH road records'+(errors.length?' · Some data sources failed; see console.':' · available layers loaded'));
+  setStatus(roadsData.features.length.toLocaleString()+' OSM road/path lines · '+buildingsData.features.length.toLocaleString()+' OSM building footprints · '+surfaceData.features.length.toLocaleString()+' DPWH road-surface records'+(roadOverlayError?' · Road overlay error: '+roadOverlayError:'. Sidewalk strips are estimated from road centerlines where surveyed edges are unavailable.')+(errors.length?' · Some data sources failed; see console.':' · layers loaded'));
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
 });
 document.getElementById('imagery').addEventListener('change',e=>setSatelliteImagery(e.target.checked));
@@ -818,7 +827,7 @@ document.getElementById('landmarks').addEventListener('change',e=>['key-landmark
 document.getElementById('realModels').addEventListener('change',e=>['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('buildings').addEventListener('change',e=>{['local-buildings-3d','local-building-labels','all-building-facade-textures'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('basemap3d').addEventListener('change',e=>{base3dLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'Basemap 3D buildings enabled for comparison with OSM. Turn off OSM 3D buildings to inspect the basemap alone.':'Basemap 3D buildings hidden; OSM layer remains independently controlled.')});
-document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels','visible-sidewalk-left','visible-sidewalk-right','visible-road-casing','visible-road-asphalt','visible-road-curb-left','visible-road-curb-right'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
+document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels','visible-sidewalk-left','visible-sidewalk-right','visible-road-casing','visible-road-asphalt','visible-road-curb-left','visible-road-curb-right'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'OSM road network enabled. Sidewalk and curb strips are estimates unless explicitly mapped.':'OSM road network, asphalt, estimated sidewalks and curbs hidden.');});
 document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null);terrainAlignmentSignature='';map.once('idle',applyTerrainAlignment);setStatus(e.target.checked?'Terrain enabled; aligning building bases and road surfaces to ground elevation…':'Terrain disabled; resetting building bases to flat ground…')}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
 document.getElementById('labels').addEventListener('change',e=>{if(map.getLayer('local-building-labels'))map.setLayoutProperty('local-building-labels','visibility',e.target.checked?'visible':'none')});
 document.getElementById('sun').addEventListener('click',()=>{golden=!golden;try{map.setLight({anchor:'viewport',position:golden?[1.2,210,35]:[1.2,45,75],color:golden?'#ffe0ad':'#ffffff',intensity:golden?0.45:0.8});document.getElementById('sun').textContent=golden?'Golden-hour light':'Neutral daylight'}catch(err){setStatus('Lighting controls are not supported by this map style.')}});
