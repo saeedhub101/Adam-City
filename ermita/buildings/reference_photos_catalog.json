@@ -4,10 +4,27 @@
   "purpose": "Licensed photographic references for building facade/material research; not automatically projected onto buildings.",
   "source": "Wikimedia Commons API",
   "source_url": "https://commons.wikimedia.org/",
-  "generated_utc": "2026-10-19T04:37:50Z",
-  "image_count": 30,
-  "downloaded_this_run": 22,
-  "errors": [],
+  "generated_utc": "2026-10-19T18:13:58Z",
+  "image_count": 32,
+  "downloaded_this_run": 19,
+  "errors": [
+    {
+      "query": "Manila Residences Bocobo facade",
+      "error": "429 Client Error: Too Many Requests for url: https://commons.wikimedia.org/w/api.php?format=json&action=query&generator=search&gsrsearch=filetype%3Abitmap+Manila+Residences+Bocobo+facade&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url%7Cextmetadata&iiurlwidth=1000"
+    },
+    {
+      "query": "7-Eleven Manila Philippines store exterior",
+      "error": "429 Client Error: Too Many Requests for url: https://commons.wikimedia.org/w/api.php?format=json&action=query&generator=search&gsrsearch=filetype%3Abitmap+7-Eleven+Manila+Philippines+store+exterior&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url%7Cextmetadata&iiurlwidth=1000"
+    },
+    {
+      "query": "Rizal Park Manila grass lawn aerial",
+      "error": "429 Client Error: Too Many Requests for url: https://commons.wikimedia.org/w/api.php?format=json&action=query&generator=search&gsrsearch=filetype%3Abitmap+Rizal+Park+Manila+grass+lawn+aerial&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url%7Cextmetadata&iiurlwidth=1000"
+    },
+    {
+      "query": "Ermita Manila hotel building exterior",
+      "error": "429 Client Error: Too Many Requests for url: https://commons.wikimedia.org/w/api.php?format=json&action=query&generator=search&gsrsearch=filetype%3Abitmap+Ermita+Manila+hotel+building+exterior&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url%7Cextmetadata&iiurlwidth=1000"
+    }
+  ],
   "matching_note": "building_candidate means the search query names a candidate building/landmark, not that visual identity has been independently verified. area_reference is neighborhood-level only. Verify each image before using it as a texture.",
   "images": [
     {
@@ -59,6 +76,22 @@
       "bytes": 335695
     },
     {
+      "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_22.jpg",
+      "title": "04660jfNational Museum of the Philippines Ermita Manilafvf 22.jpg",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_22.jpg/1280px-04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_22.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/f/fd/04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_22.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "license": "CC0",
+      "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "artist_attribution": "Judgefloro",
+      "credit": "Own work",
+      "description": "National Museum Complex (Manila)  14°35'6\"N   120°58'54\"E  Old Congress Building, Manila   National Museum of the Philippines  a)  National Museum of Fine Arts (Manila)  b)  Museum of the Filipino People  Finance Road corner Padre Burgos Avenue in Ermita,  City of Manila ; (Note: Judge Florentino Floro, the owner, to repeat, Donor  Florentino Floro  of all these photos hereby donate gratuitously, freely and unconditionally all these photos to and for Wikimedia Commons, exclusively, for public use of the public domain, and again without any condition whatsoever).",
+      "query": "National Museum of Fine Arts Manila exterior",
+      "match_type": "building_candidate",
+      "download_status": "downloaded",
+      "local_path": "ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-22.jpg",
+      "bytes": 330346
+    },
+    {
       "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_23.jpg",
       "title": "04660jfNational Museum of the Philippines Ermita Manilafvf 23.jpg",
       "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_23.jpg/1280px-04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_23.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
@@ -91,10 +124,10 @@
       "bytes": 322458
     },
     {
-      "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_35.jpg",
-      "title": "04660jfNational Museum of the Philippines Ermita Manilafvf 35.jpg",
-      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_35.jpg/1280px-04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_35.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-      "original_url": "https://upload.wikimedia.org/wikipedia/commons/f/f7/04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_35.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_32.jpg",
+      "title": "04660jfNational Museum of the Philippines Ermita Manilafvf 32.jpg",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_32.jpg/1280px-04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_32.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/e/ef/04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_32.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "license": "CC0",
       "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
       "artist_attribution": "Judgefloro",
@@ -102,9 +135,9 @@
       "description": "National Museum Complex (Manila)  14°35'6\"N   120°58'54\"E  Old Congress Building, Manila   National Museum of the Philippines  a)  National Museum of Fine Arts (Manila)  b)  Museum of the Filipino People  Finance Road corner Padre Burgos Avenue in Ermita,  City of Manila ; (Note: Judge Florentino Floro, the owner, to repeat, Donor  Florentino Floro  of all these photos hereby donate gratuitously, freely and unconditionally all these photos to and for Wikimedia Commons, exclusively, for public use of the public domain, and again without any condition whatsoever).",
       "query": "National Museum of Fine Arts Manila exterior",
       "match_type": "building_candidate",
-      "download_status": "already_saved",
-      "local_path": "ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-35.jpg",
-      "bytes": 302444
+      "download_status": "downloaded",
+      "local_path": "ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-32.jpg",
+      "bytes": 226115
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_44.jpg",
@@ -121,22 +154,6 @@
       "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-44.jpg",
       "bytes": 275944
-    },
-    {
-      "commons_page": "https://commons.wikimedia.org/wiki/File:04712jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_03.jpg",
-      "title": "04712jfNational Museum of the Philippines Ermita Manilafvf 03.jpg",
-      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/04712jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_03.jpg/1280px-04712jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-      "original_url": "https://upload.wikimedia.org/wikipedia/commons/2/26/04712jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "license": "CC0",
-      "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-      "artist_attribution": "Judgefloro",
-      "credit": "Own work",
-      "description": "National Museum Complex (Manila)  14°35'6\"N   120°58'54\"E  Old Congress Building, Manila   National Museum of the Philippines  a)  National Museum of Fine Arts (Manila)  b)  Museum of the Filipino People  Finance Road corner Padre Burgos Avenue in Ermita,  City of Manila ; (Note: Judge Florentino Floro, the owner, to repeat, Donor  Florentino Floro  of all these photos hereby donate gratuitously, freely and unconditionally all these photos to and for Wikimedia Commons, exclusively, for public use of the public domain, and again without any condition whatsoever).",
-      "query": "National Museum of Fine Arts Manila exterior",
-      "match_type": "building_candidate",
-      "download_status": "downloaded",
-      "local_path": "ermita/buildings/reference_photos/04712jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-03.jpg",
-      "bytes": 352607
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:PGH_Cancer_Institute_Building.jpg",
@@ -166,7 +183,7 @@
       "description": "Main Building of University of the Philippines Manila campus along Pedro Gil Street, Ermita, Manila",
       "query": "University of the Philippines Manila building",
       "match_type": "building_candidate",
-      "download_status": "downloaded",
+      "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/University-of-the-Philippines-Manila-Campus---Main-Building-Pedro-Gil-Ermita-Manila-2014-1.jpg",
       "bytes": 560233
     },
@@ -182,7 +199,7 @@
       "description": "University of the Philippines Manila buildings Quisumbing Hall",
       "query": "University of the Philippines Manila building",
       "match_type": "building_candidate",
-      "download_status": "downloaded",
+      "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/University-of-the-Philippines-Manila2026-06-10Complex-12.jpg",
       "bytes": 609133
     },
@@ -198,7 +215,7 @@
       "description": "University of the Philippines Manila buildings",
       "query": "University of the Philippines Manila building",
       "match_type": "building_candidate",
-      "download_status": "downloaded",
+      "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/University-of-the-Philippines-Manila2026-06-10Complex-13.jpg",
       "bytes": 320851
     },
@@ -214,7 +231,7 @@
       "description": "University of the Philippines Manila buildings",
       "query": "University of the Philippines Manila building",
       "match_type": "building_candidate",
-      "download_status": "downloaded",
+      "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/University-of-the-Philippines-Manila2026-06-10Complex-14.jpg",
       "bytes": 258037
     },
@@ -230,9 +247,41 @@
       "description": "University of the Philippines Manila buildings",
       "query": "University of the Philippines Manila building",
       "match_type": "building_candidate",
-      "download_status": "downloaded",
+      "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/University-of-the-Philippines-Manila2026-06-10Complex-15.jpg",
       "bytes": 307885
+    },
+    {
+      "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_35.jpg",
+      "title": "04660jfNational Museum of the Philippines Ermita Manilafvf 35.jpg",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_35.jpg/1280px-04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_35.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/f/f7/04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_35.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "license": "CC0",
+      "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "artist_attribution": "Judgefloro",
+      "credit": "Own work",
+      "description": "National Museum Complex (Manila)  14°35'6\"N   120°58'54\"E  Old Congress Building, Manila   National Museum of the Philippines  a)  National Museum of Fine Arts (Manila)  b)  Museum of the Filipino People  Finance Road corner Padre Burgos Avenue in Ermita,  City of Manila ; (Note: Judge Florentino Floro, the owner, to repeat, Donor  Florentino Floro  of all these photos hereby donate gratuitously, freely and unconditionally all these photos to and for Wikimedia Commons, exclusively, for public use of the public domain, and again without any condition whatsoever).",
+      "query": "National Museum of Fine Arts Manila exterior",
+      "match_type": "building_candidate",
+      "download_status": "already_saved",
+      "local_path": "ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-35.jpg",
+      "bytes": 302444
+    },
+    {
+      "commons_page": "https://commons.wikimedia.org/wiki/File:04712jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_03.jpg",
+      "title": "04712jfNational Museum of the Philippines Ermita Manilafvf 03.jpg",
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/04712jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_03.jpg/1280px-04712jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/2/26/04712jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "license": "CC0",
+      "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "artist_attribution": "Judgefloro",
+      "credit": "Own work",
+      "description": "National Museum Complex (Manila)  14°35'6\"N   120°58'54\"E  Old Congress Building, Manila   National Museum of the Philippines  a)  National Museum of Fine Arts (Manila)  b)  Museum of the Filipino People  Finance Road corner Padre Burgos Avenue in Ermita,  City of Manila ; (Note: Judge Florentino Floro, the owner, to repeat, Donor  Florentino Floro  of all these photos hereby donate gratuitously, freely and unconditionally all these photos to and for Wikimedia Commons, exclusively, for public use of the public domain, and again without any condition whatsoever).",
+      "query": "National Museum of Fine Arts Manila exterior",
+      "match_type": "building_candidate",
+      "download_status": "downloaded",
+      "local_path": "ermita/buildings/reference_photos/04712jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-03.jpg",
+      "bytes": 352607
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:01015jfIntramuros_Manila_Landmarks_Buildingsfvf_01.jpg",
