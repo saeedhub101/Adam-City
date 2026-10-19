@@ -55,10 +55,52 @@ const buildingColor=['coalesce',tag('building:colour'),tag('building:color'),tag
 function setVis(ids,on){ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')})}
 map.on('load',async()=>{
  try{
-  const pairs=await Promise.all(Object.entries(urls).map(async([k,u])=>{const r=await fetch(u);if(!r.ok)throw Error(k+' HTTP '+r.status);if(k==='housenumbers'||k==='openfreemapBuildings'){const lines=(await r.text()).split(/\r?\n/).filter(Boolean);const features=lines.map(line=>JSON.parse(line)).filter(f=>f&&f.type==='Feature');if(k==='openfreemapBuildings'){\n    // The importer decoded MVT coordinates with y_coord_down=false, then treated them as y-down.\n    // Recover each feature's tile-relative Y from its saved WGS84 coordinate and flip it back.\n    const fixCoords=(coords,tile)=>{if(!Array.isArray(coords))return coords;if(typeof coords[0]==='number'&&typeof coords[1]==='number'){const z=Number(tile.z),ty=Number(tile.y),n=2**z;const lat=Math.max(-85.05112878,Math.min(85.05112878,coords[1]));const gy=(1-Math.asinh(Math.tan(lat*Math.PI/180))/Math.PI)/2*n;const correctedGy=ty+1-(gy-ty);const correctedLat=Math.atan(Math.sinh(Math.PI*(1-2*correctedGy/n)))*180/Math.PI;return[coords[0],correctedLat,...coords.slice(2)]}return coords.map(c=>fixCoords(c,tile))};\n    for(const f of features){const tile=f._source&&f._source.tile;if(tile&&Number.isFinite(Number(tile.z))&&Number.isFinite(Number(tile.y))&&f.geometry&&f.geometry.coordinates)f.geometry.coordinates=fixCoords(f.geometry.coordinates,tile)}\n   }return[k,features]}return[k,await r.json()]}));
+  const pairs=await Promise.all(Object.entries(urls).map(async([k,u])=>{const r=await fetch(u);if(!r.ok)throw Error(k+' HTTP '+r.status);if(k==='housenumbers'||k==='openfreemapBuildings'){const lines=(await r.text()).split(/\r?
+/).filter(Boolean);const features=lines.map(line=>JSON.parse(line)).filter(f=>f&&f.type==='Feature');if(k==='openfreemapBuildings'){
+    // The importer decoded MVT coordinates with y_coord_down=false, then treated them as y-down.
+    // Recover each feature's tile-relative Y from its saved WGS84 coordinate and flip it back.
+    const fixCoords=(coords,tile)=>{if(!Array.isArray(coords))return coords;if(typeof coords[0]==='number'&&typeof coords[1]==='number'){const z=Number(tile.z),ty=Number(tile.y),n=2**z;const lat=Math.max(-85.05112878,Math.min(85.05112878,coords[1]));const gy=(1-Math.asinh(Math.tan(lat*Math.PI/180))/Math.PI)/2*n;const correctedGy=ty+1-(gy-ty);const correctedLat=Math.atan(Math.sinh(Math.PI*(1-2*correctedGy/n)))*180/Math.PI;return[coords[0],correctedLat,...coords.slice(2)]}return coords.map(c=>fixCoords(c,tile))};
+    for(const f of features){const tile=f._source&&f._source.tile;if(tile&&Number.isFinite(Number(tile.z))&&Number.isFinite(Number(tile.y))&&f.geometry&&f.geometry.coordinates)f.geometry.coordinates=fixCoords(f.geometry.coordinates,tile)}
+   }return[k,features]}return[k,await r.json()]}));
   const d=Object.fromEntries(pairs);
   // Publish the original OSM polygons separately from the newer OpenMapTiles-derived footprints.
   d.buildings.features=d.buildings.features.filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&f.properties?.tags?.building);
+  // Replace an OSM footprint only for a strong one-to-one spatial match.
+  // Match gate: centroid distance <= 18 m and bounding-box IoU >= 0.25; retain OSM tags/IDs.
+  function footprintStats(f){
+    const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
+    const pts=[];for(const poly of polys)for(const ring of poly)for(const p of ring)pts.push(p);
+    if(!pts.length)return null;
+    const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
+    const b=[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)];
+    return {b,c:[xs.reduce((a,v)=>a+v,0)/xs.length,ys.reduce((a,v)=>a+v,0)/ys.length]};
+  }
+  function bboxIou(a,b){
+    const w=Math.max(0,Math.min(a[2],b[2])-Math.max(a[0],b[0]));
+    const h=Math.max(0,Math.min(a[3],b[3])-Math.max(a[1],b[1]));
+    const inter=w*h, aa=(a[2]-a[0])*(a[3]-a[1]), ab=(b[2]-b[0])*(b[3]-b[1]);
+    return inter/Math.max(1e-15,aa+ab-inter);
+  }
+  function centroidDistanceM(a,b){
+    const dx=(a[0]-b[0])*111320*Math.cos(((a[1]+b[1])/2)*Math.PI/180);
+    const dy=(a[1]-b[1])*110540;return Math.hypot(dx,dy);
+  }
+  const osmStats=d.buildings.features.map((f,i)=>({f,i,s:footprintStats(f)})).filter(x=>x.s);
+  const msStats=d.microsoftBuildings.features.map((f,i)=>({f,i,s:footprintStats(f)})).filter(x=>x.s);
+  const matchCandidates=[];
+  for(const m of msStats)for(const o of osmStats){
+    const dist=centroidDistanceM(m.s.c,o.s.c);
+    if(dist>18)continue;
+    const iou=bboxIou(m.s.b,o.s.b);
+    if(iou>=0.25)matchCandidates.push({m,o,dist,iou});
+  }
+  matchCandidates.sort((a,b)=>b.iou-a.iou||a.dist-b.dist);
+  const usedMs=new Set(),usedOsm=new Set();let replacedFootprints=0;
+  for(const c of matchCandidates){
+    if(usedMs.has(c.m.i)||usedOsm.has(c.o.i))continue;
+    c.o.f.geometry=JSON.parse(JSON.stringify(c.m.f.geometry));
+    usedMs.add(c.m.i);usedOsm.add(c.o.i);replacedFootprints++;
+  }
   // Transfer imported OpenFreeMap address points onto their containing building polygon, so numbers render on buildings, never as standalone markers.
   function inRing(point,ring){let inside=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const a=ring[i],b=ring[j];if(((a[1]>point[1])!==(b[1]>point[1]))&&(point[0]<(b[0]-a[0])*(point[1]-a[1])/((b[1]-a[1])||1e-12)+a[0]))inside=!inside}return inside}
   function contains(geom,p){const polys=geom.type==='Polygon'?[geom.coordinates]:geom.coordinates;return polys.some(poly=>poly.length&&inRing(p,poly[0])&&!poly.slice(1).some(r=>inRing(p,r)))}
@@ -96,7 +138,7 @@ map.on('load',async()=>{
   map.addLayer({id:'local-building-name-labels',type:'symbol',source:'local-buildings',minzoom:15.3,filter:['!=',safeText,''],layout:{'symbol-placement':'point','text-field':safeText,'text-font':['Noto Sans Regular'],'text-size':10,'text-max-width':9,'text-allow-overlap':false,'symbol-z-elevate':true},paint:{'text-color':'#f9f6ec','text-halo-color':'#363b3c','text-halo-width':1.4}});
   map.addLayer({id:'local-street-labels',type:'symbol',source:'local-roads',minzoom:13.2,filter:['has','name'],layout:{'symbol-placement':'line','text-field':['coalesce',['get','name:en'],['get','name']],'text-font':['Noto Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],13,9,17,12],'text-max-angle':35},paint:{'text-color':'#fff8e9','text-halo-color':'#4b4b45','text-halo-width':1.5}});
   map.fitBounds([[120.9711,14.5732],[120.9931,14.5971]],{padding:{top:55,right:325,bottom:35,left:30},duration:0});
-  say('تم تحميل '+d.buildings.features.length.toLocaleString('en-US')+' بصمة مبنى أساسية و'+d.microsoftBuildings.features.length.toLocaleString('en-US')+' بصمة Microsoft للمقارنة و'+d.roads.features.length.toLocaleString('en-US')+' طريق/مسار. أُسنِدت '+joined.toLocaleString('en-US')+' أرقام إلى المباني الحاوية لها. فعّل مربع Microsoft لإظهار الحدود الوردية.');
+  say('تم تحميل '+d.buildings.features.length.toLocaleString('en-US')+' مبنى OSM، واستُخدمت بصمات Microsoft لتحديث هندسة '+replacedFootprints.toLocaleString('en-US')+' مبنى مطابق مكانيًا؛ مع الحفاظ على خصائص ومعرّفات OSM. طبقة Microsoft المستقلة متاحة للمقارنة.');
   $('buildings').onchange=e=>setVis(['local-building-extrusions','local-building-roof-edges'],e.target.checked);
   $('nativeOpenFreeMapBuildings').onchange=e=>setVis(openFreeMapBuildingLayerIds,e.target.checked);
   $('openfreemapBuildings').onchange=e=>{const on=e.target.checked;setVis(['openfreemap-building-extrusions'],on);say(on?'مباني OpenMapTiles المحلية ظاهرة؛ عددها '+ofmBuildingFeatures.length.toLocaleString('en-US')+' بصمة.':'تم إخفاء مباني OpenMapTiles المحلية.');};
