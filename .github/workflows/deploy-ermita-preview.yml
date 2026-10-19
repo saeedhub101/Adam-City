@@ -38,7 +38,7 @@ jobs:
           import re
           for source, target in [('index.html', '/tmp/index-inline.js'), ('ermita.html', '/tmp/ermita-inline.js')]:
               html = open(source, encoding='utf-8').read()
-              scripts = re.findall(r'<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>', html, re.I)
+              scripts = re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>', html, re.I)
               scripts = [s for s in scripts if s.strip()]
               if not scripts:
                   raise SystemExit(f'No inline JavaScript found in {source}')
