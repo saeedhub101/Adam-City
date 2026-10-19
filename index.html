@@ -32,6 +32,7 @@
 <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
 <script>
 (function(){
 const status=document.getElementById('status');
@@ -169,8 +170,8 @@ function addStreetMesh(roadNetwork){
 }
 
 function addLocalRamonModel(){
- if(!window.THREE || !THREE.GLTFLoader){setStatus('Local building model could not start: 3D model libraries unavailable.');return;}
- const modelUrl='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/ramon_magsaysay_building.glb';
+ if(!window.THREE || !THREE.FBXLoader){setStatus('Local building model could not start: FBX loader unavailable.');return;}
+ const modelUrl='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/Ramon%20Magsaysay%20Building.fbx';
  const origin=[120.98245,14.5719];
  const merc=maplibregl.MercatorCoordinate.fromLngLat({lng:origin[0],lat:origin[1]},0);
  const meterScale=merc.meterInMercatorCoordinateUnits();
@@ -182,12 +183,21 @@ function addLocalRamonModel(){
    const sun=new THREE.DirectionalLight(0xffffff,2.1);sun.position.set(-40,-60,100);this.scene.add(sun);
    this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});
    this.renderer.autoClear=false;
-   this.loader=new THREE.GLTFLoader();
-   this.loader.load(modelUrl,gltf=>{
-    this.model=gltf.scene;
-    // GLB/glTF assets use Y-up coordinates. Do not apply the old X-axis
-    // quarter-turn here: it tipped the building onto its side/upside down.
-    // Keep the authored model orientation, then ground it using its Y bounds.
+   // Load the repository's FBX source so its named materials and UV mapping are retained.
+   // Resolve the original FBX texture names to the saved repository textures (.jpeg).
+   const textureBase='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/';
+   const manager=new THREE.LoadingManager();
+   manager.setURLModifier(url=>{
+    const name=decodeURIComponent(url.split(/[\\/]/).pop()||'').toLowerCase();
+    if(name.includes('painted-cmu-block-architextures'))return textureBase+'Painted-CMU-Block-Architextures.jpeg';
+    if(name.includes('citystreetroadasphalttwolane'))return textureBase+'CityStreetRoadAsphaltTwoLaneWorn001_COL_1K.jpeg';
+    if(name.includes('mono-terrazzo-stack-architextures'))return textureBase+'Mono-Terrazzo-Stack-Architextures.jpeg';
+    return url;
+   });
+   this.loader=new THREE.FBXLoader(manager);
+   this.loader.load(modelUrl,model=>{
+    this.model=model;
+    // FBXLoader applies the FBX axis metadata; preserve that orientation.
     this.model.rotation.set(0,0,0);
     const bounds=new THREE.Box3().setFromObject(this.model);
     const size=bounds.getSize(new THREE.Vector3());
@@ -196,31 +206,27 @@ function addLocalRamonModel(){
     const factor=62/(size.y||55);
     this.model.scale.setScalar(factor);
     this.model.position.set(-center.x*factor,-bounds.min.y*factor,-center.z*factor);
-    // Keep source-model materials and their original textures. Add the repository wall
-    // material only to mesh materials that have no authored texture; never overwrite
-    // existing glass, roof, signage, or facade imagery from the source GLB.
-    // Reuse the repository's building texture only for mesh materials that lack
-    // their own authored texture, preserving any existing facade/glass/roof maps.
-    const facadeTexture=new THREE.TextureLoader().load(
-     'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/Painted-CMU-Block-Architextures.jpeg',
+    // Preserve authored FBX material colors/maps (including the glass material).
+    // Use the saved wall texture only as a fallback for meshes with no material/map.
+    const facadeTexture=new THREE.TextureLoader(manager).load(
+     textureBase+'Painted-CMU-Block-Architextures.jpeg',
      ()=>map.triggerRepaint()
     );
     facadeTexture.wrapS=facadeTexture.wrapT=THREE.RepeatWrapping;
     facadeTexture.colorSpace=THREE.SRGBColorSpace || THREE.sRGBEncoding;
     this.model.traverse(obj=>{
      if(!obj.isMesh)return;
-     const applyMaterial=mat=>{
-      const m=mat.clone();
+     const fixMaterial=mat=>{
+      const m=mat ? mat.clone() : new THREE.MeshStandardMaterial({color:0xb9b5ae});
       if(!m.map){
-       m.map=facadeTexture;
-       m.color.set(0xffffff);
+       if(!mat){m.map=facadeTexture;m.color.set(0xffffff);}
        if('roughness' in m)m.roughness=Math.max(0.72,m.roughness||0);
        if('metalness' in m)m.metalness=Math.min(0.03,m.metalness||0);
       }
       m.needsUpdate=true;
       return m;
      };
-     obj.material=Array.isArray(obj.material)?obj.material.map(applyMaterial):applyMaterial(obj.material);
+     obj.material=Array.isArray(obj.material)?obj.material.map(fixMaterial):fixMaterial(obj.material);
     });
     this.scene.add(this.model);
 
@@ -243,7 +249,7 @@ function addLocalRamonModel(){
     courtyard.frustumCulled=false;
     this.scene.add(courtyard);
     this.loaded=true;
-    setStatus('Ramon Magsaysay Center 3D mesh loaded. Existing model materials are preserved; repository wall texture fills only untextured materials. Building footprint/rotation and facade UVs still require visual verification.');
+    setStatus('Ramon Magsaysay Center FBX model loaded with repository material textures. Verify facade alignment and scale visually.');
     map.triggerRepaint();
    },undefined,err=>setStatus('Local Ramon Magsaysay GLB failed to load: '+(err&&err.message||'network error')));
   },
