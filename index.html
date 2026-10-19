@@ -16,7 +16,6 @@
 <label><input id="imagery" type="checkbox"> Satellite imagery</label>
 <label><input id="landmarks" type="checkbox" checked> Key landmarks</label>
 <label><input id="streets" type="checkbox" checked> Streets</label>
-<label><input id="realModels" type="checkbox" checked> Real building 3D model previews</label>
 <label><input id="buildings" type="checkbox" checked> OSM 3D buildings</label>
 <label><input id="basemap3d" type="checkbox"> Basemap 3D buildings</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
@@ -55,25 +54,17 @@ let roadsData=null,buildingsData=null,osmBuildingsData=null,surfaceData=null,bas
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function popupHtml(p){const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',p.osm_feature_id||p.id]];return '<div style="font:13px system-ui"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+'</div>'}
 function addRealModelMarkers(){
+ // The downloaded Ramon Magsaysay GLB is rendered as a real 3D mesh by
+ // addLocalRamonModel(). Keep only its map label here; do not substitute a
+ // clickable dot/remote iframe for the building itself.
  const models={type:'FeatureCollection',features:[
-  {type:'Feature',geometry:{type:'Point',coordinates:[120.98245,14.5719]},properties:{id:'ramon-magsaysay-center',name:'Ramon Magsaysay Center',district:'Malate',page:'https://sketchfab.com/3d-models/ramon-magsaysay-building-e244e17eea144fc585b40a873c2a1bbd',embed:'https://sketchfab.com/models/e244e17eea144fc585b40a873c2a1bbd/embed?autostart=0&ui_infos=1',kind:'Sketchfab · interactive 3D model'}},
-  {type:'Feature',geometry:{type:'Point',coordinates:[120.98041,14.57563]},properties:{id:'ermita-center-building',name:'Ermita Center Building',district:'Ermita',page:'https://embed-3dwarehouse-classic.sketchup.com/model/3743b62280dd9fa53530340d5a9e139f/Ermita-Center-Building',embed:'https://embed-3dwarehouse-classic.sketchup.com/model/3743b62280dd9fa53530340d5a9e139f/Ermita-Center-Building',kind:'3D Warehouse model page'}}
+  {type:'Feature',geometry:{type:'Point',coordinates:[120.98245,14.5719]},properties:{id:'ramon-magsaysay-center',name:'Ramon Magsaysay Center',district:'Malate'}}
  ]};
  if(map.getLayer('real-building-model-labels'))map.removeLayer('real-building-model-labels');
  if(map.getLayer('real-building-model-points'))map.removeLayer('real-building-model-points');
  if(map.getSource('real-building-models'))map.removeSource('real-building-models');
  map.addSource('real-building-models',{type:'geojson',data:models});
- map.addLayer({id:'real-building-model-points',type:'circle',source:'real-building-models',paint:{'circle-radius':['interpolate',['linear'],['zoom'],12,5,16,9,19,12],'circle-color':'#7c3aed','circle-stroke-color':'#ffffff','circle-stroke-width':2}});
  map.addLayer({id:'real-building-model-labels',type:'symbol',source:'real-building-models',layout:{'text-field':['get','name'],'text-font':['Open Sans Bold'],'text-size':12,'text-offset':[0,1.4],'text-anchor':'top','text-allow-overlap':true},paint:{'text-color':'#5b21b6','text-halo-color':'#ffffff','text-halo-width':1.5}});
- map.on('click','real-building-model-points',e=>{
-  const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};
-  const embed=p.id==='ramon-magsaysay-center'
-   ? '<iframe title="Interactive 3D model of '+esc(p.name)+'" src="'+esc(p.embed)+'" style="width:300px;max-width:75vw;height:230px;border:0;border-radius:6px" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen loading="lazy"></iframe>'
-   : '<div style="padding:10px;background:#f1f5f9;border-radius:6px">Open the original 3D Warehouse model page to inspect its interactive viewer. The source page is linked below.</div>';
-  new maplibregl.Popup({maxWidth:'340px'}).setLngLat(e.lngLat).setHTML('<div style="font:13px system-ui;max-width:310px"><b style="font-size:15px">'+esc(p.name)+'</b><div>'+esc(p.district)+' · real named building</div><div style="margin:6px 0;color:#92400e">Remote model preview — not yet downloaded or physically placed as a mesh in the city.</div>'+embed+'<div style="margin-top:8px"><a target="_blank" rel="noopener" href="'+esc(p.page)+'">Open original 3D model page</a></div></div>').addTo(map);
- });
- map.on('mouseenter','real-building-model-points',()=>map.getCanvas().style.cursor='pointer');
- map.on('mouseleave','real-building-model-points',()=>map.getCanvas().style.cursor='');
 }
 
 function addStreetMesh(roadNetwork){
@@ -853,7 +844,6 @@ map.on('load',async()=>{
   const setVisibility=(ids,visible)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visible?'visible':'none')});
   setVisibility(['local-buildings-3d','local-building-labels','all-building-facade-textures'],document.getElementById('buildings').checked);
   setVisibility(['streets-road-mesh'],document.getElementById('streets').checked);
-    setVisibility(['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'],document.getElementById('realModels').checked);
   bringRoadLayersToFront();
   const errors=[roadResult.loadError,buildingResult.loadError,surfaceResult.loadError].filter(Boolean);
   setStatus(roadsData.features.length.toLocaleString()+' OSM road/path lines · '+buildingsData.features.length.toLocaleString()+' OSM building footprints · '+surfaceData.features.length.toLocaleString()+' DPWH road-surface records'+(roadOverlayError?' · Road overlay error: '+roadOverlayError:'. Sidewalk strips are estimated from road centerlines where surveyed edges are unavailable.')+(errors.length?' · Some data sources failed; see console.':' · layers loaded'));
@@ -862,7 +852,6 @@ map.on('load',async()=>{
 document.getElementById('imagery').addEventListener('change',e=>setSatelliteImagery(e.target.checked));
 document.getElementById('streets').addEventListener('change',e=>{if(map.getLayer('streets-road-mesh'))map.setLayoutProperty('streets-road-mesh','visibility',e.target.checked?'visible':'none');setStatus(e.target.checked?'Streets enabled: asphalt, terrazzo sidewalks and raised concrete curbs generated from the loaded OSM road network.':'Streets hidden.');});
 document.getElementById('landmarks').addEventListener('change',e=>['key-landmark-halo','key-landmark-dot','key-landmark-label'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
-document.getElementById('realModels').addEventListener('change',e=>['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('buildings').addEventListener('change',e=>{['local-buildings-3d','local-building-labels','all-building-facade-textures'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('basemap3d').addEventListener('change',e=>{base3dLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'Basemap 3D buildings enabled for comparison with OSM. Turn off OSM 3D buildings to inspect the basemap alone.':'Basemap 3D buildings hidden; OSM layer remains independently controlled.')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels','visible-sidewalk-left','visible-sidewalk-right','visible-road-casing','visible-road-asphalt','visible-road-curb-left','visible-road-curb-right'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'OSM road network enabled. Sidewalk and curb strips are estimates unless explicitly mapped.':'OSM road network, asphalt, estimated sidewalks and curbs hidden.');});
