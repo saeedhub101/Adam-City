@@ -49,7 +49,7 @@ def main():
     if OUT.exists() and REGISTER.exists() and REPORT.exists():
         try:
             previous=json.loads(REPORT.read_text(encoding="utf-8"))
-            if previous.get("canonical_schema_version")==2:
+            if previous.get("status")=="success" and previous.get("canonical_schema_version")==2:
                 print(json.dumps({"status":"reused_existing_outputs",
                                   "crosswalk":str(OUT.relative_to(ROOT)),
                                   "canonical_register":str(REGISTER.relative_to(ROOT)),
