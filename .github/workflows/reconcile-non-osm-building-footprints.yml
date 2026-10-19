@@ -22,10 +22,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - name: Checkout main
+      - name: Checkout only the two footprint sources and reconciliation code
         uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/workflows/reconcile-non-osm-building-footprints.yml
+            ermita/scripts/reconcile_non_osm_building_footprints.py
+            ermita/maps/sources/google-open-buildings/google-open-buildings-v3-ermita.geojson
+            ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson
+            ermita/maps/qa
+          sparse-checkout-cone-mode: false
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
