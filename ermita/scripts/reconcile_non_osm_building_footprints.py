@@ -10,7 +10,7 @@ import csv, hashlib, json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from shapely.geometry import shape
+from shapely.geometry import shape, mapping
 
 ROOT = Path(__file__).resolve().parents[2]
 GOOGLE = ROOT / "ermita/maps/sources/google-open-buildings/google-open-buildings-v3-ermita.geojson"
