@@ -50,6 +50,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add ermita/maps/qa/non-osm-building-footprint-reconciliation-report.json
           if [ -f ermita/maps/qa/non-osm-building-footprint-crosswalk.csv ]; then git add ermita/maps/qa/non-osm-building-footprint-crosswalk.csv; fi
+          if [ -f ermita/maps/qa/non-osm-building-canonical-register.geojson ]; then git add ermita/maps/qa/non-osm-building-canonical-register.geojson; fi
           if git diff --cached --quiet; then echo "No new crosswalk changes."; exit 0; fi
           git commit -m "Reconcile Google and Microsoft satellite building footprints"
           git fetch origin main
