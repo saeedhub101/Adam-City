@@ -293,12 +293,14 @@ function addTexturedBuildingMeshes(data,roadNetwork){
  }).slice(0,40);
  for(const f of detailFeatures){
   if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
+  const featureGround=document.getElementById('terrain').checked?(terrainElevationForFeature(f)||0):0;
   const p=f.properties||{};
   const tags=p.tags||{},id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:'')),name=String(tags.name||tags['official_name']||'');
   const special=id===detailSource.osmId;
   const h=heightOf(p),levels=Math.max(1,Math.min(34,Math.round(h/(special?3.0:3.2))));
   const polygons=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
   for(const poly of polygons){
+   const startLengths=[trimPos.length,bandPos.length,balconyPos.length,doorPos.length,roofRimPos.length];
    const ring=poly&&poly[0];if(!ring||ring.length<4)continue;
    const pts=ring.map(xy);
    let area=0;for(let i=0;i<pts.length-1;i++)area+=pts[i].x*pts[i+1].z-pts[i+1].x*pts[i].z;
@@ -365,6 +367,10 @@ function addTexturedBuildingMeshes(data,roadNetwork){
      const n=area>=0?{x:dz/len,z:-dx/len}:{x:-dz/len,z:dx/len};
      boxBand(a,b,n,h-.20,.20,.16,roofRimPos);
     }
+   }
+   if(featureGround){
+    const arrays=[trimPos,bandPos,balconyPos,doorPos,roofRimPos];
+    for(let ai=0;ai<arrays.length;ai++){const arr=arrays[ai];for(let j=startLengths[ai]+1;j<arr.length;j+=3)arr[j]+=featureGround;}
    }
    detailed++;
   }
@@ -477,6 +483,36 @@ function syncLocalHeightsFromBasemap(){
  addTexturedBuildingMeshes(buildingsData,roadsData);
  setStatus('Basemap is authoritative: '+derived.length.toLocaleString()+' current Basemap building geometries/heights copied into the project building layer; OSM attributes are retained where matched. OSM-only stale footprints are replaced, not merely hidden.');
 }
+function terrainElevationForFeature(f){
+ const g=f&&f.geometry;if(!g)return null;
+ let ring=null;
+ if(g.type==='Polygon')ring=g.coordinates&&g.coordinates[0];
+ else if(g.type==='MultiPolygon')ring=g.coordinates&&g.coordinates[0]&&g.coordinates[0][0];
+ if(!ring||!ring.length)return null;
+ let lon=0,lat=0,n=0;
+ for(const p of ring){if(Array.isArray(p)&&p.length>=2&&Number.isFinite(p[0])&&Number.isFinite(p[1])){lon+=p[0];lat+=p[1];n++;}}
+ if(!n)return null;
+ try{const z=map.queryTerrainElevation([lon/n,lat/n]);return Number.isFinite(z)?z:null;}catch(e){return null;}
+}
+let terrainAlignmentSignature='';
+function applyTerrainAlignment(){
+ if(!buildingsData||!Array.isArray(buildingsData.features)||!map.getSource('local-buildings'))return;
+ const terrainOn=document.getElementById('terrain').checked,parts=[];let changed=false;
+ for(const f of buildingsData.features){
+  const p=f.properties||(f.properties={});
+  let z=terrainOn?terrainElevationForFeature(f):0;
+  if(!Number.isFinite(z))z=0;
+  z=Math.round(z*10)/10;
+  parts.push(String(p.basemap_source_id||p.osm_feature_id||f.id||'building')+':'+z);
+  if(Number(p.terrain_base_m)!==z)changed=true;
+  p.terrain_base_m=z;
+ }
+ const sig=parts.join(',');
+ if(sig===terrainAlignmentSignature&&!changed)return;
+ terrainAlignmentSignature=sig;
+ map.getSource('local-buildings').setData(buildingsData);
+ if(buildingsData.features.length&&window.THREE)addTexturedBuildingMeshes(buildingsData,roadsData);
+}
 function normalizeBuildingHeights(data){
    for(const f of (data.features||[])){
     const p=f.properties||(f.properties={}),t=p.tags||p;
@@ -517,15 +553,15 @@ function addBuildings(data){
        '#c8bfb3']],
     // Match OpenMapTiles/Liberty height fallback: height, then levels × 3.66 m, then 5 m.
     // This keeps local OSM extrusions much closer to the Basemap when source tags are missing.
-    'fill-extrusion-height':['max',2,['coalesce',
+    'fill-extrusion-height':['+', ['to-number',['get','terrain_base_m'],0], ['max',2,['coalesce',
        ['to-number',['get','basemap_render_height']],
        ['to-number',['get','height',['get','tags']]],
        ['*',['to-number',['get','building:levels',['get','tags']]],3.66],
-       5]],
-    'fill-extrusion-base':['max',0,['floor',['coalesce',
+       5]]],
+    'fill-extrusion-base':['+', ['to-number',['get','terrain_base_m'],0], ['max',0,['floor',['coalesce',
       ['to-number',['get','min_height',['get','tags']]],
       ['*',['to-number',['get','min_level',['get','tags']]],3.66],
-      0]]],
+      0]]]],
     'fill-extrusion-opacity':0.98,'fill-extrusion-vertical-gradient':true
    }});
  map.on('click','local-buildings-3d',e=>{const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};let extra='';if(String(p.osm_feature_id||'')==='way/90123959')extra='<div style="margin-top:8px"><b>Facade reference photo:</b><br><a target="_blank" rel="noopener" href="https://philippinerealtygroup.com/manila-residences-bocobo"><img alt="Manila Residences Bocobo facade reference" src="https://philippinerealtygroup.com/wp-content/images/PRG_Developments/manila-residences-bocobo/0_Manila-Residences-Bocobo-Manila-City-Metro-Manila-Philippines.jpg" style="display:block;max-width:260px;width:100%;height:auto;margin:6px 0"></a><div>Inspected online reference; the street-facing facade is modeled with cream podium, dark window/balcony bands and orange vertical accents. Photo is a reference, not stretched across the wall.</div></div>';new maplibregl.Popup().setLngLat(e.lngLat).setHTML(popupHtml(p)+extra).addTo(map)});
@@ -557,7 +593,7 @@ function addDpwRoadSurface(data){
  if(map.getLayer('dpwh-road-surface-data'))map.removeLayer('dpwh-road-surface-data');
  if(map.getSource('dpwh-road-surface-data'))map.removeSource('dpwh-road-surface-data');
  map.addSource('dpwh-road-surface-data',{type:'geojson',data:data});
- map.addLayer({id:'dpwh-road-surface-data',type:'line',source:'dpwh-road-surface-data',paint:{'line-color':'#64748b','line-width':8,'line-opacity':0.025}});
+ map.addLayer({id:'dpwh-road-surface-data',type:'line',source:'dpwh-road-surface-data',layout:{'line-elevation-reference':'ground'},paint:{'line-color':'#64748b','line-width':8,'line-opacity':0.025}});
  map.on('click','dpwh-road-surface-data',e=>{
   const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};
   const date=v=>{const n=Number(v);return n>0?new Date(n).toLocaleDateString():''};
@@ -590,9 +626,9 @@ function addRoads(data){
  if(map.getLayer('project-roads'))map.removeLayer('project-roads');
  if(map.getSource('project-roads'))map.removeSource('project-roads');
  map.addSource('project-roads',{type:'geojson',data:data});
- map.addLayer({id:'project-roads-casing',type:'line',source:'project-roads',paint:{'line-color':'#d9d3c8','line-width':['interpolate',['linear'],['zoom'],12,2,15,7,17,12,19,18],'line-opacity':0.96}});
- map.addLayer({id:'project-roads',type:'line',source:'project-roads',paint:{'line-color':['match',['get','highway'],'motorway','#f05e46','trunk','#f0784f','primary','#ed9862','secondary','#e7b76e','tertiary','#f0d6a5','#8ba2b5'],'line-width':['interpolate',['linear'],['zoom'],12,1,15,4,17,7,19,11],'line-opacity':0.99}});
- map.addLayer({id:'project-road-labels',type:'symbol',source:'project-roads',minzoom:15.2,filter:['all',['has','name'],['!=',['get','name'],'']],layout:{'symbol-placement':'line','text-field':['get','name'],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],15,10,18,13],'text-max-angle':35,'text-padding':4,'text-keep-upright':true},paint:{'text-color':'#273847','text-halo-color':'#fffaf0','text-halo-width':1.6,'text-halo-blur':0.4}});
+ map.addLayer({id:'project-roads-casing',type:'line',source:'project-roads',layout:{'line-elevation-reference':'ground'},paint:{'line-color':'#d9d3c8','line-width':['interpolate',['linear'],['zoom'],12,2,15,7,17,12,19,18],'line-opacity':0.96}});
+ map.addLayer({id:'project-roads',type:'line',source:'project-roads',layout:{'line-elevation-reference':'ground'},paint:{'line-color':['match',['get','highway'],'motorway','#f05e46','trunk','#f0784f','primary','#ed9862','secondary','#e7b76e','tertiary','#f0d6a5','#8ba2b5'],'line-width':['interpolate',['linear'],['zoom'],12,1,15,4,17,7,19,11],'line-opacity':0.99}});
+ map.addLayer({id:'project-road-labels',type:'symbol',source:'project-roads',minzoom:15.2,filter:['all',['has','name'],['!=',['get','name'],'']],layout:{'symbol-placement':'line','symbol-elevation-reference':'ground','text-field':['get','name'],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],15,10,18,13],'text-max-angle':35,'text-padding':4,'text-keep-upright':true},paint:{'text-color':'#273847','text-halo-color':'#fffaf0','text-halo-width':1.6,'text-halo-blur':0.4}});
  map.on('click','project-roads',e=>{const f=e.features&&e.features[0];if(f)new maplibregl.Popup().setLngLat(e.lngLat).setHTML(popupHtml(f.properties||{})).addTo(map)});
 }
 map.on('load',async()=>{
@@ -629,7 +665,9 @@ map.on('load',async()=>{
   if(surfaceData.features.length)addDpwRoadSurface(surfaceData);
   // Sync from the same OpenFreeMap vector-tile heights used by the visible basemap; retry as tiles load.
   syncLocalHeightsFromBasemap();
-  map.on('idle',syncLocalHeightsFromBasemap);
+  applyTerrainAlignment();
+  map.once('idle',applyTerrainAlignment);
+  map.on('idle',()=>{syncLocalHeightsFromBasemap();applyTerrainAlignment();});
   addLandmarks();addRealModelMarkers();addSatelliteImagery();addLocalRamonModel(roadsData);
   // Apply the current checkbox states after asynchronous data loading, even if a user unchecked a layer early.
   const setVisibility=(ids,visible)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visible?'visible':'none')});
@@ -645,7 +683,7 @@ document.getElementById('realModels').addEventListener('change',e=>['real-buildi
 document.getElementById('buildings').addEventListener('change',e=>{['local-buildings-3d','local-building-labels','all-building-facade-textures'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('basemap3d').addEventListener('change',e=>{base3dLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'Basemap 3D buildings enabled for comparison with OSM. Turn off OSM 3D buildings to inspect the basemap alone.':'Basemap 3D buildings hidden; OSM layer remains independently controlled.')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
-document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null)}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
+document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null);terrainAlignmentSignature='';map.once('idle',applyTerrainAlignment);setStatus(e.target.checked?'Terrain enabled; aligning building bases and road surfaces to ground elevation…':'Terrain disabled; resetting building bases to flat ground…')}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
 document.getElementById('labels').addEventListener('change',e=>{if(map.getLayer('local-building-labels'))map.setLayoutProperty('local-building-labels','visibility',e.target.checked?'visible':'none')});
 document.getElementById('sun').addEventListener('click',()=>{golden=!golden;try{map.setLight({anchor:'viewport',position:golden?[1.2,210,35]:[1.2,45,75],color:golden?'#ffe0ad':'#ffffff',intensity:golden?0.45:0.8});document.getElementById('sun').textContent=golden?'Golden-hour light':'Neutral daylight'}catch(err){setStatus('Lighting controls are not supported by this map style.')}});
 document.getElementById('tilt').addEventListener('click',()=>{tilted=!tilted;map.easeTo({pitch:tilted?62:0,bearing:tilted?-18:0,duration:900})});
