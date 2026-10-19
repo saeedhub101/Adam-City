@@ -17,6 +17,7 @@
 <label><input id="landmarks" type="checkbox" checked> Key landmarks</label>
 <label><input id="realModels" type="checkbox" checked> Real building 3D model previews</label>
 <label><input id="buildings" type="checkbox" checked> OSM 3D buildings</label>
+<label><input id="basemap3d" type="checkbox"> Basemap 3D buildings</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
 <label><input id="terrain" type="checkbox" checked> 3D terrain</label>
 <label><input id="labels" type="checkbox" checked> Building labels</label>
@@ -45,7 +46,7 @@ const map=new maplibregl.Map({
 });
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
 map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-right');
-let roadsData=null,buildingsData=null,surfaceData=null,tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[];
+let roadsData=null,buildingsData=null,surfaceData=null,tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[],base3dLayerIds=[];
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function popupHtml(p){const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',p.osm_feature_id||p.id]];return '<div style="font:13px system-ui"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+'</div>'}
 function addRealModelMarkers(){
@@ -240,12 +241,13 @@ function addTexturedBuildingMeshes(data,roadNetwork){
   const id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:''));
   // A current online building listing identifies this tower as 34 storeys; OSM's 18 m height tag is inconsistent.
   if(id===detailSource.osmId)return 102;
+  // Keep facade geometry exactly within the same height envelope as the OSM extrusion below.
+  // When OSM has no usable height or levels, the extrusion fallback is 5 m, not a taller guessed facade.
   const h=parseFloat(String(t.height||'').replace(/[^0-9.]/g,''));
-  if(Number.isFinite(h)&&h>=2&&h<=500)return h;
+  if(Number.isFinite(h)&&h>=2&&h<=500)return Math.ceil(h);
   const levels=parseFloat(t['building:levels']||t.levels||'');
-  if(Number.isFinite(levels)&&levels>=1&&levels<=150)return levels*3.2;
-  const b=t.building||p.building;
-  return ({church:18,cathedral:24,hospital:12,commercial:16,office:18,hotel:18,apartments:12,industrial:8,house:6,residential:7,garage:3,shed:3})[b]||8;
+  if(Number.isFinite(levels)&&levels>=1&&levels<=150)return Math.ceil(levels*3.66);
+  return 5;
  };
  const windowPos=[],windowNormals=[],trimPos=[],bandPos=[],balconyPos=[],doorPos=[],roofRimPos=[];
  function quad(arr,a,b,c,d){arr.push(a.x,a.y,a.z,b.x,b.y,b.z,c.x,c.y,c.z,c.x,c.y,c.z,b.x,b.y,b.z,d.x,d.y,d.z);}
@@ -473,8 +475,10 @@ function addRoads(data){
 }
 map.on('load',async()=>{
  try{
-  // Use the committed OSM building layer only; hide third-party basemap building extrusions unconditionally.
-  (map.getStyle().layers||[]).filter(l=>/building/i.test(l.id||'')&&(/3d|extrusion|fill-extrusion/i.test((l.id||'')+' '+(l['source-layer']||''))||l.type==='fill-extrusion')).forEach(l=>{if(map.getLayer(l.id))map.setLayoutProperty(l.id,'visibility','none')});
+  // Preserve the original basemap 3D buildings as an independent comparison layer.
+  // Start with it hidden so OSM remains the default; the checkbox can turn it on at any time.
+  base3dLayerIds=(map.getStyle().layers||[]).filter(l=>/building/i.test((l.id||'')+' '+(l['source-layer']||''))&&(l.type==='fill-extrusion'||/3d|extrusion/i.test(l.id||''))).map(l=>l.id);
+  base3dLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none')});
   map.addSource('terrain-dem',{type:'raster-dem',tiles:['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});
   map.setTerrain({source:'terrain-dem',exaggeration:1.15});
   map.setSky({ 'sky-color':'#8dbbe2','sky-horizon-blend':0.5,'horizon-color':'#e8f1fa','horizon-fog-blend':0.2,'fog-color':'#dce8f3','fog-ground-blend':0.15,'atmosphere-blend':0.8});
@@ -511,6 +515,7 @@ document.getElementById('imagery').addEventListener('change',e=>setSatelliteImag
 document.getElementById('landmarks').addEventListener('change',e=>['key-landmark-halo','key-landmark-dot','key-landmark-label'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('realModels').addEventListener('change',e=>['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('buildings').addEventListener('change',e=>{['local-buildings-3d','local-building-labels','all-building-facade-textures'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
+document.getElementById('basemap3d').addEventListener('change',e=>{base3dLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'Basemap 3D buildings enabled for comparison with OSM. Turn off OSM 3D buildings to inspect the basemap alone.':'Basemap 3D buildings hidden; OSM layer remains independently controlled.')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null)}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
 document.getElementById('labels').addEventListener('change',e=>{if(map.getLayer('local-building-labels'))map.setLayoutProperty('local-building-labels','visibility',e.target.checked?'visible':'none')});
