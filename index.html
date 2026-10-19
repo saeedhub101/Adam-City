@@ -347,6 +347,8 @@ function addTexturedBuildingMeshes(data,roadNetwork){
  map.addLayer(layer);
 }
 function syncLocalHeightsFromBasemap(){
+ // IMPORTANT: querySourceFeatures only returns vector tiles currently loaded in the viewport.
+ // Never use that partial tile collection as the complete building dataset or replace OSM geometry with it.
  if(!osmBuildingsData||!Array.isArray(osmBuildingsData.features)||!map.getSource('openmaptiles'))return;
  let tiles=[];
  try{tiles=map.querySourceFeatures('openmaptiles',{sourceLayer:'building'})||[];}catch(e){return;}
@@ -354,9 +356,9 @@ function syncLocalHeightsFromBasemap(){
  const idKeys=f=>{
   const p=f.properties||{},v=[];
   for(const k of ['osm_id','osm_way_id','osm_feature_id','id','original_id']){
-   const x=p[k];if(x!==undefined&&x!==null&&String(x)!=='')v.push(String(x).replace(/^(way|relation|node)\//,''));
+   const x=p[k];if(x!==undefined&&x!==null&&String(x)!=='')v.push(String(x).replace(/^(way|relation|node)\\//,''));
   }
-  if(f.id!==undefined&&f.id!==null)v.push(String(f.id).replace(/^(way|relation|node)\//,''));
+  if(f.id!==undefined&&f.id!==null)v.push(String(f.id).replace(/^(way|relation|node)\\//,''));
   return [...new Set(v)];
  };
  const center=f=>{
@@ -368,64 +370,38 @@ function syncLocalHeightsFromBasemap(){
  const osmIndex=new Map(),osmCenters=[];
  for(const f of osmBuildingsData.features){
   if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
-  const p=f.properties||{},keys=idKeys(f);
-  for(const k of keys){if(!osmIndex.has(k))osmIndex.set(k,f);}
+  const p=f.properties||{};
+  for(const k of idKeys(f)){if(!osmIndex.has(k))osmIndex.set(k,f);}
   const ctr=center(f);if(ctr)osmCenters.push({f,ctr});
  }
- const candidates=[],seen=new Set();
- for(const f of tiles){
-  if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
-  const p=f.properties||{},h=Number(p.render_height),base=Number(p.render_min_height||0);
+ let changed=false;const seen=new Set();
+ for(const tile of tiles){
+  if(!tile.geometry||!['Polygon','MultiPolygon'].includes(tile.geometry.type))continue;
+  const tp=tile.properties||{},h=Number(tp.render_height),base=Number(tp.render_min_height||0);
   if(!Number.isFinite(h)||h<2||h>500)continue;
-  const ctr=center(f);if(!ctr)continue;
-  const keys=idKeys(f);
-  const geometryKey=JSON.stringify([keys.slice().sort().join(','),ctr.map(v=>Number(v.toFixed(5))),Number(h.toFixed(1))]);
-  if(seen.has(geometryKey))continue;
-  seen.add(geometryKey);
-  candidates.push({f,h,base,ctr,keys});
- }
- if(!candidates.length)return;
- const derived=[];
- for(const q of candidates){
+  const ctr=center(tile);if(!ctr)continue;
+  const key=idKeys(tile).sort().join(',')+'|'+ctr.map(v=>v.toFixed(5)).join(',');
+  if(seen.has(key))continue;seen.add(key);
   let osm=null;
-  for(const k of q.keys){if(osmIndex.has(k)){osm=osmIndex.get(k);break;}}
+  for(const k of idKeys(tile)){if(osmIndex.has(k)){osm=osmIndex.get(k);break;}}
   if(!osm){
    let best=null,dist=Infinity;
-   for(const candidate of osmCenters){const d=toMeters(q.ctr,candidate.ctr);if(d<dist){dist=d;best=candidate.f;}}
+   for(const candidate of osmCenters){const d=toMeters(ctr,candidate.ctr);if(d<dist){dist=d;best=candidate.f;}}
    if(best&&dist<=15)osm=best;
   }
-  const bp=q.f.properties||{},op=osm?.properties||{},originalTags=op.tags&&typeof op.tags==='object'?op.tags:{};
-  const tags={...originalTags};
-  // Overwrite OSM geometry-related attributes with Basemap's current vector-tile attributes.
-  tags.height=String(q.h);tags.min_height=String(q.base);
-  tags.building=String(bp.building||bp.class||'yes');
-  if(bp.name)tags.name=String(bp.name);
-  if(bp.colour||bp.color||bp.building_colour)tags['building:colour']=String(bp.colour||bp.color||bp.building_colour);
-  if(bp.class)tags['basemap:class']=String(bp.class);
-  const props={
-   ...op,
-   tags,
-   osm_feature_id:op.osm_feature_id||((op.type&&op.id)?op.type+'/'+op.id:undefined),
-   basemap_properties:{...bp},
-   basemap_render_height:q.h,
-   basemap_render_min_height:q.base,
-   adam_height_m:q.h,
-   basemap_height_match:osm?(op.osm_feature_id||String(q.f.id||'matched-osm')):String(q.f.id||'basemap-only'),
-   basemap_source_id:q.f.id??null,
-   basemap_geometry_authoritative:true
-  };
-  if(!props.name&&bp.name)props.name=bp.name;
-  derived.push({type:'Feature',id:q.f.id,geometry:q.f.geometry,properties:props});
+  if(!osm)continue;
+  const p=osm.properties||(osm.properties={});
+  if(Number(p.basemap_render_height)!==h||Number(p.basemap_render_min_height||0)!==base){
+   p.basemap_render_height=h;p.basemap_render_min_height=base;p.basemap_height_match='matched-openmaptiles';
+   changed=true;
+  }
  }
- const next={type:'FeatureCollection',name:'Basemap-authoritative building geometry and heights merged with OSM attributes',features:derived};
- const signature=derived.map(f=>String(f.id||f.properties.basemap_source_id)+'/'+f.properties.basemap_render_height+'/'+JSON.stringify(f.geometry?.coordinates?.[0]?.[0]||f.geometry?.coordinates?.[0]||[]).slice(0,80)).join('|');
- if(signature===basemapBuildingsSignature)return;
- basemapBuildingsSignature=signature;
- buildingsData=next;
+ if(!changed)return;
+ // Keep every cached OSM footprint and its original geometry; only enrich matching features with height evidence.
+ buildingsData=osmBuildingsData;
  if(map.getSource('local-buildings'))map.getSource('local-buildings').setData(buildingsData);
- else if(buildingsData.features.length)addBuildings(buildingsData);
- addTexturedBuildingMeshes(buildingsData,roadsData);
- setStatus('Basemap is authoritative: '+derived.length.toLocaleString()+' current Basemap building geometries/heights copied into the project building layer; OSM attributes are retained where matched. OSM-only stale footprints are replaced, not merely hidden.');
+ if(buildingsData.features.length&&window.THREE)addTexturedBuildingMeshes(buildingsData,roadsData);
+ setStatus('OSM buildings preserved: '+buildingsData.features.length.toLocaleString()+' cached footprints; Basemap heights are supplemental only.');
 }
 function terrainElevationForFeature(f){
  const g=f&&f.geometry;if(!g)return null;
