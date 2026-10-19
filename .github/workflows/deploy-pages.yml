@@ -28,16 +28,18 @@ jobs:
           test -f ermita/maps/generated/ermita-road-network.geojson
           test -f ermita/maps/sources/openfreemap/area-boundary.geojson
           test -f ermita/maps/sources/openfreemap/layers/housenumber.geojsonl
+          test -f ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson
           test -f ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           test -f ermita/3d/terrain/ermita-terrain-surface.glb
           test -f ermita/3d/exports/adam-city-complete.glb
-          mkdir -p site/ermita/maps/generated site/ermita/maps/sources/openfreemap/layers site/assets site/ermita/streets site/ermita/maps/qa
+          mkdir -p site/ermita/maps/generated site/ermita/maps/sources/openfreemap/layers site/ermita/maps/sources/microsoft-satellite-buildings site/assets site/ermita/streets site/ermita/maps/qa
           cp index.html site/index.html
           cp backup/ermita/maps/generated/ermita-building-footprints.geojson site/ermita/maps/generated/ermita-osm-building-footprints.geojson
           cp ermita/maps/generated/ermita-road-network.geojson site/ermita/maps/generated/
           cp ermita/maps/sources/openfreemap/area-boundary.geojson site/ermita/maps/sources/openfreemap/
           cp ermita/maps/sources/openfreemap/source-metadata.json site/ermita/maps/sources/openfreemap/
           cp ermita/maps/sources/openfreemap/layers/housenumber.geojsonl site/ermita/maps/sources/openfreemap/layers/
+          cp ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson site/ermita/maps/sources/microsoft-satellite-buildings/
           cp ermita/streets/street_segments.csv ermita/streets/street_names.csv site/ermita/streets/
           cp ermita/maps/generated/ermita-building-details.csv site/ermita/maps/generated/
           cp ermita/maps/qa/building-height-evidence.csv site/ermita/maps/qa/
