@@ -26,6 +26,14 @@ jobs:
         with:
           ref: main
           lfs: false
+          filter: blob:none
+          sparse-checkout: |
+            .github/workflows/adam-city-export-glb.yml
+            ermita/scripts/export_preview_to_glb.py
+            ermita/maps/generated/ermita-building-footprints.geojson
+            ermita/maps/generated/ermita-road-network.geojson
+            ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
+          sparse-checkout-cone-mode: false
       - name: Fetch only the required DEM asset
         run: git lfs pull --include="ermita/3d/terrain/ermita-copernicus-dem-cropped.tif"
       - name: Set up Python
