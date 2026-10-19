@@ -237,21 +237,43 @@ function addTexturedBuildingMeshes(data,roadNetwork){
  };
  const xy=c=>({x:(c[0]-origin[0])*111319.49*Math.cos(origin[1]*Math.PI/180),z:(c[1]-origin[1])*110574.27});
  const heightOf=p=>{
-  const t=p.tags||p;
-  const id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:''));
-  // A current online building listing identifies this tower as 34 storeys; OSM's 18 m height tag is inconsistent.
-  if(id===detailSource.osmId)return 102;
-  // Keep facade geometry exactly within the same height envelope as the OSM extrusion below.
-  // When OSM has no usable height or levels, the extrusion fallback is 5 m, not a taller guessed facade.
-  const basemapH=Number(p.basemap_render_height);
-  if(Number.isFinite(basemapH)&&basemapH>=2&&basemapH<=500)return basemapH;
-  const h=parseFloat(String(t.height||'').replace(/[^0-9.]/g,''));
-  if(Number.isFinite(h)&&h>=2&&h<=500)return Math.ceil(h);
-  const levels=parseFloat(t['building:levels']||t.levels||'');
-  if(Number.isFinite(levels)&&levels>=1&&levels<=150)return Math.ceil(levels*3.66);
-  return 5;
- };
- const windowPos=[],windowNormals=[],trimPos=[],bandPos=[],balconyPos=[],doorPos=[],roofRimPos=[];
+   const t=p.tags||p;
+   const id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:''));
+   if(id===detailSource.osmId)return 102;
+   const normalized=Number(p.adam_height_m);
+   if(Number.isFinite(normalized)&&normalized>=2&&normalized<=500)return normalized;
+   const basemapH=Number(p.basemap_render_height);
+   if(Number.isFinite(basemapH)&&basemapH>=2&&basemapH<=500)return basemapH;
+   const raw=String(t.height||'').trim(),match=raw.match(/[0-9]+(?:[.,][0-9]+)?/);
+   let h=match?Number(match[0].replace(',','.')):NaN;
+   if(Number.isFinite(h)&&(/\b(ft|feet|foot)\b/i.test(raw)||raw.includes("'")))h*=0.3048;
+   if(Number.isFinite(h)&&h>=2&&h<=500)return Math.ceil(h);
+   const levels=parseFloat(String(t['building:levels']||t.levels||'').replace(',','.'));
+   if(Number.isFinite(levels)&&levels>=1&&levels<=150)return Math.ceil(levels*3.66);
+   return 5;
+  };
+  function normalizeBuildingHeights(data){
+   for(const f of (data.features||[])){
+    const p=f.properties||(f.properties={}),t=p.tags||p;
+    const id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:''));
+    let h=NaN;
+    if(id===detailSource.osmId)h=102;
+    const base=Number(p.basemap_render_height);
+    if(!Number.isFinite(h)&&Number.isFinite(base)&&base>=2&&base<=500)h=base;
+    if(!Number.isFinite(h)){
+     const raw=String(t.height||'').trim(),match=raw.match(/[0-9]+(?:[.,][0-9]+)?/);
+     let v=match?Number(match[0].replace(',','.')):NaN;
+     if(Number.isFinite(v)&&(/\b(ft|feet|foot)\b/i.test(raw)||raw.includes("'")))v*=0.3048;
+     if(Number.isFinite(v)&&v>=2&&v<=500)h=Math.ceil(v);
+    }
+    if(!Number.isFinite(h)){
+     const levels=Number(String(t['building:levels']||t.levels||'').replace(',','.'));
+     if(Number.isFinite(levels)&&levels>=1&&levels<=150)h=Math.ceil(levels*3.66);
+    }
+    p.adam_height_m=Number.isFinite(h)?h:5;
+   }
+  }
+  const windowPos=[],windowNormals=[],trimPos=[],bandPos=[],balconyPos=[],doorPos=[],roofRimPos=[];
  function quad(arr,a,b,c,d){arr.push(a.x,a.y,a.z,b.x,b.y,b.z,c.x,c.y,c.z,c.x,c.y,c.z,b.x,b.y,b.z,d.x,d.y,d.z);}
  function point(p,n,offset,y){return {x:p.x+n.x*offset,y:y,z:p.z+n.z*offset};}
  function faceQuad(arr,a,b,n,offset,y0,y1,u0,u1){
@@ -424,9 +446,10 @@ function syncLocalHeightsFromBasemap(){
   }
   if(!q)continue;
   matched++;
-  if(Number(p.basemap_render_height)!==q.h||Number(p.basemap_render_min_height)!==Number(q.f.properties?.render_min_height||0)){
+  if(Number(p.basemap_render_height)!==q.h||Number(p.basemap_render_min_height)!==Number(q.f.properties?.render_min_height||0)||Number(p.adam_height_m)!==q.h){
    p.basemap_render_height=q.h;
    p.basemap_render_min_height=Number(q.f.properties?.render_min_height||0);
+   p.adam_height_m=q.h;
    p.basemap_height_match=raw||String(q.f.id||'spatial-match');
    changed++;
   }
@@ -457,11 +480,7 @@ function addBuildings(data){
        '#c8bfb3']],
     // Match OpenMapTiles/Liberty height fallback: height, then levels × 3.66 m, then 5 m.
     // This keeps local OSM extrusions much closer to the Basemap when source tags are missing.
-    'fill-extrusion-height':['case',['==',['get','osm_feature_id'],'way/90123959'],102,['max',2,['coalesce',
-      ['to-number',['get','basemap_render_height']],
-      ['to-number',['get','height',['get','tags']]],
-      ['*',['to-number',['get','building:levels',['get','tags']]],3.66],
-      5]]],
+    'fill-extrusion-height':['max',2,['coalesce',['to-number',['get','adam_height_m']],5]],
     'fill-extrusion-base':['max',0,['floor',['coalesce',
       ['to-number',['get','min_height',['get','tags']]],
       ['*',['to-number',['get','min_level',['get','tags']]],3.66],
@@ -560,6 +579,8 @@ map.on('load',async()=>{
   // Reconcile this one photo-checked landmark against the current OSM feature ID, not a nearby guess.
   const bocobo=buildingsData.features.find(f=>String(f.properties?.osm_feature_id||'')==='way/90123959');
   if(bocobo){bocobo.properties.tags=bocobo.properties.tags||{};bocobo.properties.tags.name='Manila Residences Bocobo';bocobo.properties.tags['building:levels']='34';bocobo.properties.tags.height='102';bocobo.properties.tags['building:colour']='#e5d5bd';bocobo.properties.tags['facade:reference']='Photo reviewed: Philippine Realty Group listing';}
+  // Normalize each building's height once, so facade windows and the 3D roof use the same numeric value.
+  normalizeBuildingHeights(buildingsData);
   surfaceData={type:'FeatureCollection',features:(surfaceResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   addRoads(roadsData);
   if(buildingsData.features.length){addBuildings(buildingsData);addTexturedBuildingMeshes(buildingsData,roadsData);}
