@@ -42,7 +42,7 @@
 <script>
 (async()=>{
 const root='/Adam-City/';
-const urls={buildings:root+'ermita/maps/generated/ermita-osm-building-footprints.geojson',microsoftBuildings:root+'ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson',roads:root+'ermita/maps/generated/ermita-road-network.geojson',boundary:root+'ermita/maps/sources/openfreemap/area-boundary.geojson',housenumbers:root+'ermita/maps/sources/openfreemap/layers/housenumber.geojsonl',openfreemapBuildings:root+'ermita/maps/sources/openfreemap/layers/building.geojsonl'};
+const urls={buildings:root+'ermita/maps/generated/ermita-osm-building-footprints.geojson',microsoftBuildings:root+'ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson',roads:root+'ermita/maps/generated/ermita-road-network.geojson',boundary:root+'ermita/maps/sources/openfreemap/area-boundary.geojson',housenumbers:root+'ermita/maps/sources/openfreemap/layers/housenumber.geojsonl'};
 const $=id=>document.getElementById(id), status=$('status');
 const say=s=>{if(status)status.textContent=s};
 window.addEventListener('error',e=>{say('خطأ JavaScript: '+(e.message||'تعذر تشغيل الخريطة'));console.error(e.error||e.message)});
@@ -70,6 +70,9 @@ map.on('load',async()=>{
     for(const f of features){const tile=f._source&&f._source.tile;if(tile&&Number.isFinite(Number(tile.z))&&Number.isFinite(Number(tile.y))&&f.geometry&&f.geometry.coordinates)f.geometry.coordinates=fixCoords(f.geometry.coordinates,tile)}
    }return[k,features]}return[k,await r.json()]}));
   const d=Object.fromEntries(pairs);
+  // The deploy workflow does not publish the optional local OpenMapTiles building GeoJSONL file.
+  // Keep this overlay optional so its absence cannot block the whole map.
+  d.openfreemapBuildings=[];
   // Publish the original OSM polygons separately from the newer OpenMapTiles-derived footprints.
   d.buildings.features=d.buildings.features.filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&f.properties?.tags?.building);
   // Replace an OSM footprint only for a strong one-to-one spatial match.
