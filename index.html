@@ -707,6 +707,41 @@ function addRoads(data){
  map.addLayer({id:'project-road-labels',type:'symbol',source:'project-roads',minzoom:15.2,filter:['all',['has','name'],['!=',['get','name'],'']],layout:{'symbol-placement':'line','symbol-elevation-reference':'ground','text-field':['get','name'],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],15,10,18,13],'text-max-angle':35,'text-padding':4,'text-keep-upright':true},paint:{'text-color':'#273847','text-halo-color':'#fffaf0','text-halo-width':1.6,'text-halo-blur':0.4}});
  map.on('click','project-roads',e=>{const f=e.features&&e.features[0];if(f)new maplibregl.Popup().setLngLat(e.lngLat).setHTML(popupHtml(f.properties||{})).addTo(map)});
 }
+
+// Brand overlays are built from the *live Liberty vector-tile building geometry*.
+// The committed OSM GeoJSON can be empty, so branding must not depend on local-buildings.
+const sevenElevenOsmIds = new Set(['308695408','822386821','89830977','308701704','90301215','267205333','103494320','163678964','86401784','762587819','268207665','575422162','89536449','267205328']);
+let basemapBrandRefreshQueued=false;
+function updateBasemapBrandBuildings(){
+ if(!map.isStyleLoaded()||!map.getSource('openmaptiles'))return;
+ let tiles=[];
+ try{tiles=map.querySourceFeatures('openmaptiles',{sourceLayer:'building'})||[];}catch(e){return;}
+ const matched=new Map();
+ for(const f of tiles){
+  if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
+  const p=f.properties||{};
+  const ids=[];
+  for(const k of ['osm_id','osm_way_id','osm_feature_id','id','original_id']){
+   const v=p[k];if(v!==undefined&&v!==null&&String(v)!=='')ids.push(String(v).replace(/^(way|relation|node)\\//,''));
+  }
+  if(f.id!==undefined&&f.id!==null)ids.push(String(f.id).replace(/^(way|relation|node)\\//,''));
+  let brand='',label='',color='';
+  if(ids.some(id=>sevenElevenOsmIds.has(id))){brand='7-Eleven';label='7 ELEVEN';color='#168641';}
+  else if(ids.includes('48894714')){brand='Robinsons Manila';label='ROBINSONS';color='#d7d1c7';}
+  if(!brand)continue;
+  const key=brand+':'+(ids[0]||JSON.stringify(f.geometry.coordinates).slice(0,80));
+  const h=Number(p.render_height||p.height||p.height_m||12);
+  matched.set(key,{type:'Feature',id:key,geometry:f.geometry,properties:{brand,label,color,height:Number.isFinite(h)&&h>2?h:12,base:Number(p.render_min_height||0)}});
+ }
+ const data={type:'FeatureCollection',name:'Branding overlays matched to live basemap building vector tiles',features:[...matched.values()]};
+ const src=map.getSource('basemap-branded-building-overlays');
+ if(src)src.setData(data);
+ if(!src)return;
+ if(!map.getLayer('basemap-branded-building-extrusions'))map.addLayer({id:'basemap-branded-building-extrusions',type:'fill-extrusion',source:'basemap-branded-building-overlays',paint:{'fill-extrusion-color':['get','color'],'fill-extrusion-height':['get','height'],'fill-extrusion-base':['get','base'],'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':false}});
+ if(!map.getLayer('basemap-branded-building-signs'))map.addLayer({id:'basemap-branded-building-signs',type:'symbol',source:'basemap-branded-building-overlays',minzoom:14.8,layout:{'text-field':['get','label'],'text-font':['Open Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],15,10,18,19],'text-max-width':12,'text-allow-overlap':true,'text-ignore-placement':true},paint:{'text-color':['match',['get','brand'],'7-Eleven','#ffffff','#c92732'],'text-halo-color':['match',['get','brand'],'7-Eleven','#168641','#ffffff'],'text-halo-width':3}});
+ if(matched.size) setStatus('Live basemap building match: '+[...matched.values()].filter(f=>f.properties.brand==='7-Eleven').length+' 7-Eleven footprints and '+[...matched.values()].filter(f=>f.properties.brand==='Robinsons Manila').length+' Robinsons footprint(s) styled from vector-tile geometry.');
+}
+
 map.on('load',async()=>{
  try{
   // The Liberty basemap includes its own city-wide building layers, independent of
@@ -719,6 +754,8 @@ map.on('load',async()=>{
   baseBuildingLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none')});
   map.addSource('terrain-dem',{type:'raster-dem',tiles:['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});
   map.setTerrain({source:'terrain-dem',exaggeration:1.15});
+  map.addSource('basemap-branded-building-overlays',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+  map.on('idle',()=>{if(!basemapBrandRefreshQueued){basemapBrandRefreshQueued=true;updateBasemapBrandBuildings();basemapBrandRefreshQueued=false;}});
   map.setSky({ 'sky-color':'#8dbbe2','sky-horizon-blend':0.5,'horizon-color':'#e8f1fa','horizon-fog-blend':0.2,'fog-color':'#dce8f3','fog-ground-blend':0.15,'atmosphere-blend':0.8});
   // Load each dataset independently: a missing DPWH/buildings file must never suppress the road layer.
   const empty={type:'FeatureCollection',features:[]};
