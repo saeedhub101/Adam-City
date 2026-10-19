@@ -7,11 +7,11 @@
 <style>
 :root{color-scheme:dark;--panel:#101b23ed;--line:#334954;--text:#f3f7f8;--muted:#aab9c0;--accent:#7ce3c0}
 *{box-sizing:border-box}html,body,main,#map{margin:0;width:100%;height:100%;overflow:hidden}body{background:#111b21;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}main{position:relative}#map{position:absolute;inset:0}
-.panel{position:absolute;z-index:5;top:12px;right:12px;width:min(315px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:auto;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 35px #0006;backdrop-filter:blur(12px)}
-.brand{font-weight:900;font-size:19px;letter-spacing:.08em;direction:ltr;text-align:right}.brand span{color:var(--accent)}.sub{font-size:11px;color:var(--muted);margin:2px 0 11px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}.stat{padding:8px 3px;background:#1b2b34;border-radius:8px;text-align:center}.stat strong{display:block;font-size:16px;color:var(--accent)}.stat span{font-size:10px;color:var(--muted)}
-.group-title{font-size:11px;font-weight:800;color:var(--accent);margin:11px 2px 6px}.options{display:grid;grid-template-columns:1fr 1fr;gap:6px}.opt{display:flex;align-items:center;gap:7px;padding:8px;border:1px solid #344954;background:#1b2a33;border-radius:8px;font-size:11px;cursor:pointer;min-width:0}.opt:has(input:checked){border-color:var(--accent);background:#19352f}.opt input{width:15px;height:15px;margin:0;accent-color:var(--accent);flex-shrink:0}.opt span{line-height:1.3}
-.status{font-size:11px;color:var(--muted);line-height:1.6;margin-top:10px;min-height:22px}.assets{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;font-size:10px}.assets a{color:#9eead3;text-decoration:none;border-bottom:1px solid #51796e}
+.panel{position:absolute;z-index:5;top:8px;right:8px;width:220px;max-height:calc(100vh - 16px);overflow:auto;padding:7px;background:#fffffff0;color:#222;border:1px solid #bbb;border-radius:3px;box-shadow:none;backdrop-filter:none}
+.brand{font-weight:700;font-size:14px;letter-spacing:.03em;direction:ltr;text-align:right;color:#222}.brand span{color:#333}.sub{font-size:9px;color:#555;margin:0 0 5px}
+.stats{display:none}
+.group-title{font-size:10px;font-weight:700;color:#333;margin:6px 0 2px;border-bottom:1px solid #ddd}.options{display:grid;grid-template-columns:1fr;gap:0}.opt{display:flex;align-items:center;gap:5px;padding:2px 1px;border:0;background:transparent;border-radius:0;font-size:10px;color:#222;cursor:pointer;min-width:0}.opt:has(input:checked){border:0;background:transparent}.opt input{width:12px;height:12px;margin:0 0 0 2px;accent-color:#333;flex-shrink:0}.opt span{line-height:1.25}
+.status{font-size:9px;color:#444;line-height:1.35;margin-top:5px;min-height:0}.assets{display:none}
 .credit{position:absolute;z-index:4;bottom:10px;left:10px;max-width:calc(100vw - 20px);padding:7px 10px;background:#101b23e8;border:1px solid var(--line);border-radius:8px;color:#e0e9ec;font-size:10px}.maplibregl-ctrl-group{overflow:hidden;border-radius:9px!important}
 @media(max-width:560px){.panel{top:7px;right:7px;width:min(286px,calc(100vw - 14px));max-height:62vh;padding:10px}.credit{bottom:7px;left:7px}}
 </style></head>
@@ -19,7 +19,8 @@
 <section class="panel"><div class="brand">ADAM <span>CITY</span></div><div class="sub">ERMITA · MANILA · PHILIPPINES</div>
 <div class="stats"><div class="stat"><strong>1,528</strong><span>بصمة مبنى OSM</span></div><div class="stat"><strong>1,445</strong><span>طريق ومسار</span></div><div class="stat"><strong>DEM</strong><span>Copernicus GLO-30</span></div></div>
 <div class="group-title">المباني</div><div class="options">
-<label class="opt"><input id="buildings" type="checkbox" checked><span>مجسمات المباني</span></label>
+<label class="opt"><input id="buildings" type="checkbox" checked><span>مباني OSM المحلية (3D)</span></label>
+<label class="opt"><input id="openfreemapBuildings" type="checkbox"><span>مباني OpenFreeMap</span></label>
 <label class="opt"><input id="numbers" type="checkbox" checked><span>أرقام المباني على أسطحها</span></label>
 <label class="opt"><input id="bNames" type="checkbox" checked><span>أسماء المباني</span></label>
 <label class="opt"><input id="facade" type="checkbox" checked><span>ألوان الواجهات وطبقاتها</span></label>
@@ -30,7 +31,7 @@
 <label class="opt"><input id="sidewalks" type="checkbox" checked><span>علامات الأرصفة المتاحة</span></label>
 <label class="opt"><input id="terrain" type="checkbox" checked><span>تضاريس ثلاثية الأبعاد</span></label>
 <label class="opt"><input id="rNames" type="checkbox" checked><span>أسماء الشوارع</span></label>
-<label class="opt"><input id="baseMap" type="checkbox" checked><span>تفاصيل OpenFreeMap</span></label>
+<label class="opt"><input id="baseMap" type="checkbox" checked><span>خريطة OpenFreeMap الأساسية</span></label>
 <label class="opt"><input id="boundary" type="checkbox" checked><span>حدود إرميتا</span></label>
 </div>
 <div class="status" id="status" role="status">جارٍ تحميل بيانات المباني والطرق وOpenFreeMap…</div>
@@ -70,10 +71,11 @@ map.on('load',async()=>{
   map.addSource('local-boundary',{type:'geojson',data:d.boundary});
   // Keep the rich OpenFreeMap streets, parks, water and place-name style; local verified OSM geometry overlays it.
   const layers=map.getStyle().layers||[];
+  const openFreeMapBuildingLayerIds=layers.filter(l=>/building/i.test(l.id||'')||/building/i.test(l['source-layer']||'')).map(l=>l.id);
   map.addSource('regional-terrain-dem',{type:'raster-dem',tiles:['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});
   map.setTerrain({source:'regional-terrain-dem',exaggeration:1.18});
   map.setSky({'sky-color':'#a8c9df','sky-horizon-blend':0.45,'horizon-color':'#e7eee9','horizon-fog-blend':0.15,'fog-color':'#dce8e6','fog-ground-blend':0.15,'atmosphere-blend':0.7});
-  for(const l of layers){if(l.id&&/building_3d|building-extrusion/i.test(l.id))map.setLayoutProperty(l.id,'visibility','none')}
+  for(const id of openFreeMapBuildingLayerIds){if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none')}
   map.addLayer({id:'ermita-boundary-fill',type:'fill',source:'local-boundary',paint:{'fill-color':'#65d9b0','fill-opacity':0.045}});
   map.addLayer({id:'ermita-boundary-line',type:'line',source:'local-boundary',paint:{'line-color':'#68e2b8','line-width':2,'line-dasharray':[2,1]}});
   map.addLayer({id:'local-road-casing',type:'line',source:'local-roads',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#202326','line-opacity':.88,'line-width':['interpolate',['linear'],['zoom'],12,1,16,5,18,8]}});
@@ -91,6 +93,7 @@ map.on('load',async()=>{
   map.fitBounds([[120.9711,14.5732],[120.9931,14.5971]],{padding:{top:55,right:325,bottom:35,left:30},duration:0});
   say('تم تحميل '+d.buildings.features.length.toLocaleString('en-US')+' بصمة مبنى أساسية و'+d.microsoftBuildings.features.length.toLocaleString('en-US')+' بصمة Microsoft للمقارنة و'+d.roads.features.length.toLocaleString('en-US')+' طريق/مسار. أُسنِدت '+joined.toLocaleString('en-US')+' أرقام إلى المباني الحاوية لها. فعّل مربع Microsoft لإظهار الحدود الوردية.');
   $('buildings').onchange=e=>setVis(['local-building-extrusions','local-building-roof-edges'],e.target.checked);
+  $('openfreemapBuildings').onchange=e=>setVis(openFreeMapBuildingLayerIds,e.target.checked);
   $('microsoftBuildings').onchange=e=>{const on=e.target.checked;setVis(['microsoft-building-footprints-fill','microsoft-building-footprints-outline'],on);say(on?'طبقة Microsoft ظاهرة باللون الوردي فوق المباني الحالية للمقارنة؛ ألغِ التحديد لإخفائها.':'تم إخفاء طبقة Microsoft؛ المباني الأساسية ما زالت من مصدرها الحالي.');};
   $('numbers').onchange=e=>setVis(['building-house-numbers'],e.target.checked);
   $('bNames').onchange=e=>setVis(['local-building-name-labels'],e.target.checked);
@@ -100,7 +103,7 @@ map.on('load',async()=>{
   $('rNames').onchange=e=>setVis(['local-street-labels'],e.target.checked&&$('roads').checked);
   $('boundary').onchange=e=>setVis(['ermita-boundary-fill','ermita-boundary-line'],e.target.checked);
   $('terrain').onchange=e=>{try{map.setTerrain(e.target.checked?{source:'regional-terrain-dem',exaggeration:1.18}:null)}catch(err){console.warn('Terrain toggle failed',err)}};
-  $('baseMap').onchange=e=>{for(const l of map.getStyle().layers||[]){if(l.id==='background'||l.id?.startsWith('local-')||l.id?.startsWith('ermita-boundary')||l.id==='building-house-numbers')continue;try{map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}catch(_){}}};
+  $('baseMap').onchange=e=>{for(const l of map.getStyle().layers||[]){if(l.id==='background'||l.id?.startsWith('local-')||l.id?.startsWith('ermita-boundary')||l.id==='building-house-numbers'||openFreeMapBuildingLayerIds.includes(l.id))continue;try{map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}catch(_){}}};
  }catch(e){console.error(e);say('تعذر تحميل بيانات المدينة: '+e.message+' — راجع سجل Actions وملفات النشر.')}
 });
 })();
