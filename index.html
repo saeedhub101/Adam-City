@@ -261,10 +261,7 @@ function addTexturedBuildingMeshes(data){
    };
    const kartaFacadeTargets={
     'way/91233257':{key:'kartaYWCA',camera:[120.985673,14.582136]},
-    'way/89774335':{key:'kartaCommodore',camera:[120.979708,14.577527]},
-    'way/822413216':{key:'kartaUnknownA',camera:[120.980277,14.580004]},
-    'way/642781531':{key:'kartaUnknownB',camera:[120.986269,14.588069]},
-    'way/308695382':{key:'kartaUnknownC',camera:[120.981667,14.576875]}
+    'way/89774335':{key:'kartaCommodore',camera:[120.979708,14.577527]}
    };
    const textureKey=p=>{
     const t=p.tags||p;
@@ -273,9 +270,9 @@ function addTexturedBuildingMeshes(data){
     const n=String(t.name||t.official_name||t['name:en']||'').toLowerCase();
     const op=String(t.operator||'').toLowerCase();
     // Only assign a photographed facade to a building explicitly identified as that landmark.
-    if(/national museum of (fine arts|the philippines)|old congress building/.test(n))return 'nationalMuseum';
-    if(/university of the philippines.*(manila|main building)|upm.*main building/.test(n))return 'upManila';
-    if(/pgh cancer institute|cancer institute of the philippine general hospital/.test(n))return 'pghCancer';
+    // These reference images are not verified orthophotos of each individual wall.
+    // Do not stretch one landmark photo across every wall of an OSM footprint.
+    // Keep them catalogued until a wall-specific photo/footprint match is confirmed.
     return 'generic';
    };
    const wall=(set,a,b,h,key)=>{
