@@ -251,7 +251,8 @@ function addTexturedBuildingMeshes(data){
    Object.keys(textureSources).forEach(k=>sets[k]={positions:[],uvs:[]});
    const roofPositions=[],roofUvs=[];
    const cosLat=Math.cos(origin[1]*Math.PI/180);
-   const xy=c=>({x:(c[0]-origin[0])*111319.49*cosLat,z:-(c[1]-origin[1])*111132.92});
+   // Convert lon/lat deltas to local meters compatible with MapLibre's Mercator meter scale. North/south meters per degree increase by 1/cos(latitude); using 111132 here compressed and displaced facade meshes relative to the OSM footprints.
+   const xy=c=>({x:(c[0]-origin[0])*111319.49*cosLat,z:-(c[1]-origin[1])*111319.49/cosLat});
    const heightOf=p=>{
     const t=p.tags||p;
     const h=parseFloat(String(t.height||'').replace(/[^0-9.]/g,''));
