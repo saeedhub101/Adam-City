@@ -3,66 +3,133 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Adam City</title>
+<meta name="theme-color" content="#0b1118">
+<title>ADAM CITY — Manila</title>
 <style>
-:root{color-scheme:dark;--bg:#0a1119;--panel:#111d28;--line:#273847;--text:#edf5f8;--muted:#91a4b1;--accent:#79e5c0}
+:root{color-scheme:dark;--bg:#0b1118;--panel:#121c27;--panel2:#172432;--line:#263746;--text:#eef4f7;--muted:#8fa3b2;--mint:#75e0bd;--blue:#67aaf5}
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-.app{height:100%;display:grid;grid-template-columns:300px minmax(0,1fr);gap:12px;padding:12px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px;min-height:0}
-.brand{font-size:18px;font-weight:750;letter-spacing:.04em}.brand span{color:var(--accent)}
-.subtitle{font-size:12px;color:var(--muted);margin-top:-10px}
-.field{display:flex;flex-direction:column;gap:7px;font-size:12px;color:var(--muted)}
-input,select,button{font:inherit}
-input,select{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;background:#0b151e;color:var(--text);outline:none}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select{font:inherit}
+.app{height:100%;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;padding:14px}
+.panel{grid-column:2;grid-row:1;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:21px;display:flex;flex-direction:column;gap:19px;overflow:auto}
+.brand{font-size:19px;font-weight:850;letter-spacing:.09em;direction:ltr;text-align:right}.brand span{color:var(--mint)}
+.sub{font-size:12px;color:var(--muted);margin-top:-14px}
+.section-label{font-size:11px;letter-spacing:.08em;color:#8297a7;font-weight:750}
+.field{display:flex;flex-direction:column;gap:8px;font-size:12px;color:#b7c5ce}
+input[type=text],select{width:100%;padding:11px 12px;border:1px solid #304352;border-radius:10px;background:#0c151e;color:var(--text);outline:none}
+input:focus,select:focus{border-color:var(--mint)}
+input[type=range]{width:100%;accent-color:var(--mint);cursor:pointer}
+.range-head{display:flex;justify-content:space-between;align-items:center}.range-value{color:var(--mint);font-variant-numeric:tabular-nums}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-button{padding:11px 9px;border:1px solid var(--line);border-radius:9px;background:#182936;color:var(--text);cursor:pointer}
-button:hover{border-color:var(--accent)}
-button.primary{background:var(--accent);color:#092019;border-color:var(--accent);font-weight:700}
-.spacer{flex:1}
-.note{font-size:11px;color:var(--muted);line-height:1.7;border-top:1px solid var(--line);padding-top:14px}
-.viewport{position:relative;min-width:0;min-height:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#080f16}
-.viewport-head{position:absolute;z-index:1;top:16px;right:16px;left:16px;display:flex;align-items:center;justify-content:space-between;gap:10px;pointer-events:none}
-.pill{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:8px 12px;background:#111d28dd;color:var(--muted)}
-.display-area{position:absolute;inset:0;display:grid;place-items:center;color:#425663;font-size:13px;letter-spacing:.08em}
-@media(max-width:700px){.app{grid-template-columns:1fr;grid-template-rows:auto minmax(220px,1fr);overflow:auto}.panel{gap:12px;padding:15px}.spacer,.note{display:none}.viewport{min-height:40vh}.brand{font-size:16px}}
+button{padding:10px 8px;border:1px solid #304352;border-radius:10px;background:#192936;color:#dce7ec;cursor:pointer;transition:.18s}
+button:hover{border-color:var(--mint);background:#203642}
+button.active,button.primary{background:var(--mint);color:#082019;border-color:var(--mint);font-weight:750}
+.toggle-row{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;color:#c0cdd4}
+.switch{width:38px;height:22px;border-radius:99px;background:#30414d;position:relative;border:0;padding:0;flex:none}
+.switch:after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:#d7e1e6;top:3px;right:3px;transition:.2s}
+.switch[aria-pressed=true]{background:#287e68}.switch[aria-pressed=true]:after{right:19px;background:#fff}
+.sep{height:1px;background:var(--line)}
+.panel-foot{margin-top:auto;padding-top:13px;border-top:1px solid var(--line);font-size:11px;line-height:1.8;color:var(--muted)}
+.viewport{grid-column:1;grid-row:1;position:relative;min-width:0;min-height:0;overflow:hidden;border:1px solid #263746;border-radius:18px;background:radial-gradient(ellipse at 50% 45%,#1b303b 0%,#111d28 45%,#0b131c 100%)}
+.viewport:before{content:"";position:absolute;inset:0;opacity:.16;background-image:linear-gradient(#567080 1px,transparent 1px),linear-gradient(90deg,#567080 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(transparent,#000 18%,#000 85%,transparent)}
+.topbar{position:absolute;z-index:3;top:17px;left:18px;right:18px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;pointer-events:none}
+.map-title{font-size:13px;font-weight:750}.map-subtitle{font-size:11px;color:#8fa4b3;margin-top:5px;direction:ltr;text-align:right}
+.status{display:flex;align-items:center;gap:7px;border:1px solid #344957;background:#101c26dd;border-radius:999px;padding:8px 11px;font-size:11px;color:#b5c7d0}
+.dot{width:7px;height:7px;background:var(--mint);border-radius:50%;box-shadow:0 0 12px #75e0bd80}
+#city{width:100%;height:100%;display:block;position:absolute;inset:0;transition:transform .25s;transform-origin:50% 50%}
+#city .building{cursor:pointer;transition:opacity .2s}#city .building:hover{filter:brightness(1.35)}
+.map-tools{position:absolute;z-index:3;left:18px;bottom:18px;display:flex;gap:7px;direction:ltr}
+.map-tools button{width:38px;height:38px;padding:0;font-size:18px;background:#101c26eF}
+.legend{position:absolute;z-index:3;right:18px;bottom:18px;background:#101c26df;border:1px solid #344957;border-radius:12px;padding:11px 13px;font-size:10px;color:#a9bbc5;display:flex;gap:12px;align-items:center}
+.legend span{display:flex;gap:6px;align-items:center}.swatch{width:8px;height:8px;border-radius:2px;background:#4f9d92}.swatch.tall{background:#72a8ce}.swatch.park{background:#43886c}
+#tooltip{position:absolute;display:none;z-index:4;pointer-events:none;background:#0b151e;border:1px solid #456170;border-radius:9px;padding:8px 11px;font-size:11px;color:#eff8fa}
+@media(max-width:760px){html,body{height:auto;min-height:100%;overflow:auto}.app{height:auto;min-height:100vh;grid-template-columns:1fr;grid-template-rows:minmax(440px,62vh) auto;padding:9px;gap:9px}.viewport{grid-column:1;grid-row:1;min-height:440px}.panel{grid-column:1;grid-row:2;padding:17px;gap:15px}.panel-foot{margin-top:0}.legend{right:10px;bottom:10px}.map-tools{left:10px;bottom:10px}.topbar{top:12px;left:12px;right:12px}}
 </style>
 </head>
 <body>
 <main class="app">
-  <aside class="panel" aria-label="لوحة التحكم">
-    <div class="brand">ADAM <span>CITY</span></div>
-    <div class="subtitle">لوحة التحكم</div>
-    <label class="field">اسم المدينة
-      <input type="text" value="Manila" placeholder="اسم المدينة">
-    </label>
-    <label class="field">المنطقة
-      <select>
-        <option>نظرة عامة</option>
-        <option>Rizal Park</option>
-        <option>Ermita</option>
-        <option>Malate</option>
-        <option>Makati</option>
-      </select>
-    </label>
-    <label class="field">مستوى التكبير
-      <input type="range" min="1" max="20" value="10">
-    </label>
-    <div class="actions">
-      <button type="button">منظور علوي</button>
-      <button type="button">منظور ثلاثي الأبعاد</button>
-    </div>
-    <div class="actions">
-      <button type="button">إظهار المباني</button>
-      <button type="button">إعادة ضبط العرض</button>
-    </div>
-    <div class="spacer"></div>
-    <div class="note">مساحة عمل أولية فقط. منطقة عرض المدينة جاهزة لإضافة العارض لاحقًا.</div>
-  </aside>
-  <section class="viewport" aria-label="مساحة عرض المدينة">
-    <div class="viewport-head"><span class="pill">مساحة عرض المدينة</span><span class="pill">جاهزة للإعداد</span></div>
-    <div class="display-area">CITY VIEWPORT</div>
-  </section>
+<section class="viewport" aria-label="عرض ثلاثي الأبعاد لمدينة مانيلا">
+ <div class="topbar"><div><div class="map-title">استكشاف المدينة</div><div class="map-subtitle">MANILA, PHILIPPINES · 14.5995° N</div></div><div class="status"><i class="dot"></i><span>عرض تخطيطي تفاعلي</span></div></div>
+ <svg id="city" viewBox="0 0 1200 800" role="img" aria-label="مجسم تخطيطي ثلاثي الأبعاد لمباني وشوارع مدينة مانيلا" preserveAspectRatio="xMidYMid meet">
+ <defs><linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#263e48"/><stop offset="1" stop-color="#152a34"/></linearGradient><linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8ec8d8" stop-opacity=".65"/><stop offset="1" stop-color="#38627a" stop-opacity=".35"/></linearGradient><filter id="shadow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter></defs>
+ <g id="cityground"></g><g id="roads"></g><g id="parks"></g><g id="buildings"></g>
+ </svg>
+ <div id="tooltip"></div>
+ <div class="map-tools"><button id="zoomout" aria-label="تصغير">−</button><button id="zoomin" aria-label="تكبير">+</button><button id="reset" aria-label="إعادة ضبط" title="إعادة ضبط العرض">⌂</button></div>
+ <div class="legend"><span><i class="swatch"></i>مبانٍ</span><span><i class="swatch tall"></i>أبراج</span><span><i class="swatch park"></i>مساحات خضراء</span></div>
+</section>
+<aside class="panel" aria-label="لوحة التحكم">
+ <div class="brand">ADAM <span>CITY</span></div>
+ <div class="sub">استوديو تخطيط المدن</div>
+ <div class="sep"></div>
+ <div class="section-label">إعدادات المشهد</div>
+ <label class="field">المدينة<input id="cityname" type="text" value="Manila" readonly aria-label="اسم المدينة"></label>
+ <label class="field">المنطقة<select id="district"><option value="all">نظرة عامة على مانيلا</option><option value="intramuros">Intramuros</option><option value="ermita">Ermita & Rizal Park</option><option value="makati">Makati Skyline</option></select></label>
+ <div class="field"><div class="range-head"><label for="zoom">مستوى التكبير</label><span class="range-value" id="zoomlabel">100%</span></div><input id="zoom" type="range" min="70" max="145" value="100"></div>
+ <div class="section-label">زاوية العرض</div>
+ <div class="actions"><button id="topview">منظر علوي</button><button id="view3d" class="active">منظور 3D</button></div>
+ <div class="sep"></div>
+ <div class="toggle-row"><span>إظهار المباني</span><button class="switch" id="buildingsToggle" aria-label="إظهار المباني" aria-pressed="true"></button></div>
+ <div class="toggle-row"><span>إظهار أسماء المناطق</span><button class="switch" id="labelsToggle" aria-label="إظهار أسماء المناطق" aria-pressed="true"></button></div>
+ <button id="resetall" class="primary">إعادة ضبط المشهد</button>
+ <div class="panel-foot">نموذج بصري تخطيطي مستوحى من مانيلا، وليس بيانات خرائط أو قياسات هندسية دقيقة.<br><span style="color:#75e0bd">●</span> مساحة العمل جاهزة للاستكشاف</div>
+</aside>
 </main>
+<script>
+(function(){
+const ns='http://www.w3.org/2000/svg',svg=document.getElementById('city');
+const ground=document.getElementById('cityground'),roads=document.getElementById('roads'),parks=document.getElementById('parks'),buildings=document.getElementById('buildings');
+const el=(tag,attrs,parent)=>{const n=document.createElementNS(ns,tag);Object.entries(attrs||{}).forEach(([k,v])=>n.setAttribute(k,v));if(parent)parent.appendChild(n);return n};
+const poly=(pts,fill,parent,extra={})=>el('polygon',{points:pts.map(p=>p.join(',')).join(' '),fill,...extra},parent);
+const line=(pts,stroke,width,parent,extra={})=>el('polyline',{points:pts.map(p=>p.join(',')).join(' '),fill:'none',stroke,'stroke-width':width,...extra},parent);
+const project=(i,j)=>[600+(i-j)*42,365+(i+j)*21];
+poly([[600,92],[1070,327],[600,562],[130,327]],'url(#ground)',ground);
+poly([[600,92],[1070,327],[600,562],[130,327]],'none',ground,{stroke:'#5c7883','stroke-width':1,'stroke-opacity':.45});
+for(let i=0;i<=10;i++){
+ let a=project(i,0),b=project(i,10),c=project(0,i),d=project(10,i);
+ line([a,b],'#66808a',1,ground,{'stroke-opacity':.2});line([c,d],'#66808a',1,ground,{'stroke-opacity':.2});
+}
+// Broad diagonal avenues through the block plan
+for(let k of [3,7]){
+ let a=project(k,0),b=project(k,10),c=project(0,k),d=project(10,k);
+ line([a,b],'#0d1c25',11,roads,{'stroke-linecap':'round'});line([c,d],'#0d1c25',11,roads,{'stroke-linecap':'round'});
+ line([a,b],'#70858a',1,roads,{'stroke-dasharray':'4 8','stroke-opacity':.5});line([c,d],'#70858a',1,roads,{'stroke-dasharray':'4 8','stroke-opacity':.5});
+}
+const parkCells=[[1,2],[2,2],[1,3],[6,7],[7,7]];
+parkCells.forEach(([i,j])=>{let [x,y]=project(i,j);poly([[x,y],[x+42,y+21],[x,y+42],[x-42,y+21]],'#234f43',parks,{stroke:'#43886c','stroke-width':1});for(let t=0;t<5;t++){let tx=x-22+(t%3)*17,ty=y+10+Math.floor(t/3)*12;el('circle',{cx:tx,cy:ty,r:3,fill:'#43886c'},parks)}});
+const label=(x,y,text)=>{let t=el('text',{x,y,fill:'#b8d0d5','font-size':13,'font-family':'system-ui','text-anchor':'middle','paint-order':'stroke','stroke':'#10202a','stroke-width':3,'stroke-opacity':.8,class:'maplabel'},svg);t.textContent=text};
+label(438,285,'INTRAMUROS');label(725,470,'MANILA');label(820,270,'MAKATI');
+let seed=12345;const rnd=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646};
+for(let sum=18;sum>=0;sum--){
+ for(let i=0;i<=10;i++){let j=sum-i;if(j<0||j>10)continue;
+  if(parkCells.some(([a,b])=>a===i&&b===j))continue;
+  let [x,y]=project(i,j),h=18+Math.floor(rnd()*72),w=23+rnd()*10,d=14+rnd()*7;
+  if((i===7&&j===2)||(i===8&&j===3))h=115+Math.floor(rnd()*25);
+  let isTower=h>80,top='#'+(isTower?'4f829c':'365c6b'),left=isTower?'#28495d':'#203e4a',right=isTower?'#345f77':'#294b58';
+  const g=el('g',{class:'building','data-i':i,'data-j':j,tabindex:0,role:'button','aria-label':'مبنى في القطاع '+(i+1)+'-'+(j+1)},buildings);
+  poly([[x-w,y-h],[x,y-h-d/2],[x,y+d/2],[x-w,y]],left,g);
+  poly([[x,y-h-d/2],[x+w,y-h],[x+w,y],[x,y+d/2]],right,g);
+  poly([[x-w,y-h],[x,y-h-d/2],[x+w,y-h],[x,y-h-d/2+w*.5]],top,g,{stroke:'#8eb2bd','stroke-opacity':.45,'stroke-width':.8});
+  if(h>38){for(let wy=y-h+12;wy<y-7;wy+=12){line([[x-w+5,wy],[x-3,wy+2]],'#9ac5ce',1,g,{'stroke-opacity':.48});line([[x+4,wy+2],[x+w-4,wy]],'#86b9c7',1,g,{'stroke-opacity':.38})}}
+  g.addEventListener('click',()=>{const tip=document.getElementById('tooltip');tip.style.display='block';tip.style.left='50%';tip.style.top='50%';tip.style.transform='translate(-50%,-50%)';tip.textContent='قطاع '+(i+1)+'-'+(j+1)+' · '+(isTower?'برج مرتفع':'مبنى حضري')});
+  g.addEventListener('keydown',e=>{if(e.key==='Enter')g.dispatchEvent(new Event('click'))});
+ }
+}
+let scale=1,topMode=false,showBuildings=true,showLabels=true;
+function apply(){svg.style.transform='scale('+scale+')';document.getElementById('zoom').value=Math.round(scale*100);document.getElementById('zoomlabel').textContent=Math.round(scale*100)+'%';buildings.style.display=showBuildings?'':'none';document.querySelectorAll('.maplabel').forEach(n=>n.style.display=showLabels?'':'none');document.getElementById('topview').classList.toggle('active',topMode);document.getElementById('view3d').classList.toggle('active',!topMode);svg.style.filter=topMode?'saturate(.72) brightness(1.08)':'';svg.style.transform=topMode?'scale('+scale+') perspective(900px) rotateX(0deg)':'scale('+scale+')';}
+document.getElementById('zoom').addEventListener('input',e=>{scale=Number(e.target.value)/100;apply()});
+document.getElementById('zoomin').onclick=()=>{scale=Math.min(1.45,scale+.1);apply()};
+document.getElementById('zoomout').onclick=()=>{scale=Math.max(.7,scale-.1);apply()};
+document.getElementById('topview').onclick=()=>{topMode=true;apply()};
+document.getElementById('view3d').onclick=()=>{topMode=false;apply()};
+function toggle(id,key){const b=document.getElementById(id);b.onclick=()=>{if(key==='buildings')showBuildings=!showBuildings;else showLabels=!showLabels;b.setAttribute('aria-pressed',String(key==='buildings'?showBuildings:showLabels));apply()}}
+toggle('buildingsToggle','buildings');toggle('labelsToggle','labels');
+function reset(){scale=1;topMode=false;showBuildings=true;showLabels=true;document.getElementById('buildingsToggle').setAttribute('aria-pressed','true');document.getElementById('labelsToggle').setAttribute('aria-pressed','true');document.getElementById('tooltip').style.display='none';apply()}
+document.getElementById('reset').onclick=reset;document.getElementById('resetall').onclick=reset;
+document.getElementById('district').addEventListener('change',e=>{document.getElementById('tooltip').style.display='none';scale=e.target.value==='all'?1:e.target.value==='makati'?1.3:1.18;apply();const tip=document.getElementById('tooltip');tip.style.display='block';tip.style.left='50%';tip.style.top='58%';tip.style.transform='translate(-50%,-50%)';tip.textContent=({all:'نظرة عامة على مانيلا',intramuros:'منطقة إنتراموروس التاريخية',ermita:'إيرميتا وحديقة ريزال',makati:'أفق أبراج ماكاتي'})[e.target.value]});
+svg.addEventListener('pointerdown',()=>{const t=document.getElementById('tooltip');if(t.style.display==='block')t.style.display='none'});
+apply();
+})();
+</script>
 </body>
 </html>
