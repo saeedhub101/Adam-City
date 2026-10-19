@@ -32,6 +32,20 @@ jobs:
             ermita.html
           sparse-checkout-cone-mode: false
           fetch-depth: 1
+      - name: Validate page JavaScript syntax
+        run: |
+          python - <<'PY'
+          import re
+          for source, target in [('index.html', '/tmp/index-inline.js'), ('ermita.html', '/tmp/ermita-inline.js')]:
+              html = open(source, encoding='utf-8').read()
+              scripts = re.findall(r'<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>', html, re.I)
+              scripts = [s for s in scripts if s.strip()]
+              if not scripts:
+                  raise SystemExit(f'No inline JavaScript found in {source}')
+              open(target, 'w', encoding='utf-8').write(scripts[-1])
+          PY
+          node --check /tmp/index-inline.js
+          node --check /tmp/ermita-inline.js
       - name: Prepare static map site
         run: |
           set -e
