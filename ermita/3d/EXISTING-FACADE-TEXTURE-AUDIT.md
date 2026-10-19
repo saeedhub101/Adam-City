@@ -30,12 +30,19 @@ These five are **priority candidates for visual review, not approved textures**.
 | 1718194953 | way/642781531 | Unnamed OSM feature | 3.84 m | 1.4° | `kartaview/images/1718194953.jpg` |
 | 2488518665 | way/308695382 | Unnamed OSM feature | 4.52 m | 6.5° | `kartaview/images/2488518665.jpg` |
 
-## Texture application decision
-1. Visually inspect each existing local photo and compare the building's facade, sign, floor pattern and neighboring structures against the target feature.
-2. Reject images where the camera sees a different building, trees/vehicles obscure most of the facade, or the perspective is too oblique.
-3. For an approved image, rectify/crop the visible facade, document the target OSM feature and facade side, then map it to the corresponding wall surface. A single photo should not be wrapped around every side of a building.
-4. Keep original image, derived texture, source URL, license/attribution, target feature ID and transformation notes in the repository index.
-5. Do not label procedural window panels or generic materials as real photographed facade texture.
+## Current implementation
+The 3D preview now loads its existing facade-texture mesh layer alongside the OSM building layer. It uses the repository's existing generic wall material for unverified/unnamed buildings, plus the already-catalogued National Museum, UP Manila and PGH Cancer Institute reference images where OSM building names match those candidates.
+
+The five KartaView photos above are wired to their corresponding OSM way IDs. For each of those footprints, the code selects the footprint edge whose midpoint is nearest the photo's recorded camera coordinate and maps that photo to that single wall; the other walls keep the generic material. This avoids wrapping one street photo around all four sides. The target assignments are still metadata-based candidates and have **not** been visually verified, so image-to-facade identity and wall orientation may need correction after inspecting the live scene.
+
+The building checkbox controls both the OSM extrusion layer and the facade-texture mesh layer. All images are loaded from files already stored in the repository; no new imagery was downloaded.
+
+## Remaining work
+1. Visually inspect each existing local photo against the target building's facade, sign, floor pattern and neighboring structures.
+2. Reject or correct images where the camera sees a different building, vegetation/vehicles obscure most of the facade, or perspective is too oblique.
+3. Rectify/crop usable facades when needed, and document target OSM feature, facade side, source URL, license/attribution and transformation notes.
+4. Extend named photo mappings only where the repository metadata supports a credible building identity. Several catalog entries are generic/false search candidates (for example, some City Hall query results describe buildings in Bayambang or Cebu), so they must not be applied to unrelated Ermita buildings.
+5. Generic material and procedural window panels are improvements to surface appearance, not real photographs of each building.
 
 ## License note
 KartaView entries in the existing index specify CC BY-SA 4.0 and attribution `© Grab and KartaView Contributors`. Preserve attribution and license information for any derived texture, and verify the applicable terms before publishing the derivative.
