@@ -17,7 +17,6 @@
 <label><input id="landmarks" type="checkbox" checked> Key landmarks</label>
 <label><input id="streets" type="checkbox" checked> Streets</label>
 <label><input id="buildings" type="checkbox" checked> OSM 3D buildings</label>
-<label><input id="ramonModel" type="checkbox"> Ramon Magsaysay 3D model</label>
 <label><input id="basemap3d" type="checkbox"> Basemap 3D buildings</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
 <label><input id="terrain" type="checkbox" checked> 3D terrain</label>
@@ -169,106 +168,6 @@ function addStreetMesh(roadNetwork){
  if(map.getLayer('streets-road-mesh'))map.removeLayer('streets-road-mesh');
  map.addLayer(customLayer);
 }
-
-function addLocalRamonModel(){
- if(!window.THREE || !THREE.FBXLoader){setStatus('Local building model could not start: FBX loader unavailable.');return;}
- const modelUrl='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/Ramon%20Magsaysay%20Building.fbx';
- const origin=[120.98245,14.5719];
- const merc=maplibregl.MercatorCoordinate.fromLngLat({lng:origin[0],lat:origin[1]},0);
- const meterScale=merc.meterInMercatorCoordinateUnits();
- const customLayer={
-  id:'ramon-magsaysay-local-mesh',type:'custom',renderingMode:'3d',
-  onAdd:function(map,gl){
-   this.camera=new THREE.Camera();this.scene=new THREE.Scene();
-   this.scene.add(new THREE.AmbientLight(0xffffff,1.65));
-   const sun=new THREE.DirectionalLight(0xffffff,2.1);sun.position.set(-40,-60,100);this.scene.add(sun);
-   this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});
-   this.renderer.autoClear=false;
-   // Load the repository's FBX source so its named materials and UV mapping are retained.
-   // Resolve the original FBX texture names to the saved repository textures (.jpeg).
-   const textureBase='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/';
-   const manager=new THREE.LoadingManager();
-   manager.setURLModifier(url=>{
-    const name=decodeURIComponent(url.split(/[\\/]/).pop()||'').toLowerCase();
-    if(name.includes('painted-cmu-block-architextures'))return textureBase+'Painted-CMU-Block-Architextures.jpeg';
-    if(name.includes('citystreetroadasphalttwolane'))return textureBase+'CityStreetRoadAsphaltTwoLaneWorn001_COL_1K.jpeg';
-    if(name.includes('mono-terrazzo-stack-architextures'))return textureBase+'Mono-Terrazzo-Stack-Architextures.jpeg';
-    return url;
-   });
-   this.loader=new THREE.FBXLoader(manager);
-   this.loader.load(modelUrl,model=>{
-    this.model=model;
-    // FBXLoader applies the FBX axis metadata; preserve that orientation.
-    this.model.rotation.set(0,0,0);
-    const bounds=new THREE.Box3().setFromObject(this.model);
-    const size=bounds.getSize(new THREE.Vector3());
-    const center=bounds.getCenter(new THREE.Vector3());
-    // Use the vertical dimension only; never scale by the longest footprint edge.
-    const factor=62/(size.y||55);
-    this.model.scale.setScalar(factor);
-    this.model.position.set(-center.x*factor,-bounds.min.y*factor,-center.z*factor);
-    // Preserve authored FBX material colors/maps (including the glass material).
-    // Use the saved wall texture only as a fallback for meshes with no material/map.
-    const facadeTexture=new THREE.TextureLoader(manager).load(
-     textureBase+'Painted-CMU-Block-Architextures.jpeg',
-     ()=>map.triggerRepaint()
-    );
-    facadeTexture.wrapS=facadeTexture.wrapT=THREE.RepeatWrapping;
-    facadeTexture.colorSpace=THREE.SRGBColorSpace || THREE.sRGBEncoding;
-    this.model.traverse(obj=>{
-     if(!obj.isMesh)return;
-     const fixMaterial=mat=>{
-      const m=mat ? mat.clone() : new THREE.MeshStandardMaterial({color:0xb9b5ae});
-      if(!m.map){
-       if(!mat){m.map=facadeTexture;m.color.set(0xffffff);}
-       if('roughness' in m)m.roughness=Math.max(0.72,m.roughness||0);
-       if('metalness' in m)m.metalness=Math.min(0.03,m.metalness||0);
-      }
-      m.needsUpdate=true;
-      return m;
-     };
-     obj.material=Array.isArray(obj.material)?obj.material.map(fixMaterial):fixMaterial(obj.material);
-    });
-    this.scene.add(this.model);
-
-    // Reuse the saved courtyard tile texture as a separate paved apron beside
-    // the building, rather than laying a square on top of/under the building.
-    const courtyardTexture=new THREE.TextureLoader().load(
-     'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/courtyard.png',
-     ()=>map.triggerRepaint()
-    );
-    courtyardTexture.wrapS=courtyardTexture.wrapT=THREE.RepeatWrapping;
-    courtyardTexture.colorSpace=THREE.SRGBColorSpace || THREE.sRGBEncoding;
-    const courtyardMat=new THREE.MeshStandardMaterial({map:courtyardTexture,roughness:0.92,metalness:0,side:THREE.DoubleSide});
-    const modelBounds=new THREE.Box3().setFromObject(this.model);
-    const modelSize=modelBounds.getSize(new THREE.Vector3());
-    const plazaWidth=Math.max(12,Math.min(32,modelSize.x*0.72));
-    const plazaDepth=Math.max(10,Math.min(28,modelSize.z*0.42));
-    const courtyard=new THREE.Mesh(new THREE.PlaneGeometry(plazaWidth,plazaDepth),courtyardMat);
-    courtyard.rotation.x=-Math.PI/2;
-    courtyard.position.set(modelSize.x/2+plazaWidth/2+0.8,0.10,0);
-    courtyard.frustumCulled=false;
-    this.scene.add(courtyard);
-    this.loaded=true;
-    setStatus('Ramon Magsaysay Center FBX model loaded with repository material textures. Verify facade alignment and scale visually.');
-    map.triggerRepaint();
-   },undefined,err=>setStatus('Local Ramon Magsaysay FBX failed to load: '+(err&&err.message||'network error')));
-  },
-  render:function(gl,args){
-   if(!this.renderer)return;
-   const m=new THREE.Matrix4().fromArray(args.defaultProjectionData.mainMatrix);
-   const l=new THREE.Matrix4().makeTranslation(merc.x,merc.y,merc.z)
-    .multiply(new THREE.Matrix4().makeRotationX(Math.PI/2))
-    .scale(new THREE.Vector3(meterScale,meterScale,meterScale));
-   this.camera.projectionMatrix=m.multiply(l);
-   this.renderer.resetState();
-   this.renderer.render(this.scene,this.camera);
-  }
- };
- if(map.getLayer('ramon-magsaysay-local-mesh'))map.removeLayer('ramon-magsaysay-local-mesh');
- map.addLayer(customLayer);
-}
-
 
 function addTexturedBuildingMeshes(data,roadNetwork){
  if(!window.THREE || !data || !Array.isArray(data.features))return;
@@ -843,11 +742,9 @@ map.on('load',async()=>{
   map.once('idle',applyTerrainAlignment);
   map.on('idle',()=>{syncLocalHeightsFromBasemap();applyTerrainAlignment();});
   // Keep optional layers isolated: failure in a 3D mesh or bridge parser must not prevent road rendering.
-  for(const [label,fn] of [['landmarks',addLandmarks],['street mesh',()=>addStreetMesh(roadsData)],['satellite imagery',addSatelliteImagery],['local 3D landmark mesh',()=>addLocalRamonModel()],['bridges and stairs',addBridgeAndStairLayers]]){
+  for(const [label,fn] of [['landmarks',addLandmarks],['street mesh',()=>addStreetMesh(roadsData)],['satellite imagery',addSatelliteImagery],['bridges and stairs',addBridgeAndStairLayers]]){
    try{fn();}catch(err){console.error(label+' failed:',err);}
   }
-  if(map.getLayer('ramon-magsaysay-local-mesh')){
-   map.setLayoutProperty('ramon-magsaysay-local-mesh','visibility',document.getElementById('ramonModel').checked?'visible':'none');
   }
   // Apply the current checkbox states after asynchronous data loading, even if a user unchecked a layer early.
   const setVisibility=(ids,visible)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visible?'visible':'none')});
@@ -862,7 +759,6 @@ document.getElementById('imagery').addEventListener('change',e=>setSatelliteImag
 document.getElementById('streets').addEventListener('change',e=>{if(map.getLayer('streets-road-mesh'))map.setLayoutProperty('streets-road-mesh','visibility',e.target.checked?'visible':'none');setStatus(e.target.checked?'Streets enabled: asphalt, terrazzo sidewalks and raised concrete curbs generated from the loaded OSM road network.':'Streets hidden.');});
 document.getElementById('landmarks').addEventListener('change',e=>['key-landmark-halo','key-landmark-dot','key-landmark-label'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('buildings').addEventListener('change',e=>{['local-buildings-3d','local-building-labels','all-building-facade-textures'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
-document.getElementById('ramonModel').addEventListener('change',e=>{if(map.getLayer('ramon-magsaysay-local-mesh'))map.setLayoutProperty('ramon-magsaysay-local-mesh','visibility',e.target.checked?'visible':'none');setStatus(e.target.checked?'Ramon Magsaysay Center model shown at Roxas Boulevard and Dr. J. Quintos Street.':'Ramon Magsaysay Center model hidden.');});
 document.getElementById('basemap3d').addEventListener('change',e=>{base3dLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'Basemap 3D buildings enabled for comparison with OSM. Turn off OSM 3D buildings to inspect the basemap alone.':'Basemap 3D buildings hidden; OSM layer remains independently controlled.')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels','visible-sidewalk-left','visible-sidewalk-right','visible-road-casing','visible-road-asphalt','visible-road-curb-left','visible-road-curb-right'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'OSM road network enabled. Sidewalk and curb strips are estimates unless explicitly mapped.':'OSM road network, asphalt, estimated sidewalks and curbs hidden.');});
 document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null);terrainAlignmentSignature='';map.once('idle',applyTerrainAlignment);setStatus(e.target.checked?'Terrain enabled; aligning building bases and road surfaces to ground elevation…':'Terrain disabled; resetting building bases to flat ground…')}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
