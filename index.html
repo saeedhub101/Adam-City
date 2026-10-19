@@ -198,13 +198,14 @@ function addLocalRamonModel(){
     // Keep source-model materials and their original textures. Add the repository wall
     // material only to mesh materials that have no authored texture; never overwrite
     // existing glass, roof, signage, or facade imagery from the source GLB.
+    // Reuse the repository's building texture only for mesh materials that lack
+    // their own authored texture, preserving any existing facade/glass/roof maps.
     const facadeTexture=new THREE.TextureLoader().load(
      'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/Painted-CMU-Block-Architextures.jpeg',
      ()=>map.triggerRepaint()
     );
     facadeTexture.wrapS=facadeTexture.wrapT=THREE.RepeatWrapping;
-    facadeTexture.repeat.set(2,2);
-    facadeTexture.encoding=THREE.sRGBEncoding;
+    facadeTexture.colorSpace=THREE.SRGBColorSpace || THREE.sRGBEncoding;
     this.model.traverse(obj=>{
      if(!obj.isMesh)return;
      const applyMaterial=mat=>{
@@ -212,8 +213,8 @@ function addLocalRamonModel(){
       if(!m.map){
        m.map=facadeTexture;
        m.color.set(0xffffff);
-       if('roughness' in m)m.roughness=Math.max(0.65,m.roughness||0);
-       if('metalness' in m)m.metalness=Math.min(0.05,m.metalness||0);
+       if('roughness' in m)m.roughness=Math.max(0.72,m.roughness||0);
+       if('metalness' in m)m.metalness=Math.min(0.03,m.metalness||0);
       }
       m.needsUpdate=true;
       return m;
@@ -221,15 +222,23 @@ function addLocalRamonModel(){
      obj.material=Array.isArray(obj.material)?obj.material.map(applyMaterial):applyMaterial(obj.material);
     });
     this.scene.add(this.model);
-    // Provisional plaza pad using the supplied courtyard tile image; final footprint/rotation needs aerial verification.
-    const courtyardTexture=new THREE.TextureLoader().load('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/courtyard.png',()=>map.triggerRepaint());
+
+    // Reuse the saved courtyard tile texture as a separate paved apron beside
+    // the building, rather than laying a square on top of/under the building.
+    const courtyardTexture=new THREE.TextureLoader().load(
+     'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/courtyard.png',
+     ()=>map.triggerRepaint()
+    );
     courtyardTexture.wrapS=courtyardTexture.wrapT=THREE.RepeatWrapping;
-    courtyardTexture.repeat.set(3,3);
-    courtyardTexture.encoding=THREE.sRGBEncoding;
-    const courtyardMat=new THREE.MeshBasicMaterial({map:courtyardTexture,side:THREE.DoubleSide});
-    const courtyard=new THREE.Mesh(new THREE.PlaneGeometry(32,28),courtyardMat);
+    courtyardTexture.colorSpace=THREE.SRGBColorSpace || THREE.sRGBEncoding;
+    const courtyardMat=new THREE.MeshStandardMaterial({map:courtyardTexture,roughness:0.92,metalness:0,side:THREE.DoubleSide});
+    const modelBounds=new THREE.Box3().setFromObject(this.model);
+    const modelSize=modelBounds.getSize(new THREE.Vector3());
+    const plazaWidth=Math.max(12,Math.min(32,modelSize.x*0.72));
+    const plazaDepth=Math.max(10,Math.min(28,modelSize.z*0.42));
+    const courtyard=new THREE.Mesh(new THREE.PlaneGeometry(plazaWidth,plazaDepth),courtyardMat);
     courtyard.rotation.x=-Math.PI/2;
-    courtyard.position.set(0,0.08,0);
+    courtyard.position.set(modelSize.x/2+plazaWidth/2+0.8,0.10,0);
     courtyard.frustumCulled=false;
     this.scene.add(courtyard);
     this.loaded=true;
