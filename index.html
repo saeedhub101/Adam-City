@@ -27,6 +27,9 @@
 <label><input id="localHillshade" type="checkbox"> Local SRTM relief</label>
 <label><input id="vegetation" type="checkbox" checked> Grass / vegetation</label>
 <label><input id="labels" type="checkbox" checked> Building labels</label>
+<label>Jump to <select id="area" aria-label="Jump to area"><option value="city">Manila overview</option><option value="rizal">Rizal Park</option><option value="ermita">Ermita</option><option value="malate">Malate</option><option value="makati">Makati</option></select></label>
+<button id="streetView">Street-level view</button>
+<button id="topView">Top-down view</button>
 <button id="sun">Golden-hour light</button>
 <button id="tilt">Tilt / top view</button>
 <button id="reset">Reset view</button>
@@ -45,15 +48,15 @@ const status=document.getElementById('status');
 function setStatus(s){status.textContent=s}
 if(!window.maplibregl){setStatus('Could not load the 3D map library. Check your connection and reload.');return}
 const base='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/generated/';
-const center=[120.9825,14.5825];
-// Hard-limit navigation and visible project extent to the Ermita–Malate working area.
-// This prevents the global style's optional buildings from being explored as if they were imported project data.
-const projectBounds=[[120.965,14.555],[121.005,14.605]];
+const center=[120.994,14.574];
+ // Navigation extent includes the initial Ermita–Malate work area, Rizal Park and Makati.
+ // Local project geometry is currently denser around Ermita; the basemap fills the wider overview.
+ const projectBounds=[[120.955,14.525],[121.085,14.635]];
 const map=new maplibregl.Map({
  container:'map',
  style:'https://tiles.openfreemap.org/styles/liberty',
- bounds:projectBounds, fitBoundsOptions:{padding:24,maxZoom:15.5}, maxBounds:projectBounds,
- minZoom:13.5,maxZoom:19,center:center,zoom:15.5,pitch:62,bearing:-18,
+ bounds:projectBounds, fitBoundsOptions:{padding:24,maxZoom:13.1}, maxBounds:projectBounds,
+ minZoom:11.5,maxZoom:20,center:center,zoom:13.1,pitch:58,bearing:-18,
  antialias:true,canvasContextAttributes:{antialias:true}
 });
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
@@ -908,8 +911,21 @@ document.getElementById('vegetation').addEventListener('change',e=>{if(map.getLa
 document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null);terrainAlignmentSignature='';map.once('idle',applyTerrainAlignment);setStatus(e.target.checked?'Terrain enabled; aligning building bases and road surfaces to ground elevation…':'Terrain disabled; resetting building bases to flat ground…')}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
 document.getElementById('labels').addEventListener('change',e=>{if(map.getLayer('local-building-labels'))map.setLayoutProperty('local-building-labels','visibility',e.target.checked?'visible':'none')});
 document.getElementById('sun').addEventListener('click',()=>{golden=!golden;try{map.setLight({anchor:'viewport',position:golden?[1.2,210,35]:[1.2,45,75],color:golden?'#ffe0ad':'#ffffff',intensity:golden?0.45:0.8});document.getElementById('sun').textContent=golden?'Golden-hour light':'Neutral daylight'}catch(err){setStatus('Lighting controls are not supported by this map style.')}});
+document.getElementById('streetView').addEventListener('click',()=>{tilted=true;map.easeTo({pitch:78,zoom:19,bearing:map.getBearing(),duration:1100})});
+document.getElementById('topView').addEventListener('click',()=>{tilted=false;map.easeTo({pitch:0,zoom:Math.max(map.getZoom(),14),bearing:0,duration:900})});
+document.getElementById('area').addEventListener('change',e=>{
+ const views={
+  city:{center:[120.994,14.574],zoom:13.1,pitch:52,bearing:-18},
+  rizal:{center:[120.9795,14.583],zoom:16.2,pitch:58,bearing:-15},
+  ermita:{center:[120.9825,14.5825],zoom:16.1,pitch:62,bearing:-18},
+  malate:{center:[120.989,14.568],zoom:15.8,pitch:62,bearing:-18},
+  makati:{center:[121.0245,14.5545],zoom:14.8,pitch:58,bearing:-18}
+ };
+ const v=views[e.target.value]||views.city;
+ tilted=v.pitch>0;map.easeTo({...v,duration:1200});
+});
 document.getElementById('tilt').addEventListener('click',()=>{tilted=!tilted;map.easeTo({pitch:tilted?62:0,bearing:tilted?-18:0,duration:900})});
-document.getElementById('reset').addEventListener('click',()=>map.fitBounds(projectBounds,{padding:24,maxZoom:15.5,pitch:62,bearing:-18,duration:1200}));
+document.getElementById('reset').addEventListener('click',()=>{document.getElementById('area').value='city';map.fitBounds(projectBounds,{padding:24,maxZoom:13.1,pitch:58,bearing:-18,duration:1200})});
 })();
 </script>
 </body>
