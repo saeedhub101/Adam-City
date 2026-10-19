@@ -361,9 +361,9 @@ function syncLocalHeightsFromBasemap(){
  const idKeys=f=>{
   const p=f.properties||{},v=[];
   for(const k of ['osm_id','osm_way_id','osm_feature_id','id','original_id']){
-   const x=p[k];if(x!==undefined&&x!==null&&String(x)!=='')v.push(String(x).replace(/^(way|relation|node)\\//,''));
+   const x=p[k];if(x!==undefined&&x!==null&&String(x)!=='')v.push(String(x).replace(/^(way|relation|node)\//,''));
   }
-  if(f.id!==undefined&&f.id!==null)v.push(String(f.id).replace(/^(way|relation|node)\\//,''));
+  if(f.id!==undefined&&f.id!==null)v.push(String(f.id).replace(/^(way|relation|node)\//,''));
   return [...new Set(v)];
  };
  const center=f=>{
