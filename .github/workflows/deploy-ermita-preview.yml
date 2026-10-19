@@ -46,6 +46,18 @@ jobs:
           PY
           node --check /tmp/index-inline.js
           node --check /tmp/ermita-inline.js
+      - name: Validate inline JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path("index.html").read_text(encoding="utf-8")
+          scripts = re.findall(r"<script>([\\s\\S]*?)</script>", html)
+          if not scripts:
+              raise SystemExit("No inline application script found.")
+          Path("/tmp/adam-city-inline.js").write_text("\\n".join(scripts), encoding="utf-8")
+          PY
+          node --check /tmp/adam-city-inline.js
       - name: Prepare static map site
         run: |
           set -e
