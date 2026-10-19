@@ -1,0 +1,85 @@
+name: Expand and reconcile Ermita source data
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "ermita/scripts/reconcile_ermita_sources.py"
+      - ".github/workflows/reconcile-ermita-sources.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ermita-map-import
+  cancel-in-progress: false
+
+jobs:
+  collect-and-reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install geospatial dependencies
+        run: python -m pip install requests osm2geojson shapely pyproj trimesh mapbox-earcut rasterio numpy scipy
+      - name: Refresh OSM data incrementally (preserve cached records)
+        id: osm
+        continue-on-error: true
+        run: python ermita/scripts/import_osm_and_build_3d.py
+      - name: Refresh official DPWH road and bridge sources
+        id: dpwh
+        continue-on-error: true
+        run: python ermita/scripts/import_dpwh_national_roads.py
+      - name: Fetch additional Microsoft road detections
+        id: microsoft_roads
+        continue-on-error: true
+        run: python ermita/scripts/import_microsoft_road_detections.py
+      - name: Discover openly licensed aerial imagery
+        id: open_aerial
+        continue-on-error: true
+        run: python scripts/import_openaerialmap_ermita.py
+      - name: Consolidate repeated source identities without deleting source records
+        run: python ermita/scripts/reconcile_ermita_sources.py
+      - name: Commit source updates and reconciliation reports to main
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ermita/maps/generated ermita/maps/external ermita/maps/qa ermita/3d/generated ermita/3d/terrain ermita/maps/sources/openfreemap scripts
+          if git diff --cached --quiet; then
+            echo "No new source records or reconciliation changes."
+            exit 0
+          fi
+          git commit -m "Expand Ermita source data and reconcile duplicate records"
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase -X theirs origin/main || { git rebase --abort || true; sleep $((attempt * 3)); continue; }
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 3))
+          done
+          echo "::error::Could not publish generated data after four safe retries."
+          exit 1
+      - name: Report independent source outcomes
+        if: always()
+        env:
+          OSM: ${{ steps.osm.outcome }}
+          DPWH: ${{ steps.dpwh.outcome }}
+          MS_ROADS: ${{ steps.microsoft_roads.outcome }}
+          AERIAL: ${{ steps.open_aerial.outcome }}
+        run: |
+          echo "OSM incremental refresh: $OSM"
+          echo "DPWH road/bridge sources: $DPWH"
+          echo "Microsoft road detections: $MS_ROADS"
+          echo "OpenAerialMap licensed imagery: $AERIAL"
+          if [ "$OSM" != success ] || [ "$DPWH" != success ] || [ "$MS_ROADS" != success ] || [ "$AERIAL" != success ]; then
+            echo "::warning::One or more optional source imports failed; inspect that stage. Reconciliation still ran."
+          fi
