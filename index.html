@@ -27,6 +27,7 @@
 <div class="group-title">الشوارع والمدينة</div><div class="options">
 <label class="opt"><input id="roads" type="checkbox" checked><span>الطرق والمسارات</span></label>
 <label class="opt"><input id="sidewalks" type="checkbox" checked><span>علامات الأرصفة المتاحة</span></label>
+<label class="opt"><input id="terrain" type="checkbox" checked><span>تضاريس ثلاثية الأبعاد</span></label>
 <label class="opt"><input id="rNames" type="checkbox" checked><span>أسماء الشوارع</span></label>
 <label class="opt"><input id="baseMap" type="checkbox" checked><span>تفاصيل OpenFreeMap</span></label>
 <label class="opt"><input id="boundary" type="checkbox" checked><span>حدود إرميتا</span></label>
@@ -38,7 +39,7 @@
 <script>
 (async()=>{
 const root='/Adam-City/';
-const urls={buildings:root+'ermita/maps/generated/ermita-osm-building-footprints.geojson',roads:root+'ermita/maps/generated/ermita-road-network.geojson',boundary:root+'ermita/maps/sources/openfreemap/area-boundary.geojson'};
+const urls={buildings:root+'ermita/maps/generated/ermita-osm-building-footprints.geojson',roads:root+'ermita/maps/generated/ermita-road-network.geojson',boundary:root+'ermita/maps/sources/openfreemap/area-boundary.geojson',housenumbers:root+'ermita/maps/sources/openfreemap/layers/housenumber.geojsonl'};
 const $=id=>document.getElementById(id), status=$('status');
 const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[120.9821,14.5848],zoom:15.1,pitch:62,bearing:-18,antialias:true});
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({maxWidth:100,unit:'metric'}),'bottom-left');
@@ -51,15 +52,25 @@ const buildingColor=['coalesce',tag('building:colour'),tag('building:color'),tag
 function setVis(ids,on){ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')})}
 map.on('load',async()=>{
  try{
-  const pairs=await Promise.all(Object.entries(urls).map(async([k,u])=>{const r=await fetch(u);if(!r.ok)throw Error(k+' HTTP '+r.status);return[k,await r.json()]}));
+  const pairs=await Promise.all(Object.entries(urls).map(async([k,u])=>{const r=await fetch(u);if(!r.ok)throw Error(k+' HTTP '+r.status);if(k==='housenumbers'){const lines=(await r.text()).split(/\\r?\\n/).filter(Boolean);return[k,lines.map(line=>JSON.parse(line))]}return[k,await r.json()]}));
   const d=Object.fromEntries(pairs);
   // Publish the original OSM polygons separately from the newer OpenMapTiles-derived footprints.
   d.buildings.features=d.buildings.features.filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&f.properties?.tags?.building);
+  // Transfer imported OpenFreeMap address points onto their containing building polygon, so numbers render on buildings, never as standalone markers.
+  function inRing(point,ring){let inside=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const a=ring[i],b=ring[j];if(((a[1]>point[1])!==(b[1]>point[1]))&&(point[0]<(b[0]-a[0])*(point[1]-a[1])/((b[1]-a[1])||1e-12)+a[0]))inside=!inside}return inside}
+  function contains(geom,p){const polys=geom.type==='Polygon'?[geom.coordinates]:geom.coordinates;return polys.some(poly=>poly.length&&inRing(p,poly[0])&&!poly.slice(1).some(r=>inRing(p,r)))}
+  const candidates=d.buildings.features.map(f=>{const rings=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;const pts=rings.flat(2);return {f,minX:Math.min(...pts.filter((_,i)=>i%2===0)),maxX:Math.max(...pts.filter((_,i)=>i%2===1)),minY:Math.min(...pts.filter((_,i)=>i%2===0).map((_,i)=>0))}});
+  // Compute bounding boxes directly from coordinates (kept separate to avoid altering source geometry).
+  for(const c of candidates){const coords=c.f.geometry.type==='Polygon'?c.f.geometry.coordinates:[].concat(...c.f.geometry.coordinates);const flat=[];const walk=x=>{if(typeof x[0]==='number')flat.push(x);else x.forEach(walk)};walk(coords);c.minX=Math.min(...flat.map(p=>p[0]));c.maxX=Math.max(...flat.map(p=>p[0]));c.minY=Math.min(...flat.map(p=>p[1]));c.maxY=Math.max(...flat.map(p=>p[1]))}
+  let joined=0;for(const rec of d.housenumbers){const geom=rec.geometry;if(!geom)continue;const points=geom.type==='Point'?[geom.coordinates]:geom.type==='MultiPoint'?geom.coordinates:[];for(const point of points){for(const c of candidates){if(point[0]<c.minX||point[0]>c.maxX||point[1]<c.minY||point[1]>c.maxY)continue;if(contains(c.f.geometry,point)){const props=c.f.properties;props.tags=props.tags||{};if(!props.tags['addr:housenumber']){props.tags['addr:housenumber']=rec.properties?.housenumber;joined++}break}}}}
   map.addSource('local-buildings',{type:'geojson',data:d.buildings});
   map.addSource('local-roads',{type:'geojson',data:d.roads});
   map.addSource('local-boundary',{type:'geojson',data:d.boundary});
   // Keep the rich OpenFreeMap streets, parks, water and place-name style; local verified OSM geometry overlays it.
   const layers=map.getStyle().layers||[];
+  map.addSource('regional-terrain-dem',{type:'raster-dem',tiles:['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});
+  map.setTerrain({source:'regional-terrain-dem',exaggeration:1.18});
+  map.setSky({'sky-color':'#a8c9df','sky-horizon-blend':0.45,'horizon-color':'#e7eee9','horizon-fog-blend':0.15,'fog-color':'#dce8e6','fog-ground-blend':0.15,'atmosphere-blend':0.7});
   for(const l of layers){if(l.id&&/building_3d|building-extrusion/i.test(l.id))map.setLayoutProperty(l.id,'visibility','none')}
   map.addLayer({id:'ermita-boundary-fill',type:'fill',source:'local-boundary',paint:{'fill-color':'#65d9b0','fill-opacity':0.045}});
   map.addLayer({id:'ermita-boundary-line',type:'line',source:'local-boundary',paint:{'line-color':'#68e2b8','line-width':2,'line-dasharray':[2,1]}});
@@ -73,7 +84,7 @@ map.on('load',async()=>{
   map.addLayer({id:'local-building-name-labels',type:'symbol',source:'local-buildings',minzoom:15.3,filter:['!=',safeText,''],layout:{'symbol-placement':'point','text-field':safeText,'text-font':['Noto Sans Regular'],'text-size':10,'text-max-width':9,'text-allow-overlap':false,'symbol-z-elevate':true},paint:{'text-color':'#f9f6ec','text-halo-color':'#363b3c','text-halo-width':1.4}});
   map.addLayer({id:'local-street-labels',type:'symbol',source:'local-roads',minzoom:13.2,filter:['has','name'],layout:{'symbol-placement':'line','text-field':['coalesce',['get','name:en'],['get','name']],'text-font':['Noto Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],13,9,17,12],'text-max-angle':35},paint:{'text-color':'#fff8e9','text-halo-color':'#4b4b45','text-halo-width':1.5}});
   map.fitBounds([[120.9711,14.5732],[120.9931,14.5971]],{padding:{top:55,right:325,bottom:35,left:30},duration:0});
-  say('تم تحميل '+d.buildings.features.length.toLocaleString('en-US')+' بصمة مبنى أصلية من OSM و'+d.roads.features.length.toLocaleString('en-US')+' طريق/مسار. أسماء الشوارع وأرقام المباني تظهر عند التقريب المناسب. الارتفاعات غير المسجلة تقديرية.');
+  say('تم تحميل '+d.buildings.features.length.toLocaleString('en-US')+' بصمة مبنى أصلية من OSM و'+d.roads.features.length.toLocaleString('en-US')+' طريق/مسار. أُسنِدت '+joined.toLocaleString('en-US')+' أرقام من OpenFreeMap إلى المباني الحاوية لها؛ الأرقام تظهر على المبنى عند التقريب.');
   $('buildings').onchange=e=>setVis(['local-building-extrusions','local-building-roof-edges'],e.target.checked);
   $('numbers').onchange=e=>setVis(['building-house-numbers'],e.target.checked);
   $('bNames').onchange=e=>setVis(['local-building-name-labels'],e.target.checked);
@@ -82,6 +93,7 @@ map.on('load',async()=>{
   $('sidewalks').onchange=e=>setVis(['local-sidewalk-markings'],e.target.checked);
   $('rNames').onchange=e=>setVis(['local-street-labels'],e.target.checked&&$('roads').checked);
   $('boundary').onchange=e=>setVis(['ermita-boundary-fill','ermita-boundary-line'],e.target.checked);
+  $('terrain').onchange=e=>{try{map.setTerrain(e.target.checked?{source:'regional-terrain-dem',exaggeration:1.18}:null)}catch(err){console.warn('Terrain toggle failed',err)}};
   $('baseMap').onchange=e=>{for(const l of map.getStyle().layers||[]){if(l.id==='background'||l.id?.startsWith('local-')||l.id?.startsWith('ermita-boundary')||l.id==='building-house-numbers')continue;try{map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}catch(_){}}};
  }catch(e){console.error(e);say('تعذر تحميل بيانات المدينة: '+e.message+' — راجع سجل Actions وملفات النشر.')}
 });
