@@ -353,7 +353,7 @@ function addBuildings(data){
       5]]],
     'fill-extrusion-base':['max',0,['floor',['coalesce',
       ['to-number',['get','min_height',['get','tags']]],
-      ['*',['to-number',['get','building:levels',['get','tags']]],0],
+      ['*',['to-number',['get','min_level',['get','tags']]],3.66],
       0]]],
     'fill-extrusion-opacity':0.98,'fill-extrusion-vertical-gradient':true
    }});
