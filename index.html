@@ -46,7 +46,7 @@ const map=new maplibregl.Map({
 });
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
 map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-right');
-let roadsData=null,buildingsData=null,surfaceData=null,tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[],base3dLayerIds=[];
+let roadsData=null,buildingsData=null,osmBuildingsData=null,surfaceData=null,basemapBuildingsSignature='',tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[],base3dLayerIds=[];
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function popupHtml(p){const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',p.osm_feature_id||p.id]];return '<div style="font:13px system-ui"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+'</div>'}
 function addRealModelMarkers(){
@@ -385,9 +385,9 @@ function addTexturedBuildingMeshes(data,roadNetwork){
  map.addLayer(layer);
 }
 function syncLocalHeightsFromBasemap(){
- if(!buildingsData||!Array.isArray(buildingsData.features)||!map.getSource('openmaptiles'))return;
+ if(!osmBuildingsData||!Array.isArray(osmBuildingsData.features)||!map.getSource('openmaptiles'))return;
  let tiles=[];
- try{tiles=map.querySourceFeatures('openmaptiles',{sourceLayer:'building'} )||[];}catch(e){return;}
+ try{tiles=map.querySourceFeatures('openmaptiles',{sourceLayer:'building'})||[];}catch(e){return;}
  if(!tiles.length)return;
  const idKeys=f=>{
   const p=f.properties||{},v=[];
@@ -402,55 +402,68 @@ function syncLocalHeightsFromBasemap(){
   if(!coords.length)return null;
   let x=0,y=0;for(const p of coords){x+=p[0];y+=p[1];}return [x/coords.length,y/coords.length];
  };
- const candidates=[];
- for(const f of tiles){
-  const p=f.properties||{},h=Number(p.render_height);
-  if(!Number.isFinite(h)||h<2||h>500||!f.geometry)continue;
-  const ctr=center(f);if(!ctr)continue;
-  candidates.push({f,h,ctr,keys:idKeys(f)});
- }
- const byKey=new Map();
- for(const q of candidates)for(const k of q.keys){if(!byKey.has(k))byKey.set(k,q);}
  const toMeters=(a,b)=>{const lat=(a[1]+b[1])*Math.PI/360;return Math.hypot((a[0]-b[0])*111320*Math.cos(lat),(a[1]-b[1])*110574);};
- let changed=0,matched=0;
- for(const local of buildingsData.features){
-  if(!local.geometry||!['Polygon','MultiPolygon'].includes(local.geometry.type))continue;
-  const p=local.properties||(local.properties={}),raw=String(p.osm_feature_id||''),localId=raw.replace(/^(way|relation|node)\//,'');
-  let q=byKey.get(localId);
-  if(!q){
-   const ctr=center(local);if(!ctr)continue;
+ const osmIndex=new Map(),osmCenters=[];
+ for(const f of osmBuildingsData.features){
+  if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
+  const p=f.properties||{},keys=idKeys(f);
+  for(const k of keys){if(!osmIndex.has(k))osmIndex.set(k,f);}
+  const ctr=center(f);if(ctr)osmCenters.push({f,ctr});
+ }
+ const candidates=[],seen=new Set();
+ for(const f of tiles){
+  if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
+  const p=f.properties||{},h=Number(p.render_height),base=Number(p.render_min_height||0);
+  if(!Number.isFinite(h)||h<2||h>500)continue;
+  const ctr=center(f);if(!ctr)continue;
+  const keys=idKeys(f);
+  const geometryKey=JSON.stringify([keys.slice().sort().join(','),ctr.map(v=>Number(v.toFixed(5))),Number(h.toFixed(1))]);
+  if(seen.has(geometryKey))continue;
+  seen.add(geometryKey);
+  candidates.push({f,h,base,ctr,keys});
+ }
+ if(!candidates.length)return;
+ const derived=[];
+ for(const q of candidates){
+  let osm=null;
+  for(const k of q.keys){if(osmIndex.has(k)){osm=osmIndex.get(k);break;}}
+  if(!osm){
    let best=null,dist=Infinity;
-   for(const candidate of candidates){const d=toMeters(ctr,candidate.ctr);if(d<dist){dist=d;best=candidate;}}
-   // Avoid assigning a neighbour's height: centroid fallback must be very close.
-   if(best&&dist<=8)q=best;
+   for(const candidate of osmCenters){const d=toMeters(q.ctr,candidate.ctr);if(d<dist){dist=d;best=candidate.f;}}
+   if(best&&dist<=15)osm=best;
   }
-  if(!q)continue;
-  matched++;
-  const baseMin=Number(q.f.properties?.render_min_height||0);
-  const tags=p.tags&&typeof p.tags==='object'?p.tags:null;
-  if(Number(p.basemap_render_height)!==q.h||
-     Number(p.basemap_render_min_height)!==baseMin||
-     Number(p.adam_height_m)!==q.h||
-     (tags&&String(tags.height)!==String(q.h))||
-     (tags&&Number(tags.min_height||0)!==baseMin)){
-   p.basemap_render_height=q.h;
-   p.basemap_render_min_height=baseMin;
-   p.adam_height_m=q.h;
-   // Keep the local OSM extrusion and facade/window mesh aligned to the trusted Basemap roof height.
-   if(tags){tags.height=String(q.h);tags.min_height=String(baseMin);}
-   p.basemap_height_match=raw||String(q.f.id||'spatial-match');
-   changed++;
-  }
+  const bp=q.f.properties||{},op=osm?.properties||{},originalTags=op.tags&&typeof op.tags==='object'?op.tags:{};
+  const tags={...originalTags};
+  // Overwrite OSM geometry-related attributes with Basemap's current vector-tile attributes.
+  tags.height=String(q.h);tags.min_height=String(q.base);
+  if(bp.building)tags.building=String(bp.building);
+  if(bp.name)tags.name=String(bp.name);
+  if(bp.colour||bp.color||bp.building_colour)tags['building:colour']=String(bp.colour||bp.color||bp.building_colour);
+  if(bp.class)tags['basemap:class']=String(bp.class);
+  const props={
+   ...op,
+   tags,
+   osm_feature_id:op.osm_feature_id||((op.type&&op.id)?op.type+'/'+op.id:undefined),
+   basemap_properties:{...bp},
+   basemap_render_height:q.h,
+   basemap_render_min_height:q.base,
+   adam_height_m:q.h,
+   basemap_height_match:osm?(op.osm_feature_id||String(q.f.id||'matched-osm')):String(q.f.id||'basemap-only'),
+   basemap_source_id:q.f.id??null,
+   basemap_geometry_authoritative:true
+  };
+  if(!props.name&&bp.name)props.name=bp.name;
+  derived.push({type:'Feature',id:q.f.id,geometry:q.f.geometry,properties:props});
  }
- if(changed&&map.getSource('local-buildings')){
-  map.getSource('local-buildings').setData(buildingsData);
-  // Rebuild facade details only when newly matched heights changed, so windows/trim share the same roofline.
-  addTexturedBuildingMeshes(buildingsData,roadsData);
- }
- if(changed||!window.__adamHeightSyncLogged){
-  window.__adamHeightSyncLogged=true;
-  setStatus('Basemap height matching: '+matched.toLocaleString()+' local buildings matched to live OpenFreeMap render_height values; '+changed.toLocaleString()+' height records updated. Unmatched buildings retain OSM height/levels fallback.');
- }
+ const next={type:'FeatureCollection',name:'Basemap-authoritative building geometry and heights merged with OSM attributes',features:derived};
+ const signature=derived.map(f=>String(f.id||f.properties.basemap_source_id)+'/'+f.properties.basemap_render_height+'/'+JSON.stringify(f.geometry?.coordinates?.[0]?.[0]||f.geometry?.coordinates?.[0]||[]).slice(0,80)).join('|');
+ if(signature===basemapBuildingsSignature)return;
+ basemapBuildingsSignature=signature;
+ buildingsData=next;
+ if(map.getSource('local-buildings'))map.getSource('local-buildings').setData(buildingsData);
+ else if(buildingsData.features.length)addBuildings(buildingsData);
+ addTexturedBuildingMeshes(buildingsData,roadsData);
+ setStatus('Basemap is authoritative: '+derived.length.toLocaleString()+' current Basemap building geometries/heights copied into the project building layer; OSM attributes are retained where matched. OSM-only stale footprints are replaced, not merely hidden.');
 }
 function normalizeBuildingHeights(data){
    for(const f of (data.features||[])){
@@ -481,7 +494,7 @@ function addBuildings(data){
  if(map.getSource('local-buildings'))map.removeSource('local-buildings');
  map.addSource('local-buildings',{type:'geojson',data:data});
  map.addLayer({id:'local-buildings-3d',type:'fill-extrusion',source:'local-buildings',
-   filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['has','basemap_height_match'],['any',['has','building',['get','tags']],['has','building:part',['get','tags']]]],
+   filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['any',['has','building',['get','tags']],['has','building:part',['get','tags']]]],
    paint:{
     'fill-extrusion-color':['case',
       ['has','building:colour',['get','tags']],['get','building:colour',['get','tags']],
@@ -509,7 +522,7 @@ function addBuildings(data){
  if(map.getLayer('local-building-labels'))map.removeLayer('local-building-labels');
  map.addLayer({id:'local-building-labels',type:'symbol',source:'local-buildings',
   minzoom:16.2,
-  filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['has','basemap_height_match'],['has','name',['get','tags']]],
+  filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['has','name',['get','tags']]],
   layout:{'text-field':['get','name',['get','tags']],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],16,10,19,13],'text-max-width':10,'text-allow-overlap':false,'text-ignore-placement':false},
   paint:{'text-color':'#28323a','text-halo-color':'#fff8e9','text-halo-width':1.5,'text-halo-blur':0.3}});
 
@@ -592,6 +605,7 @@ map.on('load',async()=>{
   ]);
   roadsData={type:'FeatureCollection',features:(roadResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   buildingsData={type:'FeatureCollection',features:(buildingResult.features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
+  osmBuildingsData=buildingsData;
   // Reconcile this one photo-checked landmark against the current OSM feature ID, not a nearby guess.
   const bocobo=buildingsData.features.find(f=>String(f.properties?.osm_feature_id||'')==='way/90123959');
   if(bocobo){bocobo.properties.tags=bocobo.properties.tags||{};bocobo.properties.tags.name='Manila Residences Bocobo';bocobo.properties.tags['building:levels']='34';bocobo.properties.tags.height='102';bocobo.properties.tags['building:colour']='#e5d5bd';bocobo.properties.tags['facade:reference']='Photo reviewed: Philippine Realty Group listing';}
