@@ -316,12 +316,17 @@ function addTexturedBuildingMeshes(data){
       const dx=(mid[0]-kartaTarget.camera[0])*111319.49*cosLat,dy=(mid[1]-kartaTarget.camera[1])*111132.92;
       const dist=dx*dx+dy*dy;if(dist<nearestDist){nearestDist=dist;nearestEdge=i;}
      }}
-     for(let i=1;i<ring.length;i++){
-      const wallKey=kartaTarget?(i===nearestEdge?key:'generic'):key;
-      wall(sets[wallKey],ring[i-1],ring[i],h,wallKey);
+     // Never paint an unverified building with the same generic facade texture.
+     // Only draw facade/roof meshes when an existing photo is explicitly mapped to this feature.
+     // Other buildings remain as their source OSM extrusions until a matching facade image is verified.
+     if(key!=='generic'){
+      for(let i=1;i<ring.length;i++){
+       const wallKey=kartaTarget?(i===nearestEdge?key:'generic'):key;
+       if(wallKey!=='generic')wall(sets[wallKey],ring[i-1],ring[i],h,wallKey);
+      }
+      roof(ring,h);photoMapped[key]=(photoMapped[key]||0)+1;
      }
-     roof(ring,h);count++;
-     if(key!=='generic')photoMapped[key]++;
+     count++;
     }
    }
    this.meshes=[];
@@ -340,9 +345,9 @@ function addTexturedBuildingMeshes(data){
    roofGeo.setAttribute('position',new THREE.Float32BufferAttribute(roofPositions,3));
    roofGeo.setAttribute('uv',new THREE.Float32BufferAttribute(roofUvs,2));roofGeo.computeVertexNormals();
    const roofMat=new THREE.MeshStandardMaterial({color:0x77736b,roughness:1,side:THREE.DoubleSide});
-   this.roofs=new THREE.Mesh(roofGeo,roofMat);this.roofs.frustumCulled=false;this.scene.add(this.roofs);
+   if(roofPositions.length){this.roofs=new THREE.Mesh(roofGeo,roofMat);this.roofs.frustumCulled=false;this.scene.add(this.roofs);}
    this.loadedCount=count;
-   setStatus('3D facade meshes: '+count.toLocaleString()+' footprint parts. Existing-image facade candidates: YWCA '+photoMapped.kartaYWCA+', Commodore '+photoMapped.kartaCommodore+', unnamed targets '+(photoMapped.kartaUnknownA+photoMapped.kartaUnknownB+photoMapped.kartaUnknownC)+'. KartaView photos are applied to one nearest footprint wall only; verify visual alignment in scene. Remaining buildings use the existing generic wall material or named reference candidates.');
+   setStatus('3D facade meshes: '+count.toLocaleString()+' footprint parts. Existing-image facade candidates: YWCA '+photoMapped.kartaYWCA+', Commodore '+photoMapped.kartaCommodore+', unnamed targets '+(photoMapped.kartaUnknownA+photoMapped.kartaUnknownB+photoMapped.kartaUnknownC)+'. KartaView photos are applied to one nearest footprint wall only; verify visual alignment in scene. Unverified buildings are deliberately not assigned a generic facade photo; they remain source OSM extrusions until a building-specific image is verified.');
   },
   render:function(gl,args){
    if(!this.renderer)return;
