@@ -1,4 +1,4 @@
-name: Deploy Ermita map preview to GitHub Pages
+name: Deploy Adam City single-page site to GitHub Pages
 
 on:
   workflow_dispatch:
@@ -6,7 +6,6 @@ on:
     branches: [main]
     paths:
       - "index.html"
-      - "ermita/maps/preview.html"
       - "ermita/maps/generated/ermita-road-network.geojson"
       - "ermita/maps/generated/ermita-building-footprints.geojson"
       - ".github/workflows/deploy-ermita-preview.yml"
@@ -30,9 +29,9 @@ jobs:
         run: |
           set -e
           mkdir -p _site
-          cp ermita/maps/preview.html _site/index.html
+          cp index.html _site/index.html
           cat > _site/README.txt <<'EOF'
-          Ermita, Manila — interactive mapped roads and building footprints.
+          Adam City — single-page 3D city map for Ermita, Manila.
           Data source and project files: https://github.com/saeedhub101/Adam-City
           The map loads public GeoJSON from this repository's main branch.
           EOF
