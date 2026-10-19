@@ -46,17 +46,18 @@ def load_features(path, source):
     return out
 
 def main():
-    if OUT.exists() and REGISTER.exists() and REPORT.exists():
+    previous={}
+    if REPORT.exists():
         try:
             previous=json.loads(REPORT.read_text(encoding="utf-8"))
-            if previous.get("status")=="success" and previous.get("canonical_schema_version")==2:
-                print(json.dumps({"status":"reused_existing_outputs",
-                                  "crosswalk":str(OUT.relative_to(ROOT)),
-                                  "canonical_register":str(REGISTER.relative_to(ROOT)),
-                                  "report":str(REPORT.relative_to(ROOT))},indent=2))
-                return
         except Exception:
-            pass
+            previous={}
+    if OUT.exists() and REGISTER.exists() and previous.get("status")=="success" and previous.get("canonical_schema_version")==2:
+        print(json.dumps({"status":"reused_existing_outputs",
+                          "crosswalk":str(OUT.relative_to(ROOT)),
+                          "canonical_register":str(REGISTER.relative_to(ROOT)),
+                          "report":str(REPORT.relative_to(ROOT))},indent=2))
+        return
     report={
         "canonical_schema_version":2,
         "status":"waiting_for_source",
@@ -74,7 +75,7 @@ def main():
         print(json.dumps(report,ensure_ascii=False,indent=2))
         return
 
-    if not OUT.exists() or not REGISTER.exists():
+    if not OUT.exists() or not REGISTER.exists() or previous.get("status")!="success" or previous.get("canonical_schema_version")!=2:
         google=load_features(GOOGLE,"google")
         microsoft=load_features(MICROSOFT,"microsoft")
         # Use a local projected CRS for distance/area measurements in central Manila.
