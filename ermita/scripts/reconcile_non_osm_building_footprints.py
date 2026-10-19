@@ -79,6 +79,7 @@ def main():
         from shapely.strtree import STRtree
         m_geoms=[f["metric"] for f in microsoft]
         tree=STRtree(m_geoms)
+        geom_index_by_wkb={g.wkb:i for i,g in enumerate(m_geoms)}
         candidate_pairs=[]
         for gi,g in enumerate(google):
             try:
@@ -86,7 +87,7 @@ def main():
             except Exception:
                 candidates=[]
             for item in candidates:
-                mi=int(item) if isinstance(item,(int,)) else next((i for i,x in enumerate(m_geoms) if x is item),-1)
+                mi=int(item) if hasattr(item,"__index__") else geom_index_by_wkb.get(item.wkb,-1)
                 if mi<0 or mi>=len(microsoft):
                     continue
                 m=microsoft[mi]
