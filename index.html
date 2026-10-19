@@ -708,38 +708,77 @@ function addRoads(data){
  map.on('click','project-roads',e=>{const f=e.features&&e.features[0];if(f)new maplibregl.Popup().setLngLat(e.lngLat).setHTML(popupHtml(f.properties||{})).addTo(map)});
 }
 
-// Brand overlays are built from the *live Liberty vector-tile building geometry*.
-// The committed OSM GeoJSON can be empty, so branding must not depend on local-buildings.
-const sevenElevenOsmIds = new Set(['308695408','822386821','89830977','308701704','90301215','267205333','103494320','163678964','86401784','762587819','268207665','575422162','89536449','267205328']);
-let basemapBrandRefreshQueued=false;
+// Brand overlays are matched by real store coordinates to the building polygons
+// rendered by Liberty's live vector tiles. OSM IDs differ between tile schemas, so
+// do not rely on feature IDs being exposed consistently by the vector-tile provider.
+const brandTargets=[
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9818161,lat:14.5775371},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9798948,lat:14.5810136},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9814709,lat:14.5817069},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9804487,lat:14.5767385},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9811771,lat:14.5736793},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9806253,lat:14.5752391},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9806082,lat:14.5801527},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9837588,lat:14.5905333},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.989763,lat:14.5769223},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9796944,lat:14.5766164},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9823264,lat:14.5890294},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9825826,lat:14.5745395},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9862622,lat:14.5818841},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9812157,lat:14.577413},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9832055,lat:14.573986},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.9809411,lat:14.5784554},
+ {brand:'7-Eleven',label:'7 ELEVEN',color:'#168641',lon:120.982569,lat:14.5794266},
+ {brand:'Robinsons Manila',label:'ROBINSONS',color:'#d7d1c7',lon:120.9838040308,lat:14.5762581692}
+];
+function brandPointInRing(point,ring){
+ let inside=false;const x=point[0],y=point[1];
+ for(let i=0,j=ring.length-1;i<ring.length;j=i++){
+  const xi=ring[i][0],yi=ring[i][1],xj=ring[j][0],yj=ring[j][1];
+  if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi+1e-15)+xi))inside=!inside;
+ }
+ return inside;
+}
+function brandPointInGeometry(point,g){
+ if(!g)return false;
+ const polys=g.type==='Polygon'?[g.coordinates]:g.type==='MultiPolygon'?g.coordinates:[];
+ return polys.some(poly=>poly.length&&brandPointInRing(point,poly[0])&&!poly.slice(1).some(r=>brandPointInRing(point,r)));
+}
 function updateBasemapBrandBuildings(){
  if(!map.isStyleLoaded()||!map.getSource('openmaptiles'))return;
- let tiles=[];
- try{tiles=map.querySourceFeatures('openmaptiles',{sourceLayer:'building'})||[];}catch(e){return;}
- const matched=new Map();
+ let tiles=[];try{tiles=map.querySourceFeatures('openmaptiles',{sourceLayer:'building'})||[];}catch(e){return;}
+ const unique=new Map();
  for(const f of tiles){
   if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
-  const p=f.properties||{};
-  const ids=[];
-  for(const k of ['osm_id','osm_way_id','osm_feature_id','id','original_id']){
-   const v=p[k];if(v!==undefined&&v!==null&&String(v)!=='')ids.push(String(v).replace(/^(way|relation|node)\//,''));
-  }
-  if(f.id!==undefined&&f.id!==null)ids.push(String(f.id).replace(/^(way|relation|node)\//,''));
-  let brand='',label='',color='';
-  if(ids.some(id=>sevenElevenOsmIds.has(id))){brand='7-Eleven';label='7 ELEVEN';color='#168641';}
-  else if(ids.includes('48894714')){brand='Robinsons Manila';label='ROBINSONS';color='#d7d1c7';}
-  if(!brand)continue;
-  const key=brand+':'+(ids[0]||JSON.stringify(f.geometry.coordinates).slice(0,80));
-  const h=Number(p.render_height||p.height||p.height_m||12);
-  matched.set(key,{type:'Feature',id:key,geometry:f.geometry,properties:{brand,label,color,height:Number.isFinite(h)&&h>2?h:12,base:Number(p.render_min_height||0)}});
+  const p=f.properties||{},geom=f.geometry;
+  const coords=[];const walk=a=>{if(!Array.isArray(a))return;if(a.length>=2&&typeof a[0]==='number'&&typeof a[1]==='number')coords.push(a);else a.forEach(walk)};walk(geom.coordinates);
+  if(!coords.length)continue;
+  const center=[coords.reduce((s,c)=>s+c[0],0)/coords.length,coords.reduce((s,c)=>s+c[1],0)/coords.length];
+  const key=String(f.id??'')+'|'+center.map(n=>n.toFixed(6)).join(',');
+  if(!unique.has(key))unique.set(key,{f,center});
  }
- const data={type:'FeatureCollection',name:'Branding overlays matched to live basemap building vector tiles',features:[...matched.values()]};
- const src=map.getSource('basemap-branded-building-overlays');
- if(src)src.setData(data);
+ const buildings=[...unique.values()],matched=new Map(),used=new Set();
+ const distance=(a,b)=>{const lat=(a[1]+b[1])*Math.PI/360;return Math.hypot((a[0]-b[0])*111320*Math.cos(lat),(a[1]-b[1])*110574);};
+ for(const target of brandTargets){
+  const point=[target.lon,target.lat];
+  let candidates=buildings.filter(b=>brandPointInGeometry(point,b.f.geometry));
+  if(!candidates.length)candidates=buildings.filter(b=>distance(point,b.center)<=28).sort((a,b)=>distance(point,a.center)-distance(point,b.center)).slice(0,1);
+  for(const b of candidates){
+   const p=b.f.properties||{},id=String(b.f.id??'')+'|'+b.center.join(',');
+   // Avoid a nearby shop target repainting the same large tower twice.
+   if(used.has(id)&&target.brand==='7-Eleven')continue;
+   used.add(id);
+   const height=Number(p.render_height||p.height||p.height_m||12);
+   const k=target.brand+':'+id;
+   matched.set(k,{type:'Feature',id:k,geometry:b.f.geometry,properties:{brand:target.brand,label:target.label,color:target.color,height:Number.isFinite(height)&&height>2?height:12,base:Number(p.render_min_height||0)}});
+  }
+ }
+ const data={type:'FeatureCollection',name:'Brand overlays spatially matched to live Liberty building polygons',features:[...matched.values()]};
+ const src=map.getSource('basemap-branded-building-overlays');if(src)src.setData(data);
  if(!src)return;
  if(!map.getLayer('basemap-branded-building-extrusions'))map.addLayer({id:'basemap-branded-building-extrusions',type:'fill-extrusion',source:'basemap-branded-building-overlays',paint:{'fill-extrusion-color':['get','color'],'fill-extrusion-height':['get','height'],'fill-extrusion-base':['get','base'],'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':false}});
  if(!map.getLayer('basemap-branded-building-signs'))map.addLayer({id:'basemap-branded-building-signs',type:'symbol',source:'basemap-branded-building-overlays',minzoom:14.8,layout:{'text-field':['get','label'],'text-font':['Open Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],15,10,18,19],'text-max-width':12,'text-allow-overlap':true,'text-ignore-placement':true},paint:{'text-color':['match',['get','brand'],'7-Eleven','#ffffff','#c92732'],'text-halo-color':['match',['get','brand'],'7-Eleven','#168641','#ffffff'],'text-halo-width':3}});
- if(matched.size) setStatus('Live basemap building match: '+[...matched.values()].filter(f=>f.properties.brand==='7-Eleven').length+' 7-Eleven footprints and '+[...matched.values()].filter(f=>f.properties.brand==='Robinsons Manila').length+' Robinsons footprint(s) styled from vector-tile geometry.');
+ if(matched.size)setStatus('Live building geometry matched by store location: '+[...matched.values()].filter(f=>f.properties.brand==='7-Eleven').length+' 7-Eleven building overlays and '+[...matched.values()].filter(f=>f.properties.brand==='Robinsons Manila').length+' Robinsons overlay(s).');
 }
 
 map.on('load',async()=>{
