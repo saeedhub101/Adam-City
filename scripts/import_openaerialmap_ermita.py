@@ -27,6 +27,33 @@ def request_json(url, payload=None):
         return json.load(r)
 
 def main():
+    # Preserve the saved source snapshot and downloaded imagery. Repeated runs
+    # reuse it instead of replacing files or changing the report timestamp.
+    if REPORT.exists() and REPORT.stat().st_size:
+        try:
+            cached = json.loads(REPORT.read_text(encoding="utf-8"))
+            valid_saved_assets = []
+            for item in cached.get("downloaded", []):
+                relative = item.get("repository_path")
+                if relative:
+                    saved = ROOT / relative
+                    if saved.exists() and saved.stat().st_size:
+                        valid_saved_assets.append({"path": relative, "bytes": saved.stat().st_size,
+                                                   "sha256": item.get("sha256")})
+            if valid_saved_assets:
+                print(json.dumps({"status": "reused_existing_not_overwritten",
+                                  "report": str(REPORT.relative_to(ROOT)),
+                                  "saved_assets": valid_saved_assets,
+                                  "message": "Existing OpenAerialMap assets/report retained; no network re-download."},
+                                 ensure_ascii=False, indent=2))
+                return 0
+        except Exception as e:
+            # Do not delete or overwrite a possibly recoverable report.
+            print(json.dumps({"status": "existing_report_unreadable",
+                              "error": repr(e),
+                              "message": "Existing report retained; no download attempted."}, indent=2))
+            return 0
+
     report = {
         "source": "OpenAerialMap / Humanitarian OpenStreetMap Team imagery API",
         "catalog_api": SEARCH_URL,
