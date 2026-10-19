@@ -54,17 +54,24 @@ let roadsData=null,buildingsData=null,osmBuildingsData=null,surfaceData=null,bas
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function popupHtml(p){const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',p.osm_feature_id||p.id]];return '<div style="font:13px system-ui"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+'</div>'}
 function addRealModelMarkers(){
- // The downloaded Ramon Magsaysay GLB is rendered as a real 3D mesh by
- // addLocalRamonModel(). Keep only its map label here; do not substitute a
- // clickable dot/remote iframe for the building itself.
+ // Ermita Center Building model from the original 3D Warehouse page.
+ // The page is shown in the map popup until a downloadable local mesh can be obtained.
  const models={type:'FeatureCollection',features:[
-  {type:'Feature',geometry:{type:'Point',coordinates:[120.98245,14.5719]},properties:{id:'ramon-magsaysay-center',name:'Ramon Magsaysay Center',district:'Malate'}}
+  {type:'Feature',geometry:{type:'Point',coordinates:[120.98041,14.57563]},properties:{id:'ermita-center-building',name:'Ermita Center Building',district:'Ermita',page:'https://embed-3dwarehouse-classic.sketchup.com/model/3743b62280dd9fa53530340d5a9e139f/Ermita-Center-Building',embed:'https://embed-3dwarehouse-classic.sketchup.com/model/3743b62280dd9fa53530340d5a9e139f/Ermita-Center-Building'}}
  ]};
  if(map.getLayer('real-building-model-labels'))map.removeLayer('real-building-model-labels');
  if(map.getLayer('real-building-model-points'))map.removeLayer('real-building-model-points');
  if(map.getSource('real-building-models'))map.removeSource('real-building-models');
  map.addSource('real-building-models',{type:'geojson',data:models});
+ map.addLayer({id:'real-building-model-points',type:'circle',source:'real-building-models',paint:{'circle-radius':['interpolate',['linear'],['zoom'],12,5,16,9,19,12],'circle-color':'#7c3aed','circle-stroke-color':'#ffffff','circle-stroke-width':2}});
  map.addLayer({id:'real-building-model-labels',type:'symbol',source:'real-building-models',layout:{'text-field':['get','name'],'text-font':['Open Sans Bold'],'text-size':12,'text-offset':[0,1.4],'text-anchor':'top','text-allow-overlap':true},paint:{'text-color':'#5b21b6','text-halo-color':'#ffffff','text-halo-width':1.5}});
+ map.on('click','real-building-model-points',e=>{
+  const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};
+  const embed='<iframe title="Ermita Center Building 3D Warehouse model" src="'+esc(p.embed)+'" style="width:340px;max-width:78vw;height:280px;border:0;border-radius:6px" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen loading="lazy"></iframe>';
+  new maplibregl.Popup({maxWidth:'370px'}).setLngLat(e.lngLat).setHTML('<div style="font:13px system-ui;max-width:350px"><b style="font-size:15px">'+esc(p.name)+'</b><div>'+esc(p.district)+' · 3D Warehouse model</div>'+embed+'<div style="margin-top:8px"><a target="_blank" rel="noopener" href="'+esc(p.page)+'">Open original model page</a></div></div>').addTo(map);
+ });
+ map.on('mouseenter','real-building-model-points',()=>map.getCanvas().style.cursor='pointer');
+ map.on('mouseleave','real-building-model-points',()=>map.getCanvas().style.cursor='');
 }
 
 function addStreetMesh(roadNetwork){
