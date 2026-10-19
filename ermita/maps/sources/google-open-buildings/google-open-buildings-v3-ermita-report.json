@@ -1,5 +1,5 @@
 {
-  "status": "failed",
+  "status": "success",
   "source": "Google Research Open Buildings v3 polygon detections",
   "source_url": "https://sites.research.google/gr/open-buildings/",
   "download_root": "https://storage.googleapis.com/open-buildings-data/v3/polygons_s2_level_6_gzip_no_header",
@@ -10,7 +10,7 @@
     120.994,
     14.593
   ],
-  "retrieved_at_utc": "2026-10-19T17:49:31.526896+00:00",
+  "retrieved_at_utc": "2026-10-19T17:51:17.230852+00:00",
   "source_inference_vintage": "May 2023 (Open Buildings v3)",
   "license": "CC BY 4.0 (selected license option)",
   "attribution": "Google Research Open Buildings v3; see https://sites.research.google/gr/open-buildings/",
@@ -19,18 +19,18 @@
   "cells": [
     {
       "token": "3397",
-      "status": "failed",
-      "url": "https://storage.googleapis.com/open-buildings-data/v3/polygons_s2_level_6_gzip_no_header/3397_buildings.csv.gz",
-      "error": "ValueError('S2 cell compressed size exceeds 262144000 bytes')"
+      "status": "downloaded_and_filtered",
+      "compressed_bytes": 814424461,
+      "rows_examined": 8766464,
+      "features_retained": 7443
     }
   ],
-  "warnings": [
-    "S2 cell 3397: ValueError('S2 cell compressed size exceeds 262144000 bytes')",
-    "No building polygons were retained. Check whether the area is covered and whether S2 downloads succeeded."
-  ],
+  "warnings": [],
   "s2_level": 6,
   "s2_cells_considered": [
     "3397"
   ],
-  "feature_count": 0
+  "output_file": "ermita/maps/sources/google-open-buildings/google-open-buildings-v3-ermita.geojson",
+  "feature_count": 7443,
+  "high_confidence_count_ge_080": 3550
 }
