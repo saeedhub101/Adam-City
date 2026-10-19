@@ -4,28 +4,11 @@
   "purpose": "Licensed photographic references for building facade/material research; not automatically projected onto buildings.",
   "source": "Wikimedia Commons API",
   "source_url": "https://commons.wikimedia.org/",
-  "generated_utc": "2026-10-19T18:14:22Z",
+  "generated_utc": "2026-10-19T18:15:52Z",
   "image_count": 33,
   "downloaded_this_run": 19,
-  "errors": [
-    {
-      "query": "Manila Residences Bocobo facade",
-      "error": "429 Client Error: Too Many Requests for url: https://commons.wikimedia.org/w/api.php?format=json&action=query&generator=search&gsrsearch=filetype%3Abitmap+Manila+Residences+Bocobo+facade&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url%7Cextmetadata&iiurlwidth=1000"
-    },
-    {
-      "query": "7-Eleven Manila Philippines store exterior",
-      "error": "429 Client Error: Too Many Requests for url: https://commons.wikimedia.org/w/api.php?format=json&action=query&generator=search&gsrsearch=filetype%3Abitmap+7-Eleven+Manila+Philippines+store+exterior&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url%7Cextmetadata&iiurlwidth=1000"
-    },
-    {
-      "query": "Rizal Park Manila grass lawn aerial",
-      "error": "429 Client Error: Too Many Requests for url: https://commons.wikimedia.org/w/api.php?format=json&action=query&generator=search&gsrsearch=filetype%3Abitmap+Rizal+Park+Manila+grass+lawn+aerial&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url%7Cextmetadata&iiurlwidth=1000"
-    },
-    {
-      "query": "Ermita Manila hotel building exterior",
-      "error": "429 Client Error: Too Many Requests for url: https://commons.wikimedia.org/w/api.php?format=json&action=query&generator=search&gsrsearch=filetype%3Abitmap+Ermita+Manila+hotel+building+exterior&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url%7Cextmetadata&iiurlwidth=1000"
-    }
-  ],
-  "matching_note": "building_candidate means the search query names a candidate building/landmark, not that visual identity has been independently verified. area_reference is neighborhood-level only. Verify each image before using it as a texture.",
+  "errors": [],
+  "matching_note": "Every image is retained with license metadata. location_status and use_as_target_facade_reference separate likely local candidates from nearby-city or nonlocal reference images. No image is automatically projected onto a facade.",
   "images": [
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_19.jpg",
@@ -41,7 +24,12 @@
       "match_type": "building_candidate",
       "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-19.jpg",
-      "bytes": 287199
+      "bytes": 287199,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_20.jpg",
@@ -57,7 +45,12 @@
       "match_type": "building_candidate",
       "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-20.jpg",
-      "bytes": 282464
+      "bytes": 282464,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_21.jpg",
@@ -73,7 +66,12 @@
       "match_type": "building_candidate",
       "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-21.jpg",
-      "bytes": 335695
+      "bytes": 335695,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_23.jpg",
@@ -89,7 +87,12 @@
       "match_type": "building_candidate",
       "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-23.jpg",
-      "bytes": 318641
+      "bytes": 318641,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_28.jpg",
@@ -105,7 +108,12 @@
       "match_type": "building_candidate",
       "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-28.jpg",
-      "bytes": 351666
+      "bytes": 351666,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_29.jpg",
@@ -121,7 +129,12 @@
       "match_type": "building_candidate",
       "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-29.jpg",
-      "bytes": 322458
+      "bytes": 322458,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_35.jpg",
@@ -137,7 +150,12 @@
       "match_type": "building_candidate",
       "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-35.jpg",
-      "bytes": 302444
+      "bytes": 302444,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_44.jpg",
@@ -153,7 +171,12 @@
       "match_type": "building_candidate",
       "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-44.jpg",
-      "bytes": 275944
+      "bytes": 275944,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:PGH_Cancer_Institute_Building.jpg",
@@ -169,7 +192,12 @@
       "match_type": "building_candidate",
       "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/PGH-Cancer-Institute-Building.jpg",
-      "bytes": 440482
+      "bytes": 440482,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:University_of_the_Philippines_(Manila_Campus)_-_Main_Building_(Pedro_Gil,_Ermita,_Manila;_2014-10-20).jpg",
@@ -185,7 +213,12 @@
       "match_type": "building_candidate",
       "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/University-of-the-Philippines-Manila-Campus---Main-Building-Pedro-Gil-Ermita-Manila-2014-1.jpg",
-      "bytes": 560233
+      "bytes": 560233,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:University_of_the_Philippines_Manila2026-06-10Complex_03.jpg",
@@ -201,7 +234,12 @@
       "match_type": "building_candidate",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/University-of-the-Philippines-Manila2026-06-10Complex-03.jpg",
-      "bytes": 637875
+      "bytes": 637875,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:University_of_the_Philippines_Manila2026-06-10Complex_12.jpg",
@@ -217,7 +255,12 @@
       "match_type": "building_candidate",
       "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/University-of-the-Philippines-Manila2026-06-10Complex-12.jpg",
-      "bytes": 609133
+      "bytes": 609133,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:University_of_the_Philippines_Manila2026-06-10Complex_13.jpg",
@@ -233,7 +276,12 @@
       "match_type": "building_candidate",
       "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/University-of-the-Philippines-Manila2026-06-10Complex-13.jpg",
-      "bytes": 320851
+      "bytes": 320851,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:University_of_the_Philippines_Manila2026-06-10Complex_15.jpg",
@@ -249,7 +297,12 @@
       "match_type": "building_candidate",
       "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/University-of-the-Philippines-Manila2026-06-10Complex-15.jpg",
-      "bytes": 307885
+      "bytes": 307885,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_22.jpg",
@@ -265,7 +318,12 @@
       "match_type": "building_candidate",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-22.jpg",
-      "bytes": 330346
+      "bytes": 330346,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:04660jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_32.jpg",
@@ -281,7 +339,12 @@
       "match_type": "building_candidate",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-32.jpg",
-      "bytes": 226115
+      "bytes": 226115,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:University_of_the_Philippines_Manila2026-06-10Complex_14.jpg",
@@ -297,7 +360,12 @@
       "match_type": "building_candidate",
       "download_status": "already_saved",
       "local_path": "ermita/buildings/reference_photos/University-of-the-Philippines-Manila2026-06-10Complex-14.jpg",
-      "bytes": 258037
+      "bytes": 258037,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:04712jfNational_Museum_of_the_Philippines_Ermita_Manilafvf_03.jpg",
@@ -313,7 +381,12 @@
       "match_type": "building_candidate",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/04712jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-03.jpg",
-      "bytes": 352607
+      "bytes": 352607,
+      "original_search_match_type": "building_candidate",
+      "location_status": "likely_target_area_candidate",
+      "use_as_target_facade_reference": true,
+      "exact_building_identity_verified": false,
+      "location_note": "Likely relevant local building candidate; verify visual identity and coordinates before projecting onto a facade."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:01015jfIntramuros_Manila_Landmarks_Buildingsfvf_01.jpg",
@@ -326,10 +399,14 @@
       "credit": "Own work",
       "description": "Exterior of the Ayuntamiento de Manila (Casas Consistoriales),   Ayuntamiento de Manila  Bureau of the Treasury, Intramuros 1599, City Hall of Manila Destroyed in the Battle of 1945 now Bureau of the Treasury Casa Consistoriales (Ayuntamiento), Intramuros, 1735, now Bureau of Treasury (BTr),  Department of Finance (Philippines)  in front of the  Plaza de Roma , b) Plaza de Roma, Intra muros Exhibit - 54 Masterpieces of The Prado Museum, History and Collections  Museo del Prado   8 Great Churches of Intramuros    Intramuros landmarks   List of Cultural Properties of the Philippines in Metro Manila   Intramuros , in  Legislative districts of Manila   Political subdivision, Barangays 654, 656, 657 and 658 , District V,  Intramuros ,   City of Manila ; (Note: Judge Florentino Floro, the owner, to repeat, Donor  Florentino Floro  of all these photos hereby donate gratuitously, freely and unconditionally all these photos to and for Wikimedia Commons, exclusively, for public use of the public domain, and again without any condition whatsoever).",
       "query": "Manila City Hall exterior building",
-      "match_type": "building_candidate",
+      "match_type": "manila_context_reference",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/01015jfIntramuros-Manila-Landmarks-Buildingsfvf-01.jpg",
-      "bytes": 361100
+      "bytes": 361100,
+      "original_search_match_type": "building_candidate",
+      "location_status": "outside_or_unverified_target_area",
+      "use_as_target_facade_reference": false,
+      "location_note": "Manila-context architecture reference, not a verified facade match inside the current project AOI."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:4234Bayambang_Basista_San_Carlos_City_Road_66.jpg",
@@ -342,10 +419,14 @@
       "credit": "Own work",
       "description": "Balon Bayambang Christmas Village 2019  Philippines’ Biggest Animated Christmas Display Balon Bayambang Tricycle Terminal Exterior and convent of the Bayambang Church 1619-2019 Saint Vincent Catholic School of Bayambang, Inc. Bayambang Municipal Hall and Legislative Building Complex 2019 Maps of Bayambang Bayambang Guiness World Records Certificate (Longest Barbecue) along Bayambang-Malasiqui Road (Bayambang) to Bayambang-Basista-San Carlos Road (Bayambang)  Roman Catholic Archdiocese of Lingayen–Dagupan   Saint Vincent Ferrer Parish Church (Bayambang)   St. Vincent Ferrer Statue   Bayambang-Basista Road   Pangasinan  to Carmen Junction-Bayambang-Manat Road served by the Agno River (Bayambang)  Bayambang   Agno River   Category:Sitios and puroks of the Philippines   Subdivisions of the Philippines   List of barangays in Pangasinan ,  Barangays   Zones I, II, III, IV, V, VI and VII, Bayambang, Pangasinan  15.8076, 120.4644  Magsaysay, Bayambang, Pangasinan  15.8047, 120.4556  Bayambang, Pangasinan  along  Carmen Junction-Manat Road , KM 172+(-289) - KM 189+250  Barangays Carmen East and Carmen West ,  Carmen East  15°53'0\"N 120°36'18\"E  Rosales, Pangasinan , Camiling, Tarlac-Bayambang, Malasiqui and San Carlos City, Pangasinan Provincial Road  Calasiao, Pangasinan   Bayambang, Pangasinan  -  Malasiqui, Pangasinan  -  San Carlos City, Pangasinan  from Bautista-Alcala Road (Bautista) to Bautista-Alcala Road (Alcala) Bautista-Alcala Road (Bautista) from or along the  MacArthur Highway  or Manila North Road  Philippine highway network  (Note: Judge Florentino Floro, the owner, to repeat, Donor  Florentino Floro  of all these photos hereby donate gratuitously, freely and unconditionally Judge Floro all these photos to and for Wikimedia Commons, exclusively, for public use of the public domain, and again without any condition whatsoever).",
       "query": "Manila City Hall exterior building",
-      "match_type": "building_candidate",
+      "match_type": "nonlocal_reference",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/4234Bayambang-Basista-San-Carlos-City-Road-66.jpg",
-      "bytes": 324173
+      "bytes": 324173,
+      "original_search_match_type": "building_candidate",
+      "location_status": "outside_target_area",
+      "use_as_target_facade_reference": false,
+      "location_note": "Image is from another Philippine city/area; retained in the library but must not be assigned to an Ermita/Malate building."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:4545Exterior_and_convent_of_the_Bayambang_Church_01.jpg",
@@ -358,10 +439,14 @@
       "credit": "Own work",
       "description": "Exterior and convent of the Bayambang Church 1619-2019  Saint Vincent Catholic School of Bayambang, Inc. Bayambang Municipal Hall and Legislative Building Complex 2019 Maps of Bayambang Bayambang Guiness World Records Certificate (Longest Barbecue) along Bayambang-Malasiqui Road (Bayambang) to Bayambang-Basista-San Carlos Road (Bayambang)  Roman Catholic Archdiocese of Lingayen–Dagupan   Saint Vincent Ferrer Parish Church (Bayambang)   St. Vincent Ferrer Statue   Bayambang-Basista Road   Pangasinan  to Carmen Junction-Bayambang-Manat Road served  by the Agno River (Bayambang)  Bayambang   Agno River   Category:Sitios and puroks of the Philippines   Subdivisions of the Philippines   List of barangays in Pangasinan ,   Barangays   Zones I, II, III, IV, V, VI and VII, Bayambang, Pangasinan  15.8076, 120.4644  Magsaysay, Bayambang, Pangasinan  15.8047, 120.4556  Bayambang, Pangasinan  along  Carmen Junction-Manat Road , KM 172+(-289) - KM 189+250  Barangays Carmen East and Carmen West ,  Carmen East  15°53'0\"N   120°36'18\"E   Rosales, Pangasinan , Camiling, Tarlac-Bayambang, Malasiqui and San Carlos City, Pangasinan Provincial Road  Calasiao, Pangasinan   Bayambang, Pangasinan  -  Malasiqui, Pangasinan  -  San Carlos City, Pangasinan  from Bautista-Alcala Road (Bautista) to Bautista-Alcala Road (Alcala) Bautista-Alcala Road (Bautista) from or along the  MacArthur Highway  or Manila North Road  Philippine highway network  (Note: Judge Florentino Floro, the owner, to repeat, Donor  Florentino Floro  of all these photos hereby donate gratuitously, freely and unconditionally Judge Floro all these photos to and for Wikimedia Commons, exclusively, for public use of the public domain, and again without any condition whatsoever).",
       "query": "Manila City Hall exterior building",
-      "match_type": "building_candidate",
+      "match_type": "nonlocal_reference",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/4545Exterior-and-convent-of-the-Bayambang-Church-01.jpg",
-      "bytes": 338297
+      "bytes": 338297,
+      "original_search_match_type": "building_candidate",
+      "location_status": "outside_target_area",
+      "use_as_target_facade_reference": false,
+      "location_note": "Image is from another Philippine city/area; retained in the library but must not be assigned to an Ermita/Malate building."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:4545Exterior_and_convent_of_the_Bayambang_Church_16.jpg",
@@ -374,10 +459,14 @@
       "credit": "Own work",
       "description": "Exterior and convent of the Bayambang Church 1619-2019  Saint Vincent Catholic School of Bayambang, Inc. Bayambang Municipal Hall and Legislative Building Complex 2019 Maps of Bayambang Bayambang Guiness World Records Certificate (Longest Barbecue) along Bayambang-Malasiqui Road (Bayambang) to Bayambang-Basista-San Carlos Road (Bayambang)  Roman Catholic Archdiocese of Lingayen–Dagupan   Saint Vincent Ferrer Parish Church (Bayambang)   St. Vincent Ferrer Statue   Bayambang-Basista Road   Pangasinan  to Carmen Junction-Bayambang-Manat Road served  by the Agno River (Bayambang)  Bayambang   Agno River   Category:Sitios and puroks of the Philippines   Subdivisions of the Philippines   List of barangays in Pangasinan ,   Barangays   Zones I, II, III, IV, V, VI and VII, Bayambang, Pangasinan  15.8076, 120.4644  Magsaysay, Bayambang, Pangasinan  15.8047, 120.4556  Bayambang, Pangasinan  along  Carmen Junction-Manat Road , KM 172+(-289) - KM 189+250  Barangays Carmen East and Carmen West ,  Carmen East  15°53'0\"N   120°36'18\"E   Rosales, Pangasinan , Camiling, Tarlac-Bayambang, Malasiqui and San Carlos City, Pangasinan Provincial Road  Calasiao, Pangasinan   Bayambang, Pangasinan  -  Malasiqui, Pangasinan  -  San Carlos City, Pangasinan  from Bautista-Alcala Road (Bautista) to Bautista-Alcala Road (Alcala) Bautista-Alcala Road (Bautista) from or along the  MacArthur Highway  or Manila North Road  Philippine highway network  (Note: Judge Florentino Floro, the owner, to repeat, Donor  Florentino Floro  of all these photos hereby donate gratuitously, freely and unconditionally Judge Floro all these photos to and for Wikimedia Commons, exclusively, for public use of the public domain, and again without any condition whatsoever).",
       "query": "Manila City Hall exterior building",
-      "match_type": "building_candidate",
+      "match_type": "nonlocal_reference",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/4545Exterior-and-convent-of-the-Bayambang-Church-16.jpg",
-      "bytes": 269335
+      "bytes": 269335,
+      "original_search_match_type": "building_candidate",
+      "location_status": "outside_target_area",
+      "use_as_target_facade_reference": false,
+      "location_note": "Image is from another Philippine city/area; retained in the library but must not be assigned to an Ermita/Malate building."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:4545Exterior_and_convent_of_the_Bayambang_Church_17.jpg",
@@ -390,10 +479,14 @@
       "credit": "Own work",
       "description": "Exterior and convent of the Bayambang Church 1619-2019  Saint Vincent Catholic School of Bayambang, Inc. Bayambang Municipal Hall and Legislative Building Complex 2019 Maps of Bayambang Bayambang Guiness World Records Certificate (Longest Barbecue) along Bayambang-Malasiqui Road (Bayambang) to Bayambang-Basista-San Carlos Road (Bayambang)  Roman Catholic Archdiocese of Lingayen–Dagupan   Saint Vincent Ferrer Parish Church (Bayambang)   St. Vincent Ferrer Statue   Bayambang-Basista Road   Pangasinan  to Carmen Junction-Bayambang-Manat Road served  by the Agno River (Bayambang)  Bayambang   Agno River   Category:Sitios and puroks of the Philippines   Subdivisions of the Philippines   List of barangays in Pangasinan ,   Barangays   Zones I, II, III, IV, V, VI and VII, Bayambang, Pangasinan  15.8076, 120.4644  Magsaysay, Bayambang, Pangasinan  15.8047, 120.4556  Bayambang, Pangasinan  along  Carmen Junction-Manat Road , KM 172+(-289) - KM 189+250  Barangays Carmen East and Carmen West ,  Carmen East  15°53'0\"N   120°36'18\"E   Rosales, Pangasinan , Camiling, Tarlac-Bayambang, Malasiqui and San Carlos City, Pangasinan Provincial Road  Calasiao, Pangasinan   Bayambang, Pangasinan  -  Malasiqui, Pangasinan  -  San Carlos City, Pangasinan  from Bautista-Alcala Road (Bautista) to Bautista-Alcala Road (Alcala) Bautista-Alcala Road (Bautista) from or along the  MacArthur Highway  or Manila North Road  Philippine highway network  (Note: Judge Florentino Floro, the owner, to repeat, Donor  Florentino Floro  of all these photos hereby donate gratuitously, freely and unconditionally Judge Floro all these photos to and for Wikimedia Commons, exclusively, for public use of the public domain, and again without any condition whatsoever).",
       "query": "Manila City Hall exterior building",
-      "match_type": "building_candidate",
+      "match_type": "nonlocal_reference",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/4545Exterior-and-convent-of-the-Bayambang-Church-17.jpg",
-      "bytes": 296326
+      "bytes": 296326,
+      "original_search_match_type": "building_candidate",
+      "location_status": "outside_target_area",
+      "use_as_target_facade_reference": false,
+      "location_note": "Image is from another Philippine city/area; retained in the library but must not be assigned to an Ermita/Malate building."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:4545Exterior_and_convent_of_the_Bayambang_Church_49.jpg",
@@ -406,10 +499,14 @@
       "credit": "Own work",
       "description": "Exterior and convent of the Bayambang Church 1619-2019  Saint Vincent Catholic School of Bayambang, Inc. Bayambang Municipal Hall and Legislative Building Complex 2019 Maps of Bayambang Bayambang Guiness World Records Certificate (Longest Barbecue) along Bayambang-Malasiqui Road (Bayambang) to Bayambang-Basista-San Carlos Road (Bayambang)  Roman Catholic Archdiocese of Lingayen–Dagupan   Saint Vincent Ferrer Parish Church (Bayambang)   St. Vincent Ferrer Statue   Bayambang-Basista Road   Pangasinan  to Carmen Junction-Bayambang-Manat Road served  by the Agno River (Bayambang)  Bayambang   Agno River   Category:Sitios and puroks of the Philippines   Subdivisions of the Philippines   List of barangays in Pangasinan ,   Barangays   Zones I, II, III, IV, V, VI and VII, Bayambang, Pangasinan  15.8076, 120.4644  Magsaysay, Bayambang, Pangasinan  15.8047, 120.4556  Bayambang, Pangasinan  along  Carmen Junction-Manat Road , KM 172+(-289) - KM 189+250  Barangays Carmen East and Carmen West ,  Carmen East  15°53'0\"N   120°36'18\"E   Rosales, Pangasinan , Camiling, Tarlac-Bayambang, Malasiqui and San Carlos City, Pangasinan Provincial Road  Calasiao, Pangasinan   Bayambang, Pangasinan  -  Malasiqui, Pangasinan  -  San Carlos City, Pangasinan  from Bautista-Alcala Road (Bautista) to Bautista-Alcala Road (Alcala) Bautista-Alcala Road (Bautista) from or along the  MacArthur Highway  or Manila North Road  Philippine highway network  (Note: Judge Florentino Floro, the owner, to repeat, Donor  Florentino Floro  of all these photos hereby donate gratuitously, freely and unconditionally Judge Floro all these photos to and for Wikimedia Commons, exclusively, for public use of the public domain, and again without any condition whatsoever).",
       "query": "Manila City Hall exterior building",
-      "match_type": "building_candidate",
+      "match_type": "nonlocal_reference",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/4545Exterior-and-convent-of-the-Bayambang-Church-49.jpg",
-      "bytes": 308818
+      "bytes": 308818,
+      "original_search_match_type": "building_candidate",
+      "location_status": "outside_target_area",
+      "use_as_target_facade_reference": false,
+      "location_note": "Image is from another Philippine city/area; retained in the library but must not be assigned to an Ermita/Malate building."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:Compania_Maritima_Building_ruins_on_the_Cebu_waterfront.jpg",
@@ -422,10 +519,14 @@
       "credit": "Own work",
       "description": "Compania Maritima Building ruins on the Cebu waterfront, just south of the Cebu Customs Building, and north of the China Heritage Museum, one block east of Cebu City Hall.  \n The building was originally constructed in 1910, the same year as the Cebu Customs Building, making both buildings 114 years old.  The Compania Maritimas Building once housed the Shamrock Hotel &amp; the Manila Steamship Co.  \nAt some point the top floor lost its entire roof, all the glass window panes are now gone, and the ground floor is sealed shut.  The structure's bright yellow exterior is an empty shell  inside.  On city maps it is referred to as \"ruins.\"  \nOddly, there is no historical marker or plaque at the site. \n \nSadly, this site seems tied up in an ownership dispute between the Cebu Port Authority (CPA) and the Cebu City Government that is somehow related to redevelopment plans for the whole Carbon Market area.",
       "query": "Manila City Hall exterior building",
-      "match_type": "building_candidate",
+      "match_type": "nonlocal_reference",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/Compania-Maritima-Building-ruins-on-the-Cebu-waterfront.jpg",
-      "bytes": 208841
+      "bytes": 208841,
+      "original_search_match_type": "building_candidate",
+      "location_status": "outside_target_area",
+      "use_as_target_facade_reference": false,
+      "location_note": "Image is from another Philippine city/area; retained in the library but must not be assigned to an Ermita/Malate building."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:Portion_of_Manila_Metropolitan_Theater_facade_with_historical_marker_-_1.jpg",
@@ -438,10 +539,14 @@
       "credit": "Self-photographed",
       "description": "Upload Wizard photos of - the  Manila Metropolitan Theater\n [1]  located on Padre Burgos Avenue,  [2]  near the Manila Central Post Office towards the Lagusnilad for Lagusan ng Maynilad which means Manila Passage (overpass/underpass) Subway (underpass) [3]  Sewage systems Lagusnilad-Taft Avenue Underpass in Padre Burgos Street and Rizal Avenue  [4]  Manila City Hall  [5] .",
       "query": "Manila City Hall exterior building",
-      "match_type": "building_candidate",
+      "match_type": "manila_context_reference",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/Portion-of-Manila-Metropolitan-Theater-facade-with-historical-marker---1.jpg",
-      "bytes": 526724
+      "bytes": 526724,
+      "original_search_match_type": "building_candidate",
+      "location_status": "outside_or_unverified_target_area",
+      "use_as_target_facade_reference": false,
+      "location_note": "Manila-context architecture reference, not a verified facade match inside the current project AOI."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:Intramurosjf9916_17.JPG",
@@ -454,10 +559,14 @@
       "credit": "Own work",
       "description": "Upload Wizard photos of - the - a) Puerta de Isabel II, 1861 - Intramuros, Intramuros Golf Club, Intramuros City Walls -  Gates of Intramuros  [1]  Intramuros entrance on Gen. Luna Street, the Bastion of San Diego constructed in 1644, the defensive walls of Intramuros and Muralla Street - Gate facing the south Puerta Real Gardens the original Real Gate (Royal Gate) was built in 1663 at the end of Calle Real de Palacio now General Luna St. and was used exclusively by the Governor-General for state occasions was located west of Baluarte de San Andres and faced the old village of Bagumbayan b) The Chamber of Commerce of the Philippine Islands,  building, 3 Magallanes Drive, Intramuros, Manila, composed of Filipino businessmen, carried on the movement after the demise of Bagong Katipunan. In 1926, the Chamber issued a manifesto entitled \"Ours First, Yours Later\", urging the people to patronize locally-made products National Economic Protectionism Association [2]  Founded 1934 Headquarters Francesca Towers, EDSA, Quezon City Bayan dela Cruz, President, c) Graciano López Jaena [3]  December 18, 1856-January 20, 1896 was a journalist, orator, revolutionary, and national hero from Iloilo, the Philippines, who is well known for his newspaper, La Solidaridad - monument in front of the National Press Club of the Philippines, Intramuros, Manila - d) \"Go tell the world journalists know how to die ...\" Maguindanao massacre and e)  [4]  monument National Press Club Medical Clinic and marker, 1952 founded and e) National Press Club of the Philippines\n [5]  The Philippine National Press Club (NPC) is a professional and social organization of journalists in the Philippines founded in 1952 with the main objective of upholding the freedom of the press and maintaining the professionalism of journalists has adopted Walter Williams’ Journalists’ Creed  [6]  National Press Club Medical Clinic [7]   - Manila - Wikimapia  [8]   National Press Club Manila office building, Philippines  National Capital Region  Manila  Magallanes Drive  Intramuros  Coordinates: 14°35'41\"N 120°58'38\"E  [9]  The first Press Council to be established in the Philippines was enacted by Republic Act Number 4363, on June 19, 1965. [10]   [11]  Magallanes Drive, 1002 Intramuros, Manila President: Benny Antiporda Remate Director, Paul Gutierrez - List of historical markers in the Philippines ( [12]  - Pamantasan ng Lungsod ng Maynila, Open University [13]  Aside from partner schools, PLM is also engaged in partnership with companies, government agencies, organizations, and other institutions for the distance learning programs these include: National Press Club of the Philippines.",
       "query": "St Paul University Manila building",
-      "match_type": "building_candidate",
+      "match_type": "manila_context_reference",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/Intramurosjf9916-17.jpg",
-      "bytes": 380409
+      "bytes": 380409,
+      "original_search_match_type": "building_candidate",
+      "location_status": "outside_or_unverified_target_area",
+      "use_as_target_facade_reference": false,
+      "location_note": "Manila-context architecture reference, not a verified facade match inside the current project AOI."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:Intramurosjf9916_18.JPG",
@@ -470,10 +579,14 @@
       "credit": "Own work",
       "description": "Upload Wizard photos of - the - a) Puerta de Isabel II, 1861 - Intramuros, Intramuros Golf Club, Intramuros City Walls -  Gates of Intramuros  [1]  Intramuros entrance on Gen. Luna Street, the Bastion of San Diego constructed in 1644, the defensive walls of Intramuros and Muralla Street - Gate facing the south Puerta Real Gardens the original Real Gate (Royal Gate) was built in 1663 at the end of Calle Real de Palacio now General Luna St. and was used exclusively by the Governor-General for state occasions was located west of Baluarte de San Andres and faced the old village of Bagumbayan b) The Chamber of Commerce of the Philippine Islands,  building, 3 Magallanes Drive, Intramuros, Manila, composed of Filipino businessmen, carried on the movement after the demise of Bagong Katipunan. In 1926, the Chamber issued a manifesto entitled \"Ours First, Yours Later\", urging the people to patronize locally-made products National Economic Protectionism Association [2]  Founded 1934 Headquarters Francesca Towers, EDSA, Quezon City Bayan dela Cruz, President, c) Graciano López Jaena [3]  December 18, 1856-January 20, 1896 was a journalist, orator, revolutionary, and national hero from Iloilo, the Philippines, who is well known for his newspaper, La Solidaridad - monument in front of the National Press Club of the Philippines, Intramuros, Manila - d) \"Go tell the world journalists know how to die ...\" Maguindanao massacre and e)  [4]  monument National Press Club Medical Clinic and marker, 1952 founded and e) National Press Club of the Philippines\n [5]  The Philippine National Press Club (NPC) is a professional and social organization of journalists in the Philippines founded in 1952 with the main objective of upholding the freedom of the press and maintaining the professionalism of journalists has adopted Walter Williams’ Journalists’ Creed  [6]  National Press Club Medical Clinic [7]   - Manila - Wikimapia  [8]   National Press Club Manila office building, Philippines  National Capital Region  Manila  Magallanes Drive  Intramuros  Coordinates: 14°35'41\"N 120°58'38\"E  [9]  The first Press Council to be established in the Philippines was enacted by Republic Act Number 4363, on June 19, 1965. [10]   [11]  Magallanes Drive, 1002 Intramuros, Manila President: Benny Antiporda Remate Director, Paul Gutierrez - List of historical markers in the Philippines ( [12]  - Pamantasan ng Lungsod ng Maynila, Open University [13]  Aside from partner schools, PLM is also engaged in partnership with companies, government agencies, organizations, and other institutions for the distance learning programs these include: National Press Club of the Philippines.",
       "query": "St Paul University Manila building",
-      "match_type": "building_candidate",
+      "match_type": "manila_context_reference",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/Intramurosjf9916-18.jpg",
-      "bytes": 283444
+      "bytes": 283444,
+      "original_search_match_type": "building_candidate",
+      "location_status": "outside_or_unverified_target_area",
+      "use_as_target_facade_reference": false,
+      "location_note": "Manila-context architecture reference, not a verified facade match inside the current project AOI."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:Intramurosjf9916_29.JPG",
@@ -486,10 +599,14 @@
       "credit": "Own work",
       "description": "Upload Wizard photos of - the - a) Puerta de Isabel II, 1861 - Intramuros, Intramuros Golf Club, Intramuros City Walls -  Gates of Intramuros  [1]  Intramuros entrance on Gen. Luna Street, the Bastion of San Diego constructed in 1644, the defensive walls of Intramuros and Muralla Street - Gate facing the south Puerta Real Gardens the original Real Gate (Royal Gate) was built in 1663 at the end of Calle Real de Palacio now General Luna St. and was used exclusively by the Governor-General for state occasions was located west of Baluarte de San Andres and faced the old village of Bagumbayan b) The Chamber of Commerce of the Philippine Islands,  building, 3 Magallanes Drive, Intramuros, Manila, composed of Filipino businessmen, carried on the movement after the demise of Bagong Katipunan. In 1926, the Chamber issued a manifesto entitled \"Ours First, Yours Later\", urging the people to patronize locally-made products National Economic Protectionism Association [2]  Founded 1934 Headquarters Francesca Towers, EDSA, Quezon City Bayan dela Cruz, President, c) Graciano López Jaena [3]  December 18, 1856-January 20, 1896 was a journalist, orator, revolutionary, and national hero from Iloilo, the Philippines, who is well known for his newspaper, La Solidaridad - monument in front of the National Press Club of the Philippines, Intramuros, Manila - d) \"Go tell the world journalists know how to die ...\" Maguindanao massacre and e)  [4]  monument National Press Club Medical Clinic and marker, 1952 founded and e) National Press Club of the Philippines\n [5]  The Philippine National Press Club (NPC) is a professional and social organization of journalists in the Philippines founded in 1952 with the main objective of upholding the freedom of the press and maintaining the professionalism of journalists has adopted Walter Williams’ Journalists’ Creed  [6]  National Press Club Medical Clinic [7]   - Manila - Wikimapia  [8]   National Press Club Manila office building, Philippines  National Capital Region  Manila  Magallanes Drive  Intramuros  Coordinates: 14°35'41\"N 120°58'38\"E  [9]  The first Press Council to be established in the Philippines was enacted by Republic Act Number 4363, on June 19, 1965. [10]   [11]  Magallanes Drive, 1002 Intramuros, Manila President: Benny Antiporda Remate Director, Paul Gutierrez - List of historical markers in the Philippines ( [12]  - Pamantasan ng Lungsod ng Maynila, Open University [13]  Aside from partner schools, PLM is also engaged in partnership with companies, government agencies, organizations, and other institutions for the distance learning programs these include: National Press Club of the Philippines.",
       "query": "St Paul University Manila building",
-      "match_type": "building_candidate",
+      "match_type": "manila_context_reference",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/Intramurosjf9916-29.jpg",
-      "bytes": 295994
+      "bytes": 295994,
+      "original_search_match_type": "building_candidate",
+      "location_status": "outside_or_unverified_target_area",
+      "use_as_target_facade_reference": false,
+      "location_note": "Manila-context architecture reference, not a verified facade match inside the current project AOI."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:Intramurosjf9916_31.JPG",
@@ -502,10 +619,14 @@
       "credit": "Own work",
       "description": "Upload Wizard photos of - the - a) Puerta de Isabel II, 1861 - Intramuros, Intramuros Golf Club, Intramuros City Walls -  Gates of Intramuros  [1]  Intramuros entrance on Gen. Luna Street, the Bastion of San Diego constructed in 1644, the defensive walls of Intramuros and Muralla Street - Gate facing the south Puerta Real Gardens the original Real Gate (Royal Gate) was built in 1663 at the end of Calle Real de Palacio now General Luna St. and was used exclusively by the Governor-General for state occasions was located west of Baluarte de San Andres and faced the old village of Bagumbayan b) The Chamber of Commerce of the Philippine Islands,  building, 3 Magallanes Drive, Intramuros, Manila, composed of Filipino businessmen, carried on the movement after the demise of Bagong Katipunan. In 1926, the Chamber issued a manifesto entitled \"Ours First, Yours Later\", urging the people to patronize locally-made products National Economic Protectionism Association [2]  Founded 1934 Headquarters Francesca Towers, EDSA, Quezon City Bayan dela Cruz, President, c) Graciano López Jaena [3]  December 18, 1856-January 20, 1896 was a journalist, orator, revolutionary, and national hero from Iloilo, the Philippines, who is well known for his newspaper, La Solidaridad - monument in front of the National Press Club of the Philippines, Intramuros, Manila - d) \"Go tell the world journalists know how to die ...\" Maguindanao massacre and e)  [4]  monument National Press Club Medical Clinic and marker, 1952 founded and e) National Press Club of the Philippines\n [5]  The Philippine National Press Club (NPC) is a professional and social organization of journalists in the Philippines founded in 1952 with the main objective of upholding the freedom of the press and maintaining the professionalism of journalists has adopted Walter Williams’ Journalists’ Creed  [6]  National Press Club Medical Clinic [7]   - Manila - Wikimapia  [8]   National Press Club Manila office building, Philippines  National Capital Region  Manila  Magallanes Drive  Intramuros  Coordinates: 14°35'41\"N 120°58'38\"E  [9]  The first Press Council to be established in the Philippines was enacted by Republic Act Number 4363, on June 19, 1965. [10]   [11]  Magallanes Drive, 1002 Intramuros, Manila President: Benny Antiporda Remate Director, Paul Gutierrez - List of historical markers in the Philippines ( [12]  - Pamantasan ng Lungsod ng Maynila, Open University [13]  Aside from partner schools, PLM is also engaged in partnership with companies, government agencies, organizations, and other institutions for the distance learning programs these include: National Press Club of the Philippines.",
       "query": "St Paul University Manila building",
-      "match_type": "building_candidate",
+      "match_type": "manila_context_reference",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/Intramurosjf9916-31.jpg",
-      "bytes": 364645
+      "bytes": 364645,
+      "original_search_match_type": "building_candidate",
+      "location_status": "outside_or_unverified_target_area",
+      "use_as_target_facade_reference": false,
+      "location_note": "Manila-context architecture reference, not a verified facade match inside the current project AOI."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:Intramurosjf9916_37.JPG",
@@ -518,10 +639,14 @@
       "credit": "Own work",
       "description": "Upload Wizard photos of - the - a) Puerta de Isabel II, 1861 - Intramuros, Intramuros Golf Club, Intramuros City Walls -  Gates of Intramuros  [1]  Intramuros entrance on Gen. Luna Street, the Bastion of San Diego constructed in 1644, the defensive walls of Intramuros and Muralla Street - Gate facing the south Puerta Real Gardens the original Real Gate (Royal Gate) was built in 1663 at the end of Calle Real de Palacio now General Luna St. and was used exclusively by the Governor-General for state occasions was located west of Baluarte de San Andres and faced the old village of Bagumbayan b) The Chamber of Commerce of the Philippine Islands,  building, 3 Magallanes Drive, Intramuros, Manila, composed of Filipino businessmen, carried on the movement after the demise of Bagong Katipunan. In 1926, the Chamber issued a manifesto entitled \"Ours First, Yours Later\", urging the people to patronize locally-made products National Economic Protectionism Association [2]  Founded 1934 Headquarters Francesca Towers, EDSA, Quezon City Bayan dela Cruz, President, c) Graciano López Jaena [3]  December 18, 1856-January 20, 1896 was a journalist, orator, revolutionary, and national hero from Iloilo, the Philippines, who is well known for his newspaper, La Solidaridad - monument in front of the National Press Club of the Philippines, Intramuros, Manila - d) \"Go tell the world journalists know how to die ...\" Maguindanao massacre and e)  [4]  monument National Press Club Medical Clinic and marker, 1952 founded and e) National Press Club of the Philippines\n [5]  The Philippine National Press Club (NPC) is a professional and social organization of journalists in the Philippines founded in 1952 with the main objective of upholding the freedom of the press and maintaining the professionalism of journalists has adopted Walter Williams’ Journalists’ Creed  [6]  National Press Club Medical Clinic [7]   - Manila - Wikimapia  [8]   National Press Club Manila office building, Philippines  National Capital Region  Manila  Magallanes Drive  Intramuros  Coordinates: 14°35'41\"N 120°58'38\"E  [9]  The first Press Council to be established in the Philippines was enacted by Republic Act Number 4363, on June 19, 1965. [10]   [11]  Magallanes Drive, 1002 Intramuros, Manila President: Benny Antiporda Remate Director, Paul Gutierrez - List of historical markers in the Philippines ( [12]  - Pamantasan ng Lungsod ng Maynila, Open University [13]  Aside from partner schools, PLM is also engaged in partnership with companies, government agencies, organizations, and other institutions for the distance learning programs these include: National Press Club of the Philippines.",
       "query": "St Paul University Manila building",
-      "match_type": "building_candidate",
+      "match_type": "manila_context_reference",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/Intramurosjf9916-37.jpg",
-      "bytes": 524921
+      "bytes": 524921,
+      "original_search_match_type": "building_candidate",
+      "location_status": "outside_or_unverified_target_area",
+      "use_as_target_facade_reference": false,
+      "location_note": "Manila-context architecture reference, not a verified facade match inside the current project AOI."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:Intramurosjf9916_38.JPG",
@@ -534,10 +659,14 @@
       "credit": "Own work",
       "description": "Upload Wizard photos of - the - a) Puerta de Isabel II, 1861 - Intramuros, Intramuros Golf Club, Intramuros City Walls -  Gates of Intramuros  [1]  Intramuros entrance on Gen. Luna Street, the Bastion of San Diego constructed in 1644, the defensive walls of Intramuros and Muralla Street - Gate facing the south Puerta Real Gardens the original Real Gate (Royal Gate) was built in 1663 at the end of Calle Real de Palacio now General Luna St. and was used exclusively by the Governor-General for state occasions was located west of Baluarte de San Andres and faced the old village of Bagumbayan b) The Chamber of Commerce of the Philippine Islands,  building, 3 Magallanes Drive, Intramuros, Manila, composed of Filipino businessmen, carried on the movement after the demise of Bagong Katipunan. In 1926, the Chamber issued a manifesto entitled \"Ours First, Yours Later\", urging the people to patronize locally-made products National Economic Protectionism Association [2]  Founded 1934 Headquarters Francesca Towers, EDSA, Quezon City Bayan dela Cruz, President, c) Graciano López Jaena [3]  December 18, 1856-January 20, 1896 was a journalist, orator, revolutionary, and national hero from Iloilo, the Philippines, who is well known for his newspaper, La Solidaridad - monument in front of the National Press Club of the Philippines, Intramuros, Manila - d) \"Go tell the world journalists know how to die ...\" Maguindanao massacre and e)  [4]  monument National Press Club Medical Clinic and marker, 1952 founded and e) National Press Club of the Philippines\n [5]  The Philippine National Press Club (NPC) is a professional and social organization of journalists in the Philippines founded in 1952 with the main objective of upholding the freedom of the press and maintaining the professionalism of journalists has adopted Walter Williams’ Journalists’ Creed  [6]  National Press Club Medical Clinic [7]   - Manila - Wikimapia  [8]   National Press Club Manila office building, Philippines  National Capital Region  Manila  Magallanes Drive  Intramuros  Coordinates: 14°35'41\"N 120°58'38\"E  [9]  The first Press Council to be established in the Philippines was enacted by Republic Act Number 4363, on June 19, 1965. [10]   [11]  Magallanes Drive, 1002 Intramuros, Manila President: Benny Antiporda Remate Director, Paul Gutierrez - List of historical markers in the Philippines ( [12]  - Pamantasan ng Lungsod ng Maynila, Open University [13]  Aside from partner schools, PLM is also engaged in partnership with companies, government agencies, organizations, and other institutions for the distance learning programs these include: National Press Club of the Philippines.",
       "query": "St Paul University Manila building",
-      "match_type": "building_candidate",
+      "match_type": "manila_context_reference",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/Intramurosjf9916-38.jpg",
-      "bytes": 290343
+      "bytes": 290343,
+      "original_search_match_type": "building_candidate",
+      "location_status": "outside_or_unverified_target_area",
+      "use_as_target_facade_reference": false,
+      "location_note": "Manila-context architecture reference, not a verified facade match inside the current project AOI."
     },
     {
       "commons_page": "https://commons.wikimedia.org/wiki/File:Intramurosjf9916_39.JPG",
@@ -550,10 +679,14 @@
       "credit": "Own work",
       "description": "Upload Wizard photos of - the - a) Puerta de Isabel II, 1861 - Intramuros, Intramuros Golf Club, Intramuros City Walls -  Gates of Intramuros  [1]  Intramuros entrance on Gen. Luna Street, the Bastion of San Diego constructed in 1644, the defensive walls of Intramuros and Muralla Street - Gate facing the south Puerta Real Gardens the original Real Gate (Royal Gate) was built in 1663 at the end of Calle Real de Palacio now General Luna St. and was used exclusively by the Governor-General for state occasions was located west of Baluarte de San Andres and faced the old village of Bagumbayan b) The Chamber of Commerce of the Philippine Islands,  building, 3 Magallanes Drive, Intramuros, Manila, composed of Filipino businessmen, carried on the movement after the demise of Bagong Katipunan. In 1926, the Chamber issued a manifesto entitled \"Ours First, Yours Later\", urging the people to patronize locally-made products National Economic Protectionism Association [2]  Founded 1934 Headquarters Francesca Towers, EDSA, Quezon City Bayan dela Cruz, President, c) Graciano López Jaena [3]  December 18, 1856-January 20, 1896 was a journalist, orator, revolutionary, and national hero from Iloilo, the Philippines, who is well known for his newspaper, La Solidaridad - monument in front of the National Press Club of the Philippines, Intramuros, Manila - d) \"Go tell the world journalists know how to die ...\" Maguindanao massacre and e)  [4]  monument National Press Club Medical Clinic and marker, 1952 founded and e) National Press Club of the Philippines\n [5]  The Philippine National Press Club (NPC) is a professional and social organization of journalists in the Philippines founded in 1952 with the main objective of upholding the freedom of the press and maintaining the professionalism of journalists has adopted Walter Williams’ Journalists’ Creed  [6]  National Press Club Medical Clinic [7]   - Manila - Wikimapia  [8]   National Press Club Manila office building, Philippines  National Capital Region  Manila  Magallanes Drive  Intramuros  Coordinates: 14°35'41\"N 120°58'38\"E  [9]  The first Press Council to be established in the Philippines was enacted by Republic Act Number 4363, on June 19, 1965. [10]   [11]  Magallanes Drive, 1002 Intramuros, Manila President: Benny Antiporda Remate Director, Paul Gutierrez - List of historical markers in the Philippines ( [12]  - Pamantasan ng Lungsod ng Maynila, Open University [13]  Aside from partner schools, PLM is also engaged in partnership with companies, government agencies, organizations, and other institutions for the distance learning programs these include: National Press Club of the Philippines.",
       "query": "St Paul University Manila building",
-      "match_type": "building_candidate",
+      "match_type": "manila_context_reference",
       "download_status": "downloaded",
       "local_path": "ermita/buildings/reference_photos/Intramurosjf9916-39.jpg",
-      "bytes": 358195
+      "bytes": 358195,
+      "original_search_match_type": "building_candidate",
+      "location_status": "outside_or_unverified_target_area",
+      "use_as_target_facade_reference": false,
+      "location_note": "Manila-context architecture reference, not a verified facade match inside the current project AOI."
     }
   ]
 }
