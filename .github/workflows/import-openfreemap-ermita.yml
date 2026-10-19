@@ -1,57 +1,17 @@
-name: Import OpenFreeMap Ermita vector tiles
+name: RETIRED — OpenFreeMap OSM-derived import paused
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/import-openfreemap-ermita.yml"
-      - "scripts/import_openfreemap_ermita.py"
   workflow_dispatch:
-    inputs:
-      min_zoom:
-        description: "Minimum zoom level"
-        required: false
-        default: "10"
-      max_zoom:
-        description: "Maximum zoom level"
-        required: false
-        default: "16"
 
 permissions:
-  contents: write
-
-concurrency:
-  group: openfreemap-ermita-import
-  cancel-in-progress: false
+  contents: read
 
 jobs:
-  download-and-catalogue:
+  disabled:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     steps:
-      - name: Checkout main
-        uses: actions/checkout@v4
-        with:
-          ref: main
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: Install decoder dependencies
-        run: python -m pip install --disable-pip-version-check requests mapbox-vector-tile
-      - name: Download raw tiles and extract all OpenMapTiles layers
-        env:
-          MIN_ZOOM: ${{ github.event.inputs.min_zoom || '10' }}
-          MAX_ZOOM: ${{ github.event.inputs.max_zoom || '16' }}
-        run: python scripts/import_openfreemap_ermita.py
-      - name: Commit source data to main
+      - name: Explain current source policy
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ermita/maps/sources/openfreemap
-          if git diff --cached --quiet; then
-            echo "No source data changes to commit."
-          else
-            git commit -m "Import OpenFreeMap OpenMapTiles data for Ermita"
-            git push origin HEAD:main
-          fi
+          echo "No OpenFreeMap/OpenMapTiles source import is performed under the current no-OSM scope."
+          echo "Previously saved source tiles and layer extracts are preserved."
+          echo "This workflow performs no download, replacement, or commit."
