@@ -722,9 +722,9 @@ function updateBasemapBrandBuildings(){
   const p=f.properties||{};
   const ids=[];
   for(const k of ['osm_id','osm_way_id','osm_feature_id','id','original_id']){
-   const v=p[k];if(v!==undefined&&v!==null&&String(v)!=='')ids.push(String(v).replace(/^(way|relation|node)\\//,''));
+   const v=p[k];if(v!==undefined&&v!==null&&String(v)!=='')ids.push(String(v).replace(/^(way|relation|node)\//,''));
   }
-  if(f.id!==undefined&&f.id!==null)ids.push(String(f.id).replace(/^(way|relation|node)\\//,''));
+  if(f.id!==undefined&&f.id!==null)ids.push(String(f.id).replace(/^(way|relation|node)\//,''));
   let brand='',label='',color='';
   if(ids.some(id=>sevenElevenOsmIds.has(id))){brand='7-Eleven';label='7 ELEVEN';color='#168641';}
   else if(ids.includes('48894714')){brand='Robinsons Manila';label='ROBINSONS';color='#d7d1c7';}
