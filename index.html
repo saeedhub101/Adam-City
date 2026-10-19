@@ -87,6 +87,7 @@ function addTexturedRoadSurface(roadNetwork){
  const xy=c=>({x:(c[0]-origin[0])*111320*Math.cos(origin[1]*Math.PI/180),z:(c[1]-origin[1])*111132});
  function makeRibbonGeometry(features,widthFor,repeatMeters,y,offsetForWidth=0){
   const positions=[],uvs=[];
+  function groundY(c,offset){try{const z=map.queryTerrainElevation(c);return Number.isFinite(z)?z+offset:offset;}catch(e){return offset;}}
   function segment(a,b,width){
    const p=xy(a),q=xy(b),dx=q.x-p.x,dz=q.z-p.z,len=Math.hypot(dx,dz);
    if(len<0.2)return;
@@ -94,7 +95,8 @@ function addTexturedRoadSurface(roadNetwork){
    const ax=p.x+nx*off,az=p.z+nz*off,bx=q.x+nx*off,bz=q.z+nz*off,half=width/2;
    const x1=ax+nx*half,z1=az+nz*half,x2=ax-nx*half,z2=az-nz*half;
    const x3=bx+nx*half,z3=bz+nz*half,x4=bx-nx*half,z4=bz-nz*half,u=len/repeatMeters;
-   positions.push(x1,y,z1,x2,y,z2,x3,y,z3,x3,y,z3,x2,y,z2,x4,y,z4);
+   const ya=groundY(a,y),yb=groundY(b,y);
+   positions.push(x1,ya,z1,x2,ya,z2,x3,yb,z3,x3,yb,z3,x2,ya,z2,x4,yb,z4);
    uvs.push(0,0,0,1,u,0,u,0,0,1,u,1);
   }
   for(const f of features){
@@ -140,7 +142,8 @@ function addTexturedRoadSurface(roadNetwork){
       const nx=-dz/len,nz=dx/len,off=sideSign*(roadWidth(hw,p,tags)/2+1.0),half=sidewalkWidth(hw,p,tags)/2;
       const ax=a.x+nx*off,az=a.z+nz*off,bx=b.x+nx*off,bz=b.z+nz*off;
       const x1=ax+nx*half,z1=az+nz*half,x2=ax-nx*half,z2=az-nz*half,x3=bx+nx*half,z3=bz+nz*half,x4=bx-nx*half,z4=bz-nz*half,u=len/2;
-      positions.push(x1,.16,z1,x2,.16,z2,x3,.16,z3,x3,.16,z3,x2,.16,z2,x4,.16,z4);
+      const ya=groundY(line[i-1],.16),yb=groundY(line[i],.16);
+      positions.push(x1,ya,z1,x2,ya,z2,x3,yb,z3,x3,yb,z3,x2,ya,z2,x4,yb,z4);
       uvs.push(0,0,0,1,u,0,u,0,0,1,u,1);
      }
     }
@@ -709,7 +712,7 @@ document.getElementById('buildings').addEventListener('change',e=>{['local-build
 document.getElementById('basemap3d').addEventListener('change',e=>{base3dLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'Basemap 3D buildings enabled for comparison with OSM. Turn off OSM 3D buildings to inspect the basemap alone.':'Basemap 3D buildings hidden; OSM layer remains independently controlled.')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('roadTexture').addEventListener('change',e=>{if(map.getLayer('project-textured-road-surfaces'))map.setLayoutProperty('project-textured-road-surfaces','visibility',e.target.checked?'visible':'none');setStatus(e.target.checked?'Textured asphalt roads and sidewalk strips enabled across the loaded project road network.':'Textured road surfaces hidden; vector road lines remain controlled separately.')});
-document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null);terrainAlignmentSignature='';map.once('idle',applyTerrainAlignment);setStatus(e.target.checked?'Terrain enabled; aligning building bases and road surfaces to ground elevation…':'Terrain disabled; resetting building bases to flat ground…')}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
+document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null);terrainAlignmentSignature='';map.once('idle',()=>{applyTerrainAlignment();if(roadsData)addTexturedRoadSurface(roadsData);if(!document.getElementById('roadTexture').checked&&map.getLayer('project-textured-road-surfaces'))map.setLayoutProperty('project-textured-road-surfaces','visibility','none')});setStatus(e.target.checked?'Terrain enabled; aligning building bases and textured road surfaces to ground elevation…':'Terrain disabled; resetting building bases and textured road surfaces to flat ground…')}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
 document.getElementById('labels').addEventListener('change',e=>{if(map.getLayer('local-building-labels'))map.setLayoutProperty('local-building-labels','visibility',e.target.checked?'visible':'none')});
 document.getElementById('sun').addEventListener('click',()=>{golden=!golden;try{map.setLight({anchor:'viewport',position:golden?[1.2,210,35]:[1.2,45,75],color:golden?'#ffe0ad':'#ffffff',intensity:golden?0.45:0.8});document.getElementById('sun').textContent=golden?'Golden-hour light':'Neutral daylight'}catch(err){setStatus('Lighting controls are not supported by this map style.')}});
 document.getElementById('tilt').addEventListener('click',()=>{tilted=!tilted;map.easeTo({pitch:tilted?62:0,bearing:tilted?-18:0,duration:900})});
