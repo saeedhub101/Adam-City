@@ -54,3 +54,11 @@ New import jobs do not query OpenStreetMap. Existing project files and the curre
 - Current audit: **1,032 probable Google/Microsoft matches**, **6,411 Google-only or geometry-conflict detections**, and **733 Microsoft-only or geometry-conflict detections**.
 - These are candidate identity matches, not a declaration that either geometry is always correct. Both original source files remain unchanged, and the crosswalk records disagreements rather than replacing one footprint with the other.
 - Full report: `ermita/maps/qa/non-osm-building-footprint-reconciliation-report.json`.
+
+## Canonical satellite building register
+
+- `ermita/maps/qa/non-osm-building-canonical-register.geojson` is the unified display register containing **8,176 records** after the 1,032 probable matches are represented once.
+- For matched records, the Google polygon is used only as the canonical display geometry because it carries a confidence score and has a newer documented detection vintage; the Microsoft observation and overlap metrics remain attached as metadata.
+- The original Google and Microsoft GeoJSON source files are untouched. Records without a confident match remain source-specific and are flagged for review instead of being silently discarded.
+- The canonical register is available in the preview through the lazy-loaded **Unified satellite building register** checkbox, so the additional 8.9 MB file is not downloaded until requested.
+
