@@ -38,6 +38,7 @@ DEM_OUT = TERRAIN / "srtm-1arcsec-ermita.tif"
 COVER_OUT = LANDCOVER / "esa-worldcover-2021-10m-ermita.tif"
 VEG_OUT = LANDCOVER / "vegetation-grass-classes-ermita.geojson"
 REPORT_OUT = QA / "non-osm-terrain-landcover-report.json"
+HILLSHADE_OUT = TERRAIN / "srtm-1arcsec-ermita-hillshade.png"
 
 CLASS_NAMES = {
     10: "tree_cover", 20: "shrubland", 30: "grassland", 40: "cropland",
@@ -129,6 +130,31 @@ def vectorize_vegetation(raster_path: Path) -> dict:
             "class_counts": {name: sum(1 for f in features_out if f["properties"]["class_name"] == name)
                              for name in sorted({f["properties"]["class_name"] for f in features_out})}}
 
+def create_hillshade() -> dict:
+    if HILLSHADE_OUT.exists() and HILLSHADE_OUT.stat().st_size:
+        return {"status": "reused_existing", "path": str(HILLSHADE_OUT.relative_to(ROOT)),
+                "bytes": HILLSHADE_OUT.stat().st_size}
+    from PIL import Image
+    with rasterio.open(DEM_OUT) as ds:
+        elev = ds.read(1).astype("float32")
+        nodata = ds.nodata
+        valid = elev != nodata if nodata is not None else np.ones(elev.shape, dtype=bool)
+        xres = abs(ds.transform.a) * 111320 * np.cos(np.deg2rad((BBOX[1] + BBOX[3]) / 2))
+        yres = abs(ds.transform.e) * 111132
+        gy, gx = np.gradient(elev, max(yres, 1), max(xres, 1))
+        slope = np.pi / 2 - np.arctan(np.hypot(gx, gy))
+        aspect = np.arctan2(-gx, gy)
+        azimuth, altitude = np.deg2rad(315), np.deg2rad(45)
+        shade = np.sin(altitude) * np.sin(slope) + np.cos(altitude) * np.cos(slope) * np.cos(azimuth - aspect)
+        gray = np.clip(255 * (0.35 + 0.65 * np.maximum(shade, 0)), 0, 255).astype("uint8")
+        rgba = np.zeros((elev.shape[0], elev.shape[1], 4), dtype="uint8")
+        rgba[:, :, :3] = gray[:, :, None]
+        rgba[:, :, 3] = np.where(valid, 95, 0).astype("uint8")
+        Image.fromarray(rgba, mode="RGBA").save(HILLSHADE_OUT, optimize=True)
+    return {"status": "created", "path": str(HILLSHADE_OUT.relative_to(ROOT)),
+            "bytes": HILLSHADE_OUT.stat().st_size, "width": int(elev.shape[1]),
+            "height": int(elev.shape[0]), "derived_from": str(DEM_OUT.relative_to(ROOT))}
+
 def main():
     report = {
         "status": "running",
@@ -159,6 +185,12 @@ def main():
             report["outputs"]["terrain"]["source_resolution"] = "approximately 1 arc-second"
         except Exception as exc:
             report["warnings"].append("Terrain import failed: " + repr(exc))
+        # Derive a transparent hillshade preview from the locally stored SRTM DEM.
+        try:
+            if DEM_OUT.exists():
+                report["outputs"]["terrain_hillshade"] = create_hillshade()
+        except Exception as exc:
+            report["warnings"].append("Terrain hillshade generation failed: " + repr(exc))
         # Land cover: skip the network request when the clipped raster is already saved.
         try:
             if COVER_OUT.exists() and COVER_OUT.stat().st_size:
