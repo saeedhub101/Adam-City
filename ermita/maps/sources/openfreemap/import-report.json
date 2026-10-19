@@ -1,0 +1,52 @@
+{
+  "source": "OpenFreeMap / OpenMapTiles",
+  "area": "Ermita, Fifth District, Manila, Capital District, Metro Manila, 1000, Philippines",
+  "tile_template": "https://tiles.openfreemap.org/planet/20261011_080001_pt/{z}/{x}/{y}.pbf",
+  "zoom_range": [
+    10,
+    16
+  ],
+  "planned_tiles": 43,
+  "downloaded_tiles": 43,
+  "empty_tiles": 0,
+  "total_pbf_bytes": 2438222,
+  "layer_feature_counts": {
+    "aerodrome_label": 7,
+    "aeroway": 281,
+    "boundary": 51,
+    "building": 570,
+    "housenumber": 1165,
+    "landcover": 585,
+    "landuse": 916,
+    "mountain_peak": 22,
+    "park": 24,
+    "place": 1067,
+    "poi": 14976,
+    "transportation": 11098,
+    "transportation_name": 1727,
+    "water": 236,
+    "water_name": 41,
+    "waterway": 541
+  },
+  "layer_files": {
+    "aerodrome_label": "ermita/maps/sources/openfreemap/layers/aerodrome_label.geojsonl",
+    "aeroway": "ermita/maps/sources/openfreemap/layers/aeroway.geojsonl",
+    "boundary": "ermita/maps/sources/openfreemap/layers/boundary.geojsonl",
+    "building": "ermita/maps/sources/openfreemap/layers/building.geojsonl",
+    "housenumber": "ermita/maps/sources/openfreemap/layers/housenumber.geojsonl",
+    "landcover": "ermita/maps/sources/openfreemap/layers/landcover.geojsonl",
+    "landuse": "ermita/maps/sources/openfreemap/layers/landuse.geojsonl",
+    "mountain_peak": "ermita/maps/sources/openfreemap/layers/mountain_peak.geojsonl",
+    "park": "ermita/maps/sources/openfreemap/layers/park.geojsonl",
+    "place": "ermita/maps/sources/openfreemap/layers/place.geojsonl",
+    "poi": "ermita/maps/sources/openfreemap/layers/poi.geojsonl",
+    "transportation": "ermita/maps/sources/openfreemap/layers/transportation.geojsonl",
+    "transportation_name": "ermita/maps/sources/openfreemap/layers/transportation_name.geojsonl",
+    "water": "ermita/maps/sources/openfreemap/layers/water.geojsonl",
+    "water_name": "ermita/maps/sources/openfreemap/layers/water_name.geojsonl",
+    "waterway": "ermita/maps/sources/openfreemap/layers/waterway.geojsonl"
+  },
+  "errors": [],
+  "raw_tile_index": "tile-index.json",
+  "retrieved_utc": "2026-10-19T17:30:55Z"
+}

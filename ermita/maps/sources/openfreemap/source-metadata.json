@@ -1,0 +1,42 @@
+{
+  "source_name": "OpenFreeMap / OpenMapTiles",
+  "style_url": "https://tiles.openfreemap.org/styles/liberty",
+  "tilejson_tile_template": "https://tiles.openfreemap.org/planet/20261011_080001_pt/{z}/{x}/{y}.pbf",
+  "underlying_data": "OpenStreetMap contributors",
+  "attribution": "OpenFreeMap © OpenMapTiles Data from OpenStreetMap",
+  "schema_url": "https://openmaptiles.org/docs/schema/",
+  "area_query": "Ermita, Manila, Metro Manila, Philippines",
+  "area_display_name": "Ermita, Fifth District, Manila, Capital District, Metro Manila, 1000, Philippines",
+  "area_osm_type": "relation",
+  "area_osm_id": 103706,
+  "bbox_south_north_west_east": [
+    14.5731967,
+    14.5970416,
+    120.9710994,
+    120.9930963
+  ],
+  "min_zoom": 10,
+  "max_zoom": 16,
+  "tile_count_planned": 43,
+  "tile_limit": 3000,
+  "download_limit_bytes": 52428800,
+  "layers": [
+    "aerodrome_label",
+    "aeroway",
+    "boundary",
+    "building",
+    "housenumber",
+    "landcover",
+    "landuse",
+    "mountain_peak",
+    "park",
+    "place",
+    "poi",
+    "transportation",
+    "transportation_name",
+    "water",
+    "water_name",
+    "waterway"
+  ],
+  "retrieved_utc": "2026-10-19T17:30:51Z"
+}
