@@ -34,10 +34,20 @@ jobs:
         run: python -m pip install requests shapely pyproj rasterio numpy scipy
       - name: Import official DPWH road, surface, lane and bridge data
         continue-on-error: true
-        run: python ermita/scripts/import_dpwh_national_roads.py
+        run: |
+          if [ -s ermita/maps/external/dpwh-national-roads-ermita.geojson ] && [ -s ermita/maps/external/dpwh-road-surface-type-ermita.geojson ] && [ -s ermita/maps/external/dpwh-number-of-lanes-ermita.geojson ] && [ -s ermita/maps/external/dpwh-bridge-inventory-ermita.geojson ]; then
+            echo "DPWH source snapshots already exist; skip downloads and preserve files."
+          else
+            python ermita/scripts/import_dpwh_national_roads.py
+          fi
       - name: Fetch Microsoft road detections
         continue-on-error: true
-        run: python ermita/scripts/import_microsoft_road_detections.py
+        run: |
+          if [ -s ermita/maps/external/ermita-microsoft-road-detections.geojson ]; then
+            echo "Microsoft road snapshot already exists; skip download and preserve file."
+          else
+            python ermita/scripts/import_microsoft_road_detections.py
+          fi
       - name: Discover licensed OpenAerialMap imagery
         continue-on-error: true
         run: python scripts/import_openaerialmap_ermita.py
