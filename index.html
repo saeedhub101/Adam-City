@@ -32,6 +32,7 @@
 <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/libs/fflate.min.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
 <script>
 (function(){
@@ -251,7 +252,7 @@ function addLocalRamonModel(){
     this.loaded=true;
     setStatus('Ramon Magsaysay Center FBX model loaded with repository material textures. Verify facade alignment and scale visually.');
     map.triggerRepaint();
-   },undefined,err=>setStatus('Local Ramon Magsaysay GLB failed to load: '+(err&&err.message||'network error')));
+   },undefined,err=>setStatus('Local Ramon Magsaysay FBX failed to load: '+(err&&err.message||'network error')));
   },
   render:function(gl,args){
    if(!this.renderer)return;
