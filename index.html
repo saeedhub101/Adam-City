@@ -252,29 +252,6 @@ function addTexturedBuildingMeshes(data,roadNetwork){
    if(Number.isFinite(levels)&&levels>=1&&levels<=150)return Math.ceil(levels*3.66);
    return 5;
   };
-  function normalizeBuildingHeights(data){
-   for(const f of (data.features||[])){
-    const p=f.properties||(f.properties={}),t=p.tags||p;
-    const id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:''));
-    let h=NaN;
-    if(id===detailSource.osmId)h=102;
-    const base=Number(p.basemap_render_height);
-    if(!Number.isFinite(h)&&Number.isFinite(base)&&base>=2&&base<=500)h=base;
-    if(!Number.isFinite(h)){
-     const raw=String(t.height||'').trim(),match=raw.match(/[0-9]+(?:[.,][0-9]+)?/);
-     let v=match?Number(match[0].replace(',','.')):NaN;
-     if(Number.isFinite(v)&&(/\b(ft|feet|foot)\b/i.test(raw)||raw.includes("'")))v*=0.3048;
-     if(Number.isFinite(v)&&v>=2&&v<=500)h=Math.ceil(v);
-    }
-    if(!Number.isFinite(h)){
-     const levels=Number(String(t['building:levels']||t.levels||'').replace(',','.'));
-     if(Number.isFinite(levels)&&levels>=1&&levels<=150)h=Math.ceil(levels*3.66);
-    }
-    p.adam_height_m=Number.isFinite(h)?h:5;
-    // Store a numeric height in OSM tags too, so the original extrusion expression remains compatible.
-    if(p.tags&&typeof p.tags==='object')p.tags.height=String(p.adam_height_m);
-   }
-  }
   const windowPos=[],windowNormals=[],trimPos=[],bandPos=[],balconyPos=[],doorPos=[],roofRimPos=[];
  function quad(arr,a,b,c,d){arr.push(a.x,a.y,a.z,b.x,b.y,b.z,c.x,c.y,c.z,c.x,c.y,c.z,b.x,b.y,b.z,d.x,d.y,d.z);}
  function point(p,n,offset,y){return {x:p.x+n.x*offset,y:y,z:p.z+n.z*offset};}
@@ -466,6 +443,30 @@ function syncLocalHeightsFromBasemap(){
   setStatus('Basemap height matching: '+matched.toLocaleString()+' local buildings matched to live OpenFreeMap render_height values; '+changed.toLocaleString()+' height records updated. Unmatched buildings retain OSM height/levels fallback.');
  }
 }
+function normalizeBuildingHeights(data){
+   for(const f of (data.features||[])){
+    const p=f.properties||(f.properties={}),t=p.tags||p;
+    const id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:''));
+    let h=NaN;
+    if(id==='way/90123959')h=102;
+    const base=Number(p.basemap_render_height);
+    if(!Number.isFinite(h)&&Number.isFinite(base)&&base>=2&&base<=500)h=base;
+    if(!Number.isFinite(h)){
+     const raw=String(t.height||'').trim(),match=raw.match(/[0-9]+(?:[.,][0-9]+)?/);
+     let v=match?Number(match[0].replace(',','.')):NaN;
+     if(Number.isFinite(v)&&(/\b(ft|feet|foot)\b/i.test(raw)||raw.includes("'")))v*=0.3048;
+     if(Number.isFinite(v)&&v>=2&&v<=500)h=Math.ceil(v);
+    }
+    if(!Number.isFinite(h)){
+     const levels=Number(String(t['building:levels']||t.levels||'').replace(',','.'));
+     if(Number.isFinite(levels)&&levels>=1&&levels<=150)h=Math.ceil(levels*3.66);
+    }
+    p.adam_height_m=Number.isFinite(h)?h:5;
+    // Store a numeric height in OSM tags too, so the original extrusion expression remains compatible.
+    if(p.tags&&typeof p.tags==='object')p.tags.height=String(p.adam_height_m);
+   }
+}
+
 function addBuildings(data){
  if(map.getLayer('local-buildings-3d'))map.removeLayer('local-buildings-3d');
  if(map.getSource('local-buildings'))map.removeSource('local-buildings');
