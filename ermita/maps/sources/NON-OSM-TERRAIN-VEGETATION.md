@@ -38,3 +38,10 @@ The import is incremental: valid existing outputs are reused, and files are neve
 
 New import jobs do not query OpenStreetMap. Existing project files and the current OpenFreeMap/OSM-derived basemap have been retained rather than destructively removed; the site is therefore **not yet completely independent of OSM in its display layer**. This distinction is intentional so existing work is not lost while independent sources are collected and compared.
 
+## Additional independent building source under import
+
+- Microsoft/Bing satellite-derived Philippines footprints are being processed separately from Google Open Buildings v3.
+- The source archive is about 1.1 GB compressed for the entire Philippines, so the workflow keeps it in temporary CI storage and writes only polygons intersecting the Ermita/Rizal Park project bounds into `sources/microsoft-satellite-buildings/`.
+- The original retired importer remains untouched; this is a separate, area-clipped import path. The new source is independent of OSM data, although Microsoft licenses the database under ODbL.
+- Dataset information and license: https://github.com/microsoft/IdMyPhBuildingFootprints
+
