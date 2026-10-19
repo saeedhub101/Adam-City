@@ -29,7 +29,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install raster processing dependencies
-        run: python -m pip install rasterio numpy shapely
+        run: python -m pip install rasterio numpy shapely pillow
       - name: Import terrain and land-cover rasters (no OSM)
         run: python ermita/scripts/import_non_osm_terrain_landcover.py
       - name: Commit only new non-OSM terrain and vegetation outputs
