@@ -171,7 +171,20 @@ def main():
         })
         if props.get("name") is None and tags.get("name"):
             props["name"] = tags["name"]
-        output.append({"type": "Feature", "properties": props, "geometry": mapping(b["geometry"])})
+        # Keep the authoritative Basemap outline, but simplify tile-edge detail and round
+        # coordinates to six decimals (~0.1 m) so mobile browsers can parse the dataset.
+        compact_geom = b["geometry"].simplify(0.000008, preserve_topology=True)
+        if compact_geom.is_empty:
+            continue
+        def rounded_coords(value):
+            if isinstance(value, (list, tuple)):
+                if len(value) >= 2 and isinstance(value[0], (int, float)) and isinstance(value[1], (int, float)):
+                    return [round(float(value[0]), 6), round(float(value[1]), 6)] + [value[i] for i in range(2, len(value))]
+                return [rounded_coords(v) for v in value]
+            return value
+        compact_mapping = mapping(compact_geom)
+        compact_mapping["coordinates"] = rounded_coords(compact_mapping["coordinates"])
+        output.append({"type": "Feature", "properties": props, "geometry": compact_mapping})
         if best and best_d <= 12:
             matched += 1
 
