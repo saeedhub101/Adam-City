@@ -748,10 +748,10 @@ function addVisibleRoadAndSidewalkOverlays(data){
  const sideWidth=['interpolate',['linear'],['zoom'],13,0.8,15,2.1,17,3.5,19,5];
  const sideOffset=['interpolate',['linear'],['zoom'],13,2,15,5,17,8,19,12];
  for(const [id,offset] of [['visible-sidewalk-left',1],['visible-sidewalk-right',-1]]){
-  map.addLayer({id,type:'line',source:sourceId,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#d8d2c6','line-width':sideWidth,'line-offset':offset*sideOffset,'line-opacity':1}});
+  map.addLayer({id,type:'line',source:sourceId,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#d8d2c6','line-width':sideWidth,'line-offset':['*',offset,sideOffset],'line-opacity':1}});
  }
  for(const [id,offset] of [['visible-road-curb-left',1],['visible-road-curb-right',-1]]){
-  map.addLayer({id,type:'line',source:sourceId,layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#8b8c87','line-width':['interpolate',['linear'],['zoom'],14,0.4,17,1.1,19,1.5],'line-offset':offset*['interpolate',['linear'],['zoom'],13,3,15,6,17,10,19,14],'line-opacity':0.95}});
+  map.addLayer({id,type:'line',source:sourceId,layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#8b8c87','line-width':['interpolate',['linear'],['zoom'],14,0.4,17,1.1,19,1.5],'line-offset':['*',offset,['interpolate',['linear'],['zoom'],13,3,15,6,17,10,19,14]],'line-opacity':0.95}});
  }
  const visible=document.getElementById('roads')?.checked!==false;
  ['visible-sidewalk-left','visible-sidewalk-right','visible-road-casing','visible-road-asphalt','visible-road-curb-left','visible-road-curb-right'].forEach(id=>map.setLayoutProperty(id,'visibility',visible?'visible':'none'));
