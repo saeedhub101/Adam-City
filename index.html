@@ -639,6 +639,95 @@ function addLandmarks(){
  map.on('mouseenter','key-landmark-dot',()=>map.getCanvas().style.cursor='pointer');
  map.on('mouseleave','key-landmark-dot',()=>map.getCanvas().style.cursor='');
 }
+function addBridgeAndStairLayers(){
+ const sourceId='basemap-bridges-stairs';
+ const empty={type:'FeatureCollection',features:[]};
+ if(!map.getSource(sourceId))map.addSource(sourceId,{type:'geojson',data:empty});
+ if(!map.getLayer('project-bridges-casing'))map.addLayer({id:'project-bridges-casing',type:'line',source:sourceId,filter:['==',['get','kind'],'bridge'],layout:{'line-cap':'round','line-join':'round','line-elevation-reference':'ground'},paint:{'line-color':'#343b43','line-width':['interpolate',['linear'],['zoom'],13,3,16,10,19,19],'line-opacity':0.98}});
+ if(!map.getLayer('project-bridges-deck'))map.addLayer({id:'project-bridges-deck',type:'line',source:sourceId,filter:['==',['get','kind'],'bridge'],layout:{'line-cap':'butt','line-join':'round','line-elevation-reference':'ground'},paint:{'line-color':['match',['get','material_type'],'wood','#95613b','steel','#59636f','concrete','#b8b9b6','unknown','#a9adb2','#a9adb2'],'line-width':['interpolate',['linear'],['zoom'],13,1.5,16,7,19,14],'line-opacity':1}});
+ if(!map.getLayer('project-bridges-railings-left'))map.addLayer({id:'project-bridges-railings-left',type:'line',source:sourceId,filter:['==',['get','kind'],'bridge'],layout:{'line-cap':'round','line-join':'round','line-elevation-reference':'ground'},paint:{'line-color':'#e3e6e8','line-width':['interpolate',['linear'],['zoom'],15,0.5,19,1.8],'line-offset':['interpolate',['linear'],['zoom'],15,3,19,7],'line-opacity':0.95}});
+ if(!map.getLayer('project-bridges-railings-right'))map.addLayer({id:'project-bridges-railings-right',type:'line',source:sourceId,filter:['==',['get','kind'],'bridge'],layout:{'line-cap':'round','line-join':'round','line-elevation-reference':'ground'},paint:{'line-color':'#e3e6e8','line-width':['interpolate',['linear'],['zoom'],15,0.5,19,1.8],'line-offset':['interpolate',['linear'],['zoom'],15,-3,19,-7],'line-opacity':0.95}});
+ if(!map.getLayer('project-stairs-treads'))map.addLayer({id:'project-stairs-treads',type:'line',source:sourceId,filter:['==',['get','kind'],'stair-tread'],layout:{'line-cap':'butt','line-elevation-reference':'ground'},paint:{'line-color':'#ddd8cf','line-width':['interpolate',['linear'],['zoom'],14,0.7,17,1.5,19,2.2],'line-opacity':1}});
+ if(!map.getLayer('project-stairs-outline'))map.addLayer({id:'project-stairs-outline',type:'line',source:sourceId,filter:['==',['get','kind'],'stairs'],layout:{'line-cap':'round','line-join':'round','line-elevation-reference':'ground'},paint:{'line-color':'#5b626b','line-width':['interpolate',['linear'],['zoom'],13,1,16,4,19,7],'line-opacity':0.9}});
+ const cache=new Map();
+ const materialOf=p=>{
+  const raw=String(p.material||p['bridge:material']||p['material:bridge']||p['building:material']||p.surface||'').toLowerCase();
+  if(/wood|timber|wooden/.test(raw))return 'wood';
+  if(/steel|metal|iron/.test(raw))return 'steel';
+  if(/concrete|cement|reinforced/.test(raw))return 'concrete';
+  return 'unknown';
+ };
+ const lineParts=g=>g&&g.type==='LineString'?[g.coordinates]:g&&g.type==='MultiLineString'?g.coordinates:[];
+ const keyOf=f=>String(f.id??f.properties?.osm_feature_id??f.properties?.osm_id??f.properties?.id??JSON.stringify(f.geometry?.coordinates||[]).slice(0,180));
+ function extractBasemap(){
+  let tiles=[];try{tiles=map.querySourceFeatures('openmaptiles',{sourceLayer:'transportation'})||[];}catch(e){return;}
+  for(const f of tiles){
+   const g=f.geometry,p=f.properties||{},layer=f.layer||{},srcLayer=String(layer['source-layer']||f.sourceLayer||'');
+   if(!g||!['LineString','MultiLineString'].includes(g.type))continue;
+   const brunnel=String(p.brunnel||p.structure||'').toLowerCase();
+   const clazz=String(p.class||p.highway||'').toLowerCase();
+   const subclass=String(p.subclass||'').toLowerCase();
+   const isBridge=brunnel==='bridge'||p.bridge===true||String(p.bridge||'').toLowerCase()==='yes'||String(p['bridge:structure']||'')!=='';
+   const isStairs=clazz==='steps'||subclass==='steps'||String(p.highway||'').toLowerCase()==='steps'||String(p.ramp||'').toLowerCase()==='stairs';
+   if(!isBridge&&!isStairs)continue;
+   const mat=materialOf(p);
+   const key='basemap:'+srcLayer+':'+keyOf(f)+':'+(isBridge?'b':'s');
+   const props={...p,kind:isBridge?'bridge':'stairs',material_type:mat,source:'Basemap vector tiles',source_layer:srcLayer||'transportation',feature_id:key};
+   cache.set(key,{type:'Feature',id:key,geometry:g,properties:props});
+  }
+ }
+ function normalizeOsm(){
+  for(const f of (roadsData?.features||[])){
+   const p=f.properties||{},t=p.tags||{},g=f.geometry;
+   if(!g||!['LineString','MultiLineString'].includes(g.type))continue;
+   const bridge=String(t.bridge||p.bridge||'').toLowerCase();
+   const hw=String(t.highway||p.highway||'').toLowerCase();
+   const isBridge=bridge!==''&&bridge!=='no'||String(t.man_made||'').toLowerCase()==='bridge';
+   const isStairs=hw==='steps'||String(t.ramp||'').toLowerCase()==='stair';
+   if(!isBridge&&!isStairs)continue;
+   const merged={...p,...t};
+   const mat=materialOf(merged);
+   const id=String(p.osm_feature_id||p.id||t.id||keyOf(f));
+   const key='osm:'+id+':'+(isBridge?'b':'s');
+   cache.set(key,{type:'Feature',id:key,geometry:g,properties:{...merged,kind:isBridge?'bridge':'stairs',material_type:mat,source:'OSM project data',feature_id:id}});
+  }
+ }
+ function makeTreads(features){
+  const result=[];
+  const metersPerLon=111320*Math.cos(map.getCenter().lat*Math.PI/180),metersPerLat=111132;
+  for(const f of features){
+   if(f.properties?.kind!=='stairs')continue;
+   for(const line of lineParts(f.geometry)){
+    for(let i=1;i<line.length;i++){
+     const a=line[i-1],b=line[i],dx=(b[0]-a[0])*metersPerLon,dy=(b[1]-a[1])*metersPerLat,len=Math.hypot(dx,dy);
+     if(len<0.25)continue;
+     const nx=-dy/len,ny=dx/len,count=Math.min(180,Math.max(1,Math.floor(len/0.32)));
+     for(let j=0;j<=count;j++){
+      const t=j/count,lon=a[0]+(b[0]-a[0])*t,lat=a[1]+(b[1]-a[1])*t,half=0.52;
+      result.push({type:'Feature',id:'tread:'+f.id+':'+i+':'+j,geometry:{type:'LineString',coordinates:[[lon+nx*half/metersPerLon,lat+ny*half/metersPerLat],[lon-nx*half/metersPerLon,lat-ny*half/metersPerLat]]},properties:{kind:'stair-tread',source:f.properties.source||'OSM/Basemap',parent_id:f.id}});
+     }
+    }
+   }
+  }
+  return result;
+ }
+ let lastSignature='';
+ function refresh(){
+  extractBasemap();normalizeOsm();
+  const features=[...cache.values()];
+  const treadFeatures=makeTreads(features);
+  const merged={type:'FeatureCollection',features:[...features,...treadFeatures]};
+  const sig=features.map(f=>String(f.id)).sort().join('|')+'#'+treadFeatures.length;
+  if(sig===lastSignature)return;
+  lastSignature=sig;
+  map.getSource(sourceId).setData(merged);
+ }
+ refresh();
+ map.on('idle',refresh);
+ map.on('moveend',refresh);
+ setStatus('Bridge/stair extraction active: merging Basemap transportation features with OSM project data; bridge colors use tagged material, and stair treads are drawn where mapped stair lines exist.');
+}
+
 function addRoads(data){
  if(map.getLayer('project-roads-casing'))map.removeLayer('project-roads-casing');
  if(map.getLayer('project-roads'))map.removeLayer('project-roads');
@@ -686,7 +775,7 @@ map.on('load',async()=>{
   applyTerrainAlignment();
   map.once('idle',applyTerrainAlignment);
   map.on('idle',()=>{syncLocalHeightsFromBasemap();applyTerrainAlignment();});
-  addLandmarks();addRealModelMarkers();addSatelliteImagery();addLocalRamonModel(roadsData);
+  addLandmarks();addRealModelMarkers();addSatelliteImagery();addLocalRamonModel(roadsData);addBridgeAndStairLayers();
   // Apply the current checkbox states after asynchronous data loading, even if a user unchecked a layer early.
   const setVisibility=(ids,visible)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visible?'visible':'none')});
   setVisibility(['local-buildings-3d','local-building-labels','all-building-facade-textures'],document.getElementById('buildings').checked);
