@@ -238,8 +238,6 @@ function addTexturedBuildingMeshes(data,roadNetwork){
  const xy=c=>({x:(c[0]-origin[0])*111319.49*Math.cos(origin[1]*Math.PI/180),z:(c[1]-origin[1])*110574.27});
  const heightOf=p=>{
    const t=p.tags||p;
-   const id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:''));
-   if(id===detailSource.osmId)return 102;
    const normalized=Number(p.adam_height_m);
    if(Number.isFinite(normalized)&&normalized>=2&&normalized<=500)return normalized;
    const basemapH=Number(p.basemap_render_height);
@@ -425,10 +423,18 @@ function syncLocalHeightsFromBasemap(){
   }
   if(!q)continue;
   matched++;
-  if(Number(p.basemap_render_height)!==q.h||Number(p.basemap_render_min_height)!==Number(q.f.properties?.render_min_height||0)||Number(p.adam_height_m)!==q.h){
+  const baseMin=Number(q.f.properties?.render_min_height||0);
+  const tags=p.tags&&typeof p.tags==='object'?p.tags:null;
+  if(Number(p.basemap_render_height)!==q.h||
+     Number(p.basemap_render_min_height)!==baseMin||
+     Number(p.adam_height_m)!==q.h||
+     (tags&&String(tags.height)!==String(q.h))||
+     (tags&&Number(tags.min_height||0)!==baseMin)){
    p.basemap_render_height=q.h;
-   p.basemap_render_min_height=Number(q.f.properties?.render_min_height||0);
+   p.basemap_render_min_height=baseMin;
    p.adam_height_m=q.h;
+   // Keep the local OSM extrusion and facade/window mesh aligned to the trusted Basemap roof height.
+   if(tags){tags.height=String(q.h);tags.min_height=String(baseMin);}
    p.basemap_height_match=raw||String(q.f.id||'spatial-match');
    changed++;
   }
@@ -483,11 +489,11 @@ function addBuildings(data){
        '#c8bfb3']],
     // Match OpenMapTiles/Liberty height fallback: height, then levels × 3.66 m, then 5 m.
     // This keeps local OSM extrusions much closer to the Basemap when source tags are missing.
-    'fill-extrusion-height':['case',['==',['get','osm_feature_id'],'way/90123959'],102,['max',2,['coalesce',
+    'fill-extrusion-height':['max',2,['coalesce',
        ['to-number',['get','basemap_render_height']],
        ['to-number',['get','height',['get','tags']]],
        ['*',['to-number',['get','building:levels',['get','tags']]],3.66],
-       5]]],
+       5]],
     'fill-extrusion-base':['max',0,['floor',['coalesce',
       ['to-number',['get','min_height',['get','tags']]],
       ['*',['to-number',['get','min_level',['get','tags']]],3.66],
