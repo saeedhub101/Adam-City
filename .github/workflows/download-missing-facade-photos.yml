@@ -1,0 +1,56 @@
+name: Download missing real facade photos
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "ermita/scripts/download_missing_facade_photos.py"
+      - ".github/workflows/download-missing-facade-photos.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ermita-facade-photo-download
+  cancel-in-progress: false
+
+jobs:
+  download-missing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install image processing dependencies
+        run: python -m pip install --disable-pip-version-check requests pillow
+      - name: Download only missing matched facade photos
+        run: python ermita/scripts/download_missing_facade_photos.py
+      - name: Save new images and catalog updates to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add kartaview/images kartaview/ermita-real-facade-images.csv kartaview/ermita-facade-image-download-report.json ermita/3d/facade-photo-review.csv
+          if git diff --cached --quiet; then
+            echo "No missing image files or catalog changes."
+            exit 0
+          fi
+          git commit -m "Download missing matched facade photos"
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Push race on attempt $attempt; retrying."
+            git rebase --abort || true
+            sleep 2
+          done
+          echo "Could not push facade photo assets after retries."
+          exit 1
