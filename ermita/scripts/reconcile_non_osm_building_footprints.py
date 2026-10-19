@@ -47,12 +47,18 @@ def load_features(path, source):
 
 def main():
     if OUT.exists() and REGISTER.exists() and REPORT.exists():
-        print(json.dumps({"status":"reused_existing_not_overwritten",
-                          "crosswalk":str(OUT.relative_to(ROOT)),
-                          "canonical_register":str(REGISTER.relative_to(ROOT)),
-                          "report":str(REPORT.relative_to(ROOT))},indent=2))
-        return
+        try:
+            previous=json.loads(REPORT.read_text(encoding="utf-8"))
+            if previous.get("canonical_schema_version")==2:
+                print(json.dumps({"status":"reused_existing_outputs",
+                                  "crosswalk":str(OUT.relative_to(ROOT)),
+                                  "canonical_register":str(REGISTER.relative_to(ROOT)),
+                                  "report":str(REPORT.relative_to(ROOT))},indent=2))
+                return
+        except Exception:
+            pass
     report={
+        "canonical_schema_version":2,
         "status":"waiting_for_source",
         "retrieved_at_utc":datetime.now(timezone.utc).isoformat(),
         "policy":"Google and Microsoft source records remain unchanged; a derived crosswalk and canonical display register are produced; no OSM queries.",
