@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "retrieved_at_utc": "2026-10-19T18:05:48.650902+00:00",
-  "policy": "Google and Microsoft source records remain unchanged; only identity crosswalk is produced; no OSM queries.",
+  "retrieved_at_utc": "2026-10-19T18:09:18.535198+00:00",
+  "policy": "Google and Microsoft source records remain unchanged; a derived crosswalk and canonical display register are produced; no OSM queries.",
   "sources": {
     "google": {
       "path": "ermita/maps/sources/google-open-buildings/google-open-buildings-v3-ermita.geojson",
@@ -23,6 +23,7 @@
     "probable_matches": 1032,
     "google_only_or_conflict": 6411,
     "microsoft_only_or_conflict": 733,
+    "canonical_register_features": 8176,
     "candidate_pairs_passing_threshold": 1097
   },
   "warnings": [],
@@ -31,5 +32,7 @@
     "microsoft": "7a23f4e8682e293be53b267a721120257878b02781f585883b9b53a37931ba4b"
   },
   "crosswalk_file": "ermita/maps/qa/non-osm-building-footprint-crosswalk.csv",
-  "crosswalk_bytes": 2710159
+  "crosswalk_bytes": 2710159,
+  "canonical_register_file": "ermita/maps/qa/non-osm-building-canonical-register.geojson",
+  "canonical_register_bytes": 8699740
 }
