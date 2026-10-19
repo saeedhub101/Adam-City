@@ -44,13 +44,17 @@
 const root='/Adam-City/';
 const urls={buildings:root+'ermita/maps/generated/ermita-osm-building-footprints.geojson',microsoftBuildings:root+'ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson',roads:root+'ermita/maps/generated/ermita-road-network.geojson',boundary:root+'ermita/maps/sources/openfreemap/area-boundary.geojson',housenumbers:root+'ermita/maps/sources/openfreemap/layers/housenumber.geojsonl',openfreemapBuildings:root+'ermita/maps/sources/openfreemap/layers/building.geojsonl'};
 const $=id=>document.getElementById(id), status=$('status');
-const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[120.9821,14.5848],zoom:15.1,pitch:62,bearing:-18,antialias:true});
-map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({maxWidth:100,unit:'metric'}),'bottom-left');
-const say=s=>status.textContent=s;
+const say=s=>{if(status)status.textContent=s};
 window.addEventListener('error',e=>{say('خطأ JavaScript: '+(e.message||'تعذر تشغيل الخريطة'));console.error(e.error||e.message)});
 window.addEventListener('unhandledrejection',e=>{say('فشل تحميل الخريطة: '+(e.reason?.message||String(e.reason)));console.error(e.reason)});
+if(!window.maplibregl){say('تعذر تحميل مكتبة الخريطة من unpkg؛ تحقق من الاتصال أو جرّب تحديث الصفحة.');return}
+const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[120.9821,14.5848],zoom:15.1,pitch:62,bearing:-18,antialias:true});
+map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({maxWidth:100,unit:'metric'}),'bottom-left');
 map.on('error',e=>{const msg=e?.error?.message||'خطأ في مصدر الخريطة';console.error('MapLibre error:',e.error||e);if(status&&!status.textContent.startsWith('تم تحميل'))say('مشكلة في الخريطة: '+msg)});
-map.on('style.load',()=>{if(status&&status.textContent==='جارٍ تحميل بيانات المباني والطرق وOpenFreeMap…')say('تم تحميل نمط الخريطة؛ جارٍ تحميل بيانات المباني…')});
+let styleReady=false,fallbackAttempted=false;
+map.on('style.load',()=>{styleReady=true;if(status&&status.textContent==='جارٍ تحميل بيانات المباني والطرق وOpenFreeMap…')say('تم تحميل نمط الخريطة؛ جارٍ تحميل بيانات المباني…')});
+// If the vector style is blocked or unavailable, switch to a simple raster basemap so the map does not remain black.
+setTimeout(()=>{if(styleReady||fallbackAttempted)return;fallbackAttempted=true;console.warn('OpenFreeMap style did not load in time; switching to raster fallback.');say('تعذر تحميل نمط OpenFreeMap؛ جارٍ تشغيل خريطة بديلة…');try{map.setStyle({version:8,sources:{'osm-raster':{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm-raster',type:'raster',source:'osm-raster'}]})}catch(err){console.error(err);say('فشل تشغيل نمط الخريطة البديل: '+err.message)}},12000);
 const tag=(key)=>['coalesce',['get',key,['get','tags']],['get',key]];
 const safeText=['coalesce',tag('name'),tag('official_name'),tag('alt_name'),''];
 const houseNo=['coalesce',tag('addr:housenumber'),tag('ref'),''];
