@@ -18,6 +18,7 @@ MICROSOFT = ROOT / "ermita/maps/sources/microsoft-satellite-buildings/microsoft-
 QA = ROOT / "ermita/maps/qa"
 QA.mkdir(parents=True, exist_ok=True)
 OUT = QA / "non-osm-building-footprint-crosswalk.csv"
+REGISTER = QA / "non-osm-building-canonical-register.geojson"
 REPORT = QA / "non-osm-building-footprint-reconciliation-report.json"
 IOU_MIN = 0.25
 CENTROID_MAX_M = 18.0
@@ -45,15 +46,16 @@ def load_features(path, source):
     return out
 
 def main():
-    if OUT.exists() and REPORT.exists():
+    if OUT.exists() and REGISTER.exists() and REPORT.exists():
         print(json.dumps({"status":"reused_existing_not_overwritten",
                           "crosswalk":str(OUT.relative_to(ROOT)),
+                          "canonical_register":str(REGISTER.relative_to(ROOT)),
                           "report":str(REPORT.relative_to(ROOT))},indent=2))
         return
     report={
         "status":"waiting_for_source",
         "retrieved_at_utc":datetime.now(timezone.utc).isoformat(),
-        "policy":"Google and Microsoft source records remain unchanged; only identity crosswalk is produced; no OSM queries.",
+        "policy":"Google and Microsoft source records remain unchanged; a derived crosswalk and canonical display register are produced; no OSM queries.",
         "sources":{"google":{"path":str(GOOGLE.relative_to(ROOT)),"exists":GOOGLE.exists()},
                    "microsoft":{"path":str(MICROSOFT.relative_to(ROOT)),"exists":MICROSOFT.exists()}},
         "matching":{"method":"spatial intersection-over-union plus centroid distance",
@@ -66,7 +68,7 @@ def main():
         print(json.dumps(report,ensure_ascii=False,indent=2))
         return
 
-    if not OUT.exists():
+    if not OUT.exists() or not REGISTER.exists():
         google=load_features(GOOGLE,"google")
         microsoft=load_features(MICROSOFT,"microsoft")
         # Use a local projected CRS for distance/area measurements in central Manila.
@@ -140,14 +142,61 @@ def main():
                         "microsoft_feature_id":m["id"],"microsoft_area_m2":round(m["metric_area"],2),
                         "geometry_policy":"Review needed; original geometry preserved.",
                         "google_source_path":str(GOOGLE.relative_to(ROOT)),"microsoft_source_path":str(MICROSOFT.relative_to(ROOT))})
+        canonical_features=[]
+        for gi,g in enumerate(google):
+            gp=g["properties"]
+            google_observation={"source":"Google Research Open Buildings v3","source_feature_id":g["id"],
+                                "confidence":gp.get("confidence"),"area_m2":round(g["metric_area"],2),
+                                "source_file":str(GOOGLE.relative_to(ROOT))}
+            props={"canonical_id":f"nonosm-building-{len(canonical_features)+1:06d}",
+                   "record_status":"google_only_or_geometry_conflict",
+                   "geometry_source":"Google Research Open Buildings v3",
+                   "google_feature_id":g["id"],"google_confidence":gp.get("confidence"),
+                   "google_area_m2":round(g["metric_area"],2),"microsoft_feature_id":None,
+                   "microsoft_area_m2":None,"source_observations":[google_observation],
+                   "geometry_policy":"Google geometry retained for display; all original source geometries remain unchanged."}
+            if gi in matches:
+                mi,iou,inter,dist,og,om=matches[gi]
+                m=microsoft[mi]
+                microsoft_observation={"source":"Microsoft IdMyPhBuildingFootprints","source_feature_id":m["id"],
+                    "area_m2":round(m["metric_area"],2),"source_file":str(MICROSOFT.relative_to(ROOT))}
+                props.update({"record_status":"matched_probable_same_building",
+                    "microsoft_feature_id":m["id"],"microsoft_area_m2":round(m["metric_area"],2),
+                    "intersection_over_union":round(iou,4),"centroid_distance_m":round(dist,2),
+                    "overlap_fraction_google":round(og,4),"overlap_fraction_microsoft":round(om,4),
+                    "source_observations":[google_observation,microsoft_observation],
+                    "geometry_policy":"Google polygon selected for display only; Microsoft polygon and match metrics retained as a separate source observation."})
+            canonical_features.append({"type":"Feature","id":props["canonical_id"],
+                                       "geometry":mapping(g["geometry"]),"properties":props})
+        for mi,m in enumerate(microsoft):
+            if mi in used_m:
+                continue
+            observation={"source":"Microsoft IdMyPhBuildingFootprints","source_feature_id":m["id"],
+                         "area_m2":round(m["metric_area"],2),"source_file":str(MICROSOFT.relative_to(ROOT))}
+            props={"canonical_id":f"nonosm-building-{len(canonical_features)+1:06d}",
+                   "record_status":"microsoft_only_or_geometry_conflict",
+                   "geometry_source":"Microsoft IdMyPhBuildingFootprints",
+                   "google_feature_id":None,"google_confidence":None,"google_area_m2":None,
+                   "microsoft_feature_id":m["id"],"microsoft_area_m2":round(m["metric_area"],2),
+                   "source_observations":[observation],
+                   "geometry_policy":"Microsoft geometry retained for display; all original source geometries remain unchanged."}
+            canonical_features.append({"type":"Feature","id":props["canonical_id"],
+                                       "geometry":mapping(m["geometry"]),"properties":props})
+        register={"type":"FeatureCollection","name":"Canonical non-OSM satellite building register for Ermita",
+                  "source_policy":"Derived display view only; original Google and Microsoft source files are never edited.",
+                  "feature_count":len(canonical_features),"features":canonical_features}
+        REGISTER.write_text(json.dumps(register,ensure_ascii=False,separators=(",",":"))+"\\n",encoding="utf-8")
         report["status"]="success"
         report["inputs_sha256"]={"google":digest(GOOGLE),"microsoft":digest(MICROSOFT)}
         report["counts"]={"google_features":len(google),"microsoft_features":len(microsoft),
                           "probable_matches":len(matches),"google_only_or_conflict":len(google)-len(matches),
                           "microsoft_only_or_conflict":len(microsoft)-len(used_m),
+                          "canonical_register_features":len(canonical_features),
                           "candidate_pairs_passing_threshold":len(candidate_pairs)}
         report["crosswalk_file"]=str(OUT.relative_to(ROOT))
         report["crosswalk_bytes"]=OUT.stat().st_size
+        report["canonical_register_file"]=str(REGISTER.relative_to(ROOT))
+        report["canonical_register_bytes"]=REGISTER.stat().st_size
     REPORT.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     print(json.dumps(report,ensure_ascii=False,indent=2))
 
