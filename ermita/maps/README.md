@@ -22,3 +22,10 @@ Microsoft/Bing building footprints were rejected because their outlines were ina
 - Preserve source IDs/tags and distinguish mapped heights from estimates.
 - Save accepted imported assets and reports in the repository, not only workflow artifacts.
 - Inspect existing files first and download only missing/new data.
+
+## Consolidated map/building register
+
+- [Consolidated source inventory and merge rules](qa/consolidated-map-building-register.md)
+- [Merged building register (one row per OSM feature ID)](qa/consolidated-building-register.csv)
+
+The register preserves conflicting values and indicates which source files contain each building record. Missing from a file does not mean missing in the real world.
