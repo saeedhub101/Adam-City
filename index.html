@@ -280,7 +280,7 @@ function addTexturedBuildingMeshes(data,roadNetwork){
      const mid={x:(pts[ei-1].x+pts[ei].x)/2,z:(pts[ei-1].z+pts[ei].z)/2};
      let best=Infinity;
      for(const rf of roadNetwork.features){
-      const rp=rf.properties||{};if(rp.name&&!/jorge bocobo/i.test(String(rp.name)))continue;
+      const rp=rf.properties||{};if(!/jorge bocobo/i.test(String(rp.name||'')))continue;
       const rg=rf.geometry;if(!rg)continue;const lines=rg.type==='LineString'?[rg.coordinates]:rg.type==='MultiLineString'?rg.coordinates:[];
       for(const line of lines)for(let ri=1;ri<line.length;ri++){
        const ra=xy(line[ri-1]),rb=xy(line[ri]),vx=rb.x-ra.x,vz=rb.z-ra.z,wx=mid.x-ra.x,wz=mid.z-ra.z,t=Math.max(0,Math.min(1,(wx*vx+wz*vz)/(vx*vx+vz*vz||1)));
