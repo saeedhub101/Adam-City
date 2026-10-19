@@ -271,6 +271,8 @@ function addTexturedBuildingMeshes(data,roadNetwork){
      if(Number.isFinite(levels)&&levels>=1&&levels<=150)h=Math.ceil(levels*3.66);
     }
     p.adam_height_m=Number.isFinite(h)?h:5;
+    // Store a numeric height in OSM tags too, so the original extrusion expression remains compatible.
+    if(p.tags&&typeof p.tags==='object')p.tags.height=String(p.adam_height_m);
    }
   }
   const windowPos=[],windowNormals=[],trimPos=[],bandPos=[],balconyPos=[],doorPos=[],roofRimPos=[];
@@ -480,7 +482,11 @@ function addBuildings(data){
        '#c8bfb3']],
     // Match OpenMapTiles/Liberty height fallback: height, then levels × 3.66 m, then 5 m.
     // This keeps local OSM extrusions much closer to the Basemap when source tags are missing.
-    'fill-extrusion-height':['max',2,['coalesce',['to-number',['get','adam_height_m']],5]],
+    'fill-extrusion-height':['case',['==',['get','osm_feature_id'],'way/90123959'],102,['max',2,['coalesce',
+       ['to-number',['get','basemap_render_height']],
+       ['to-number',['get','height',['get','tags']]],
+       ['*',['to-number',['get','building:levels',['get','tags']]],3.66],
+       5]]],
     'fill-extrusion-base':['max',0,['floor',['coalesce',
       ['to-number',['get','min_height',['get','tags']]],
       ['*',['to-number',['get','min_level',['get','tags']]],3.66],
