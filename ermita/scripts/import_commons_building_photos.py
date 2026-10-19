@@ -32,6 +32,11 @@ QUERIES = [
     ("Malate Manila buildings street", "area_reference"),
     ("University of the Philippines Manila building", "building_candidate"),
     ("St Paul University Manila building", "building_candidate"),
+    ("Robinsons Place Manila exterior", "building_candidate"),
+    ("Manila Residences Bocobo facade", "building_candidate"),
+    ("7-Eleven Manila Philippines store exterior", "building_candidate"),
+    ("Rizal Park Manila grass lawn aerial", "area_reference"),
+    ("Ermita Manila hotel building exterior", "area_reference"),
 ]
 
 def safe_name(value: str) -> str:
@@ -65,6 +70,16 @@ def title_matches(query: str, title: str) -> bool:
         return ("university of the philippines" in t and "manila" in t) or "up manila" in t
     if "st paul university manila" in q:
         return "st paul university manila" in t or "saint paul university manila" in t
+    if "robinsons place manila" in q:
+        return "robinsons" in t and "manila" in t and ("place" in t or "mall" in t)
+    if "manila residences bocobo" in q:
+        return "bocobo" in t and ("residence" in t or "residences" in t)
+    if "7-eleven manila" in q:
+        return ("7-eleven" in t or "7 eleven" in t or "711" in t) and "manila" in t
+    if "rizal park manila grass lawn aerial" in q:
+        return ("rizal park" in t or "luneta" in t) and any(word in t for word in ("aerial", "lawn", "park", "grass"))
+    if "ermita manila hotel building exterior" in q:
+        return "ermita" in t and any(word in t for word in ("hotel", "building", "exterior"))
     return False
 
 
