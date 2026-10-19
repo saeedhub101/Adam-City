@@ -270,8 +270,6 @@ function addTexturedBuildingMeshes(data,roadNetwork){
  for(const f of data.features){
   if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
   const p=f.properties||{};
-  // Basemap is authoritative: do not render an OSM building unless a current Basemap building matched it.
-  if(!Number.isFinite(Number(p.basemap_render_height))||!p.basemap_height_match)continue;
   const tags=p.tags||{},id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:'')),name=String(tags.name||tags['official_name']||'');
   const special=id===detailSource.osmId;
   const h=heightOf(p),levels=Math.max(1,Math.min(34,Math.round(h/(special?3.0:3.2))));
@@ -436,7 +434,7 @@ function syncLocalHeightsFromBasemap(){
   const tags={...originalTags};
   // Overwrite OSM geometry-related attributes with Basemap's current vector-tile attributes.
   tags.height=String(q.h);tags.min_height=String(q.base);
-  if(bp.building)tags.building=String(bp.building);
+  tags.building=String(bp.building||bp.class||'yes');
   if(bp.name)tags.name=String(bp.name);
   if(bp.colour||bp.color||bp.building_colour)tags['building:colour']=String(bp.colour||bp.color||bp.building_colour);
   if(bp.class)tags['basemap:class']=String(bp.class);
@@ -609,8 +607,7 @@ map.on('load',async()=>{
   // Reconcile this one photo-checked landmark against the current OSM feature ID, not a nearby guess.
   const bocobo=buildingsData.features.find(f=>String(f.properties?.osm_feature_id||'')==='way/90123959');
   if(bocobo){bocobo.properties.tags=bocobo.properties.tags||{};bocobo.properties.tags.name='Manila Residences Bocobo';bocobo.properties.tags['building:levels']='34';bocobo.properties.tags.height='102';bocobo.properties.tags['building:colour']='#e5d5bd';bocobo.properties.tags['facade:reference']='Photo reviewed: Philippine Realty Group listing';}
-  // Basemap is the authority for visible buildings and heights. OSM footprints are retained as source records,
-  // but only features matched to Basemap render_height are rendered; stale OSM-only buildings stay hidden.
+  // Keep the original OSM dataset for attributes, then let live Basemap vector-tile geometry/heights replace the rendered building features.
   normalizeBuildingHeights(buildingsData);
   surfaceData={type:'FeatureCollection',features:(surfaceResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   addRoads(roadsData);
