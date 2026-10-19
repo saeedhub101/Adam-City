@@ -41,7 +41,7 @@
 <script>
 (async()=>{
 const root='/Adam-City/';
-const urls={buildings:root+'ermita/maps/generated/ermita-osm-building-footprints.geojson',microsoftBuildings:root+'ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson',roads:root+'ermita/maps/generated/ermita-road-network.geojson',boundary:root+'ermita/maps/sources/openfreemap/area-boundary.geojson',housenumbers:root+'ermita/maps/sources/openfreemap/layers/housenumber.geojsonl'};
+const urls={buildings:root+'ermita/maps/generated/ermita-osm-building-footprints.geojson',microsoftBuildings:root+'ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson',roads:root+'ermita/maps/generated/ermita-road-network.geojson',boundary:root+'ermita/maps/sources/openfreemap/area-boundary.geojson',housenumbers:root+'ermita/maps/sources/openfreemap/layers/housenumber.geojsonl',openfreemapBuildings:root+'ermita/maps/sources/openfreemap/layers/building.geojsonl'};
 const $=id=>document.getElementById(id), status=$('status');
 const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[120.9821,14.5848],zoom:15.1,pitch:62,bearing:-18,antialias:true});
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({maxWidth:100,unit:'metric'}),'bottom-left');
@@ -54,7 +54,7 @@ const buildingColor=['coalesce',tag('building:colour'),tag('building:color'),tag
 function setVis(ids,on){ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')})}
 map.on('load',async()=>{
  try{
-  const pairs=await Promise.all(Object.entries(urls).map(async([k,u])=>{const r=await fetch(u);if(!r.ok)throw Error(k+' HTTP '+r.status);if(k==='housenumbers'){const lines=(await r.text()).split(/\r?\n/).filter(Boolean);return[k,lines.map(line=>JSON.parse(line))]}return[k,await r.json()]}));
+  const pairs=await Promise.all(Object.entries(urls).map(async([k,u])=>{const r=await fetch(u);if(!r.ok)throw Error(k+' HTTP '+r.status);if(k==='housenumbers'||k==='openfreemapBuildings'){const lines=(await r.text()).split(/\r?\n/).filter(Boolean);return[k,lines.map(line=>JSON.parse(line)).filter(f=>f&&f.type==='Feature')]}return[k,await r.json()]}));
   const d=Object.fromEntries(pairs);
   // Publish the original OSM polygons separately from the newer OpenMapTiles-derived footprints.
   d.buildings.features=d.buildings.features.filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&f.properties?.tags?.building);
@@ -66,6 +66,8 @@ map.on('load',async()=>{
   for(const c of candidates){const coords=c.f.geometry.type==='Polygon'?c.f.geometry.coordinates:[].concat(...c.f.geometry.coordinates);const flat=[];const walk=x=>{if(typeof x[0]==='number')flat.push(x);else x.forEach(walk)};walk(coords);c.minX=Math.min(...flat.map(p=>p[0]));c.maxX=Math.max(...flat.map(p=>p[0]));c.minY=Math.min(...flat.map(p=>p[1]));c.maxY=Math.max(...flat.map(p=>p[1]))}
   let joined=0;for(const rec of d.housenumbers){const geom=rec.geometry;if(!geom)continue;const points=geom.type==='Point'?[geom.coordinates]:geom.type==='MultiPoint'?geom.coordinates:[];for(const point of points){for(const c of candidates){if(point[0]<c.minX||point[0]>c.maxX||point[1]<c.minY||point[1]>c.maxY)continue;if(contains(c.f.geometry,point)){const props=c.f.properties;props.tags=props.tags||{};if(!props.tags['addr:housenumber']){props.tags['addr:housenumber']=rec.properties?.housenumber;joined++}break}}}}
   map.addSource('local-buildings',{type:'geojson',data:d.buildings});
+  const ofmBuildingFeatures=d.openfreemapBuildings.filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type));
+  map.addSource('openfreemap-buildings',{type:'geojson',data:{type:'FeatureCollection',features:ofmBuildingFeatures}});
   map.addSource('microsoft-buildings',{type:'geojson',data:d.microsoftBuildings});
   map.addSource('local-roads',{type:'geojson',data:d.roads});
   map.addSource('local-boundary',{type:'geojson',data:d.boundary});
@@ -82,6 +84,8 @@ map.on('load',async()=>{
   map.addLayer({id:'local-road-surfaces',type:'line',source:'local-roads',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['match',['get','highway'],'motorway','#bfa78a','trunk','#c4ae91','primary','#c8b69c','secondary','#b8b4a8','tertiary','#c5c0b3','residential','#c8c4ba','service','#aaa99f','footway','#c9c5b7','pedestrian','#d2cbb9','steps','#b8b0a1','#bcb8ac'],'line-opacity':.98,'line-width':['interpolate',['linear'],['zoom'],11,.45,14,1.6,17,4.8]}});
   map.addLayer({id:'local-sidewalk-markings',type:'line',source:'local-roads',filter:['in',tag('sidewalk'),['literal',['both','left','right','yes']]],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#e5dfce','line-opacity':.9,'line-width':['interpolate',['linear'],['zoom'],15,.5,18,1.8],'line-offset':['interpolate',['linear'],['zoom'],15,1,18,3]}});
   map.addLayer({id:'local-building-extrusions',type:'fill-extrusion',source:'local-buildings',minzoom:13.2,paint:{'fill-extrusion-color':buildingColor,'fill-extrusion-height':height,'fill-extrusion-base':['coalesce',['to-number',tag('min_height')],['*',['to-number',tag('building:min_level')],3.15],0],'fill-extrusion-opacity':.98,'fill-extrusion-vertical-gradient':true}});
+  // OpenMapTiles building footprints from the repository's local GeoJSONL catalogue (separate from the OpenFreeMap basemap style).
+  map.addLayer({id:'openfreemap-building-extrusions',type:'fill-extrusion',source:'openfreemap-buildings',minzoom:13.2,layout:{visibility:'none'},paint:{'fill-extrusion-color':['coalesce',['get','colour'],['get','building:colour'], '#77b7d8'],'fill-extrusion-height':['max',2,['coalesce',['to-number',['get','render_height']],['to-number',['get','height']],['*',['to-number',['get','building:levels']],3.15],8]],'fill-extrusion-base':['max',0,['coalesce',['to-number',['get','render_min_height']],['to-number',['get','min_height']],0]],'fill-extrusion-opacity':0.86,'fill-extrusion-vertical-gradient':true}});
   // Microsoft footprints are a comparison overlay only: transparent fill and a vivid outline make mismatches easy to spot.
   map.addLayer({id:'microsoft-building-footprints-fill',type:'fill',source:'microsoft-buildings',minzoom:13.2,layout:{visibility:'none'},paint:{'fill-color':'#ff3ea5','fill-opacity':0.22}});
   map.addLayer({id:'microsoft-building-footprints-outline',type:'line',source:'microsoft-buildings',minzoom:13.2,layout:{visibility:'none','line-cap':'round','line-join':'round'},paint:{'line-color':'#ff3ea5','line-width':['interpolate',['linear'],['zoom'],13,1.2,17,2.8],'line-opacity':0.98}});
@@ -93,7 +97,7 @@ map.on('load',async()=>{
   map.fitBounds([[120.9711,14.5732],[120.9931,14.5971]],{padding:{top:55,right:325,bottom:35,left:30},duration:0});
   say('تم تحميل '+d.buildings.features.length.toLocaleString('en-US')+' بصمة مبنى أساسية و'+d.microsoftBuildings.features.length.toLocaleString('en-US')+' بصمة Microsoft للمقارنة و'+d.roads.features.length.toLocaleString('en-US')+' طريق/مسار. أُسنِدت '+joined.toLocaleString('en-US')+' أرقام إلى المباني الحاوية لها. فعّل مربع Microsoft لإظهار الحدود الوردية.');
   $('buildings').onchange=e=>setVis(['local-building-extrusions','local-building-roof-edges'],e.target.checked);
-  $('openfreemapBuildings').onchange=e=>setVis(openFreeMapBuildingLayerIds,e.target.checked);
+  $('openfreemapBuildings').onchange=e=>{const on=e.target.checked;setVis(['openfreemap-building-extrusions',...openFreeMapBuildingLayerIds],on);say(on?'مباني OpenMapTiles المحلية ظاهرة؛ عددها '+ofmBuildingFeatures.length.toLocaleString('en-US')+' بصمة.':'تم إخفاء مباني OpenMapTiles المحلية.');};
   $('microsoftBuildings').onchange=e=>{const on=e.target.checked;setVis(['microsoft-building-footprints-fill','microsoft-building-footprints-outline'],on);say(on?'طبقة Microsoft ظاهرة باللون الوردي فوق المباني الحالية للمقارنة؛ ألغِ التحديد لإخفائها.':'تم إخفاء طبقة Microsoft؛ المباني الأساسية ما زالت من مصدرها الحالي.');};
   $('numbers').onchange=e=>setVis(['building-house-numbers'],e.target.checked);
   $('bNames').onchange=e=>setVis(['local-building-name-labels'],e.target.checked);
