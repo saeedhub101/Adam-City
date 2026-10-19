@@ -43,6 +43,31 @@ def api(params):
     response.raise_for_status()
     return response.json()
 
+def title_matches(query: str, title: str) -> bool:
+    """Reject Commons search spillover whose file title does not name the target."""
+    t = re.sub(r"[^a-z0-9]+", " ", title.lower()).strip()
+    q = query.lower()
+    if "philippine general hospital" in q:
+        return "pgh" in t or "philippine general hospital" in t or "cancer institute building" in t
+    if "manila doctors hospital" in q:
+        return "manila doctors hospital" in t
+    if "national museum of fine arts" in q:
+        return "national museum" in t and ("fine arts" in t or "philippines" in t or "ermita" in t)
+    if "manila city hall" in q:
+        return "manila city hall" in t or "city hall of manila" in t
+    if "rizal memorial medical center" in q:
+        return "rizal memorial medical center" in t
+    if "ermita manila buildings street" in q:
+        return "ermita" in t and any(word in t for word in ("building", "street", "facade", "exterior"))
+    if "malate manila buildings street" in q:
+        return "malate" in t and any(word in t for word in ("building", "street", "facade", "exterior"))
+    if "university of the philippines manila" in q:
+        return ("university of the philippines" in t and "manila" in t) or "up manila" in t
+    if "st paul university manila" in q:
+        return "st paul university manila" in t or "saint paul university manila" in t
+    return False
+
+
 def main():
     existing = {}
     if CATALOG.exists():
@@ -83,6 +108,11 @@ def main():
                 if not license_name or not license_url:
                     continue
                 title = page.get("title", "image")
+                # Wikimedia search can return gallery pages or unrelated images whose
+                # long descriptions mention the query. Require the filename/title to
+                # identify the target before retaining it as a building candidate.
+                if not title_matches(query, title):
+                    continue
                 page_url = "https://commons.wikimedia.org/wiki/" + title.replace(" ", "_")
                 key = page_url
                 if key not in found:
