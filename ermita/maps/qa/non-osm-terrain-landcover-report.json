@@ -1,0 +1,60 @@
+{
+  "status": "success",
+  "area": "Ermita / Rizal Park, Manila, Philippines",
+  "aoi_bbox_wgs84": [
+    120.972,
+    14.572,
+    120.994,
+    14.593
+  ],
+  "retrieved_at_utc": "2026-10-19T17:48:57.987998+00:00",
+  "policy": "Non-OSM sources only; existing outputs are reused and never overwritten.",
+  "sources": {
+    "terrain": {
+      "name": "SRTM 1 arc-second terrain via AWS Terrain Tiles",
+      "url": "https://elevation-tiles-prod.s3.amazonaws.com/skadi/N14/N14E120.hgt.gz",
+      "license_reference": "https://registry.opendata.aws/terrain-tiles/"
+    },
+    "landcover": {
+      "name": "ESA WorldCover 2021 v200, 10 m",
+      "url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N12E120_Map.tif",
+      "license": "CC BY 4.0",
+      "attribution": "© ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium",
+      "license_reference": "https://esa-worldcover.org/en/data-access"
+    }
+  },
+  "outputs": {
+    "terrain": {
+      "status": "created",
+      "path": "ermita/maps/sources/terrain/srtm-1arcsec-ermita.tif",
+      "width": 80,
+      "height": 77,
+      "crs": "EPSG:4326",
+      "bands": 1,
+      "dtype": "int16",
+      "source_resolution": "approximately 1 arc-second"
+    },
+    "landcover": {
+      "status": "created",
+      "path": "ermita/maps/sources/landcover/esa-worldcover-2021-10m-ermita.tif",
+      "width": 264,
+      "height": 252,
+      "crs": "EPSG:4326",
+      "bands": 1,
+      "dtype": "uint8"
+    },
+    "vegetation_polygons": {
+      "status": "created",
+      "path": "ermita/maps/sources/landcover/vegetation-grass-classes-ermita.geojson",
+      "features": 530,
+      "class_counts": {
+        "bare_sparse_vegetation": 134,
+        "cropland": 12,
+        "grassland": 37,
+        "herbaceous_wetland": 1,
+        "tree_cover": 346
+      }
+    }
+  },
+  "warnings": []
+}
