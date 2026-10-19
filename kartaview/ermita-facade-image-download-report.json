@@ -1,0 +1,83 @@
+{
+  "status": "success",
+  "area": "Ermita, Manila, Philippines",
+  "source": "KartaView public street-level imagery",
+  "source_terms": "https://kartaview.org/terms",
+  "image_license": "CC BY-SA 4.0",
+  "attribution_required": "© Grab and KartaView Contributors",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "matched_rows_checked": 246,
+  "new_images_downloaded": 8,
+  "existing_images_skipped": 238,
+  "failures": [],
+  "new_image_details": [
+    {
+      "photo_id": "1725814073",
+      "path": "kartaview/images/1725814073.jpg",
+      "source_bytes": 12644412,
+      "stored_bytes": 436182,
+      "sha256": "c34de78455096027c60b390b9790d4fef99bbec803828d5b865667252c1dd597"
+    },
+    {
+      "photo_id": "1725770313",
+      "path": "kartaview/images/1725770313.jpg",
+      "source_bytes": 12656505,
+      "stored_bytes": 427687,
+      "sha256": "f08df6696ff0c69a75bd1886892bec8d0ed387ec4396adb91592ec30de18f7fa"
+    },
+    {
+      "photo_id": "1725814025",
+      "path": "kartaview/images/1725814025.jpg",
+      "source_bytes": 12825337,
+      "stored_bytes": 435508,
+      "sha256": "867a74f8918a0bdfafb73a87799210c023cfe351d1cb0281c89e1900298969bd"
+    },
+    {
+      "photo_id": "1703939641",
+      "path": "kartaview/images/1703939641.jpg",
+      "source_bytes": 13030268,
+      "stored_bytes": 438304,
+      "sha256": "6f4ae61d561b0c0cb184a6fc2890963238e7d6532bd330f7f1d20006a0db7810"
+    },
+    {
+      "photo_id": "1725813977",
+      "path": "kartaview/images/1725813977.jpg",
+      "source_bytes": 13239912,
+      "stored_bytes": 453933,
+      "sha256": "f6cac65584d97e8cfa212e76b76baa49d5e6d5a6f403937b1de75842dbd5df40"
+    },
+    {
+      "photo_id": "1725814041",
+      "path": "kartaview/images/1725814041.jpg",
+      "source_bytes": 13399311,
+      "stored_bytes": 436506,
+      "sha256": "38e64439480d2b7073883dd32bcfc227942552cad51b4e790971721011ce5627"
+    },
+    {
+      "photo_id": "1750133513",
+      "path": "kartaview/images/1750133513.jpg",
+      "source_bytes": 13808352,
+      "stored_bytes": 447662,
+      "sha256": "e2ec0ef480cf34f1e3d01c452ed6d5f72065b82f80d114d640bcc3d34b7f67ce"
+    },
+    {
+      "photo_id": "2488149561",
+      "path": "kartaview/images/2488149561.jpg",
+      "source_bytes": 24719540,
+      "stored_bytes": 367304,
+      "sha256": "c93b6c4ddd7431d88994f2b4c9c1f2c2265258f9547563ca32c854ca318e5c7a"
+    }
+  ],
+  "outputs": [
+    "kartaview/images/",
+    "kartaview/ermita-real-facade-images.csv",
+    "ermita/3d/facade-photo-review.csv"
+  ],
+  "important_limitations": [
+    "These are geolocation/heading-based facade candidates, not visually confirmed building identities.",
+    "No KartaView layer or photo points are added to the map.",
+    "Photos are not automatically projected onto 3D building walls; use only after visual identity verification.",
+    "Images are resized to a maximum 2400 px edge and optimized to keep repository size manageable.",
+    "Attribution and CC BY-SA 4.0 licensing information are retained in the catalog."
+  ]
+}
