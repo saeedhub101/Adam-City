@@ -722,7 +722,28 @@ map.on('load',async()=>{
    loadGeoJSON('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/external/dpwh-road-surface-type-ermita.geojson','DPWH road data')
   ]);
   roadsData={type:'FeatureCollection',features:(roadResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
-  buildingsData={type:'FeatureCollection',features:(buildingResult.features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
+  const sevenElevenFootprints=new Set(['way/308701704','way/90301215','way/267205333','way/103494320']);
+  buildingsData={type:'FeatureCollection',features:(buildingResult.features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']||String(f.properties?.osm_feature_id||'')==='way/48894714'))};
+  for(const f of buildingsData.features){
+   const p=f.properties||(f.properties={}),tags=p.tags||(p.tags={}),id=String(p.osm_feature_id||'');
+   if(sevenElevenFootprints.has(id)){
+    tags.name='7-Eleven';
+    tags.brand='7-Eleven';
+    tags['building:colour']='#168641';
+    tags['facade:brand']='7-Eleven';
+    tags['facade:style']='green fascia, orange-red-green horizontal bands, white 7-Eleven sign';
+   }
+   if(id==='way/48894714'){
+    tags.name='Robinsons Manila';
+    tags.shop='mall';
+    tags.building=tags.building||'retail';
+    tags['building:levels']=tags['building:levels']||'4';
+    tags.height=tags.height||'18';
+    tags['building:colour']='#d7d1c7';
+    tags['facade:brand']='Robinsons Manila';
+    tags['facade:style']='Robinsons Place Manila mall facade, light neutral cladding, red Robinsons signage';
+   }
+  }
   osmBuildingsData=buildingsData;
   // Reconcile this one photo-checked landmark against the current OSM feature ID, not a nearby guess.
   const bocobo=buildingsData.features.find(f=>String(f.properties?.osm_feature_id||'')==='way/90123959');
@@ -744,7 +765,6 @@ map.on('load',async()=>{
   // Keep optional layers isolated: failure in a 3D mesh or bridge parser must not prevent road rendering.
   for(const [label,fn] of [['landmarks',addLandmarks],['street mesh',()=>addStreetMesh(roadsData)],['satellite imagery',addSatelliteImagery],['bridges and stairs',addBridgeAndStairLayers]]){
    try{fn();}catch(err){console.error(label+' failed:',err);}
-  }
   }
   // Apply the current checkbox states after asynchronous data loading, even if a user unchecked a layer early.
   const setVisibility=(ids,visible)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visible?'visible':'none')});
