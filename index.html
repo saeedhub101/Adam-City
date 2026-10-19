@@ -1,114 +1,89 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#101820">
-<title>ADAM CITY | Ermita 3D</title>
-<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111b21"><title>ADAM CITY — Ermita 3D</title>
+<link href="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.css" rel="stylesheet">
 <style>
-:root{color-scheme:dark;--bg:#101820;--panel:#14212b;--line:#334651;--text:#f2f6f8;--muted:#a2b2bc;--accent:#78e3bf}
-*{box-sizing:border-box}html,body,main,#map{margin:0;width:100%;height:100%;overflow:hidden}
-body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-main{position:relative}#map{position:absolute;inset:0;background:#111b22}
-.panel{position:absolute;z-index:5;top:14px;right:14px;width:min(305px,calc(100vw - 28px));padding:14px;background:#111c25f2;border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 35px #0005;backdrop-filter:blur(12px)}
-.brand{font-weight:850;font-size:18px;letter-spacing:.08em;direction:ltr;text-align:right}.brand span{color:var(--accent)}
-.sub{font-size:11px;color:var(--muted);margin:3px 0 12px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
-.stat{padding:8px 5px;background:#1b2a34;border-radius:8px;text-align:center}.stat strong{display:block;font-size:16px;color:var(--accent)}.stat span{font-size:10px;color:var(--muted)}
-.options{display:grid;gap:7px}.opt{display:flex;align-items:center;gap:9px;padding:9px 10px;border:1px solid #344754;background:#1b2a34;border-radius:9px;font-size:12px;cursor:pointer}.opt:has(input:checked){border-color:var(--accent);background:#19352f}.opt input{width:16px;height:16px;margin:0;accent-color:var(--accent)}.opt span{flex:1}.opt small{color:var(--muted);font-size:10px}
-.status{font-size:11px;color:var(--muted);line-height:1.6;margin-top:11px;min-height:18px}
-.credit{position:absolute;z-index:4;bottom:12px;left:12px;max-width:calc(100vw - 24px);padding:7px 10px;background:#111c25e8;border:1px solid var(--line);border-radius:8px;color:#d6e1e7;font-size:10px}
-.maplibregl-ctrl-group{overflow:hidden;border-radius:9px!important}
-@media(max-width:560px){.panel{top:8px;right:8px;width:min(278px,calc(100vw - 16px));padding:11px}.credit{bottom:8px;left:8px}}
-</style>
-</head>
-<body><main>
-<div id="map" aria-label="نموذج ثلاثي الأبعاد لمنطقة إرميتا في مانيلا"></div>
-<section class="panel">
- <div class="brand">ADAM <span>CITY</span></div>
- <div class="sub">ERMITA · MANILA, PHILIPPINES</div>
- <div class="stats">
-  <div class="stat"><strong>1,533</strong><span>مبنى/جزء مبنى</span></div>
-  <div class="stat"><strong>1,445</strong><span>طريق ومسار</span></div>
-  <div class="stat"><strong>OSM</strong><span>مصدر البيانات</span></div>
- </div>
- <div class="options">
-  <label class="opt"><input type="checkbox" id="buildings" checked><span>المباني ثلاثية الأبعاد</span><small>Footprints</small></label>
-  <label class="opt"><input type="checkbox" id="roads" checked><span>الطرق والمسارات</span><small>Road network</small></label>
-  <label class="opt"><input type="checkbox" id="labels" checked><span>أسماء الطرق والمباني</span><small>Labels</small></label>
-  <label class="opt"><input type="checkbox" id="boundary" checked><span>حدود منطقة إرميتا</span><small>Boundary</small></label>
- </div>
- <div class="status" id="status" role="status">جارٍ تحميل بيانات OpenStreetMap المحفوظة في المستودع…</div>
-</section>
-<div class="credit">© OpenStreetMap contributors · ODbL 1.0 · ارتفاعات المباني المجهولة معروضة كتقدير بصري فقط</div>
-</main>
-<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+:root{color-scheme:dark;--panel:#101b23ed;--line:#334954;--text:#f3f7f8;--muted:#aab9c0;--accent:#7ce3c0}
+*{box-sizing:border-box}html,body,main,#map{margin:0;width:100%;height:100%;overflow:hidden}body{background:#111b21;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}main{position:relative}#map{position:absolute;inset:0}
+.panel{position:absolute;z-index:5;top:12px;right:12px;width:min(315px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:auto;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 35px #0006;backdrop-filter:blur(12px)}
+.brand{font-weight:900;font-size:19px;letter-spacing:.08em;direction:ltr;text-align:right}.brand span{color:var(--accent)}.sub{font-size:11px;color:var(--muted);margin:2px 0 11px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}.stat{padding:8px 3px;background:#1b2b34;border-radius:8px;text-align:center}.stat strong{display:block;font-size:16px;color:var(--accent)}.stat span{font-size:10px;color:var(--muted)}
+.group-title{font-size:11px;font-weight:800;color:var(--accent);margin:11px 2px 6px}.options{display:grid;grid-template-columns:1fr 1fr;gap:6px}.opt{display:flex;align-items:center;gap:7px;padding:8px;border:1px solid #344954;background:#1b2a33;border-radius:8px;font-size:11px;cursor:pointer;min-width:0}.opt:has(input:checked){border-color:var(--accent);background:#19352f}.opt input{width:15px;height:15px;margin:0;accent-color:var(--accent);flex-shrink:0}.opt span{line-height:1.3}
+.status{font-size:11px;color:var(--muted);line-height:1.6;margin-top:10px;min-height:22px}.assets{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;font-size:10px}.assets a{color:#9eead3;text-decoration:none;border-bottom:1px solid #51796e}
+.credit{position:absolute;z-index:4;bottom:10px;left:10px;max-width:calc(100vw - 20px);padding:7px 10px;background:#101b23e8;border:1px solid var(--line);border-radius:8px;color:#e0e9ec;font-size:10px}.maplibregl-ctrl-group{overflow:hidden;border-radius:9px!important}
+@media(max-width:560px){.panel{top:7px;right:7px;width:min(286px,calc(100vw - 14px));max-height:62vh;padding:10px}.credit{bottom:7px;left:7px}}
+</style></head>
+<body><main><div id="map" aria-label="مدينة إرميتا ثلاثية الأبعاد"></div>
+<section class="panel"><div class="brand">ADAM <span>CITY</span></div><div class="sub">ERMITA · MANILA · PHILIPPINES</div>
+<div class="stats"><div class="stat"><strong>1,528</strong><span>بصمة مبنى OSM</span></div><div class="stat"><strong>1,445</strong><span>طريق ومسار</span></div><div class="stat"><strong>DEM</strong><span>Copernicus GLO-30</span></div></div>
+<div class="group-title">المباني</div><div class="options">
+<label class="opt"><input id="buildings" type="checkbox" checked><span>مجسمات المباني</span></label>
+<label class="opt"><input id="numbers" type="checkbox" checked><span>أرقام المباني على أسطحها</span></label>
+<label class="opt"><input id="bNames" type="checkbox" checked><span>أسماء المباني</span></label>
+<label class="opt"><input id="facade" type="checkbox" checked><span>ألوان الواجهات وطبقاتها</span></label>
+</div>
+<div class="group-title">الشوارع والمدينة</div><div class="options">
+<label class="opt"><input id="roads" type="checkbox" checked><span>الطرق والمسارات</span></label>
+<label class="opt"><input id="sidewalks" type="checkbox" checked><span>علامات الأرصفة المتاحة</span></label>
+<label class="opt"><input id="rNames" type="checkbox" checked><span>أسماء الشوارع</span></label>
+<label class="opt"><input id="baseMap" type="checkbox" checked><span>تفاصيل OpenFreeMap</span></label>
+<label class="opt"><input id="boundary" type="checkbox" checked><span>حدود إرميتا</span></label>
+</div>
+<div class="status" id="status" role="status">جارٍ تحميل بيانات المباني والطرق وOpenFreeMap…</div>
+<div class="assets"><a href="assets/ermita-terrain-surface.glb" target="_blank" rel="noopener">نموذج التضاريس GLB</a><a href="assets/adam-city-complete.glb" target="_blank" rel="noopener">تصدير المدينة GLB</a><a href="assets/ermita-copernicus-dem-cropped.tif" target="_blank" rel="noopener">ملف DEM GeoTIFF</a></div>
+</section><div class="credit">© OpenStreetMap contributors · ODbL · OpenFreeMap / OpenMapTiles · Copernicus DEM GLO-30 (DSM، دقة اسمية 30م)</div></main>
+<script src="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
 <script>
-(async function(){
-const base='/Adam-City/ermita/maps/';
-const urls={
- buildings:base+'generated/ermita-building-footprints.geojson',
- roads:base+'generated/ermita-road-network.geojson',
- details:base+'generated/ermita-building-details.geojson',
- boundary:base+'sources/openfreemap/area-boundary.geojson'
-};
-const status=document.getElementById('status');
-const empty={version:8,sources:{},layers:[{id:'bg',type:'background',paint:{'background-color':'#111b22'}}]};
-const map=new maplibregl.Map({container:'map',style:empty,center:[120.9821,14.5848],zoom:14.4,pitch:58,bearing:-18,antialias:true});
-map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');
-map.addControl(new maplibregl.ScaleControl({maxWidth:100,unit:'metric'}),'bottom-left');
-function say(s){status.textContent=s}
-function heightExpression(){
- return ['max',3,['coalesce',
-  ['to-number',['get','height']],
-  ['to-number',['get','height',['get','tags']]],
-  ['*',['to-number',['get','building:levels']],3.2],
-  ['*',['to-number',['get','building:levels',['get','tags']]],3.2],
-  ['*',['to-number',['get','levels']],3.2],
-  8
- ]];
-}
-function textName(){
- return ['coalesce',['get','name'],['get','name',['get','tags']],['get','official_name'],['get','official_name',['get','tags']],''];
-}
+(async()=>{
+const root='/Adam-City/';
+const urls={buildings:root+'ermita/maps/generated/ermita-osm-building-footprints.geojson',roads:root+'ermita/maps/generated/ermita-road-network.geojson',boundary:root+'ermita/maps/sources/openfreemap/area-boundary.geojson'};
+const $=id=>document.getElementById(id), status=$('status');
+const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[120.9821,14.5848],zoom:15.1,pitch:62,bearing:-18,antialias:true});
+map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({maxWidth:100,unit:'metric'}),'bottom-left');
+const say=s=>status.textContent=s;
+const tag=(key)=>['coalesce',['get',key,['get','tags']],['get',key]];
+const safeText=['coalesce',tag('name'),tag('official_name'),tag('alt_name'),''];
+const houseNo=['coalesce',tag('addr:housenumber'),tag('ref'),''];
+const height=['max',3,['coalesce',['to-number',tag('height')],['*',['to-number',tag('building:levels')],3.15],['*',['to-number',tag('levels')],3.15],8]];
+const buildingColor=['coalesce',tag('building:colour'),tag('building:color'),tag('colour'),['match',tag('building'),'hospital','#d9c9b7','commercial','#c9b9a7','retail','#d6c8b4','apartments','#c4c4bd','industrial','#a8b0b1','church','#d7c9a8','school','#cfc8b5','#c9c5bb']];
+function setVis(ids,on){ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')})}
 map.on('load',async()=>{
  try{
-  const results=await Promise.all(Object.entries(urls).map(async ([key,url])=>{
-   const response=await fetch(url);
-   if(!response.ok)throw new Error(key+' HTTP '+response.status);
-   return [key,await response.json()];
-  }));
-  const data=Object.fromEntries(results);
-  map.addSource('osm-buildings',{type:'geojson',data:data.buildings});
-  map.addSource('osm-roads',{type:'geojson',data:data.roads});
-  map.addSource('osm-building-details',{type:'geojson',data:data.details});
-  map.addSource('ermita-boundary',{type:'geojson',data:data.boundary});
-  map.addLayer({id:'boundary-fill',type:'fill',source:'ermita-boundary',paint:{'fill-color':'#78e3bf','fill-opacity':0.035}});
-  map.addLayer({id:'boundary-line',type:'line',source:'ermita-boundary',paint:{'line-color':'#78e3bf','line-width':2,'line-dasharray':[2,1]}});
-  map.addLayer({id:'road-casing',type:'line',source:'osm-roads',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#070d12','line-opacity':0.9,'line-width':['interpolate',['linear'],['zoom'],12,1.1,16,4.2]}});
-  map.addLayer({id:'road-lines',type:'line',source:'osm-roads',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['match',['get','highway'],'motorway','#f0b66b','trunk','#e7ad68','primary','#d9a56d','secondary','#b9c8cf','tertiary','#8fa7b3','residential','#617986','service','#455b68','#506874'],'line-opacity':0.96,'line-width':['interpolate',['linear'],['zoom'],11,0.4,15,2.2,17,4.2]}});
-  map.addLayer({id:'building-extrusions',type:'fill-extrusion',source:'osm-buildings',minzoom:12.2,paint:{'fill-extrusion-color':['case',['has','name'],'#80cdb6','#688d9c'],'fill-extrusion-height':heightExpression(),'fill-extrusion-base':['coalesce',['to-number',['get','min_height']],['*',['to-number',['get','min_level']],3.2],0],'fill-extrusion-opacity':0.94,'fill-extrusion-vertical-gradient':true}});
-  map.addLayer({id:'building-outlines',type:'line',source:'osm-buildings',minzoom:14.5,paint:{'line-color':'#c0e4d9','line-opacity':0.45,'line-width':0.5}});
-  map.addLayer({id:'building-names',type:'symbol',source:'osm-building-details',minzoom:15.3,filter:['all',['==',['geometry-type'],'Point'],['!=',textName(),'']],layout:{'text-field':textName(),'text-size':10,'text-font':['Open Sans Regular'],'text-offset':[0,0.8],'text-anchor':'top','text-allow-overlap':false},paint:{'text-color':'#f4f7f8','text-halo-color':'#17232d','text-halo-width':1.3}});
-  map.addLayer({id:'road-names',type:'symbol',source:'osm-roads',minzoom:13.4,filter:['has','name'],layout:{'symbol-placement':'line','text-field':['get','name'],'text-size':['interpolate',['linear'],['zoom'],13,9,17,12],'text-font':['Open Sans Regular'],'text-max-angle':35},paint:{'text-color':'#e4edf0','text-halo-color':'#14212b','text-halo-width':1.5}});
-  map.fitBounds([[120.9711,14.5732],[120.9931,14.5971]],{padding:{top:65,right:335,bottom:35,left:35},duration:0});
-  const counts=data.buildings.features?.length||1533,roadsCount=data.roads.features?.length||1445;
-  say('تم تحميل بيانات المستودع: '+counts.toLocaleString('en-US')+' مبنى/جزء مبنى و'+roadsCount.toLocaleString('en-US')+' طريقًا أو مسارًا. يمكنك إظهار الطبقات وإخفاؤها من هنا.');
-  document.getElementById('buildings').addEventListener('change',e=>{map.setLayoutProperty('building-extrusions','visibility',e.target.checked?'visible':'none');map.setLayoutProperty('building-outlines','visibility',e.target.checked?'visible':'none');map.setLayoutProperty('building-names','visibility',e.target.checked&&document.getElementById('labels').checked?'visible':'none')});
-  document.getElementById('roads').addEventListener('change',e=>{['road-casing','road-lines'].forEach(id=>map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none'));map.setLayoutProperty('road-names','visibility',e.target.checked&&document.getElementById('labels').checked?'visible':'none')});
-  document.getElementById('labels').addEventListener('change',e=>{const v=e.target.checked?'visible':'none';map.setLayoutProperty('road-names','visibility',v);map.setLayoutProperty('building-names','visibility',v)});
-  document.getElementById('boundary').addEventListener('change',e=>['boundary-fill','boundary-line'].forEach(id=>map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')));
-  map.on('click','building-extrusions',e=>{
-   const p=e.features&&e.features[0]&&e.features[0].properties;if(!p)return;
-   const tags=p.tags||{};const name=p.name||tags.name||tags['official_name']||'مبنى غير مسمّى';
-   const height=p.height||tags.height||'غير مسجّل';
-   new maplibregl.Popup({closeButton:true}).setLngLat(e.lngLat).setHTML('<div dir="rtl" style="font:13px system-ui;min-width:140px"><b>'+String(name).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))+'</b><br>الارتفاع المسجّل: '+String(height)+'</div>').addTo(map);
-  });
-  map.on('mouseenter','building-extrusions',()=>map.getCanvas().style.cursor='pointer');
-  map.on('mouseleave','building-extrusions',()=>map.getCanvas().style.cursor='');
- }catch(err){console.error(err);say('تعذر تحميل ملفات بيانات المدينة. تأكد من اكتمال نشر GitHub Pages. '+err.message)}
+  const pairs=await Promise.all(Object.entries(urls).map(async([k,u])=>{const r=await fetch(u);if(!r.ok)throw Error(k+' HTTP '+r.status);return[k,await r.json()]}));
+  const d=Object.fromEntries(pairs);
+  // Publish the original OSM polygons separately from the newer OpenMapTiles-derived footprints.
+  d.buildings.features=d.buildings.features.filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&f.properties?.tags?.building);
+  map.addSource('local-buildings',{type:'geojson',data:d.buildings});
+  map.addSource('local-roads',{type:'geojson',data:d.roads});
+  map.addSource('local-boundary',{type:'geojson',data:d.boundary});
+  // Keep the rich OpenFreeMap streets, parks, water and place-name style; local verified OSM geometry overlays it.
+  const layers=map.getStyle().layers||[];
+  for(const l of layers){if(l.id&&/building_3d|building-extrusion/i.test(l.id))map.setLayoutProperty(l.id,'visibility','none')}
+  map.addLayer({id:'ermita-boundary-fill',type:'fill',source:'local-boundary',paint:{'fill-color':'#65d9b0','fill-opacity':0.045}});
+  map.addLayer({id:'ermita-boundary-line',type:'line',source:'local-boundary',paint:{'line-color':'#68e2b8','line-width':2,'line-dasharray':[2,1]}});
+  map.addLayer({id:'local-road-casing',type:'line',source:'local-roads',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#202326','line-opacity':.88,'line-width':['interpolate',['linear'],['zoom'],12,1,16,5,18,8]}});
+  map.addLayer({id:'local-road-surfaces',type:'line',source:'local-roads',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['match',['get','highway'],'motorway','#bfa78a','trunk','#c4ae91','primary','#c8b69c','secondary','#b8b4a8','tertiary','#c5c0b3','residential','#c8c4ba','service','#aaa99f','footway','#c9c5b7','pedestrian','#d2cbb9','steps','#b8b0a1','#bcb8ac'],'line-opacity':.98,'line-width':['interpolate',['linear'],['zoom'],11,.45,14,1.6,17,4.8]}});
+  map.addLayer({id:'local-sidewalk-markings',type:'line',source:'local-roads',filter:['in',tag('sidewalk'),['literal',['both','left','right','yes']]],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#e5dfce','line-opacity':.9,'line-width':['interpolate',['linear'],['zoom'],15,.5,18,1.8],'line-offset':['interpolate',['linear'],['zoom'],15,1,18,3]}});
+  map.addLayer({id:'local-building-extrusions',type:'fill-extrusion',source:'local-buildings',minzoom:13.2,paint:{'fill-extrusion-color':buildingColor,'fill-extrusion-height':height,'fill-extrusion-base':['coalesce',['to-number',tag('min_height')],['*',['to-number',tag('building:min_level')],3.15],0],'fill-extrusion-opacity':.98,'fill-extrusion-vertical-gradient':true}});
+  map.addLayer({id:'local-building-roof-edges',type:'line',source:'local-buildings',minzoom:14.5,paint:{'line-color':'#645f56','line-opacity':.6,'line-width':.6}});
+  // Address numbers are polygon labels, not clickable point markers.
+  map.addLayer({id:'building-house-numbers',type:'symbol',source:'local-buildings',minzoom:16.1,filter:['!=',houseNo,''],layout:{'symbol-placement':'point','text-field':houseNo,'text-font':['Noto Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],16,9,19,13],'text-allow-overlap':false,'text-ignore-placement':false,'symbol-z-elevate':true,'text-anchor':'center'},paint:{'text-color':'#2c2924','text-halo-color':'#f8f2e5','text-halo-width':1.5,'text-halo-blur':.2}});
+  map.addLayer({id:'local-building-name-labels',type:'symbol',source:'local-buildings',minzoom:15.3,filter:['!=',safeText,''],layout:{'symbol-placement':'point','text-field':safeText,'text-font':['Noto Sans Regular'],'text-size':10,'text-max-width':9,'text-allow-overlap':false,'symbol-z-elevate':true},paint:{'text-color':'#f9f6ec','text-halo-color':'#363b3c','text-halo-width':1.4}});
+  map.addLayer({id:'local-street-labels',type:'symbol',source:'local-roads',minzoom:13.2,filter:['has','name'],layout:{'symbol-placement':'line','text-field':['coalesce',['get','name:en'],['get','name']],'text-font':['Noto Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],13,9,17,12],'text-max-angle':35},paint:{'text-color':'#fff8e9','text-halo-color':'#4b4b45','text-halo-width':1.5}});
+  map.fitBounds([[120.9711,14.5732],[120.9931,14.5971]],{padding:{top:55,right:325,bottom:35,left:30},duration:0});
+  say('تم تحميل '+d.buildings.features.length.toLocaleString('en-US')+' بصمة مبنى أصلية من OSM و'+d.roads.features.length.toLocaleString('en-US')+' طريق/مسار. أسماء الشوارع وأرقام المباني تظهر عند التقريب المناسب. الارتفاعات غير المسجلة تقديرية.');
+  $('buildings').onchange=e=>setVis(['local-building-extrusions','local-building-roof-edges'],e.target.checked);
+  $('numbers').onchange=e=>setVis(['building-house-numbers'],e.target.checked);
+  $('bNames').onchange=e=>setVis(['local-building-name-labels'],e.target.checked);
+  $('facade').onchange=e=>{if(map.getLayer('local-building-extrusions'))map.setPaintProperty('local-building-extrusions','fill-extrusion-color',e.target.checked?buildingColor:'#c8c5bd')};
+  $('roads').onchange=e=>setVis(['local-road-casing','local-road-surfaces','local-street-labels'],e.target.checked);
+  $('sidewalks').onchange=e=>setVis(['local-sidewalk-markings'],e.target.checked);
+  $('rNames').onchange=e=>setVis(['local-street-labels'],e.target.checked&&$('roads').checked);
+  $('boundary').onchange=e=>setVis(['ermita-boundary-fill','ermita-boundary-line'],e.target.checked);
+  $('baseMap').onchange=e=>{for(const l of map.getStyle().layers||[]){if(l.id==='background'||l.id?.startsWith('local-')||l.id?.startsWith('ermita-boundary')||l.id==='building-house-numbers')continue;try{map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}catch(_){}}};
+ }catch(e){console.error(e);say('تعذر تحميل بيانات المدينة: '+e.message+' — راجع سجل Actions وملفات النشر.')}
 });
 })();
-</script>
-</body></html>
+</script></body></html>
