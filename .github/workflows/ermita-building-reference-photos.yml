@@ -23,6 +23,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/workflows/ermita-building-reference-photos.yml
+            ermita/scripts/import_commons_building_photos.py
+            ermita/buildings/reference_photos
+            ermita/buildings/reference_photos_catalog.json
+          sparse-checkout-cone-mode: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
