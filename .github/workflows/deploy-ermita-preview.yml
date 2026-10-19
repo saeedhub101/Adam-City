@@ -23,8 +23,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout main
+      - name: Checkout only the single-page site (avoid downloading multi-GB source archives)
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            index.html
+          sparse-checkout-cone-mode: false
+          fetch-depth: 1
       - name: Prepare static map site
         run: |
           set -e
