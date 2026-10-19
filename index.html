@@ -200,10 +200,10 @@ map.on('load',async()=>{
   buildingsData={type:'FeatureCollection',features:(results[1].features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
   surfaceData={type:'FeatureCollection',features:(results[2].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   // Facade photos are not presented as popups. Only validated photo-to-building texture assignments may be rendered.
-  addBuildings(buildingsData);addRoads(roadsData);addDpwRoadSurface(surfaceData);addLandmarks();addBrandedStores(results[4]);addSatelliteImagery();addLocalAerialImagery();
-  const storeFeatures=results[4].features||[];const storeCounts={};storeFeatures.forEach(f=>{const b=f.properties&&f.properties.brand;storeCounts[b]=(storeCounts[b]||0)+1});
+  addBuildings(buildingsData);addRoads(roadsData);addDpwRoadSurface(surfaceData);addLandmarks();addBrandedStores(results[3]);addSatelliteImagery();addLocalAerialImagery();
+  const storeFeatures=results[3].features||[];const storeCounts={};storeFeatures.forEach(f=>{const b=f.properties&&f.properties.brand;storeCounts[b]=(storeCounts[b]||0)+1});
    
-   setStatus(buildingsData.features.length.toLocaleString()+' building outlines · KartaView candidates: '+photoBuildingCount+' features; '+multiPhotoCount+' with 2+ photos; '+threePhotoCount+' with 3+ photos. Candidate matches are not visually verified.');
+   setStatus(buildingsData.features.length.toLocaleString()+' building outlines loaded · 3D extrusions active. Facade-photo popup fallback removed; verified texture assignments are not yet available.');
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
 });
 document.getElementById('imagery').addEventListener('change',e=>setSatelliteImagery(e.target.checked));
