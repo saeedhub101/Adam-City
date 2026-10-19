@@ -1,0 +1,41 @@
+name: Import authoritative Basemap building geometry
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/import_basemap_buildings.py"
+      - ".github/workflows/import-basemap-buildings.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: basemap-building-import
+  cancel-in-progress: false
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install tile and geometry decoders
+        run: pip install mapbox-vector-tile shapely
+      - name: Download Basemap building tiles and replace OSM geometry
+        run: python scripts/import_basemap_buildings.py
+      - name: Commit the Basemap-derived building dataset to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ermita/maps/generated/ermita-building-footprints.geojson
+          if git diff --cached --quiet; then
+            echo "Basemap-derived building data is already current."
+          else
+            git commit -m "Replace OSM building geometry with current Basemap data"
+            git push origin main
+          fi
