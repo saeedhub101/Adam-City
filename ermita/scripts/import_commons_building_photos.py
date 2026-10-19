@@ -234,7 +234,7 @@ def main():
             item["location_status"] = "outside_or_unverified_target_area"
             item["use_as_target_facade_reference"] = False
             item["location_note"] = "Manila-context architecture reference, not a verified facade match inside the current project AOI."
-        elif any(term in title for term in ("ermita", "malate", "philippine general hospital", "pgh cancer institute", "national museum of the philippines", "university of the philippines manila", "up manila")):
+        elif any(term in title for term in ("ermita", "malate", "bocobo", "robinsons place manila", "philippine general hospital", "pgh cancer institute", "national museum of the philippines", "university of the philippines manila", "up manila")):
             item["location_status"] = "likely_target_area_candidate"
             item["use_as_target_facade_reference"] = True
             item["exact_building_identity_verified"] = False
