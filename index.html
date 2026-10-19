@@ -185,9 +185,10 @@ function addLocalRamonModel(){
    this.loader=new THREE.GLTFLoader();
    this.loader.load(modelUrl,gltf=>{
     this.model=gltf.scene;
-    // The source mesh is Z-up (its ~55 m building height is on the Z axis).
-    // Convert it to Three.js Y-up before measuring/scaling so it stands vertically.
-    this.model.rotation.x=-Math.PI/2;
+    // GLB/glTF assets use Y-up coordinates. Do not apply the old X-axis
+    // quarter-turn here: it tipped the building onto its side/upside down.
+    // Keep the authored model orientation, then ground it using its Y bounds.
+    this.model.rotation.set(0,0,0);
     const bounds=new THREE.Box3().setFromObject(this.model);
     const size=bounds.getSize(new THREE.Vector3());
     const center=bounds.getCenter(new THREE.Vector3());
