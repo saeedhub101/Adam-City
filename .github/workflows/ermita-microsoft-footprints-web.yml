@@ -1,42 +1,16 @@
-name: Prepare Microsoft building footprints for map comparison
+name: RETIRED — Microsoft footprint converter
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'ermita/maps/external/ermita-microsoft-building-footprints.geojsonl.gz'
-      - 'ermita/scripts/prepare_microsoft_building_footprints.py'
-      - '.github/workflows/ermita-microsoft-footprints-web.yml'
 
 permissions:
-  contents: write
-
-concurrency:
-  group: ermita-microsoft-footprints-web-main
-  cancel-in-progress: false
+  contents: read
 
 jobs:
-  convert:
+  retired:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Convert saved Microsoft GeoJSONL archive to browser-ready GeoJSON
-        run: python ermita/scripts/prepare_microsoft_building_footprints.py
-      - name: Commit derived file to main
+      - name: Confirm source is disabled
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ermita/maps/external/ermita-microsoft-building-footprints.geojson
-          if git diff --cached --quiet; then
-            echo "No Microsoft footprint changes to commit."
-          else
-            git commit -m "Prepare Microsoft footprints for map comparison"
-            git pull --rebase origin main
-            git push origin main
-          fi
+          echo "Microsoft footprint conversion is retired; the source data was removed."
+          echo "This workflow will not download, convert, upload, or commit any footprint data."
