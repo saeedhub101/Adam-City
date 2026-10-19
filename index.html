@@ -11,69 +11,98 @@
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
 main{height:100%;width:100%;position:relative}
-#map{position:absolute;inset:0;background:#d5e0e2}
+#map{position:absolute;inset:0;background:#101820}
 .toolbar{position:absolute;z-index:5;top:14px;right:14px;width:min(290px,calc(100vw - 28px));padding:14px;background:#111c25f2;border:1px solid #334651;border-radius:14px;box-shadow:0 10px 35px #0004;backdrop-filter:blur(12px)}
 .brand{font-weight:850;font-size:17px;letter-spacing:.08em;direction:ltr;text-align:right}.brand span{color:var(--accent)}
 .sub{font-size:11px;color:var(--muted);margin:3px 0 13px}
-.label{font-size:11px;color:#bdcbd3;margin-bottom:8px}
-.sources{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-button{border:1px solid #344754;background:#1c2b36;color:#e7eef2;border-radius:9px;padding:10px 8px;font:inherit;font-size:12px;cursor:pointer;transition:.15s}
-button:hover{border-color:var(--accent)}
-button.active{background:var(--accent);color:#092119;border-color:var(--accent);font-weight:750}
-button:disabled{opacity:.5;cursor:not-allowed}
-.source-status{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;min-height:18px}
+.label{font-size:11px;color:#bdcbd3;margin-bottom:9px}
+.sources{display:grid;gap:9px}
+.source-option{display:flex;align-items:center;gap:10px;border:1px solid #344754;background:#1c2b36;color:#e7eef2;border-radius:9px;padding:10px;font-size:12px;cursor:pointer}
+.source-option:has(input:checked){border-color:var(--accent);background:#18352f}
+.source-option input{width:16px;height:16px;margin:0;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
+.source-option span{flex:1}
+.source-option small{color:var(--muted);font-size:10px}
 .keybox{display:none;margin-top:10px;gap:7px}.keybox.show{display:grid}
-input{width:100%;min-width:0;border:1px solid #344754;border-radius:8px;padding:10px;background:#0c151d;color:#fff;font:inherit;font-size:12px}
-.map-caption{position:absolute;z-index:4;bottom:15px;right:15px;max-width:calc(100vw - 30px);padding:9px 12px;border:1px solid #344754;border-radius:10px;background:#111c25eF;font-size:11px;color:#dce6eb;pointer-events:none}
+input[type=password]{width:100%;min-width:0;border:1px solid #344754;border-radius:8px;padding:10px;background:#0c151d;color:#fff;font:inherit;font-size:12px}
+.keybox button{border:1px solid #344754;background:#263a46;color:#e7eef2;border-radius:8px;padding:9px;font:inherit;font-size:12px;cursor:pointer}
+.source-status{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;min-height:18px}
 .maplibregl-ctrl-group{overflow:hidden;border-radius:9px!important}
-@media(max-width:560px){.toolbar{top:8px;right:8px;width:min(265px,calc(100vw - 16px));padding:11px}.map-caption{bottom:8px;right:8px;font-size:10px}}
+@media(max-width:560px){.toolbar{top:8px;right:8px;width:min(265px,calc(100vw - 16px));padding:11px}}
 </style>
 </head>
 <body>
 <main>
-<div id="map" aria-label="خريطة معاينة المدينة"></div>
-<section class="toolbar" aria-label="اختيار مصدر بيانات الخريطة">
+<div id="map" aria-label="خريطة فارغة لمعاينة المدينة"></div>
+<section class="toolbar" aria-label="اختيار مصادر بيانات الخريطة">
  <div class="brand">ADAM <span>CITY</span></div>
  <div class="sub">معاينة المدينة · Manila, Philippines</div>
- <div class="label">اختر مصدر بيانات الخريطة</div>
+ <div class="label">فعّل مصدرًا واحدًا أو أكثر</div>
  <div class="sources">
-  <button type="button" class="active" data-source="osm">OpenStreetMap</button>
-  <button type="button" data-source="ofm">OpenFreeMap</button>
-  <button type="button" data-source="ms">Microsoft Maps</button>
+  <label class="source-option"><input type="checkbox" data-source="osm"><span>OpenStreetMap</span><small>خريطة الشوارع</small></label>
+  <label class="source-option"><input type="checkbox" data-source="ofm"><span>OpenFreeMap</span><small>خريطة مفتوحة</small></label>
+  <label class="source-option"><input type="checkbox" data-source="ms"><span>Microsoft Maps</span><small>صور جوية</small></label>
  </div>
  <div class="keybox" id="keybox">
   <input id="mskey" type="password" autocomplete="off" placeholder="أدخل Microsoft Maps API key" aria-label="Microsoft Maps API key">
-  <button type="button" id="applykey">تطبيق المفتاح</button>
+  <button type="button" id="applykey">حفظ المفتاح وتفعيل المصدر</button>
  </div>
- <div class="source-status" id="status" role="status">المصدر الحالي: OpenStreetMap</div>
+ <div class="source-status" id="status" role="status">الخريطة فارغة. ضع علامة بجانب أي مصدر لعرض بياناته.</div>
 </section>
-<div class="map-caption">MANILA · 14.5995° N, 120.9842° E</div>
 </main>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script>
 (function(){
 const center=[120.9842,14.5995],status=document.getElementById('status'),keybox=document.getElementById('keybox');
-const osmStyle={version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'}},layers:[{id:'osm',type:'raster',source:'osm'}]};
+const emptyStyle={version:8,sources:{},layers:[{id:'background',type:'background',paint:{'background-color':'#101820'}}]};
+const osmTiles={type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© OpenStreetMap contributors'};
 const ofmStyle='https://tiles.openfreemap.org/styles/liberty';
-let map;
+let map,msKey='',selected={osm:false,ofm:false,ms:false},renderToken=0;
 function showStatus(s){status.textContent=s}
-function init(style){if(map)map.remove();map=new maplibregl.Map({container:'map',style,center,zoom:12.5,pitch:48,bearing:-15,antialias:true});map.addControl(new maplibregl.NavigationControl({showCompass:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({maxWidth:100,unit:'metric'}),'bottom-left');map.on('error',e=>{if(e&&e.error)showStatus('تعذر تحميل بعض بيانات المصدر؛ تحقق من الاتصال أو إعدادات المصدر.')});}
-function selectSource(source){
- document.querySelectorAll('[data-source]').forEach(b=>b.classList.toggle('active',b.dataset.source===source));
- keybox.classList.toggle('show',source==='ms');
- if(source==='osm'){init(osmStyle);showStatus('المصدر الحالي: OpenStreetMap. يتم تحميل خريطة الشوارع مباشرة.')}
- else if(source==='ofm'){init(ofmStyle);showStatus('المصدر الحالي: OpenFreeMap. قد يستغرق تحميل الخريطة لحظات.')}
- else {showStatus('Microsoft Maps يحتاج مفتاح API صالحًا. أدخله أدناه لتجربة طبقة الصور الجوية.')}
+function initMap(){
+ map=new maplibregl.Map({container:'map',style:emptyStyle,center,zoom:12.5,pitch:0,bearing:0,antialias:true});
+ map.addControl(new maplibregl.NavigationControl({showCompass:true}),'bottom-left');
+ map.addControl(new maplibregl.ScaleControl({maxWidth:100,unit:'metric'}),'bottom-left');
 }
-document.querySelectorAll('[data-source]').forEach(b=>b.addEventListener('click',()=>selectSource(b.dataset.source)));
+function addRaster(id,source,tiles,attribution,opacity){
+ if(map.getSource(source))return;
+ map.addSource(source,{type:'raster',tiles,tileSize:256,attribution});
+ map.addLayer({id,type:'raster',source,paint:{'raster-opacity':opacity}});
+}
+function rebuild(){
+ const token=++renderToken;
+ const useOfm=selected.ofm;
+ map.setStyle(useOfm?ofmStyle:emptyStyle);
+ map.once('style.load',()=>{
+  if(token!==renderToken)return;
+  if(selected.osm)addRaster('osm-layer','osm-source',osmTiles.tiles,'© OpenStreetMap contributors',useOfm?0.58:1);
+  if(selected.ms&&msKey){
+   const tiles=['https://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1&key='+encodeURIComponent(msKey)];
+   addRaster('microsoft-layer','microsoft-source',tiles,'Microsoft Bing Maps',useOfm||selected.osm?0.72:1);
+  }
+  const names=[];
+  if(selected.osm)names.push('OpenStreetMap');
+  if(selected.ofm)names.push('OpenFreeMap');
+  if(selected.ms&&msKey)names.push('Microsoft Maps');
+  showStatus(names.length?'المصادر المفعّلة: '+names.join(' + ')+(selected.ms&&!msKey?' — أدخل مفتاح Microsoft لتفعيله.':''):'الخريطة فارغة. ضع علامة بجانب أي مصدر لعرض بياناته.');
+ });
+}
+function updateSelection(){
+ selected.osm=document.querySelector('[data-source="osm"]').checked;
+ selected.ofm=document.querySelector('[data-source="ofm"]').checked;
+ selected.ms=document.querySelector('[data-source="ms"]').checked;
+ keybox.classList.toggle('show',selected.ms);
+ if(selected.ms&&!msKey)showStatus('Microsoft Maps يحتاج مفتاح API صالحًا. أدخله لتفعيل هذا المصدر.');
+ rebuild();
+}
+document.querySelectorAll('[data-source]').forEach(input=>input.addEventListener('change',updateSelection));
 document.getElementById('applykey').addEventListener('click',()=>{
  const key=document.getElementById('mskey').value.trim();
  if(!key){showStatus('أدخل مفتاح Microsoft Maps API أولًا.');return}
- const quadkey='https://ecn.t3.tiles.virtualearth.net/tiles/a{quadkey}.jpeg?g=1&key='+encodeURIComponent(key);
- const style={version:8,sources:{bing:{type:'raster',tiles:[quadkey],tileSize:256,attribution:'Microsoft Bing Maps'}},layers:[{id:'bing-aerial',type:'raster',source:'bing'}]};
- init(style);showStatus('تم إعداد طلب طبقة Microsoft Maps. إذا لم تظهر الصور، تحقق من صلاحية المفتاح وخدمة الخرائط المفعّلة.');
+ msKey=key;
+ updateSelection();
+ showStatus('تم إعداد Microsoft Maps. إذا لم تظهر الصور، فتحقق من صلاحية المفتاح والخدمة المفعّلة.');
 });
-init(osmStyle);
+initMap();
 })();
 </script>
 </body>
