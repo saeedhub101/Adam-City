@@ -21,6 +21,7 @@
 <label><input id="basemap3d" type="checkbox" checked> Basemap 3D buildings</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
 <label><input id="terrain" type="checkbox" checked> 3D terrain</label>
+<label><input id="localHillshade" type="checkbox"> Local SRTM relief</label>
 <label><input id="vegetation" type="checkbox" checked> Grass / vegetation</label>
 <label><input id="labels" type="checkbox" checked> Building labels</label>
 <button id="sun">Golden-hour light</button>
@@ -823,6 +824,10 @@ map.on('load',async()=>{
    if(!document.getElementById('vegetation').checked)map.setLayoutProperty('esa-vegetation-fill','visibility','none');
   }catch(err){console.error('ESA vegetation layer failed:',err);}
   try{
+   map.addSource('local-srtm-hillshade',{type:'image',url:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/sources/terrain/srtm-1arcsec-ermita-hillshade.png',coordinates:[[120.972,14.593],[120.994,14.593],[120.994,14.572],[120.972,14.572]]});
+   map.addLayer({id:'local-srtm-hillshade-layer',type:'raster',source:'local-srtm-hillshade',layout:{visibility:document.getElementById('localHillshade').checked?'visible':'none'},paint:{'raster-opacity':0.34,'raster-resampling':'linear'}});
+  }catch(err){console.error('Local SRTM hillshade failed:',err);}
+  try{
    map.addSource('google-open-buildings-source',{type:'geojson',data:googleBuildingResult});
    map.addLayer({id:'google-open-buildings-fill',type:'fill',source:'google-open-buildings-source',layout:{visibility:document.getElementById('googleBuildings').checked?'visible':'none'},paint:{'fill-color':['case',['>=',['to-number',['get','confidence'],0],0.8],'#ffb000','#32d5c4'],'fill-opacity':0.10,'fill-outline-color':['case',['>=',['to-number',['get','confidence'],0],0.8],'#ffb000','#1e8f88']}});
    map.addLayer({id:'google-open-buildings-outline',type:'line',source:'google-open-buildings-source',layout:{visibility:document.getElementById('googleBuildings').checked?'visible':'none'},paint:{'line-color':['case',['>=',['to-number',['get','confidence'],0],0.8],'#ff9e00','#087f78'],'line-width':['interpolate',['linear'],['zoom'],13,0.5,16,1.4,19,2.4],'line-opacity':0.9}});
@@ -859,6 +864,7 @@ document.getElementById('buildings').addEventListener('change',e=>{['local-build
 document.getElementById('basemap3d').addEventListener('change',e=>{base3dLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'Basemap 3D buildings enabled for comparison with OSM. Turn off OSM 3D buildings to inspect the basemap alone.':'Basemap 3D buildings hidden; OSM layer remains independently controlled.')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels','visible-sidewalk-left','visible-sidewalk-right','visible-road-casing','visible-road-asphalt','visible-road-curb-left','visible-road-curb-right'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'OSM road network enabled. Sidewalk and curb strips are estimates unless explicitly mapped.':'OSM road network, asphalt, estimated sidewalks and curbs hidden.');});
 document.getElementById('googleBuildings').addEventListener('change',e=>{['google-open-buildings-fill','google-open-buildings-outline'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'Google Open Buildings v3 footprints enabled; orange outlines have confidence ≥ 0.80.':'Google building-footprint comparison hidden.');});
+document.getElementById('localHillshade').addEventListener('change',e=>{if(map.getLayer('local-srtm-hillshade-layer'))map.setLayoutProperty('local-srtm-hillshade-layer','visibility',e.target.checked?'visible':'none');setStatus(e.target.checked?'Local SRTM-derived hillshade overlay enabled.':'Local SRTM hillshade hidden.');});
 document.getElementById('vegetation').addEventListener('change',e=>{if(map.getLayer('esa-vegetation-fill'))map.setLayoutProperty('esa-vegetation-fill','visibility',e.target.checked?'visible':'none');setStatus(e.target.checked?'ESA WorldCover vegetation overlay enabled (10 m, 2021).':'Grass / vegetation overlay hidden.');});
 document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null);terrainAlignmentSignature='';map.once('idle',applyTerrainAlignment);setStatus(e.target.checked?'Terrain enabled; aligning building bases and road surfaces to ground elevation…':'Terrain disabled; resetting building bases to flat ground…')}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
 document.getElementById('labels').addEventListener('change',e=>{if(map.getLayer('local-building-labels'))map.setLayoutProperty('local-building-labels','visibility',e.target.checked?'visible':'none')});
