@@ -259,10 +259,13 @@ function addTexturedBuildingMeshes(data){
     return ({church:18,cathedral:24,hospital:12,commercial:16,office:18,hotel:18,apartments:12,industrial:8,house:6,residential:7,garage:3,shed:3})[b]||8;
    };
    const textureKey=p=>{
-    const n=String((p.tags||p).name||(p.tags||p).official_name||'').toLowerCase();
-    if(/national museum of (fine arts|the philippines)/.test(n))return 'nationalMuseum';
+    const t=p.tags||p;
+    const n=String(t.name||t.official_name||t['name:en']||'').toLowerCase();
+    const op=String(t.operator||'').toLowerCase();
+    // Only assign a photographed facade to a building explicitly identified as that landmark.
+    if(/national museum of (fine arts|the philippines)|old congress building/.test(n))return 'nationalMuseum';
     if(/university of the philippines.*(manila|main building)|upm.*main building/.test(n))return 'upManila';
-    if(/pgh cancer institute/.test(n))return 'pghCancer';
+    if(/pgh cancer institute|cancer institute of the philippine general hospital/.test(n))return 'pghCancer';
     return 'generic';
    };
    const wall=(set,a,b,h,key)=>{
