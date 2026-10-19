@@ -105,12 +105,20 @@ def main():
             pass
 
     # Skip queries that already have saved images; only search new/unresolved targets.
-    completed_queries = {
+    old_catalog = {}
+    if CATALOG.exists():
+        try:
+            old_catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
+        except Exception:
+            old_catalog = {}
+    completed_queries = set(old_catalog.get("queries_completed", []))
+    completed_queries.update(
         item.get("query") for item in existing.values()
         if item.get("query") and item.get("local_path") and (ROOT / item["local_path"]).is_file()
-    }
+    )
     found = {}
     errors = []
+    queried_successfully = []
     for query, match_type in QUERIES:
         if query in completed_queries:
             continue
@@ -125,6 +133,7 @@ def main():
                 "iiprop": "url|extmetadata",
                 "iiurlwidth": 1000,
             })
+            queried_successfully.append(query)
             pages = (data.get("query") or {}).get("pages") or {}
             for page in pages.values():
                 infos = page.get("imageinfo") or []
@@ -170,6 +179,7 @@ def main():
     # Keep up to 24 distinct Commons images per run. Prefer exact building candidates.
     ordered = sorted(found.values(), key=lambda x: (x["match_type"] != "building_candidate", x["query"], x["title"]))
     images = []
+    downloaded_now = 0
     for item in ordered[:24]:
         old = existing.get(item["commons_page"])
         if old and old.get("local_path") and (ROOT / old["local_path"]).is_file():
@@ -203,6 +213,7 @@ def main():
             if not response.headers.get("Content-Type", "").startswith("image/"):
                 raise ValueError("download response is not an image")
             dest.write_bytes(response.content)
+            downloaded_now += 1
             item["local_path"] = str(dest.relative_to(ROOT)).replace(os.sep, "/")
             item["bytes"] = len(response.content)
             item["download_status"] = "downloaded"
@@ -216,6 +227,8 @@ def main():
     selected = {x["commons_page"] for x in images}
     for page, item in existing.items():
         if page not in selected and item.get("local_path") and (ROOT / item["local_path"]).is_file():
+            item = dict(item)
+            item["download_status"] = "already_saved"
             images.append(item)
 
     # Correctly label older catalog entries whose previous broad search query
@@ -252,7 +265,8 @@ def main():
         "source_url": "https://commons.wikimedia.org/",
         "generated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "image_count": len(images),
-        "downloaded_this_run": sum(x.get("download_status") == "downloaded" for x in images),
+        "downloaded_this_run": downloaded_now,
+        "queries_completed": sorted(completed_queries.union(queried_successfully)),
         "errors": errors,
         "matching_note": "Every image is retained with license metadata. location_status and use_as_target_facade_reference separate likely local candidates from nearby-city or nonlocal reference images. No image is automatically projected onto a facade.",
         "images": images,
