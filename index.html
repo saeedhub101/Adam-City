@@ -250,7 +250,7 @@ function addTexturedBuildingMeshes(data,roadNetwork){
    if(Number.isFinite(levels)&&levels>=1&&levels<=150)return Math.ceil(levels*3.66);
    return 5;
   };
-  const windowPos=[],windowNormals=[],trimPos=[],bandPos=[],balconyPos=[],doorPos=[],roofRimPos=[];
+  const trimPos=[],bandPos=[],balconyPos=[],doorPos=[],roofRimPos=[];
  function quad(arr,a,b,c,d){arr.push(a.x,a.y,a.z,b.x,b.y,b.z,c.x,c.y,c.z,c.x,c.y,c.z,b.x,b.y,b.z,d.x,d.y,d.z);}
  function point(p,n,offset,y){return {x:p.x+n.x*offset,y:y,z:p.z+n.z*offset};}
  function faceQuad(arr,a,b,n,offset,y0,y1,u0,u1){
@@ -266,9 +266,9 @@ function addTexturedBuildingMeshes(data,roadNetwork){
  }
  function geom(positions){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));g.computeVertexNormals();return g;}
  const cosLat=Math.cos(origin[1]*Math.PI/180);
- let detailed=0,windowCount=0,doorCount=0;
+ let detailed=0,doorCount=0;
  // Facade meshes are expensive on phones. Keep all building footprints/extrusions,
- // but generate procedural window geometry only for the 40 nearest buildings.
+ // and add only restrained facade bands/entrances; no window geometry is generated.
  const featureCenter=f=>{
   const g=f.geometry;if(!g)return origin;
   let ring=null;
@@ -318,7 +318,7 @@ function addTexturedBuildingMeshes(data,roadNetwork){
     const specialFront=special&&i===frontEdge;
     const a=pts[i-1],b=pts[i],dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);
     if(len<3||len>250)continue;
-    // The outward normal is derived from polygon winding, so windows sit outside the wall instead of floating inward.
+    // Facade normals are derived from polygon winding for correctly oriented trim.
     const n=area>=0?{x:dz/len,z:-dx/len}:{x:-dz/len,z:dx/len};
     const count=Math.max(1,Math.min(28,Math.floor(len/(special?2.4:3.0))));
     const cell=len/count;
@@ -330,15 +330,6 @@ function addTexturedBuildingMeshes(data,roadNetwork){
      for(let j=0;j<count;j++){
       const inset=Math.min(.12,cell*.08),u0=(j*cell+inset)/len,u1=((j+1)*cell-inset)/len;
       if(u1-u0<.05)continue;
-      const ww=(u1-u0)*len,winH=y1-y0;
-      // Ground-floor shopfronts use larger glazed openings; upper floors get dark glass with pale trim.
-      const lowShop=isCommercial&&floor===0;
-      const wy0=lowShop?.18:y0,wy1=lowShop?Math.min(floorH*.88,h-.2):y1;
-      faceQuad(windowPos,a,b,n,.12,wy0,wy1,u0+(lowShop?0:.035),u1-(lowShop?0:.035));
-      windowCount++;
-      const uA=u0,uB=u1;
-      const sillY=lowShop?wy0:Math.max(base+.08,wy0-.12);
-      boxBand(point(a,n,.18, sillY),point(b,n,.18,sillY),n,sillY,.10,.0,trimPos);
       if(specialFront){
        // Street-facing wall only: cream concrete framing, black ribbon glazing and thin balcony slab, derived from the inspected tower photo.
        boxBand(a,b,n,base+floorH-.14,.12,.19,bandPos);
@@ -389,7 +380,7 @@ function addTexturedBuildingMeshes(data,roadNetwork){
    add(doorPos,0x102332,.22);
    add(roofRimPos,0xd7d0c4,.8);
    this.visible=true;
-   setStatus('Facade pass active: '+detailed.toLocaleString()+' OSM building footprints with '+windowCount.toLocaleString()+' modeled window/shopfront openings, '+doorCount.toLocaleString()+' entrances and roof/floor trim. Manila Residences Bocobo has a photo-reviewed, building-specific facade treatment; generic details are procedural, not survey measurements.');
+   setStatus('Facade pass active: '+detailed.toLocaleString()+' OSM building footprints with all modeled windows removed, '+doorCount.toLocaleString()+' entrances and roof/floor trim.');
   },
   render:function(gl,args){
    if(!this.renderer)return;
