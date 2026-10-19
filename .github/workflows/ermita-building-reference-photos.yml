@@ -1,0 +1,42 @@
+name: Import licensed building reference photos
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ermita/scripts/import_commons_building_photos.py'
+      - '.github/workflows/ermita-building-reference-photos.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ermita-building-reference-photos-main
+  cancel-in-progress: false
+
+jobs:
+  import-photos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download licensed Commons images and record attribution
+        run: python ermita/scripts/import_commons_building_photos.py
+      - name: Commit images and catalog to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ermita/buildings/reference_photos ermita/buildings/reference_photos_catalog.json
+          if git diff --cached --quiet; then
+            echo "No new reference photos or catalog changes."
+          else
+            git commit -m "Import licensed building reference photos for Ermita and Malate"
+            git pull --rebase origin main
+            git push origin main
+          fi
