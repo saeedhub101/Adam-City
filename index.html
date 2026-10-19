@@ -129,8 +129,27 @@ function addTexturedRoadSurface(roadNetwork){
    walkTexture.wrapS=walkTexture.wrapT=THREE.RepeatWrapping;walkTexture.encoding=THREE.sRGBEncoding;
    walkTexture.anisotropy=this.renderer.capabilities.getMaxAnisotropy();
    const walkMat=new THREE.MeshBasicMaterial({map:walkTexture,side:THREE.DoubleSide});
-   const sidewalkGeom=makeRibbonGeometry(sidewalkFeatures,sidewalkWidth,2,0.16);
-   const sidewalkMesh=new THREE.Mesh(sidewalkGeom,walkMat);sidewalkMesh.frustumCulled=false;this.scene.add(sidewalkMesh);
+   function makeSidewalkGeometry(features,sideSign){
+    const positions=[],uvs=[];
+    for(const f of features){
+     const p=f.properties||{},tags=p.tags||{},hw=p.highway||tags.highway||'residential',g=f.geometry;
+     if(!g)continue;
+     const lines=g.type==='LineString'?[g.coordinates]:g.type==='MultiLineString'?g.coordinates:[];
+     for(const line of lines)for(let i=1;i<line.length;i++){
+      const a=xy(line[i-1]),b=xy(line[i]),dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);if(len<0.2)continue;
+      const nx=-dz/len,nz=dx/len,off=sideSign*(roadWidth(hw,p,tags)/2+1.0),half=sidewalkWidth(hw,p,tags)/2;
+      const ax=a.x+nx*off,az=a.z+nz*off,bx=b.x+nx*off,bz=b.z+nz*off;
+      const x1=ax+nx*half,z1=az+nz*half,x2=ax-nx*half,z2=az-nz*half,x3=bx+nx*half,z3=bz+nz*half,x4=bx-nx*half,z4=bz-nz*half,u=len/2;
+      positions.push(x1,.16,z1,x2,.16,z2,x3,.16,z3,x3,.16,z3,x2,.16,z2,x4,.16,z4);
+      uvs.push(0,0,0,1,u,0,u,0,0,1,u,1);
+     }
+    }
+    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));g.computeVertexNormals();return g;
+   }
+   for(const sideSign of [-1,1]){
+    const sidewalkGeom=makeSidewalkGeometry(sidewalkFeatures,sideSign);
+    const sidewalkMesh=new THREE.Mesh(sidewalkGeom,walkMat);sidewalkMesh.frustumCulled=false;this.scene.add(sidewalkMesh);
+   }
    this.visible=true;
    setStatus(roadNetwork.features.length.toLocaleString()+' mapped road/path lines · citywide asphalt road surfaces and sidewalk texture loading.');
   },
