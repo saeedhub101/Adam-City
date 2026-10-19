@@ -44,7 +44,7 @@ jobs:
           features = data.get('features', [])
           with dst.open('w', encoding='utf-8') as f:
               for feature in features:
-                  f.write(json.dumps(feature, separators=(',', ':')) + '\\n')
+                  f.write(json.dumps(feature, separators=(',', ':')) + '\n')
           print(f'Prepared {len(features)} OpenFreeMap/OpenMapTiles building features')
           PY
           cp index.html site/index.html
