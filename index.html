@@ -269,7 +269,10 @@ function addTexturedBuildingMeshes(data,roadNetwork){
  let detailed=0,windowCount=0,doorCount=0;
  for(const f of data.features){
   if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
-  const p=f.properties||{},tags=p.tags||{},id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:'')),name=String(tags.name||tags['official_name']||'');
+  const p=f.properties||{};
+  // Basemap is authoritative: do not render an OSM building unless a current Basemap building matched it.
+  if(!Number.isFinite(Number(p.basemap_render_height))||!p.basemap_height_match)continue;
+  const tags=p.tags||{},id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:'')),name=String(tags.name||tags['official_name']||'');
   const special=id===detailSource.osmId;
   const h=heightOf(p),levels=Math.max(1,Math.min(34,Math.round(h/(special?3.0:3.2))));
   const polygons=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
@@ -478,7 +481,7 @@ function addBuildings(data){
  if(map.getSource('local-buildings'))map.removeSource('local-buildings');
  map.addSource('local-buildings',{type:'geojson',data:data});
  map.addLayer({id:'local-buildings-3d',type:'fill-extrusion',source:'local-buildings',
-   filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['any',['has','building',['get','tags']],['has','building:part',['get','tags']]]],
+   filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['has','basemap_height_match'],['any',['has','building',['get','tags']],['has','building:part',['get','tags']]]],
    paint:{
     'fill-extrusion-color':['case',
       ['has','building:colour',['get','tags']],['get','building:colour',['get','tags']],
@@ -506,7 +509,7 @@ function addBuildings(data){
  if(map.getLayer('local-building-labels'))map.removeLayer('local-building-labels');
  map.addLayer({id:'local-building-labels',type:'symbol',source:'local-buildings',
   minzoom:16.2,
-  filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['has','name',['get','tags']]],
+  filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['has','basemap_height_match'],['has','name',['get','tags']]],
   layout:{'text-field':['get','name',['get','tags']],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],16,10,19,13],'text-max-width':10,'text-allow-overlap':false,'text-ignore-placement':false},
   paint:{'text-color':'#28323a','text-halo-color':'#fff8e9','text-halo-width':1.5,'text-halo-blur':0.3}});
 
@@ -592,7 +595,8 @@ map.on('load',async()=>{
   // Reconcile this one photo-checked landmark against the current OSM feature ID, not a nearby guess.
   const bocobo=buildingsData.features.find(f=>String(f.properties?.osm_feature_id||'')==='way/90123959');
   if(bocobo){bocobo.properties.tags=bocobo.properties.tags||{};bocobo.properties.tags.name='Manila Residences Bocobo';bocobo.properties.tags['building:levels']='34';bocobo.properties.tags.height='102';bocobo.properties.tags['building:colour']='#e5d5bd';bocobo.properties.tags['facade:reference']='Photo reviewed: Philippine Realty Group listing';}
-  // Normalize each building's height once, so facade windows and the 3D roof use the same numeric value.
+  // Basemap is the authority for visible buildings and heights. OSM footprints are retained as source records,
+  // but only features matched to Basemap render_height are rendered; stale OSM-only buildings stay hidden.
   normalizeBuildingHeights(buildingsData);
   surfaceData={type:'FeatureCollection',features:(surfaceResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   addRoads(roadsData);
