@@ -37,7 +37,7 @@ button.active,button.primary{background:var(--mint);color:#082019;border-color:v
 .status{display:flex;align-items:center;gap:7px;border:1px solid #344957;background:#101c26dd;border-radius:999px;padding:8px 11px;font-size:11px;color:#b5c7d0}
 .dot{width:7px;height:7px;background:var(--mint);border-radius:50%;box-shadow:0 0 12px #75e0bd80}
 #city{width:100%;height:100%;display:block;position:absolute;inset:0;transition:transform .25s;transform-origin:50% 50%}
-#city .building{cursor:pointer;transition:opacity .2s}#city .building:hover{filter:brightness(1.35)}
+#city .building{cursor:pointer;transition:opacity .2s}#city .building:hover{filter:brightness(1.35)}\n#city.topmode .building > :not(polygon:nth-child(3)){display:none}\n#city.topmode .building polygon:nth-child(3){fill:#4b7884}
 .map-tools{position:absolute;z-index:3;left:18px;bottom:18px;display:flex;gap:7px;direction:ltr}
 .map-tools button{width:38px;height:38px;padding:0;font-size:18px;background:#101c26eF}
 .legend{position:absolute;z-index:3;right:18px;bottom:18px;background:#101c26df;border:1px solid #344957;border-radius:12px;padding:11px 13px;font-size:10px;color:#a9bbc5;display:flex;gap:12px;align-items:center}
@@ -116,7 +116,7 @@ for(let sum=18;sum>=0;sum--){
  }
 }
 let scale=1,topMode=false,showBuildings=true,showLabels=true;
-function apply(){svg.style.transform='scale('+scale+')';document.getElementById('zoom').value=Math.round(scale*100);document.getElementById('zoomlabel').textContent=Math.round(scale*100)+'%';buildings.style.display=showBuildings?'':'none';document.querySelectorAll('.maplabel').forEach(n=>n.style.display=showLabels?'':'none');document.getElementById('topview').classList.toggle('active',topMode);document.getElementById('view3d').classList.toggle('active',!topMode);svg.style.filter=topMode?'saturate(.72) brightness(1.08)':'';svg.style.transform=topMode?'scale('+scale+') perspective(900px) rotateX(0deg)':'scale('+scale+')';}
+function apply(){svg.classList.toggle('topmode',topMode);svg.style.transform='scale('+scale+')';document.getElementById('zoom').value=Math.round(scale*100);document.getElementById('zoomlabel').textContent=Math.round(scale*100)+'%';buildings.style.display=showBuildings?'':'none';document.querySelectorAll('.maplabel').forEach(n=>n.style.display=showLabels?'':'none');document.getElementById('topview').classList.toggle('active',topMode);document.getElementById('view3d').classList.toggle('active',!topMode);svg.style.filter=topMode?'saturate(.72) brightness(1.08)':'';svg.style.transform=topMode?'scale('+scale+') perspective(900px) rotateX(0deg)':'scale('+scale+')';}
 document.getElementById('zoom').addEventListener('input',e=>{scale=Number(e.target.value)/100;apply()});
 document.getElementById('zoomin').onclick=()=>{scale=Math.min(1.45,scale+.1);apply()};
 document.getElementById('zoomout').onclick=()=>{scale=Math.max(.7,scale-.1);apply()};
