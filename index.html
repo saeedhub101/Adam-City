@@ -18,8 +18,7 @@
 <label><input id="realModels" type="checkbox" checked> Real building 3D model previews</label>
 <label><input id="buildings" type="checkbox" checked> OSM 3D buildings</label>
 <label><input id="basemap3d" type="checkbox"> Basemap 3D buildings</label>
-<label><input id="roads" type="checkbox" checked> Road network / labels</label>
-<label><input id="roadTexture" type="checkbox" checked> Textured road surfaces</label>
+<label><input id="roads" type="checkbox" checked> Project road network</label>
 <label><input id="terrain" type="checkbox" checked> 3D terrain</label>
 <label><input id="labels" type="checkbox" checked> Building labels</label>
 <button id="sun">Golden-hour light</button>
@@ -76,98 +75,6 @@ function addRealModelMarkers(){
  map.on('mouseleave','real-building-model-points',()=>map.getCanvas().style.cursor='');
 }
 
-function addTexturedRoadSurface(roadNetwork){
- const layerId='project-textured-road-surfaces';
- if(map.getLayer(layerId))map.removeLayer(layerId);
- if(!window.THREE||!roadNetwork||!Array.isArray(roadNetwork.features))return;
- const origin=[120.98245,14.5719];
- const merc=maplibregl.MercatorCoordinate.fromLngLat({lng:origin[0],lat:origin[1]},0);
- const meterScale=merc.meterInMercatorCoordinateUnits();
- const roadWidth=hw=>({motorway:15,motorway_link:8,trunk:12,trunk_link:7,primary:10,primary_link:7,secondary:8,secondary_link:6,tertiary:7,tertiary_link:5,residential:6,unclassified:5,living_street:4,service:3.5,footway:1.8,path:1.5,pedestrian:3,steps:1.8,corridor:2,construction:5})[hw]||5;
- const xy=c=>({x:(c[0]-origin[0])*111320*Math.cos(origin[1]*Math.PI/180),z:(c[1]-origin[1])*111132});
- function makeRibbonGeometry(features,widthFor,repeatMeters,y,offsetForWidth=0){
-  const positions=[],uvs=[];
-  function groundY(c,offset){try{const z=map.queryTerrainElevation(c);return Number.isFinite(z)?z+offset:offset;}catch(e){return offset;}}
-  function segment(a,b,width){
-   const p=xy(a),q=xy(b),dx=q.x-p.x,dz=q.z-p.z,len=Math.hypot(dx,dz);
-   if(len<0.2)return;
-   const nx=-dz/len,nz=dx/len,off=offsetForWidth;
-   const ax=p.x+nx*off,az=p.z+nz*off,bx=q.x+nx*off,bz=q.z+nz*off,half=width/2;
-   const x1=ax+nx*half,z1=az+nz*half,x2=ax-nx*half,z2=az-nz*half;
-   const x3=bx+nx*half,z3=bz+nz*half,x4=bx-nx*half,z4=bz-nz*half,u=len/repeatMeters;
-   const ya=groundY(a,y),yb=groundY(b,y);
-   positions.push(x1,ya,z1,x2,ya,z2,x3,yb,z3,x3,yb,z3,x2,ya,z2,x4,yb,z4);
-   uvs.push(0,0,0,1,u,0,u,0,0,1,u,1);
-  }
-  for(const f of features){
-   const p=f.properties||{},tags=p.tags||{},hw=p.highway||tags.highway||'residential',width=widthFor(hw,p,tags),g=f.geometry;
-   if(!g)continue;
-   const lines=g.type==='LineString'?[g.coordinates]:g.type==='MultiLineString'?g.coordinates:[];
-   for(const line of lines)for(let i=1;i<line.length;i++)segment(line[i-1],line[i],width);
-  }
-  const g=new THREE.BufferGeometry();
-  g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
-  g.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
-  g.computeVertexNormals();
-  return g;
- }
- const sidewalkFeatures=roadNetwork.features.filter(f=>!['motorway','trunk','motorway_link','trunk_link','steps','corridor'].includes((f.properties||{}).highway));
- const sidewalkWidth=(hw,p,tags)=>Math.max(1.2,Math.min(2.2,roadWidth(hw,p,tags)*0.24));
- const layer={
-  id:layerId,type:'custom',renderingMode:'3d',
-  onAdd:function(map,gl){
-   this.camera=new THREE.Camera();this.scene=new THREE.Scene();
-   this.scene.add(new THREE.AmbientLight(0xffffff,1.5));
-   const sun=new THREE.DirectionalLight(0xffffff,1.2);sun.position.set(-40,-60,100);this.scene.add(sun);
-   this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});this.renderer.autoClear=false;
-   const loader=new THREE.TextureLoader();
-   const roadTexture=loader.load('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/CityStreetRoadAsphaltTwoLaneWorn001_COL_1K.jpeg',()=>map.triggerRepaint(),undefined,()=>setStatus('Road data loaded, but the asphalt image could not be loaded.'));
-   roadTexture.wrapS=roadTexture.wrapT=THREE.RepeatWrapping;roadTexture.encoding=THREE.sRGBEncoding;
-   roadTexture.anisotropy=this.renderer.capabilities.getMaxAnisotropy();
-   const roadMat=new THREE.MeshBasicMaterial({map:roadTexture,side:THREE.DoubleSide});
-   const roadGeom=makeRibbonGeometry(roadNetwork.features,roadWidth,7,0.12);
-   const roadMesh=new THREE.Mesh(roadGeom,roadMat);roadMesh.frustumCulled=false;this.scene.add(roadMesh);
-   const walkTexture=loader.load('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/Mono-Terrazzo-Stack-Architextures.jpeg',()=>map.triggerRepaint(),undefined,()=>{});
-   walkTexture.wrapS=walkTexture.wrapT=THREE.RepeatWrapping;walkTexture.encoding=THREE.sRGBEncoding;
-   walkTexture.anisotropy=this.renderer.capabilities.getMaxAnisotropy();
-   const walkMat=new THREE.MeshBasicMaterial({map:walkTexture,side:THREE.DoubleSide});
-   function makeSidewalkGeometry(features,sideSign){
-    const positions=[],uvs=[];
-    for(const f of features){
-     const p=f.properties||{},tags=p.tags||{},hw=p.highway||tags.highway||'residential',g=f.geometry;
-     if(!g)continue;
-     const lines=g.type==='LineString'?[g.coordinates]:g.type==='MultiLineString'?g.coordinates:[];
-     for(const line of lines)for(let i=1;i<line.length;i++){
-      const a=xy(line[i-1]),b=xy(line[i]),dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);if(len<0.2)continue;
-      const nx=-dz/len,nz=dx/len,off=sideSign*(roadWidth(hw,p,tags)/2+1.0),half=sidewalkWidth(hw,p,tags)/2;
-      const ax=a.x+nx*off,az=a.z+nz*off,bx=b.x+nx*off,bz=b.z+nz*off;
-      const x1=ax+nx*half,z1=az+nz*half,x2=ax-nx*half,z2=az-nz*half,x3=bx+nx*half,z3=bz+nz*half,x4=bx-nx*half,z4=bz-nz*half,u=len/2;
-      const ya=groundY(line[i-1],.16),yb=groundY(line[i],.16);
-      positions.push(x1,ya,z1,x2,ya,z2,x3,yb,z3,x3,yb,z3,x2,ya,z2,x4,yb,z4);
-      uvs.push(0,0,0,1,u,0,u,0,0,1,u,1);
-     }
-    }
-    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));g.computeVertexNormals();return g;
-   }
-   for(const sideSign of [-1,1]){
-    const sidewalkGeom=makeSidewalkGeometry(sidewalkFeatures,sideSign);
-    const sidewalkMesh=new THREE.Mesh(sidewalkGeom,walkMat);sidewalkMesh.frustumCulled=false;this.scene.add(sidewalkMesh);
-   }
-   this.visible=true;
-   setStatus(roadNetwork.features.length.toLocaleString()+' mapped road/path lines · citywide asphalt road surfaces and sidewalk texture loading.');
-  },
-  render:function(gl,args){
-   if(!this.renderer)return;
-   const m=new THREE.Matrix4().fromArray(args.defaultProjectionData.mainMatrix);
-   const l=new THREE.Matrix4().makeTranslation(merc.x,merc.y,merc.z).multiply(new THREE.Matrix4().makeRotationX(Math.PI/2)).scale(new THREE.Vector3(meterScale,meterScale,meterScale));
-   this.camera.projectionMatrix=m.multiply(l);
-   this.renderer.resetState();this.renderer.render(this.scene,this.camera);
-  }
- };
- if(map.getLayer('project-roads-casing'))map.addLayer(layer,'project-roads-casing');
- else map.addLayer(layer);
-}
-
 function addLocalRamonModel(roadNetwork){
  if(!window.THREE || !THREE.GLTFLoader){setStatus('Local building model could not start: 3D model libraries unavailable.');return;}
  const modelUrl='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/ramon_magsaysay_building.glb';
@@ -182,6 +89,73 @@ function addLocalRamonModel(roadNetwork){
    const sun=new THREE.DirectionalLight(0xffffff,2.1);sun.position.set(-40,-60,100);this.scene.add(sun);
    this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});
    this.renderer.autoClear=false;
+   // Real asphalt and sidewalk textures applied to map-derived road centerlines.
+   function makeRibbonGeometry(features,widthFor,sideOffset,repeatMeters,y){
+    const positions=[],uvs=[];
+    const originLat=origin[1],cosLat=Math.cos(originLat*Math.PI/180);
+    const xy=c=>({x:(c[0]-origin[0])*111320*cosLat,z:(c[1]-origin[1])*111132});
+    function segment(a,b,width,offsetSign){
+     const p=xy(a),q=xy(b),dx=q.x-p.x,dz=q.z-p.z,len=Math.hypot(dx,dz);
+     if(len<0.2)return;
+     const nx=-dz/len,nz=dx/len,off=sideOffset*offsetSign;
+     const ax=p.x+nx*off,az=p.z+nz*off,bx=q.x+nx*off,bz=q.z+nz*off;
+     const half=width/2;
+     const x1=ax+nx*half,z1=az+nz*half,x2=ax-nx*half,z2=az-nz*half;
+     const x3=bx+nx*half,z3=bz+nz*half,x4=bx-nx*half,z4=bz-nz*half;
+     const u=len/repeatMeters;
+     positions.push(x1,y,z1,x2,y,z2,x3,y,z3,x3,y,z3,x2,y,z2,x4,y,z4);
+     uvs.push(0,0,0,1,u,0,u,0,0,1,u,1);
+    }
+    for(const f of (features||[])){
+     const p=f.properties||{},tags=p.tags||{};
+     const hw=p.highway||tags.highway||'residential';
+     const roadWidth=widthFor(hw,p,tags);
+     const geom=f.geometry;if(!geom)continue;
+     const lines=geom.type==='LineString'?[geom.coordinates]:geom.type==='MultiLineString'?geom.coordinates:[];
+     for(const line of lines)for(let i=1;i<line.length;i++){
+      if(sideOffset===0)segment(line[i-1],line[i],roadWidth,0);
+      else {segment(line[i-1],line[i],widthFor(hw,p,tags),1);segment(line[i-1],line[i],widthFor(hw,p,tags),-1);}
+     }
+    }
+    const g=new THREE.BufferGeometry();
+    g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
+    g.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
+    g.computeVertexNormals();
+    return g;
+   }
+   function roadWidth(hw){
+    return ({motorway:15,motorway_link:8,trunk:12,trunk_link:7,primary:10,primary_link:7,secondary:8,secondary_link:6,tertiary:7,tertiary_link:5,residential:6,unclassified:5,living_street:4,service:3.5,footway:1.8,path:1.5,pedestrian:3})[hw]||5;
+   }
+   if(roadNetwork&&roadNetwork.features){
+    const loader=new THREE.TextureLoader();
+    const roadTexture=loader.load('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/CityStreetRoadAsphaltTwoLaneWorn001_COL_1K.jpeg',()=>map.triggerRepaint());
+    roadTexture.wrapS=roadTexture.wrapT=THREE.RepeatWrapping;roadTexture.encoding=THREE.sRGBEncoding;
+    roadTexture.anisotropy=this.renderer.capabilities.getMaxAnisotropy();
+    const roadMat=new THREE.MeshBasicMaterial({map:roadTexture,side:THREE.DoubleSide});
+    const roadGeom=makeRibbonGeometry(roadNetwork.features,hw=>roadWidth(hw),0,7,0.10);
+    const roadMesh=new THREE.Mesh(roadGeom,roadMat);roadMesh.frustumCulled=false;this.scene.add(roadMesh);
+    const walkTexture=loader.load('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/Mono-Terrazzo-Stack-Architextures.jpeg',()=>map.triggerRepaint());
+    walkTexture.wrapS=walkTexture.wrapT=THREE.RepeatWrapping;walkTexture.encoding=THREE.sRGBEncoding;
+    walkTexture.anisotropy=this.renderer.capabilities.getMaxAnisotropy();
+    const walkMat=new THREE.MeshBasicMaterial({map:walkTexture,side:THREE.DoubleSide});
+    const sidewalkFeatures=roadNetwork.features.filter(f=>!['motorway','trunk'].includes((f.properties||{}).highway));
+    // Build offset sidewalk strips on both sides of each street centerline.
+    const sidewalkPositions=[],sidewalkUvs=[];
+    function addSidewalkLine(a,b,hw,sign){
+     const cosLat=Math.cos(origin[1]*Math.PI/180);
+     const p={x:(a[0]-origin[0])*111320*cosLat,z:(a[1]-origin[1])*111132};
+     const q={x:(b[0]-origin[0])*111320*cosLat,z:(b[1]-origin[1])*111132};
+     const dx=q.x-p.x,dz=q.z-p.z,len=Math.hypot(dx,dz);if(len<0.2)return;
+     const nx=-dz/len,nz=dx/len,off=roadWidth(hw)/2+1.05;
+     const ax=p.x+nx*off*sign,az=p.z+nz*off*sign,bx=q.x+nx*off*sign,bz=q.z+nz*off*sign,half=.8,u=len/2;
+     const x1=ax+nx*half,z1=az+nz*half,x2=ax-nx*half,z2=az-nz*half,x3=bx+nx*half,z3=bz+nz*half,x4=bx-nx*half,z4=bz-nz*half;
+     sidewalkPositions.push(x1,.14,z1,x2,.14,z2,x3,.14,z3,x3,.14,z3,x2,.14,z2,x4,.14,z4);
+     sidewalkUvs.push(0,0,0,1,u,0,u,0,0,1,u,1);
+    }
+    for(const f of sidewalkFeatures){const p=f.properties||{},tags=p.tags||{},hw=p.highway||tags.highway||'residential',g=f.geometry;if(!g)continue;const lines=g.type==='LineString'?[g.coordinates]:g.type==='MultiLineString'?g.coordinates:[];for(const line of lines)for(let i=1;i<line.length;i++){addSidewalkLine(line[i-1],line[i],hw,1);addSidewalkLine(line[i-1],line[i],hw,-1);}}
+    const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32BufferAttribute(sidewalkPositions,3));sg.setAttribute('uv',new THREE.Float32BufferAttribute(sidewalkUvs,2));sg.computeVertexNormals();
+    const sidewalkMesh=new THREE.Mesh(sg,walkMat);sidewalkMesh.frustumCulled=false;this.scene.add(sidewalkMesh);setStatus('Local Ramon Magsaysay GLB loading · asphalt texture on mapped roads · terrazzo texture on approximate sidewalk strips.');
+   }
    this.loader=new THREE.GLTFLoader();
    this.loader.load(modelUrl,gltf=>{
     this.model=gltf.scene;
@@ -687,7 +661,6 @@ map.on('load',async()=>{
   normalizeBuildingHeights(buildingsData);
   surfaceData={type:'FeatureCollection',features:(surfaceResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   addRoads(roadsData);
-  addTexturedRoadSurface(roadsData);
   if(buildingsData.features.length){addBuildings(buildingsData);addTexturedBuildingMeshes(buildingsData,roadsData);}
   if(surfaceData.features.length)addDpwRoadSurface(surfaceData);
   // Sync from the same OpenFreeMap vector-tile heights used by the visible basemap; retry as tiles load.
@@ -699,7 +672,6 @@ map.on('load',async()=>{
   // Apply the current checkbox states after asynchronous data loading, even if a user unchecked a layer early.
   const setVisibility=(ids,visible)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visible?'visible':'none')});
   setVisibility(['local-buildings-3d','local-building-labels','all-building-facade-textures'],document.getElementById('buildings').checked);
-  setVisibility(['project-textured-road-surfaces'],document.getElementById('roadTexture').checked);
     setVisibility(['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'],document.getElementById('realModels').checked);
   const errors=[roadResult.loadError,buildingResult.loadError,surfaceResult.loadError].filter(Boolean);
   setStatus(roadsData.features.length.toLocaleString()+' mapped road/path lines · '+buildingsData.features.length.toLocaleString()+' OSM building footprints with facade detail · '+surfaceData.features.length.toLocaleString()+' DPWH road records'+(errors.length?' · Some data sources failed; see console.':' · available layers loaded'));
@@ -711,8 +683,7 @@ document.getElementById('realModels').addEventListener('change',e=>['real-buildi
 document.getElementById('buildings').addEventListener('change',e=>{['local-buildings-3d','local-building-labels','all-building-facade-textures'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('basemap3d').addEventListener('change',e=>{base3dLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'Basemap 3D buildings enabled for comparison with OSM. Turn off OSM 3D buildings to inspect the basemap alone.':'Basemap 3D buildings hidden; OSM layer remains independently controlled.')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
-document.getElementById('roadTexture').addEventListener('change',e=>{if(map.getLayer('project-textured-road-surfaces'))map.setLayoutProperty('project-textured-road-surfaces','visibility',e.target.checked?'visible':'none');setStatus(e.target.checked?'Textured asphalt roads and sidewalk strips enabled across the loaded project road network.':'Textured road surfaces hidden; vector road lines remain controlled separately.')});
-document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null);terrainAlignmentSignature='';map.once('idle',()=>{applyTerrainAlignment();if(roadsData)addTexturedRoadSurface(roadsData);if(!document.getElementById('roadTexture').checked&&map.getLayer('project-textured-road-surfaces'))map.setLayoutProperty('project-textured-road-surfaces','visibility','none')});setStatus(e.target.checked?'Terrain enabled; aligning building bases and textured road surfaces to ground elevation…':'Terrain disabled; resetting building bases and textured road surfaces to flat ground…')}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
+document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null);terrainAlignmentSignature='';map.once('idle',applyTerrainAlignment);setStatus(e.target.checked?'Terrain enabled; aligning building bases and road surfaces to ground elevation…':'Terrain disabled; resetting building bases to flat ground…')}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
 document.getElementById('labels').addEventListener('change',e=>{if(map.getLayer('local-building-labels'))map.setLayoutProperty('local-building-labels','visibility',e.target.checked?'visible':'none')});
 document.getElementById('sun').addEventListener('click',()=>{golden=!golden;try{map.setLight({anchor:'viewport',position:golden?[1.2,210,35]:[1.2,45,75],color:golden?'#ffe0ad':'#ffffff',intensity:golden?0.45:0.8});document.getElementById('sun').textContent=golden?'Golden-hour light':'Neutral daylight'}catch(err){setStatus('Lighting controls are not supported by this map style.')}});
 document.getElementById('tilt').addEventListener('click',()=>{tilted=!tilted;map.easeTo({pitch:tilted?62:0,bearing:tilted?-18:0,duration:900})});
