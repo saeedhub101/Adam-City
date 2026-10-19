@@ -267,7 +267,27 @@ function addTexturedBuildingMeshes(data,roadNetwork){
  function geom(positions){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));g.computeVertexNormals();return g;}
  const cosLat=Math.cos(origin[1]*Math.PI/180);
  let detailed=0,windowCount=0,doorCount=0;
- for(const f of data.features){
+ // Facade meshes are expensive on phones. Keep all building footprints/extrusions,
+ // but generate procedural window geometry only for the 40 nearest buildings.
+ const featureCenter=f=>{
+  const g=f.geometry;if(!g)return origin;
+  let ring=null;
+  if(g.type==='Polygon')ring=g.coordinates&&g.coordinates[0];
+  else if(g.type==='MultiPolygon')ring=g.coordinates&&g.coordinates[0]&&g.coordinates[0][0];
+  if(!ring||!ring.length)return origin;
+  let x=0,y=0,n=0;for(const c of ring){if(Array.isArray(c)&&c.length>=2){x+=c[0];y+=c[1];n++;}}
+  return n?[x/n,y/n]:origin;
+ };
+ const detailFeatures=[...data.features].sort((a,b)=>{
+  const aid=String(a.properties?.osm_feature_id||((a.properties?.type&&a.properties?.id)?a.properties.type+'/'+a.properties.id:''));
+  const bid=String(b.properties?.osm_feature_id||((b.properties?.type&&b.properties?.id)?b.properties.type+'/'+b.properties.id:''));
+  if(aid==='way/90123959')return -1;if(bid==='way/90123959')return 1;
+  const ca=featureCenter(a),cb=featureCenter(b);
+  const da=Math.hypot((ca[0]-origin[0])*111320*Math.cos(origin[1]*Math.PI/180),(ca[1]-origin[1])*110574);
+  const db=Math.hypot((cb[0]-origin[0])*111320*Math.cos(origin[1]*Math.PI/180),(cb[1]-origin[1])*110574);
+  return da-db;
+ }).slice(0,40);
+ for(const f of detailFeatures){
   if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
   const p=f.properties||{};
   const tags=p.tags||{},id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:'')),name=String(tags.name||tags['official_name']||'');
