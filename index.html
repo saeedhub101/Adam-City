@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adam City</title>
+<style>
+:root{color-scheme:dark;--bg:#0a1119;--panel:#111d28;--line:#273847;--text:#edf5f8;--muted:#91a4b1;--accent:#79e5c0}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.app{height:100%;display:grid;grid-template-columns:300px minmax(0,1fr);gap:12px;padding:12px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px;min-height:0}
+.brand{font-size:18px;font-weight:750;letter-spacing:.04em}.brand span{color:var(--accent)}
+.subtitle{font-size:12px;color:var(--muted);margin-top:-10px}
+.field{display:flex;flex-direction:column;gap:7px;font-size:12px;color:var(--muted)}
+input,select,button{font:inherit}
+input,select{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;background:#0b151e;color:var(--text);outline:none}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+button{padding:11px 9px;border:1px solid var(--line);border-radius:9px;background:#182936;color:var(--text);cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:#092019;border-color:var(--accent);font-weight:700}
+.spacer{flex:1}
+.note{font-size:11px;color:var(--muted);line-height:1.7;border-top:1px solid var(--line);padding-top:14px}
+.viewport{position:relative;min-width:0;min-height:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#080f16}
+.viewport-head{position:absolute;z-index:1;top:16px;right:16px;left:16px;display:flex;align-items:center;justify-content:space-between;gap:10px;pointer-events:none}
+.pill{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:8px 12px;background:#111d28dd;color:var(--muted)}
+.display-area{position:absolute;inset:0;display:grid;place-items:center;color:#425663;font-size:13px;letter-spacing:.08em}
+@media(max-width:700px){.app{grid-template-columns:1fr;grid-template-rows:auto minmax(220px,1fr);overflow:auto}.panel{gap:12px;padding:15px}.spacer,.note{display:none}.viewport{min-height:40vh}.brand{font-size:16px}}
+</style>
+</head>
+<body>
+<main class="app">
+  <aside class="panel" aria-label="لوحة التحكم">
+    <div class="brand">ADAM <span>CITY</span></div>
+    <div class="subtitle">لوحة التحكم</div>
+    <label class="field">اسم المدينة
+      <input type="text" value="Manila" placeholder="اسم المدينة">
+    </label>
+    <label class="field">المنطقة
+      <select>
+        <option>نظرة عامة</option>
+        <option>Rizal Park</option>
+        <option>Ermita</option>
+        <option>Malate</option>
+        <option>Makati</option>
+      </select>
+    </label>
+    <label class="field">مستوى التكبير
+      <input type="range" min="1" max="20" value="10">
+    </label>
+    <div class="actions">
+      <button type="button">منظور علوي</button>
+      <button type="button">منظور ثلاثي الأبعاد</button>
+    </div>
+    <div class="actions">
+      <button type="button">إظهار المباني</button>
+      <button type="button">إعادة ضبط العرض</button>
+    </div>
+    <div class="spacer"></div>
+    <div class="note">مساحة عمل أولية فقط. منطقة عرض المدينة جاهزة لإضافة العارض لاحقًا.</div>
+  </aside>
+  <section class="viewport" aria-label="مساحة عرض المدينة">
+    <div class="viewport-head"><span class="pill">مساحة عرض المدينة</span><span class="pill">جاهزة للإعداد</span></div>
+    <div class="display-area">CITY VIEWPORT</div>
+  </section>
+</main>
+</body>
+</html>
