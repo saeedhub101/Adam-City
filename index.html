@@ -20,6 +20,7 @@
 <label><input id="buildings" type="checkbox" checked> Existing 3D buildings</label>
 <label><input id="googleBuildings" type="checkbox"> Google building footprints</label>
 <label><input id="microsoftBuildings" type="checkbox"> Microsoft building footprints</label>
+<label><input id="canonicalBuildings" type="checkbox"> Unified satellite building register</label>
 <label><input id="basemap3d" type="checkbox" checked> Basemap 3D buildings</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
 <label><input id="terrain" type="checkbox" checked> 3D terrain</label>
@@ -877,6 +878,29 @@ document.getElementById('buildings').addEventListener('change',e=>{['local-build
 document.getElementById('basemap3d').addEventListener('change',e=>{base3dLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'Basemap 3D buildings enabled for comparison with OSM. Turn off OSM 3D buildings to inspect the basemap alone.':'Basemap 3D buildings hidden; OSM layer remains independently controlled.')});
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels','visible-sidewalk-left','visible-sidewalk-right','visible-road-casing','visible-road-asphalt','visible-road-curb-left','visible-road-curb-right'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'OSM road network enabled. Sidewalk and curb strips are estimates unless explicitly mapped.':'OSM road network, asphalt, estimated sidewalks and curbs hidden.');});
 document.getElementById('googleBuildings').addEventListener('change',e=>{['google-open-buildings-fill','google-open-buildings-outline'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});if(e.target.checked){if(map.getLayer('google-open-buildings-fill'))map.moveLayer('google-open-buildings-fill');if(map.getLayer('google-open-buildings-outline'))map.moveLayer('google-open-buildings-outline');}setStatus(e.target.checked?'Google Open Buildings v3 footprints enabled; orange outlines have confidence ≥ 0.80.':'Google building-footprint comparison hidden.');});
+async function toggleCanonicalBuildings(enabled){
+ const fillId='canonical-satellite-buildings-fill',lineId='canonical-satellite-buildings-outline',sourceId='canonical-satellite-buildings-source';
+ if(!enabled){[fillId,lineId].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none')});return;}
+ if(!map.isStyleLoaded()){map.once('load',()=>toggleCanonicalBuildings(true));return;}
+ try{
+  if(!map.getSource(sourceId)){
+   setStatus('Loading unified satellite building register…');
+   const response=await fetch('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/qa/non-osm-building-canonical-register.geojson');
+   if(!response.ok)throw new Error('HTTP '+response.status);
+   const data=await response.json();
+   map.addSource(sourceId,{type:'geojson',data});
+   const colors=['match',['get','record_status'],'matched_probable_same_building','#20a66a','microsoft_only_or_geometry_conflict','#a14de0','#f1a340'];
+   map.addLayer({id:fillId,type:'fill',source:sourceId,paint:{'fill-color':colors,'fill-opacity':0.09,'fill-outline-color':colors}});
+   map.addLayer({id:lineId,type:'line',source:sourceId,paint:{'line-color':colors,'line-width':['interpolate',['linear'],['zoom'],13,0.35,16,1.0,19,1.8],'line-opacity':0.92}});
+   map.on('click',fillId,e=>{const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};new maplibregl.Popup().setLngLat(e.lngLat).setHTML('<div style="font:13px system-ui"><b>Unified satellite building record</b><div>Record: '+esc(p.canonical_id)+'</div><div>Status: '+esc(p.record_status)+'</div><div>Display geometry: '+esc(p.geometry_source)+'</div><div>Google confidence: '+esc(p.google_confidence)+'</div><div>Google ID: '+esc(p.google_feature_id)+'</div><div>Microsoft ID: '+esc(p.microsoft_feature_id)+'</div><div>Footprints remain separately preserved in their source files.</div></div>').addTo(map)});
+  }
+  [fillId,lineId].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility','visible')});
+  map.moveLayer(fillId);map.moveLayer(lineId);
+  const source=map.getSource(sourceId);
+  setStatus('Unified non-OSM satellite building register shown: 8,176 unique display records; matched and source-specific footprints are color-coded.');
+ }catch(err){console.error('Canonical satellite building register failed:',err);document.getElementById('canonicalBuildings').checked=false;setStatus('Could not load unified building register: '+String(err.message||err));}
+}
+document.getElementById('canonicalBuildings').addEventListener('change',e=>toggleCanonicalBuildings(e.target.checked));
 document.getElementById('microsoftBuildings').addEventListener('change',e=>{['microsoft-satellite-buildings-fill','microsoft-satellite-buildings-outline'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});if(e.target.checked){if(map.getLayer('microsoft-satellite-buildings-fill'))map.moveLayer('microsoft-satellite-buildings-fill');if(map.getLayer('microsoft-satellite-buildings-outline'))map.moveLayer('microsoft-satellite-buildings-outline');}setStatus(e.target.checked?'Microsoft satellite-derived footprint layer enabled; outlines show building detections only.':'Microsoft building-footprint comparison hidden.');});
 document.getElementById('oamPark').addEventListener('change',e=>{if(map.getLayer('oam-park-orthophoto-layer'))map.setLayoutProperty('oam-park-orthophoto-layer','visibility',e.target.checked?'visible':'none');setStatus(e.target.checked?'Licensed 5 cm OpenAerialMap orthophoto shown for the north-edge park coverage only.':'OpenAerialMap park orthophoto hidden.');});
 document.getElementById('localHillshade').addEventListener('change',e=>{if(map.getLayer('local-srtm-hillshade-layer'))map.setLayoutProperty('local-srtm-hillshade-layer','visibility',e.target.checked?'visible':'none');setStatus(e.target.checked?'Local SRTM-derived hillshade overlay enabled.':'Local SRTM hillshade hidden.');});
