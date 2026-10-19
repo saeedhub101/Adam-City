@@ -1,4 +1,4 @@
-name: Deploy Adam City single-page site to GitHub Pages
+name: Deploy Adam City building and city pages to GitHub Pages
 
 on:
   workflow_dispatch:
@@ -7,6 +7,7 @@ on:
     paths:
       - "index.html"
       - "ermita.html"
+      - "buildings.html"
       - "ermita/maps/generated/ermita-road-network.geojson"
       - "ermita/maps/generated/ermita-building-footprints.geojson"
       - ".github/workflows/deploy-ermita-preview.yml"
@@ -24,38 +25,45 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout only the single-page site (avoid downloading multi-GB source archives)
+      - name: Checkout only the pages needed for deployment
         uses: actions/checkout@v4
         with:
           sparse-checkout: |
             index.html
             ermita.html
+            buildings.html
           sparse-checkout-cone-mode: false
           fetch-depth: 1
-      - name: Validate page JavaScript syntax
+      - name: Validate inline JavaScript syntax
         run: |
           python - <<'PY'
           import re
-          for source, target in [('index.html', '/tmp/index-inline.js'), ('ermita.html', '/tmp/ermita-inline.js')]:
+          for source in ('index.html', 'ermita.html', 'buildings.html'):
               html = open(source, encoding='utf-8').read()
               scripts = re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>', html, re.I)
               scripts = [s for s in scripts if s.strip()]
               if not scripts:
                   raise SystemExit(f'No inline JavaScript found in {source}')
+              target = '/tmp/' + source.replace('.html', '-inline.js')
               open(target, 'w', encoding='utf-8').write(scripts[-1])
+              print(f'Extracted inline JavaScript: {source}')
           PY
           node --check /tmp/index-inline.js
           node --check /tmp/ermita-inline.js
-      - name: Prepare static map site
+          node --check /tmp/buildings-inline.js
+      - name: Prepare static site
         run: |
           set -e
           mkdir -p _site
           cp index.html _site/index.html
           cp ermita.html _site/ermita.html
+          cp buildings.html _site/buildings.html
           cat > _site/README.txt <<'EOF'
-          Adam City — single-page 3D city map for Ermita, Manila.
-          Data source and project files: https://github.com/saeedhub101/Adam-City
-          The map loads public GeoJSON from this repository's main branch.
+          Adam City pages:
+          - index.html: main site
+          - ermita.html: Ermita 3D preview
+          - buildings.html: independent OpenFreeMap and OSM building-source viewer
+          Source repository: https://github.com/saeedhub101/Adam-City
           EOF
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
