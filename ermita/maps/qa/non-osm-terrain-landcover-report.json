@@ -1,5 +1,5 @@
 {
-  "status": "partial",
+  "status": "success",
   "area": "Ermita / Rizal Park, Manila, Philippines",
   "aoi_bbox_wgs84": [
     120.972,
@@ -7,7 +7,7 @@
     120.994,
     14.593
   ],
-  "retrieved_at_utc": "2026-10-19T17:59:00.530017+00:00",
+  "retrieved_at_utc": "2026-10-19T18:00:02.375926+00:00",
   "policy": "Non-OSM sources only; existing outputs are reused and never overwritten.",
   "sources": {
     "terrain": {
@@ -32,6 +32,14 @@
       "crs": "EPSG:4326",
       "source_resolution": "approximately 1 arc-second"
     },
+    "terrain_hillshade": {
+      "status": "created",
+      "path": "ermita/maps/sources/terrain/srtm-1arcsec-ermita-hillshade.png",
+      "bytes": 6594,
+      "width": 80,
+      "height": 77,
+      "derived_from": "ermita/maps/sources/terrain/srtm-1arcsec-ermita.tif"
+    },
     "landcover": {
       "status": "reused_existing",
       "path": "ermita/maps/sources/landcover/esa-worldcover-2021-10m-ermita.tif",
@@ -43,7 +51,5 @@
       "features": 530
     }
   },
-  "warnings": [
-    "Terrain hillshade generation failed: ModuleNotFoundError(\"No module named 'PIL'\")"
-  ]
+  "warnings": []
 }
