@@ -243,6 +243,8 @@ function addTexturedBuildingMeshes(data,roadNetwork){
   if(id===detailSource.osmId)return 102;
   // Keep facade geometry exactly within the same height envelope as the OSM extrusion below.
   // When OSM has no usable height or levels, the extrusion fallback is 5 m, not a taller guessed facade.
+  const basemapH=Number(p.basemap_render_height);
+  if(Number.isFinite(basemapH)&&basemapH>=2&&basemapH<=500)return basemapH;
   const h=parseFloat(String(t.height||'').replace(/[^0-9.]/g,''));
   if(Number.isFinite(h)&&h>=2&&h<=500)return Math.ceil(h);
   const levels=parseFloat(t['building:levels']||t.levels||'');
@@ -380,6 +382,65 @@ function addTexturedBuildingMeshes(data,roadNetwork){
  if(map.getLayer(layerId))map.removeLayer(layerId);
  map.addLayer(layer);
 }
+function syncLocalHeightsFromBasemap(){
+ if(!buildingsData||!Array.isArray(buildingsData.features)||!map.getSource('openmaptiles'))return;
+ let tiles=[];
+ try{tiles=map.querySourceFeatures('openmaptiles',{sourceLayer:'building'} )||[];}catch(e){return;}
+ if(!tiles.length)return;
+ const idKeys=f=>{
+  const p=f.properties||{},v=[];
+  for(const k of ['osm_id','osm_way_id','osm_feature_id','id','original_id']){
+   const x=p[k];if(x!==undefined&&x!==null&&String(x)!=='')v.push(String(x).replace(/^(way|relation|node)\//,''));
+  }
+  if(f.id!==undefined&&f.id!==null)v.push(String(f.id).replace(/^(way|relation|node)\//,''));
+  return [...new Set(v)];
+ };
+ const center=f=>{
+  const coords=[];const walk=g=>{if(!g)return;if(g.type==='Point'){coords.push(g.coordinates);return;}if(g.type==='GeometryCollection'){(g.geometries||[]).forEach(walk);return;}const flatten=a=>{if(!Array.isArray(a))return;if(a.length>=2&&typeof a[0]==='number'&&typeof a[1]==='number')coords.push(a);else a.forEach(flatten)};flatten(g.coordinates);};walk(f.geometry);
+  if(!coords.length)return null;
+  let x=0,y=0;for(const p of coords){x+=p[0];y+=p[1];}return [x/coords.length,y/coords.length];
+ };
+ const candidates=[];
+ for(const f of tiles){
+  const p=f.properties||{},h=Number(p.render_height);
+  if(!Number.isFinite(h)||h<2||h>500||!f.geometry)continue;
+  const ctr=center(f);if(!ctr)continue;
+  candidates.push({f,h,ctr,keys:idKeys(f)});
+ }
+ const byKey=new Map();
+ for(const q of candidates)for(const k of q.keys){if(!byKey.has(k))byKey.set(k,q);}
+ const toMeters=(a,b)=>{const lat=(a[1]+b[1])*Math.PI/360;return Math.hypot((a[0]-b[0])*111320*Math.cos(lat),(a[1]-b[1])*110574);};
+ let changed=0,matched=0;
+ for(const local of buildingsData.features){
+  if(!local.geometry||!['Polygon','MultiPolygon'].includes(local.geometry.type))continue;
+  const p=local.properties||(local.properties={}),raw=String(p.osm_feature_id||''),localId=raw.replace(/^(way|relation|node)\//,'');
+  let q=byKey.get(localId);
+  if(!q){
+   const ctr=center(local);if(!ctr)continue;
+   let best=null,dist=Infinity;
+   for(const candidate of candidates){const d=toMeters(ctr,candidate.ctr);if(d<dist){dist=d;best=candidate;}}
+   // Avoid assigning a neighbour's height: centroid fallback must be very close.
+   if(best&&dist<=8)q=best;
+  }
+  if(!q)continue;
+  matched++;
+  if(Number(p.basemap_render_height)!==q.h||Number(p.basemap_render_min_height)!==Number(q.f.properties?.render_min_height||0)){
+   p.basemap_render_height=q.h;
+   p.basemap_render_min_height=Number(q.f.properties?.render_min_height||0);
+   p.basemap_height_match=raw||String(q.f.id||'spatial-match');
+   changed++;
+  }
+ }
+ if(changed&&map.getSource('local-buildings')){
+  map.getSource('local-buildings').setData(buildingsData);
+  // Rebuild facade details only when newly matched heights changed, so windows/trim share the same roofline.
+  addTexturedBuildingMeshes(buildingsData,roadsData);
+ }
+ if(changed||!window.__adamHeightSyncLogged){
+  window.__adamHeightSyncLogged=true;
+  setStatus('Basemap height matching: '+matched.toLocaleString()+' local buildings matched to live OpenFreeMap render_height values; '+changed.toLocaleString()+' height records updated. Unmatched buildings retain OSM height/levels fallback.');
+ }
+}
 function addBuildings(data){
  if(map.getLayer('local-buildings-3d'))map.removeLayer('local-buildings-3d');
  if(map.getSource('local-buildings'))map.removeSource('local-buildings');
@@ -396,10 +457,11 @@ function addBuildings(data){
        '#c8bfb3']],
     // Match OpenMapTiles/Liberty height fallback: height, then levels × 3.66 m, then 5 m.
     // This keeps local OSM extrusions much closer to the Basemap when source tags are missing.
-    'fill-extrusion-height':['case',['==',['get','osm_feature_id'],'way/90123959'],102,['max',2,['ceil',['coalesce',
+    'fill-extrusion-height':['case',['==',['get','osm_feature_id'],'way/90123959'],102,['max',2,['coalesce',
+      ['to-number',['get','basemap_render_height']],
       ['to-number',['get','height',['get','tags']]],
       ['*',['to-number',['get','building:levels',['get','tags']]],3.66],
-      5]]]],
+      5]]],
     'fill-extrusion-base':['max',0,['floor',['coalesce',
       ['to-number',['get','min_height',['get','tags']]],
       ['*',['to-number',['get','min_level',['get','tags']]],3.66],
@@ -502,6 +564,9 @@ map.on('load',async()=>{
   addRoads(roadsData);
   if(buildingsData.features.length){addBuildings(buildingsData);addTexturedBuildingMeshes(buildingsData,roadsData);}
   if(surfaceData.features.length)addDpwRoadSurface(surfaceData);
+  // Sync from the same OpenFreeMap vector-tile heights used by the visible basemap; retry as tiles load.
+  syncLocalHeightsFromBasemap();
+  map.on('idle',syncLocalHeightsFromBasemap);
   addLandmarks();addRealModelMarkers();addSatelliteImagery();addLocalRamonModel(roadsData);
   // Apply the current checkbox states after asynchronous data loading, even if a user unchecked a layer early.
   const setVisibility=(ids,visible)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visible?'visible':'none')});
