@@ -1,4 +1,4 @@
-name: Deploy index.html to GitHub Pages
+name: Deploy ADAM CITY Ermita map to GitHub Pages
 
 on:
   push:
@@ -25,16 +25,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Prepare only the homepage
+      - name: Prepare homepage and local Ermita OSM data
         run: |
+          set -e
           test -f index.html
-          mkdir -p site
+          mkdir -p site/ermita/maps/generated
+          mkdir -p site/ermita/maps/sources/openfreemap
           cp index.html site/index.html
+          cp ermita/maps/generated/ermita-building-footprints.geojson site/ermita/maps/generated/
+          cp ermita/maps/generated/ermita-road-network.geojson site/ermita/maps/generated/
+          cp ermita/maps/generated/ermita-building-details.geojson site/ermita/maps/generated/
+          cp ermita/maps/sources/openfreemap/area-boundary.geojson site/ermita/maps/sources/openfreemap/
+          echo "Published local OSM data files:"
+          du -h site/ermita/maps/generated/* site/ermita/maps/sources/openfreemap/*
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload homepage artifact
+      - name: Upload map and data artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
