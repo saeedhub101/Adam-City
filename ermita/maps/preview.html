@@ -251,7 +251,7 @@ function addTexturedBuildingMeshes(data){
    Object.keys(textureSources).forEach(k=>sets[k]={positions:[],uvs:[]});
    const roofPositions=[],roofUvs=[];
    const cosLat=Math.cos(origin[1]*Math.PI/180);
-   const xy=c=>({x:(c[0]-origin[0])*111319.49*cosLat,z:-(c[1]-origin[1])*111132.92});
+   const xy=c=>({x:(c[0]-origin[0])*111319.49*cosLat,z:(c[1]-origin[1])*111132.92});
    const heightOf=p=>{
     const t=p.tags||p;
     const h=parseFloat(String(t.height||'').replace(/[^0-9.]/g,''));
