@@ -20,7 +20,7 @@
 <div class="stats"><div class="stat"><strong>1,528</strong><span>بصمة مبنى OSM</span></div><div class="stat"><strong>1,445</strong><span>طريق ومسار</span></div><div class="stat"><strong>DEM</strong><span>Copernicus GLO-30</span></div></div>
 <div class="group-title">المباني</div><div class="options">
 <label class="opt"><input id="buildings" type="checkbox" checked><span>مباني OSM المحلية (3D)</span></label>
-<label class="opt"><input id="openfreemapBuildings" type="checkbox"><span>مباني OpenFreeMap</span></label>
+<label class="opt"><input id="openfreemapBuildings" type="checkbox"><span>مباني OpenMapTiles</span></label>
 <label class="opt"><input id="numbers" type="checkbox" checked><span>أرقام المباني على أسطحها</span></label>
 <label class="opt"><input id="bNames" type="checkbox" checked><span>أسماء المباني</span></label>
 <label class="opt"><input id="facade" type="checkbox" checked><span>ألوان الواجهات وطبقاتها</span></label>
@@ -97,7 +97,7 @@ map.on('load',async()=>{
   map.fitBounds([[120.9711,14.5732],[120.9931,14.5971]],{padding:{top:55,right:325,bottom:35,left:30},duration:0});
   say('تم تحميل '+d.buildings.features.length.toLocaleString('en-US')+' بصمة مبنى أساسية و'+d.microsoftBuildings.features.length.toLocaleString('en-US')+' بصمة Microsoft للمقارنة و'+d.roads.features.length.toLocaleString('en-US')+' طريق/مسار. أُسنِدت '+joined.toLocaleString('en-US')+' أرقام إلى المباني الحاوية لها. فعّل مربع Microsoft لإظهار الحدود الوردية.');
   $('buildings').onchange=e=>setVis(['local-building-extrusions','local-building-roof-edges'],e.target.checked);
-  $('openfreemapBuildings').onchange=e=>{const on=e.target.checked;setVis(['openfreemap-building-extrusions',...openFreeMapBuildingLayerIds],on);say(on?'مباني OpenMapTiles المحلية ظاهرة؛ عددها '+ofmBuildingFeatures.length.toLocaleString('en-US')+' بصمة.':'تم إخفاء مباني OpenMapTiles المحلية.');};
+  $('openfreemapBuildings').onchange=e=>{const on=e.target.checked;setVis(['openfreemap-building-extrusions'],on);say(on?'مباني OpenMapTiles المحلية ظاهرة؛ عددها '+ofmBuildingFeatures.length.toLocaleString('en-US')+' بصمة.':'تم إخفاء مباني OpenMapTiles المحلية.');};
   $('microsoftBuildings').onchange=e=>{const on=e.target.checked;setVis(['microsoft-building-footprints-fill','microsoft-building-footprints-outline'],on);say(on?'طبقة Microsoft ظاهرة باللون الوردي فوق المباني الحالية للمقارنة؛ ألغِ التحديد لإخفائها.':'تم إخفاء طبقة Microsoft؛ المباني الأساسية ما زالت من مصدرها الحالي.');};
   $('numbers').onchange=e=>setVis(['building-house-numbers'],e.target.checked);
   $('bNames').onchange=e=>setVis(['local-building-name-labels'],e.target.checked);
