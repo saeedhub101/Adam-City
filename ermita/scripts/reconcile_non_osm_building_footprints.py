@@ -153,7 +153,7 @@ def main():
                    "geometry_source":"Google Research Open Buildings v3",
                    "google_feature_id":g["id"],"google_confidence":gp.get("confidence"),
                    "google_area_m2":round(g["metric_area"],2),"microsoft_feature_id":None,
-                   "microsoft_area_m2":None,"source_observations":[google_observation],
+                   "microsoft_area_m2":None,"source_observations_json":json.dumps([google_observation],ensure_ascii=False,separators=(",",":")),
                    "geometry_policy":"Google geometry retained for display; all original source geometries remain unchanged."}
             if gi in matches:
                 mi,iou,inter,dist,og,om=matches[gi]
@@ -164,7 +164,7 @@ def main():
                     "microsoft_feature_id":m["id"],"microsoft_area_m2":round(m["metric_area"],2),
                     "intersection_over_union":round(iou,4),"centroid_distance_m":round(dist,2),
                     "overlap_fraction_google":round(og,4),"overlap_fraction_microsoft":round(om,4),
-                    "source_observations":[google_observation,microsoft_observation],
+                    "source_observations_json":json.dumps([google_observation,microsoft_observation],ensure_ascii=False,separators=(",",":")),
                     "geometry_policy":"Google polygon selected for display only; Microsoft polygon and match metrics retained as a separate source observation."})
             canonical_features.append({"type":"Feature","id":props["canonical_id"],
                                        "geometry":mapping(g["geometry"]),"properties":props})
@@ -178,7 +178,7 @@ def main():
                    "geometry_source":"Microsoft IdMyPhBuildingFootprints",
                    "google_feature_id":None,"google_confidence":None,"google_area_m2":None,
                    "microsoft_feature_id":m["id"],"microsoft_area_m2":round(m["metric_area"],2),
-                   "source_observations":[observation],
+                   "source_observations_json":json.dumps([observation],ensure_ascii=False,separators=(",",":")),
                    "geometry_policy":"Microsoft geometry retained for display; all original source geometries remain unchanged."}
             canonical_features.append({"type":"Feature","id":props["canonical_id"],
                                        "geometry":mapping(m["geometry"]),"properties":props})
