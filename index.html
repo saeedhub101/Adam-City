@@ -517,7 +517,17 @@ function addBuildings(data){
   filter:['all',['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],['has','name',['get','tags']]],
   layout:{'text-field':['get','name',['get','tags']],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],16,10,19,13],'text-max-width':10,'text-allow-overlap':false,'text-ignore-placement':false},
   paint:{'text-color':'#28323a','text-halo-color':'#fff8e9','text-halo-width':1.5,'text-halo-blur':0.3}});
-
+ if(map.getLayer('seven-eleven-facade-sign'))map.removeLayer('seven-eleven-facade-sign');
+ map.addLayer({id:'seven-eleven-facade-sign',type:'symbol',source:'local-buildings',minzoom:15.2,
+  filter:['==',['get','name',['get','tags']],'7-Eleven'],
+  layout:{'text-field':'7 ELEVEN','text-font':['Open Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],15,10,18,17],'text-max-width':8,'text-allow-overlap':true,'text-ignore-placement':true},
+  paint:{'text-color':'#ffffff','text-halo-color':'#087d3b','text-halo-width':5,'text-halo-blur':0}});
+ if(map.getLayer('robinsons-mall-facade-sign'))map.removeLayer('robinsons-mall-facade-sign');
+ map.addLayer({id:'robinsons-mall-facade-sign',type:'symbol',source:'local-buildings',minzoom:14.8,
+  filter:['==',['get','name',['get','tags']],'Robinsons Manila'],
+  layout:{'text-field':'ROBINSONS','text-font':['Open Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],15,11,18,20],'text-max-width':12,'text-allow-overlap':true,'text-ignore-placement':true},
+  paint:{'text-color':'#c82432','text-halo-color':'#ffffff','text-halo-width':3,'text-halo-blur':0}});
+ 
 }
 function addSatelliteImagery(){
  const layers=(map.getStyle().layers||[]).filter(l=>l.id!=='satellite-imagery'&&!base3dLayerIds.includes(l.id)&&!l.id.startsWith('local-')&&!l.id.startsWith('project-')&&!l.id.startsWith('key-landmark-'));
