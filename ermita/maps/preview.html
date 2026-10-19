@@ -446,12 +446,11 @@ map.on('load',async()=>{
   addRoads(roadsData);
   if(buildingsData.features.length)addBuildings(buildingsData);
   if(surfaceData.features.length)addDpwRoadSurface(surfaceData);
-  addLandmarks();addRealModelMarkers();addSatelliteImagery();addTexturedBuildingMeshes(buildingsData);addLocalRamonModel(roadsData);
+  addLandmarks();addRealModelMarkers();addSatelliteImagery();addLocalRamonModel(roadsData);
   // Apply the current checkbox states after asynchronous data loading, even if a user unchecked a layer early.
   const setVisibility=(ids,visible)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visible?'visible':'none')});
   setVisibility(['local-buildings-3d','local-building-labels'],document.getElementById('buildings').checked);
-  setVisibility(['all-building-facade-textures'],document.getElementById('buildings').checked);
-  setVisibility(['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'],document.getElementById('realModels').checked);
+    setVisibility(['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'],document.getElementById('realModels').checked);
   setVisibility(basemap3DBuildingLayerIds,document.getElementById('basemapBuildings').checked);
   const errors=[roadResult.loadError,buildingResult.loadError,surfaceResult.loadError].filter(Boolean);
   setStatus(roadsData.features.length.toLocaleString()+' mapped road/path lines · '+buildingsData.features.length.toLocaleString()+' OSM building footprints · '+surfaceData.features.length.toLocaleString()+' DPWH road records · '+basemap3DBuildingLayerIds.length+' basemap 3D building style layers'+(errors.length?' · Some data sources failed; see console.':' · available layers loaded'));
@@ -460,7 +459,7 @@ map.on('load',async()=>{
 document.getElementById('imagery').addEventListener('change',e=>setSatelliteImagery(e.target.checked));
 document.getElementById('landmarks').addEventListener('change',e=>['key-landmark-halo','key-landmark-dot','key-landmark-label'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('realModels').addEventListener('change',e=>['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
-document.getElementById('buildings').addEventListener('change',e=>{['local-buildings-3d','local-building-labels','all-building-facade-textures'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
+document.getElementById('buildings').addEventListener('change',e=>{['local-buildings-3d','local-building-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('basemapBuildings').addEventListener('change',e=>basemap3DBuildingLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null)}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
