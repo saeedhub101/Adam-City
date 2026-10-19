@@ -1,0 +1,36 @@
+{
+  "status": "failed",
+  "source": "Google Research Open Buildings v3 polygon detections",
+  "source_url": "https://sites.research.google/gr/open-buildings/",
+  "download_root": "https://storage.googleapis.com/open-buildings-data/v3/polygons_s2_level_6_gzip_no_header",
+  "area": "Ermita / Rizal Park, Manila, Philippines",
+  "bbox_wgs84": [
+    120.972,
+    14.572,
+    120.994,
+    14.593
+  ],
+  "retrieved_at_utc": "2026-10-19T17:49:31.526896+00:00",
+  "source_inference_vintage": "May 2023 (Open Buildings v3)",
+  "license": "CC BY 4.0 (selected license option)",
+  "attribution": "Google Research Open Buildings v3; see https://sites.research.google/gr/open-buildings/",
+  "minimum_confidence_retained": 0.65,
+  "identity_policy": "Stored as a separate source; no OSM matching or overwriting.",
+  "cells": [
+    {
+      "token": "3397",
+      "status": "failed",
+      "url": "https://storage.googleapis.com/open-buildings-data/v3/polygons_s2_level_6_gzip_no_header/3397_buildings.csv.gz",
+      "error": "ValueError('S2 cell compressed size exceeds 262144000 bytes')"
+    }
+  ],
+  "warnings": [
+    "S2 cell 3397: ValueError('S2 cell compressed size exceeds 262144000 bytes')",
+    "No building polygons were retained. Check whether the area is covered and whether S2 downloads succeeded."
+  ],
+  "s2_level": 6,
+  "s2_cells_considered": [
+    "3397"
+  ],
+  "feature_count": 0
+}
