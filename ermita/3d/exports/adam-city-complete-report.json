@@ -1,0 +1,21 @@
+{
+  "output": "ermita/3d/exports/adam-city-complete.glb",
+  "buildings_exported": 1487,
+  "road_segments_exported": 1437,
+  "terrain_vertices": 20412,
+  "terrain_triangles": 40250,
+  "coordinate_system": "EPSG:3857 metres, shared scene origin; Z relative to minimum DEM elevation",
+  "sources": {
+    "buildings": "ermita/maps/generated/ermita-building-footprints.geojson",
+    "roads": "ermita/maps/generated/ermita-road-network.geojson",
+    "terrain": "ermita/3d/terrain/ermita-copernicus-dem-cropped.tif"
+  },
+  "limitations": [
+    "This is a geometry export of the committed preview source layers, not a screen capture.",
+    "Streamed Esri imagery tiles are not embedded; they are not committed local assets and redistribution is restricted.",
+    "Building heights use source height/levels when available and a documented 9.6 m fallback otherwise.",
+    "Road widths are visualization estimates based on highway class; road centerlines come from OSM.",
+    "Procedural facade placeholder GLBs are not fused because they were independently recentered and cannot be safely aligned without original transforms."
+  ],
+  "license": "OpenStreetMap contributors, ODbL 1.0; Copernicus DEM attribution per source report."
+}
