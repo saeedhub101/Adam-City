@@ -220,7 +220,7 @@ function addLocalRamonModel(roadNetwork){
 }
 
 
-function addTexturedBuildingMeshes(data){
+function addTexturedBuildingMeshes(data,roadNetwork){
  if(!window.THREE || !data || !Array.isArray(data.features))return;
  const layerId='all-building-facade-textures';
  if(map.getLayer(layerId))map.removeLayer(layerId);
@@ -274,7 +274,24 @@ function addTexturedBuildingMeshes(data){
    const ring=poly&&poly[0];if(!ring||ring.length<4)continue;
    const pts=ring.map(xy);
    let area=0;for(let i=0;i<pts.length-1;i++)area+=pts[i].x*pts[i+1].z-pts[i+1].x*pts[i].z;
+   let frontEdge=-1,frontDistance=Infinity;
+   if(special&&roadNetwork&&Array.isArray(roadNetwork.features)){
+    for(let ei=1;ei<pts.length;ei++){
+     const mid={x:(pts[ei-1].x+pts[ei].x)/2,z:(pts[ei-1].z+pts[ei].z)/2};
+     let best=Infinity;
+     for(const rf of roadNetwork.features){
+      const rp=rf.properties||{};if(rp.name&&!/jorge bocobo/i.test(String(rp.name)))continue;
+      const rg=rf.geometry;if(!rg)continue;const lines=rg.type==='LineString'?[rg.coordinates]:rg.type==='MultiLineString'?rg.coordinates:[];
+      for(const line of lines)for(let ri=1;ri<line.length;ri++){
+       const ra=xy(line[ri-1]),rb=xy(line[ri]),vx=rb.x-ra.x,vz=rb.z-ra.z,wx=mid.x-ra.x,wz=mid.z-ra.z,t=Math.max(0,Math.min(1,(wx*vx+wz*vz)/(vx*vx+vz*vz||1)));
+       best=Math.min(best,Math.hypot(mid.x-ra.x-t*vx,mid.z-ra.z-t*vz));
+      }
+     }
+     if(best<frontDistance){frontDistance=best;frontEdge=ei;}
+    }
+   }
    for(let i=1;i<pts.length;i++){
+    const specialFront=special&&i===frontEdge;
     const a=pts[i-1],b=pts[i],dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);
     if(len<3||len>250)continue;
     // The outward normal is derived from polygon winding, so windows sit outside the wall instead of floating inward.
@@ -298,8 +315,8 @@ function addTexturedBuildingMeshes(data){
       const uA=u0,uB=u1;
       const sillY=lowShop?wy0:Math.max(base+.08,wy0-.12);
       boxBand(point(a,n,.18, sillY),point(b,n,.18,sillY),n,sillY,.10,.0,trimPos);
-      if(special){
-       // Cream concrete framing, black ribbon glazing and thin balcony slab: derived from the inspected tower photo.
+      if(specialFront){
+       // Street-facing wall only: cream concrete framing, black ribbon glazing and thin balcony slab, derived from the inspected tower photo.
        boxBand(a,b,n,base+floorH-.14,.12,.19,bandPos);
        if(floor%3===0)boxBand(a,b,n,base+floorH-.02,.09,.29,balconyPos);
       }else if(floorH>2.6){
@@ -313,7 +330,7 @@ function addTexturedBuildingMeshes(data){
      }
     }
     // Thin vertical accent strips on the photo-checked Cityland tower.
-    if(special){
+    if(specialFront){
      for(let k=1;k<4;k++){
       const u=k/4,aa={x:a.x+dx*u,y:0,z:a.z+dz*u},bb={x:a.x+dx*u,y:h,z:a.z+dz*u};
       const half=.12,low={x:aa.x+n.x*.24,y:0,z:aa.z+n.z*.24},lowR={x:aa.x+n.x*.24+n.x*half,y:0,z:aa.z+n.z*.24+n.z*half};
@@ -387,7 +404,7 @@ function addBuildings(data){
       0]]],
     'fill-extrusion-opacity':0.98,'fill-extrusion-vertical-gradient':true
    }});
- map.on('click','local-buildings-3d',e=>{const f=e.features&&e.features[0];if(!f)return;new maplibregl.Popup().setLngLat(e.lngLat).setHTML(popupHtml(f.properties||{})).addTo(map)});
+ map.on('click','local-buildings-3d',e=>{const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};let extra='';if(String(p.osm_feature_id||'')==='way/90123959')extra='<div style="margin-top:8px"><b>Facade reference photo:</b><br><a target="_blank" rel="noopener" href="https://philippinerealtygroup.com/manila-residences-bocobo"><img alt="Manila Residences Bocobo facade reference" src="https://philippinerealtygroup.com/wp-content/images/PRG_Developments/manila-residences-bocobo/0_Manila-Residences-Bocobo-Manila-City-Metro-Manila-Philippines.jpg" style="display:block;max-width:260px;width:100%;height:auto;margin:6px 0"></a><div>Inspected online reference; the street-facing facade is modeled with cream podium, dark window/balcony bands and orange vertical accents. Photo is a reference, not stretched across the wall.</div></div>';new maplibregl.Popup().setLngLat(e.lngLat).setHTML(popupHtml(p)+extra).addTo(map)});
  map.on('mouseenter','local-buildings-3d',()=>map.getCanvas().style.cursor='pointer');
  map.on('mouseleave','local-buildings-3d',()=>map.getCanvas().style.cursor='');
  if(map.getLayer('local-building-labels'))map.removeLayer('local-building-labels');
@@ -479,7 +496,7 @@ map.on('load',async()=>{
   if(bocobo){bocobo.properties.tags=bocobo.properties.tags||{};bocobo.properties.tags.name='Manila Residences Bocobo';bocobo.properties.tags['building:levels']='34';bocobo.properties.tags.height='102';bocobo.properties.tags['building:colour']='#e5d5bd';bocobo.properties.tags['facade:reference']='Photo reviewed: Philippine Realty Group listing';}
   surfaceData={type:'FeatureCollection',features:(surfaceResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   addRoads(roadsData);
-  if(buildingsData.features.length){addBuildings(buildingsData);addTexturedBuildingMeshes(buildingsData);}
+  if(buildingsData.features.length){addBuildings(buildingsData);addTexturedBuildingMeshes(buildingsData,roadsData);}
   if(surfaceData.features.length)addDpwRoadSurface(surfaceData);
   addLandmarks();addRealModelMarkers();addSatelliteImagery();addLocalRamonModel(roadsData);
   // Apply the current checkbox states after asynchronous data loading, even if a user unchecked a layer early.
