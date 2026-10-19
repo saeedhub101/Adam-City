@@ -21,14 +21,14 @@
 <label><input id="roads" type="checkbox" checked> Project road network</label>
 <label><input id="terrain" type="checkbox" checked> 3D terrain</label>
 <label><input id="labels" type="checkbox" checked> Building labels</label>
-<label><input id="kartaview" type="checkbox" checked> KartaView photo points</label>
+<label><input id="facadeTextures" type="checkbox" checked> Verified facade textures</label>
 <button id="sun">Golden-hour light</button>
 <button id="tilt">Tilt / top view</button>
 <button id="reset">Reset view</button>
 </div>
 </header>
 <div id="map" role="application" aria-label="Interactive three-dimensional city map of Ermita Manila"></div>
-<footer>Switchable Esri satellite layer, mapped 3D street network, official DPWH road records and highlighted landmarks. Estimated building heights and ~30 m terrain are not survey-grade. © Esri, Maxar, Earthstar Geographics, OpenStreetMap contributors · DPWH road data · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
+<footer>Switchable Esri satellite layer, mapped 3D street network, official DPWH road records and highlighted landmarks. Photographs are not shown as popups in place of 3D facade textures. Estimated building heights and ~30 m terrain are not survey-grade. © Esri, Maxar, Earthstar Geographics, OpenStreetMap contributors · DPWH road data · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
 <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
 <script>
 (function(){
@@ -47,33 +47,10 @@ map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-righ
 map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-right');
 let roadsData=null,buildingsData=null,surfaceData=null,tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[];
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-let facadePhotoIndex={};
 function popupHtml(p){
  const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const id=p.osm_feature_id||p.id;
  const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',id]];
- const photos=facadePhotoIndex[id]||[];
- const photoHtml=photos.length?'<div style="margin-top:8px;border-top:1px solid #ddd;padding-top:8px"><b>KartaView candidate photos ('+photos.length+')</b><div style="font-size:11px;color:#9a4d00;margin:3px 0 6px">Not visually verified; candidate only.</div>'+photos.slice(0,5).map(photo=>'<div style="margin:7px 0;padding-top:6px;border-top:1px solid #eee"><img src="https://saeedhub101.github.io/Adam-City/'+esc(photo.image)+'" alt="KartaView candidate photo" loading="lazy" style="display:block;width:240px;max-width:100%;height:auto;margin-top:4px;border-radius:4px"><div style="font-size:11px;color:#555">'+esc(photo.capture_date||'Capture date unknown')+' · '+esc(photo.distance_to_wall_m===null?'':photo.distance_to_wall_m+' m from footprint')+' · direction difference '+esc(photo.heading_difference_deg===null?'unknown':photo.heading_difference_deg+'°')+' · '+esc(photo.match_status||'candidate')+'</div><div><a target="_blank" rel="noopener" href="'+esc(photo.source_page||'https://kartaview.org/')+'">Open source photo</a></div></div>').join('')+'</div>':'<div style="margin-top:8px">No KartaView photo candidate indexed for this feature.</div>';
- return '<div style="font:13px system-ui;max-width:260px"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+photoHtml+'</div>';
-}
-
-function addKartaViewPhotoPoints(index){
- const features=[];
- Object.entries(index||{}).forEach(([osmId,photos])=>(photos||[]).forEach(photo=>{
-  if(typeof photo.longitude!=='number'||typeof photo.latitude!=='number')return;
-  features.push({type:'Feature',geometry:{type:'Point',coordinates:[photo.longitude,photo.latitude]},properties:{osm_id:osmId,photo_id:photo.photo_id,image:photo.image||'',capture_date:photo.capture_date||'',distance_to_wall_m:photo.distance_to_wall_m,heading_difference_deg:photo.heading_difference_deg,match_status:photo.match_status||'candidate',source_page:photo.source_page||'https://kartaview.org/'}});
- }));
- if(map.getLayer('kartaview-photo-points'))map.removeLayer('kartaview-photo-points');
- if(map.getSource('kartaview-photo-points'))map.removeSource('kartaview-photo-points');
- map.addSource('kartaview-photo-points',{type:'geojson',data:{type:'FeatureCollection',features}});
- map.addLayer({id:'kartaview-photo-points',type:'circle',source:'kartaview-photo-points',paint:{'circle-radius':['interpolate',['linear'],['zoom'],13,3,17,6,20,9],'circle-color':['match',['get','match_status'],'direction_checked','#16a34a','#f59e0b'],'circle-stroke-color':'#ffffff','circle-stroke-width':1.5,'circle-opacity':0.9}});
- map.on('click','kartaview-photo-points',e=>{
-  const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};
-  const img=p.image?'<img src="https://saeedhub101.github.io/Adam-City/'+esc(p.image)+'" alt="KartaView street photo" loading="lazy" style="display:block;width:240px;max-width:100%;height:auto;margin:6px 0;border-radius:4px">':'';
-  const details='<div style="font:12px system-ui;max-width:260px"><b>KartaView photo candidate</b><div>Linked OSM feature: '+esc(p.osm_id)+'</div><div>Status: '+esc(p.match_status)+'</div><div>Wall distance: '+esc(p.distance_to_wall_m===null?'unknown':p.distance_to_wall_m+' m')+'</div><div>Heading difference: '+esc(p.heading_difference_deg===null?'unknown':p.heading_difference_deg+'°')+'</div><div>'+esc(p.capture_date)+'</div>'+img+'<div style="color:#9a4d00">Candidate only — building identity not visually verified.</div><a target="_blank" rel="noopener" href="'+esc(p.source_page)+'">Open KartaView source</a></div>';
-  new maplibregl.Popup().setLngLat(e.lngLat).setHTML(details).addTo(map);
- });
- map.on('mouseenter','kartaview-photo-points',()=>map.getCanvas().style.cursor='pointer');
- map.on('mouseleave','kartaview-photo-points',()=>map.getCanvas().style.cursor='');
+ return '<div style="font:13px system-ui;max-width:260px"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+'</div>';
 }
 
 function addBuildings(data){
@@ -217,16 +194,15 @@ map.on('load',async()=>{
    fetch(base+'ermita-road-network.geojson').then(r=>{if(!r.ok)throw Error('Road data HTTP '+r.status);return r.json()}),
    fetch(base+'ermita-building-footprints.geojson').then(r=>{if(!r.ok)throw Error('Building data HTTP '+r.status);return r.json()}),
    fetch('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/external/dpwh-road-surface-type-ermita.geojson').then(r=>{if(!r.ok)throw Error('DPWH road data HTTP '+r.status);return r.json()}),
-   fetch('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/3d/facade-photo-index.json').then(r=>{if(!r.ok)throw Error('Facade photo index HTTP '+r.status);return r.json()}),
    fetch('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/generated/ermita-branded-stores.geojson').then(r=>{if(!r.ok)throw Error('Branded store data HTTP '+r.status);return r.json()})
   ]);
   roadsData={type:'FeatureCollection',features:(results[0].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   buildingsData={type:'FeatureCollection',features:(results[1].features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
   surfaceData={type:'FeatureCollection',features:(results[2].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
-  facadePhotoIndex=results[3].buildings||{};
+  // Facade photos are not presented as popups. Only validated photo-to-building texture assignments may be rendered.
   addBuildings(buildingsData);addRoads(roadsData);addDpwRoadSurface(surfaceData);addLandmarks();addBrandedStores(results[4]);addSatelliteImagery();addLocalAerialImagery();
   const storeFeatures=results[4].features||[];const storeCounts={};storeFeatures.forEach(f=>{const b=f.properties&&f.properties.brand;storeCounts[b]=(storeCounts[b]||0)+1});
-   const photoGroups=Object.values(facadePhotoIndex);const photoBuildingCount=photoGroups.length;const multiPhotoCount=photoGroups.filter(a=>a.length>=2).length;const threePhotoCount=photoGroups.filter(a=>a.length>=3).length;
+   
    setStatus(buildingsData.features.length.toLocaleString()+' building outlines · KartaView candidates: '+photoBuildingCount+' features; '+multiPhotoCount+' with 2+ photos; '+threePhotoCount+' with 3+ photos. Candidate matches are not visually verified.');
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
 });
