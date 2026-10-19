@@ -113,6 +113,9 @@ def main():
 
     scene = trimesh.Scene()
     scene.add_geometry(terrain_mesh, node_name="Copernicus terrain surface", geom_name="terrain")
+    # Aggregate features into a small number of meshes to keep the GLB compact.
+    building_meshes = []
+    road_meshes = []
     building_count = 0
     for f in building_data.get("features", []):
         if not f.get("geometry"):
@@ -132,11 +135,13 @@ def main():
                 mesh = trimesh.creation.extrude_polygon(poly, height, engine="earcut")
                 mesh.apply_translation([0, 0, ground_z(poly.centroid.x, poly.centroid.y)])
                 mesh.visual.face_colors = color
-                scene.add_geometry(mesh, node_name=str(tags.get("name") or tags.get("osm_feature_id") or f"building-{building_count}"))
+                building_meshes.append(mesh)
                 building_count += 1
         except Exception as e:
             print("Skipping building:", e)
 
+    if building_meshes:
+        scene.add_geometry(trimesh.util.concatenate(building_meshes), node_name="OSM buildings", geom_name="buildings")
     road_count = 0
     for f in road_data.get("features", []):
         if not f.get("geometry"):
@@ -156,11 +161,13 @@ def main():
                 mesh = trimesh.creation.extrude_polygon(poly, 0.12, engine="earcut")
                 mesh.apply_translation([0, 0, ground_z(line.centroid.x, line.centroid.y) + 0.04])
                 mesh.visual.face_colors = [67, 69, 72, 255]
-                scene.add_geometry(mesh, node_name=name)
+                road_meshes.append(mesh)
                 road_count += 1
         except Exception as e:
             print("Skipping road:", e)
 
+    if road_meshes:
+        scene.add_geometry(trimesh.util.concatenate(road_meshes), node_name="OSM roads and paths", geom_name="roads")
     # One shared origin is essential: never recenter each source GLB independently.
     bounds = scene.bounds
     center_xy = (bounds[0, :2] + bounds[1, :2]) / 2
