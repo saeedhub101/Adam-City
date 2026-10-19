@@ -128,8 +128,17 @@ def main():
         for i,f in enumerate(features):
             p=f.get("properties") or {}
             sid=osm_id(f)
+            # OpenMapTiles feature IDs can be tile-local; only merge these with OSM
+            # when an explicit stable OSM ID field is present.
+            if source.startswith("openfreemap"):
+                p0=f.get("properties") or {}
+                t0=p0.get("tags") if isinstance(p0.get("tags"),dict) else {}
+                stable=p0.get("osm_feature_id") or p0.get("osm_id") or t0.get("osm_id")
+                sid=str(stable) if stable is not None else None
+                if sid and sid.isdigit():
+                    sid="way/"+sid
             # Avoid accidental collision of provider-local numeric IDs with OSM IDs.
-            if sid and "/" not in sid and source not in ("osm_building_footprints","osm_road_network","openfreemap_buildings","openfreemap_roads","osm_raw_elements"):
+            if sid and "/" not in sid and source not in ("osm_building_footprints","osm_road_network","osm_raw_elements"):
                 sid=None
             key=sid if sid else feature_key(f,source,i)
             entity=entities.setdefault(key,{"entity_id":key,"osm_id":sid,"geometry_candidates":[],"observations":[],"sources":[]})
