@@ -728,6 +728,35 @@ function addBridgeAndStairLayers(){
  setStatus('Bridge/stair extraction active: merging Basemap transportation features with OSM project data; bridge colors use tagged material, and stair treads are drawn where mapped stair lines exist.');
 }
 
+function addVisibleRoadAndSidewalkOverlays(data){
+ const sourceId='visible-road-sidewalk-overlay';
+ if(map.getLayer('visible-sidewalk-left'))map.removeLayer('visible-sidewalk-left');
+ if(map.getLayer('visible-sidewalk-right'))map.removeLayer('visible-sidewalk-right');
+ if(map.getLayer('visible-road-casing'))map.removeLayer('visible-road-casing');
+ if(map.getLayer('visible-road-asphalt'))map.removeLayer('visible-road-asphalt');
+ if(map.getLayer('visible-road-curb-left'))map.removeLayer('visible-road-curb-left');
+ if(map.getLayer('visible-road-curb-right'))map.removeLayer('visible-road-curb-right');
+ if(map.getSource(sourceId))map.removeSource(sourceId);
+ map.addSource(sourceId,{type:'geojson',data:data});
+ const width=['interpolate',['linear'],['zoom'],12,2.5,14,4.5,16,8,18,14,19,18];
+ // Keep these visible MapLibre layers above custom Three.js meshes: the custom mesh had been
+ // inserted later in the style and could visually cover the older road centerline layers.
+ map.addLayer({id:'visible-road-casing',type:'line',source:sourceId,layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#c9c2b5','line-width':width,'line-opacity':1}});
+ map.addLayer({id:'visible-road-asphalt',type:'line',source:sourceId,layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#555b61','line-width':['interpolate',['linear'],['zoom'],12,1.4,14,2.8,16,5.4,18,10,19,13],'line-opacity':1}});
+ // Sidewalk strips are deliberately offset from the mapped road centerline so they remain
+ // visible even when source data only contains road lines, not explicit sidewalk polygons.
+ const sideWidth=['interpolate',['linear'],['zoom'],13,0.8,15,2.1,17,3.5,19,5];
+ const sideOffset=['interpolate',['linear'],['zoom'],13,2,15,5,17,8,19,12];
+ for(const [id,offset] of [['visible-sidewalk-left',1],['visible-sidewalk-right',-1]]){
+  map.addLayer({id,type:'line',source:sourceId,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#d8d2c6','line-width':sideWidth,'line-offset':offset*sideOffset,'line-opacity':1}});
+ }
+ for(const [id,offset] of [['visible-road-curb-left',1],['visible-road-curb-right',-1]]){
+  map.addLayer({id,type:'line',source:sourceId,layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#8b8c87','line-width':['interpolate',['linear'],['zoom'],14,0.4,17,1.1,19,1.5],'line-offset':offset*['interpolate',['linear'],['zoom'],13,3,15,6,17,10,19,14],'line-opacity':0.95}});
+ }
+ const visible=document.getElementById('roads')?.checked!==false;
+ ['visible-sidewalk-left','visible-sidewalk-right','visible-road-casing','visible-road-asphalt','visible-road-curb-left','visible-road-curb-right'].forEach(id=>map.setLayoutProperty(id,'visibility',visible?'visible':'none'));
+}
+
 function addRoads(data){
  if(map.getLayer('project-roads-casing'))map.removeLayer('project-roads-casing');
  if(map.getLayer('project-roads'))map.removeLayer('project-roads');
@@ -775,7 +804,7 @@ map.on('load',async()=>{
   applyTerrainAlignment();
   map.once('idle',applyTerrainAlignment);
   map.on('idle',()=>{syncLocalHeightsFromBasemap();applyTerrainAlignment();});
-  addLandmarks();addRealModelMarkers();addSatelliteImagery();addLocalRamonModel(roadsData);addBridgeAndStairLayers();
+  addLandmarks();addRealModelMarkers();addSatelliteImagery();addLocalRamonModel(roadsData);addBridgeAndStairLayers();addVisibleRoadAndSidewalkOverlays(roadsData);
   // Apply the current checkbox states after asynchronous data loading, even if a user unchecked a layer early.
   const setVisibility=(ids,visible)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visible?'visible':'none')});
   setVisibility(['local-buildings-3d','local-building-labels','all-building-facade-textures'],document.getElementById('buildings').checked);
@@ -789,7 +818,7 @@ document.getElementById('landmarks').addEventListener('change',e=>['key-landmark
 document.getElementById('realModels').addEventListener('change',e=>['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('buildings').addEventListener('change',e=>{['local-buildings-3d','local-building-labels','all-building-facade-textures'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('basemap3d').addEventListener('change',e=>{base3dLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')});setStatus(e.target.checked?'Basemap 3D buildings enabled for comparison with OSM. Turn off OSM 3D buildings to inspect the basemap alone.':'Basemap 3D buildings hidden; OSM layer remains independently controlled.')});
-document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
+document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels','visible-sidewalk-left','visible-sidewalk-right','visible-road-casing','visible-road-asphalt','visible-road-curb-left','visible-road-curb-right'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null);terrainAlignmentSignature='';map.once('idle',applyTerrainAlignment);setStatus(e.target.checked?'Terrain enabled; aligning building bases and road surfaces to ground elevation…':'Terrain disabled; resetting building bases to flat ground…')}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
 document.getElementById('labels').addEventListener('change',e=>{if(map.getLayer('local-building-labels'))map.setLayoutProperty('local-building-labels','visibility',e.target.checked?'visible':'none')});
 document.getElementById('sun').addEventListener('click',()=>{golden=!golden;try{map.setLight({anchor:'viewport',position:golden?[1.2,210,35]:[1.2,45,75],color:golden?'#ffe0ad':'#ffffff',intensity:golden?0.45:0.8});document.getElementById('sun').textContent=golden?'Golden-hour light':'Neutral daylight'}catch(err){setStatus('Lighting controls are not supported by this map style.')}});
