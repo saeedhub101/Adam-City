@@ -190,7 +190,7 @@ function addStreetMesh(roadNetwork){
  map.addLayer(customLayer);
 }
 
-function addLocalRamonModel(roadNetwork){
+function addLocalRamonModel(){
  if(!window.THREE || !THREE.GLTFLoader){setStatus('Local building model could not start: 3D model libraries unavailable.');return;}
  const modelUrl='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/ramon_magsaysay_building.glb';
  const origin=[120.98245,14.5719];
@@ -846,7 +846,7 @@ map.on('load',async()=>{
   map.once('idle',applyTerrainAlignment);
   map.on('idle',()=>{syncLocalHeightsFromBasemap();applyTerrainAlignment();});
   // Keep optional layers isolated: failure in a 3D mesh or bridge parser must not prevent road rendering.
-  for(const [label,fn] of [['landmarks',addLandmarks],['street mesh',()=>addStreetMesh(roadsData)],['real building model markers',addRealModelMarkers],['satellite imagery',addSatelliteImagery],['local 3D landmark mesh',()=>addLocalRamonModel(roadsData)],['bridges and stairs',addBridgeAndStairLayers]]){
+  for(const [label,fn] of [['landmarks',addLandmarks],['street mesh',()=>addStreetMesh(roadsData)],['real building model markers',addRealModelMarkers],['satellite imagery',addSatelliteImagery],['local 3D landmark mesh',()=>addLocalRamonModel()],['bridges and stairs',addBridgeAndStairLayers]]){
    try{fn();}catch(err){console.error(label+' failed:',err);}
   }
   // Apply the current checkbox states after asynchronous data loading, even if a user unchecked a layer early.
