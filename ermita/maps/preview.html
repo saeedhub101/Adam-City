@@ -165,15 +165,28 @@ function addLocalRamonModel(roadNetwork){
     const factor=62/maxDim;
     this.model.scale.setScalar(factor);
     this.model.position.set(-center.x*factor,-bounds.min.y*factor,-center.z*factor);
-    // Apply the repository's supplied wall/facade material to the building meshes.
-    const facadeTexture=this.loader.manager ? new THREE.TextureLoader(this.loader.manager).load('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/Painted-CMU-Block-Architextures.jpeg',()=>map.triggerRepaint()) : new THREE.TextureLoader().load('https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/Painted-CMU-Block-Architextures.jpeg',()=>map.triggerRepaint());
+    // Keep source-model materials and their original textures. Add the repository wall
+    // material only to mesh materials that have no authored texture; never overwrite
+    // existing glass, roof, signage, or facade imagery from the source GLB.
+    const facadeTexture=new THREE.TextureLoader().load(
+     'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/Painted-CMU-Block-Architextures.jpeg',
+     ()=>map.triggerRepaint()
+    );
     facadeTexture.wrapS=facadeTexture.wrapT=THREE.RepeatWrapping;
     facadeTexture.repeat.set(2,2);
     facadeTexture.encoding=THREE.sRGBEncoding;
     this.model.traverse(obj=>{
      if(!obj.isMesh)return;
      const applyMaterial=mat=>{
-      const m=mat.clone();m.map=facadeTexture;m.color.set(0xffffff);m.needsUpdate=true;return m;
+      const m=mat.clone();
+      if(!m.map){
+       m.map=facadeTexture;
+       m.color.set(0xffffff);
+       if('roughness' in m)m.roughness=Math.max(0.65,m.roughness||0);
+       if('metalness' in m)m.metalness=Math.min(0.05,m.metalness||0);
+      }
+      m.needsUpdate=true;
+      return m;
      };
      obj.material=Array.isArray(obj.material)?obj.material.map(applyMaterial):applyMaterial(obj.material);
     });
@@ -190,7 +203,7 @@ function addLocalRamonModel(roadNetwork){
     courtyard.frustumCulled=false;
     this.scene.add(courtyard);
     this.loaded=true;
-    setStatus('Ramon Magsaysay Center GLB loaded with supplied wall texture and courtyard tile. Plaza dimensions and facade texture mapping are provisional; visual alignment still needs verification.');
+    setStatus('Ramon Magsaysay Center 3D mesh loaded. Existing model materials are preserved; repository wall texture fills only untextured materials. Building footprint/rotation and facade UVs still require visual verification.');
     map.triggerRepaint();
    },undefined,err=>setStatus('Local Ramon Magsaysay GLB failed to load: '+(err&&err.message||'network error')));
   },
