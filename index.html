@@ -242,6 +242,11 @@ function addTexturedBuildingMeshes(data){
   kartaGLC:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/1703939609.jpg',
   kartaPuso:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2506561113.jpg',
   kartaAdriatico:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2512972601.jpg',
+  karta822413216:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2506564233.jpg',
+  karta642781531:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/1718194953.jpg',
+  karta308695382:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2488518665.jpg',
+  karta542698878:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2488520905.jpg',
+  karta823330151:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2506561673.jpg',
  };
  const customLayer={
   id:layerId,type:'custom',renderingMode:'3d',
@@ -278,7 +283,13 @@ function addTexturedBuildingMeshes(data){
         'way/267171292':{key:'kartaCasaBlanca',camera:[120.983028,14.575581]},
         'way/90128945':{key:'kartaGLC',camera:[120.979818,14.580858]},
         'way/90132745':{key:'kartaPuso',camera:[120.980499,14.580293]},
-        'way/367262432':{key:'kartaAdriatico',camera:[120.982879,14.57817]}
+        'way/367262432':{key:'kartaAdriatico',camera:[120.982879,14.57817]},
+        // Additional existing KartaView photos: OSM footprint ID is exact and camera heading is checked in the saved CSV.
+        'way/822413216':{key:'karta822413216',camera:[120.980277,14.580004]},
+        'way/642781531':{key:'karta642781531',camera:[120.986269,14.588069]},
+        'way/308695382':{key:'karta308695382',camera:[120.981667,14.576875]},
+        'way/542698878':{key:'karta542698878',camera:[120.982568,14.581502]},
+        'way/823330151':{key:'karta823330151',camera:[120.980198,14.577374]}
    };
    const textureKey=p=>{
     const t=p.tags||p;
@@ -310,7 +321,7 @@ function addTexturedBuildingMeshes(data){
      roofUvs.push(p0.x/5,p0.z/5,p1.x/5,p1.z/5,p2.x/5,p2.z/5);
     }
    };
-   let count=0,photoMapped={kartaYWCA:0,kartaCommodore:0,kartaNIH:0,kartaJadeVine:0,kartaAsiaPlaza:0,kartaCasaBlanca:0,kartaGLC:0,kartaPuso:0,kartaAdriatico:0};
+   let count=0,photoMapped={kartaYWCA:0,kartaCommodore:0,kartaNIH:0,kartaJadeVine:0,kartaAsiaPlaza:0,kartaCasaBlanca:0,kartaGLC:0,kartaPuso:0,kartaAdriatico:0,karta822413216:0,karta642781531:0,karta308695382:0,karta542698878:0,karta823330151:0};
    for(const f of data.features){
     if(!f.geometry)continue;
     const p=f.properties||{},osmId=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:'')),kartaTarget=kartaFacadeTargets[osmId],key=textureKey(p),h=heightOf(p),g=f.geometry;
