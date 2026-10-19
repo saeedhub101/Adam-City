@@ -62,3 +62,10 @@ New import jobs do not query OpenStreetMap. Existing project files and the curre
 - The original Google and Microsoft GeoJSON source files are untouched. Records without a confident match remain source-specific and are flagged for review instead of being silently discarded.
 - The canonical register is available in the preview through the lazy-loaded **Unified satellite building register** checkbox, so the additional 8.9 MB file is not downloaded until requested.
 
+## Licensed facade-reference photo catalog
+
+- `ermita/buildings/reference_photos_catalog.json` indexes **33 licensed photos** and their local file paths, Commons pages, attribution and license terms.
+- Current location review labels 18 as likely Ermita/Malate-area candidates, 9 as Manila context/outside-or-unverified area, and 6 as nonlocal references. Nonlocal images were retained, not deleted, but marked as unsuitable for direct target-building assignment.
+- The catalog is a research index only. It does not claim that a photo belongs to a specific footprint and does not project photos onto building façades automatically.
+- Searches for Robinsons Place Manila, Manila Residences Bocobo, 7-Eleven, park grass and local hotels returned no verified filename-matched photo in the latest run; those buildings still need a better-matched licensed photo source or manual confirmation.
+
