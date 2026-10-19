@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "index.html"
+      - "ermita.html"
       - "ermita/maps/generated/ermita-road-network.geojson"
       - "ermita/maps/generated/ermita-building-footprints.geojson"
       - ".github/workflows/deploy-ermita-preview.yml"
@@ -28,6 +29,7 @@ jobs:
         with:
           sparse-checkout: |
             index.html
+            ermita.html
           sparse-checkout-cone-mode: false
           fetch-depth: 1
       - name: Prepare static map site
@@ -35,6 +37,7 @@ jobs:
           set -e
           mkdir -p _site
           cp index.html _site/index.html
+          cp ermita.html _site/ermita.html
           cat > _site/README.txt <<'EOF'
           Adam City — single-page 3D city map for Ermita, Manila.
           Data source and project files: https://github.com/saeedhub101/Adam-City
