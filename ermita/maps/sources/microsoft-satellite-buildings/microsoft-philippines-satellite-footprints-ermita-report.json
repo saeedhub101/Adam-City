@@ -1,0 +1,25 @@
+{
+  "status": "success",
+  "source": "Microsoft Bing Maps satellite-derived building footprints for the Philippines",
+  "project_url": "https://github.com/microsoft/IdMyPhBuildingFootprints",
+  "source_url": "https://minedbuildings.z5.web.core.windows.net/legacy/southeast-asia/philippines.geojsonl.zip",
+  "license": "Open Data Commons Open Database License (ODbL)",
+  "license_reference": "https://opendatacommons.org/licenses/odbl/1-0/",
+  "imagery_vintage": "2016-2020 Maxar imagery (project documentation)",
+  "area": "Ermita / Rizal Park, Manila, Philippines",
+  "bbox_wgs84": [
+    120.972,
+    14.572,
+    120.994,
+    14.593
+  ],
+  "retrieved_at_utc": "2026-10-19T18:00:07.575807+00:00",
+  "policy": "Independent non-OSM source. Country archive remains temporary; only clipped features are committed; existing outputs are never overwritten.",
+  "archive_bytes": 1189283353,
+  "zip_member": "philippines.geojsonl",
+  "rows_examined": 17421764,
+  "feature_count": 1765,
+  "warnings": [],
+  "output_file": "ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson",
+  "output_bytes": 1040994
+}
