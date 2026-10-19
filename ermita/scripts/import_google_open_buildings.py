@@ -19,7 +19,7 @@ REPORT = OUT_DIR / "google-open-buildings-v3-ermita-report.json"
 BBOX = (120.972, 14.572, 120.994, 14.593)
 AOI = box(*BBOX)
 BASE = "https://storage.googleapis.com/open-buildings-data/v3/polygons_s2_level_6_gzip_no_header"
-MAX_CELL_BYTES = 250 * 1024 * 1024
+MAX_CELL_BYTES = 2 * 1024 * 1024 * 1024
 MIN_CONFIDENCE = 0.65
 
 def cell_tokens():
