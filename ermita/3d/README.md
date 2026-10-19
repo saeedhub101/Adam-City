@@ -1,70 +1,22 @@
 # Ermita 3D Map Collection
 
-Goal: build a source-traceable 3D model of Ermita, Manila, with more detail for Rizal Park. Geometry should come from documented geographic sources, not an AI-generated guess.
+Goal: build a source-traceable 3D model of Ermita, Manila, with extra detail for Rizal Park.
 
-## Priority: real geographic geometry before decorative 3D detail
+## Active building geometry
 
-The current reliable base is the actual mapped geometry in OpenStreetMap plus the supplementary Microsoft building-footprint snapshot. The dedicated OSM road/path centerline layer is `../maps/generated/ermita-road-network.geojson` (1,445 mapped ways from the current cached OSM source); its segment index is `../streets/street_segments.csv`. For buildings, use the OSM footprint layer and the 12,132 Microsoft outline candidates as separate source layers, then adjudicate overlaps. Do not present procedural windows, doors, signboards, or generic extrusions as surveyed/photorealistic real buildings. Until verified façade/height data is available, prioritize correct road layout and building footprints, and label extruded heights as estimated or unknown.
+- **Building footprints:** only the committed OpenStreetMap layer at `../maps/generated/ermita-building-footprints.geojson` is used by the live preview. Microsoft/Bing footprint data was rejected as inaccurate and removed from the repository.
+- **Street geometry:** `../maps/generated/ermita-road-network.geojson` contains the cached OSM road/path centerlines.
+- **Height evidence:** use `../maps/qa/building-height-evidence.csv` and its report. Explicit source heights remain distinct from floor counts; unknown heights must not be described as surveyed.
+- **Facade details:** `index.html` builds a batched 3D facade-detail pass for OSM footprints, including window/shopfront openings, floor bands, entrance panels and roof-edge trim. Most details are procedural visual estimates, not measured architectural records.
+- **Photo-reviewed building:** Manila Residences Bocobo (OSM `way/90123959`) has a source-specific 34-floor facade treatment based on the inspected reference photo at [Philippine Realty Group](https://philippinerealtygroup.com/manila-residences-bocobo). The photo shows a cream podium, dark horizontal window/balcony bands and orange vertical accents. The listing reports 34 storeys; the local OSM 18 m height tag conflicted with that evidence, so the preview uses a documented approximate 102 m override. This is an estimate, not a survey measurement.
+- **Photo provenance:** the online photo is a visual modeling reference, not copied into the repository or stretched across a wall. Recheck source terms before any redistribution of the original photo.
+- **Terrain:** `terrain/ermita-copernicus-dem-cropped.tif` and `terrain/ermita-terrain-surface.glb`; source is Copernicus DEM GLO-30, nominally 30 m, and represents a DSM rather than bare-earth DTM.
+- **Street-level imagery:** KartaView records remain a separate source archive. They are not automatically assigned to building facades; a nearby camera point alone cannot verify a building face.
 
-## Real-geometry inspection and height evidence
+## Modeling and QA rules
 
-- Open `../maps/preview.html` for an interactive 2D inspection of the actual OSM road centerlines and mapped building polygons before evaluating 3D output.
-- Use `../maps/qa/building-height-evidence.csv` and its report to distinguish explicit source height tags from level counts and unknown heights. Never silently convert levels to meters or fill missing heights with guessed values.
-- Microsoft footprints remain a separate outline candidate layer and are not automatically fused with OSM. The first-pass comparison under `../maps/qa/` must be reviewed before creating a merged building layer.
-
-## Data already imported or generated
-
-- **OSM map/building features:** `../maps/generated/import-report.json`; 1,533 building/building-part features are reported in the current OSM export.
-- **Microsoft/Bing building footprints:** `../maps/external/ermita-microsoft-building-footprints.geojsonl.gz`; 12,132 AOI-clipped features, with limitations documented in `../maps/external/microsoft-building-footprints-import-report.json`.
-- **DPWH road/bridge references:** four clipped layers under `../maps/external/`; see `dpwh-road-bridge-batch-import-report.json`.
-- **Procedural building facade details:** `generated/ermita-buildings-facade-details.glb` and `generated/facade-details-report.json`. The report describes 1,468 polygon parts, 234,990 window panels, 6,390 door placeholders and 1,802 named signboard placeholders. These are procedural placeholders, not surveyed architecture.
-- **Extruded buildings:** `generated/ermita-buildings-extruded.glb`.
-- **Terrain:** `terrain/ermita-copernicus-dem-cropped.tif` and `terrain/ermita-terrain-surface.glb`, documented by `terrain/terrain-import-report.json`. The source is Copernicus DEM GLO-30, nominally 30 m, and is a DSM rather than bare-earth DTM.
-- **Street-level image index:** `../../kartaview/ermita-street-imagery-metadata.csv` and related GeoJSON/sequence files; facade matches are indexed in `../../kartaview/ermita-real-facade-images.csv`.
-
-## Planned outputs and provenance
-
-- Source building footprints with source IDs and tags.
-- A reconciled building-footprint layer that keeps source provenance and does not silently replace conflicting outlines.
-- Building heights from actual source attributes where available; any inferred heights must retain an explicit estimation method.
-- Streets and paths with source and attribute provenance.
-- Permitted elevation and imagery products, or a manifest that records why restricted products cannot be mirrored.
-- glTF/GLB or other 3D exports when file size and licensing allow.
-
-## Known limitations and gaps
-
-- Microsoft footprints date from imagery acquired in 2016–2020 and do not include facades, signs, or guaranteed names.
-- OSM coverage and building tags are uneven. The OSM and Microsoft building layers have not yet been systematically matched, deduplicated, or adjudicated.
-- Procedural windows, doors and signboards are placeholders. Their presence is not evidence of measured facade geometry, exact lettering, or true logos.
-- KartaView images are not automatically calibrated or projected onto building walls.
-- Copernicus terrain is regional context, not street-level survey data and not suitable for engineering, drainage design, or flood-safety decisions.
-- High-resolution LiDAR/DTM and aerial imagery for this exact AOI have not yet been found in the current inventory; search existing repository contents first, then use automatic downloads and skip sources that require manual contact.
-
-## Sources to download automatically (do not contact agencies or wait for requests)
-
-1. OpenStreetMap / Geofabrik: https://download.geofabrik.de/asia/philippines.html and https://www.openstreetmap.org/copyright
-2. Geoportal Philippines: https://geoportal.gov.ph/ — inspect the full layer catalogue and download accessible layers through scripts/workflows; if a layer is not directly accessible, skip it and test another source.
-3. NAMRIA elevation, topographic and orthophoto products: https://www.namria.gov.ph/downloads.aspx — search the repository first, then download publicly accessible files; if a product requires a request/payment/account, skip it and move to another source.
-4. LiPAD / Phil-LiDAR: https://lipad.dream.upd.edu.ph/ — check for direct public downloads; skip any data requiring approval or manual requests.
-5. OpenDronePH: https://philsa.gov.ph/open-drone-ph/ — use datasets directly downloadable without registration; otherwise skip and continue.
-6. Microsoft/Bing Open Building Footprints: https://github.com/microsoft/IdMyPhBuildingFootprints — already imported for this AOI; do not download it again merely to repeat the same import.
-
-## Modelling and licensing rules
-
-- Keep source geometry, source IDs, source date, CRS and transformations traceable.
-- Do not label estimated heights as measured.
-- Do not infer roof, facade, or interior geometry from a 2D footprint alone.
-- Keep DEM/terrain separate from building geometry.
-- Keep source attribution and provenance metadata with every dataset and derivative.
-- Keep original source files unchanged. Record every cleaned/merged derivative and its QA counts.
-- Check repository size limits; use appropriate external artifact storage for large permitted source archives.
-
-
-## Active source acquisition (2026-10-18)
-
-The source audit is in `building-data-source-investigation.md`; the source status register is `source-manifest.csv`. Do not submit provider requests: use direct downloads/workflows only and skip blocked sources.
-
-- **Street-level facade references:** the repository already reports 238 local KartaView images and 246 candidate building matches. Use `facade-photo-review.csv` to record visual verification for all 246 candidates; blank verification cells mean the facade has not yet been visually confirmed. This is candidate evidence, not verified facade mapping. Keep KartaView out of the live map renderer as requested; do not download duplicate photo IDs. KartaView imagery requires CC BY-SA 4.0 compliance and attribution: © Grab and KartaView Contributors.
-- **DSM/DTM/LiDAR/orthophotos:** inspect all existing terrain and source files first. Download any directly accessible data with workflows; skip portals that require manual requests, account approval, or contact.
-- **OpenDronePH:** requires registration and donor-specific reuse checks; Manila coverage is not yet confirmed.
-- **Repository status:** this pass updated source documentation and request templates. It did not obtain a LiPAD approval, purchase NAMRIA products, submit external forms, or download new government datasets. Never mark those steps complete without actual data/approval evidence.
+1. Keep OSM as the sole active footprint source until a replacement source is explicitly validated.
+2. Do not use third-party basemap building extrusions as a hidden second footprint layer.
+3. Never apply a street photo to a facade unless building identity, camera direction, and the exact street-facing wall are verified.
+4. Keep real measured data and procedural visual details clearly distinguished.
+5. Preserve all accepted data in repository files and make imports incremental; never re-download assets already present.
