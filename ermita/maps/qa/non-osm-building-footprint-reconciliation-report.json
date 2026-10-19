@@ -1,0 +1,35 @@
+{
+  "status": "success",
+  "retrieved_at_utc": "2026-10-19T18:05:48.650902+00:00",
+  "policy": "Google and Microsoft source records remain unchanged; only identity crosswalk is produced; no OSM queries.",
+  "sources": {
+    "google": {
+      "path": "ermita/maps/sources/google-open-buildings/google-open-buildings-v3-ermita.geojson",
+      "exists": true
+    },
+    "microsoft": {
+      "path": "ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson",
+      "exists": true
+    }
+  },
+  "matching": {
+    "method": "spatial intersection-over-union plus centroid distance",
+    "minimum_iou": 0.25,
+    "maximum_centroid_distance_m": 18.0
+  },
+  "counts": {
+    "google_features": 7443,
+    "microsoft_features": 1765,
+    "probable_matches": 1032,
+    "google_only_or_conflict": 6411,
+    "microsoft_only_or_conflict": 733,
+    "candidate_pairs_passing_threshold": 1097
+  },
+  "warnings": [],
+  "inputs_sha256": {
+    "google": "dcf75ed4b1be5267e034df5de02f59c94caf1132477cbcea666cec63ef4c6bbe",
+    "microsoft": "7a23f4e8682e293be53b267a721120257878b02781f585883b9b53a37931ba4b"
+  },
+  "crosswalk_file": "ermita/maps/qa/non-osm-building-footprint-crosswalk.csv",
+  "crosswalk_bytes": 2710159
+}
