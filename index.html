@@ -50,7 +50,7 @@ const map=new maplibregl.Map({
 });
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
 map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-right');
-let roadsData=null,buildingsData=null,osmBuildingsData=null,surfaceData=null,basemapBuildingsSignature='',tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[],base3dLayerIds=[];
+let roadsData=null,buildingsData=null,osmBuildingsData=null,surfaceData=null,basemapBuildingsSignature='',tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[],base3dLayerIds=[],baseBuildingLayerIds=[];
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function popupHtml(p){const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',p.osm_feature_id||p.id]];return '<div style="font:13px system-ui"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+'</div>'}
 function addRealModelMarkers(){
@@ -773,10 +773,14 @@ function addRoads(data){
 }
 map.on('load',async()=>{
  try{
-  // Preserve the original basemap 3D buildings as an independent comparison layer.
-  // Start with it hidden so OSM remains the default; the checkbox can turn it on at any time.
-  base3dLayerIds=(map.getStyle().layers||[]).filter(l=>/building/i.test((l.id||'')+' '+(l['source-layer']||''))&&(l.type==='fill-extrusion'||/3d|extrusion/i.test(l.id||''))).map(l=>l.id);
-  base3dLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none')});
+  // The Liberty basemap includes its own city-wide building layers, independent of
+  // the project's Ermita-clipped OSM GeoJSON. Hide ALL basemap building layers by
+  // default; otherwise buildings from outside the intended Ermita dataset appear
+  // mixed into the project and make the OSM checkbox misleading.
+  const styleLayers=map.getStyle().layers||[];
+  baseBuildingLayerIds=styleLayers.filter(l=>/building/i.test((l.id||'')+' '+(l['source-layer']||''))).map(l=>l.id);
+  base3dLayerIds=styleLayers.filter(l=>/building/i.test((l.id||'')+' '+(l['source-layer']||''))&&(l.type==='fill-extrusion'||/3d|extrusion/i.test(l.id||''))).map(l=>l.id);
+  baseBuildingLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none')});
   map.addSource('terrain-dem',{type:'raster-dem',tiles:['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});
   map.setTerrain({source:'terrain-dem',exaggeration:1.15});
   map.setSky({ 'sky-color':'#8dbbe2','sky-horizon-blend':0.5,'horizon-color':'#e8f1fa','horizon-fog-blend':0.2,'fog-color':'#dce8f3','fog-ground-blend':0.15,'atmosphere-blend':0.8});
