@@ -1,0 +1,54 @@
+name: Import non-OSM Ermita terrain and vegetation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "ermita/scripts/import_non_osm_terrain_landcover.py"
+      - ".github/workflows/import-non-osm-terrain-landcover.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ermita-non-osm-terrain-landcover
+  cancel-in-progress: false
+
+jobs:
+  import-terrain-landcover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install raster processing dependencies
+        run: python -m pip install rasterio numpy shapely
+      - name: Import terrain and land-cover rasters (no OSM)
+        run: python ermita/scripts/import_non_osm_terrain_landcover.py
+      - name: Commit only new non-OSM terrain and vegetation outputs
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ermita/maps/sources/terrain ermita/maps/sources/landcover ermita/maps/qa/non-osm-terrain-landcover-report.json
+          if git diff --cached --quiet; then
+            echo "No new terrain or land-cover files."
+            exit 0
+          fi
+          git commit -m "Add non-OSM Ermita terrain and vegetation data"
+          git fetch origin main
+          # Do not use an automatic conflict strategy that could overwrite source data.
+          if ! git rebase origin/main; then
+            git rebase --abort || true
+            echo "::error::Remote main changed; stopped without overwriting repository files."
+            exit 1
+          fi
+          git push origin HEAD:main
