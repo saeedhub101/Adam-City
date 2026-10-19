@@ -14,7 +14,6 @@
 <div><h1>Adam City · Ermita 3D</h1><p>Interactive 3D buildings, terrain, mapped streets · Manila, Philippines</p><div class="status" id="status">Loading 3D scene and local mapping data…</div></div>
 <div class="controls">
 <label><input id="imagery" type="checkbox"> Esri satellite</label>
-<label><input id="localImagery" type="checkbox"> Local aerial photo</label>
 <label><input id="landmarks" type="checkbox" checked> Key landmarks</label>
 <label><input id="stores" type="checkbox" checked> 7-Eleven / McDonald’s / Starbucks</label>
 <label><input id="buildings" type="checkbox" checked> 3D building footprints</label>
@@ -99,12 +98,6 @@ function setSatelliteImagery(enabled){
  setStatus(enabled?'Satellite imagery enabled · imagery dates and resolution vary by tile':'Street basemap enabled · local 3D buildings and landmark layer remain available');
 }
 
-function addLocalAerialImagery(){
- const imageUrl='https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/maps/external/openaerialmap/ermita-5b90f92da0d7280005fab355.jpg';
- map.addSource('local-aerial-image-source',{type:'image',url:imageUrl,coordinates:[[120.979060723937,14.596850060355752],[120.9843077431096,14.596850060355752],[120.9843077431096,14.59211535406543],[120.979060723937,14.59211535406543]]});
- map.addLayer({id:'local-aerial-image',type:'raster',source:'local-aerial-image-source',layout:{visibility:'none'},paint:{'raster-opacity':1,'raster-fade-duration':0}},'local-buildings-3d');
-}
-function setLocalAerialImagery(enabled){if(map.getLayer('local-aerial-image'))map.setLayoutProperty('local-aerial-image','visibility',enabled?'visible':'none');}
 
 
 function addDpwRoadSurface(data){
@@ -200,14 +193,12 @@ map.on('load',async()=>{
   buildingsData={type:'FeatureCollection',features:(results[1].features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
   surfaceData={type:'FeatureCollection',features:(results[2].features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   // Facade photos are not presented as popups. Only validated photo-to-building texture assignments may be rendered.
-  addBuildings(buildingsData);addRoads(roadsData);addDpwRoadSurface(surfaceData);addLandmarks();addBrandedStores(results[3]);addSatelliteImagery();addLocalAerialImagery();
   const storeFeatures=results[3].features||[];const storeCounts={};storeFeatures.forEach(f=>{const b=f.properties&&f.properties.brand;storeCounts[b]=(storeCounts[b]||0)+1});
    
    setStatus(buildingsData.features.length.toLocaleString()+' building outlines loaded · 3D extrusions active. Facade-photo popup fallback removed; verified texture assignments are not yet available.');
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
 });
 document.getElementById('imagery').addEventListener('change',e=>setSatelliteImagery(e.target.checked));
-document.getElementById('localImagery').addEventListener('change',e=>setLocalAerialImagery(e.target.checked));
 document.getElementById('landmarks').addEventListener('change',e=>['key-landmark-halo','key-landmark-dot','key-landmark-label'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('stores').addEventListener('change',e=>['brand-store-badges','brand-store-labels','brand-store-names'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('buildings').addEventListener('change',e=>{if(map.getLayer('local-buildings-3d'))map.setLayoutProperty('local-buildings-3d','visibility',e.target.checked?'visible':'none')});
