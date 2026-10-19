@@ -298,10 +298,10 @@ function addTexturedBuildingMeshes(data){
      roofUvs.push(p0.x/5,p0.z/5,p1.x/5,p1.z/5,p2.x/5,p2.z/5);
     }
    };
-   let count=0,photoMapped={nationalMuseum:0,upManila:0,pghCancer:0};
+   let count=0,photoMapped={nationalMuseum:0,upManila:0,pghCancer:0,kartaYWCA:0,kartaCommodore:0,kartaUnknownA:0,kartaUnknownB:0,kartaUnknownC:0};
    for(const f of data.features){
     if(!f.geometry)continue;
-    const p=f.properties||{},key=textureKey(p),set=sets[key],h=heightOf(p),g=f.geometry;
+    const p=f.properties||{},osmId=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:'')),kartaTarget=kartaFacadeTargets[osmId],key=textureKey(p),h=heightOf(p),g=f.geometry;
     const polys=g.type==='Polygon'?[g.coordinates]:g.type==='MultiPolygon'?g.coordinates:[];
     for(const poly of polys){
      const ring=poly&&poly[0];if(!ring||ring.length<4)continue;
