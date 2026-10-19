@@ -199,10 +199,10 @@ def main():
         if sid in seen: continue
         seen.add(sid); unique_footprints.append(f)
     (QA/"ermita-canonical-source-register.geojson").write_text(
-        json.dumps({"type":"FeatureCollection","features":canonical},ensure_ascii=False,separators=(",",":"))+"\\n",encoding="utf-8")
+        json.dumps({"type":"FeatureCollection","features":canonical},ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
     (QA/"ermita-osm-building-footprints-deduplicated.geojson").write_text(
-        json.dumps({"type":"FeatureCollection","features":unique_footprints},ensure_ascii=False,separators=(",",":"))+"\\n",encoding="utf-8")
-    (QA/"ermita-source-conflicts.json").write_text(json.dumps(source_conflicts,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
+        json.dumps({"type":"FeatureCollection","features":unique_footprints},ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
+    (QA/"ermita-source-conflicts.json").write_text(json.dumps(source_conflicts,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     with (QA/"ermita-source-inventory.csv").open("w",encoding="utf-8",newline="") as out:
         fields=["dataset","features","geometry_Point","geometry_LineString","geometry_MultiLineString","geometry_Polygon","geometry_MultiPolygon","building_or_part","highway","named"]
         w=csv.DictWriter(out,fieldnames=fields);w.writeheader()
@@ -215,6 +215,6 @@ def main():
       "source_conflict_entity_count":len(source_conflicts),
       "outputs":{"canonical_register":"ermita/maps/qa/ermita-canonical-source-register.geojson","deduplicated_footprints":"ermita/maps/qa/ermita-osm-building-footprints-deduplicated.geojson","source_conflicts":"ermita/maps/qa/ermita-source-conflicts.json","source_inventory":"ermita/maps/qa/ermita-source-inventory.csv"},
       "policy":"Source datasets remain unchanged. No conflicting tag, name, height, or geometry is silently discarded. Spatial-only matches are not merged without an identity key."}
-    (QA/"ermita-source-reconciliation-report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
+    (QA/"ermita-source-reconciliation-report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     print(json.dumps(report,ensure_ascii=False,indent=2))
 if __name__=="__main__": main()
