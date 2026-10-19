@@ -195,3 +195,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Build trigger: export current committed preview geometry as one aligned GLB.
