@@ -1,20 +1,15 @@
-name: Deploy ADAM CITY Ermita map to GitHub Pages
-
+name: Deploy ADAM CITY Ermita 3D city
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
-
 permissions:
   contents: read
   pages: write
   id-token: write
-
 concurrency:
   group: github-pages
   cancel-in-progress: true
-
 jobs:
   deploy:
     environment:
@@ -24,29 +19,39 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Prepare homepage and local Ermita OSM data
+      - name: Prepare 3D city and all browser assets
+        shell: bash
         run: |
-          set -e
+          set -euo pipefail
           test -f index.html
-          mkdir -p site/ermita/maps/generated
-          mkdir -p site/ermita/maps/sources/openfreemap
+          test -f backup/ermita/maps/generated/ermita-building-footprints.geojson
+          test -f ermita/maps/generated/ermita-road-network.geojson
+          test -f ermita/maps/sources/openfreemap/area-boundary.geojson
+          test -f ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
+          test -f ermita/3d/terrain/ermita-terrain-surface.glb
+          test -f ermita/3d/exports/adam-city-complete.glb
+          mkdir -p site/ermita/maps/generated site/ermita/maps/sources/openfreemap site/assets site/ermita/streets site/ermita/maps/qa
           cp index.html site/index.html
-          cp ermita/maps/generated/ermita-building-footprints.geojson site/ermita/maps/generated/
+          cp backup/ermita/maps/generated/ermita-building-footprints.geojson site/ermita/maps/generated/ermita-osm-building-footprints.geojson
           cp ermita/maps/generated/ermita-road-network.geojson site/ermita/maps/generated/
-          cp ermita/maps/generated/ermita-building-details.geojson site/ermita/maps/generated/
           cp ermita/maps/sources/openfreemap/area-boundary.geojson site/ermita/maps/sources/openfreemap/
-          echo "Published local OSM data files:"
-          du -h site/ermita/maps/generated/* site/ermita/maps/sources/openfreemap/*
-
+          cp ermita/maps/sources/openfreemap/source-metadata.json site/ermita/maps/sources/openfreemap/
+          cp ermita/streets/street_segments.csv ermita/streets/street_names.csv site/ermita/streets/
+          cp ermita/maps/generated/ermita-building-details.csv site/ermita/maps/generated/
+          cp ermita/maps/qa/building-height-evidence.csv site/ermita/maps/qa/
+          cp ermita/3d/terrain/ermita-copernicus-dem-cropped.tif site/assets/
+          cp ermita/3d/terrain/ermita-terrain-surface.glb site/assets/
+          cp ermita/3d/exports/adam-city-complete.glb site/assets/
+          cp ermita/3d/terrain/terrain-import-report.json site/assets/
+          echo "Prepared assets:"
+          du -sh site
+          find site -type f -printf '%p %s bytes\n' | sort
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-
       - name: Upload map and data artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
