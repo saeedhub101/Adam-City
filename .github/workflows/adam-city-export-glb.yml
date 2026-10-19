@@ -33,7 +33,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install geometry dependencies
-        run: python -m pip install --upgrade pip numpy rasterio trimesh shapely pyproj mapbox-earcut
+        run: python -m pip install --upgrade pip numpy scipy rasterio trimesh shapely pyproj mapbox-earcut
       - name: Build unified GLB
         run: python ermita/scripts/export_preview_to_glb.py
       - name: Validate GLB and size
