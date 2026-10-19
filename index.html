@@ -743,8 +743,8 @@ function addVisibleRoadAndSidewalkOverlays(data){
  if(map.getSource(sourceId))map.removeSource(sourceId);
  map.addSource(sourceId,{type:'geojson',data:data});
  // Strong opaque road surfaces; screen widths are tuned for the zoom levels used in the game.
- const drivableFilter=['all',['has','highway'],['!in',['get','highway'],['literal',['footway','path','steps','corridor','pedestrian']]]];
- const sidewalkFilter=['all',['has','highway'],['!in',['get','highway'],['literal',['motorway','motorway_link','trunk','trunk_link','footway','path','steps','corridor','pedestrian']]],['!=',['get','sidewalk'],'no']];
+ const drivableFilter=['all',['has','highway'],['!',['in',['get','highway'],['literal',['footway','path','steps','corridor','pedestrian']]]]];
+ const sidewalkFilter=['all',['has','highway'],['!',['in',['get','highway'],['literal',['motorway','motorway_link','trunk','trunk_link','footway','path','steps','corridor','pedestrian']]]],['!=',['get','sidewalk'],'no']];
  map.addLayer({id:'visible-road-casing',type:'line',source:sourceId,filter:drivableFilter,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#b8b2a7','line-width':['interpolate',['linear'],['zoom'],12,3,14,7,16,13,18,21,19,26],'line-opacity':1}});
  map.addLayer({id:'visible-road-asphalt',type:'line',source:sourceId,filter:drivableFilter,layout:{'line-cap':'butt','line-join':'round'},paint:{'line-color':'#41474d','line-width':['interpolate',['linear'],['zoom'],12,2,14,5,16,10,18,17,19,21],'line-opacity':1}});
  // Estimated sidewalk strips are intentionally distinct from asphalt.
