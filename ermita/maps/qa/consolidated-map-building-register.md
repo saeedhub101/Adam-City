@@ -15,7 +15,7 @@ Current join summary:
 - 1,533 IDs appear in both detail files.
 - 37 additional polygon/building-related IDs appear in the legacy detail file only.
 - Height evidence contains 1,528 polygon records; it distinguishes explicit tagged heights, floor counts, and unknown heights.
-- 24 consolidated records have more than one distinct value in at least one merged field. The CSV retains those values.
+- The CSV keeps field values labeled with their source. Different names may be aliases/official names; different heights or other attributes may be real discrepancies, so neither is silently discarded.
 - A record missing from a particular file means only that it is absent from that file, not that the building is absent in reality.
 
 ## Map geometry and imagery inventory
