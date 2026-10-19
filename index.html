@@ -16,7 +16,6 @@
 <label><input id="imagery" type="checkbox"> Satellite imagery</label>
 <label><input id="landmarks" type="checkbox" checked> Key landmarks</label>
 <label><input id="realModels" type="checkbox" checked> Real building 3D model previews</label>
-<label style="font-weight:800;color:#7de7ff;background:#18334a;padding:5px 8px;border-radius:5px"><input id="basemapBuildings" type="checkbox"> BASEMAP 3D BUILDINGS</label>
 <label><input id="buildings" type="checkbox" checked> OSM 3D buildings</label>
 <label><input id="roads" type="checkbox" checked> Project road network</label>
 <label><input id="terrain" type="checkbox" checked> 3D terrain</label>
@@ -27,7 +26,7 @@
 </div>
 </header>
 <div id="map" role="application" aria-label="Interactive three-dimensional city map of Ermita Manila"></div>
-<footer>Local Ramon Magsaysay Center GLB mesh, switchable satellite imagery, mapped 3D street network, official DPWH road records and highlighted landmarks. Estimated building heights and ~30 m terrain are not survey-grade. © Esri, Maxar, Earthstar Geographics, OpenStreetMap contributors · DPWH road data · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
+<footer>OSM building extrusions with modeled facade details, a photo-reviewed Manila Residences Bocobo facade reference, switchable satellite imagery, mapped 3D street network, DPWH road records and highlighted landmarks. Heights without verified source measurements are estimates. © Esri, Maxar, Earthstar Geographics, OpenStreetMap contributors · DPWH road data · <a href="https://github.com/saeedhub101/Adam-City">Project source</a></footer>
 <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
 <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
 <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -46,7 +45,7 @@ const map=new maplibregl.Map({
 });
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
 map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-right');
-let roadsData=null,buildingsData=null,surfaceData=null,tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[],basemap3DBuildingLayerIds=[];
+let roadsData=null,buildingsData=null,surfaceData=null,tilted=true,golden=true,imageryOn=false,baseLayerVisibility=[];
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function popupHtml(p){const t=p.tags||{};const name=p.name||t.name||t.building||p.highway||'Mapped feature';const rows=[['Type',p.highway||t.building||t.amenity],['Levels',t['building:levels']],['Height',t.height],['Address',[t['addr:housenumber'],t['addr:street']].filter(Boolean).join(' ')],['OSM ID',p.osm_feature_id||p.id]];return '<div style="font:13px system-ui"><b>'+esc(name)+'</b>'+rows.filter(x=>x[1]).map(x=>'<div><b>'+esc(x[0])+':</b> '+esc(x[1])+'</div>').join('')+(p.source_url?'<div><a target="_blank" rel="noopener" href="'+esc(p.source_url)+'">Open OSM feature</a></div>':'')+'</div>'}
 function addRealModelMarkers(){
@@ -228,129 +227,140 @@ function addTexturedBuildingMeshes(data){
  const origin=[120.9825,14.5825];
  const merc=maplibregl.MercatorCoordinate.fromLngLat({lng:origin[0],lat:origin[1]},0);
  const meterScale=merc.meterInMercatorCoordinateUnits();
- const textureSources={
-  generic:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/Painted-CMU-Block-Architextures.jpeg',
-  nationalMuseum:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-19.jpg',
-  upManila:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/reference_photos/University-of-the-Philippines-Manila-Campus---Main-Building-Pedro-Gil-Ermita-Manila-2014-1.jpg',
-  pghCancer:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/reference_photos/PGH-Cancer-Institute-Building.jpg',
-  kartaYWCA:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2488521673.jpg',
-  kartaCommodore:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2488519305.jpg',
-  kartaNIH:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/1281083517.jpg',
-  kartaJadeVine:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/1239582917.jpg',
-  kartaAsiaPlaza:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/1725814009.jpg',
-  kartaCasaBlanca:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/1725814025.jpg',
-  kartaGLC:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/1703939609.jpg',
-  kartaPuso:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2506561113.jpg',
-  kartaAdriatico:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2512972601.jpg',
-  karta822413216:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2506564233.jpg',
-  karta642781531:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/1718194953.jpg',
-  karta308695382:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2488518665.jpg',
-  karta542698878:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2488520905.jpg',
-  karta823330151:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2506561673.jpg',
+ const detailSource={
+  name:'Manila Residences Bocobo',
+  osmId:'way/90123959',
+  referenceUrl:'https://philippinerealtygroup.com/manila-residences-bocobo',
+  imageUrl:'https://philippinerealtygroup.com/wp-content/images/PRG_Developments/manila-residences-bocobo/0_Manila-Residences-Bocobo-Manila-City-Metro-Manila-Philippines.jpg',
+  reference:'Internet photo visually reviewed 2026-10-19: cream podium, dark horizontal balcony/window bands and orange vertical accents. The photo is a reference for a modeled facade, not used as a stretched wall texture.'
  };
- const customLayer={
+ const xy=c=>({x:(c[0]-origin[0])*111319.49*Math.cos(origin[1]*Math.PI/180),z:(c[1]-origin[1])*110574.27});
+ const heightOf=p=>{
+  const t=p.tags||p;
+  const id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:''));
+  // A current online building listing identifies this tower as 34 storeys; OSM's 18 m height tag is inconsistent.
+  if(id===detailSource.osmId)return 102;
+  const h=parseFloat(String(t.height||'').replace(/[^0-9.]/g,''));
+  if(Number.isFinite(h)&&h>=2&&h<=500)return h;
+  const levels=parseFloat(t['building:levels']||t.levels||'');
+  if(Number.isFinite(levels)&&levels>=1&&levels<=150)return levels*3.2;
+  const b=t.building||p.building;
+  return ({church:18,cathedral:24,hospital:12,commercial:16,office:18,hotel:18,apartments:12,industrial:8,house:6,residential:7,garage:3,shed:3})[b]||8;
+ };
+ const windowPos=[],windowNormals=[],trimPos=[],bandPos=[],balconyPos=[],doorPos=[],roofRimPos=[];
+ function quad(arr,a,b,c,d){arr.push(a.x,a.y,a.z,b.x,b.y,b.z,c.x,c.y,c.z,c.x,c.y,c.z,b.x,b.y,b.z,d.x,d.y,d.z);}
+ function point(p,n,offset,y){return {x:p.x+n.x*offset,y:y,z:p.z+n.z*offset};}
+ function faceQuad(arr,a,b,n,offset,y0,y1,u0,u1){
+  const aa=point(a,n,offset,y0),bb=point(b,n,offset,y0),cc=point(a,n,offset,y1),dd=point(b,n,offset,y1);
+  const dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz)||1;
+  const p1={x:aa.x+dx*u0,y:y0,z:aa.z+dz*u0},p2={x:aa.x+dx*u1,y:y0,z:aa.z+dz*u1};
+  const p3={x:aa.x+dx*u0,y:y1,z:aa.z+dz*u0},p4={x:aa.x+dx*u1,y:y1,z:aa.z+dz*u1};
+  quad(arr,p1,p2,p3,p4);
+ }
+ function boxBand(a,b,n,y,thickness,offset,arr){
+  const aa=point(a,n,offset,y),bb=point(b,n,offset,y),cc=point(a,n,offset,y+thickness),dd=point(b,n,offset,y+thickness);
+  quad(arr,aa,bb,cc,dd);
+ }
+ function geom(positions){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));g.computeVertexNormals();return g;}
+ const cosLat=Math.cos(origin[1]*Math.PI/180);
+ let detailed=0,windowCount=0,doorCount=0;
+ for(const f of data.features){
+  if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
+  const p=f.properties||{},tags=p.tags||{},id=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:'')),name=String(tags.name||tags['official_name']||'');
+  const special=id===detailSource.osmId;
+  const h=heightOf(p),levels=Math.max(1,Math.min(34,Math.round(h/(special?3.0:3.2))));
+  const polygons=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;
+  for(const poly of polygons){
+   const ring=poly&&poly[0];if(!ring||ring.length<4)continue;
+   const pts=ring.map(xy);
+   let area=0;for(let i=0;i<pts.length-1;i++)area+=pts[i].x*pts[i+1].z-pts[i+1].x*pts[i].z;
+   for(let i=1;i<pts.length;i++){
+    const a=pts[i-1],b=pts[i],dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);
+    if(len<3||len>250)continue;
+    // The outward normal is derived from polygon winding, so windows sit outside the wall instead of floating inward.
+    const n=area>=0?{x:dz/len,z:-dx/len}:{x:-dz/len,z:dx/len};
+    const count=Math.max(1,Math.min(28,Math.floor(len/(special?2.4:3.0))));
+    const cell=len/count;
+    const isCommercial=['retail','commercial','office','hotel','hospital'].includes(tags.building);
+    for(let floor=0;floor<levels;floor++){
+     const base=floor*(h/levels),floorH=h/levels;
+     const y0=base+Math.max(.42,floorH*.18),y1=Math.min(h-.18,base+floorH*.78);
+     if(y1-y0<.45)continue;
+     for(let j=0;j<count;j++){
+      const inset=Math.min(.12,cell*.08),u0=(j*cell+inset)/len,u1=((j+1)*cell-inset)/len;
+      if(u1-u0<.05)continue;
+      const ww=(u1-u0)*len,winH=y1-y0;
+      // Ground-floor shopfronts use larger glazed openings; upper floors get dark glass with pale trim.
+      const lowShop=isCommercial&&floor===0;
+      const wy0=lowShop?.18:y0,wy1=lowShop?Math.min(floorH*.88,h-.2):y1;
+      faceQuad(windowPos,a,b,n,.12,wy0,wy1,u0+(lowShop?0:.035),u1-(lowShop?0:.035));
+      windowCount++;
+      const uA=u0,uB=u1;
+      const sillY=lowShop?wy0:Math.max(base+.08,wy0-.12);
+      boxBand(point(a,n,.18, sillY),point(b,n,.18,sillY),n,sillY,.10,.0,trimPos);
+      if(special){
+       // Cream concrete framing, black ribbon glazing and thin balcony slab: derived from the inspected tower photo.
+       boxBand(a,b,n,base+floorH-.14,.12,.19,bandPos);
+       if(floor%3===0)boxBand(a,b,n,base+floorH-.02,.09,.29,balconyPos);
+      }else if(floorH>2.6){
+       boxBand(a,b,n,base+floorH-.07,.055,.15,trimPos);
+      }
+     }
+     // A single door/shop entrance is added to the longest ground-floor wall, not every edge.
+     if(floor===0&&len>7&&i===1){
+      const u0=Math.max(.08,.5-.45/len),u1=Math.min(.92,.5+.45/len);
+      faceQuad(doorPos,a,b,n,.16,.08,Math.min(floorH* .92,2.65),u0,u1);doorCount++;
+     }
+    }
+    // Thin vertical accent strips on the photo-checked Cityland tower.
+    if(special){
+     for(let k=1;k<4;k++){
+      const u=k/4,aa={x:a.x+dx*u,y:0,z:a.z+dz*u},bb={x:a.x+dx*u,y:h,z:a.z+dz*u};
+      const half=.12,baseA=point(aa,n,.24,0),baseB=point(bb,n,.24,0);
+      const c={x:baseA.x-n.x*half,y:h,z:baseA.z-n.z*half},d={x:baseB.x-n.x*half,y:0,z:baseB.z-n.z*half};
+      const e={x:baseA.x+n.x*half,y:0,z:baseA.z+n.z*half},g={x:baseB.x+n.x*half,y:h,z:baseB.z+n.z*half};
+      quad(bandPos,baseA,e,baseB,g);
+     }
+    }
+   }
+   // Roof edge/parapet trim makes rooflines visible against the extrusion.
+   if(pts.length>3){
+    for(let i=1;i<pts.length;i++){
+     const a=pts[i-1],b=pts[i],dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz);if(len<3||len>250)continue;
+     const n=area>=0?{x:dz/len,z:-dx/len}:{x:-dz/len,z:dx/len};
+     boxBand(a,b,n,h-.20,.20,.16,roofRimPos);
+    }
+   }
+   detailed++;
+  }
+ }
+ const layer={
   id:layerId,type:'custom',renderingMode:'3d',
   onAdd:function(map,gl){
    this.camera=new THREE.Camera();this.scene=new THREE.Scene();
-   this.scene.add(new THREE.AmbientLight(0xffffff,1.35));
-   const sun=new THREE.DirectionalLight(0xffffff,1.7);sun.position.set(-80,-100,180);this.scene.add(sun);
-   this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});
-   this.renderer.autoClear=false;
-   const sets={};
-   Object.keys(textureSources).forEach(k=>sets[k]={positions:[],uvs:[]});
-   const roofPositions=[],roofUvs=[];
-   const cosLat=Math.cos(origin[1]*Math.PI/180);
-   // Convert lon/lat deltas to local meters compatible with MapLibre's Mercator meter scale. North/south meters per degree increase by 1/cos(latitude); using 111132 here compressed and displaced facade meshes relative to the OSM footprints.
-   const xy=c=>({x:(c[0]-origin[0])*111319.49*cosLat,z:(c[1]-origin[1])*111132.92});
-   const heightOf=p=>{
-    const t=p.tags||p;
-    const h=parseFloat(String(t.height||'').replace(/[^0-9.]/g,''));
-    if(Number.isFinite(h)&&h>=2&&h<=500)return h;
-    const levels=parseFloat(t['building:levels']||t.levels||'');
-    if(Number.isFinite(levels)&&levels>=1&&levels<=150)return levels*3.2;
-    const b=t.building||p.building;
-    return ({church:18,cathedral:24,hospital:12,commercial:16,office:18,hotel:18,apartments:12,industrial:8,house:6,residential:7,garage:3,shed:3})[b]||8;
-   };
-   // Street-level KartaView images are panoramas, not facade textures.
-   // Keep them in the repository/catalog for later rectification, but never paste a full panorama onto a wall.
-   const kartaFacadeTargets={};
-   const textureKey=()=> 'generic';
-   const wall=(set,a,b,h,key)=>{
-    const p=xy(a),q=xy(b),len=Math.hypot(q.x-p.x,q.z-p.z);
-    if(len<0.35)return;
-    const u=len/3.2,v=h/3.2;
-    set.positions.push(p.x,0,p.z,q.x,0,q.z,p.x,h,p.z,p.x,h,p.z,q.x,0,q.z,q.x,h,q.z);
-    // Landmark reference images are stretched across each wall panel; generic PBR repeats at a realistic scale.
-    if(key==='generic')set.uvs.push(0,0,u,0,0,v,0,v,u,0,u,v);
-    else set.uvs.push(0,0,1,0,0,1,0,1,1,0,1,1);
-   };
-   const roof=(ring,h)=>{
-    if(ring.length<4)return;
-    const p0=xy(ring[0]);
-    for(let i=1;i<ring.length-2;i++){
-     const p1=xy(ring[i]),p2=xy(ring[i+1]);
-     roofPositions.push(p0.x,h,p0.z,p1.x,h,p1.z,p2.x,h,p2.z);
-     roofUvs.push(p0.x/5,p0.z/5,p1.x/5,p1.z/5,p2.x/5,p2.z/5);
-    }
-   };
-   let count=0;
-   for(const f of data.features){
-    if(!f.geometry)continue;
-    const p=f.properties||{},osmId=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:'')),kartaTarget=kartaFacadeTargets[osmId],key=textureKey(p),h=heightOf(p),g=f.geometry;
-    const polys=g.type==='Polygon'?[g.coordinates]:g.type==='MultiPolygon'?g.coordinates:[];
-    for(const poly of polys){
-     const ring=poly&&poly[0];if(!ring||ring.length<4)continue;
-     let perimeter=0;for(let i=1;i<ring.length;i++)perimeter+=Math.hypot((ring[i][0]-ring[i-1][0])*111319.49*cosLat,(ring[i][1]-ring[i-1][1])*111132.92);
-     if(perimeter<4||perimeter>12000)continue;
-     // KartaView images are mapped only to the footprint edge nearest the recorded camera position;
-     // all other walls retain the generic material rather than wrapping one street photo around the whole building.
-     let nearestEdge=-1,nearestDist=Infinity;
-     if(kartaTarget){for(let i=1;i<ring.length;i++){
-      const mid=[(ring[i-1][0]+ring[i][0])/2,(ring[i-1][1]+ring[i][1])/2];
-      const dx=(mid[0]-kartaTarget.camera[0])*111319.49*cosLat,dy=(mid[1]-kartaTarget.camera[1])*111132.92;
-      const dist=dx*dx+dy*dy;if(dist<nearestDist){nearestDist=dist;nearestEdge=i;}
-     }}
-     // Never paint an unverified building with the same generic facade texture.
-     // Only draw facade/roof meshes when an existing photo is explicitly mapped to this feature.
-     // Other buildings remain as their source OSM extrusions until a matching facade image is verified.
-     // Do not apply street panoramas or unverified reference photos to building walls.
-     // A real facade texture can be enabled only after rectifying/cropping the facade itself
-     // and verifying it against this specific building and wall orientation.
-     count++;
-    }
-   }
-   this.meshes=[];
-   Object.keys(sets).forEach(key=>{
-    const dataSet=sets[key];if(!dataSet.positions.length)return;
-    const geo=new THREE.BufferGeometry();
-    geo.setAttribute('position',new THREE.Float32BufferAttribute(dataSet.positions,3));
-    geo.setAttribute('uv',new THREE.Float32BufferAttribute(dataSet.uvs,2));geo.computeVertexNormals();
-    const tex=new THREE.TextureLoader().load(textureSources[key],()=>map.triggerRepaint());
-    tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.encoding=THREE.sRGBEncoding;
-    if(key==='generic')tex.repeat.set(1,1);
-    const mat=new THREE.MeshStandardMaterial({map:tex,color:0xffffff,roughness:0.92,side:THREE.DoubleSide});
-    const mesh=new THREE.Mesh(geo,mat);mesh.frustumCulled=false;this.scene.add(mesh);this.meshes.push(mesh);
-   });
-   const roofGeo=new THREE.BufferGeometry();
-   roofGeo.setAttribute('position',new THREE.Float32BufferAttribute(roofPositions,3));
-   roofGeo.setAttribute('uv',new THREE.Float32BufferAttribute(roofUvs,2));roofGeo.computeVertexNormals();
-   const roofMat=new THREE.MeshStandardMaterial({color:0x77736b,roughness:1,side:THREE.DoubleSide});
-   if(roofPositions.length){this.roofs=new THREE.Mesh(roofGeo,roofMat);this.roofs.frustumCulled=false;this.scene.add(this.roofs);}
-   this.loadedCount=count;
-   setStatus('3D building footprints: '+count.toLocaleString()+'. Full KartaView street panoramas are no longer pasted onto facades; photos remain stored as source references pending facade-only rectification and visual verification.');
+   this.scene.add(new THREE.AmbientLight(0xffffff,1.8));
+   const sun=new THREE.DirectionalLight(0xffffff,1.8);sun.position.set(-80,-100,180);this.scene.add(sun);
+   this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});this.renderer.autoClear=false;
+   const add=(positions,color,roughness=0.78)=>{if(!positions.length)return;const m=new THREE.Mesh(geom(positions),new THREE.MeshStandardMaterial({color,roughness,metalness:0.02,side:THREE.DoubleSide}));m.frustumCulled=false;this.scene.add(m);};
+   add(windowPos,0x172a3a,.24);
+   add(trimPos,0xf0e7d6,.68);
+   add(bandPos,0xc96b42,.62);
+   add(balconyPos,0xe6dfd0,.8);
+   add(doorPos,0x102332,.22);
+   add(roofRimPos,0xd7d0c4,.8);
+   this.visible=true;
+   setStatus('Facade pass active: '+detailed.toLocaleString()+' OSM building footprints with '+windowCount.toLocaleString()+' modeled window/shopfront openings, '+doorCount.toLocaleString()+' entrances and roof/floor trim. Manila Residences Bocobo has a photo-reviewed, building-specific facade treatment; generic details are procedural, not survey measurements.');
   },
   render:function(gl,args){
    if(!this.renderer)return;
    const m=new THREE.Matrix4().fromArray(args.defaultProjectionData.mainMatrix);
-   const l=new THREE.Matrix4().makeTranslation(merc.x,merc.y,merc.z)
-    .multiply(new THREE.Matrix4().makeRotationX(Math.PI/2))
-    .scale(new THREE.Vector3(meterScale,meterScale,meterScale));
+   const l=new THREE.Matrix4().makeTranslation(merc.x,merc.y,merc.z).multiply(new THREE.Matrix4().makeRotationX(Math.PI/2)).scale(new THREE.Vector3(meterScale,meterScale,meterScale));
    this.camera.projectionMatrix=m.multiply(l);
    this.renderer.resetState();this.renderer.render(this.scene,this.camera);
   }
  };
  if(map.getLayer(layerId))map.removeLayer(layerId);
- map.addLayer(customLayer);
+ map.addLayer(layer);
 }
 function addBuildings(data){
  if(map.getLayer('local-buildings-3d'))map.removeLayer('local-buildings-3d');
@@ -447,10 +457,7 @@ function addRoads(data){
 }
 map.on('load',async()=>{
  try{
-  // Liberty's basemap has its own 3D building layer, independent of our OSM GeoJSON layer.
-  // Hide it by default so unchecking project building layers really removes visible extrusions.
-  basemap3DBuildingLayerIds=(map.getStyle().layers||[]).filter(l=>/building/i.test(l.id||'')&&(/3d|extrusion|fill-extrusion/i.test((l.id||'')+' '+(l['source-layer']||''))||l.type==='fill-extrusion')).map(l=>l.id);
-  basemap3DBuildingLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none')});
+  // Use the committed OSM building layer only; third-party basemap building extrusions are intentionally disabled.
   map.addSource('terrain-dem',{type:'raster-dem',tiles:['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});
   map.setTerrain({source:'terrain-dem',exaggeration:1.15});
   map.setSky({ 'sky-color':'#8dbbe2','sky-horizon-blend':0.5,'horizon-color':'#e8f1fa','horizon-fog-blend':0.2,'fog-color':'#dce8f3','fog-ground-blend':0.15,'atmosphere-blend':0.8});
@@ -476,16 +483,14 @@ map.on('load',async()=>{
   const setVisibility=(ids,visible)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',visible?'visible':'none')});
   setVisibility(['local-buildings-3d','local-building-labels','all-building-facade-textures'],document.getElementById('buildings').checked);
     setVisibility(['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'],document.getElementById('realModels').checked);
-  setVisibility(basemap3DBuildingLayerIds,document.getElementById('basemapBuildings').checked);
   const errors=[roadResult.loadError,buildingResult.loadError,surfaceResult.loadError].filter(Boolean);
-  setStatus(roadsData.features.length.toLocaleString()+' mapped road/path lines · '+buildingsData.features.length.toLocaleString()+' OSM building footprints · '+surfaceData.features.length.toLocaleString()+' DPWH road records · '+basemap3DBuildingLayerIds.length+' basemap 3D building style layers'+(errors.length?' · Some data sources failed; see console.':' · available layers loaded'));
+  setStatus(roadsData.features.length.toLocaleString()+' mapped road/path lines · '+buildingsData.features.length.toLocaleString()+' OSM building footprints with facade detail · '+surfaceData.features.length.toLocaleString()+' DPWH road records'+(errors.length?' · Some data sources failed; see console.':' · available layers loaded'));
  }catch(e){setStatus('Some project layers failed to load: '+e.message+'. The 3D basemap may still be available.')}
 });
 document.getElementById('imagery').addEventListener('change',e=>setSatelliteImagery(e.target.checked));
 document.getElementById('landmarks').addEventListener('change',e=>['key-landmark-halo','key-landmark-dot','key-landmark-label'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('realModels').addEventListener('change',e=>['real-building-model-points','real-building-model-labels','ramon-magsaysay-local-mesh'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('buildings').addEventListener('change',e=>{['local-buildings-3d','local-building-labels','all-building-facade-textures'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
-document.getElementById('basemapBuildings').addEventListener('change',e=>basemap3DBuildingLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('roads').addEventListener('change',e=>{['project-roads','project-roads-casing','project-road-labels'].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')})});
 document.getElementById('terrain').addEventListener('change',e=>{try{map.setTerrain(e.target.checked?{source:'terrain-dem',exaggeration:1.15}:null)}catch(err){setStatus('Terrain tiles unavailable; buildings and roads can still be viewed in 3D.')}});
 document.getElementById('labels').addEventListener('change',e=>{if(map.getLayer('local-building-labels'))map.setLayoutProperty('local-building-labels','visibility',e.target.checked?'visible':'none')});
