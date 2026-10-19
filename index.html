@@ -271,38 +271,10 @@ function addTexturedBuildingMeshes(data){
     const b=t.building||p.building;
     return ({church:18,cathedral:24,hospital:12,commercial:16,office:18,hotel:18,apartments:12,industrial:8,house:6,residential:7,garage:3,shed:3})[b]||8;
    };
-   const kartaFacadeTargets={
-    'way/91233257':{key:'kartaYWCA',camera:[120.985673,14.582136]},
-    'way/89774335':{key:'kartaCommodore',camera:[120.979708,14.577527]},
-    // KartaView capture is only 0.35 m from this named footprint; heading is unavailable,
-    // so render on the nearest wall only and keep it flagged as a provisional match.
-    'way/27650470':{key:'kartaNIH',camera:[120.98728,14.575894]},
-    // Named KartaView records; nearest-wall projection is provisional where heading metadata is absent.
-        'way/90125136':{key:'kartaJadeVine',camera:[120.980874,14.580619]},
-        'way/1061988733':{key:'kartaAsiaPlaza',camera:[120.982429,14.575211]},
-        'way/267171292':{key:'kartaCasaBlanca',camera:[120.983028,14.575581]},
-        'way/90128945':{key:'kartaGLC',camera:[120.979818,14.580858]},
-        'way/90132745':{key:'kartaPuso',camera:[120.980499,14.580293]},
-        'way/367262432':{key:'kartaAdriatico',camera:[120.982879,14.57817]},
-        // Additional existing KartaView photos: OSM footprint ID is exact and camera heading is checked in the saved CSV.
-        'way/822413216':{key:'karta822413216',camera:[120.980277,14.580004]},
-        'way/642781531':{key:'karta642781531',camera:[120.986269,14.588069]},
-        'way/308695382':{key:'karta308695382',camera:[120.981667,14.576875]},
-        'way/542698878':{key:'karta542698878',camera:[120.982568,14.581502]},
-        'way/823330151':{key:'karta823330151',camera:[120.980198,14.577374]}
-   };
-   const textureKey=p=>{
-    const t=p.tags||p;
-    const osmId=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:''));
-    if(kartaFacadeTargets[osmId])return kartaFacadeTargets[osmId].key;
-    const n=String(t.name||t.official_name||t['name:en']||'').toLowerCase();
-    const op=String(t.operator||'').toLowerCase();
-    // Only assign a photographed facade to a building explicitly identified as that landmark.
-    // These reference images are not verified orthophotos of each individual wall.
-    // Do not stretch one landmark photo across every wall of an OSM footprint.
-    // Keep them catalogued until a wall-specific photo/footprint match is confirmed.
-    return 'generic';
-   };
+   // Street-level KartaView images are panoramas, not facade textures.
+   // Keep them in the repository/catalog for later rectification, but never paste a full panorama onto a wall.
+   const kartaFacadeTargets={};
+   const textureKey=()=> 'generic';
    const wall=(set,a,b,h,key)=>{
     const p=xy(a),q=xy(b),len=Math.hypot(q.x-p.x,q.z-p.z);
     if(len<0.35)return;
@@ -321,7 +293,7 @@ function addTexturedBuildingMeshes(data){
      roofUvs.push(p0.x/5,p0.z/5,p1.x/5,p1.z/5,p2.x/5,p2.z/5);
     }
    };
-   let count=0,photoMapped={kartaYWCA:0,kartaCommodore:0,kartaNIH:0,kartaJadeVine:0,kartaAsiaPlaza:0,kartaCasaBlanca:0,kartaGLC:0,kartaPuso:0,kartaAdriatico:0,karta822413216:0,karta642781531:0,karta308695382:0,karta542698878:0,karta823330151:0};
+   let count=0;
    for(const f of data.features){
     if(!f.geometry)continue;
     const p=f.properties||{},osmId=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:'')),kartaTarget=kartaFacadeTargets[osmId],key=textureKey(p),h=heightOf(p),g=f.geometry;
@@ -341,15 +313,9 @@ function addTexturedBuildingMeshes(data){
      // Never paint an unverified building with the same generic facade texture.
      // Only draw facade/roof meshes when an existing photo is explicitly mapped to this feature.
      // Other buildings remain as their source OSM extrusions until a matching facade image is verified.
-     if(key!=='generic'){
-      for(let i=1;i<ring.length;i++){
-       // Street photographs are applied only to the camera-facing wall, never all sides.
-       if(kartaTarget && i===nearestEdge)wall(sets[key],ring[i-1],ring[i],h,key);
-       else if(!kartaTarget)wall(sets[key],ring[i-1],ring[i],h,key);
-      }
-      if(!kartaTarget)roof(ring,h);
-      photoMapped[key]=(photoMapped[key]||0)+1;
-     }
+     // Do not apply street panoramas or unverified reference photos to building walls.
+     // A real facade texture can be enabled only after rectifying/cropping the facade itself
+     // and verifying it against this specific building and wall orientation.
      count++;
     }
    }
@@ -371,7 +337,7 @@ function addTexturedBuildingMeshes(data){
    const roofMat=new THREE.MeshStandardMaterial({color:0x77736b,roughness:1,side:THREE.DoubleSide});
    if(roofPositions.length){this.roofs=new THREE.Mesh(roofGeo,roofMat);this.roofs.frustumCulled=false;this.scene.add(this.roofs);}
    this.loadedCount=count;
-   setStatus('3D facade meshes: '+count.toLocaleString()+' footprint parts. Existing-image photo mappings: YWCA '+photoMapped.kartaYWCA+', Commodore '+photoMapped.kartaCommodore+'. Their street photos are limited to one camera-facing wall; remaining walls and buildings without verified matches are not given a generic facade photo.');
+   setStatus('3D building footprints: '+count.toLocaleString()+'. Full KartaView street panoramas are no longer pasted onto facades; photos remain stored as source references pending facade-only rectification and visual verification.');
   },
   render:function(gl,args){
    if(!this.renderer)return;
