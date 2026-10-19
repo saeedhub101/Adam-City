@@ -1,0 +1,46 @@
+name: Import Microsoft satellite building footprints for Ermita
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "ermita/scripts/import_microsoft_satellite_footprints.py"
+      - ".github/workflows/import-microsoft-satellite-footprints-ermita.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ermita-microsoft-satellite-buildings
+  cancel-in-progress: false
+
+jobs:
+  import-microsoft-buildings:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install geometry dependency
+        run: python -m pip install shapely
+      - name: Stream and clip Microsoft Philippines building dataset (no OSM)
+        run: python ermita/scripts/import_microsoft_satellite_footprints.py
+      - name: Commit clipped building data and provenance only
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ermita/maps/sources/microsoft-satellite-buildings
+          if git diff --cached --quiet; then echo "No new Microsoft footprint outputs."; exit 0; fi
+          git commit -m "Add Microsoft satellite-derived building footprints for Ermita"
+          git fetch origin main
+          if ! git rebase origin/main; then git rebase --abort || true; echo "::error::Remote main changed; stopped without overwriting source data."; exit 1; fi
+          git push origin HEAD:main
