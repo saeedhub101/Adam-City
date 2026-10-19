@@ -235,6 +235,7 @@ function addTexturedBuildingMeshes(data){
   pghCancer:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/reference_photos/PGH-Cancer-Institute-Building.jpg',
   kartaYWCA:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2488521673.jpg',
   kartaCommodore:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2488519305.jpg',
+  kartaNIH:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/1281083517.jpg',
  };
  const customLayer={
   id:layerId,type:'custom',renderingMode:'3d',
@@ -261,7 +262,10 @@ function addTexturedBuildingMeshes(data){
    };
    const kartaFacadeTargets={
     'way/91233257':{key:'kartaYWCA',camera:[120.985673,14.582136]},
-    'way/89774335':{key:'kartaCommodore',camera:[120.979708,14.577527]}
+    'way/89774335':{key:'kartaCommodore',camera:[120.979708,14.577527]},
+    // KartaView capture is only 0.35 m from this named footprint; heading is unavailable,
+    // so render on the nearest wall only and keep it flagged as a provisional match.
+    'way/27650470':{key:'kartaNIH',camera:[120.98728,14.575894]}
    };
    const textureKey=p=>{
     const t=p.tags||p;
@@ -293,7 +297,7 @@ function addTexturedBuildingMeshes(data){
      roofUvs.push(p0.x/5,p0.z/5,p1.x/5,p1.z/5,p2.x/5,p2.z/5);
     }
    };
-   let count=0,photoMapped={nationalMuseum:0,upManila:0,pghCancer:0,kartaYWCA:0,kartaCommodore:0};
+   let count=0,photoMapped={kartaYWCA:0,kartaCommodore:0,kartaNIH:0};
    for(const f of data.features){
     if(!f.geometry)continue;
     const p=f.properties||{},osmId=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:'')),kartaTarget=kartaFacadeTargets[osmId],key=textureKey(p),h=heightOf(p),g=f.geometry;
