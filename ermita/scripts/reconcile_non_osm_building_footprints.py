@@ -185,7 +185,7 @@ def main():
         register={"type":"FeatureCollection","name":"Canonical non-OSM satellite building register for Ermita",
                   "source_policy":"Derived display view only; original Google and Microsoft source files are never edited.",
                   "feature_count":len(canonical_features),"features":canonical_features}
-        REGISTER.write_text(json.dumps(register,ensure_ascii=False,separators=(",",":"))+"\\n",encoding="utf-8")
+        REGISTER.write_text(json.dumps(register,ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
         report["status"]="success"
         report["inputs_sha256"]={"google":digest(GOOGLE),"microsoft":digest(MICROSOFT)}
         report["counts"]={"google_features":len(google),"microsoft_features":len(microsoft),
