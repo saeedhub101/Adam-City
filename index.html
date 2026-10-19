@@ -47,6 +47,10 @@ const $=id=>document.getElementById(id), status=$('status');
 const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[120.9821,14.5848],zoom:15.1,pitch:62,bearing:-18,antialias:true});
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({maxWidth:100,unit:'metric'}),'bottom-left');
 const say=s=>status.textContent=s;
+window.addEventListener('error',e=>{say('خطأ JavaScript: '+(e.message||'تعذر تشغيل الخريطة'));console.error(e.error||e.message)});
+window.addEventListener('unhandledrejection',e=>{say('فشل تحميل الخريطة: '+(e.reason?.message||String(e.reason)));console.error(e.reason)});
+map.on('error',e=>{const msg=e?.error?.message||'خطأ في مصدر الخريطة';console.error('MapLibre error:',e.error||e);if(status&&!status.textContent.startsWith('تم تحميل'))say('مشكلة في الخريطة: '+msg)});
+map.on('style.load',()=>{if(status&&status.textContent==='جارٍ تحميل بيانات المباني والطرق وOpenFreeMap…')say('تم تحميل نمط الخريطة؛ جارٍ تحميل بيانات المباني…')});
 const tag=(key)=>['coalesce',['get',key,['get','tags']],['get',key]];
 const safeText=['coalesce',tag('name'),tag('official_name'),tag('alt_name'),''];
 const houseNo=['coalesce',tag('addr:housenumber'),tag('ref'),''];
@@ -118,8 +122,9 @@ map.on('load',async()=>{
   const layers=map.getStyle().layers||[];
   const openFreeMapBuildingLayerIds=layers.filter(l=>/building/i.test(l.id||'')||/building/i.test(l['source-layer']||'')).map(l=>l.id);
   map.addSource('regional-terrain-dem',{type:'raster-dem',tiles:['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});
-  map.setTerrain({source:'regional-terrain-dem',exaggeration:1.18});
-  map.setSky({'sky-color':'#a8c9df','sky-horizon-blend':0.45,'horizon-color':'#e7eee9','horizon-fog-blend':0.15,'fog-color':'#dce8e6','fog-ground-blend':0.15,'atmosphere-blend':0.7});
+  // Terrain and sky are optional: do not let a DEM/sky failure prevent the 2D map and building layers from rendering.
+  try{map.setTerrain({source:'regional-terrain-dem',exaggeration:1.18})}catch(err){console.warn('Terrain disabled:',err);$('terrain').checked=false}
+  try{map.setSky({'sky-color':'#a8c9df','sky-horizon-blend':0.45,'horizon-color':'#e7eee9','horizon-fog-blend':0.15,'fog-color':'#dce8e6','fog-ground-blend':0.15,'atmosphere-blend':0.7})}catch(err){console.warn('Sky disabled:',err)}
   // Keep the original OpenFreeMap style buildings visible by default; their checkbox controls only these style layers.
   map.addLayer({id:'ermita-boundary-fill',type:'fill',source:'local-boundary',paint:{'fill-color':'#65d9b0','fill-opacity':0.045}});
   map.addLayer({id:'ermita-boundary-line',type:'line',source:'local-boundary',paint:{'line-color':'#68e2b8','line-width':2,'line-dasharray':[2,1]}});
