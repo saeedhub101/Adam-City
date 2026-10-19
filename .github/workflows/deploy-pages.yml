@@ -44,7 +44,7 @@ jobs:
           features = data.get('features', [])
           with dst.open('w', encoding='utf-8') as f:
               for feature in features:
-              f.write(json.dumps(feature, separators=(',', ':')) + '\n')
+                  f.write(json.dumps(feature, separators=(',', ':')) + '\\n')
           print(f'Prepared {len(features)} OpenFreeMap/OpenMapTiles building features')
           PY
           cp index.html site/index.html
@@ -64,7 +64,7 @@ jobs:
           cp ermita/3d/terrain/terrain-import-report.json site/assets/
           echo "Prepared assets:"
           du -sh site
-          find site -type f -printf '%p %s bytes\n' | sort
+          find site -type f -printf '%p %s bytes\\n' | sort
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Upload map and data artifact
