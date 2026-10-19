@@ -9,6 +9,8 @@
 **Critical finding: the active building-footprints path is not currently the original OSM dataset.** It contains Basemap/OpenMapTiles-derived geometry. The original OSM GeoJSON still exists under `backup/`, but the active path used by the page has been overwritten.
 
 This is not merely a documentation mismatch:
+This also explains a misleading UI state: `index.html` loads the active file and assigns its features to `osmBuildingsData`, while the checkbox is labelled `OSM 3D buildings`. Because that file is Basemap-derived, the OSM checkbox is currently displaying the wrong source dataset. The recent code-level fix that preserves `osmBuildingsData` cannot restore the original OSM buildings while this input file itself is wrong.
+
 
 - Active file: `ermita/maps/generated/ermita-building-footprints.geojson` — **17,882,142 bytes**, 1,123 polygon/multipolygon features, metadata explicitly says Basemap-authoritative geometry.
 - Preserved OSM file: `backup/ermita/maps/generated/ermita-building-footprints.geojson` — **631,703 bytes**, 1,533 features: 1,528 polygons and 5 points, with OSM IDs and raw tags.
