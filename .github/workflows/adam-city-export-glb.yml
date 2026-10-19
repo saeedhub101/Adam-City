@@ -33,6 +33,8 @@ jobs:
             ermita/maps/generated/ermita-building-footprints.geojson
             ermita/maps/generated/ermita-road-network.geojson
             ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
+            ermita/3d/exports/adam-city-complete.glb
+            ermita/3d/exports/adam-city-complete-report.json
           sparse-checkout-cone-mode: false
       - name: Fetch only the required DEM asset
         run: git lfs pull --include="ermita/3d/terrain/ermita-copernicus-dem-cropped.tif"
