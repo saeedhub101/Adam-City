@@ -232,7 +232,12 @@ function addTexturedBuildingMeshes(data){
   generic:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/Painted-CMU-Block-Architextures.jpeg',
   nationalMuseum:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/reference_photos/04660jfNational-Museum-of-the-Philippines-Ermita-Manilafvf-19.jpg',
   upManila:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/reference_photos/University-of-the-Philippines-Manila-Campus---Main-Building-Pedro-Gil-Ermita-Manila-2014-1.jpg',
-  pghCancer:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/reference_photos/PGH-Cancer-Institute-Building.jpg'
+  pghCancer:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/ermita/buildings/reference_photos/PGH-Cancer-Institute-Building.jpg',
+  kartaYWCA:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2488521673.jpg',
+  kartaCommodore:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2488519305.jpg',
+  kartaUnknownA:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2506564233.jpg',
+  kartaUnknownB:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/1718194953.jpg',
+  kartaUnknownC:'https://raw.githubusercontent.com/saeedhub101/Adam-City/main/kartaview/images/2488518665.jpg'
  };
  const customLayer={
   id:layerId,type:'custom',renderingMode:'3d',
@@ -256,8 +261,17 @@ function addTexturedBuildingMeshes(data){
     const b=t.building||p.building;
     return ({church:18,cathedral:24,hospital:12,commercial:16,office:18,hotel:18,apartments:12,industrial:8,house:6,residential:7,garage:3,shed:3})[b]||8;
    };
+   const kartaFacadeTargets={
+    'way/91233257':{key:'kartaYWCA',camera:[120.985673,14.582136]},
+    'way/89774335':{key:'kartaCommodore',camera:[120.979708,14.577527]},
+    'way/822413216':{key:'kartaUnknownA',camera:[120.980277,14.580004]},
+    'way/642781531':{key:'kartaUnknownB',camera:[120.986269,14.588069]},
+    'way/308695382':{key:'kartaUnknownC',camera:[120.981667,14.576875]}
+   };
    const textureKey=p=>{
     const t=p.tags||p;
+    const osmId=String(p.osm_feature_id||((p.type&&p.id)?p.type+'/'+p.id:''));
+    if(kartaFacadeTargets[osmId])return kartaFacadeTargets[osmId].key;
     const n=String(t.name||t.official_name||t['name:en']||'').toLowerCase();
     const op=String(t.operator||'').toLowerCase();
     // Only assign a photographed facade to a building explicitly identified as that landmark.
@@ -293,7 +307,18 @@ function addTexturedBuildingMeshes(data){
      const ring=poly&&poly[0];if(!ring||ring.length<4)continue;
      let perimeter=0;for(let i=1;i<ring.length;i++)perimeter+=Math.hypot((ring[i][0]-ring[i-1][0])*111319.49*cosLat,(ring[i][1]-ring[i-1][1])*111132.92);
      if(perimeter<4||perimeter>12000)continue;
-     for(let i=1;i<ring.length;i++)wall(set,ring[i-1],ring[i],h,key);
+     // KartaView images are mapped only to the footprint edge nearest the recorded camera position;
+     // all other walls retain the generic material rather than wrapping one street photo around the whole building.
+     let nearestEdge=-1,nearestDist=Infinity;
+     if(kartaTarget){for(let i=1;i<ring.length;i++){
+      const mid=[(ring[i-1][0]+ring[i][0])/2,(ring[i-1][1]+ring[i][1])/2];
+      const dx=(mid[0]-kartaTarget.camera[0])*111319.49*cosLat,dy=(mid[1]-kartaTarget.camera[1])*111132.92;
+      const dist=dx*dx+dy*dy;if(dist<nearestDist){nearestDist=dist;nearestEdge=i;}
+     }}
+     for(let i=1;i<ring.length;i++){
+      const wallKey=kartaTarget?(i===nearestEdge?key:'generic'):key;
+      wall(sets[wallKey],ring[i-1],ring[i],h,wallKey);
+     }
      roof(ring,h);count++;
      if(key!=='generic')photoMapped[key]++;
     }
@@ -316,7 +341,7 @@ function addTexturedBuildingMeshes(data){
    const roofMat=new THREE.MeshStandardMaterial({color:0x77736b,roughness:1,side:THREE.DoubleSide});
    this.roofs=new THREE.Mesh(roofGeo,roofMat);this.roofs.frustumCulled=false;this.scene.add(this.roofs);
    this.loadedCount=count;
-   setStatus('3D facade meshes: '+count.toLocaleString()+' footprint parts; named photo-texture candidates: National Museum '+photoMapped.nationalMuseum+', UP Manila '+photoMapped.upManila+', PGH Cancer Institute '+photoMapped.pghCancer+'. These image assignments are name-based candidates, not independently verified facade-angle matches; remaining buildings use generic wall material.');
+   setStatus('3D facade meshes: '+count.toLocaleString()+' footprint parts. Existing-image facade candidates: YWCA '+photoMapped.kartaYWCA+', Commodore '+photoMapped.kartaCommodore+', unnamed targets '+(photoMapped.kartaUnknownA+photoMapped.kartaUnknownB+photoMapped.kartaUnknownC)+'. KartaView photos are applied to one nearest footprint wall only; verify visual alignment in scene. Remaining buildings use the existing generic wall material or named reference candidates.');
   },
   render:function(gl,args){
    if(!this.renderer)return;
@@ -448,7 +473,7 @@ map.on('load',async()=>{
   buildingsData={type:'FeatureCollection',features:(buildingResult.features||[]).filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.tags?.['building:part']))};
   surfaceData={type:'FeatureCollection',features:(surfaceResult.features||[]).filter(f=>f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type))};
   addRoads(roadsData);
-  if(buildingsData.features.length)addBuildings(buildingsData);
+  if(buildingsData.features.length){addBuildings(buildingsData);addTexturedBuildingMeshes(buildingsData);}
   if(surfaceData.features.length)addDpwRoadSurface(surfaceData);
   addLandmarks();addRealModelMarkers();addSatelliteImagery();addLocalRamonModel(roadsData);
   // Apply the current checkbox states after asynchronous data loading, even if a user unchecked a layer early.
