@@ -27,5 +27,5 @@ The repository contains historical snapshots and scripts that may use legacy pat
 - `ermita/` — area data and generated assets.
 - `kartaview/` — KartaView imagery and review index (legacy path currently referenced by metadata and scripts).
 - `backup/` — historical snapshots and recovery copies.
-- `scripts/` — root importers required by deployment.
+- `ermita/scripts/` — Ermita-specific importers and processing scripts used by deployment.
 - `ermita-malate-3d.html` — GitHub Pages preview entry point.
