@@ -1,3 +1,4 @@
+# Workflow trigger: verify the open aerial importers against the live public catalog.
 #!/usr/bin/env python3
 """Incrementally discover and download openly licensed OpenAerialMap imagery for Ermita.
 
