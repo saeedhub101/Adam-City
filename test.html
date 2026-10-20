@@ -108,6 +108,7 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.0/meshopt_decoder.module.js';
 const waitMap=()=>new Promise(resolve=>{const check=()=>{if(window.adamCityMap?.isStyleLoaded())resolve(window.adamCityMap);else setTimeout(check,100)};check()});
 try {
  const map=await waitMap();
@@ -123,7 +124,9 @@ try {
    camera=new THREE.Camera();scene=new THREE.Scene();
    scene.add(new THREE.AmbientLight(0xffffff,2.0));
    const light=new THREE.DirectionalLight(0xffffff,2.2);light.position.set(0,-70,100).normalize();scene.add(light);
-   new GLTFLoader().load(modelUrl,gltf=>{
+   const loader=new GLTFLoader();
+   loader.setMeshoptDecoder(MeshoptDecoder);
+   loader.load(modelUrl,gltf=>{
     model=gltf.scene;
     model.position.set(anchor.x,anchor.y,anchor.z);
     model.scale.set(meterScale,-meterScale,meterScale);
@@ -134,7 +137,11 @@ try {
     if(!window.adamWindowsEnabled)model.visible=false;
     const s=document.getElementById('status');if(s)s.textContent='تم تحميل نموذج windows؛ شغّل المفتاح رقم 12 لإظهار تفاصيل الواجهات والشبابيك.';
     mapInstance.triggerRepaint();
-   },undefined,err=>{
+   },progress=>{
+    const s=document.getElementById('status');
+    if(s && progress.total) s.textContent='جارٍ تحميل نموذج windows: '+Math.round(progress.loaded/progress.total*100)+'%';
+    else if(s) s.textContent='جارٍ تنزيل نموذج windows ثلاثي الأبعاد ('+Math.round(progress.loaded/1048576)+' MB)…';
+   },err=>{
     const e=document.getElementById('error');e.style.display='block';e.textContent='تعذر تحميل نموذج windows: '+(err?.message||err);
     document.getElementById('status').textContent='تعذر تحميل نموذج windows ثلاثي الأبعاد.';
    });
