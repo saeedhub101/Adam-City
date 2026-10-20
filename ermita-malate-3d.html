@@ -60,9 +60,10 @@
       container: 'map',
       center: [120.9821, 14.5848],
       zoom: 15.0,
-      pitch: 68,
+      pitch: 56,
       bearing: -18,
-      maxPitch: 80,
+      maxPitch: 70,
+      maxZoom: 19,
       style: {
         version: 8,
         glyphs: 'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',
@@ -109,7 +110,7 @@
       let loadedBuildingFeatures = 0;
       try { visibleBuildings = map.queryRenderedFeatures({layers:[buildingLayer]}).length; } catch (_) {}
       try { loadedBuildingFeatures = map.querySourceFeatures(sourceId, {sourceLayer:'building'}).length; } catch (_) {}
-      status.textContent = `الزوم ${map.getZoom().toFixed(1)} · مبانٍ ظاهرة: ${visibleBuildings} · عناصر مبانٍ في البلاطات المحمّلة: ${loadedBuildingFeatures} · أقصى زوم أصلي للبيانات: 14`;
+      status.textContent = `الزوم ${map.getZoom().toFixed(1)} · ميل الكاميرا ${Math.round(map.getPitch())}° · مبانٍ ظاهرة: ${visibleBuildings} · عناصر مبانٍ في البلاطات المحمّلة: ${loadedBuildingFeatures} · أقصى زوم أصلي للبيانات: 14 (تُكبّر البلاطات بعده)`;
       // A zero rendered-feature count is not proof of a tile/network failure,
       // especially for pitched 3D extrusions. Only map.on('error') reports actual load errors.
       if (!firstErrorShown) errorBox.style.display = 'none';
@@ -120,6 +121,20 @@
       updateDiagnostics();
     });
     map.on('idle', updateDiagnostics);
+
+    // At close range, flatten the camera so buildings remain inside the view.
+    let adjustingCloseZoomPitch = false;
+    map.on('zoomend', () => {
+      const z = map.getZoom();
+      const pitch = map.getPitch();
+      const targetPitch = z >= 17 ? 42 : (z >= 16 ? 48 : (z >= 15 ? 54 : null));
+      if (targetPitch !== null && pitch > targetPitch + 1 && !adjustingCloseZoomPitch) {
+        adjustingCloseZoomPitch = true;
+        map.easeTo({pitch: targetPitch, duration: 280});
+        map.once('moveend', () => { adjustingCloseZoomPitch = false; updateDiagnostics(); });
+      }
+    });
+
     let firstErrorShown = false;
     map.on('error', e => {
       console.error('Local OpenFreeMap tile error', e.error || e);
@@ -131,11 +146,11 @@
         status.textContent = 'خطأ في تحميل الخريطة أو البلاطات؛ تفاصيل الخطأ ظاهرة أدناه.';
       }
     });
-    const fly = (center, zoom, pitch=62, bearing=-18) => map.flyTo({center,zoom,pitch,bearing,duration:1100});
-    document.getElementById('ermita').addEventListener('click', () => fly([120.9821,14.5848],15.1,65,-18));
-    document.getElementById('malate').addEventListener('click', () => fly([120.9918,14.5707],15.1,65,-18));
-    document.getElementById('both').addEventListener('click', () => fly([120.9860,14.5780],14.1,62,-18));
-    document.getElementById('reset').addEventListener('click', () => map.easeTo({pitch:62,bearing:-18,duration:800}));
+    const fly = (center, zoom, pitch=54, bearing=-18) => map.flyTo({center,zoom,pitch,bearing,duration:1100});
+    document.getElementById('ermita').addEventListener('click', () => fly([120.9821,14.5848],15.1,54,-18));
+    document.getElementById('malate').addEventListener('click', () => fly([120.9918,14.5707],15.1,54,-18));
+    document.getElementById('both').addEventListener('click', () => fly([120.9860,14.5780],14.1,52,-18));
+    document.getElementById('reset').addEventListener('click', () => map.easeTo({pitch:54,bearing:-18,duration:800}));
     document.getElementById('buildings').addEventListener('change', e => map.setLayoutProperty(buildingLayer,'visibility',e.target.checked?'visible':'none'));
     document.getElementById('buildingColors').addEventListener('change', e => map.setPaintProperty(buildingLayer,'fill-extrusion-color',e.target.checked?['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building_colour'],['match',['get','class'],'commercial','#c9b8a4','industrial','#b9b7b1','public','#c4c9ce','residential','#d8cdbd','#c9bfb0'] ]:'#c9bfb0'));
     document.getElementById('buildingNumbers').addEventListener('change', e => map.setLayoutProperty('local-building-numbers','visibility',e.target.checked?'visible':'none'));
