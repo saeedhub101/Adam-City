@@ -4,7 +4,8 @@ import concurrent.futures, json, math, os, pathlib, sys, time
 import requests
 import mapbox_vector_tile
 
-ROOT = pathlib.Path("ermita/maps/sources/openfreemap")
+REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
+ROOT = REPO_ROOT / "ermita/maps/sources/openfreemap"
 RAW = ROOT / "vector-tiles"
 LAYERS_DIR = ROOT / "layers"
 STYLE_URL = "https://tiles.openfreemap.org/styles/liberty"
