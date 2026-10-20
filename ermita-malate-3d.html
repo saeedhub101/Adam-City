@@ -156,7 +156,7 @@ function applySourceVisibility(){
 }
 document.getElementById('baseMapSource').onchange=applySourceVisibility;
 document.getElementById('baseBuildingSource').onchange=applySourceVisibility;
-map.on('load',()=>{map.resize();applySourceVisibility();applyFacadeBuildingHighlight();statusText();});
+map.on('load',()=>{map.resize();applySourceVisibility();statusText();});
 map.on('idle',statusText);
 map.on('error',e=>{console.error(e.error||e);if(!firstError){firstError=true;errorBox.style.display='block';errorBox.textContent=(e.error&&e.error.message)||e.message||'تعذر تحميل مورد؛ افحص الرابط أو اتصال الشبكة.';}});
 const fly=(center,zoom=15.2)=>map.flyTo({center,zoom,pitch:57,bearing:-18,duration:1000});
@@ -170,40 +170,9 @@ const osmAppearanceColor=['coalesce',['get','building:colour'],['get','building:
 function applyBuildingAppearance(){
  const colorsOn=document.getElementById('colors').checked;
  const osmOn=document.getElementById('osmAppearance').checked;
- const highlightOn=document.getElementById('facadeModel').checked;
- const color=highlightOn?'#20d65a':(colorsOn?(osmOn?osmAppearanceColor:defaultBuildingColor):'#c9bfb0');
+ const color=colorsOn?(osmOn?osmAppearanceColor:defaultBuildingColor):'#c9bfb0';
  if(map.getLayer('adam-local-buildings-3d'))map.setPaintProperty('adam-local-buildings-3d','fill-extrusion-color',color);
  toggleLayers(groups.osmAppearance,osmOn);
-}
-function applyFacadeBuildingHighlight(){
- // Never recolor the whole building layer. Only show the separate target-footprint
- // overlay built from the exact OSM feature IDs listed by the facade generator.
- const on=document.getElementById('facadeModel').checked;
- if(map.getLayer('adam-facade-target-highlight')) {
-  map.setLayoutProperty('adam-facade-target-highlight','visibility',on?'visible':'none');
- }
-}
-async function loadFacadeTargetHighlights(){
- if(map.getSource('adam-facade-targets')) return;
- const csvUrl=new URL('./ermita/3d/generated/facade-signage-index.csv',location.href).href;
- const response=await fetch(csvUrl,{cache:'no-store'});
- if(!response.ok)throw new Error('فهرس مباني الواجهات غير متاح ('+response.status+')');
- const lines=(await response.text()).trim().split(/\r?\n/);
- const ids=[...new Set(lines.slice(1).map(line=>line.split(',')[0].trim()).filter(id=>/^(way|relation|node)\//.test(id)))];
- if(!ids.length)throw new Error('لم توجد معرفات مبانٍ في فهرس الواجهات');
- map.addLayer({
-  id:'adam-facade-target-highlight',type:'fill-extrusion',source:'osmBuildingDetails',
-  filter:['all',['==',['geometry-type'],'Polygon'],['in',['get','osm_feature_id'],['literal',ids]]],
-  paint:{
-   'fill-extrusion-color':'#20d65a',
-   'fill-extrusion-height':['max',3,['case',
-    ['>', ['to-number',['get','height',['get','tags']],0],0],['to-number',['get','height',['get','tags']],0],
-    ['>', ['to-number',['get','building:levels',['get','tags']],0],0],['*',['to-number',['get','building:levels',['get','tags']],0],3.2],
-    ['>', ['to-number',['get','levels',['get','tags']],0],0],['*',['to-number',['get','levels',['get','tags']],0],3.2],9.6]],
-   'fill-extrusion-base':0,'fill-extrusion-opacity':0.98,'fill-extrusion-vertical-gradient':false
-  },
-  layout:{visibility:document.getElementById('facadeModel').checked?'visible':'none'}
- });
 }
 document.getElementById('colors').onchange=applyBuildingAppearance;
 document.getElementById('osmAppearance').onchange=applyBuildingAppearance;
@@ -211,19 +180,22 @@ async function addFacadeLayer(){
 if(facadeLoading || facadeLayerAdded)return;
 facadeLoading=true;
 const facadeToggle=document.getElementById('facadeModel');
-applyFacadeBuildingHighlight();
-status.textContent='جارٍ تحميل نوافذ مولّدة من مضلعات وارتفاعات OSM…';
+status.textContent='جارٍ فحص ملف GLB ومحاذاة نموذج الواجهات…';
 errorBox.style.display='none';
 try{
  if(!window.THREE || !window.THREE.GLTFLoader)throw new Error('مكتبات Three.js / GLTFLoader لم تُحمّل');
- await loadFacadeTargetHighlights();
- applyFacadeBuildingHighlight();
  const originResponse=await fetch(facadeOriginUrl,{cache:'no-store'});
- if(!originResponse.ok)throw new Error('ملف محاذاة نموذج الواجهات غير موجود ('+originResponse.status+'): '+facadeOriginUrl);
+ if(!originResponse.ok)throw new Error('ملف محاذاة نموذج الواجهات غير موجود ('+originResponse.status+')');
  const origin=await originResponse.json();
- if(!Number.isFinite(origin.longitude)||!Number.isFinite(origin.latitude)||!Number.isFinite(origin.anchor_altitude_m))throw new Error('إحداثيات محاذاة نموذج النوافذ غير صالحة');
- const modelResponse=await fetch(facadeModelUrl,{method:'HEAD',cache:'no-store'});
- if(!modelResponse.ok)throw new Error('ملف نموذج النوافذ غير متاح ('+modelResponse.status+'): '+facadeModelUrl);
+ if(!Number.isFinite(origin.longitude)||!Number.isFinite(origin.latitude)||!Number.isFinite(origin.anchor_altitude_m))throw new Error('إحداثيات محاذاة نموذج الواجهات غير صالحة');
+ const modelResponse=await fetch(facadeModelUrl,{cache:'no-store'});
+ if(!modelResponse.ok)throw new Error('ملف GLB غير متاح ('+modelResponse.status+')');
+ const buffer=await modelResponse.arrayBuffer();
+ if(buffer.byteLength<20)throw new Error('ملف GLB أقصر من الحد الأدنى؛ الملف تالف أو فارغ');
+ const header=new DataView(buffer);
+ if(header.getUint32(0,true)!==0x46546c67)throw new Error('فشل فحص GLB: ترويسة glTF غير صحيحة');
+ if(header.getUint32(4,true)!==2)throw new Error('إصدار GLB غير مدعوم: '+header.getUint32(4,true));
+ if(header.getUint32(8,true)!==buffer.byteLength)throw new Error('حجم GLB المعلن لا يطابق الحجم المنزّل');
  const THREE=window.THREE;
  facadeLayer={id:'adam-facade-details-model',type:'custom',renderingMode:'3d',
  onAdd:function(map,gl){
@@ -231,17 +203,23 @@ try{
   this.scene.add(new THREE.AmbientLight(0xffffff,1.5));
   const light=new THREE.DirectionalLight(0xffffff,1.1);light.position.set(-40,-50,100).normalize();this.scene.add(light);
   const loader=new THREE.GLTFLoader();
-  loader.load(facadeModelUrl,gltf=>{
-   this.model=gltf.scene;this.scene.add(this.model);facadeLoading=false;
-   status.textContent='تم تحميل طبقة النوافذ من نموذج OSM. هذه نوافذ تقديرية مبنية على بصمات المباني ووسوم الارتفاع/الطوابق.';
+  status.textContent='ترويسة GLB سليمة ('+(buffer.byteLength/1048576).toFixed(1)+' MB)؛ جارٍ تحليل هندسة النوافذ والأبواب…';
+  loader.parse(buffer,new URL('.',facadeModelUrl).href,gltf=>{
+   this.model=gltf.scene;
+   const bounds=new THREE.Box3().setFromObject(this.model);
+   const size=bounds.getSize(new THREE.Vector3());
+   if(!Number.isFinite(size.x)||!Number.isFinite(size.y)||!Number.isFinite(size.z)||size.x<=0||size.y<=0||size.z<=0){
+    facadeLoading=false;facadeLayerAdded=false;facadeToggle.checked=false;
+    errorBox.style.display='block';errorBox.textContent='GLB سليم الترويسيًا لكن هندسته فارغة أو ذات أبعاد غير صالحة.';
+    status.textContent='فشل التحقق من هندسة نموذج الواجهات.';return;
+   }
+   this.scene.add(this.model);facadeLoading=false;
+   status.textContent='GLB سليم: '+(buffer.byteLength/1048576).toFixed(1)+' MB؛ أبعاد الهندسة المحلية '+size.x.toFixed(1)+' × '+size.y.toFixed(1)+' × '+size.z.toFixed(1)+' م تقريبًا. يجري وضعه وفق ملف المركز.';
    map.triggerRepaint();
-  },event=>{
-   if(event.lengthComputable)status.textContent='تحميل نموذج النوافذ: '+Math.round(event.loaded/event.total*100)+'%';
   },err=>{
-   facadeLoading=false;facadeLayerAdded=false;
-   facadeToggle.checked=false;applyFacadeBuildingHighlight();
-   errorBox.style.display='block';errorBox.textContent='فشل تحميل نموذج النوافذ: '+(err.message||err);
-   status.textContent='تعذر تحميل طبقة النوافذ؛ أُعيد لون المباني إلى وضعه السابق.';
+   facadeLoading=false;facadeLayerAdded=false;facadeToggle.checked=false;
+   errorBox.style.display='block';errorBox.textContent='ترويسة GLB سليمة لكن تعذر تحليل محتواه: '+(err.message||err);
+   status.textContent='فشل تحليل هندسة GLB.';
   });
  },
  render:function(gl,matrix){
@@ -258,18 +236,16 @@ try{
  map.addLayer(facadeLayer);facadeLayerAdded=true;
 }catch(e){
  facadeLoading=false;facadeLayerAdded=false;facadeLayer=null;
- errorBox.style.display='block';errorBox.textContent='تعذر تشغيل طبقة النوافذ: '+(e.message||e);
- status.textContent='تعذر تشغيل طبقة النوافذ. راجع رسالة الخطأ الظاهرة.';
+ errorBox.style.display='block';errorBox.textContent='تعذر تشغيل طبقة الواجهات: '+(e.message||e);
+ status.textContent='تعذر تشغيل طبقة الواجهات؛ راجع رسالة الخطأ.';
  facadeToggle.checked=false;
 }
 }
 document.getElementById('facadeModel').onchange=async e=>{
- applyFacadeBuildingHighlight();
  if(e.target.checked)await addFacadeLayer();
  else {
   if(map.getLayer('adam-facade-details-model'))map.removeLayer('adam-facade-details-model');
   facadeLayerAdded=false;facadeLayer=null;facadeLoading=false;
-  applyFacadeBuildingHighlight();
  }
 };
 function addModelLayer(){
