@@ -35,6 +35,8 @@ jobs:
           /ermita-malate-3d.html
           /ermita/maps/sources/openfreemap/
           /ermita/maps/generated/ermita-building-details.geojson
+          /ermita/maps/generated/ermita-building-footprints.geojson
+          /ermita/3d/generated/ermita-buildings-facade-details.glb
           /ermita/3d/exports/adam-city-complete.glb
           /ermita/3d/exports/adam-city-complete-report.json
           /ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
@@ -49,7 +51,48 @@ jobs:
         run: |
           set -euo pipefail
           test -s ermita-malate-3d.html
-          python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile
+          python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj
+          # Calculate the exact local origin used when the committed facade GLB was generated.
+          python3 - <<'PY'
+          import json, math, re
+          from pathlib import Path
+          from pyproj import Transformer
+          from shapely.geometry import shape
+          from shapely.ops import transform as geom_transform
+          source = Path('ermita/maps/generated/ermita-building-footprints.geojson')
+          data = json.loads(source.read_text(encoding='utf-8'))
+          project = Transformer.from_crs('EPSG:4326', 'EPSG:3857', always_xy=True).transform
+          minx=miny=float('inf'); maxx=maxy=float('-inf'); maxz=0.0; count=0
+          for feature in data.get('features', []):
+              try:
+                  geom=geom_transform(project, shape(feature['geometry']))
+                  polys=[geom] if geom.geom_type=='Polygon' else list(geom.geoms) if geom.geom_type=='MultiPolygon' else []
+                  p=feature.get('properties') or {}; tags=p.get('tags') if isinstance(p.get('tags'),dict) else p
+                  raw=tags.get('height'); height=None
+                  if raw:
+                      m=re.search(r'\\d+(?:\\.\\d+)?',str(raw).replace(',','.'))
+                      if m and 1.5 <= float(m.group()) <= 500: height=float(m.group())
+                  if height is None:
+                      raw=tags.get('building:levels') or tags.get('levels')
+                      if raw:
+                          m=re.search(r'\\d+(?:\\.\\d+)?',str(raw))
+                          if m and 1 <= float(m.group()) <= 150: height=float(m.group())*3.2
+                  if height is None: height=9.6
+                  for poly in polys:
+                      if poly.is_empty or not poly.is_valid or poly.area < 12: continue
+                      a,b,d,e=poly.bounds
+                      minx,miny,maxx,maxy=min(minx,a),min(miny,b),max(maxx,d),max(maxy,e)
+                      maxz=max(maxz,height); count+=1
+              except Exception: pass
+          if not count: raise SystemExit('Could not calculate facade GLB origin from building footprints')
+          cx,cy=(minx+maxx)/2,(miny+maxy)/2
+          R=6378137.0
+          lon=math.degrees(cx/R); lat=math.degrees(2*math.atan(math.exp(cy/R))-math.pi/2)
+          out=Path('ermita/3d/generated/facade-model-origin.json')
+          out.parent.mkdir(parents=True,exist_ok=True)
+          out.write_text(json.dumps({'longitude':lon,'latitude':lat,'anchor_altitude_m':maxz/2,'buildings_used':count,'origin_method':'Recomputed from the same OSM footprint geometry and height rules used to generate the facade GLB'},indent=2)+'\\n',encoding='utf-8')
+          print('Facade GLB origin:', out.read_text())
+          PY
           python3 ermita/scripts/import_openfreemap_ermita.py
           NEW_TILES="$(python3 -c "import json; print(json.load(open('ermita/maps/sources/openfreemap/import-report.json')).get('new_tiles_downloaded', 0))")"
           echo "New source tiles downloaded: $NEW_TILES"
@@ -148,8 +191,10 @@ jobs:
           # Publish the repository copies, whether reused or newly generated.
           cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/building-fallback.geojson
           cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/ground-fallback.geojson
-          mkdir -p site/ermita/maps/generated site/ermita/3d/exports site/ermita/3d/terrain
+          mkdir -p site/ermita/maps/generated site/ermita/3d/generated site/ermita/3d/exports site/ermita/3d/terrain
           cp ermita/maps/generated/ermita-building-details.geojson site/ermita/maps/generated/ermita-building-details.geojson
+          cp ermita/3d/generated/ermita-buildings-facade-details.glb site/ermita/3d/generated/ermita-buildings-facade-details.glb
+          cp ermita/3d/generated/facade-model-origin.json site/ermita/3d/generated/facade-model-origin.json
           cp ermita/3d/exports/adam-city-complete.glb site/ermita/3d/exports/adam-city-complete.glb
           cp ermita/3d/terrain/ermita-copernicus-dem-cropped.tif site/ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           test -s site/ermita/3d/exports/adam-city-complete.glb
@@ -159,6 +204,8 @@ jobs:
           test -s site/ermita/maps/sources/openfreemap/building-fallback.geojson
           test -s site/ermita/maps/sources/openfreemap/ground-fallback.geojson
           test -s site/ermita/maps/generated/ermita-building-details.geojson
+          test -s site/ermita/3d/generated/ermita-buildings-facade-details.glb
+          test -s site/ermita/3d/generated/facade-model-origin.json
           # Save every newly imported/generated OpenFreeMap asset and its reports to main.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
