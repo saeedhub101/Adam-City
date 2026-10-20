@@ -4,10 +4,10 @@ A source-traceable 3D city-data project focused on Ermita and Malate, Manila.
 
 ## Start here
 
-- [Repository structure and naming rules](REPOSITORY_STRUCTURE.md)
-- [Data asset policy](DATA_ASSET_POLICY.md)
-- [Data source catalog](DATA_SOURCE_CATALOG.md)
-- [Data audit report](DATA_AUDIT_REPORT.md)
+- [Repository structure and naming rules](docs/repository-structure.md)
+- [Data asset policy](docs/data-asset-policy.md)
+- [Data source catalog](docs/data-source-catalog.md)
+- [Data audit report](docs/data-audit-report.md)
 - [3D preview page](ermita-malate-3d.html)
 
 ## Core rules

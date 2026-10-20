@@ -5,7 +5,7 @@
 
 ## 1. Building geometry and 3D building sources
 
-> **Critical file-level audit finding (2026-10-19):** the active `ermita/maps/generated/ermita-building-footprints.geojson` is Basemap/OpenMapTiles-derived (1,123 features), not the original OSM dataset. The original OSM snapshot (1,533 features) survives at `backup/ermita/maps/generated/ermita-building-footprints.geojson`. The Basemap import script/workflow writes to the active OSM filename, and the height-audit report is stale against the active file. Read [`DATA_AUDIT_REPORT.md`](DATA_AUDIT_REPORT.md) before rebuilding the page. No source data was changed by the audit.
+> **Critical file-level audit finding (2026-10-19):** the active `ermita/maps/generated/ermita-building-footprints.geojson` is Basemap/OpenMapTiles-derived (1,123 features), not the original OSM dataset. The original OSM snapshot (1,533 features) survives at `backup/ermita/maps/generated/ermita-building-footprints.geojson`. The Basemap import script/workflow writes to the active OSM filename, and the height-audit report is stale against the active file. Read [`DATA_AUDIT_REPORT.md`](data-audit-report.md) before rebuilding the page. No source data was changed by the audit.
 
 | Source/layer | Repository location or delivery method | What is available now | Coverage / evidence | Limitations and decision | Correct role in a clean rebuild |
 |---|---|---|---|---|---|
