@@ -99,7 +99,23 @@ map.on('load',async()=>{
   for(const c of candidates){const coords=c.f.geometry.type==='Polygon'?c.f.geometry.coordinates:[].concat(...c.f.geometry.coordinates);const flat=[];const walk=x=>{if(typeof x[0]==='number')flat.push(x);else x.forEach(walk)};walk(coords);c.minX=Math.min(...flat.map(p=>p[0]));c.maxX=Math.max(...flat.map(p=>p[0]));c.minY=Math.min(...flat.map(p=>p[1]));c.maxY=Math.max(...flat.map(p=>p[1]))}
   let joined=0;for(const rec of d.housenumbers){const geom=rec.geometry;if(!geom)continue;const points=geom.type==='Point'?[geom.coordinates]:geom.type==='MultiPoint'?geom.coordinates:[];for(const point of points){for(const c of candidates){if(point[0]<c.minX||point[0]>c.maxX||point[1]<c.minY||point[1]>c.maxY)continue;if(contains(c.f.geometry,point)){const props=c.f.properties;props.tags=props.tags||{};if(!props.tags['addr:housenumber']){props.tags['addr:housenumber']=rec.properties?.housenumber;joined++}break}}}}
   map.addSource('local-buildings',{type:'geojson',data:d.buildings});
-  const ofmBuildingFeatures=d.openfreemapBuildings.filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type));
+  // The local OpenMapTiles catalogue contains features from several zoom levels.
+  // z13 includes generalized block footprints with null render_height; mixing them with z14
+  // creates duplicate/flat buildings. Use the source's most detailed published zoom and
+  // keep only one feature per source ID, excluding outline-only features marked hide_3d.
+  const ofmById=new Map();
+  for(const f of d.openfreemapBuildings){
+    if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
+    const tileZoom=Number(f._source?.tile?.z);
+    if(tileZoom!==14)continue;
+    if(f.properties?.hide_3d===true||f.properties?.hide_3d===1||f.properties?.hide_3d==='true')continue;
+    const id=f.id??f.properties?.osm_id;
+    const key=id==null?JSON.stringify(f.geometry.coordinates):String(id);
+    if(!ofmById.has(key))ofmById.set(key,f);
+  }
+  const ofmBuildingFeatures=[...ofmById.values()];
+  const ofmHeight=['coalesce',['to-number',['get','render_height']],['to-number',['get','height']],['to-number',['get','building:height']],['to-number',['get','basemap_render_height']],['to-number',['get','adam_height_m']],['*',['to-number',['get','building:levels']],3.66],5];
+  const ofmBase=['coalesce',['to-number',['get','render_min_height']],['to-number',['get','min_height']],['to-number',['get','building:min_height']],['to-number',['get','basemap_render_min_height']],['*',['to-number',['get','building:min_level']],3.66],0];
   map.addSource('openfreemap-buildings',{type:'geojson',data:{type:'FeatureCollection',features:ofmBuildingFeatures}});
   map.addSource('local-roads',{type:'geojson',data:d.roads});
   map.addSource('local-boundary',{type:'geojson',data:d.boundary});
@@ -121,7 +137,7 @@ map.on('load',async()=>{
   addLayerSafe({id:'local-building-footprints',type:'fill',source:'local-buildings',minzoom:12.8,filter:['!', ['any',['has','height',['get','tags']],['has','building:levels',['get','tags']],['has','levels',['get','tags']]]],paint:{'fill-color':buildingColor,'fill-opacity':0.92}});
   addLayerSafe({id:'local-building-extrusions',type:'fill-extrusion',source:'local-buildings',minzoom:13.2,filter:['any',['has','height',['get','tags']],['has','building:levels',['get','tags']],['has','levels',['get','tags']]],paint:{'fill-extrusion-color':buildingColor,'fill-extrusion-height':sourceHeight,'fill-extrusion-base':['coalesce',['to-number',tag('min_height')],['*',['to-number',tag('building:min_level')],3.15],0],'fill-extrusion-opacity':.98,'fill-extrusion-vertical-gradient':true}});
   // OpenMapTiles building footprints from the repository's local GeoJSONL catalogue (separate from the OpenFreeMap basemap style).
-  addLayerSafe({id:'openfreemap-building-extrusions',type:'fill-extrusion',source:'openfreemap-buildings',minzoom:13.2,layout:{visibility:'none'},paint:{'fill-extrusion-color':['coalesce',['get','colour'],['get','color'],['get','building:colour'], '#c9c5bb'],'fill-extrusion-height':['coalesce',['to-number',['get','height']],['to-number',['get','render_height']],['to-number',['get','basemap_render_height']],['to-number',['get','adam_height_m']],['*',['to-number',['get','building:levels']],3.15],3],'fill-extrusion-base':['coalesce',['to-number',['get','min_height']],['to-number',['get','render_min_height']],['to-number',['get','basemap_render_min_height']],0],'fill-extrusion-opacity':0.86,'fill-extrusion-vertical-gradient':true}});
+  addLayerSafe({id:'openfreemap-building-extrusions',type:'fill-extrusion',source:'openfreemap-buildings',minzoom:13.2,layout:{visibility:'none'},paint:{'fill-extrusion-color':['coalesce',['get','colour'],['get','color'],['get','building:colour'], '#c9c5bb'],'fill-extrusion-height':ofmHeight,'fill-extrusion-base':ofmBase,'fill-extrusion-opacity':0.86,'fill-extrusion-vertical-gradient':true}});
   // Microsoft footprints are a comparison overlay only: transparent fill and a vivid outline make mismatches easy to spot.
   addLayerSafe({id:'local-building-roof-edges',type:'line',source:'local-buildings',minzoom:14.5,paint:{'line-color':'#645f56','line-opacity':.6,'line-width':.6}});
   // Address numbers are polygon labels, not clickable point markers.
