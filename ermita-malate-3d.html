@@ -69,7 +69,8 @@ sources:{
 tiles:{type:'vector',tiles:[tileBase+'{z}/{x}/{y}.pbf'],minzoom:10,maxzoom:14,attribution:'OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors'},
 buildings:{type:'geojson',data:buildingUrl,maxzoom:14},
 
-ground:{type:'geojson',data:groundUrl,maxzoom:14}
+ground:{type:'geojson',data:groundUrl,maxzoom:14},
+osmBuildingDetails:{type:'geojson',data:new URL('./ermita/maps/generated/ermita-building-details.geojson',location.href).href,maxzoom:14}
 },
 layers:[
 {id:'bg',type:'background',paint:{'background-color':'#dce5e5'}},
@@ -90,6 +91,7 @@ layers:[
 'fill-extrusion-opacity':0.97,'fill-extrusion-vertical-gradient':true}},
 
 
+{id:'osm-building-info-labels',type:'symbol',source:'osmBuildingDetails',filter:['==',['geometry-type'],'Polygon'],minzoom:15,layout:{visibility:'none','text-field':['coalesce',['get','name',['get','tags']],['get','brand',['get','tags']],['get','shop',['get','tags']],['get','amenity',['get','tags']]],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],15,9,18,12],'text-max-width':12,'text-allow-overlap':false},paint:{'text-color':'#25343a','text-halo-color':'#ffffff','text-halo-width':1.6}},
 {id:'house-numbers',type:'symbol',source:'tiles','source-layer':'housenumber',minzoom:15,layout:{'text-field':['coalesce',['to-string',['get','housenumber']],['to-string',['get','addr:housenumber']]],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],15,9,18,13],'text-allow-overlap':false},paint:{'text-color':'#202b32','text-halo-color':'#fff','text-halo-width':1.5}},
 {id:'road-names',type:'symbol',source:'tiles','source-layer':'transportation_name',minzoom:13,layout:{'symbol-placement':'line','text-field':['coalesce',['get','name:en'],['get','name']], 'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],13,10,17,14],'text-max-angle':35},paint:{'text-color':'#46545a','text-halo-color':'#fff','text-halo-width':1.5}},
 {id:'place-labels',type:'symbol',source:'tiles','source-layer':'place',layout:{'text-field':['coalesce',['get','name:en'],['get','name']],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],10,10,15,14]},paint:{'text-color':'#35454b','text-halo-color':'#fff','text-halo-width':1.6}},
@@ -132,7 +134,7 @@ map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-l
 let firstError=false, modelLayerAdded=false, modelLoading=false, modelLayer=null;
 const toggleLayers=(ids,on)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')});
 const groups={
-buildings:['adam-local-buildings-3d'],ground:['adam-local-landcover','adam-local-landuse'],roads:['adam-local-road-casing','adam-local-roads','adam-local-roads-vector','adam-local-park-fill'],water:['adam-local-water-fill','adam-local-water-vector','adam-local-waterway','adam-local-waterway-vector'],
+buildings:['adam-local-buildings-3d'],osmAppearance:['adam-local-osm-building-info-labels'],ground:['adam-local-landcover','adam-local-landuse'],roads:['adam-local-road-casing','adam-local-roads','adam-local-roads-vector','adam-local-park-fill'],water:['adam-local-water-fill','adam-local-water-vector','adam-local-waterway','adam-local-waterway-vector'],
 roadNames:['adam-local-road-names'],numbers:['adam-local-house-numbers'],places:['adam-local-place-labels'],pois:['adam-local-poi-labels'],boundaries:['adam-local-boundary-lines'],air:['adam-local-aeroway-lines','adam-local-aerodrome-labels'],waterNames:['adam-local-water-names'],peaks:['adam-local-mountain-peak-labels']
 };
 function statusText(){
@@ -164,6 +166,7 @@ function applyBuildingAppearance(){
  const osmOn=document.getElementById('osmAppearance').checked;
  const color=colorsOn?(osmOn?osmAppearanceColor:defaultBuildingColor):'#c9bfb0';
  if(map.getLayer('adam-local-buildings-3d'))map.setPaintProperty('adam-local-buildings-3d','fill-extrusion-color',color);
+ toggleLayers(groups.osmAppearance,osmOn);
 }
 document.getElementById('colors').onchange=applyBuildingAppearance;
 document.getElementById('osmAppearance').onchange=applyBuildingAppearance;
