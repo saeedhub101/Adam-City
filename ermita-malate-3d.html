@@ -105,17 +105,14 @@
     };
     const updateDiagnostics = () => {
       if (!map.isStyleLoaded()) return;
-      let features = [];
-      try { features = map.queryRenderedFeatures({layers:[buildingLayer]}); } catch (_) {}
-      const tileZoom = Math.min(14, Math.max(10, Math.floor(map.getZoom())));
-      const tile = tileFor(map.getCenter(), tileZoom);
-      status.textContent = `الزوم ${map.getZoom().toFixed(1)} · مبانٍ مرسومة في الشاشة: ${features.length} · أقصى زوم للبيانات المحلية: 14`;
-      if (features.length === 0 && map.getZoom() >= 12) {
-        errorBox.style.display = 'block';
-        errorBox.textContent = `تنبيه تشخيصي: لا توجد مبانٍ ظاهرة في الإطار الحالي (هذا ليس بحد ذاته خطأ HTTP). بلاطة مركز الخريطة: ${tileBase}${tile.z}/${tile.x}/${tile.y}.pbf — إذا ظهر خطأ تحميل فعلي فستظهر تفاصيله في هذا المربع أيضاً.`;
-      } else if (!firstErrorShown) {
-        errorBox.style.display = 'none';
-      }
+      let visibleBuildings = 0;
+      let loadedBuildingFeatures = 0;
+      try { visibleBuildings = map.queryRenderedFeatures({layers:[buildingLayer]}).length; } catch (_) {}
+      try { loadedBuildingFeatures = map.querySourceFeatures(sourceId, {sourceLayer:'building'}).length; } catch (_) {}
+      status.textContent = `الزوم ${map.getZoom().toFixed(1)} · مبانٍ ظاهرة: ${visibleBuildings} · عناصر مبانٍ في البلاطات المحمّلة: ${loadedBuildingFeatures} · أقصى زوم أصلي للبيانات: 14`;
+      // A zero rendered-feature count is not proof of a tile/network failure,
+      // especially for pitched 3D extrusions. Only map.on('error') reports actual load errors.
+      if (!firstErrorShown) errorBox.style.display = 'none';
     };
     map.on('load', () => {
       map.resize();
