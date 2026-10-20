@@ -27,7 +27,7 @@ PEDESTRIAN_KEYS = {
     "wheelchair", "incline", "lit", "smoothness", "width", "surface",
     "entrance", "door", "barrier", "bollard", "fence", "gate", "handrail",
     "steps", "conveying", "bench", "waste_basket", "street_lamp", "traffic_sign",
-    "traffic_signals", "highway"
+    "traffic_signals", "highway", "amenity", "man_made"
 }
 PEDESTRIAN_HIGHWAYS = {
     "footway", "pedestrian", "path", "steps", "crossing", "corridor",
@@ -75,12 +75,24 @@ def osm_id(feature):
 
 def is_pedestrian(feature):
     t = tags(feature)
-    return (t.get("highway") in PEDESTRIAN_HIGHWAYS or
-            bool(PEDESTRIAN_KEYS.intersection(t)) and
-            bool({"sidewalk", "tactile_paving", "kerb", "ramp", "entrance", "door",
-                  "barrier", "bollard", "fence", "gate", "bench", "waste_basket",
-                  "street_lamp", "crossing", "crossing:markings", "crossing:signals",
-                  "wheelchair", "footway", "handrail", "steps"}.intersection(t)))
+    highway_value = t.get("highway")
+    amenity_value = t.get("amenity")
+    return (
+        highway_value in PEDESTRIAN_HIGHWAYS
+        or highway_value in {"street_lamp", "traffic_signals", "stop", "give_way"}
+        or amenity_value in {"bench", "waste_basket", "drinking_water", "fountain"}
+        or t.get("man_made") == "street_lamp"
+        or (
+            bool(PEDESTRIAN_KEYS.intersection(t))
+            and bool({
+                "sidewalk", "sidewalk:both", "sidewalk:left", "sidewalk:right",
+                "tactile_paving", "kerb", "ramp", "entrance", "door", "barrier",
+                "bollard", "fence", "gate", "bench", "waste_basket", "street_lamp",
+                "crossing", "crossing:markings", "crossing:signals", "wheelchair",
+                "footway", "handrail", "steps", "traffic_sign", "traffic_signals"
+            }.intersection(t))
+        )
+    )
 
 def is_road(feature):
     t = tags(feature)
