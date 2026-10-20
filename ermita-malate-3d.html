@@ -7,19 +7,21 @@
 <style>
 :root{color-scheme:dark;--panel:rgba(16,26,35,.94);--line:#344654;--text:#eef4f7;--muted:#a7b8c4;--accent:#67d5c2}
 *{box-sizing:border-box}html,body,#map{width:100%;height:100%;margin:0}body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#101a23;color:var(--text)}#map{position:absolute;inset:0}
-.panel{position:absolute;z-index:3;top:10px;right:10px;width:min(330px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow:auto;padding:12px;border:1px solid var(--line);border-radius:13px;background:var(--panel);box-shadow:0 10px 34px #0005;backdrop-filter:blur(12px)}
+.panel{position:absolute;z-index:3;top:10px;right:10px;width:min(270px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--panel);box-shadow:0 8px 26px #0004;backdrop-filter:blur(12px)}
+.panel details{max-height:inherit}.panel summary{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;list-style:none;padding:10px 12px;font-size:13px;font-weight:700}.panel summary::-webkit-details-marker{display:none}.panel summary:after{content:"＋";color:var(--accent);font-size:16px}.panel details[open] summary:after{content:"−"}.panel-content{padding:0 11px 11px;overflow:auto;max-height:calc(100dvh - 70px)}
 h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(--muted);margin-bottom:9px}.buttons{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1px solid #435865;border-radius:8px;padding:8px 6px;cursor:pointer}button:active{transform:scale(.98)}
 .group{border-top:1px solid var(--line);margin-top:9px;padding-top:6px}.group-title{font-size:11px;color:var(--accent);font-weight:700;margin-bottom:3px}
 .row{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:12px;color:#dce7ec;min-height:20px}input{accent-color:var(--accent);width:16px;height:16px;flex:0 0 auto}
 .status{font-size:10px;color:var(--muted);line-height:1.5;margin-top:9px;padding-top:8px;border-top:1px solid var(--line);overflow-wrap:anywhere}#error{display:none;margin-top:8px;padding:8px;border-radius:8px;background:#542c31;color:#ffe2e3;font-size:11px;direction:ltr;overflow-wrap:anywhere}
 .attribution{position:absolute;z-index:2;bottom:9px;right:9px;background:#101a23e8;border:1px solid #344654;border-radius:7px;padding:5px 8px;font-size:10px;color:#d7e1e6;direction:ltr}
-@media(max-width:520px){.panel{top:6px;right:6px;width:min(300px,calc(100vw - 12px));max-height:calc(100dvh - 12px);padding:9px}h1{font-size:14px}.sub{margin-bottom:6px}.row{margin-top:5px;font-size:11px}}
+@media(max-width:520px){.panel{top:6px;right:6px;width:min(250px,calc(100vw - 12px));max-height:calc(100dvh - 12px)}.panel summary{padding:8px 10px;font-size:12px}h1{font-size:14px}.sub{margin-bottom:6px}.row{margin-top:5px;font-size:11px}.buttons{gap:4px}button{padding:6px 4px;font-size:11px}}
 </style></head>
 <body>
 <div id="map" aria-label="خريطة ثلاثية الأبعاد لإرميتا ومالاتي"></div>
-<section class="panel">
-<h1>ADAM CITY · Ermita + Malate</h1>
+<section class="panel"><details id="layerControls">
+<summary>ADAM CITY · Ermita + Malate <span style="font-weight:400;color:var(--muted)">الطبقات</span></summary>
+<div class="panel-content">
 <div class="sub">طبقات من ملفات المستودع المحلية. الارتفاعات/التفاصيل التقديرية موضحة في خصائص المصدر؛ بيانات OpenFreeMap القصوى عند مستوى التكبير 14.</div>
 <div class="buttons"><button id="ermita">Ermita</button><button id="malate">Malate</button><button id="both">المنطقتان</button><button id="reset">إعادة زاوية الكاميرا</button></div>
 <div class="group"><div class="group-title">المباني والتضاريس ثلاثية الأبعاد</div>
@@ -42,7 +44,7 @@ button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1
 <label class="row"><input type="checkbox" id="waterNames" checked> أسماء المياه</label>
 <label class="row"><input type="checkbox" id="peaks" checked> القمم والارتفاعات المسماة</label></div>
 <div class="status" id="status">جارٍ تحميل البلاطات والبيانات المحلية…</div><div id="error"></div>
-</section>
+</div></details></section>
 <div class="attribution">OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors · DEM © Copernicus / DLR / Airbus</div>
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
@@ -113,7 +115,9 @@ document.getElementById('reset').onclick=()=>map.easeTo({pitch:57,bearing:-18,du
 Object.entries(groups).forEach(([id,layers])=>{const el=document.getElementById(id);if(el)el.onchange=()=>toggleLayers(layers,el.checked)});
 document.getElementById('colors').onchange=e=>map.setPaintProperty('buildings-3d','fill-extrusion-color',e.target.checked?['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building_colour'],['match',['get','class'],'commercial','#c9b8a4','industrial','#b9b7b1','public','#c4c9ce','residential','#d8cdbd','#c9bfb0'] ]:'#c9bfb0');
 function addModelLayer(){
-if(modelLayerAdded||modelLoading)return;modelLoading=true;
+if(modelLoading)return;
+if(map.getLayer('adam-city-complete-model')){modelLayerAdded=true;return;}
+modelLoading=true;
 try{
 const THREE=window.THREE;
 modelLayer={id:'adam-city-complete-model',type:'custom',renderingMode:'3d',
@@ -133,12 +137,12 @@ this.renderer.resetState();this.renderer.render(this.scene,this.camera);map.trig
 },
 onRemove:function(){if(this.renderer)this.renderer.dispose();}
 };
-map.addLayer(modelLayer);modelLayerAdded=true;modelLoading=false;
+if(!map.getLayer('adam-city-complete-model'))map.addLayer(modelLayer);modelLayerAdded=true;modelLoading=false;
 }catch(e){modelLoading=false;errorBox.style.display='block';errorBox.textContent='تعذر بدء نموذج GLB: '+e.message;}
 }
 document.getElementById('terrainModel').onchange=e=>{
 if(e.target.checked){addModelLayer();if(modelLayerAdded)map.setLayoutProperty('buildings-3d','visibility','none');}
-else if(modelLayerAdded){map.removeLayer('adam-city-complete-model');modelLayerAdded=false;modelLayer=null;}
+else if(map.getLayer('adam-city-complete-model')){map.removeLayer('adam-city-complete-model');modelLayerAdded=false;modelLayer=null;modelLoading=false;}
 };
 document.getElementById('terrain').onchange=e=>{
 if(e.target.checked){errorBox.style.display='block';errorBox.textContent='ملف DEM موجود في المستودع، لكن GeoTIFF ليس بلاطة terrain جاهزة لـ MapLibre. نموذج GLB الكامل هو خيار التضاريس المتاح في هذه الصفحة.';document.getElementById('terrainModel').checked=true;addModelLayer();}
