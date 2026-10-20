@@ -11,28 +11,28 @@
 
 | Layer | Total features in repository | File |
 |---|---:|---|
-| aerodrome_label | 7 | layers/aerodrome_label.geojsonl |
-| aeroway | 281 | layers/aeroway.geojsonl |
-| boundary | 51 | layers/boundary.geojsonl |
-| building | 570 | layers/building.geojsonl |
-| housenumber | 1165 | layers/housenumber.geojsonl |
-| landcover | 585 | layers/landcover.geojsonl |
-| landuse | 916 | layers/landuse.geojsonl |
-| mountain_peak | 22 | layers/mountain_peak.geojsonl |
-| park | 24 | layers/park.geojsonl |
-| place | 1067 | layers/place.geojsonl |
-| poi | 14976 | layers/poi.geojsonl |
-| transportation | 11098 | layers/transportation.geojsonl |
-| transportation_name | 1727 | layers/transportation_name.geojsonl |
-| water | 236 | layers/water.geojsonl |
-| water_name | 41 | layers/water_name.geojsonl |
-| waterway | 541 | layers/waterway.geojsonl |
+| aerodrome_label | 0 | layers/aerodrome_label.geojsonl |
+| aeroway | 21 | layers/aeroway.geojsonl |
+| boundary | 40 | layers/boundary.geojsonl |
+| building | 618 | layers/building.geojsonl |
+| housenumber | 4186 | layers/housenumber.geojsonl |
+| landcover | 228 | layers/landcover.geojsonl |
+| landuse | 929 | layers/landuse.geojsonl |
+| mountain_peak | 0 | layers/mountain_peak.geojsonl |
+| park | 6 | layers/park.geojsonl |
+| place | 1214 | layers/place.geojsonl |
+| poi | 28179 | layers/poi.geojsonl |
+| transportation | 4921 | layers/transportation.geojsonl |
+| transportation_name | 2961 | layers/transportation_name.geojsonl |
+| water | 90 | layers/water.geojsonl |
+| water_name | 63 | layers/water_name.geojsonl |
+| waterway | 291 | layers/waterway.geojsonl |
 
 ## Incremental import report
 
-- Existing valid tiles reused: 9
-- New valid tiles downloaded: 0
-- Unsupported zoom tiles skipped: 34
+- Existing valid tiles reused: 4
+- New valid tiles downloaded: 12
+- Unsupported zoom tiles skipped: 0
 - Empty/failed tiles: 0
 - Review import-report.json and tile-index.json for per-tile status.
 - To retry previously empty tiles intentionally, set RETRY_EMPTY_TILES=1.

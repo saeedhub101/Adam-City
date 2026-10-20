@@ -1,111 +1,99 @@
 [
   {
-    "z": 10,
-    "x": 856,
-    "y": 470,
-    "status": "already_present",
-    "bytes": 161477,
-    "path": "ermita/maps/sources/openfreemap/vector-tiles/10/856/470.pbf",
+    "z": 14,
+    "x": 13696,
+    "y": 7519,
+    "status": "downloaded_new",
+    "bytes": 43715,
+    "path": "ermita/maps/sources/openfreemap/vector-tiles/14/13696/7519.pbf",
     "layer_feature_counts": {
-      "aerodrome_label": 3,
-      "aeroway": 59,
-      "boundary": 7,
-      "landcover": 54,
-      "landuse": 62,
-      "mountain_peak": 21,
-      "park": 11,
-      "place": 358,
-      "transportation": 141,
-      "transportation_name": 183,
-      "water": 24,
-      "water_name": 3,
-      "waterway": 32
+      "boundary": 1,
+      "building": 2,
+      "housenumber": 1,
+      "landuse": 11,
+      "place": 115,
+      "poi": 388,
+      "transportation": 43,
+      "transportation_name": 28,
+      "water": 2,
+      "water_name": 5
     }
   },
   {
-    "z": 11,
-    "x": 1712,
-    "y": 940,
-    "status": "already_present",
-    "bytes": 128118,
-    "path": "ermita/maps/sources/openfreemap/vector-tiles/11/1712/940.pbf",
+    "z": 14,
+    "x": 13696,
+    "y": 7520,
+    "status": "downloaded_new",
+    "bytes": 93287,
+    "path": "ermita/maps/sources/openfreemap/vector-tiles/14/13696/7520.pbf",
     "layer_feature_counts": {
-      "aerodrome_label": 3,
-      "aeroway": 125,
-      "boundary": 9,
-      "landcover": 6,
-      "landuse": 87,
-      "mountain_peak": 1,
-      "park": 9,
-      "place": 219,
-      "transportation": 179,
-      "transportation_name": 127,
-      "water": 44,
-      "water_name": 2,
-      "waterway": 60
+      "aeroway": 1,
+      "boundary": 1,
+      "building": 3,
+      "housenumber": 1,
+      "landcover": 10,
+      "landuse": 14,
+      "place": 38,
+      "poi": 235,
+      "transportation": 56,
+      "transportation_name": 30,
+      "water": 3,
+      "water_name": 7
     }
   },
   {
-    "z": 12,
-    "x": 3424,
-    "y": 1880,
-    "status": "already_present",
-    "bytes": 230616,
-    "path": "ermita/maps/sources/openfreemap/vector-tiles/12/3424/1880.pbf",
+    "z": 14,
+    "x": 13696,
+    "y": 7521,
+    "status": "downloaded_new",
+    "bytes": 4364,
+    "path": "ermita/maps/sources/openfreemap/vector-tiles/14/13696/7521.pbf",
     "layer_feature_counts": {
-      "aerodrome_label": 1,
-      "aeroway": 85,
-      "boundary": 10,
-      "landcover": 4,
-      "landuse": 115,
-      "park": 1,
-      "place": 71,
-      "poi": 88,
-      "transportation": 4893,
-      "transportation_name": 63,
-      "water": 41,
-      "waterway": 166
-    }
-  },
-  {
-    "z": 13,
-    "x": 6848,
-    "y": 3760,
-    "status": "already_present",
-    "bytes": 71152,
-    "path": "ermita/maps/sources/openfreemap/vector-tiles/13/6848/3760.pbf",
-    "layer_feature_counts": {
-      "boundary": 4,
       "building": 1,
-      "landcover": 9,
-      "landuse": 53,
-      "place": 26,
-      "poi": 32,
-      "transportation": 931,
-      "transportation_name": 8,
-      "water": 25,
-      "waterway": 26
+      "place": 10,
+      "poi": 3,
+      "transportation": 1,
+      "transportation_name": 3,
+      "water": 1,
+      "water_name": 6
     }
   },
   {
-    "z": 13,
-    "x": 6849,
-    "y": 3760,
-    "status": "already_present",
-    "bytes": 206248,
-    "path": "ermita/maps/sources/openfreemap/vector-tiles/13/6849/3760.pbf",
+    "z": 14,
+    "x": 13696,
+    "y": 7522,
+    "status": "downloaded_new",
+    "bytes": 1250,
+    "path": "ermita/maps/sources/openfreemap/vector-tiles/14/13696/7522.pbf",
     "layer_feature_counts": {
-      "boundary": 6,
-      "building": 1,
-      "landcover": 5,
-      "landuse": 184,
-      "park": 1,
-      "place": 37,
-      "poi": 48,
-      "transportation": 2224,
-      "transportation_name": 36,
-      "water": 25,
-      "waterway": 147
+      "boundary": 1,
+      "place": 1,
+      "transportation": 1,
+      "transportation_name": 1,
+      "water": 1,
+      "water_name": 3
+    }
+  },
+  {
+    "z": 14,
+    "x": 13697,
+    "y": 7519,
+    "status": "downloaded_new",
+    "bytes": 559825,
+    "path": "ermita/maps/sources/openfreemap/vector-tiles/14/13697/7519.pbf",
+    "layer_feature_counts": {
+      "boundary": 5,
+      "building": 76,
+      "housenumber": 200,
+      "landcover": 21,
+      "landuse": 124,
+      "place": 182,
+      "poi": 3184,
+      "transportation": 373,
+      "transportation_name": 479,
+      "water": 6,
+      "water_name": 7,
+      "waterway": 49
     }
   },
   {
@@ -151,6 +139,50 @@
       "transportation_name": 50,
       "water": 15,
       "water_name": 9
+    }
+  },
+  {
+    "z": 14,
+    "x": 13697,
+    "y": 7522,
+    "status": "downloaded_new",
+    "bytes": 53546,
+    "path": "ermita/maps/sources/openfreemap/vector-tiles/14/13697/7522.pbf",
+    "layer_feature_counts": {
+      "boundary": 4,
+      "building": 12,
+      "landcover": 5,
+      "landuse": 6,
+      "place": 27,
+      "poi": 754,
+      "transportation": 80,
+      "transportation_name": 20,
+      "water": 3,
+      "water_name": 4,
+      "waterway": 2
+    }
+  },
+  {
+    "z": 14,
+    "x": 13698,
+    "y": 7519,
+    "status": "downloaded_new",
+    "bytes": 542281,
+    "path": "ermita/maps/sources/openfreemap/vector-tiles/14/13698/7519.pbf",
+    "layer_feature_counts": {
+      "aeroway": 1,
+      "boundary": 4,
+      "building": 90,
+      "housenumber": 337,
+      "landcover": 17,
+      "landuse": 131,
+      "place": 225,
+      "poi": 4253,
+      "transportation": 695,
+      "transportation_name": 391,
+      "water": 6,
+      "water_name": 7,
+      "waterway": 22
     }
   },
   {
@@ -202,275 +234,119 @@
     }
   },
   {
-    "z": 15,
-    "x": 27395,
-    "y": 15040,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
+    "z": 14,
+    "x": 13698,
+    "y": 7522,
+    "status": "downloaded_new",
+    "bytes": 382636,
+    "path": "ermita/maps/sources/openfreemap/vector-tiles/14/13698/7522.pbf",
+    "layer_feature_counts": {
+      "aeroway": 9,
+      "boundary": 7,
+      "building": 95,
+      "housenumber": 247,
+      "landcover": 27,
+      "landuse": 114,
+      "park": 1,
+      "place": 62,
+      "poi": 3580,
+      "transportation": 806,
+      "transportation_name": 298,
+      "water": 16,
+      "water_name": 4,
+      "waterway": 23
+    }
   },
   {
-    "z": 15,
-    "x": 27395,
-    "y": 15041,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
+    "z": 14,
+    "x": 13699,
+    "y": 7519,
+    "status": "downloaded_new",
+    "bytes": 445177,
+    "path": "ermita/maps/sources/openfreemap/vector-tiles/14/13699/7519.pbf",
+    "layer_feature_counts": {
+      "boundary": 5,
+      "building": 31,
+      "housenumber": 240,
+      "landcover": 16,
+      "landuse": 83,
+      "place": 168,
+      "poi": 3212,
+      "transportation": 426,
+      "transportation_name": 331,
+      "water": 10,
+      "water_name": 6,
+      "waterway": 23
+    }
   },
   {
-    "z": 15,
-    "x": 27395,
-    "y": 15042,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
+    "z": 14,
+    "x": 13699,
+    "y": 7520,
+    "status": "downloaded_new",
+    "bytes": 451871,
+    "path": "ermita/maps/sources/openfreemap/vector-tiles/14/13699/7520.pbf",
+    "layer_feature_counts": {
+      "boundary": 5,
+      "building": 39,
+      "housenumber": 351,
+      "landcover": 52,
+      "landuse": 156,
+      "park": 2,
+      "place": 157,
+      "poi": 3432,
+      "transportation": 487,
+      "transportation_name": 453,
+      "water": 20,
+      "water_name": 7,
+      "waterway": 45
+    }
   },
   {
-    "z": 15,
-    "x": 27396,
-    "y": 15040,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
+    "z": 14,
+    "x": 13699,
+    "y": 7521,
+    "status": "downloaded_new",
+    "bytes": 542153,
+    "path": "ermita/maps/sources/openfreemap/vector-tiles/14/13699/7521.pbf",
+    "layer_feature_counts": {
+      "boundary": 4,
+      "building": 68,
+      "housenumber": 876,
+      "landcover": 43,
+      "landuse": 131,
+      "park": 2,
+      "place": 139,
+      "poi": 4121,
+      "transportation": 555,
+      "transportation_name": 515,
+      "water": 8,
+      "water_name": 5,
+      "waterway": 57
+    }
   },
   {
-    "z": 15,
-    "x": 27396,
-    "y": 15041,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 15,
-    "x": 27396,
-    "y": 15042,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 15,
-    "x": 27397,
-    "y": 15040,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 15,
-    "x": 27397,
-    "y": 15041,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 15,
-    "x": 27397,
-    "y": 15042,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54790,
-    "y": 30081,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54790,
-    "y": 30082,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54790,
-    "y": 30083,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54790,
-    "y": 30084,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54790,
-    "y": 30085,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54791,
-    "y": 30081,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54791,
-    "y": 30082,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54791,
-    "y": 30083,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54791,
-    "y": 30084,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54791,
-    "y": 30085,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54792,
-    "y": 30081,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54792,
-    "y": 30082,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54792,
-    "y": 30083,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54792,
-    "y": 30084,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54792,
-    "y": 30085,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54793,
-    "y": 30081,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54793,
-    "y": 30082,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54793,
-    "y": 30083,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54793,
-    "y": 30084,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54793,
-    "y": 30085,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54794,
-    "y": 30081,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54794,
-    "y": 30082,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54794,
-    "y": 30083,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54794,
-    "y": 30084,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
-  },
-  {
-    "z": 16,
-    "x": 54794,
-    "y": 30085,
-    "status": "unsupported_zoom",
-    "source_maxzoom": 14,
-    "reason": "Source does not publish this zoom level."
+    "z": 14,
+    "x": 13699,
+    "y": 7522,
+    "status": "downloaded_new",
+    "bytes": 535824,
+    "path": "ermita/maps/sources/openfreemap/vector-tiles/14/13699/7522.pbf",
+    "layer_feature_counts": {
+      "aeroway": 10,
+      "boundary": 3,
+      "building": 201,
+      "housenumber": 768,
+      "landcover": 37,
+      "landuse": 159,
+      "park": 1,
+      "place": 90,
+      "poi": 5017,
+      "transportation": 1398,
+      "transportation_name": 412,
+      "water": 14,
+      "water_name": 2,
+      "waterway": 70
+    }
   }
 ]
