@@ -113,6 +113,9 @@ jobs:
           mkdir -p site/ermita/maps/sources/openfreemap
           cp ermita-malate-3d.html site/ermita-malate-3d.html
           cp -a ermita/maps/sources/openfreemap/vector-tiles site/ermita/maps/sources/openfreemap/
+          # The preview uses the committed GeoJSON fallbacks for building extrusion and ground/roads.
+          cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/building-fallback.geojson
+          cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/ground-fallback.geojson
           # Existing generated outputs are reused unless the source set gained new tiles or an output is missing.
           if [[ "$REBUILD_FALLBACKS" -eq 1 ]]; then
             python3 -m pip install --disable-pip-version-check mapbox-vector-tile
@@ -199,6 +202,8 @@ jobs:
           test -s site/ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           test -s site/ermita-malate-3d.html
           test -s site/ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
+          test -s site/ermita/maps/sources/openfreemap/building-fallback.geojson
+          test -s site/ermita/maps/sources/openfreemap/ground-fallback.geojson
           test -s site/ermita/maps/generated/ermita-building-details.geojson
           test -s site/ermita/3d/generated/ermita-buildings-facade-details.glb
           test -s site/ermita/3d/generated/facade-model-origin.json
