@@ -34,6 +34,7 @@ jobs:
           git sparse-checkout set --no-cone --stdin <<'EOF'
           /ermita-malate-3d.html
           /ermita/maps/sources/openfreemap/
+          /ermita/maps/sources/microsoft-satellite-buildings/
           /ermita/3d/exports/adam-city-complete.glb
           /ermita/3d/exports/adam-city-complete-report.json
           /ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
@@ -69,6 +70,7 @@ jobs:
           mkdir -p site/ermita/maps/sources/openfreemap
           cp ermita-malate-3d.html site/ermita-malate-3d.html
           cp -a ermita/maps/sources/openfreemap/vector-tiles site/ermita/maps/sources/openfreemap/
+          cp -a ermita/maps/sources/microsoft-satellite-buildings site/ermita/maps/sources/
           # Existing generated outputs are reused unless the source set gained new tiles or an output is missing.
           if [[ "$REBUILD_FALLBACKS" -eq 1 ]]; then
             python3 -m pip install --disable-pip-version-check mapbox-vector-tile
@@ -156,6 +158,7 @@ jobs:
           test -s site/ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
           test -s site/ermita/maps/sources/openfreemap/building-fallback.geojson
           test -s site/ermita/maps/sources/openfreemap/ground-fallback.geojson
+          test -s site/ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson
           # Save every newly imported/generated OpenFreeMap asset and its reports to main.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
