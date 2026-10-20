@@ -61,8 +61,8 @@ jobs:
           python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh
           # Fingerprints invalidate only outputs whose generator, source data, or contract changed.
           # Stable hashes intentionally exclude timestamps and CI-run metadata.
-          FACADE_FINGERPRINT="$( { printf 'contract=1\\n'; sha256sum ermita/scripts/generate_facade_details.py ermita/maps/generated/ermita-building-details.geojson; } | sha256sum | awk '{print $1}')"
-          LANDMARK_FINGERPRINT="$( { printf 'contract=2\\n'; sha256sum ermita/scripts/generate_landmark_facades.py ermita/maps/generated/ermita-building-details.geojson; } | sha256sum | awk '{print $1}')"
+          FACADE_FINGERPRINT="$( { printf 'contract=1\n'; sha256sum ermita/scripts/generate_facade_details.py ermita/maps/generated/ermita-building-details.geojson; } | sha256sum | awk '{print $1}')"
+          LANDMARK_FINGERPRINT="$( { printf 'contract=2\n'; sha256sum ermita/scripts/generate_landmark_facades.py ermita/maps/generated/ermita-building-details.geojson; } | sha256sum | awk '{print $1}')"
           FACADE_STALE=0
           LANDMARK_STALE=0
           if [[ ! -s ermita/3d/generated/facade-generation.sha256 ]] || [[ "$(cat ermita/3d/generated/facade-generation.sha256 2>/dev/null || true)" != "$FACADE_FINGERPRINT" ]]; then FACADE_STALE=1; fi
@@ -71,14 +71,14 @@ jobs:
           if [[ ! -s ermita/3d/generated/ermita-buildings-facade-details.glb || ! -s ermita/3d/generated/facade-details-report.json || ! -s ermita/3d/generated/facade-signage-index.csv || ! -s ermita/3d/generated/facade-model-origin.json || "$FACADE_STALE" -eq 1 ]]; then
             echo "Facade assets missing or stale; regenerating only the facade asset family."
             python3 ermita/scripts/generate_facade_details.py
-            printf '%s\\n' "$FACADE_FINGERPRINT" > ermita/3d/generated/facade-generation.sha256
+            printf '%s\n' "$FACADE_FINGERPRINT" > ermita/3d/generated/facade-generation.sha256
           else
             echo "Reusing committed facade assets; generator and source fingerprints match."
           fi
           if [[ ! -s ermita/3d/landmarks/landmark-facade-details.glb || ! -s ermita/3d/landmarks/landmark-facade-origin.json || ! -s ermita/3d/landmarks/landmark-facade-report.json || "$LANDMARK_STALE" -eq 1 ]]; then
             echo "Landmark assets missing or stale; regenerating the landmark asset family."
             python3 ermita/scripts/generate_landmark_facades.py
-            printf '%s\\n' "$LANDMARK_FINGERPRINT" > ermita/3d/landmarks/landmark-generation.sha256
+            printf '%s\n' "$LANDMARK_FINGERPRINT" > ermita/3d/landmarks/landmark-generation.sha256
           else
             echo "Reusing committed landmark assets; generator and source fingerprints match; no Overpass request needed."
           fi
