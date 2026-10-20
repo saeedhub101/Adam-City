@@ -1,7 +1,10 @@
 {
-  "longitude": 120.99243150000001,
-  "latitude": 14.583583671064408,
-  "anchor_altitude_m": 129.0,
-  "buildings_used": 135687,
-  "origin_method": "Recomputed from the same OSM footprint geometry and height rules used to generate the facade GLB"
+  "longitude": 120.98457549999999,
+  "latitude": 14.580668523627777,
+  "anchor_altitude_m": 115.0,
+  "buildings_used": 186,
+  "indexed_osm_ids_matched": 67,
+  "indexed_osm_ids_missing": 1401,
+  "origin_method": "Recomputed from valid footprint polygons whose OSM IDs occur in the facade GLB index; uses the GLB generator height rules",
+  "coordinate_system": "EPSG:3857 local meters, recentered at (longitude, latitude, anchor_altitude_m)"
 }
