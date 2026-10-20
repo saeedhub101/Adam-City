@@ -2,6 +2,12 @@ name: Import open aerial sources for Ermita
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ermita/scripts/import_openaerialmap_ermita.py'
+      - 'ermita/scripts/import_tm_open_buildings_ermita.py'
+      - '.github/workflows/import-open-aerial-sources.yml'
 
 permissions:
   contents: write
