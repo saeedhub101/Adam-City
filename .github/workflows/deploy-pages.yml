@@ -50,7 +50,10 @@ jobs:
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13697/7521.pbf
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13698/7521.pbf
+          # Publish the actual page and all locally stored tiles it references.
+          cp ermita-malate-3d.html site/ermita-malate-3d.html
           mkdir -p site/ermita/maps/sources/openfreemap
+          cp -a ermita/maps/sources/openfreemap/vector-tiles site/ermita/maps/sources/openfreemap/
           # Existing repository data always wins; build only whichever fallback is missing.
           if [[ ! -s ermita/maps/sources/openfreemap/building-fallback.geojson || ! -s ermita/maps/sources/openfreemap/ground-fallback.geojson ]]; then
             python3 -m pip install --disable-pip-version-check mapbox-vector-tile
@@ -129,6 +132,10 @@ jobs:
           # Publish the repository copies, whether reused or newly generated.
           cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/building-fallback.geojson
           cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/ground-fallback.geojson
+          test -s site/ermita-malate-3d.html
+          test -s site/ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
+          test -s site/ermita/maps/sources/openfreemap/building-fallback.geojson
+          test -s site/ermita/maps/sources/openfreemap/ground-fallback.geojson
           # Persist only new fallback data on main; ignore these paths in push triggers to avoid loops.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
