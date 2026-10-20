@@ -38,6 +38,7 @@ jobs:
           /ermita/maps/generated/ermita-building-footprints.geojson
           /ermita/3d/generated/ermita-buildings-facade-details.glb
           /ermita/3d/generated/facade-model-origin.json
+          /ermita/3d/generated/facade-signage-index.csv
           /ermita/3d/exports/adam-city-complete.glb
           /ermita/3d/exports/adam-city-complete-report.json
           /ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
@@ -200,6 +201,7 @@ jobs:
           cp ermita/maps/generated/ermita-building-details.geojson site/ermita/maps/generated/ermita-building-details.geojson
           cp ermita/3d/generated/ermita-buildings-facade-details.glb site/ermita/3d/generated/ermita-buildings-facade-details.glb
           cp ermita/3d/generated/facade-model-origin.json site/ermita/3d/generated/facade-model-origin.json
+          cp ermita/3d/generated/facade-signage-index.csv site/ermita/3d/generated/facade-signage-index.csv
           cp ermita/3d/exports/adam-city-complete.glb site/ermita/3d/exports/adam-city-complete.glb
           cp ermita/3d/terrain/ermita-copernicus-dem-cropped.tif site/ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           test -s site/ermita/3d/exports/adam-city-complete.glb
@@ -211,6 +213,7 @@ jobs:
           test -s site/ermita/maps/generated/ermita-building-details.geojson
           test -s site/ermita/3d/generated/ermita-buildings-facade-details.glb
           test -s site/ermita/3d/generated/facade-model-origin.json
+          test -s site/ermita/3d/generated/facade-signage-index.csv
           # Save every newly imported/generated OpenFreeMap asset and its reports to main.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
