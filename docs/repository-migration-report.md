@@ -32,14 +32,23 @@ A full path migration should be done as a single planned operation: build an old
 ## Follow-up organization pass (2026-10-20)
 
 - Moved the five repository-level policy, audit, catalog, structure, and migration documents into `docs/` and normalized their filenames to lowercase kebab-case.
-- Kept `README.md`, the active preview HTML, `.github/workflows/`, and deployment-required root `scripts/` paths in place because the active Pages workflow and links depend on them.
+- Kept `README.md`, the active preview HTML, and `.github/workflows/` in place because they are deployment entry points. Moved the four Ermita-specific root importers into `ermita/scripts/` and updated the Pages workflow to use the new path.
 - Kept `ermita/`, `kartaview/`, and `backup/` at their current roots in this pass. They contain thousands of assets and references in scripts, CSV metadata, and HTML; moving them safely requires a repository-wide path migration and deployment/data-reference validation, not just moving directory entries. No data files were deleted as part of this documentation move.
 
 
 ## Latest verification (2026-10-20)
 
-- Current branch head at this check: `9d4211c0c4be2875e20351168bcc59ef91297ba7`.
+- Current branch head at this check: `60adc147730a7181bf13484cfa13024474e9f448`.
 - Recursive tree inspection: 2,000 tracked files, `truncated: false`.
 - Confirmed the five documentation files now exist under `docs/`, and the old root-level copies no longer exist.
 - Confirmed both historical checkpoint HTML files are present under `backup/checkpoints/`.
 - The remaining project/data directories were not wholesale moved because the active deployment workflow and source-indexing files depend on their current paths. The next safe phase is a reference-aware path migration with automated path checks, not a blind directory move.
+
+
+## Importer relocation verification (2026-10-20)
+
+- Moved `import_openfreemap_ermita.py`, `import_basemap_buildings.py`, `import_openaerialmap_ermita.py`, and `prepare_local_aerial_preview.py` from root `scripts/` to `ermita/scripts/`.
+- Updated `.github/workflows/deploy-pages.yml` sparse-checkout and execution paths for the OpenFreeMap importer.
+- Adjusted repository-root resolution in the moved basemap/OpenAerialMap/aerial-preview scripts.
+- Verified that no `.py` files remain in the former root `scripts/` directory and all four destination paths exist. The recursive Git tree still reports 2,000 tracked files and is not truncated.
+- This verifies path structure, not a completed GitHub Actions run or a visual browser test. The remaining `kartaview/`, `backup/`, and `ermita/` data hierarchy has not been relocated wholesale because its internal references require a larger migration and validation pass.
