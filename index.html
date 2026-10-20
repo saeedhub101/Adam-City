@@ -88,6 +88,8 @@ map.on('load',async()=>{
   // Keep the rich OpenFreeMap streets, parks, water and place-name style; local verified OSM geometry overlays it.
   const layers=map.getStyle().layers||[];
   const openFreeMapBuildingLayerIds=layers.filter(l=>/building/i.test(l.id||'')||/building/i.test(l['source-layer']||'')).map(l=>l.id);
+  // Keep the basemap's building styling separate; OSM source is the default visible building layer.
+  setVis(openFreeMapBuildingLayerIds,false);
   map.addSource('regional-terrain-dem',{type:'raster-dem',tiles:['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});
   // Terrain and sky are optional: do not let a DEM/sky failure prevent the 2D map and building layers from rendering.
   try{map.setTerrain({source:'regional-terrain-dem',exaggeration:1.18})}catch(err){console.warn('Terrain disabled:',err);$('terrain').checked=false}
