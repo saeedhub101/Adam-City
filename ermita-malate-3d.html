@@ -54,7 +54,7 @@ button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1
 <div class="status" id="status">جارٍ تحميل البلاطات والبيانات المحلية…</div><div id="error"></div>
 <details open class="group" id="commercialDiagnostics"><summary class="group-title">تشخيص نموذج الواجهات التجارية</summary>
 <div id="commercialDiagnosticText" style="font:10px/1.6 ui-monospace,monospace;direction:ltr;white-space:pre-wrap;overflow-wrap:anywhere;margin-top:6px">بانتظار بدء الفحص…</div>
-<button type="button" id="retryCommercialDiagnostic" style="margin-top:7px;width:100%">إعادة فحص وتحميل النموذج</button></details>
+<div class="buttons" style="margin-top:7px"><button type="button" id="retryCommercialDiagnostic">إعادة الفحص</button><button type="button" id="zoomCommercialModel">الانتقال إلى النموذج</button></div></details>
 </div></details></section>
 <div class="attribution">OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors · DEM © Copernicus / DLR / Airbus</div>
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
@@ -287,6 +287,8 @@ async function addLandmarkFacadeLayer(){
     },err=>{landmarkLoading=false;landmarkLayerAdded=false;toggle.checked=false;errorBox.style.display='block';errorBox.textContent='تعذر تحليل نموذج المعالم: '+(err.message||err);});
    },
    render:function(gl,matrix){
+    this.renderCount=(this.renderCount||0)+1;
+    if(this.renderCount===1)commercialDiag('Render callback','وصل إلى Three.js render()');
     if(!this.model)return;
     const mc=maplibregl.MercatorCoordinate.fromLngLat({lng:origin.longitude,lat:origin.latitude},origin.anchor_altitude_m);
     const scale=mc.meterInMercatorCoordinateUnits();const m=new THREE.Matrix4().fromArray(matrix);
@@ -354,7 +356,7 @@ async function addCommercialFacadeLayer(){
      commercialDiag('GLTF parse','SUCCESS');commercialDiag('Meshes',meshCount);commercialDiag('Materials',materialCount);
      commercialDiag('Local bounds (m)',size.x.toFixed(2)+' × '+size.y.toFixed(2)+' × '+size.z.toFixed(2));
      commercialDiag('Model state','Parsed and added to Three.js scene');
-     this.scene.add(this.model);commercialLoading=false;status.textContent='تم تحليل نموذج الواجهات التجارية؛ راقب لوحة التشخيص للتحقق من تحميله وأبعاده.';map.triggerRepaint();
+     this.scene.add(this.model);commercialLoading=false;status.textContent='تم تحميل نموذج الواجهات التجارية؛ تم توسيط الكاميرا عليه للتحقق من ظهوره.';map.easeTo({center:[origin.longitude,origin.latitude],zoom:15.1,pitch:55,bearing:0,duration:900});map.triggerRepaint();
     },err=>{commercialLoading=false;commercialLayerAdded=false;toggle.checked=false;commercialDiag('GLTF parse','FAILED: '+(err.message||err));errorBox.style.display='block';errorBox.textContent='تعذر تحليل نموذج الواجهات التجارية: '+(err.message||err);});
    },
    render:function(gl,matrix){
@@ -374,6 +376,10 @@ async function addCommercialFacadeLayer(){
   status.textContent='تعذر تحميل طبقة الواجهات التجارية؛ راجع رسالة الخطأ.';
  }
 }
+document.getElementById('zoomCommercialModel').onclick=()=>{
+ map.easeTo({center:[120.9820416,14.5850152],zoom:15.1,pitch:55,bearing:0,duration:700});
+ map.triggerRepaint();
+};
 document.getElementById('retryCommercialDiagnostic').onclick=async()=>{
  if(map.getLayer('adam-commercial-facades'))map.removeLayer('adam-commercial-facades');
  commercialLayerAdded=false;commercialLayer=null;commercialLoading=false;
