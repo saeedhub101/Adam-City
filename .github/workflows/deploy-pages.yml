@@ -22,7 +22,7 @@ jobs:
         run: |
           set -euo pipefail
           git init .
-          git remote add origin https://github.com/saeedhub101/Adam-City.git
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/saeedhub101/Adam-City.git"
           # Partial clone downloads Git objects lazily; sparse checkout materializes only required files.
           git -c protocol.version=2 fetch --depth=1 --filter=blob:none origin main
           git sparse-checkout init --no-cone
@@ -53,6 +53,8 @@ jobs:
           git switch -C main FETCH_HEAD
       - name: Complete missing OpenFreeMap zoom-14 tiles with a viewport buffer
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile
