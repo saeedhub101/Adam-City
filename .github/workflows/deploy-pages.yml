@@ -33,9 +33,8 @@ jobs:
           git sparse-checkout init --no-cone
           git sparse-checkout set --no-cone --stdin <<'EOF'
           /ermita-malate-3d.html
-          /ermita/maps/sources/openfreemap/vector-tiles/
-          /ermita/maps/sources/openfreemap/building-fallback.geojson
-          /ermita/maps/sources/openfreemap/ground-fallback.geojson
+          /ermita/maps/sources/openfreemap/
+          /scripts/import_openfreemap_ermita.py
           EOF
           git switch -C main FETCH_HEAD
 
@@ -46,16 +45,29 @@ jobs:
         run: |
           set -euo pipefail
           test -s ermita-malate-3d.html
+          python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile
+          python3 scripts/import_openfreemap_ermita.py
+          NEW_TILES="$(python3 -c "import json; print(json.load(open('ermita/maps/sources/openfreemap/import-report.json')).get('new_tiles_downloaded', 0))")"
+          echo "New source tiles downloaded: $NEW_TILES"
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13697/7520.pbf
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13697/7521.pbf
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13698/7521.pbf
-          # Publish the actual page and all locally stored tiles it references.
-          cp ermita-malate-3d.html site/ermita-malate-3d.html
+          # Reuse saved outputs on normal runs. Rebuild derived fallbacks only if missing or new source tiles arrived.
+          REBUILD_FALLBACKS=0
+          if [[ ! -s ermita/maps/sources/openfreemap/building-fallback.geojson || ! -s ermita/maps/sources/openfreemap/ground-fallback.geojson || "$NEW_TILES" -gt 0 ]]; then
+            REBUILD_FALLBACKS=1
+          fi
+          if [[ "$NEW_TILES" -eq 0 ]]; then
+            # The importer refreshes timestamps in its reports; keep committed reports stable when no data changed.
+            git checkout -- ermita/maps/sources/openfreemap/area-boundary.geojson ermita/maps/sources/openfreemap/source-metadata.json ermita/maps/sources/openfreemap/tile-index.json ermita/maps/sources/openfreemap/import-report.json ermita/maps/sources/openfreemap/README.md 2>/dev/null || true
+          fi
+          # Prepare output folder before copying the page and source data.
           mkdir -p site/ermita/maps/sources/openfreemap
+          cp ermita-malate-3d.html site/ermita-malate-3d.html
           cp -a ermita/maps/sources/openfreemap/vector-tiles site/ermita/maps/sources/openfreemap/
-          # Existing repository data always wins; build only whichever fallback is missing.
-          if [[ ! -s ermita/maps/sources/openfreemap/building-fallback.geojson || ! -s ermita/maps/sources/openfreemap/ground-fallback.geojson ]]; then
+          # Existing generated outputs are reused unless the source set gained new tiles or an output is missing.
+          if [[ "$REBUILD_FALLBACKS" -eq 1 ]]; then
             python3 -m pip install --disable-pip-version-check mapbox-vector-tile
             python3 - <<'PY'
           import json, math
@@ -65,8 +77,8 @@ jobs:
           repo_dir = Path('ermita/maps/sources/openfreemap')
           building_out = repo_dir / 'building-fallback.geojson'
           ground_out = repo_dir / 'ground-fallback.geojson'
-          need_buildings = not (building_out.is_file() and building_out.stat().st_size > 0)
-          need_ground = not (ground_out.is_file() and ground_out.stat().st_size > 0)
+          need_buildings = True
+          need_ground = True
           building_features, ground_features = [], []
           seen_buildings, seen_ground = set(), set()
           ground_layers = {'landcover', 'landuse', 'water', 'waterway', 'transportation'}
@@ -136,11 +148,13 @@ jobs:
           test -s site/ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
           test -s site/ermita/maps/sources/openfreemap/building-fallback.geojson
           test -s site/ermita/maps/sources/openfreemap/ground-fallback.geojson
-          # Persist only new fallback data on main; ignore these paths in push triggers to avoid loops.
+          # Save every newly imported/generated OpenFreeMap asset and its reports to main.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/saeedhub101/Adam-City.git"
-          git add ermita/maps/sources/openfreemap/building-fallback.geojson ermita/maps/sources/openfreemap/ground-fallback.geojson
+          if [[ "$NEW_TILES" -gt 0 || "$REBUILD_FALLBACKS" -eq 1 ]]; then
+            git add ermita/maps/sources/openfreemap/
+          fi
           if ! git diff --cached --quiet; then
             git commit -m "Store generated building and ground fallback data"
             git push origin HEAD:main
