@@ -134,6 +134,7 @@ try {
 } catch(err) {
  errorBox.style.display='block'; errorBox.textContent='تعذر تحميل خريطة OpenFreeMap العالمية؛ سيتم عرض البيانات المحلية إن أمكن. '+(err.message||err);
 }
+const remoteBuildingDefaultColors=Object.fromEntries((remoteStyle?.layers||[]).filter(layer=>remoteBuildingIds.includes(layer.id)).map(layer=>[layer.id,layer.paint?.['fill-extrusion-color']]));
 const map = new maplibregl.Map({container:'map',center:[120.9918,14.5707],zoom:15,pitch:57,bearing:-18,antialias:true,style:remoteStyle||localStyle});
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
 let firstError=false, modelLayerAdded=false, modelLoading=false, modelLayer=null;
@@ -156,7 +157,7 @@ function applySourceVisibility(){
 }
 document.getElementById('baseMapSource').onchange=applySourceVisibility;
 document.getElementById('baseBuildingSource').onchange=applySourceVisibility;
-map.on('load',()=>{map.resize();applySourceVisibility();statusText();});
+map.on('load',()=>{map.resize();applySourceVisibility();applyFacadeBuildingHighlight();statusText();});
 map.on('idle',statusText);
 map.on('error',e=>{console.error(e.error||e);if(!firstError){firstError=true;errorBox.style.display='block';errorBox.textContent=(e.error&&e.error.message)||e.message||'تعذر تحميل مورد؛ افحص الرابط أو اتصال الشبكة.';}});
 const fly=(center,zoom=15.2)=>map.flyTo({center,zoom,pitch:57,bearing:-18,duration:1000});
@@ -170,9 +171,25 @@ const osmAppearanceColor=['coalesce',['get','building:colour'],['get','building:
 function applyBuildingAppearance(){
  const colorsOn=document.getElementById('colors').checked;
  const osmOn=document.getElementById('osmAppearance').checked;
- const color=colorsOn?(osmOn?osmAppearanceColor:defaultBuildingColor):'#c9bfb0';
+ const highlightOn=document.getElementById('facadeModel').checked;
+ const color=highlightOn?'#20d65a':(colorsOn?(osmOn?osmAppearanceColor:defaultBuildingColor):'#c9bfb0');
  if(map.getLayer('adam-local-buildings-3d'))map.setPaintProperty('adam-local-buildings-3d','fill-extrusion-color',color);
  toggleLayers(groups.osmAppearance,osmOn);
+}
+function applyFacadeBuildingHighlight(){
+ const highlightOn=document.getElementById('facadeModel').checked;
+ const highlightColor='#20d65a';
+ if(map.getLayer('adam-local-buildings-3d')){
+  const colorsOn=document.getElementById('colors').checked;
+  const osmOn=document.getElementById('osmAppearance').checked;
+  map.setPaintProperty('adam-local-buildings-3d','fill-extrusion-color',highlightOn?highlightColor:(colorsOn?(osmOn?osmAppearanceColor:defaultBuildingColor):'#c9bfb0'));
+ }
+ remoteBuildingIds.forEach(id=>{
+  if(!map.getLayer(id))return;
+  const original=remoteBuildingDefaultColors[id];
+  if(highlightOn)map.setPaintProperty(id,'fill-extrusion-color',highlightColor);
+  else if(original!==undefined)map.setPaintProperty(id,'fill-extrusion-color',original);
+ });
 }
 document.getElementById('colors').onchange=applyBuildingAppearance;
 document.getElementById('osmAppearance').onchange=applyBuildingAppearance;
@@ -180,6 +197,7 @@ async function addFacadeLayer(){
 if(facadeLoading || facadeLayerAdded)return;
 facadeLoading=true;
 const facadeToggle=document.getElementById('facadeModel');
+applyFacadeBuildingHighlight();
 status.textContent='جارٍ تحميل نوافذ مولّدة من مضلعات وارتفاعات OSM…';
 errorBox.style.display='none';
 try{
@@ -205,8 +223,9 @@ try{
    if(event.lengthComputable)status.textContent='تحميل نموذج النوافذ: '+Math.round(event.loaded/event.total*100)+'%';
   },err=>{
    facadeLoading=false;facadeLayerAdded=false;
+   facadeToggle.checked=false;applyFacadeBuildingHighlight();
    errorBox.style.display='block';errorBox.textContent='فشل تحميل نموذج النوافذ: '+(err.message||err);
-   status.textContent='تعذر تحميل طبقة النوافذ؛ ألغِ التحديد ثم أعد تفعيله للمحاولة مجددًا.';
+   status.textContent='تعذر تحميل طبقة النوافذ؛ أُعيد لون المباني إلى وضعه السابق.';
   });
  },
  render:function(gl,matrix){
@@ -229,8 +248,13 @@ try{
 }
 }
 document.getElementById('facadeModel').onchange=async e=>{
+ applyFacadeBuildingHighlight();
  if(e.target.checked)await addFacadeLayer();
- else if(map.getLayer('adam-facade-details-model')){map.removeLayer('adam-facade-details-model');facadeLayerAdded=false;facadeLayer=null;facadeLoading=false;}
+ else {
+  if(map.getLayer('adam-facade-details-model'))map.removeLayer('adam-facade-details-model');
+  facadeLayerAdded=false;facadeLayer=null;facadeLoading=false;
+  applyFacadeBuildingHighlight();
+ }
 };
 function addModelLayer(){
 if(modelLoading)return;
