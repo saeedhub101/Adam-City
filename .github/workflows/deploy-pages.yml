@@ -63,7 +63,7 @@ jobs:
           from shapely.geometry import shape
           from shapely.ops import transform as geom_transform
 
-          source = Path('ermita/maps/generated/ermita-building-footprints.geojson')
+          source = Path('ermita/maps/generated/ermita-building-details.geojson')
           index = Path('ermita/3d/generated/facade-signage-index.csv')
           data = json.loads(source.read_text(encoding='utf-8'))
           with index.open(newline='', encoding='utf-8') as f:
@@ -117,7 +117,7 @@ jobs:
               'buildings_used':parts,
               'indexed_osm_ids_matched':len(matched_ids),
               'indexed_osm_ids_missing':len(missing),
-              'origin_method':'Recomputed from valid footprint polygons whose OSM IDs occur in the facade GLB index; uses the GLB generator height rules',
+              'origin_method':'Recomputed from the original OSM building-detail geometries whose IDs occur in the facade GLB index; uses the GLB generator height rules',
               'coordinate_system':'EPSG:3857 local meters, recentered at (longitude, latitude, anchor_altitude_m)'
           }
           out.write_text(json.dumps(origin,indent=2)+'\n',encoding='utf-8')
