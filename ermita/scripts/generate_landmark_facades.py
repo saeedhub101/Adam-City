@@ -153,7 +153,7 @@ def main():
     pgh_feature=next((f for f in features if (f.get('properties') or {}).get('osm_feature_id')=='way/16554344'),None)
     if not pgh_feature:
         raise RuntimeError('PGH candidate way/16554344 is absent from the committed building data')
-    museum=museum_polygon()
+    museum=geom_transform(TO_METERS,museum_polygon())
     pgh=geom_transform(TO_METERS,shape(pgh_feature['geometry']))
     # The PGH feature is a plausible historic-hospital candidate, not a verified Cancer Institute match.
     geoms=[('relation/61326',museum,24.0,{'stone':[222,216,202,255],'trim':[197,185,164,255],'roof':[126,80,66,255]}),
