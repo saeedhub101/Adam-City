@@ -39,6 +39,8 @@
       <button id="reset">إعادة زاوية الكاميرا</button>
     </div>
     <label class="row"><input type="checkbox" id="buildings" checked> إظهار المباني ثلاثية الأبعاد</label>
+    <label class="row"><input type="checkbox" id="buildingColors" checked> ألوان المباني حسب بيانات المصدر</label>
+    <label class="row"><input type="checkbox" id="buildingNumbers" checked> إظهار أرقام المباني</label>
     <label class="row"><input type="checkbox" id="roads" checked> إظهار الشوارع</label>
     <div class="status" id="status">جارٍ تحميل البلاطات المحلية…</div>
     <div id="error"></div>
@@ -81,12 +83,13 @@
           {id:roadLayers[0],type:'line',source:sourceId,'source-layer':'transportation',paint:{'line-color':'#a5a9a7','line-width':['interpolate',['linear'],['zoom'],10,0.6,14,5,16,8]}},
           {id:roadLayers[1],type:'line',source:sourceId,'source-layer':'transportation',paint:{'line-color':['match',['get','class'],'motorway','#f3c18b','trunk','#f3c18b','primary','#f5d7a4','secondary','#fff5d9','#fffdf7'],'line-width':['interpolate',['linear'],['zoom'],10,0.25,14,2.8,16,5.5]}},
           {id:buildingLayer,type:'fill-extrusion',source:sourceId,'source-layer':'building',minzoom:12,filter:['==',['geometry-type'],'Polygon'],paint:{
-            'fill-extrusion-color':'#c9bfb0',
+            'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building_colour'],['match',['get','class'],'commercial','#c9b8a4','industrial','#b9b7b1','public','#c4c9ce','residential','#d8cdbd','#c9bfb0']],
             'fill-extrusion-height':['max',3,['case',['>', ['to-number',['get','render_height'],0],0],['to-number',['get','render_height'],0],['>', ['to-number',['get','height'],0],0],['to-number',['get','height'],0],['>', ['to-number',['get','building:levels'],0],0],['*',['to-number',['get','building:levels'],0],3.15],5]],
             'fill-extrusion-base':['max',0,['case',['>', ['to-number',['get','render_min_height'],0],0],['to-number',['get','render_min_height'],0],['>', ['to-number',['get','min_height'],0],0],['to-number',['get','min_height'],0],0]],
             'fill-extrusion-opacity':0.96,
             'fill-extrusion-vertical-gradient':true
-          }}
+          }},
+          {id:'local-building-numbers',type:'symbol',source:sourceId,'source-layer':'housenumber',minzoom:15,layout:{'text-field':['to-string',['get','housenumber']],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],15,9,17,12,19,14],'text-allow-overlap':false,'text-ignore-placement':false},paint:{'text-color':'#202b32','text-halo-color':'#ffffff','text-halo-width':1.6,'text-halo-blur':0.2}}
         ]
       }
     });
@@ -127,6 +130,8 @@
     document.getElementById('both').addEventListener('click', () => fly([120.9860,14.5780],14.1,62,-18));
     document.getElementById('reset').addEventListener('click', () => map.easeTo({pitch:62,bearing:-18,duration:800}));
     document.getElementById('buildings').addEventListener('change', e => map.setLayoutProperty(buildingLayer,'visibility',e.target.checked?'visible':'none'));
+    document.getElementById('buildingColors').addEventListener('change', e => map.setPaintProperty(buildingLayer,'fill-extrusion-color',e.target.checked?['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building_colour'],['match',['get','class'],'commercial','#c9b8a4','industrial','#b9b7b1','public','#c4c9ce','residential','#d8cdbd','#c9bfb0'] ]:'#c9bfb0'));
+    document.getElementById('buildingNumbers').addEventListener('change', e => map.setLayoutProperty('local-building-numbers','visibility',e.target.checked?'visible':'none'));
     document.getElementById('roads').addEventListener('change', e => roadLayers.forEach(id => map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')));
   })();
   </script>
