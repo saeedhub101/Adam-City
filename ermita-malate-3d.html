@@ -356,7 +356,7 @@ async function addCommercialFacadeLayer(){
      commercialDiag('GLTF parse','SUCCESS');commercialDiag('Meshes',meshCount);commercialDiag('Materials',materialCount);
      commercialDiag('Local bounds (m)',size.x.toFixed(2)+' × '+size.y.toFixed(2)+' × '+size.z.toFixed(2));
      commercialDiag('Model state','Parsed and added to Three.js scene');
-     this.scene.add(this.model);commercialLoading=false;status.textContent='تم تحميل نموذج الواجهات التجارية؛ تم توسيط الكاميرا عليه للتحقق من ظهوره.';map.easeTo({center:[origin.longitude,origin.latitude],zoom:15.1,pitch:55,bearing:0,duration:900});map.triggerRepaint();
+     this.scene.add(this.model);commercialLoading=false;status.textContent='تم تحميل نموذج الواجهات التجارية؛ تم توسيط الكاميرا عليه للتحقق من ظهوره.';map.easeTo({center:[origin.longitude,origin.latitude],zoom:13.7,pitch:48,bearing:0,duration:700});map.triggerRepaint();
     },err=>{commercialLoading=false;commercialLayerAdded=false;toggle.checked=false;commercialDiag('GLTF parse','FAILED: '+(err.message||err));errorBox.style.display='block';errorBox.textContent='تعذر تحليل نموذج الواجهات التجارية: '+(err.message||err);});
    },
    render:function(gl,matrix){
@@ -365,7 +365,7 @@ async function addCommercialFacadeLayer(){
     const scale=mc.meterInMercatorCoordinateUnits();const m=new THREE.Matrix4().fromArray(matrix);
     const local=new THREE.Matrix4().makeTranslation(mc.x,mc.y,mc.z).scale(new THREE.Vector3(scale,-scale,scale));
     this.camera.projectionMatrix=m.multiply(local);this.camera.projectionMatrixInverse.copy(this.camera.projectionMatrix).invert();
-    this.renderer.resetState();this.renderer.render(this.scene,this.camera);
+    this.renderer.resetState();this.renderer.render(this.scene,this.camera);map.triggerRepaint();
    },
    onRemove:function(){if(this.renderer)this.renderer.dispose();}
   };
@@ -377,7 +377,7 @@ async function addCommercialFacadeLayer(){
  }
 }
 document.getElementById('zoomCommercialModel').onclick=()=>{
- map.easeTo({center:[120.9820416,14.5850152],zoom:15.1,pitch:55,bearing:0,duration:700});
+ map.easeTo({center:[120.9820416,14.5850152],zoom:13.7,pitch:48,bearing:0,duration:700});
  map.triggerRepaint();
 };
 document.getElementById('retryCommercialDiagnostic').onclick=async()=>{
