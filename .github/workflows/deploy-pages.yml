@@ -217,6 +217,8 @@ jobs:
           if [[ "$NEW_TILES" -gt 0 || "$REBUILD_FALLBACKS" -eq 1 ]]; then
             git add ermita/maps/sources/openfreemap/
           fi
+          # Persist the generated alignment file in main as well as publishing it, so the page never depends on a temporary CI-only asset.
+          git add ermita/3d/generated/facade-model-origin.json
           if ! git diff --cached --quiet; then
             git commit -m "Store generated building and ground fallback data"
             git push origin HEAD:main
