@@ -34,6 +34,9 @@ jobs:
           git sparse-checkout set --no-cone --stdin <<'EOF'
           /ermita-malate-3d.html
           /ermita/maps/sources/openfreemap/
+          /ermita/3d/exports/adam-city-complete.glb
+          /ermita/3d/exports/adam-city-complete-report.json
+          /ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           /scripts/import_openfreemap_ermita.py
           EOF
           git switch -C main FETCH_HEAD
@@ -144,6 +147,11 @@ jobs:
           # Publish the repository copies, whether reused or newly generated.
           cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/building-fallback.geojson
           cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/ground-fallback.geojson
+          mkdir -p site/ermita/3d/exports site/ermita/3d/terrain
+          cp ermita/3d/exports/adam-city-complete.glb site/ermita/3d/exports/adam-city-complete.glb
+          cp ermita/3d/terrain/ermita-copernicus-dem-cropped.tif site/ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
+          test -s site/ermita/3d/exports/adam-city-complete.glb
+          test -s site/ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           test -s site/ermita-malate-3d.html
           test -s site/ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
           test -s site/ermita/maps/sources/openfreemap/building-fallback.geojson
