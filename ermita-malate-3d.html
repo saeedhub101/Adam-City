@@ -34,6 +34,7 @@ button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1
 <label class="row"><input type="checkbox" id="osmAppearance"> OSM — ألوان ومواد الواجهات من الوسوم، دون تغيير شكل المبنى أو ارتفاعه</label>
 <label class="row"><input type="checkbox" id="facadeModel"> تفاصيل الواجهات العامة (نوافذ وأبواب)</label>
 <label class="row"><input type="checkbox" id="landmarkFacades"> عمارة مخصصة: المتحف الوطني (مطابقة PGH قيد التحقق)</label>
+<label class="row"><input type="checkbox" id="commercialFacades"> واجهات تجارية حقيقية: Robinsons + لوحات 7-Eleven وMcDonald’s</label>
 <label class="row"><input type="checkbox" id="terrainModel"> نموذج المدينة الكامل GLB (مبانٍ + طرق + تضاريس)</label>
 <label class="row"><input type="checkbox" id="terrain"> تضاريس DEM (نموذج Copernicus)</label>
 <label class="row"><input type="checkbox" id="numbers" checked> أرقام المباني</label></div>
@@ -67,6 +68,8 @@ const facadeModelUrl = new URL('./ermita/3d/generated/ermita-buildings-facade-de
 const facadeOriginUrl = new URL('./ermita/3d/generated/facade-model-origin.json', location.href).href;
 const landmarkModelUrl = new URL('./ermita/3d/landmarks/landmark-facade-details.glb', location.href).href;
 const landmarkOriginUrl = new URL('./ermita/3d/landmarks/landmark-facade-origin.json', location.href).href;
+const commercialModelUrl = new URL('./ermita/3d/commercial/commercial-facades.glb', location.href).href;
+const commercialOriginUrl = new URL('./ermita/3d/commercial/commercial-facades-origin.json', location.href).href;
 const demUrl = new URL('./ermita/3d/terrain/ermita-copernicus-dem-cropped.tif', location.href).href;
 const status = document.getElementById('status'), errorBox = document.getElementById('error');
 const localStyle = {
@@ -142,6 +145,7 @@ map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-l
 let firstError=false, modelLayerAdded=false, modelLoading=false, modelLayer=null;
 let facadeLayerAdded=false, facadeLoading=false, facadeLayer=null;
 let landmarkLayerAdded=false, landmarkLoading=false, landmarkLayer=null;
+let commercialLayerAdded=false, commercialLoading=false, commercialLayer=null;
 const toggleLayers=(ids,on)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')});
 const groups={
 buildings:['adam-local-buildings-3d'],osmAppearance:['adam-local-osm-building-info-labels'],ground:['adam-local-landcover','adam-local-landuse'],roads:['adam-local-road-casing','adam-local-roads','adam-local-roads-vector','adam-local-park-fill'],water:['adam-local-water-fill','adam-local-water-vector','adam-local-waterway','adam-local-waterway-vector'],
@@ -299,6 +303,60 @@ async function addLandmarkFacadeLayer(){
 document.getElementById('landmarkFacades').onchange=async e=>{
  if(e.target.checked)await addLandmarkFacadeLayer();
  else{if(map.getLayer('adam-landmark-facades'))map.removeLayer('adam-landmark-facades');landmarkLayerAdded=false;landmarkLayer=null;landmarkLoading=false;}
+};
+async function addCommercialFacadeLayer(){
+ if(commercialLoading || commercialLayerAdded)return;
+ commercialLoading=true;
+ const toggle=document.getElementById('commercialFacades');
+ status.textContent='جارٍ تحميل واجهات Robinsons ولوحات العلامات التجارية…';
+ errorBox.style.display='none';
+ try{
+  if(!window.THREE || !window.THREE.GLTFLoader)throw new Error('مكتبات Three.js / GLTFLoader لم تُحمّل');
+  const originResponse=await fetch(commercialOriginUrl,{cache:'no-store'});
+  if(!originResponse.ok)throw new Error('ملف محاذاة الواجهات التجارية غير متاح ('+originResponse.status+')');
+  const origin=await originResponse.json();
+  if(!Number.isFinite(origin.longitude)||!Number.isFinite(origin.latitude)||!Number.isFinite(origin.anchor_altitude_m))throw new Error('إحداثيات طبقة الواجهات التجارية غير صالحة');
+  const response=await fetch(commercialModelUrl,{cache:'no-store'});
+  if(!response.ok)throw new Error('ملف الواجهات التجارية غير متاح ('+response.status+')');
+  const buffer=await response.arrayBuffer();
+  if(buffer.byteLength<20)throw new Error('ملف الواجهات التجارية فارغ أو تالف');
+  const header=new DataView(buffer);
+  if(header.getUint32(0,true)!==0x46546c67 || header.getUint32(4,true)!==2 || header.getUint32(8,true)!==buffer.byteLength)throw new Error('فشل التحقق من ترويسة GLB');
+  const THREE=window.THREE;
+  commercialLayer={id:'adam-commercial-facades',type:'custom',renderingMode:'3d',
+   onAdd:function(map,gl){
+    this.camera=new THREE.Camera();this.scene=new THREE.Scene();
+    this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});this.renderer.autoClear=false;
+    this.scene.add(new THREE.AmbientLight(0xffffff,1.7));
+    const light=new THREE.DirectionalLight(0xffffff,1.1);light.position.set(-40,-50,100).normalize();this.scene.add(light);
+    new THREE.GLTFLoader().parse(buffer,new URL('.',commercialModelUrl).href,gltf=>{
+     this.model=gltf.scene;const bounds=new THREE.Box3().setFromObject(this.model);const size=bounds.getSize(new THREE.Vector3());
+     if(!Number.isFinite(size.x)||!Number.isFinite(size.y)||!Number.isFinite(size.z)||size.x<=0||size.y<=0||size.z<=0){
+      commercialLoading=false;commercialLayerAdded=false;toggle.checked=false;errorBox.style.display='block';errorBox.textContent='نموذج الواجهات التجارية لا يحتوي هندسة صالحة.';return;
+     }
+     this.scene.add(this.model);commercialLoading=false;status.textContent='تم تحميل تفاصيل Robinsons ولوحات صور 7-Eleven وMcDonald’s على واجهات المباني المطابقة.';map.triggerRepaint();
+    },err=>{commercialLoading=false;commercialLayerAdded=false;toggle.checked=false;errorBox.style.display='block';errorBox.textContent='تعذر تحليل نموذج الواجهات التجارية: '+(err.message||err);});
+   },
+   render:function(gl,matrix){
+    if(!this.model)return;
+    const mc=maplibregl.MercatorCoordinate.fromLngLat({lng:origin.longitude,lat:origin.latitude},origin.anchor_altitude_m);
+    const scale=mc.meterInMercatorCoordinateUnits();const m=new THREE.Matrix4().fromArray(matrix);
+    const local=new THREE.Matrix4().makeTranslation(mc.x,mc.y,mc.z).scale(new THREE.Vector3(scale,-scale,scale));
+    this.camera.projectionMatrix=m.multiply(local);this.camera.projectionMatrixInverse.copy(this.camera.projectionMatrix).invert();
+    this.renderer.resetState();this.renderer.render(this.scene,this.camera);
+   },
+   onRemove:function(){if(this.renderer)this.renderer.dispose();}
+  };
+  map.addLayer(commercialLayer);commercialLayerAdded=true;
+ }catch(e){
+  commercialLoading=false;commercialLayerAdded=false;commercialLayer=null;toggle.checked=false;
+  errorBox.style.display='block';errorBox.textContent='تعذر تحميل الواجهات التجارية: '+(e.message||e);
+  status.textContent='تعذر تحميل طبقة الواجهات التجارية؛ راجع رسالة الخطأ.';
+ }
+}
+document.getElementById('commercialFacades').onchange=async e=>{
+ if(e.target.checked)await addCommercialFacadeLayer();
+ else{if(map.getLayer('adam-commercial-facades'))map.removeLayer('adam-commercial-facades');commercialLayerAdded=false;commercialLayer=null;commercialLoading=false;}
 };
 
 document.getElementById('facadeModel').onchange=async e=>{
