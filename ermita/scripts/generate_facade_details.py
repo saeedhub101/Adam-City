@@ -48,6 +48,17 @@ def box_at(center, extents, angle, color):
     return mesh
 
 
+def pbr_material(color, *, metallic=0.0, roughness=0.7, alpha_mode="OPAQUE"):
+    return trimesh.visual.material.PBRMaterial(
+        name="Facade glass" if alpha_mode == "BLEND" else "Facade painted material",
+        baseColorFactor=color,
+        metallicFactor=metallic,
+        roughnessFactor=roughness,
+        alphaMode=alpha_mode,
+        doubleSided=True,
+    )
+
+
 def main():
     if not MAP_FILE.exists():
         raise FileNotFoundError(f"Missing {MAP_FILE}; run the OSM building-detail import first")
@@ -75,7 +86,9 @@ def main():
     if not prepared:
         raise RuntimeError("No valid building polygons available for facade generation")
     center = ((minx+maxx)/2, (miny+maxy)/2, maxz/2)
-    meshes = []
+    window_meshes = []
+    door_meshes = []
+    sign_meshes = []
     signage = []
     windows_count = doors_count = panels_count = 0
 
@@ -117,7 +130,7 @@ def main():
                     cy = a[1] + uy*along + ny*0.065 - center[1]
                     cz = z + wh/2 - center[2]
                     ww = min(1.25, max(0.55, usable/count*0.55))
-                    meshes.append(box_at((cx,cy,cz),(ww,0.10,wh),angle,[42,76,99,255]))
+                    window_meshes.append(box_at((cx,cy,cz),(ww,0.10,wh),angle,[100,170,198,205]))
                     windows_count += 1
             # Ground-floor door and a generic signboard. Real sign text is not fabricated.
             if length >= 7:
@@ -125,12 +138,12 @@ def main():
                 cx = a[0] + ux*along + nx*0.075 - center[0]
                 cy = a[1] + uy*along + ny*0.075 - center[1]
                 if height >= 2.4:
-                    meshes.append(box_at((cx,cy,0.95-center[2]),(0.95,0.12,1.9),angle,[83,65,48,255]))
+                    door_meshes.append(box_at((cx,cy,0.95-center[2]),(0.95,0.12,1.9),angle,[83,65,48,255]))
                     doors_count += 1
                 if name:
                     sx = a[0] + ux*along + nx*0.10 - center[0]
                     sy = a[1] + uy*along + ny*0.10 - center[1]
-                    meshes.append(box_at((sx,sy,2.25-center[2]),(min(3.2,max(1.4,len(str(name))*0.12)),0.14,0.48),angle,[190,158,83,255]))
+                    sign_meshes.append(box_at((sx,sy,2.25-center[2]),(min(3.2,max(1.4,len(str(name))*0.12)),0.14,0.48),angle,[190,158,83,255]))
                     panels_count += 1
         signage.append({
             "osm_feature_id": fid, "mapped_name_or_use": name,
@@ -140,10 +153,30 @@ def main():
             "source": "OpenStreetMap contributors; ODbL 1.0",
             "note": "Panel is a generic placeholder; name/use comes from OSM tags when present."
         })
-    if not meshes:
+    if not window_meshes and not door_meshes and not sign_meshes:
         raise RuntimeError("No facade details generated; inspect input footprints")
-    combined = trimesh.util.concatenate(meshes)
-    combined.export(OUT_GLB)
+
+    # Separate geometry groups preserve independent glTF materials for glass and opaque details.
+    scene = trimesh.Scene()
+    if window_meshes:
+        glass = trimesh.util.concatenate(window_meshes)
+        glass.visual = trimesh.visual.TextureVisuals(
+            material=pbr_material([100, 170, 198, 205], metallic=0.25, roughness=0.16, alpha_mode="BLEND")
+        )
+        scene.add_geometry(glass, geom_name="window_glass", node_name="window_glass")
+    if door_meshes:
+        doors = trimesh.util.concatenate(door_meshes)
+        doors.visual = trimesh.visual.TextureVisuals(
+            material=pbr_material([83, 65, 48, 255], metallic=0.0, roughness=0.78)
+        )
+        scene.add_geometry(doors, geom_name="doors", node_name="doors")
+    if sign_meshes:
+        signs = trimesh.util.concatenate(sign_meshes)
+        signs.visual = trimesh.visual.TextureVisuals(
+            material=pbr_material([190, 158, 83, 255], metallic=0.05, roughness=0.52)
+        )
+        scene.add_geometry(signs, geom_name="signboards", node_name="signboards")
+    scene.export(OUT_GLB)
     # Store the origin in the same run and from the exact polygons used by this GLB.
     # Never recompute it later from all footprint records, which can be a different set.
     longitude, latitude = TO_LONLAT(center[0], center[1])
