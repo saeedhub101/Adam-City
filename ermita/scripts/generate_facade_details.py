@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate procedural facade details for Ermita buildings from OSM footprints.
+"""Generate procedural facade details for Ermita buildings from original OSM building geometries.
 
 Windows, doors and sign panels are visualization placeholders, not surveyed architecture.
 Named sign panels are indexed in a CSV; this script does not invent logos or exact sign text.
@@ -13,7 +13,7 @@ from shapely.geometry import shape
 from shapely.ops import transform as geom_transform
 
 ROOT = Path(__file__).resolve().parents[2]
-MAP_FILE = ROOT / "ermita/maps/generated/ermita-building-footprints.geojson"
+MAP_FILE = ROOT / "ermita/maps/generated/ermita-building-details.geojson"
 OUT_DIR = ROOT / "ermita/3d/generated"
 OUT_GLB = OUT_DIR / "ermita-buildings-facade-details.glb"
 OUT_CSV = OUT_DIR / "facade-signage-index.csv"
@@ -50,7 +50,7 @@ def box_at(center, extents, angle, color):
 
 def main():
     if not MAP_FILE.exists():
-        raise FileNotFoundError(f"Missing {MAP_FILE}; run the OSM import first")
+        raise FileNotFoundError(f"Missing {MAP_FILE}; run the OSM building-detail import first")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     collection = json.loads(MAP_FILE.read_text(encoding="utf-8"))
     prepared = []
