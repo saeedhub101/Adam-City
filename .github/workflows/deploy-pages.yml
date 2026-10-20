@@ -87,12 +87,12 @@ jobs:
                   tags=props.get('tags') if isinstance(props.get('tags'),dict) else props
                   raw=tags.get('height'); height=None
                   if raw:
-                      m=re.search(r'\\d+(?:\\.\\d+)?',str(raw).replace(',','.'))
+                      m=re.search(r'\d+(?:\.\\d+)?',str(raw).replace(',','.'))
                       if m and 1.5 <= float(m.group()) <= 500: height=float(m.group())
                   if height is None:
                       raw=tags.get('building:levels') or tags.get('levels')
                       if raw:
-                          m=re.search(r'\\d+(?:\\.\\d+)?',str(raw))
+                          m=re.search(r'\d+(?:\.\\d+)?',str(raw))
                           if m and 1 <= float(m.group()) <= 150: height=float(m.group())*3.2
                   if height is None: height=9.6
                   for poly in polys:
@@ -120,7 +120,7 @@ jobs:
               'origin_method':'Recomputed from valid footprint polygons whose OSM IDs occur in the facade GLB index; uses the GLB generator height rules',
               'coordinate_system':'EPSG:3857 local meters, recentered at (longitude, latitude, anchor_altitude_m)'
           }
-          out.write_text(json.dumps(origin,indent=2)+'\\n',encoding='utf-8')
+          out.write_text(json.dumps(origin,indent=2)+'\n',encoding='utf-8')
           print('Facade GLB target origin:', json.dumps(origin,indent=2))
           PY
           python3 ermita/scripts/import_openfreemap_ermita.py
