@@ -243,10 +243,21 @@ def main():
         except Exception: pass
     store_features=[f for f in stores.get("features",[]) if re.search(r"7.?eleven|mcdonald",str(props(f).get("brand","")+" "+props(f).get("name","")),re.I)]
     if not building_features: raise RuntimeError("No valid building polygons in canonical GeoJSON")
-    # Robinsons is matched by the explicit OSM name, never by nearest-neighbour guess.
-    mall=next((f for f,g in building_features if fid(f)=="way/48894714" or str(tags(f).get("name","")).lower() in ("robinsons manila","robinsons place manila")),None)
-    if mall is None: raise RuntimeError("Could not identify the named Robinsons Manila footprint; refusing to guess")
+    # The named Robinsons retail-area polygon (way/48894714) is a landuse/site outline,
+    # not the actual building footprint. The mapped 7-level retail building way/130532101
+    # is the candidate footprint; validate its building tags and scale before using it.
+    mall=next((f for f,g in building_features
+        if fid(f)=="way/130532101"
+        and str(tags(f).get("building","")).lower()=="retail"
+        and str(tags(f).get("building:levels",""))=="7"
+        and str(tags(f).get("height",""))=="25"),None)
+    if mall is None:
+        raise RuntimeError("Could not verify Robinsons Manila's 7-level retail building footprint way/130532101; refusing to guess")
     mall_geom=geom_transform(TO_METERS,shape(mall["geometry"]))
+    mall_parts=polygon_parts(mall_geom)
+    mall_area=max((p.area for p in mall_parts),default=0.0)
+    if mall_area < 20000 or mall_area > 250000:
+        raise RuntimeError(f"Robinsons candidate footprint has implausible area {mall_area:.0f} m²; refusing to generate")
     # Origin near center of Ermita/Malate assets keeps all local coordinates numerically stable.
     all_bounds=[g.bounds for _,g in building_features]
     minx=min(b[0] for b in all_bounds); miny=min(b[1] for b in all_bounds)
@@ -277,7 +288,7 @@ def main():
         candidates=[]
         for bf,bgeom in building_features:
             bt=tags(bf)
-            if str(bt.get("name","")).lower() in ("robinsons manila","robinsons place manila"): continue
+            if fid(bf)=="way/130532101" or str(bt.get("name","")).lower() in ("robinsons manila","robinsons place manila"): continue
             # Prefer an explicitly branded building, then a nearby footprint containing the POI.
             dist=bgeom.distance(pt)
             if dist<=28:
