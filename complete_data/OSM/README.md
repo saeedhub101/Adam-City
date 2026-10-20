@@ -10,7 +10,8 @@ This folder is a dedicated inventory/collection area for the OpenStreetMap (OSM)
 - `data/buildings/` — building footprints, building/building-part details, and attribute tables.
 - `data/roads/` — mapped road/path centerlines and attributes.
 - `data/thematic/` — thematic exports (accessibility, businesses, environment, heritage, public services, transport, utilities, signs, street furniture, etc.). These are collected for inspection; their exact provenance and overlap with raw OSM still need to be checked before treating every row as exclusively OSM-derived.
-- `quality/` — building-height evidence report and table.
+- `quality/` — building-height evidence report/table and road-network export report.
+- `queries/` — Overpass query used to collect OSM roads, buildings, and tagged features.
 - `scripts/` — existing OSM import/export and height-audit scripts.
 - `manifest.json` — original path, copied path, byte size, blob SHA and purpose for each collected file.
 
