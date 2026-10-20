@@ -32,7 +32,7 @@ button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1
 <label class="row"><input type="checkbox" id="buildings" checked> مباني OpenFreeMap ثلاثية الأبعاد</label>
 <label class="row"><input type="checkbox" id="colors" checked> ألوان المباني من خصائص المصدر</label>
 <label class="row"><input type="checkbox" id="osmAppearance"> OSM — ألوان ومواد الواجهات من الوسوم، دون تغيير شكل المبنى أو ارتفاعه</label>
-<label class="row"><input type="checkbox" id="facadeModel"> تفاصيل الواجهات (نوافذ وأبواب ولافتات مولّدة)</label>
+<label class="row"><input type="checkbox" id="facadeModel" checked> تفاصيل الواجهات (نوافذ وأبواب ولافتات مولّدة)</label>
 <label class="row"><input type="checkbox" id="terrainModel"> نموذج المدينة الكامل GLB (مبانٍ + طرق + تضاريس)</label>
 <label class="row"><input type="checkbox" id="terrain"> تضاريس DEM (نموذج Copernicus)</label>
 <label class="row"><input type="checkbox" id="numbers" checked> أرقام المباني</label></div>
@@ -154,7 +154,7 @@ function applySourceVisibility(){
 }
 document.getElementById('baseMapSource').onchange=applySourceVisibility;
 document.getElementById('baseBuildingSource').onchange=applySourceVisibility;
-map.on('load',()=>{map.resize();applySourceVisibility();statusText();});
+map.on('load',()=>{map.resize();applySourceVisibility();statusText();if(document.getElementById('facadeModel').checked)addFacadeLayer();});
 map.on('idle',statusText);
 map.on('error',e=>{console.error(e.error||e);if(!firstError){firstError=true;errorBox.style.display='block';errorBox.textContent=(e.error&&e.error.message)||e.message||'تعذر تحميل مورد؛ افحص الرابط أو اتصال الشبكة.';}});
 const fly=(center,zoom=15.2)=>map.flyTo({center,zoom,pitch:57,bearing:-18,duration:1000});
