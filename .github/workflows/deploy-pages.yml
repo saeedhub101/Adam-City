@@ -3,144 +3,63 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
+
 concurrency:
   group: github-pages
   cancel-in-progress: true
+
 jobs:
   deploy:
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
-      - name: Fetch only deployment inputs from the 1.5 GB repository
+      - name: Fetch only the 3D page and its local vector tiles
         shell: bash
         run: |
           set -euo pipefail
           git init .
           git remote add origin https://github.com/saeedhub101/Adam-City.git
-          # Partial clone downloads Git objects lazily; sparse checkout materializes only required files.
           git -c protocol.version=2 fetch --depth=1 --filter=blob:none origin main
           git sparse-checkout init --no-cone
           git sparse-checkout set --no-cone --stdin <<'EOF'
-          /index.html
           /ermita-malate-3d.html
-          /scripts/import_openfreemap_ermita.py
-          /backup/ermita/maps/generated/ermita-building-footprints.geojson
-          /ermita/maps/generated/ermita-building-footprints.geojson
-          /ermita/maps/generated/ermita-road-network.geojson
-          /ermita/maps/generated/ermita-building-details.csv
-          /ermita/maps/qa/building-height-evidence.csv
-          /ermita/maps/sources/openfreemap/area-boundary.geojson
-          /ermita/maps/sources/openfreemap/source-metadata.json
-          /ermita/maps/sources/openfreemap/import-report.json
-          /ermita/maps/sources/openfreemap/README.md
-          /ermita/maps/sources/openfreemap/tile-index.json
-          /ermita/maps/sources/openfreemap/layers/housenumber.geojsonl
           /ermita/maps/sources/openfreemap/vector-tiles/
-          /ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson
-          /ermita/streets/street_segments.csv
-          /ermita/streets/street_names.csv
-          /ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
-          /ermita/3d/terrain/ermita-terrain-surface.glb
-          /ermita/3d/terrain/terrain-import-report.json
-          /ermita/3d/exports/adam-city-complete.glb
           EOF
           git switch -C main FETCH_HEAD
-      - name: Complete OpenFreeMap zoom 10-14 tiles with expanded viewport coverage
-        shell: bash
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile
-          # Import every published zoom level so the map remains populated when zooming out.
-          # Two-tile buffer at each level covers pitched views and the Ermita-Malate corridor.
-          MIN_ZOOM=10 MAX_ZOOM=14 TILE_BUFFER=2 python3 scripts/import_openfreemap_ermita.py
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/saeedhub101/Adam-City.git"
-          git add ermita/maps/sources/openfreemap/vector-tiles/ \
-            ermita/maps/sources/openfreemap/tile-index.json \
-            ermita/maps/sources/openfreemap/import-report.json \
-            ermita/maps/sources/openfreemap/source-metadata.json \
-            ermita/maps/sources/openfreemap/README.md
-          if ! git diff --cached --quiet; then
-            git commit -m "Add multi-zoom OpenFreeMap tiles for stable 3D preview"
-            git push origin main
-          else
-            echo "OpenFreeMap zoom-14 tile coverage is already complete."
-          fi
-      - name: Prepare 3D city and all browser assets
+
+      - name: Prepare the minimal static site
         shell: bash
         run: |
           set -euo pipefail
-          test -f index.html
-          test -f ermita-malate-3d.html
-          test -f backup/ermita/maps/generated/ermita-building-footprints.geojson
-          test -f ermita/maps/generated/ermita-road-network.geojson
-          test -f ermita/maps/sources/openfreemap/area-boundary.geojson
+          test -s ermita-malate-3d.html
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13697/7520.pbf
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13697/7521.pbf
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13698/7521.pbf
-          test -f ermita/maps/sources/openfreemap/layers/housenumber.geojsonl
-          test -f ermita/maps/generated/ermita-building-footprints.geojson
-          test -f ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson
-          test -f ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
-          test -f ermita/3d/terrain/ermita-terrain-surface.glb
-          test -f ermita/3d/exports/adam-city-complete.glb
-          mkdir -p site/ermita/maps/generated site/ermita/maps/sources/openfreemap/vector-tiles site/ermita/maps/sources/openfreemap/layers site/ermita/maps/sources/microsoft-satellite-buildings site/assets site/ermita/streets site/ermita/maps/qa
-          # Publish basemap-derived footprints separately; keep the preserved OSM snapshot untouched.
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          src = Path('ermita/maps/generated/ermita-building-footprints.geojson')
-          dst = Path('site/ermita/maps/sources/openfreemap/layers/building.geojsonl')
-          data = json.loads(src.read_text(encoding='utf-8'))
-          features = data.get('features', [])
-          with dst.open('w', encoding='utf-8') as f:
-              for feature in features:
-                  f.write(json.dumps(feature, separators=(',', ':')) + '\n')
-          print(f'Prepared {len(features)} OpenFreeMap/OpenMapTiles building features')
-          PY
-          cp index.html site/index.html
+          mkdir -p site/ermita/maps/sources/openfreemap/vector-tiles
           cp ermita-malate-3d.html site/ermita-malate-3d.html
-          cp backup/ermita/maps/generated/ermita-building-footprints.geojson site/ermita/maps/generated/ermita-osm-building-footprints.geojson
-          cp ermita/maps/generated/ermita-road-network.geojson site/ermita/maps/generated/
-          cp ermita/maps/sources/openfreemap/area-boundary.geojson site/ermita/maps/sources/openfreemap/
-          cp ermita/maps/sources/openfreemap/source-metadata.json site/ermita/maps/sources/openfreemap/
-          cp ermita/maps/sources/openfreemap/tile-index.json site/ermita/maps/sources/openfreemap/
-          # The standalone 3D page reads the original local PBF vector tiles; publish them too.
           cp -a ermita/maps/sources/openfreemap/vector-tiles/. site/ermita/maps/sources/openfreemap/vector-tiles/
-          test -s site/ermita/maps/sources/openfreemap/vector-tiles/14/13697/7520.pbf
-          test -s site/ermita/maps/sources/openfreemap/vector-tiles/14/13697/7521.pbf
-          test -s site/ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
-          test -s site/ermita/maps/sources/openfreemap/vector-tiles/14/13698/7521.pbf
-          echo "Verified local building vector tiles in the published site."
-          cp ermita/maps/sources/openfreemap/layers/housenumber.geojsonl site/ermita/maps/sources/openfreemap/layers/
-          # building.geojsonl was generated above from the basemap-derived footprint collection.
-          cp ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson site/ermita/maps/sources/microsoft-satellite-buildings/
-          cp ermita/streets/street_segments.csv ermita/streets/street_names.csv site/ermita/streets/
-          cp ermita/maps/generated/ermita-building-details.csv site/ermita/maps/generated/
-          cp ermita/maps/qa/building-height-evidence.csv site/ermita/maps/qa/
-          cp ermita/3d/terrain/ermita-copernicus-dem-cropped.tif site/assets/
-          cp ermita/3d/terrain/ermita-terrain-surface.glb site/assets/
-          cp ermita/3d/exports/adam-city-complete.glb site/assets/
-          cp ermita/3d/terrain/terrain-import-report.json site/assets/
-          echo "Prepared assets:"
+          # Keep the repository's root index.html deleted; publish a tiny redirect only in the artifact.
+          printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=ermita-malate-3d.html"><title>ADAM CITY</title><a href="ermita-malate-3d.html">Open ADAM CITY 3D preview</a></html>' > site/index.html
+          echo "Published files:"
           du -sh site
-          find site -type f -printf '%p %s bytes\\n' | sort
+          find site -type f -name '*.pbf' | wc -l
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-      - name: Upload map and data artifact
-        uses: actions/upload-pages-artifact@v3
+
+      - name: Upload map artifact
+        uses: actions/upload-pages-artifact@v4
         with:
           path: site
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
