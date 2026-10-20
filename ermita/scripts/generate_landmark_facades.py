@@ -150,14 +150,10 @@ def main():
         raise FileNotFoundError(MAP_FILE)
     data=json.loads(MAP_FILE.read_text(encoding='utf-8'))
     features=data.get('features',[])
-    pgh_feature=next((f for f in features if (f.get('properties') or {}).get('osm_feature_id')=='way/16554344'),None)
-    if not pgh_feature:
-        raise RuntimeError('PGH candidate way/16554344 is absent from the committed building data')
     museum=geom_transform(TO_METERS,museum_polygon())
-    pgh=geom_transform(TO_METERS,shape(pgh_feature['geometry']))
-    # The PGH feature is a plausible historic-hospital candidate, not a verified Cancer Institute match.
-    geoms=[('relation/61326',museum,24.0,{'stone':[222,216,202,255],'trim':[197,185,164,255],'roof':[126,80,66,255]}),
-           ('way/16554344',pgh,9.0,{'stone':[190,183,190,255],'trim':[218,211,203,255],'roof':[130,83,68,255]})]
+    # Do not place PGH details on the nearby unnamed 133 x 187 m hospital polygon:
+    # it is not a verified Cancer Institute footprint and may cover several structures.
+    geoms=[('relation/61326',museum,24.0,{'stone':[222,216,202,255],'trim':[197,185,164,255],'roof':[126,80,66,255]})]
     minx=min(g.bounds[0] for _,g,_,_ in geoms); miny=min(g.bounds[1] for _,g,_,_ in geoms)
     maxx=max(g.bounds[2] for _,g,_,_ in geoms); maxy=max(g.bounds[3] for _,g,_,_ in geoms)
     maxz=max(h for _,_,h,_ in geoms)
@@ -180,11 +176,12 @@ def main():
     OUT_ORIGIN.write_text(json.dumps({'longitude':lon,'latitude':lat,'anchor_altitude_m':origin[2],
       'coordinate_system':'EPSG:3857 local meters recentered at longitude/latitude/anchor altitude',
       'origin_method':'Computed from the exact polygons used to generate the landmark GLB'},indent=2)+'\n',encoding='utf-8')
-    report={'status':'success_with_identity_warning','source':'OpenStreetMap relation 61326 plus candidate way/16554344',
+    report={'status':'museum_model_generated_pgh_footprint_pending','source':'OpenStreetMap relation 61326',
       'output_glb':str(OUT_GLB.relative_to(ROOT)),'output_origin':str(OUT_ORIGIN.relative_to(ROOT)),
       'glb_bytes':OUT_GLB.stat().st_size,'targets':generated,
+      'pending_targets':[{'name':'PGH Cancer Institute','reference_image':'ermita/buildings/reference_photos/PGH-Cancer-Institute-Building.jpg','status':'waiting_for_verified_building_footprint','candidate_rejected':'way/16554344 is an unnamed 133 x 187 m polygon and is not safe to treat as the Cancer Institute'}],
       'limitations':['Facade details are stylized architectural overlays, not photogrammetry or surveyed dimensions.',
-      'PGH Cancer Institute footprint identity is not yet verified; its facade must be checked visually before treating the overlay as final.',
+      'PGH is intentionally excluded until its exact footprint is verified; no guessed facade is attached to a nearby building.',
       'Base building mass remains supplied by the existing map layer.']}
     OUT_REPORT.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     print(json.dumps(report,indent=2))
