@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Replace Ermita's local OSM building footprints with OpenFreeMap Basemap footprints.
+"""Import OpenFreeMap building footprints as a separate dataset; never overwrite OSM geometry.
 
-Basemap tile geometry and render_height/render_min_height are authoritative. OSM tags are
-kept only as supplementary attributes for a spatially matched feature. The output is
-stored in the repository so the map does not need to rediscover these tiles every visit.
+Basemap geometry and render heights remain explicitly identified as OpenFreeMap/OpenMapTiles
+source data. Any spatially matched OSM attributes are supplementary and carry match-distance
+metadata; the original OSM snapshot is read-only.
 """
 import json
 import math
@@ -17,7 +17,8 @@ from shapely.geometry import shape, mapping
 from shapely.ops import unary_union
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT = os.path.join(REPO, "ermita/maps/generated/ermita-building-footprints.geojson")
+OUT = os.path.join(REPO, "ermita/maps/external/ermita-basemap-building-footprints.geojson")
+OSM_INPUT = os.path.join(REPO, "backup/ermita/maps/generated/ermita-building-footprints.geojson")
 # Ermita + Malate working area
 WEST, SOUTH, EAST, NORTH = 120.965, 14.555, 121.005, 14.605
 ZOOM = 14
@@ -119,7 +120,7 @@ def main():
             continue
         p = props_by_key[key]
         basemap.append({"geometry": geom, "properties": p, "center": center(geom), "key": key})
-    with open(OUT, "r", encoding="utf-8") as f:
+    with open(OSM_INPUT, "r", encoding="utf-8") as f:
         old = json.load(f)
     osm_features = old.get("features", [])
     osm_polys = []
@@ -200,11 +201,12 @@ def main():
         "osm_attribute_matches": matched,
         "features": output
     }
+    os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, separators=(",", ":"))
         f.write("\n")
     print(f"Fetched {fetched} tiles at z={z}")
-    print(f"Replaced OSM footprints with {len(output)} Basemap building geometries; retained OSM attributes on {matched} spatial matches.")
+    print(f"Wrote {len(output)} separate Basemap building geometries; retained supplementary OSM attributes on {matched} spatial matches. Original OSM footprints were not modified.")
     print(f"Wrote {OUT} ({os.path.getsize(OUT):,} bytes)")
 
 if __name__ == "__main__":
