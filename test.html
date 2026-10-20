@@ -61,10 +61,13 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
    map.addSource(sourceId,{type:'geojson',data:resolvedUrl});
    const ids=[];
    if(kind==='buildings'){
-     const id=sourceId+'-3d';map.addLayer({id,type:'fill-extrusion',source:sourceId,layout:{visibility:'none'},paint:{
-       'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],color||'#c8bca9'],
-       'fill-extrusion-height':['max',3,['case',['>', ['to-number',['get','height'],0],0],['to-number',['get','height'],0],['>', ['to-number',['get','building:levels'],0],0],['*',['to-number',['get','building:levels'],0],3.15],['>', ['to-number',['get','levels'],0],0],['*',['to-number',['get','levels'],0],3.15],5]],
-       'fill-extrusion-base':['max',0,['coalesce',['to-number',['get','min_height'],0],0]],'fill-extrusion-opacity':0.92,'fill-extrusion-vertical-gradient':true}});ids.push(id);
+     // OSM exports retain the original tags inside properties.tags; support both nested and flattened schemas.
+     const tag=(name)=>['coalesce',['get',name],['get',name,['get','tags']]];
+     const height=tag('height'), levels=['coalesce',['get','building:levels'],['get','building:levels',['get','tags']],['get','levels'],['get','levels',['get','tags']]];
+     const id=sourceId+'-3d';map.addLayer({id,type:'fill-extrusion',source:sourceId,filter:['==',['geometry-type'],'Polygon'],layout:{visibility:'none'},paint:{
+       'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building:colour',['get','tags']],color||'#c8bca9'],
+       'fill-extrusion-height':['max',3,['case',['>', ['to-number',height,0],0],['to-number',height,0],['>', ['to-number',levels,0],0],['*',['to-number',levels,0],3.15],5]],
+       'fill-extrusion-base':['max',0,['to-number',tag('min_height'),0]],'fill-extrusion-opacity':0.92,'fill-extrusion-vertical-gradient':true}});ids.push(id);
    }else{
      const fill=sourceId+'-fill',line=sourceId+'-line',circle=sourceId+'-point';
      map.addLayer({id:fill,type:'fill',source:sourceId,layout:{visibility:'none'},paint:{'fill-color':color||'#5aa99b','fill-opacity':0.24,'fill-outline-color':color||'#5aa99b'}});ids.push(fill);
@@ -74,7 +77,7 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
    groups[key].push(...ids);
  }
  function bind(key){const el=document.getElementById('osm-'+key);el.addEventListener('change',()=>{setGroup(groups[key],el.checked);if(key==='raw'||key==='tags')status.textContent=key==='raw'?'raw يحتوي بيانات المصدر الخام، ولا يُرسم مباشرة على الخريطة.':'tags عبارة عن جداول وسوم CSV، ولا تُرسم مباشرة كمعالم جغرافية.';});}
- map.on('error',e=>{if(e.error){const msg='خطأ في تحميل طبقة: '+e.error.message;status.textContent=msg;errorBox.style.display='block';errorBox.textContent=msg+' — راجع مسار ملف GeoJSON أو استجابة GitHub Pages.';}});
+ map.on('error',e=>{if(e.error){const source=e.sourceId?' | source='+e.sourceId:'';const msg='خطأ في تحميل طبقة: '+e.error.message+source;status.textContent=msg;errorBox.style.display='block';errorBox.textContent=msg+' — راجع مسار GeoJSON أو استجابة GitHub Pages.';console.error('ADAM CITY map error',e);}});
  map.on('load',()=>{
   try{
    addSourceLayer('features','osm-features-src','complete_data/OSM/data/features/ermita-features.geojson','map','#8ab5c5');
