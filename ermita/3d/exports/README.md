@@ -6,7 +6,7 @@
 
 Run `python ermita/scripts/export_preview_to_glb.py` after installing `numpy rasterio trimesh shapely pyproj mapbox-earcut`.
 
-The workflow validates the GLB, checks its size against GitHub's ordinary single-file limit, and commits the resulting `.glb` plus a JSON report to `main` when it is within the limit.
+The existing committed GLB and report are durable repository assets. The current tracked `.github/workflows/` tree has no dedicated export workflow, so do not assume the manual script will automatically commit outputs; inspect and commit validated results explicitly.
 
 ## What is represented
 

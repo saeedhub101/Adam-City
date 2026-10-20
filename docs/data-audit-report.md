@@ -19,7 +19,7 @@ This also explains a misleading UI state: the prior page implementation loaded t
 - The active file's coordinate bounds are `[120.959129, 14.540718, 121.025734, 14.626441]`, which extend well beyond the stated working AOI `[120.965, 14.555, 121.005, 14.605]`. The importer is not clipping the result to that AOI.
 - The OSM file in `backup/` has bounds `[120.9711465, 14.5736304, 120.9929367, 14.5963994]`. It is an Ermita-centred extract and does not span the full planned Malate/Ermita working rectangle.
 
-The repository's `docs/data-asset-policy.md` says OSM is the active footprint source and datasets must not be silently replaced. The current import script and workflow contradict that policy: `ermita/scripts/import_basemap_buildings.py` writes directly to the active OSM filename, and `.github/workflows/import-basemap-buildings.yml` commits the replacement to `main`.
+The earlier version of `docs/data-asset-policy.md` described OSM as the active footprint source. The importer `ermita/scripts/import_basemap_buildings.py` writes directly to the active generated filename; the current tracked workflow tree no longer contains the previously documented `import-basemap-buildings.yml`. Treat running the importer as a potentially destructive source replacement until its output path is separated.
 
 ## 1. Building data: actual file-level comparison
 
