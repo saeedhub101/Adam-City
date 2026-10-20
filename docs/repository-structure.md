@@ -14,7 +14,7 @@ This guide records the intended organization while preserving paths referenced b
 | `ermita/3d/terrain/` | DEM and terrain assets | Preserve source resolution, vertical units, and whether a surface is DSM or bare-earth DTM. |
 | `ermita/3d/generated/` and `ermita/3d/exports/` | Generated models and preview exports | Keep derived assets distinct from original source data. |
 | `ermita/scripts/` | Ermita-specific processing scripts | Use descriptive `verb_subject.py` names and repository-relative paths. |
-| `scripts/` | Root-level importers required by the active deployment workflow | Do not move until workflow references and importer paths are updated together. |
+| `ermita/scripts/` | Ermita-specific importers, reconciliation tools, and generation scripts | Keep repository-root path resolution correct when moving scripts. |
 | `kartaview/` | KartaView imagery, metadata, indexes, and facade-review artifacts | Retain this path until CSV records and scripts that use root-relative `kartaview/...` paths are migrated together. |
 | `backup/` | Historical/original snapshots and recoverable copies | Treat as read-only except for explicit restoration/migration. A backup is not automatically the active dataset. |
 | `backup/checkpoints/` | Historical page snapshots saved before earlier changes | Reference-only archive; not the active deployed page. |
@@ -49,7 +49,7 @@ This is the initial normalization guide, not a claim that every legacy filename 
 - `ermita/`: area-scoped project data, including maps, sources, generated datasets, QA, terrain, 3D exports, research and area-specific scripts.
 - `kartaview/`: KartaView image archive and review/metadata tables. This remains a top-level directory for now because CSV/JSON metadata, image review pages and processing scripts refer to paths under `kartaview/`; moving the 1,300+ assets without updating every consumer would break those links.
 - `backup/`: retained historical copies and rollback assets, including the checkpoint pages.
-- `scripts/`: root-level importers directly called by the Pages workflow.
+- `ermita/scripts/`: area-specific importers; the Pages workflow calls `ermita/scripts/import_openfreemap_ermita.py`.
 - `ermita-malate-3d.html`, `.nojekyll`, `.github/workflows/`: deployment entry point and GitHub Pages configuration; paths are part of the active deployment contract.
 
 The repository tree was checked recursively and GitHub reported `truncated: false`. The tracked file count remained 2,000 after the documentation move. No project data files were intentionally deleted in this organization pass.
@@ -57,7 +57,7 @@ The repository tree was checked recursively and GitHub reported `truncated: fals
 
 ## Importer script placement
 
-The four Ermita-specific importers are organized under `ermita/scripts/`. The Pages workflow sparse-checkout and invocation use `ermita/scripts/import_openfreemap_ermita.py`. Moved scripts that resolve files relative to their own location were adjusted to keep repository-root paths stable.
+The four relocated importers live under `ermita/scripts/`. The Pages workflow sparse-checkout and invocation use `ermita/scripts/import_openfreemap_ermita.py`. Repository-root path resolution was adjusted in moved scripts. Shared surface textures live in `ermita/assets/textures/`, with the usage guide at `ermita/assets/README.md`.
 
 
 ## Asset organization update

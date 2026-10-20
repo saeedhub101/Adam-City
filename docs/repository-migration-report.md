@@ -56,4 +56,9 @@ A full path migration should be done as a single planned operation: build an old
 
 ## Shared texture consolidation (2026-10-20)
 
-Moved the asphalt, terrazzo sidewalk, painted masonry, and courtyard surface images from `ermita/buildings/` into `ermita/assets/textures/`. Updated the building asset usage guide and `ermita/3d/real-building-models.json`. Verified all four images exist at their new paths, none remain at the old paths, and the repository still contains 2,000 tracked files. Historical checkpoint pages under `backup/` were intentionally left untouched, as requested.
+Moved the asphalt, terrazzo sidewalk, painted masonry, and courtyard surface images from `ermita/buildings/` into `ermita/assets/textures/`. Updated `ermita/assets/README.md` and `ermita/3d/real-building-models.json`. Verified all four images exist at their new paths, none remain at the old paths, and the repository still contains 2,000 tracked files. Historical checkpoint pages under `backup/` were intentionally left untouched, as requested.
+
+
+## Final layout cleanup (2026-10-20)
+
+Moved the shared-asset usage guide from `ermita/buildings/ASSET_USAGE.md` to `ermita/assets/README.md`, corrected stale references to a non-existent `ermita/maps/preview.html`, and updated the Ermita overview and repository structure guide to reflect the active root preview page and current script locations. The `kartaview/` and `backup/` trees were intentionally excluded from this work as requested.

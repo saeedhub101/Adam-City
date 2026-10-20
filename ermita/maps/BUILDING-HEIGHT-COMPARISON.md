@@ -16,7 +16,7 @@ OSM data source: OpenStreetMap contributors (ODbL). This is a local-tag audit an
 
 ## Shared height policy
 
-The local OSM extrusion in `ermita/maps/preview.html` now follows the same fallback sequence used by OpenMapTiles building rendering:
+The local OSM extrusion in the active preview `../../ermita-malate-3d.html` follows the same fallback sequence used by OpenMapTiles building rendering:
 
 1. Use the tagged `height` when available.
 2. Otherwise use `building:levels × 3.66 m`.

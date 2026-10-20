@@ -2,7 +2,7 @@
 
 **Scope:** Ermita, Manila, Philippines, with extra-detailed coverage of Rizal Park (Luneta).
 
-**Goal:** Build a broad, source-traceable collection of map features and place information. This is a data project, not an application or website. No game or map viewer is being built at this stage.
+**Goal:** Build a broad, source-traceable collection of map features and place information. The repository contains both the source-traceable geographic data collection and the active 3D preview page. The preview is a separate consumer of selected committed datasets, not a replacement for the source archive.
 
 ## Coverage targets
 
@@ -41,8 +41,8 @@ OpenStreetMap-derived data must be credited to OpenStreetMap contributors and co
 
 ## Repository layout
 
-- `assets/textures/` — shared reusable surface materials, including road, sidewalk, courtyard, and façade texture maps.
+- `assets/` — shared reusable materials and their catalog.
 - `buildings/` — building-specific model files, building inventory, and reference photography.
 - `3d/` — city model outputs, terrain products, and 3D source/catalog metadata.
 - `maps/` — geographic source data, derived layers, external datasets, and QA registers.
-- `scripts/` — importers, reconciliation tools, and geometry/model generation utilities.
+- `scripts/` — area-specific importers, reconciliation tools, and geometry/model generation utilities.
