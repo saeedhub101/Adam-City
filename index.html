@@ -90,7 +90,7 @@ map.on('load',async()=>{
   const d=Object.fromEntries(pairs);
   // OpenFreeMap/OpenMapTiles footprints are published as a separate local GeoJSONL overlay.
   // Publish the original OSM polygons separately from the newer OpenMapTiles-derived footprints.
-  d.buildings.features=d.buildings.features.filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&f.properties?.tags?.building);
+  d.buildings.features=d.buildings.features.filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&(f.properties?.tags?.building||f.properties?.building));
   // Transfer imported OpenFreeMap address points onto their containing building polygon, so numbers render on buildings, never as standalone markers.
   function inRing(point,ring){let inside=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const a=ring[i],b=ring[j];if(((a[1]>point[1])!==(b[1]>point[1]))&&(point[0]<(b[0]-a[0])*(point[1]-a[1])/((b[1]-a[1])||1e-12)+a[0]))inside=!inside}return inside}
   function contains(geom,p){const polys=geom.type==='Polygon'?[geom.coordinates]:geom.coordinates;return polys.some(poly=>poly.length&&inRing(p,poly[0])&&!poly.slice(1).some(r=>inRing(p,r)))}
@@ -103,13 +103,15 @@ map.on('load',async()=>{
   // z13 includes generalized block footprints with null render_height; mixing them with z14
   // creates duplicate/flat buildings. Use the source's most detailed published zoom and
   // keep only one feature per source ID, excluding outline-only features marked hide_3d.
+  const ofmPolygons=d.openfreemapBuildings.filter(f=>f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type)&&!(f.properties?.hide_3d===true||f.properties?.hide_3d===1||f.properties?.hide_3d==='true'));
+  // The Pages deploy step currently builds this GeoJSONL from a GeoJSON collection, so
+  // many deployed records have no _source.tile.z metadata. Only apply the z14 preference
+  // when tile zoom metadata actually exists; otherwise keep the available source polygons.
+  const hasTileZoom=ofmPolygons.some(f=>Number.isFinite(Number(f._source?.tile?.z)));
+  const ofmCandidates=hasTileZoom?ofmPolygons.filter(f=>Number(f._source?.tile?.z)===14):ofmPolygons;
   const ofmById=new Map();
-  for(const f of d.openfreemapBuildings){
-    if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
-    const tileZoom=Number(f._source?.tile?.z);
-    if(tileZoom!==14)continue;
-    if(f.properties?.hide_3d===true||f.properties?.hide_3d===1||f.properties?.hide_3d==='true')continue;
-    const id=f.id??f.properties?.osm_id;
+  for(const f of ofmCandidates){
+    const id=f.id??f.properties?.osm_id??f.properties?.osm_feature_id;
     const key=id==null?JSON.stringify(f.geometry.coordinates):String(id);
     if(!ofmById.has(key))ofmById.set(key,f);
   }
