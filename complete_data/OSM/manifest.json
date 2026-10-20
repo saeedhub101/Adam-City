@@ -48,10 +48,10 @@
     },
     {
       "source_path": "ermita/maps/generated/ermita-building_details.csv",
-      "copied_path": "complete_data/OSM/data/buildings/ermita-building_details-legacy.csv",
+      "copied_path": "complete_data/OSM/data/buildings/osm-building-details.csv",
       "size_bytes": 430871,
       "blob_sha": "8ec2323dbc6dcda2b2fb46616dfcbabc6259cab9",
-      "description": "Legacy duplicate/variant of building details CSV; preserved separately"
+      "description": "OpenStreetMap feature details table"
     },
     {
       "source_path": "ermita/maps/generated/ermita-road-network.geojson",
