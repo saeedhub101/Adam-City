@@ -5,18 +5,21 @@
   "output_glb": "ermita/3d/generated/ermita-buildings-facade-details.glb",
   "output_signage_index": "ermita/3d/generated/facade-signage-index.csv",
   "building_polygon_parts": 1468,
-  "glb_bytes": 58366312,
+  "glb_bytes": 88929272,
   "model_center_epsg3857_m": {
     "x": 13467659.266042639,
     "y": 1641420.5583208972,
     "z": 115.0
   },
-  "window_panels": 234990,
+  "window_panels": 200626,
+  "window_frames": 200626,
+  "window_sills": 200626,
+  "balcony_parts": 1200,
   "door_placeholders": 6390,
   "named_signboard_placeholders": 1802,
   "placement": "EPSG:3857 meters; recentered using the same building extent as the extrusion model",
   "limitations": [
-    "Windows, doors and signboards are procedural placeholders, not measured architectural features.",
+    "Windows, frames, sills, balconies, doors and signboards are procedural visual details, not surveyed architectural features.",
     "Floor counts are estimated if OSM building:levels is absent.",
     "Signboard names are drawn from available OSM name/brand/shop/amenity tags; actual typography, logos, colors and wording are not reconstructed.",
     "No facade photographs, photogrammetry, or street-level imagery are included."
