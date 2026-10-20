@@ -176,13 +176,34 @@ function applyBuildingAppearance(){
  toggleLayers(groups.osmAppearance,osmOn);
 }
 function applyFacadeBuildingHighlight(){
- const highlightOn=document.getElementById('facadeModel').checked;
- const colorsOn=document.getElementById('colors').checked;
- const osmOn=document.getElementById('osmAppearance').checked;
- const color=highlightOn?'#20d65a':(colorsOn?(osmOn?osmAppearanceColor:defaultBuildingColor):'#c9bfb0');
- // Highlight only the repository's local building layer, which is the layer
- // derived from the footprints used to generate the facade-detail model.
- if(map.getLayer('adam-local-buildings-3d'))map.setPaintProperty('adam-local-buildings-3d','fill-extrusion-color',color);
+ // Never recolor the whole building layer. Only show the separate target-footprint
+ // overlay built from the exact OSM feature IDs listed by the facade generator.
+ const on=document.getElementById('facadeModel').checked;
+ if(map.getLayer('adam-facade-target-highlight')) {
+  map.setLayoutProperty('adam-facade-target-highlight','visibility',on?'visible':'none');
+ }
+}
+async function loadFacadeTargetHighlights(){
+ if(map.getSource('adam-facade-targets')) return;
+ const csvUrl=new URL('./ermita/3d/generated/facade-signage-index.csv',location.href).href;
+ const response=await fetch(csvUrl,{cache:'no-store'});
+ if(!response.ok)throw new Error('فهرس مباني الواجهات غير متاح ('+response.status+')');
+ const lines=(await response.text()).trim().split(/\\r?\\n/);
+ const ids=[...new Set(lines.slice(1).map(line=>line.split(',')[0].trim()).filter(id=>/^(way|relation|node)\\//.test(id)))];
+ if(!ids.length)throw new Error('لم توجد معرفات مبانٍ في فهرس الواجهات');
+ map.addLayer({
+  id:'adam-facade-target-highlight',type:'fill-extrusion',source:'osmBuildingDetails',
+  filter:['all',['==',['geometry-type'],'Polygon'],['in',['get','osm_feature_id'],['literal',ids]]],
+  paint:{
+   'fill-extrusion-color':'#20d65a',
+   'fill-extrusion-height':['max',3,['case',
+    ['>', ['to-number',['get','height',['get','tags']],0],0],['to-number',['get','height',['get','tags']],0],
+    ['>', ['to-number',['get','building:levels',['get','tags']],0],0],['*',['to-number',['get','building:levels',['get','tags']],0],3.2],
+    ['>', ['to-number',['get','levels',['get','tags']],0],0],['*',['to-number',['get','levels',['get','tags']],0],3.2],9.6]],
+   'fill-extrusion-base':0,'fill-extrusion-opacity':0.98,'fill-extrusion-vertical-gradient':false
+  },
+  layout:{visibility:document.getElementById('facadeModel').checked?'visible':'none'}
+ });
 }
 document.getElementById('colors').onchange=applyBuildingAppearance;
 document.getElementById('osmAppearance').onchange=applyBuildingAppearance;
@@ -195,6 +216,8 @@ status.textContent='جارٍ تحميل نوافذ مولّدة من مضلعا�
 errorBox.style.display='none';
 try{
  if(!window.THREE || !window.THREE.GLTFLoader)throw new Error('مكتبات Three.js / GLTFLoader لم تُحمّل');
+ await loadFacadeTargetHighlights();
+ applyFacadeBuildingHighlight();
  const originResponse=await fetch(facadeOriginUrl,{cache:'no-store'});
  if(!originResponse.ok)throw new Error('ملف محاذاة نموذج الواجهات غير موجود ('+originResponse.status+'): '+facadeOriginUrl);
  const origin=await originResponse.json();
