@@ -23,7 +23,7 @@ button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1
 <summary>ADAM CITY · Ermita + Malate <span style="font-weight:400;color:var(--muted)">الطبقات</span></summary>
 <div class="panel-content">
 <div class="sub">طبقات من ملفات المستودع المحلية. الارتفاعات/التفاصيل التقديرية موضحة في خصائص المصدر؛ بيانات OpenFreeMap القصوى عند مستوى التكبير 14.</div>
-<div class="buttons"><button id="ermita">Ermita</button><button id="malate">Malate</button><button id="both">المنطقتان</button><button id="reset">إعادة زاوية الكاميرا</button><button id="nativeBasemap">الخريطة الأصلية من المصدر</button><button id="satelliteBasemap">Satellite</button></div><div class="sub" id="basemapStatus">خريطة الأساس: المصدر الأصلي · طبقات المستودع تبقى مستقلة.</div>
+<div class="buttons"><button id="ermita">Ermita</button><button id="malate">Malate</button><button id="both">المنطقتان</button><button id="reset">إعادة زاوية الكاميرا</button></div>
 <div class="group"><div class="group-title">المباني والتضاريس ثلاثية الأبعاد</div>
 <label class="row"><input type="checkbox" id="buildings" checked> مباني OpenFreeMap ثلاثية الأبعاد</label>
 <label class="row"><input type="checkbox" id="colors" checked> ألوان المباني من خصائص المصدر</label>
@@ -58,8 +58,6 @@ const groundUrl = base + 'ground-fallback.geojson';
 const modelUrl = new URL('./ermita/3d/exports/adam-city-complete.glb', location.href).href;
 const demUrl = new URL('./ermita/3d/terrain/ermita-copernicus-dem-cropped.tif', location.href).href;
 const status = document.getElementById('status'), errorBox = document.getElementById('error');
-const nativeStyleUrl='https://tiles.openfreemap.org/styles/liberty';
-const satelliteStyle={version:8,sources:{satellite:{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,maxzoom:19,attribution:'Imagery © Esri, Maxar, Earthstar Geographics, and the GIS User Community'}},layers:[{id:'satellite-imagery',type:'raster',source:'satellite'}]};
 const map = new maplibregl.Map({container:'map',center:[120.9821,14.5848],zoom:15,pitch:57,bearing:-18,antialias:true,style:{
 version:8,glyphs:'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',
 sources:{
@@ -95,22 +93,18 @@ layers:[
 {id:'mountain-peak-labels',type:'symbol',source:'tiles','source-layer':'mountain_peak',layout:{'text-field':['coalesce',['get','name:en'],['get','name']],'text-font':['Open Sans Regular'],'text-size':11},paint:{'text-color':'#465342','text-halo-color':'#fff','text-halo-width':1.4}}
 ] }});
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
-let repositorySources=null,repositoryLayers=null;
-function captureRepositoryStyle(){if(repositorySources)return;const s=map.getStyle();repositorySources={};for(const [id,src] of Object.entries(s.sources||{}))repositorySources[id]={...src};repositoryLayers=(s.layers||[]).filter(l=>l.id!=='bg').map(l=>JSON.parse(JSON.stringify(l)));}
-function applyBasemap(mode){document.getElementById('nativeBasemap').style.borderColor=mode==='native'?'#67d5c2':'#435865';document.getElementById('satelliteBasemap').style.borderColor=mode==='satellite'?'#67d5c2':'#435865';document.getElementById('basemapStatus').textContent=mode==='native'?'خريطة الأساس: OpenFreeMap الأصلية عبر الإنترنت · طبقات المستودع مستقلة':'خريطة الأساس: صور الأقمار الصناعية عبر الإنترنت · طبقات المستودع مستقلة';map.setStyle(mode==='native'?nativeStyleUrl:satelliteStyle);map.once('style.load',()=>{try{const rename={};for(const [id,src] of Object.entries(repositorySources||{})){rename[id]='repo_'+id;if(!map.getSource(rename[id]))map.addSource(rename[id],src);}let first=null;for(const raw of repositoryLayers||[]){if(raw.type==='background')continue;const l=JSON.parse(JSON.stringify(raw));l.id='repo_'+l.id;if(l.source&&rename[l.source])l.source=rename[l.source];if(!map.getLayer(l.id)){map.addLayer(l);if(!first)first=l.id;}}Object.entries(groups).forEach(([key,ids])=>ids.forEach(id=>{const box=document.getElementById(key),lid='repo_'+id;if(map.getLayer(lid))map.setLayoutProperty(lid,'visibility',box&&box.checked?'visible':'none');}));const cb=document.getElementById('colors');if(map.getLayer('repo_buildings-3d')&&cb&&!cb.checked)map.setPaintProperty('repo_buildings-3d','fill-extrusion-color','#c9bfb0');if(document.getElementById('terrainModel').checked)addModelLayer();statusText();}catch(err){errorBox.style.display='block';errorBox.textContent='تعذر إعادة طبقات المستودع: '+err.message;}});}
-document.getElementById('nativeBasemap').onclick=()=>applyBasemap('native');document.getElementById('satelliteBasemap').onclick=()=>applyBasemap('satellite');
 let firstError=false, modelLayerAdded=false, modelLoading=false, modelLayer=null;
-const toggleLayers=(ids,on)=>ids.forEach(id=>{const lid=map.getLayer(id)?id:'repo_'+id;if(map.getLayer(lid))map.setLayoutProperty(lid,'visibility',on?'visible':'none')});
+const toggleLayers=(ids,on)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')});
 const groups={
 buildings:['buildings-3d'],ground:['landcover','landuse'],roads:['road-casing','roads','roads-vector','park-fill'],water:['water-fill','water-vector','waterway','waterway-vector'],
 roadNames:['road-names'],numbers:['house-numbers'],places:['place-labels'],pois:['poi-labels'],boundaries:['boundary-lines'],air:['aeroway-lines','aerodrome-labels'],waterNames:['water-names'],peaks:['mountain-peak-labels']
 };
 function statusText(){
 if(!map.isStyleLoaded())return;
-let visible=0;try{const lid=map.getLayer('buildings-3d')?'buildings-3d':'repo_buildings-3d';if(map.getLayer(lid))visible=map.queryRenderedFeatures({layers:[lid]}).length}catch(_){}
+let visible=0;try{visible=map.queryRenderedFeatures({layers:['buildings-3d']}).length}catch(_){}
 status.textContent='Zoom '+map.getZoom().toFixed(1)+' · ميل '+Math.round(map.getPitch())+'° · مبانٍ مرئية '+visible+' · بلاطات المصدر حتى zoom 14؛ التكبير بعدها لا يضيف تفاصيل جديدة.';
 }
-map.on('load',()=>{captureRepositoryStyle();map.resize();statusText();});
+map.on('load',()=>{map.resize();statusText();});
 map.on('idle',statusText);
 map.on('error',e=>{console.error(e.error||e);if(!firstError){firstError=true;errorBox.style.display='block';errorBox.textContent=(e.error&&e.error.message)||e.message||'تعذر تحميل مورد؛ افحص الرابط أو اتصال الشبكة.';}});
 const fly=(center,zoom=15.2)=>map.flyTo({center,zoom,pitch:57,bearing:-18,duration:1000});
@@ -119,7 +113,7 @@ document.getElementById('malate').onclick=()=>fly([120.9918,14.5707]);
 document.getElementById('both').onclick=()=>fly([120.986,14.578],14.1);
 document.getElementById('reset').onclick=()=>map.easeTo({pitch:57,bearing:-18,duration:700});
 Object.entries(groups).forEach(([id,layers])=>{const el=document.getElementById(id);if(el)el.onchange=()=>toggleLayers(layers,el.checked)});
-document.getElementById('colors').onchange=e=>{const lid=map.getLayer('buildings-3d')?'buildings-3d':'repo_buildings-3d';if(map.getLayer(lid))map.setPaintProperty(lid,'fill-extrusion-color',e.target.checked?['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building_colour'],['match',['get','class'],'commercial','#c9b8a4','industrial','#b9b7b1','public','#c4c9ce','residential','#d8cdbd','#c9bfb0'] ]:'#c9bfb0');};
+document.getElementById('colors').onchange=e=>map.setPaintProperty('buildings-3d','fill-extrusion-color',e.target.checked?['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building_colour'],['match',['get','class'],'commercial','#c9b8a4','industrial','#b9b7b1','public','#c4c9ce','residential','#d8cdbd','#c9bfb0'] ]:'#c9bfb0');
 function addModelLayer(){
 if(modelLoading)return;
 if(map.getLayer('adam-city-complete-model')){modelLayerAdded=true;return;}
