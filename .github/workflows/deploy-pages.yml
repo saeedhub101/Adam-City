@@ -43,9 +43,56 @@ jobs:
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13697/7521.pbf
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13698/7521.pbf
+          python3 -m pip install --disable-pip-version-check mapbox-vector-tile
           mkdir -p site/ermita/maps/sources/openfreemap/vector-tiles
           cp ermita-malate-3d.html site/ermita-malate-3d.html
           cp -a ermita/maps/sources/openfreemap/vector-tiles/. site/ermita/maps/sources/openfreemap/vector-tiles/
+          # Build a low-zoom building fallback from local z14 PBFs. The original z10-z12
+          # tiles contain zero building features, so this preserves buildings while zooming out.
+          python3 - <<'PY'
+          import glob, json, math
+          from pathlib import Path
+          import mapbox_vector_tile
+          root = Path('ermita/maps/sources/openfreemap/vector-tiles/14')
+          features = []
+          seen = set()
+          def lonlat(x, y, z, extent):
+              n = 2 ** z
+              gx, gy = x / extent, y / extent
+              lon = gx / n * 360.0 - 180.0
+              lat = math.degrees(math.atan(math.sinh(math.pi * (1 - 2 * gy / n))))
+              return [lon, lat]
+          def convert(coords, tx, ty, extent):
+              if isinstance(coords, (list, tuple)) and len(coords) >= 2 and isinstance(coords[0], (int, float)) and isinstance(coords[1], (int, float)):
+                  return lonlat(tx * extent + coords[0], ty * extent + coords[1], 14, extent) + list(coords[2:])
+              if isinstance(coords, (list, tuple)):
+                  return [convert(item, tx, ty, extent) for item in coords]
+              return coords
+          for path in sorted(root.glob('*/*.pbf')):
+              x, y = int(path.parent.name), int(path.stem)
+              decoded = mapbox_vector_tile.decode(path.read_bytes())
+              layer = decoded.get('building')
+              if not layer:
+                  continue
+              extent = int(layer.get('extent', 4096))
+              for feature in layer.get('features', []):
+                  geometry = feature.get('geometry')
+                  if not geometry or geometry.get('type') not in ('Polygon', 'MultiPolygon'):
+                      continue
+                  out_geometry = {'type': geometry['type'], 'coordinates': convert(geometry.get('coordinates'), x, y, extent)}
+                  props = feature.get('properties') or {}
+                  signature = json.dumps([out_geometry, props], sort_keys=True, separators=(',', ':'))
+                  if signature in seen:
+                      continue
+                  seen.add(signature)
+                  features.append({'type':'Feature', 'id':feature.get('id'), 'geometry':out_geometry, 'properties':props})
+          if not features:
+              raise SystemExit('No building polygons found in local z14 PBF tiles; refusing to publish an empty fallback.')
+          out = Path('site/ermita/maps/sources/openfreemap/building-fallback.geojson')
+          out.parent.mkdir(parents=True, exist_ok=True)
+          out.write_text(json.dumps({'type':'FeatureCollection','features':features}, separators=(',', ':')), encoding='utf-8')
+          print(f'Generated low-zoom fallback with {len(features)} building polygons from local z14 PBF tiles ({out.stat().st_size} bytes)')
+          PY
           # Keep the repository's root index.html deleted; publish a tiny redirect only in the artifact.
           printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=ermita-malate-3d.html"><title>ADAM CITY</title><a href="ermita-malate-3d.html">Open ADAM CITY 3D preview</a></html>' > site/index.html
           echo "Published files:"
