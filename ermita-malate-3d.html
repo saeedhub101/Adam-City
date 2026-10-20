@@ -56,9 +56,9 @@
     const errorBox = document.getElementById('error');
     const map = new maplibregl.Map({
       container: 'map',
-      center: [120.9860, 14.5780],
-      zoom: 14.1,
-      pitch: 62,
+      center: [120.9821, 14.5848],
+      zoom: 15.0,
+      pitch: 68,
       bearing: -18,
       maxPitch: 80,
       style: {
@@ -81,9 +81,9 @@
           {id:roadLayers[0],type:'line',source:sourceId,'source-layer':'transportation',paint:{'line-color':'#a5a9a7','line-width':['interpolate',['linear'],['zoom'],10,0.6,14,5,16,8]}},
           {id:roadLayers[1],type:'line',source:sourceId,'source-layer':'transportation',paint:{'line-color':['match',['get','class'],'motorway','#f3c18b','trunk','#f3c18b','primary','#f5d7a4','secondary','#fff5d9','#fffdf7'],'line-width':['interpolate',['linear'],['zoom'],10,0.25,14,2.8,16,5.5]}},
           {id:buildingLayer,type:'fill-extrusion',source:sourceId,'source-layer':'building',minzoom:12,filter:['==',['geometry-type'],'Polygon'],paint:{
-            'fill-extrusion-color':['case',['has','render_height'],'#c5b6a4',['has','height'],'#c5b6a4','#d2c7b9'],
-            'fill-extrusion-height':['max',2,['coalesce',['to-number',['get','render_height']],['to-number',['get','height']],['*',['to-number',['get','building:levels']],3.2],5]],
-            'fill-extrusion-base':['coalesce',['to-number',['get','render_min_height']],['to-number',['get','min_height']],0],
+            'fill-extrusion-color':'#c9bfb0',
+            'fill-extrusion-height':['max',3,['case',['>', ['to-number',['get','render_height'],0],0],['to-number',['get','render_height'],0],['>', ['to-number',['get','height'],0],0],['to-number',['get','height'],0],['>', ['to-number',['get','building:levels'],0],0],['*',['to-number',['get','building:levels'],0],3.15],5]],
+            'fill-extrusion-base':['max',0,['case',['>', ['to-number',['get','render_min_height'],0],0],['to-number',['get','render_min_height'],0],['>', ['to-number',['get','min_height'],0],0],['to-number',['get','min_height'],0],0]],
             'fill-extrusion-opacity':0.96,
             'fill-extrusion-vertical-gradient':true
           }}
@@ -92,23 +92,33 @@
     });
     map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');
     map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
+    const updateDiagnostics = () => {
+      if (!map.isStyleLoaded()) return;
+      const features = map.queryRenderedFeatures({layers:[buildingLayer]});
+      const tileZoom = Math.min(14, Math.floor(map.getZoom()));
+      status.textContent = `الزوم ${map.getZoom().toFixed(1)} · مبانٍ مرسومة في الشاشة: ${features.length} · أقصى زوم لبيانات المصدر: 14`;
+      if (features.length === 0 && map.getZoom() >= 12) {
+        errorBox.style.display = 'block';
+        errorBox.textContent = `لم تُرسم مبانٍ في هذا الإطار. افحص طلب البلاطة: ${tileBase}${tileZoom}/{x}/{y}.pbf`;
+      } else {
+        errorBox.style.display = 'none';
+      }
+    };
     map.on('load', () => {
       map.resize();
-      status.textContent = 'تم تحميل نمط الخريطة. جارٍ طلب بلاطات المباني المحلية عند مستوى التكبير الحالي.';
+      status.textContent = 'تم تحميل الخريطة؛ جارٍ فحص طبقة المباني والبلاطات المحلية…';
+      updateDiagnostics();
     });
-    map.on('sourcedata', e => {
-      if (e.sourceId === sourceId && e.isSourceLoaded) {
-        status.textContent = 'مصدر البلاطات المحلية متصل. حرّك الخريطة أو كبّر لرؤية تفاصيل المباني المتاحة في البلاطات.';
-      }
-    });
+    map.on('idle', updateDiagnostics);
     let firstErrorShown = false;
     map.on('error', e => {
       console.error('Local OpenFreeMap tile error', e.error || e);
-      if (!firstErrorShown && e.error) {
+      const message = e.error?.message || e.message || 'Tile loading error';
+      if (!firstErrorShown) {
         firstErrorShown = true;
         errorBox.style.display = 'block';
-        errorBox.textContent = (e.error.message || 'Tile loading error') + ' — tile URL: ' + tileTemplate;
-        status.textContent = 'حدث خطأ أثناء تحميل البلاطات المحلية. راجع رسالة الخطأ أدناه.';
+        errorBox.textContent = message + ' — tile template: ' + tileTemplate;
+        status.textContent = 'خطأ في تحميل الخريطة أو البلاطات؛ تفاصيل الخطأ ظاهرة أدناه.';
       }
     });
     const fly = (center, zoom, pitch=62, bearing=-18) => map.flyTo({center,zoom,pitch,bearing,duration:1100});
