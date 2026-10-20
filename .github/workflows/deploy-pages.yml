@@ -58,11 +58,21 @@ jobs:
           set -euo pipefail
           test -s ermita-malate-3d.html
           python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh
-          # Rebuild the facade GLB with a dedicated translucent PBR glass mesh, doors, and signboards.
-          python3 ermita/scripts/generate_facade_details.py
-          # Generate a separate, source-traceable custom architecture layer for the National Museum and PGH candidate.
-          python3 ermita/scripts/generate_landmark_facades.py
-          # Recalculate the facade origin only from the exact building IDs in the GLB's own index.
+          # Repository-first cache policy: reuse committed generated assets; generate only missing outputs.
+          if [[ ! -s ermita/3d/generated/ermita-buildings-facade-details.glb || ! -s ermita/3d/generated/facade-details-report.json || ! -s ermita/3d/generated/facade-signage-index.csv ]]; then
+            python3 ermita/scripts/generate_facade_details.py
+          else
+            echo "Reusing committed facade GLB, report, and signage index."
+          fi
+          # Landmark outputs are a durable repository cache too; call Overpass only when an output is missing.
+          if [[ ! -s ermita/3d/landmarks/landmark-facade-details.glb || ! -s ermita/3d/landmarks/landmark-facade-origin.json || ! -s ermita/3d/landmarks/landmark-facade-report.json ]]; then
+            python3 ermita/scripts/generate_landmark_facades.py
+          else
+            echo "Reusing committed landmark facade GLB, origin, and report; no Overpass request needed."
+          fi
+          # Generate the facade origin only if it is missing. It is stored in main after generation.
+          if [[ ! -s ermita/3d/generated/facade-model-origin.json ]]; then
+          # Calculate the origin only from the exact building IDs in the GLB's own index.
           # Do not use every footprint in the larger OSM dataset: that shifts the GLB away from its targets.
           python3 - <<'PY'
           import csv, json, math, re
@@ -131,6 +141,9 @@ jobs:
           out.write_text(json.dumps(origin,indent=2)+'\n',encoding='utf-8')
           print('Facade GLB target origin:', json.dumps(origin,indent=2))
           PY
+          else
+            echo "Reusing committed facade-model-origin.json."
+          fi
           python3 ermita/scripts/import_openfreemap_ermita.py
           NEW_TILES="$(python3 -c "import json; print(json.load(open('ermita/maps/sources/openfreemap/import-report.json')).get('new_tiles_downloaded', 0))")"
           echo "New source tiles downloaded: $NEW_TILES"
@@ -256,7 +269,15 @@ jobs:
           test -s site/ermita/3d/landmarks/landmark-facade-details.glb
           test -s site/ermita/3d/landmarks/landmark-facade-origin.json
           test -s site/ermita/3d/landmarks/landmark-facade-report.json
-          # Save every newly imported/generated OpenFreeMap asset and its reports to main.
+          # Validate all generated artifacts before publishing or persisting them.
+          test -s ermita/3d/generated/facade-model-origin.json
+          test -s ermita/3d/generated/ermita-buildings-facade-details.glb
+          test -s ermita/3d/generated/facade-signage-index.csv
+          test -s ermita/3d/generated/facade-details-report.json
+          test -s ermita/3d/landmarks/landmark-facade-details.glb
+          test -s ermita/3d/landmarks/landmark-facade-origin.json
+          test -s ermita/3d/landmarks/landmark-facade-report.json
+          # Save every newly imported/generated asset to main. Existing committed outputs are reused.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/saeedhub101/Adam-City.git"
