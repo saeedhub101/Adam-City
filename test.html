@@ -26,8 +26,8 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <label class="row"><input type="checkbox" id="osm-raw"> 1. raw — بيانات OSM الخام (ليست طبقة خريطة مباشرة)</label>
 <label class="row"><input type="checkbox" id="osm-features"> 2. features — جميع المعالم الجغرافية</label>
 <label class="row"><input type="checkbox" id="osm-tags"> 3. tags — جدول الوسوم (بيانات وصفية وليست طبقة مكانية)</label>
-<label class="row"><input type="checkbox" id="osm-buildings"> 4. buildings — بصمات المباني وتفاصيل الأسطح</label>
-<label class="row"><input type="checkbox" id="osm-roads"> 5. roads — الطرق وتفاصيل هندستها</label>
+<label class="row"><input type="checkbox" id="osm-buildings" checked> 4. buildings — بصمات المباني وتفاصيل الأسطح</label>
+<label class="row"><input type="checkbox" id="osm-roads" checked> 5. roads — الطرق وتفاصيل هندستها</label>
 <label class="row"><input type="checkbox" id="osm-thematic"> 6. thematic — المتاجر والعلامات والتفاصيل الموضوعية</label>
 <label class="row"><input type="checkbox" id="osm-pedestrian"> 7. pedestrian — تفاصيل المشاة</label>
 <label class="row"><input type="checkbox" id="osm-addresses"> 8. addresses — العناوين وأسماء الشوارع والرموز البريدية</label>
@@ -92,6 +92,8 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
    addSourceLayer('nature','osm-vegetation-src','complete_data/OSM/data/nature/ermita-trees-parks-vegetation.geojson','map','#71c982');
    // Bind all eleven OSM directory toggles; raw and tags are inventory/data tables rather than direct map layers.
    ['raw','features','tags','buildings','roads','thematic','pedestrian','addresses','administrative','places','nature'].forEach(bind);
+   // Show the two core spatial OSM layers immediately so the test page visibly verifies the local datasets.
+   setGroup(groups.buildings,true);setGroup(groups.roads,true);
    document.getElementById('osm-windows').addEventListener('change',ev=>{window.adamWindowsEnabled=ev.target.checked; if(window.adamWindowsLayerReady && window.adamSetWindowsVisible) window.adamSetWindowsVisible(ev.target.checked); else if(ev.target.checked) status.textContent='جارٍ تحميل نموذج windows ثلاثي الأبعاد…';});
    document.getElementById('baseGround').addEventListener('change',ev=>originalLayers.filter(l=>!baseBuildingIds.includes(l.id)).forEach(l=>visibility(l.id,ev.target.checked)));
    document.getElementById('baseBuildings').addEventListener('change',ev=>setGroup(baseBuildingIds,ev.target.checked));
