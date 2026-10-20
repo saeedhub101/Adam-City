@@ -13,7 +13,7 @@ All paths below are repository-relative and should be reused instead of download
 - `CityStreetRoadAsphaltTwoLaneWorn001_COL_1K.jpeg` — asphalt texture used on generated street ribbons following mapped road centerlines.
 - `Mono-Terrazzo-Stack-Architextures.jpeg` — provisional sidewalk surface texture, applied to narrow strips on both sides of mapped streets. Replace only if a more appropriate local sidewalk texture is found.
 - `Painted-CMU-Block-Architextures.jpeg` — now assigned as a provisional texture map to the local Ramon Magsaysay GLB mesh materials. This is a generic painted masonry material, not a verified photo of the actual building facade; UV alignment and visual accuracy still need checking.
-- `courtyard.png` — now applied to a provisional 32 m × 28 m textured plaza pad at the model anchor. The exact courtyard boundary, position, and rotation are not yet verified against aerial imagery.
+- `ermita/assets/textures/courtyard.png` — now applied to a provisional 32 m × 28 m textured plaza pad at the model anchor. The exact courtyard boundary, position, and rotation are not yet verified against aerial imagery.
 
 ## Notes
 - Textured street ribbons and sidewalk strips are approximate visual overlays, not surveyed road/sidewalk polygons.
