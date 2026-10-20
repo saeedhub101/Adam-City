@@ -7,9 +7,11 @@
 <style>
 :root{color-scheme:dark;--panel:rgba(16,26,35,.96);--line:#344654;--text:#eef4f7;--muted:#a7b8c4;--accent:#67d5c2}
 *{box-sizing:border-box}html,body,#map{height:100%;width:100%;margin:0}body{font-family:system-ui,sans-serif;background:#101a23;color:var(--text)}#map{position:absolute;inset:0}
-.panel{position:absolute;z-index:5;top:10px;right:10px;width:min(310px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:0 8px 26px #0005;backdrop-filter:blur(12px)}
+.panel{position:absolute;z-index:5;top:10px;right:10px;width:min(300px,calc(100vw - 20px));height:auto;max-height:72dvh;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#67d5c2 #172631;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:0 8px 26px #0005;backdrop-filter:blur(12px)}
+.panel::-webkit-scrollbar{width:7px}.panel::-webkit-scrollbar-track{background:#172631;border-radius:8px}.panel::-webkit-scrollbar-thumb{background:#527c83;border-radius:8px}.panel::-webkit-scrollbar-thumb:hover{background:#67d5c2}
+.panel .status{position:sticky;bottom:-12px;background:var(--panel);padding-bottom:8px}
 h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(--muted);margin-bottom:10px}.group{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}.group-title{font-size:12px;color:var(--accent);font-weight:700;margin-bottom:5px}.row{display:flex;align-items:flex-start;gap:8px;margin:7px 0;font-size:12px;line-height:1.4}input{accent-color:var(--accent);width:16px;height:16px;flex:0 0 auto;margin-top:1px}.status{font-size:10px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere;margin-top:9px;border-top:1px solid var(--line);padding-top:8px}#error{display:none;color:#ffdadd;background:#542c31;padding:8px;border-radius:7px;font-size:11px;margin-top:8px;direction:ltr;overflow-wrap:anywhere}.attribution{position:absolute;bottom:8px;left:8px;z-index:2;background:#101a23df;padding:5px 8px;border-radius:6px;font-size:10px;direction:ltr}
-@media(max-width:520px){.panel{top:6px;right:6px;width:min(280px,calc(100vw - 12px));max-height:70dvh;padding:9px}h1{font-size:14px}.row{font-size:11px;margin:5px 0}}
+@media(max-width:520px){.panel{top:6px;right:6px;width:min(270px,calc(100vw - 12px));max-height:55dvh;padding:9px}h1{font-size:14px}.row{font-size:11px;margin:5px 0}}
 </style></head>
 <body>
 <div id="map" aria-label="خريطة ثلاثية الأبعاد لإرميتا ومالاتي"></div>
@@ -53,8 +55,10 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
  const visibility=(id,on)=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none');};
  const setGroup=(ids,on)=>ids.forEach(id=>visibility(id,on));
  const groups={raw:[],features:[],tags:[],buildings:[],roads:[],thematic:[],pedestrian:[],addresses:[],administrative:[],places:[],nature:[]};
+ const sourcePaths=[];
  function addSourceLayer(key,sourceId,path,kind,color){
-   map.addSource(sourceId,{type:'geojson',data:url(path)});
+   const resolvedUrl=url(path);sourcePaths.push({sourceId,path,resolvedUrl});
+   map.addSource(sourceId,{type:'geojson',data:resolvedUrl});
    const ids=[];
    if(kind==='buildings'){
      const id=sourceId+'-3d';map.addLayer({id,type:'fill-extrusion',source:sourceId,layout:{visibility:'none'},paint:{
@@ -70,7 +74,7 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
    groups[key].push(...ids);
  }
  function bind(key){const el=document.getElementById('osm-'+key);el.addEventListener('change',()=>{setGroup(groups[key],el.checked);if(key==='raw'||key==='tags')status.textContent=key==='raw'?'raw يحتوي بيانات المصدر الخام، ولا يُرسم مباشرة على الخريطة.':'tags عبارة عن جداول وسوم CSV، ولا تُرسم مباشرة كمعالم جغرافية.';});}
- map.on('error',e=>{if(e.error)status.textContent='ملاحظة تحميل: '+e.error.message;});
+ map.on('error',e=>{if(e.error){const msg='خطأ في تحميل طبقة: '+e.error.message;status.textContent=msg;errorBox.style.display='block';errorBox.textContent=msg+' — راجع مسار ملف GeoJSON أو استجابة GitHub Pages.';}});
  map.on('load',()=>{
   try{
    addSourceLayer('features','osm-features-src','complete_data/OSM/data/features/ermita-features.geojson','map','#8ab5c5');
@@ -91,7 +95,7 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
    document.getElementById('osm-windows').addEventListener('change',ev=>{window.adamWindowsEnabled=ev.target.checked; if(window.adamWindowsLayerReady && window.adamSetWindowsVisible) window.adamSetWindowsVisible(ev.target.checked); else if(ev.target.checked) status.textContent='جارٍ تحميل نموذج windows ثلاثي الأبعاد…';});
    document.getElementById('baseGround').addEventListener('change',ev=>originalLayers.filter(l=>!baseBuildingIds.includes(l.id)).forEach(l=>visibility(l.id,ev.target.checked)));
    document.getElementById('baseBuildings').addEventListener('change',ev=>setGroup(baseBuildingIds,ev.target.checked));
-   status.textContent='الخريطة جاهزة. شغّل كل مجلد على حدة. مجلدا raw وtags لا يحتويان طبقات مكانية قابلة للرسم مباشرة.';
+   status.textContent='الخريطة جاهزة. طبقات OSM مضافة؛ فعّل مربعات الاختيار لإظهارها. مجلدا raw وtags جداول/بيانات خام وليسا طبقات مكانية مباشرة.';
   }catch(e){errorBox.style.display='block';errorBox.textContent='تعذر تجهيز طبقات OSM: '+(e.message||e);status.textContent='تم تحميل الخريطة الأساسية، لكن بعض طبقات OSM لم تُجهّز.';}
  });
 })();
