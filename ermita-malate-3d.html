@@ -188,8 +188,8 @@ async function loadFacadeTargetHighlights(){
  const csvUrl=new URL('./ermita/3d/generated/facade-signage-index.csv',location.href).href;
  const response=await fetch(csvUrl,{cache:'no-store'});
  if(!response.ok)throw new Error('فهرس مباني الواجهات غير متاح ('+response.status+')');
- const lines=(await response.text()).trim().split(/\\r?\\n/);
- const ids=[...new Set(lines.slice(1).map(line=>line.split(',')[0].trim()).filter(id=>/^(way|relation|node)\\//.test(id)))];
+ const lines=(await response.text()).trim().split(/\r?\n/);
+ const ids=[...new Set(lines.slice(1).map(line=>line.split(',')[0].trim()).filter(id=>/^(way|relation|node)\//.test(id)))];
  if(!ids.length)throw new Error('لم توجد معرفات مبانٍ في فهرس الواجهات');
  map.addLayer({
   id:'adam-facade-target-highlight',type:'fill-extrusion',source:'osmBuildingDetails',
