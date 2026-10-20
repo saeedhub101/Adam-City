@@ -1,27 +1,37 @@
 # OSM — OpenStreetMap data collection
 
-This folder is a dedicated inventory/collection area for the OpenStreetMap (OSM) data already present in Adam-City. It is being populated from files on `main` without modifying or deleting their original locations.
+This folder is the organized OSM data inventory for Adam-City. Source snapshots are preserved, and derived datasets are stored in separate purpose-specific folders. No cross-category merge is performed.
 
 ## Structure
 
-- `data/raw/` — raw OSM export and sync-state metadata.
-- `data/features/` — generated OSM feature collection.
-- `data/tags/` — tag inventory used to discover which attributes exist.
-- `data/buildings/` — building footprints, building/building-part details, and attribute tables.
-- `data/roads/` — mapped road/path centerlines and attributes.
-- `data/thematic/` — thematic exports (accessibility, businesses, environment, heritage, public services, transport, utilities, signs, street furniture, etc.). These are collected for inspection; their exact provenance and overlap with raw OSM still need to be checked before treating every row as exclusively OSM-derived.
-- `quality/` — building-height evidence report/table and road-network export report.
-- `queries/` — Overpass query used to collect OSM roads, buildings, and tagged features.
-- `scripts/` — existing OSM import/export and height-audit scripts.
-- `manifest.json` — original path, copied path, byte size, blob SHA and purpose for each collected file.
+- `data/raw/` — raw OSM export and synchronization state.
+- `data/features/` — committed OSM feature collection used as the source snapshot for local exports.
+- `data/tags/` — full tag inventory for discovering available attributes.
+- `data/buildings/` — building footprints, building details, and the separate `ermita-building-roof-details` layer (CSV + GeoJSON).
+- `data/roads/` — road network and the separate `ermita-road-engineering-details` layer (CSV + GeoJSON).
+- `data/pedestrian/` — the separate `ermita-pedestrian-street-details` layer (CSV + GeoJSON).
+- `data/thematic/` — thematic exports for accessibility, businesses, environment, heritage, public services, transport, utilities, signs, street furniture, and related themes.
+- `quality/` — evidence and export reports, including `osm-detail-layer-export-report.json` for the three detail layers.
+- `queries/` — OSM/Overpass query definitions.
+- `scripts/` — import, audit, and detail-layer export scripts.
+- `manifest.json` — inventory of files, paths, sizes, blob SHAs, and descriptions.
 
-## Important notes
+## Newly organized detail layers
 
-1. The original files under `ermita/` remain untouched. These are copies in the repository tree, using the same underlying Git blobs where possible.
-2. The collected `data/buildings/` folder stores the retained OSM details table as `osm-building-details.csv`; original source files under `ermita/maps/generated/` remain untouched.
-3. This is the initial collection, not yet a full field-by-field audit. Next, inspect every dataset's schema and value coverage, identify duplicate records, and distinguish explicitly tagged heights from floor counts and unknown values.
-4. The source attribution in the OSM-derived files refers to OpenStreetMap contributors; preserve OSM attribution and applicable ODbL terms when using or redistributing the data.
+1. **Pedestrian street details:** crossings and crossing signals, footways, sidewalk/accessibility attributes, entrances, doors, barriers, bollards, gates, handrails, steps, benches, waste baskets, street lighting, and other mapped pedestrian-scale features.
+2. **Road engineering:** road and transport geometries with mapped highway/railway/route/public-transport attributes, including surface, smoothness, width, lanes, one-way direction, turn lanes, speed limits, cycleways, sidewalks, bridges, tunnels, access, lighting, and related tags.
+3. **Building and roof details:** building footprints and building parts with mapped heights, floor counts, minimum levels, roof shape/height/material/colour/orientation, building material/colour, names, addresses, and other original tags.
 
-## Original sources
+The exact availability of each attribute varies by feature. An absent tag means it is not recorded on that OSM feature; it is not inferred or fabricated.
 
-The `manifest.json` records the original source path for every collected file.
+## Provenance and limits
+
+- These three new detail layers were **exported from the existing committed snapshot** `ermita/maps/generated/ermita-features.geojson`. This workflow did not perform a fresh Overpass/network import.
+- Geometry and original feature properties/tags are preserved in each GeoJSON output. CSV files are searchable indexes and include the full tag set in `tags_json`.
+- Counts and per-key tag presence are recorded in `quality/osm-detail-layer-export-report.json`.
+- Original source files under `ermita/maps/generated/` are not deleted or overwritten.
+- Source: OpenStreetMap contributors. Preserve attribution and comply with ODbL 1.0.
+
+## Reproducibility
+
+Run `python3 ermita/scripts/export_osm_detail_layers.py` to rebuild the three independent layers from the current committed feature snapshot.
