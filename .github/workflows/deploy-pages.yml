@@ -47,6 +47,7 @@ jobs:
           /ermita/scripts/generate_commercial_facades.py
           /ermita/buildings/commercial_assets/
           /ermita/buildings/reference_photos/robinsons-manila/
+          /ermita/buildings/reference_photos/robinsons-manila/
           /ermita/3d/exports/adam-city-complete.glb
           /ermita/3d/exports/adam-city-complete-report.json
           /ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
@@ -88,13 +89,13 @@ jobs:
             echo "Reusing committed landmark assets; generator and source fingerprints match; no Overpass request needed."
           fi
           # Commercial facade generation is independently fingerprinted and does not overwrite other building edits.
-          COMMERCIAL_FINGERPRINT="$( { printf 'contract=1\\n'; sha256sum ermita/scripts/generate_commercial_facades.py ermita/maps/generated/ermita-building-details.geojson ermita/maps/generated/ermita-branded-stores.geojson; } | sha256sum | awk '{print $1}')"
+          COMMERCIAL_FINGERPRINT="$( { printf 'contract=1\n'; sha256sum ermita/scripts/generate_commercial_facades.py ermita/maps/generated/ermita-building-details.geojson ermita/maps/generated/ermita-branded-stores.geojson; } | sha256sum | awk '{print $1}')"
           COMMERCIAL_STALE=0
           if [[ ! -s ermita/3d/commercial/commercial-generation.sha256 ]] || [[ "$(cat ermita/3d/commercial/commercial-generation.sha256 2>/dev/null || true)" != "$COMMERCIAL_FINGERPRINT" ]]; then COMMERCIAL_STALE=1; fi
           if [[ ! -s ermita/3d/commercial/commercial-facades.glb || ! -s ermita/3d/commercial/commercial-facades-origin.json || ! -s ermita/3d/commercial/commercial-facades-report.json || "$COMMERCIAL_STALE" -eq 1 ]]; then
             echo "Commercial facade assets missing or stale; generating Robinsons facade and brand image-sign panels."
             python3 ermita/scripts/generate_commercial_facades.py
-            printf '%s\\n' "$COMMERCIAL_FINGERPRINT" > ermita/3d/commercial/commercial-generation.sha256
+            printf '%s\n' "$COMMERCIAL_FINGERPRINT" > ermita/3d/commercial/commercial-generation.sha256
           else
             echo "Reusing committed commercial facade assets; source and generator fingerprints match."
           fi
