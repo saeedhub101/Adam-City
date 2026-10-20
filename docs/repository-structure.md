@@ -41,3 +41,15 @@ Before moving or renaming a path:
 ## Status
 
 This is the initial normalization guide, not a claim that every legacy filename has already been renamed. Some paths are workflow/API contracts and must be migrated atomically rather than renamed in isolation.
+
+
+## Current verified layout (2026-10-20)
+
+- `docs/`: policy, data inventory, audit and repository organization reports.
+- `ermita/`: area-scoped project data, including maps, sources, generated datasets, QA, terrain, 3D exports, research and area-specific scripts.
+- `kartaview/`: KartaView image archive and review/metadata tables. This remains a top-level directory for now because CSV/JSON metadata, image review pages and processing scripts refer to paths under `kartaview/`; moving the 1,300+ assets without updating every consumer would break those links.
+- `backup/`: retained historical copies and rollback assets, including the checkpoint pages.
+- `scripts/`: root-level importers directly called by the Pages workflow.
+- `ermita-malate-3d.html`, `.nojekyll`, `.github/workflows/`: deployment entry point and GitHub Pages configuration; paths are part of the active deployment contract.
+
+The repository tree was checked recursively and GitHub reported `truncated: false`. The tracked file count remained 2,000 after the documentation move. No project data files were intentionally deleted in this organization pass.

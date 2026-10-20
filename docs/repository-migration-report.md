@@ -34,3 +34,12 @@ A full path migration should be done as a single planned operation: build an old
 - Moved the five repository-level policy, audit, catalog, structure, and migration documents into `docs/` and normalized their filenames to lowercase kebab-case.
 - Kept `README.md`, the active preview HTML, `.github/workflows/`, and deployment-required root `scripts/` paths in place because the active Pages workflow and links depend on them.
 - Kept `ermita/`, `kartaview/`, and `backup/` at their current roots in this pass. They contain thousands of assets and references in scripts, CSV metadata, and HTML; moving them safely requires a repository-wide path migration and deployment/data-reference validation, not just moving directory entries. No data files were deleted as part of this documentation move.
+
+
+## Latest verification (2026-10-20)
+
+- Current branch head at this check: `9d4211c0c4be2875e20351168bcc59ef91297ba7`.
+- Recursive tree inspection: 2,000 tracked files, `truncated: false`.
+- Confirmed the five documentation files now exist under `docs/`, and the old root-level copies no longer exist.
+- Confirmed both historical checkpoint HTML files are present under `backup/checkpoints/`.
+- The remaining project/data directories were not wholesale moved because the active deployment workflow and source-indexing files depend on their current paths. The next safe phase is a reference-aware path migration with automated path checks, not a blind directory move.

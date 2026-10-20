@@ -19,3 +19,13 @@ A source-traceable 3D city-data project focused on Ermita and Malate, Manila.
 5. Work on main; do not create project branches without explicit instruction.
 
 The repository contains historical snapshots and scripts that may use legacy paths. Consult the structure guide before moving or renaming any referenced asset.
+
+
+## Repository map
+
+- `docs/` — policy, source catalog, audit and organization records.
+- `ermita/` — area data and generated assets.
+- `kartaview/` — KartaView imagery and review index (legacy path currently referenced by metadata and scripts).
+- `backup/` — historical snapshots and recovery copies.
+- `scripts/` — root importers required by deployment.
+- `ermita-malate-3d.html` — GitHub Pages preview entry point.
