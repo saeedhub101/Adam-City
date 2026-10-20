@@ -32,6 +32,7 @@ button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1
 <label class="row"><input type="checkbox" id="buildings" checked> مباني OpenFreeMap ثلاثية الأبعاد</label>
 <label class="row"><input type="checkbox" id="colors" checked> ألوان المباني من خصائص المصدر</label>
 <label class="row"><input type="checkbox" id="osmAppearance"> OSM — ألوان ومواد الواجهات من الوسوم، دون تغيير شكل المبنى أو ارتفاعه</label>
+<label class="row"><input type="checkbox" id="facadeModel"> تفاصيل الواجهات (نوافذ وأبواب ولافتات مولّدة)</label>
 <label class="row"><input type="checkbox" id="terrainModel"> نموذج المدينة الكامل GLB (مبانٍ + طرق + تضاريس)</label>
 <label class="row"><input type="checkbox" id="terrain"> تضاريس DEM (نموذج Copernicus)</label>
 <label class="row"><input type="checkbox" id="numbers" checked> أرقام المباني</label></div>
@@ -61,6 +62,8 @@ const tileBase = base + 'vector-tiles/';
 const buildingUrl = base + 'building-fallback.geojson';
 const groundUrl = base + 'ground-fallback.geojson';
 const modelUrl = new URL('./ermita/3d/exports/adam-city-complete.glb', location.href).href;
+const facadeModelUrl = new URL('./ermita/3d/generated/ermita-buildings-facade-details.glb', location.href).href;
+const facadeOriginUrl = new URL('./ermita/3d/generated/facade-model-origin.json', location.href).href;
 const demUrl = new URL('./ermita/3d/terrain/ermita-copernicus-dem-cropped.tif', location.href).href;
 const status = document.getElementById('status'), errorBox = document.getElementById('error');
 const localStyle = {
@@ -132,6 +135,7 @@ try {
 const map = new maplibregl.Map({container:'map',center:[120.9918,14.5707],zoom:15,pitch:57,bearing:-18,antialias:true,style:remoteStyle||localStyle});
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
 let firstError=false, modelLayerAdded=false, modelLoading=false, modelLayer=null;
+let facadeLayerAdded=false, facadeLoading=false, facadeLayer=null;
 const toggleLayers=(ids,on)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')});
 const groups={
 buildings:['adam-local-buildings-3d'],osmAppearance:['adam-local-osm-building-info-labels'],ground:['adam-local-landcover','adam-local-landuse'],roads:['adam-local-road-casing','adam-local-roads','adam-local-roads-vector','adam-local-park-fill'],water:['adam-local-water-fill','adam-local-water-vector','adam-local-waterway','adam-local-waterway-vector'],
@@ -170,6 +174,40 @@ function applyBuildingAppearance(){
 }
 document.getElementById('colors').onchange=applyBuildingAppearance;
 document.getElementById('osmAppearance').onchange=applyBuildingAppearance;
+async function addFacadeLayer(){
+if(facadeLoading || facadeLayerAdded)return;
+facadeLoading=true;
+try{
+ const [originResponse]=await Promise.all([fetch(facadeOriginUrl)]);
+ if(!originResponse.ok)throw new Error('ملف محاذاة نموذج الواجهات غير موجود ('+originResponse.status+')');
+ const origin=await originResponse.json();
+ const THREE=window.THREE;
+ facadeLayer={id:'adam-facade-details-model',type:'custom',renderingMode:'3d',
+ onAdd:function(map,gl){
+  this.camera=new THREE.Camera();this.scene=new THREE.Scene();this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});this.renderer.autoClear=false;
+  this.scene.add(new THREE.AmbientLight(0xffffff,1.5));
+  const light=new THREE.DirectionalLight(0xffffff,1.1);light.position.set(-40,-50,100).normalize();this.scene.add(light);
+  const loader=new THREE.GLTFLoader();
+  loader.load(facadeModelUrl,gltf=>{this.model=gltf.scene;this.scene.add(this.model);map.triggerRepaint();},undefined,err=>{facadeLoading=false;errorBox.style.display='block';errorBox.textContent='تعذر تحميل تفاصيل الواجهات: '+(err.message||err);});
+ },
+ render:function(gl,matrix){
+  if(!this.model)return;
+  const mc=maplibregl.MercatorCoordinate.fromLngLat({lng:origin.longitude,lat:origin.latitude},origin.anchor_altitude_m||0);
+  const s=mc.meterInMercatorCoordinateUnits();
+  const m=new THREE.Matrix4().fromArray(matrix);
+  const l=new THREE.Matrix4().makeTranslation(mc.x,mc.y,mc.z).scale(new THREE.Vector3(s,-s,s));
+  this.camera.projectionMatrix=m.multiply(l);this.camera.projectionMatrixInverse.copy(this.camera.projectionMatrix).invert();
+  this.renderer.resetState();this.renderer.render(this.scene,this.camera);
+ },
+ onRemove:function(){if(this.renderer)this.renderer.dispose();}
+ };
+ map.addLayer(facadeLayer);facadeLayerAdded=true;facadeLoading=false;
+}catch(e){facadeLoading=false;errorBox.style.display='block';errorBox.textContent='تعذر تشغيل نموذج الواجهات: '+(e.message||e);document.getElementById('facadeModel').checked=false;}
+}
+document.getElementById('facadeModel').onchange=async e=>{
+ if(e.target.checked)await addFacadeLayer();
+ else if(map.getLayer('adam-facade-details-model')){map.removeLayer('adam-facade-details-model');facadeLayerAdded=false;facadeLayer=null;facadeLoading=false;}
+};
 function addModelLayer(){
 if(modelLoading)return;
 if(map.getLayer('adam-city-complete-model')){modelLayerAdded=true;return;}
