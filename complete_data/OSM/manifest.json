@@ -1,0 +1,183 @@
+{
+  "title": "Adam-City OSM data inventory",
+  "created_from_branch": "main",
+  "created_from_commit": "31e6008747e2c031d853b49926041823d619e914",
+  "note": "Files are added as repository-path copies referencing the existing Git blobs; source files are not deleted or changed. Thematic exports are grouped for inspection but their exact source provenance still needs validation.",
+  "files": [
+    {
+      "source_path": "ermita/maps/generated/ermita-osm-raw.json",
+      "copied_path": "complete_data/OSM/data/raw/ermita-osm-raw.json",
+      "size_bytes": 2536656,
+      "blob_sha": "852b59691160b8045d7424f43a7bc88bff28fa19",
+      "description": "Raw OSM export"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-osm-sync-state.json",
+      "copied_path": "complete_data/OSM/data/raw/ermita-osm-sync-state.json",
+      "size_bytes": 253,
+      "blob_sha": "475f559828d3d8c5c0e90080925e8e7c2ab2ba6c",
+      "description": "OSM synchronization state"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-features.geojson",
+      "copied_path": "complete_data/OSM/data/features/ermita-features.geojson",
+      "size_bytes": 2305708,
+      "blob_sha": "9cd1c86dc76042a3a5284d957b313f76d4d9aa8f",
+      "description": "Generated OSM feature collection"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-all-feature-tags.csv",
+      "copied_path": "complete_data/OSM/data/tags/ermita-all-feature-tags.csv",
+      "size_bytes": 1526596,
+      "blob_sha": "24f5e88c7f6f08a6e059b720a42cbc6c6478e244",
+      "description": "OSM tag inventory across features"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-building-footprints.geojson",
+      "copied_path": "complete_data/OSM/data/buildings/ermita-building-footprints.geojson",
+      "size_bytes": 17882142,
+      "blob_sha": "9227ca92a0395b15b980b151bbd9115b9d44b090",
+      "description": "OSM building footprint polygons"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-building-details.geojson",
+      "copied_path": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+      "size_bytes": 631719,
+      "blob_sha": "7b5ad6fabf0e6e855d2d25ec946f1fdb831ef1ce",
+      "description": "OSM building and building-part details"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-building-details.csv",
+      "copied_path": "complete_data/OSM/data/buildings/ermita-building-details.csv",
+      "size_bytes": 318860,
+      "blob_sha": "f50ef7fbe1c5a7fc680065e9ac2dfceee3fa9d10",
+      "description": "OSM building attributes table"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-building_details.csv",
+      "copied_path": "complete_data/OSM/data/buildings/ermita-building_details-legacy.csv",
+      "size_bytes": 430871,
+      "blob_sha": "8ec2323dbc6dcda2b2fb46616dfcbabc6259cab9",
+      "description": "Legacy duplicate/variant of building details CSV; preserved separately"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-road-network.geojson",
+      "copied_path": "complete_data/OSM/data/roads/ermita-road-network.geojson",
+      "size_bytes": 987435,
+      "blob_sha": "7c49ccd8ac7752713755315eac9ef37af4bab93c",
+      "description": "OSM mapped road/path centerlines"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-accessibility.csv",
+      "copied_path": "complete_data/OSM/data/thematic/ermita-accessibility.csv",
+      "size_bytes": 131200,
+      "blob_sha": "c049f1297ef9cb4fc7488cb9d7b960058d15e692",
+      "description": "Thematic accessibility export; provenance should be verified"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-businesses.csv",
+      "copied_path": "complete_data/OSM/data/thematic/ermita-businesses.csv",
+      "size_bytes": 338836,
+      "blob_sha": "d3e6bfe59802a15e3f4a8c6d5e1edfe7fa663b91",
+      "description": "Thematic businesses export; provenance should be verified"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-environment.csv",
+      "copied_path": "complete_data/OSM/data/thematic/ermita-environment.csv",
+      "size_bytes": 248706,
+      "blob_sha": "53a012e5a9ea02a447ec8b81b81b7f95471fd75f",
+      "description": "Thematic environment export; provenance should be verified"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-heritage.csv",
+      "copied_path": "complete_data/OSM/data/thematic/ermita-heritage.csv",
+      "size_bytes": 58607,
+      "blob_sha": "f96bad547c98fa517211f5d1b4c0bd98d563298e",
+      "description": "Thematic heritage export; provenance should be verified"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-public_services.csv",
+      "copied_path": "complete_data/OSM/data/thematic/ermita-public_services.csv",
+      "size_bytes": 255182,
+      "blob_sha": "ffbf05fb66c01cdc6ca52db57983192f7e077daf",
+      "description": "Thematic public services export; provenance should be verified"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-transport.csv",
+      "copied_path": "complete_data/OSM/data/thematic/ermita-transport.csv",
+      "size_bytes": 477603,
+      "blob_sha": "a9e98caa86cb1af85f0d80016be11a13ff9ab8a3",
+      "description": "Thematic transport export; provenance should be verified"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-utilities.csv",
+      "copied_path": "complete_data/OSM/data/thematic/ermita-utilities.csv",
+      "size_bytes": 138248,
+      "blob_sha": "b671f7de9c92b86ddb707b7a6f138a1c5cf13d56",
+      "description": "Thematic utilities export; provenance should be verified"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-places-businesses-infrastructure.csv",
+      "copied_path": "complete_data/OSM/data/thematic/ermita-places-businesses-infrastructure.csv",
+      "size_bytes": 460774,
+      "blob_sha": "3d1df8fffe4d6346d482b650b1ac67e741f26421",
+      "description": "Combined places/businesses/infrastructure export; provenance should be verified"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-branded-stores.geojson",
+      "copied_path": "complete_data/OSM/data/thematic/ermita-branded-stores.geojson",
+      "size_bytes": 20877,
+      "blob_sha": "7bf8939452138ee4043b8d4e5ae7ac312c65db8c",
+      "description": "Branded stores export; provenance should be verified"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-street-signs-and-signals.geojson",
+      "copied_path": "complete_data/OSM/data/thematic/ermita-street-signs-and-signals.geojson",
+      "size_bytes": 25171,
+      "blob_sha": "22502e4126277a754b1ebc855a913c2f768de420",
+      "description": "Street signs and signals export; provenance should be verified"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-street_furniture.csv",
+      "copied_path": "complete_data/OSM/data/thematic/ermita-street_furniture.csv",
+      "size_bytes": 76116,
+      "blob_sha": "8adf219166affab320edb91d2a4bd1380443977f",
+      "description": "Street furniture export; provenance should be verified"
+    },
+    {
+      "source_path": "ermita/maps/qa/building-height-evidence.csv",
+      "copied_path": "complete_data/OSM/quality/building-height-evidence.csv",
+      "size_bytes": 173884,
+      "blob_sha": "033ba677498c6b0ba9e66e9f41fa707276c0394f",
+      "description": "QA table based on OSM building footprints"
+    },
+    {
+      "source_path": "ermita/maps/qa/building-height-evidence-report.json",
+      "copied_path": "complete_data/OSM/quality/building-height-evidence-report.json",
+      "size_bytes": 883,
+      "blob_sha": "f0c588857168b364b4183a7c8a2f6adec810b4a5",
+      "description": "QA summary for OSM height evidence"
+    },
+    {
+      "source_path": "ermita/scripts/import_osm_and_build_3d.py",
+      "copied_path": "complete_data/OSM/scripts/import_osm_and_build_3d.py",
+      "size_bytes": 26079,
+      "blob_sha": "e85edeb13f3d522e4ca6df776cb1662468534e8a",
+      "description": "Existing OSM import/build script"
+    },
+    {
+      "source_path": "ermita/scripts/export_osm_roads.py",
+      "copied_path": "complete_data/OSM/scripts/export_osm_roads.py",
+      "size_bytes": 6307,
+      "blob_sha": "155fe550305a5a3b73f9fc936320f15b836408c9",
+      "description": "Existing OSM road export script"
+    },
+    {
+      "source_path": "ermita/scripts/audit_building_height_evidence.py",
+      "copied_path": "complete_data/OSM/scripts/audit_building_height_evidence.py",
+      "size_bytes": 3683,
+      "blob_sha": "b7b10342b3f19b1aff275b3ace25af66b4a263a0",
+      "description": "Existing height evidence audit script"
+    }
+  ]
+}

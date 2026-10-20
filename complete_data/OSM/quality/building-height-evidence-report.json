@@ -1,0 +1,23 @@
+{
+  "status": "success",
+  "source_file": "ermita/maps/generated/ermita-building-footprints.geojson",
+  "output_csv": "ermita/maps/qa/building-height-evidence.csv",
+  "polygon_feature_count": 1528,
+  "evidence_class_counts": {
+    "height_tagged": 118,
+    "levels_only_no_height_inferred": 633,
+    "height_unknown": 777
+  },
+  "tag_counts": {
+    "height": 118,
+    "building_levels": 743,
+    "min_height": 2,
+    "roof_shape": 97
+  },
+  "policy": "Only source-tagged height is reported as height. Levels are retained as levels and are never converted to meters. Missing height remains unknown.",
+  "limitations": [
+    "OSM tags are contributor-mapped and may be missing or outdated; this is not a field survey.",
+    "Building parts may overlap parent buildings and are not necessarily unique buildings.",
+    "No heights are inferred from imagery or from storey counts."
+  ]
+}
