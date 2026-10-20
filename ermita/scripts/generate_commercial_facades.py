@@ -53,33 +53,32 @@ def load_logo_assets():
     return Image.open(seven_png).convert("RGBA"), Image.open(mc_png).convert("RGBA")
 
 def fetch_robinsons_reference_photos():
-    """Download up to two high-resolution Commons exterior/interior photos with attribution."""
+    """Download high-resolution Robinsons Manila exterior photographs with attribution."""
     PHOTO_DIR.mkdir(parents=True, exist_ok=True)
     api = "https://commons.wikimedia.org/w/api.php"
+    titles = [
+        "File:Robinsons Place Manila, May 2025 (1).jpg",
+        "File:Robinsons Place Manila, May 2025 (2).jpg",
+    ]
     params = {
-        "action":"query", "generator":"search", "gsrsearch":'filetype:bitmap "Robinsons Place Manila"',
-        "gsrnamespace":6, "gsrlimit":20, "prop":"imageinfo",
-        "iiprop":"url|extmetadata|size", "iiurlwidth":1600, "format":"json"
+        "action":"query", "titles":"|".join(titles), "prop":"imageinfo",
+        "iiprop":"url|extmetadata|size", "iiurlwidth":1800, "format":"json"
     }
     downloaded = []
     try:
-        data = requests.get(api, params=params, headers=HEADERS, timeout=45)
-        data.raise_for_status()
-        pages = list((data.json().get("query") or {}).get("pages", {}).values())
-        pages.sort(key=lambda p: (("exterior" not in p.get("title","").lower()), p.get("title","").lower()))
+        response = requests.get(api, params=params, headers=HEADERS, timeout=45)
+        response.raise_for_status()
+        pages = list((response.json().get("query") or {}).get("pages", {}).values())
+        pages.sort(key=lambda p:p.get("title",""))
         for page in pages:
-            if len(downloaded) >= 2:
-                break
             info = (page.get("imageinfo") or [{}])[0]
             title = page.get("title","")
             url = info.get("thumburl") or info.get("url")
             meta = info.get("extmetadata") or {}
             license_name = (meta.get("LicenseShortName") or {}).get("value","")
             artist = re.sub("<[^>]+>", "", (meta.get("Artist") or {}).get("value","")).strip()
+            description_url = info.get("descriptionurl","")
             if not url or not license_name:
-                continue
-            # Keep only images whose actual file title is clearly about the target mall.
-            if not any(term in title.lower() for term in ("robinsons place manila", "robinsons manila")):
                 continue
             raw = fetch(url)
             try:
@@ -89,16 +88,17 @@ def fetch_robinsons_reference_photos():
             except Exception:
                 continue
             slug = re.sub(r"[^a-zA-Z0-9]+","-",title.replace("File:","")).strip("-").lower()[:90]
-            ext = ".jpg" if image.format in ("JPEG","JPG") else ".png" if image.format == "PNG" else ".webp"
-            path = PHOTO_DIR / (slug + ext)
+            path = PHOTO_DIR / (slug + ".jpg")
             path.write_bytes(raw)
             downloaded.append({
-                "title":title, "path":str(path.relative_to(ROOT)), "source_url":info.get("descriptionurl",""),
+                "title":title, "path":str(path.relative_to(ROOT)), "source_url":description_url,
                 "download_url":url, "license":license_name, "artist":artist,
                 "width":image.width, "height":image.height
             })
     except Exception as exc:
         print("WARNING: unable to refresh Robinsons reference photos:", exc)
+    if not downloaded:
+        raise RuntimeError("Could not download the selected high-resolution Robinsons Manila reference photographs")
     return downloaded
 
 def props(feature):
@@ -324,7 +324,7 @@ def main():
             "poi_to_footprint_m":round(dist,2),"panel_width_m":width,"panel_height_m":height,
             "image_asset":"ermita/buildings/commercial_assets/7-eleven-logo.png" if is_seven else "ermita/buildings/commercial_assets/mcdonalds-golden-arches.png",
             "placement":"separate textured quad placed just off the longest mapped facade edge",
-            "source_note":"Logo asset is downloaded from the official 7-Eleven site / McDonald's Corporate media library."})
+            "source_note":"Logo asset is downloaded from the official 7-Eleven site / Wikimedia Commons public-domain McDonald's logo."})
     if not scene.geometry: raise RuntimeError("No commercial facade geometry was generated")
     OUT_DIR.mkdir(parents=True,exist_ok=True)
     glb=scene.export(file_type="glb")
