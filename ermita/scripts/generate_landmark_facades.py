@@ -90,8 +90,11 @@ def museum_polygon():
         geom = geom.difference(unary_union(inners))
     if geom.geom_type == 'MultiPolygon':
         geom = max(geom.geoms, key=lambda p: p.area)
-    if geom.is_empty or not geom.is_valid or geom.area < 100:
-        raise RuntimeError('National Museum relation geometry failed validity/area checks')
+    # Validate area in projected meters, not square degrees. The previous
+    # check compared lon/lat-degree area to 100 m² and rejected every valid footprint.
+    projected = geom_transform(TO_METERS, geom)
+    if geom.is_empty or not geom.is_valid or projected.is_empty or projected.area < 100:
+        raise RuntimeError(f'National Museum relation geometry failed validity/area checks (projected area={projected.area:.1f} m²)')
     return geom
 
 def facade_overlay(poly, origin, style, fid, height):
