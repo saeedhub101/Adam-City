@@ -62,3 +62,12 @@ Moved the asphalt, terrazzo sidewalk, painted masonry, and courtyard surface ima
 ## Final layout cleanup (2026-10-20)
 
 Moved the shared-asset usage guide from `ermita/buildings/ASSET_USAGE.md` to `ermita/assets/README.md`, corrected stale references to a non-existent `ermita/maps/preview.html`, and updated the Ermita overview and repository structure guide to reflect the active root preview page and current script locations. The `kartaview/` and `backup/` trees were intentionally excluded from this work as requested.
+
+
+## Documentation reconciliation (2026-10-20)
+
+- Corrected stale references to a missing root `index.html` and to removed deployment/export workflow filenames; the active Pages entry point is `ermita-malate-3d.html`, and the tracked workflow is `.github/workflows/deploy-pages.yml`.
+- Reconciled the 3D/maps/QA documentation with the committed source layout: the live preview uses OpenFreeMap and local tile-derived fallback layers; the generated footprint GeoJSON is Basemap/OpenMapTiles-derived according to the file-level audit; Google Open Buildings and Microsoft satellite-derived footprints are stored separately and are not assumed to be active preview layers.
+- Marked the initial layer inventory as historical planning guidance, not a current inventory.
+- Updated the data policy to prohibit source conflation rather than incorrectly declaring the committed Microsoft satellite-footprint dataset absent.
+- No changes were made to `kartaview/` or `backup/`.

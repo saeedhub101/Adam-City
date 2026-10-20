@@ -4,7 +4,7 @@
 
 ## Build
 
-Run GitHub Actions workflow **Export current preview to one GLB** (`.github/workflows/adam-city-export-glb.yml`) on `main`, or run `python ermita/scripts/export_preview_to_glb.py` after installing `numpy rasterio trimesh shapely pyproj mapbox-earcut`.
+Run `python ermita/scripts/export_preview_to_glb.py` after installing `numpy rasterio trimesh shapely pyproj mapbox-earcut`.
 
 The workflow validates the GLB, checks its size against GitHub's ordinary single-file limit, and commits the resulting `.glb` plus a JSON report to `main` when it is within the limit.
 

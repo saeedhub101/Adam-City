@@ -1,6 +1,7 @@
 # Adam-City Repository Data Audit
 
-**Audit date:** 2026-10-19  
+**Initial audit date:** 2026-10-19  
+**Documentation reconciliation:** 2026-10-20  
 **Branch inspected:** `main` only  
 **Purpose:** verify the committed data files themselves, not just documentation. This audit did not alter or delete any source dataset.
 
@@ -9,7 +10,7 @@
 **Critical finding: the active building-footprints path is not currently the original OSM dataset.** It contains Basemap/OpenMapTiles-derived geometry. The original OSM GeoJSON still exists under `backup/`, but the active path used by the page has been overwritten.
 
 This is not merely a documentation mismatch:
-This also explains a misleading UI state: `index.html` loads the active file and assigns its features to `osmBuildingsData`, while the checkbox is labelled `OSM 3D buildings`. Because that file is Basemap-derived, the OSM checkbox is currently displaying the wrong source dataset. The recent code-level fix that preserves `osmBuildingsData` cannot restore the original OSM buildings while this input file itself is wrong.
+This also explains a misleading UI state: the prior page implementation loaded the active file and assigns its features to `osmBuildingsData`, while the checkbox is labelled `OSM 3D buildings`. Because that file is Basemap-derived, the OSM checkbox is currently displaying the wrong source dataset. The recent code-level fix that preserves `osmBuildingsData` cannot restore the original OSM buildings while this input file itself is wrong.
 
 
 - Active file: `ermita/maps/generated/ermita-building-footprints.geojson` — **17,882,142 bytes**, 1,123 polygon/multipolygon features, metadata explicitly says Basemap-authoritative geometry.
@@ -51,11 +52,11 @@ The inspected script `ermita/scripts/import_basemap_buildings.py` declares its o
 ermita/maps/generated/ermita-building-footprints.geojson
 ```
 
-Its docstring says it will replace local OSM footprints with Basemap footprints. The workflow `.github/workflows/import-basemap-buildings.yml` runs on a manual dispatch and on pushes affecting the importer/workflow, then stages and commits that same file to `main`.
+Its docstring says it will replace local OSM footprints with Basemap footprints. The current tracked workflow tree contains only `.github/workflows/deploy-pages.yml`; the previously documented `.github/workflows/import-basemap-buildings.yml` is not present on `main`. The importer still targets the active generated filename, so running it manually could overwrite the file.
 
 **Required correction before rebuilding the page:** store Basemap output at a separate path such as `ermita/maps/external/ermita-basemap-building-footprints.geojson`; keep OSM at its own active path; update the page and audit scripts to load each source independently. Do not merge the two into one source file or label Basemap geometry as OSM.
 
-The retired Microsoft-building workflows/scripts are intentionally disabled. This audit did find a separate Microsoft road-detections file, `ermita/maps/external/ermita-microsoft-road-detections.geojson`, containing 2,626 line features. That is road-detection data, not Microsoft building footprints, and must not be presented as building coverage.
+A separate Microsoft satellite-derived building dataset is now present under `ermita/maps/sources/microsoft-satellite-buildings/` (1,765 area-clipped polygons according to its import report), as well as the Microsoft road-detections file `ermita/maps/external/ermita-microsoft-road-detections.geojson`. The building dataset is independent of the generated Basemap file and should remain a separate comparison layer; its presence alone does not establish accuracy or live-preview integration.
 
 ## 3. Roads and DPWH files: actual parsed counts
 
@@ -97,9 +98,9 @@ The complete GLB report itself says streamed Esri imagery is not embedded and th
 
 - The inspected recursive Git tree contains **1,829 tracked files** in total, including the historical `backup/` subtree and many image files.
 - The `backup/` tree contains useful older source data and large generated assets, but it is not the active source of truth for the website.
-- The root `index.html` is 67,996 bytes. The deployment workflow publishes this page and the page loads the committed building and road GeoJSON paths.
+- The active page entry point is the root `ermita-malate-3d.html`. The deployment workflow publishes this page together with selected OpenFreeMap vector tiles and generated local fallback layers.
 - The Basemap import workflow can overwrite the active building-footprints path. This is the most important workflow/data-integrity risk found.
-- The Microsoft building-footprint importer and comparison workflow are retired as documented. Microsoft road-detections remain a separate dataset.
+- The current tracked workflow tree contains only `deploy-pages.yml`. Microsoft satellite-derived footprints and Microsoft road detections are separate datasets; the former are not currently proven to be active in the preview.
 - A commit or a file existing in the tree does not prove the published Pages deployment has completed or that the browser displays all geometry correctly. Visual QA has not been performed as part of this repository-file audit.
 
 ## 7. Recommended order of repair

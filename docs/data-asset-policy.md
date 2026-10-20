@@ -5,8 +5,8 @@
 3. Work on `main` only; do not create branches for this project.
 4. Distinguish source located, link tested, downloaded, committed, validated, geospatially aligned and licence verified.
 5. Keep source datasets separate until geometry and coverage have been checked; never silently replace conflicts.
-6. **Microsoft/Bing building footprints are rejected for the current Ermita project.** Their inaccurate outlines were removed. Do not re-import them or revive their workflows unless the project owner explicitly reverses this decision.
-7. Use OSM as the active building-footprint source; preserve OSM IDs/tags and comply with ODbL attribution/share-alike obligations.
+6. Keep building providers in separate datasets. A Microsoft satellite-derived footprint dataset and a Google Open Buildings dataset are now committed under `ermita/maps/sources/`; neither is automatically the active preview layer, and their presence does not establish accuracy.
+7. The current live preview is OpenFreeMap-based. The generated `ermita/maps/generated/ermita-building-footprints.geojson` is Basemap/OpenMapTiles-derived according to the file-level audit, not a pure OSM dataset. Preserve source identities and never label or overwrite one provider as another. OSM data must retain IDs/tags and comply with ODbL attribution/share-alike obligations.
 8. Prioritize streets, building footprints, real facades, roofs, building heights, windows, doors, signs and materials. Trees are lower priority.
 9. Do not claim an asset was downloaded, visually verified or accurately aligned unless the file exists and the check actually succeeded.
 10. For facade photos, verify building identity, camera direction, visible facade, street-facing wall, source URL and reuse terms before applying the image to a model.

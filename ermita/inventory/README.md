@@ -1,5 +1,7 @@
 # Layer Inventory and Collection Status
 
+> **Status note (2026-10-20):** this matrix originated as an initial collection plan and is not a current repository inventory. Several layers listed below have since been imported. For actual file presence, counts, and provenance, use [`docs/data-source-catalog.md`](../../docs/data-source-catalog.md) and [`docs/data-audit-report.md`](../../docs/data-audit-report.md). Do not read the historical status cells as current state.
+
 Status meanings:
 
 - **Planned** — identified as a target, not yet collected.

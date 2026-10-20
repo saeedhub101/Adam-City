@@ -2,7 +2,7 @@
 
 ## Active geometry source
 
-The live 3D preview uses only the committed OSM footprint file `generated/ermita-building-footprints.geojson`. Microsoft/Bing outlines were rejected as inaccurate and removed, and the associated comparison CSV/report and workflow were retired.
+The live preview entry point is `../../../ermita-malate-3d.html` and its base display is OpenFreeMap with local tile-derived fallbacks. The generated file `../generated/ermita-building-footprints.geojson` is Basemap/OpenMapTiles-derived according to the repository data audit; it must not be described as pure OSM. Independent Google and Microsoft satellite-derived footprint datasets exist under `../sources/` and are not automatically active layers.
 
 ## Height evidence
 
