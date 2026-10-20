@@ -189,8 +189,6 @@ jobs:
           PY
           fi
           # Publish the repository copies, whether reused or newly generated.
-          cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/building-fallback.geojson
-          cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/ground-fallback.geojson
           mkdir -p site/ermita/maps/generated site/ermita/3d/generated site/ermita/3d/exports site/ermita/3d/terrain
           cp ermita/maps/generated/ermita-building-details.geojson site/ermita/maps/generated/ermita-building-details.geojson
           cp ermita/3d/generated/ermita-buildings-facade-details.glb site/ermita/3d/generated/ermita-buildings-facade-details.glb
@@ -201,8 +199,6 @@ jobs:
           test -s site/ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           test -s site/ermita-malate-3d.html
           test -s site/ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
-          test -s site/ermita/maps/sources/openfreemap/building-fallback.geojson
-          test -s site/ermita/maps/sources/openfreemap/ground-fallback.geojson
           test -s site/ermita/maps/generated/ermita-building-details.geojson
           test -s site/ermita/3d/generated/ermita-buildings-facade-details.glb
           test -s site/ermita/3d/generated/facade-model-origin.json
