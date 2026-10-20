@@ -2,7 +2,7 @@
   "title": "Adam-City OSM data inventory",
   "created_from_branch": "main",
   "created_from_commit": "31e6008747e2c031d853b49926041823d619e914",
-  "note": "Original OSM snapshot and source files are preserved. Separate pedestrian, road-engineering, and building/roof detail datasets are derived from the committed feature snapshot; they are not a fresh Overpass download. Each derived file and its quality report are inventoried below.",
+  "note": "Original OSM snapshot and source files are preserved. Separate pedestrian, road, building, address, administrative, services, water/natural and vegetation datasets are derived from the committed feature snapshot; these exports are not a fresh Overpass download. Every exported file is inventoried below.",
   "files": [
     {
       "source_path": "ermita/maps/generated/ermita-osm-raw.json",
@@ -234,6 +234,83 @@
       "size_bytes": 16451,
       "blob_sha": "555d94efce55a9c20ee7dddb8c022311a5459a0c",
       "description": "Feature counts and tag-key coverage report for the three independent derived layers"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-features.geojson",
+      "copied_path": "complete_data/OSM/data/addresses/ermita-addresses-street-names-postcodes.geojson",
+      "size_bytes": 810714,
+      "blob_sha": "488709ec34ea3bf10e66b1b7aacb56aa819cbf08",
+      "description": "OSM addresses, street names and postal-code attributes"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-features.geojson",
+      "copied_path": "complete_data/OSM/data/addresses/ermita-addresses-street-names-postcodes.csv",
+      "size_bytes": 657100,
+      "blob_sha": "0bc142f26aad320495b702a19a9cd624f9752662",
+      "description": "OSM addresses, street names and postal-code attributes"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-features.geojson",
+      "copied_path": "complete_data/OSM/data/administrative/ermita-administrative-boundaries.geojson",
+      "size_bytes": 6980,
+      "blob_sha": "e25aa0356cb8af7ed19622bd89a067583d583523",
+      "description": "OSM administrative boundaries and administrative levels"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-features.geojson",
+      "copied_path": "complete_data/OSM/data/administrative/ermita-administrative-boundaries.csv",
+      "size_bytes": 3602,
+      "blob_sha": "3b7e2dd690fd47462955bf7c2d75df269dd354b4",
+      "description": "OSM administrative boundaries and administrative levels"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-features.geojson",
+      "copied_path": "complete_data/OSM/data/places/ermita-shops-food-health-education-religion-services.geojson",
+      "size_bytes": 551973,
+      "blob_sha": "d1fd8c876ed723913a34aa99490138ea724e4ef6",
+      "description": "OSM shops, food, health, education, religious institutions and services"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-features.geojson",
+      "copied_path": "complete_data/OSM/data/places/ermita-shops-food-health-education-religion-services.csv",
+      "size_bytes": 429219,
+      "blob_sha": "caac0f45b6c31c189c916f0a930b0ee0452b9da3",
+      "description": "OSM shops, food, health, education, religious institutions and services"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-features.geojson",
+      "copied_path": "complete_data/OSM/data/nature/ermita-water-and-natural-features.geojson",
+      "size_bytes": 10105,
+      "blob_sha": "633789475a4c77d1be37bf1b0a8f0351f1a9f8f6",
+      "description": "OSM waterways, water bodies, coastlines and natural features"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-features.geojson",
+      "copied_path": "complete_data/OSM/data/nature/ermita-water-and-natural-features.csv",
+      "size_bytes": 2344,
+      "blob_sha": "8458561c06bca79737431a8f082a01ec737369c9",
+      "description": "OSM waterways, water bodies, coastlines and natural features"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-features.geojson",
+      "copied_path": "complete_data/OSM/data/nature/ermita-trees-parks-vegetation.geojson",
+      "size_bytes": 388260,
+      "blob_sha": "d703c9f3c05c451bf3b8a29898e3cfa8c0f9dc2c",
+      "description": "OSM trees, tree rows, parks and vegetation"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-features.geojson",
+      "copied_path": "complete_data/OSM/data/nature/ermita-trees-parks-vegetation.csv",
+      "size_bytes": 224475,
+      "blob_sha": "3d031fbf938bb99f96df82226e30f6770e565e86",
+      "description": "OSM trees, tree rows, parks and vegetation"
+    },
+    {
+      "source_path": "ermita/maps/generated/ermita-features.geojson",
+      "copied_path": "complete_data/OSM/quality/osm-additional-theme-export-report.json",
+      "size_bytes": 114102,
+      "blob_sha": "9671bed155f735e3efb57f67c6c68c63abb6f7d8",
+      "description": "Counts, geometry types, tag keys and selected values for additional OSM exports"
     }
   ]
 }

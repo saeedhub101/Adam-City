@@ -35,3 +35,18 @@ The exact availability of each attribute varies by feature. An absent tag means 
 ## Reproducibility
 
 Run `python3 ermita/scripts/export_osm_detail_layers.py` to rebuild the three independent layers from the current committed feature snapshot.
+
+<!-- ADDITIONAL OSM THEMES START -->
+## Additional OSM themes
+
+The following independent layers are exported from ermita/maps/generated/ermita-features.geojson:
+
+- data/addresses/ermita-addresses-street-names-postcodes — address tags, street names and postal-code attributes.
+- data/administrative/ermita-administrative-boundaries — administrative boundaries and levels.
+- data/places/ermita-shops-food-health-education-religion-services — mapped shops, food, health, education, religious institutions and services.
+- data/nature/ermita-water-and-natural-features — mapped waterways, water bodies, coastlines and other natural features.
+- data/nature/ermita-trees-parks-vegetation — trees, tree rows, parks, gardens and vegetation.
+- quality/osm-additional-theme-export-report.json — counts, geometry types, tag-key coverage and selected tag values.
+
+Each layer has CSV and GeoJSON files. GeoJSON retains source geometries and original tags; CSV provides searchable rows with tags_json. Categories can overlap when a source feature carries multiple themes. Missing values are not inferred. This run re-exports the committed snapshot; it does not fetch live OSM data. Refresh the OSM snapshot separately if newer or absent source features are required.
+<!-- ADDITIONAL OSM THEMES END -->
