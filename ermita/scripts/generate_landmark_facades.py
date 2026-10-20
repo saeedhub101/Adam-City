@@ -45,10 +45,29 @@ def cylinder(center, radius, height, name, color, sections=16):
 def museum_polygon():
     # OSM relation 61326 is the Old Legislative Building / National Museum of Fine Arts.
     query = '[out:json][timeout:45];relation(61326);out geom;'
-    response = requests.post('https://overpass-api.de/api/interpreter',
-        data={'data': query}, timeout=60, headers={'User-Agent':'Adam-City/1.0 (landmark architecture research)'})
-    response.raise_for_status()
-    payload = response.json()
+    # Overpass endpoints occasionally return 502 during busy periods. Try several
+    # independent public instances with bounded retries before failing the build.
+    endpoints = [
+        'https://overpass-api.de/api/interpreter',
+        'https://overpass.kumi.systems/api/interpreter',
+        'https://overpass.private.coffee/api/interpreter',
+    ]
+    headers = {'User-Agent': 'Adam-City/1.0 (landmark architecture research)'}
+    errors = []
+    payload = None
+    for endpoint in endpoints:
+        for attempt in range(3):
+            try:
+                response = requests.post(endpoint, data={'data': query}, timeout=75, headers=headers)
+                response.raise_for_status()
+                payload = response.json()
+                break
+            except (requests.RequestException, ValueError) as exc:
+                errors.append(f'{endpoint} attempt {attempt + 1}: {exc}')
+        if payload is not None:
+            break
+    if payload is None:
+        raise RuntimeError('Unable to retrieve National Museum relation from all Overpass endpoints: ' + ' | '.join(errors))
     rel = next((x for x in payload.get('elements', []) if x.get('type') == 'relation' and x.get('id') == 61326), None)
     if not rel:
         raise RuntimeError('OSM relation 61326 returned no relation geometry')
