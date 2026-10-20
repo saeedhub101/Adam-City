@@ -156,7 +156,7 @@ def main():
         "coordinate_system": "EPSG:3857 local meters, recentered at (longitude, latitude, anchor_altitude_m)"
     }
     (OUT_DIR / "facade-model-origin.json").write_text(
-        json.dumps(origin, indent=2) + "\\n", encoding="utf-8"
+        json.dumps(origin, indent=2) + "\n", encoding="utf-8"
     )
     with OUT_CSV.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=list(signage[0].keys()))
