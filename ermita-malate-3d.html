@@ -32,6 +32,7 @@ button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1
 <label class="row"><input type="checkbox" id="buildings" checked> مباني OpenFreeMap ثلاثية الأبعاد</label>
 <label class="row"><input type="checkbox" id="colors" checked> ألوان المباني من خصائص المصدر</label>
 <label class="row"><input type="checkbox" id="osmAppearance"> OSM — ألوان ومواد الواجهات من الوسوم، دون تغيير شكل المبنى أو ارتفاعه</label>
+<label class="row"><input type="checkbox" id="allBuildingFingerprints"> جمع خصائص المباني وبصماتها المتاحة (ألوان + واجهات + نماذج)</label>
 <label class="row"><input type="checkbox" id="facadeModel"> تفاصيل الواجهات العامة (نوافذ وأبواب)</label>
 <label class="row"><input type="checkbox" id="landmarkFacades"> عمارة مخصصة: المتحف الوطني (مطابقة PGH قيد التحقق)</label>
 <label class="row"><input type="checkbox" id="commercialFacades" checked> واجهات تجارية حقيقية: Robinsons + لوحات 7-Eleven وMcDonald’s</label>
@@ -431,6 +432,28 @@ else if(map.getLayer('adam-city-complete-model')){map.removeLayer('adam-city-com
 document.getElementById('terrain').onchange=e=>{
 if(e.target.checked){errorBox.style.display='block';errorBox.textContent='ملف DEM موجود في المستودع، لكن GeoTIFF ليس بلاطة terrain جاهزة لـ MapLibre. نموذج GLB الكامل هو خيار التضاريس المتاح في هذه الصفحة.';document.getElementById('terrainModel').checked=true;addModelLayer();}
 else if(!firstError)errorBox.style.display='none';
+};
+const allBuildingFingerprints=document.getElementById('allBuildingFingerprints');
+allBuildingFingerprints.onchange=async e=>{
+ const enabled=e.target.checked;
+ const setToggle=(id,value)=>{const el=document.getElementById(id);if(!el)return;el.checked=value;if(typeof el.onchange==='function')el.onchange({target:el});};
+ if(enabled){
+  setToggle('colors',true);
+  setToggle('osmAppearance',true);
+  setToggle('facadeModel',true);
+  setToggle('landmarkFacades',true);
+  setToggle('commercialFacades',true);
+  status.textContent='تفعيل بصمات المباني: خصائص ألوان OSM والواجهات الإجرائية والنماذج التجارية والمعالم المتاحة…';
+  if(!facadeLayerAdded) await addFacadeLayer();
+  if(!landmarkLayerAdded) await addLandmarkFacadeLayer();
+  if(!commercialLayerAdded) await addCommercialFacadeLayer();
+ }else{
+  setToggle('osmAppearance',false);
+  setToggle('facadeModel',false);
+  setToggle('landmarkFacades',false);
+  setToggle('commercialFacades',false);
+  status.textContent='تم إيقاف طبقات البصمات الإضافية؛ بقيت المباني الأساسية وارتفاعاتها كما هي.';
+ }
 };
 })();
 </script></body></html>
