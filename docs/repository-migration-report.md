@@ -52,3 +52,8 @@ A full path migration should be done as a single planned operation: build an old
 - Adjusted repository-root resolution in the moved basemap/OpenAerialMap/aerial-preview scripts.
 - Verified that no `.py` files remain in the former root `scripts/` directory and all four destination paths exist. The recursive Git tree still reports 2,000 tracked files and is not truncated.
 - This verifies path structure, not a completed GitHub Actions run or a visual browser test. The remaining `kartaview/`, `backup/`, and `ermita/` data hierarchy has not been relocated wholesale because its internal references require a larger migration and validation pass.
+
+
+## Shared texture consolidation (2026-10-20)
+
+Moved the asphalt, terrazzo sidewalk, painted masonry, and courtyard surface images from `ermita/buildings/` into `ermita/assets/textures/`. Updated the building asset usage guide and `ermita/3d/real-building-models.json`. Verified all four images exist at their new paths, none remain at the old paths, and the repository still contains 2,000 tracked files. Historical checkpoint pages under `backup/` were intentionally left untouched, as requested.

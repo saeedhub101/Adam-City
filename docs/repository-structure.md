@@ -58,3 +58,10 @@ The repository tree was checked recursively and GitHub reported `truncated: fals
 ## Importer script placement
 
 The four Ermita-specific importers are organized under `ermita/scripts/`. The Pages workflow sparse-checkout and invocation use `ermita/scripts/import_openfreemap_ermita.py`. Moved scripts that resolve files relative to their own location were adjusted to keep repository-root paths stable.
+
+
+## Asset organization update
+
+- `ermita/assets/textures/` is the single shared home for reusable surface images, including asphalt, sidewalk, courtyard, brick, and façade texture maps.
+- `ermita/buildings/` retains building-specific models, the building register, and reference photos rather than general-purpose surface textures.
+- Ermita-specific importers live in `ermita/scripts/`; the deployment workflow invokes the OpenFreeMap importer from there.

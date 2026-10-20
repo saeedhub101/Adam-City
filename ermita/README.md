@@ -37,3 +37,12 @@ This folder establishes the collection structure and source/quality plan. It doe
 ## Attribution
 
 OpenStreetMap-derived data must be credited to OpenStreetMap contributors and comply with the ODbL: https://www.openstreetmap.org/copyright. Other sources retain their own terms; check the terms before copying, redistributing, or combining their data.
+
+
+## Repository layout
+
+- `assets/textures/` — shared reusable surface materials, including road, sidewalk, courtyard, and façade texture maps.
+- `buildings/` — building-specific model files, building inventory, and reference photography.
+- `3d/` — city model outputs, terrain products, and 3D source/catalog metadata.
+- `maps/` — geographic source data, derived layers, external datasets, and QA registers.
+- `scripts/` — importers, reconciliation tools, and geometry/model generation utilities.
