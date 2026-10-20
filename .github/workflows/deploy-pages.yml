@@ -22,7 +22,7 @@ jobs:
         run: |
           set -euo pipefail
           git init .
-          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/saeedhub101/Adam-City.git"
+          git remote add origin https://github.com/saeedhub101/Adam-City.git
           # Partial clone downloads Git objects lazily; sparse checkout materializes only required files.
           git -c protocol.version=2 fetch --depth=1 --filter=blob:none origin main
           git sparse-checkout init --no-cone
@@ -62,6 +62,7 @@ jobs:
           MIN_ZOOM=14 MAX_ZOOM=14 TILE_BUFFER=1 python3 scripts/import_openfreemap_ermita.py
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/saeedhub101/Adam-City.git"
           git add ermita/maps/sources/openfreemap/vector-tiles/14 \
             ermita/maps/sources/openfreemap/tile-index.json \
             ermita/maps/sources/openfreemap/import-report.json \
