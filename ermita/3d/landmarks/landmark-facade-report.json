@@ -1,0 +1,29 @@
+{
+  "status": "museum_model_generated_pgh_footprint_pending",
+  "source": "OpenStreetMap relation 61326",
+  "output_glb": "ermita/3d/landmarks/landmark-facade-details.glb",
+  "output_origin": "ermita/3d/landmarks/landmark-facade-origin.json",
+  "glb_bytes": 27388,
+  "targets": [
+    {
+      "target_id": "relation/61326",
+      "mesh_count": 41,
+      "approx_height_m": 24.0,
+      "identity_verified": true,
+      "status": "verified OSM relation identity"
+    }
+  ],
+  "pending_targets": [
+    {
+      "name": "PGH Cancer Institute",
+      "reference_image": "ermita/buildings/reference_photos/PGH-Cancer-Institute-Building.jpg",
+      "status": "waiting_for_verified_building_footprint",
+      "candidate_rejected": "way/16554344 is an unnamed 133 x 187 m polygon and is not safe to treat as the Cancer Institute"
+    }
+  ],
+  "limitations": [
+    "Facade details are stylized architectural overlays, not photogrammetry or surveyed dimensions.",
+    "PGH is intentionally excluded until its exact footprint is verified; no guessed facade is attached to a nearby building.",
+    "Base building mass remains supplied by the existing map layer."
+  ]
+}

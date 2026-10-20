@@ -3,8 +3,6 @@
   "latitude": 14.58501519429619,
   "anchor_altitude_m": 115.0,
   "buildings_used": 1468,
-  "indexed_osm_ids_matched": 1468,
-  "indexed_osm_ids_missing": 0,
-  "origin_method": "Recomputed from the original OSM building-detail geometries whose IDs occur in the facade GLB index; uses the GLB generator height rules",
+  "origin_method": "Generated in the same run as the GLB from the exact prepared polygon bounds and height rules",
   "coordinate_system": "EPSG:3857 local meters, recentered at (longitude, latitude, anchor_altitude_m)"
 }
