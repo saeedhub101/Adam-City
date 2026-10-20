@@ -52,6 +52,9 @@ button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1
 <label class="row"><input type="checkbox" id="waterNames" checked> أسماء المياه</label>
 <label class="row"><input type="checkbox" id="peaks" checked> القمم والارتفاعات المسماة</label></div>
 <div class="status" id="status">جارٍ تحميل البلاطات والبيانات المحلية…</div><div id="error"></div>
+<details open class="group" id="commercialDiagnostics"><summary class="group-title">تشخيص نموذج الواجهات التجارية</summary>
+<div id="commercialDiagnosticText" style="font:10px/1.6 ui-monospace,monospace;direction:ltr;white-space:pre-wrap;overflow-wrap:anywhere;margin-top:6px">بانتظار بدء الفحص…</div>
+<button type="button" id="retryCommercialDiagnostic" style="margin-top:7px;width:100%">إعادة فحص وتحميل النموذج</button></details>
 </div></details></section>
 <div class="attribution">OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors · DEM © Copernicus / DLR / Airbus</div>
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
@@ -260,13 +263,15 @@ async function addLandmarkFacadeLayer(){
   if(!window.THREE || !window.THREE.GLTFLoader)throw new Error('مكتبات Three.js / GLTFLoader لم تُحمّل');
   const originResponse=await fetch(landmarkOriginUrl,{cache:'no-store'});
   if(!originResponse.ok)throw new Error('ملف محاذاة معالم المباني غير متاح ('+originResponse.status+')');
-  const origin=await originResponse.json();
+  const origin=await originResponse.json();commercialDiag('Origin JSON',JSON.stringify(origin));
   if(!Number.isFinite(origin.longitude)||!Number.isFinite(origin.latitude)||!Number.isFinite(origin.anchor_altitude_m))throw new Error('إحداثيات محاذاة طبقة المعالم غير صالحة');
   const response=await fetch(landmarkModelUrl,{cache:'no-store'});
   if(!response.ok)throw new Error('ملف نموذج المعالم غير متاح ('+response.status+')');
-  const buffer=await response.arrayBuffer();
+  const buffer=await response.arrayBuffer();commercialDiag('Bytes downloaded',buffer.byteLength+' bytes ('+(buffer.byteLength/1048576).toFixed(3)+' MiB)');
   if(buffer.byteLength<20)throw new Error('ملف نموذج المعالم فارغ أو تالف');
   const header=new DataView(buffer);
+  commercialDiag('GLB magic',header.getUint32(0,true)===0x46546c67?'glTF OK':'INVALID');
+  commercialDiag('GLB version',header.getUint32(4,true));commercialDiag('GLB declared bytes',header.getUint32(8,true));
   if(header.getUint32(0,true)!==0x46546c67 || header.getUint32(4,true)!==2 || header.getUint32(8,true)!==buffer.byteLength)throw new Error('فشل التحقق من ترويسة GLB');
   const THREE=window.THREE;
   landmarkLayer={id:'adam-landmark-facades',type:'custom',renderingMode:'3d',
@@ -304,6 +309,9 @@ document.getElementById('landmarkFacades').onchange=async e=>{
  if(e.target.checked)await addLandmarkFacadeLayer();
  else{if(map.getLayer('adam-landmark-facades'))map.removeLayer('adam-landmark-facades');landmarkLayerAdded=false;landmarkLayer=null;landmarkLoading=false;}
 };
+const commercialDiagnosticText=document.getElementById('commercialDiagnosticText');
+const commercialDiagnosticLines=[];
+function commercialDiag(label,value){commercialDiagnosticLines.push(label+': '+value);commercialDiagnosticText.textContent=commercialDiagnosticLines.slice(-18).join('\n');}
 async function addCommercialFacadeLayer(){
  if(commercialLoading || commercialLayerAdded)return;
  commercialLoading=true;
@@ -312,11 +320,17 @@ async function addCommercialFacadeLayer(){
  errorBox.style.display='none';
  try{
   if(!window.THREE || !window.THREE.GLTFLoader)throw new Error('مكتبات Three.js / GLTFLoader لم تُحمّل');
+  commercialDiagnosticLines.length=0;commercialDiag('المرحلة','بدء تحميل الطبقة');commercialDiag('Origin URL',commercialOriginUrl);
   const originResponse=await fetch(commercialOriginUrl,{cache:'no-store'});
+  commercialDiag('Origin HTTP',originResponse.status+' '+originResponse.statusText);
   if(!originResponse.ok)throw new Error('ملف محاذاة الواجهات التجارية غير متاح ('+originResponse.status+')');
   const origin=await originResponse.json();
   if(!Number.isFinite(origin.longitude)||!Number.isFinite(origin.latitude)||!Number.isFinite(origin.anchor_altitude_m))throw new Error('إحداثيات طبقة الواجهات التجارية غير صالحة');
+  commercialDiag('GLB URL',commercialModelUrl);
   const response=await fetch(commercialModelUrl,{cache:'no-store'});
+  commercialDiag('GLB HTTP',response.status+' '+response.statusText);
+  commercialDiag('Content-Type',response.headers.get('content-type')||'(غير محدد)');
+  commercialDiag('Content-Length header',response.headers.get('content-length')||'(غير محدد)');
   if(!response.ok)throw new Error('ملف الواجهات التجارية غير متاح ('+response.status+')');
   const buffer=await response.arrayBuffer();
   if(buffer.byteLength<20)throw new Error('ملف الواجهات التجارية فارغ أو تالف');
@@ -329,13 +343,19 @@ async function addCommercialFacadeLayer(){
     this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});this.renderer.autoClear=false;
     this.scene.add(new THREE.AmbientLight(0xffffff,1.7));
     const light=new THREE.DirectionalLight(0xffffff,1.1);light.position.set(-40,-50,100).normalize();this.scene.add(light);
+    commercialDiag('GLTFLoader','بدأ تحليل محتوى GLB');
     new THREE.GLTFLoader().parse(buffer,new URL('.',commercialModelUrl).href,gltf=>{
      this.model=gltf.scene;const bounds=new THREE.Box3().setFromObject(this.model);const size=bounds.getSize(new THREE.Vector3());
      if(!Number.isFinite(size.x)||!Number.isFinite(size.y)||!Number.isFinite(size.z)||size.x<=0||size.y<=0||size.z<=0){
       commercialLoading=false;commercialLayerAdded=false;toggle.checked=false;errorBox.style.display='block';errorBox.textContent='نموذج الواجهات التجارية لا يحتوي هندسة صالحة.';return;
      }
-     this.scene.add(this.model);commercialLoading=false;status.textContent='تم تحميل تفاصيل Robinsons ولوحات صور 7-Eleven وMcDonald’s على واجهات المباني المطابقة.';map.triggerRepaint();
-    },err=>{commercialLoading=false;commercialLayerAdded=false;toggle.checked=false;errorBox.style.display='block';errorBox.textContent='تعذر تحليل نموذج الواجهات التجارية: '+(err.message||err);});
+     let meshCount=0,materialCount=0;
+     this.model.traverse(obj=>{if(obj.isMesh){meshCount++;if(Array.isArray(obj.material))materialCount+=obj.material.length;else if(obj.material)materialCount++;}});
+     commercialDiag('GLTF parse','SUCCESS');commercialDiag('Meshes',meshCount);commercialDiag('Materials',materialCount);
+     commercialDiag('Local bounds (m)',size.x.toFixed(2)+' × '+size.y.toFixed(2)+' × '+size.z.toFixed(2));
+     commercialDiag('Model state','Parsed and added to Three.js scene');
+     this.scene.add(this.model);commercialLoading=false;status.textContent='تم تحليل نموذج الواجهات التجارية؛ راقب لوحة التشخيص للتحقق من تحميله وأبعاده.';map.triggerRepaint();
+    },err=>{commercialLoading=false;commercialLayerAdded=false;toggle.checked=false;commercialDiag('GLTF parse','FAILED: '+(err.message||err));errorBox.style.display='block';errorBox.textContent='تعذر تحليل نموذج الواجهات التجارية: '+(err.message||err);});
    },
    render:function(gl,matrix){
     if(!this.model)return;
@@ -350,10 +370,16 @@ async function addCommercialFacadeLayer(){
   map.addLayer(commercialLayer);commercialLayerAdded=true;
  }catch(e){
   commercialLoading=false;commercialLayerAdded=false;commercialLayer=null;toggle.checked=false;
-  errorBox.style.display='block';errorBox.textContent='تعذر تحميل الواجهات التجارية: '+(e.message||e);
+  commercialDiag('LOAD ERROR',e.message||e);errorBox.style.display='block';errorBox.textContent='تعذر تحميل الواجهات التجارية: '+(e.message||e);
   status.textContent='تعذر تحميل طبقة الواجهات التجارية؛ راجع رسالة الخطأ.';
  }
 }
+document.getElementById('retryCommercialDiagnostic').onclick=async()=>{
+ if(map.getLayer('adam-commercial-facades'))map.removeLayer('adam-commercial-facades');
+ commercialLayerAdded=false;commercialLayer=null;commercialLoading=false;
+ document.getElementById('commercialFacades').checked=true;
+ await addCommercialFacadeLayer();
+};
 document.getElementById('commercialFacades').onchange=async e=>{
  if(e.target.checked)await addCommercialFacadeLayer();
  else{if(map.getLayer('adam-commercial-facades'))map.removeLayer('adam-commercial-facades');commercialLayerAdded=false;commercialLayer=null;commercialLoading=false;}
