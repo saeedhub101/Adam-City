@@ -45,6 +45,7 @@ jobs:
           /ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           /ermita/scripts/import_openfreemap_ermita.py
           /ermita/scripts/generate_facade_details.py
+          /ermita/scripts/generate_landmark_facades.py
           EOF
           git switch -C main FETCH_HEAD
 
@@ -58,6 +59,8 @@ jobs:
           python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh
           # Rebuild the facade GLB with a dedicated translucent PBR glass mesh, doors, and signboards.
           python3 ermita/scripts/generate_facade_details.py
+          # Generate a separate, source-traceable custom architecture layer for the National Museum and PGH candidate.
+          python3 ermita/scripts/generate_landmark_facades.py
           # Recalculate the facade origin only from the exact building IDs in the GLB's own index.
           # Do not use every footprint in the larger OSM dataset: that shifts the GLB away from its targets.
           python3 - <<'PY'
@@ -229,11 +232,14 @@ jobs:
           cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/building-fallback.geojson
           cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/ground-fallback.geojson
           # Publish the repository copies, whether reused or newly generated.
-          mkdir -p site/ermita/maps/generated site/ermita/3d/generated site/ermita/3d/exports site/ermita/3d/terrain
+          mkdir -p site/ermita/maps/generated site/ermita/3d/generated site/ermita/3d/exports site/ermita/3d/terrain site/ermita/3d/landmarks
           cp ermita/maps/generated/ermita-building-details.geojson site/ermita/maps/generated/ermita-building-details.geojson
           cp ermita/3d/generated/ermita-buildings-facade-details.glb site/ermita/3d/generated/ermita-buildings-facade-details.glb
           cp ermita/3d/generated/facade-model-origin.json site/ermita/3d/generated/facade-model-origin.json
           cp ermita/3d/generated/facade-signage-index.csv site/ermita/3d/generated/facade-signage-index.csv
+          cp ermita/3d/landmarks/landmark-facade-details.glb site/ermita/3d/landmarks/landmark-facade-details.glb
+          cp ermita/3d/landmarks/landmark-facade-origin.json site/ermita/3d/landmarks/landmark-facade-origin.json
+          cp ermita/3d/landmarks/landmark-facade-report.json site/ermita/3d/landmarks/landmark-facade-report.json
           cp ermita/3d/exports/adam-city-complete.glb site/ermita/3d/exports/adam-city-complete.glb
           cp ermita/3d/terrain/ermita-copernicus-dem-cropped.tif site/ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           test -s site/ermita/3d/exports/adam-city-complete.glb
@@ -246,6 +252,9 @@ jobs:
           test -s site/ermita/3d/generated/ermita-buildings-facade-details.glb
           test -s site/ermita/3d/generated/facade-model-origin.json
           test -s site/ermita/3d/generated/facade-signage-index.csv
+          test -s site/ermita/3d/landmarks/landmark-facade-details.glb
+          test -s site/ermita/3d/landmarks/landmark-facade-origin.json
+          test -s site/ermita/3d/landmarks/landmark-facade-report.json
           # Save every newly imported/generated OpenFreeMap asset and its reports to main.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -255,6 +264,7 @@ jobs:
           fi
           # Persist the generated alignment file in main as well as publishing it, so the page never depends on a temporary CI-only asset.
           git add ermita/3d/generated/facade-model-origin.json ermita/3d/generated/ermita-buildings-facade-details.glb ermita/3d/generated/facade-signage-index.csv ermita/3d/generated/facade-details-report.json
+          git add ermita/3d/landmarks/landmark-facade-details.glb ermita/3d/landmarks/landmark-facade-origin.json ermita/3d/landmarks/landmark-facade-report.json
           if ! git diff --cached --quiet; then
             git commit -m "Store generated building and ground fallback data"
             git push origin HEAD:main
