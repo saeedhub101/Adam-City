@@ -18,7 +18,7 @@ This folder is a dedicated inventory/collection area for the OpenStreetMap (OSM)
 ## Important notes
 
 1. The original files under `ermita/` remain untouched. These are copies in the repository tree, using the same underlying Git blobs where possible.
-2. The collected `data/buildings/` folder retains the legacy `ermita-building_details-legacy.csv` instead of the newer `ermita-building-details.csv` copy, based on the comparison; the original source files under `ermita/maps/generated/` remain untouched.
+2. The collected `data/buildings/` folder stores the retained OSM details table as `osm-building-details.csv`; original source files under `ermita/maps/generated/` remain untouched.
 3. This is the initial collection, not yet a full field-by-field audit. Next, inspect every dataset's schema and value coverage, identify duplicate records, and distinguish explicitly tagged heights from floor counts and unknown values.
 4. The source attribution in the OSM-derived files refers to OpenStreetMap contributors; preserve OSM attribution and applicable ODbL terms when using or redistributing the data.
 
