@@ -134,7 +134,6 @@ try {
 } catch(err) {
  errorBox.style.display='block'; errorBox.textContent='تعذر تحميل خريطة OpenFreeMap العالمية؛ سيتم عرض البيانات المحلية إن أمكن. '+(err.message||err);
 }
-const remoteBuildingDefaultColors=Object.fromEntries((remoteStyle?.layers||[]).filter(layer=>remoteBuildingIds.includes(layer.id)).map(layer=>[layer.id,layer.paint?.['fill-extrusion-color']]));
 const map = new maplibregl.Map({container:'map',center:[120.9918,14.5707],zoom:15,pitch:57,bearing:-18,antialias:true,style:remoteStyle||localStyle});
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
 let firstError=false, modelLayerAdded=false, modelLoading=false, modelLayer=null;
@@ -178,18 +177,12 @@ function applyBuildingAppearance(){
 }
 function applyFacadeBuildingHighlight(){
  const highlightOn=document.getElementById('facadeModel').checked;
- const highlightColor='#20d65a';
- if(map.getLayer('adam-local-buildings-3d')){
-  const colorsOn=document.getElementById('colors').checked;
-  const osmOn=document.getElementById('osmAppearance').checked;
-  map.setPaintProperty('adam-local-buildings-3d','fill-extrusion-color',highlightOn?highlightColor:(colorsOn?(osmOn?osmAppearanceColor:defaultBuildingColor):'#c9bfb0'));
- }
- remoteBuildingIds.forEach(id=>{
-  if(!map.getLayer(id))return;
-  const original=remoteBuildingDefaultColors[id];
-  if(highlightOn)map.setPaintProperty(id,'fill-extrusion-color',highlightColor);
-  else if(original!==undefined)map.setPaintProperty(id,'fill-extrusion-color',original);
- });
+ const colorsOn=document.getElementById('colors').checked;
+ const osmOn=document.getElementById('osmAppearance').checked;
+ const color=highlightOn?'#20d65a':(colorsOn?(osmOn?osmAppearanceColor:defaultBuildingColor):'#c9bfb0');
+ // Highlight only the repository's local building layer, which is the layer
+ // derived from the footprints used to generate the facade-detail model.
+ if(map.getLayer('adam-local-buildings-3d'))map.setPaintProperty('adam-local-buildings-3d','fill-extrusion-color',color);
 }
 document.getElementById('colors').onchange=applyBuildingAppearance;
 document.getElementById('osmAppearance').onchange=applyBuildingAppearance;
