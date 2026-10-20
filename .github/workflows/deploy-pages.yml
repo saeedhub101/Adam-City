@@ -51,25 +51,26 @@ jobs:
           /ermita/3d/exports/adam-city-complete.glb
           EOF
           git switch -C main FETCH_HEAD
-      - name: Complete missing OpenFreeMap zoom-14 tiles with a viewport buffer
+      - name: Complete OpenFreeMap zoom 10-14 tiles with expanded viewport coverage
         shell: bash
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile
-          # Keep the native source zoom at 14 and add one tile of coverage around Ermita.
-          MIN_ZOOM=14 MAX_ZOOM=14 TILE_BUFFER=1 python3 scripts/import_openfreemap_ermita.py
+          # Import every published zoom level so the map remains populated when zooming out.
+          # Two-tile buffer at each level covers pitched views and the Ermita-Malate corridor.
+          MIN_ZOOM=10 MAX_ZOOM=14 TILE_BUFFER=2 python3 scripts/import_openfreemap_ermita.py
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/saeedhub101/Adam-City.git"
-          git add ermita/maps/sources/openfreemap/vector-tiles/14 \
+          git add ermita/maps/sources/openfreemap/vector-tiles/ \
             ermita/maps/sources/openfreemap/tile-index.json \
             ermita/maps/sources/openfreemap/import-report.json \
             ermita/maps/sources/openfreemap/source-metadata.json \
             ermita/maps/sources/openfreemap/README.md
           if ! git diff --cached --quiet; then
-            git commit -m "Add buffered OpenFreeMap z14 tiles for 3D preview"
+            git commit -m "Add multi-zoom OpenFreeMap tiles for stable 3D preview"
             git push origin main
           else
             echo "OpenFreeMap zoom-14 tile coverage is already complete."
