@@ -4,7 +4,7 @@
 Windows, doors and sign panels are visualization placeholders, not surveyed architecture.
 Named sign panels are indexed in a CSV; this script does not invent logos or exact sign text.
 """
-import csv, json, math, re
+import csv, json, math, re, hashlib
 from pathlib import Path
 
 import trimesh
@@ -87,6 +87,9 @@ def main():
         raise RuntimeError("No valid building polygons available for facade generation")
     center = ((minx+maxx)/2, (miny+maxy)/2, maxz/2)
     window_meshes = []
+    frame_meshes = []
+    sill_meshes = []
+    balcony_meshes = []
     door_meshes = []
     sign_meshes = []
     signage = []
@@ -102,6 +105,10 @@ def main():
         floor_h = height / levels
         name = tags.get("name") or tags.get("brand") or tags.get("shop") or tags.get("amenity") or ""
         fid = (feature.get("properties") or {}).get("osm_feature_id", "")
+        # Stable per-building variation: avoid a city of identical, repeated blue window blocks.
+        seed = int(hashlib.sha256(str(fid or name or len(prepared)).encode()).hexdigest()[:8], 16)
+        frame_color = ([218, 211, 195, 255] if seed % 5 in (0, 1) else [76, 72, 66, 255] if seed % 5 in (2, 3) else [156, 151, 139, 255])
+        glass_color = ([87, 135, 157, 220] if seed % 4 == 0 else [112, 153, 170, 205] if seed % 4 == 1 else [75, 105, 119, 220] if seed % 4 == 2 else [151, 181, 190, 190])
         # Only exterior walls; window rows and panels sit just outside the footprint.
         ring = list(poly.exterior.coords)
         for a, b in zip(ring[:-1], ring[1:]):
@@ -113,8 +120,8 @@ def main():
             nx, ny = -uy, ux
             angle = math.atan2(dy, dx)
             # Place 1–2 m from corners and avoid excessive tiny windows.
-            spacing = 2.6
-            count = min(80, max(0, int((length-2.0)/spacing)))
+            spacing = 3.0
+            count = min(55, max(0, int((length-2.0)/spacing)))
             if count < 1:
                 continue
             usable = min(length-1.2, count*spacing)
@@ -130,8 +137,18 @@ def main():
                     cy = a[1] + uy*along + ny*0.065 - center[1]
                     cz = z + wh/2 - center[2]
                     ww = min(1.25, max(0.55, usable/count*0.55))
-                    window_meshes.append(box_at((cx,cy,cz),(ww,0.10,wh),angle,[100,170,198,205]))
+                    # Slightly larger opaque backing reads as a real frame/reveal around the glass.
+                    frame_meshes.append(box_at((cx,cy,cz),(ww+0.16,0.14,wh+0.16),angle,frame_color))
+                    window_meshes.append(box_at((cx,cy,cz+0.005),(ww,0.075,wh),angle,glass_color))
+                    # Projecting sill catches light and breaks up flat facades.
+                    sill_meshes.append(box_at((cx,cy-ny*0.035,cz-wh/2-0.045),(ww+0.22,0.20,0.07),angle,frame_color))
                     windows_count += 1
+            # Occasional shallow balconies on taller buildings, using a stable building-specific pattern.
+            if height >= 12 and seed % 3 == 0 and floor_h > 2.4 and length >= 9:
+                balcony_z = min(height - 1.4, floor_h * (1 + (seed % max(1, levels-1))))
+                if balcony_z > 2.8:
+                    balcony_meshes.append(box_at((a[0]+ux*length*0.5+nx*0.48-center[0], a[1]+uy*length*0.5+ny*0.48-center[1], balcony_z-center[2]), (min(2.8,length*0.34),0.75,0.12), angle, [174,169,157,255]))
+                    balcony_meshes.append(box_at((a[0]+ux*length*0.5+nx*0.82-center[0], a[1]+uy*length*0.5+ny*0.82-center[1], balcony_z+0.48-center[2]), (min(2.8,length*0.34),0.08,0.85), angle, [91,94,91,255]))
             # Ground-floor door and a generic signboard. Real sign text is not fabricated.
             if length >= 7:
                 along = length * 0.5
@@ -158,6 +175,18 @@ def main():
 
     # Separate geometry groups preserve independent glTF materials for glass and opaque details.
     scene = trimesh.Scene()
+    if frame_meshes:
+        frames = trimesh.util.concatenate(frame_meshes)
+        frames.visual = trimesh.visual.TextureVisuals(material=pbr_material([156, 151, 139, 255], metallic=0.0, roughness=0.82))
+        scene.add_geometry(frames, geom_name="window_frames", node_name="window_frames")
+    if sill_meshes:
+        sills = trimesh.util.concatenate(sill_meshes)
+        sills.visual = trimesh.visual.TextureVisuals(material=pbr_material([174, 169, 157, 255], metallic=0.0, roughness=0.8))
+        scene.add_geometry(sills, geom_name="window_sills", node_name="window_sills")
+    if balcony_meshes:
+        balconies = trimesh.util.concatenate(balcony_meshes)
+        balconies.visual = trimesh.visual.TextureVisuals(material=pbr_material([130, 127, 118, 255], metallic=0.08, roughness=0.7))
+        scene.add_geometry(balconies, geom_name="balconies", node_name="balconies")
     if window_meshes:
         glass = trimesh.util.concatenate(window_meshes)
         glass.visual = trimesh.visual.TextureVisuals(
@@ -202,11 +231,11 @@ def main():
         "output_signage_index": str(OUT_CSV.relative_to(ROOT)),
         "building_polygon_parts": len(prepared), "glb_bytes": OUT_GLB.stat().st_size,
         "model_center_epsg3857_m": {"x": center[0], "y": center[1], "z": center[2]},
-        "window_panels": windows_count,
+        "window_panels": windows_count, "window_frames": len(frame_meshes), "window_sills": len(sill_meshes), "balcony_parts": len(balcony_meshes),
         "door_placeholders": doors_count, "named_signboard_placeholders": panels_count,
         "placement": "EPSG:3857 meters; recentered using the same building extent as the extrusion model",
         "limitations": [
-            "Windows, doors and signboards are procedural placeholders, not measured architectural features.",
+            "Windows, frames, sills, balconies, doors and signboards are procedural visual details, not surveyed architectural features.",
             "Floor counts are estimated if OSM building:levels is absent.",
             "Signboard names are drawn from available OSM name/brand/shop/amenity tags; actual typography, logos, colors and wording are not reconstructed.",
             "No facade photographs, photogrammetry, or street-level imagery are included."
