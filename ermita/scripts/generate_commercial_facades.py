@@ -174,6 +174,23 @@ def outward_normal(poly,a,b):
     if poly.contains(test): nx,ny=-nx,-ny
     return nx,ny
 
+def nearest_edge(poly, point):
+    """Choose a usable facade edge nearest the mapped store POI; break ties by frontage length."""
+    ring=list(poly.exterior.coords)
+    candidates=[]
+    for a,b in zip(ring[:-1],ring[1:]):
+        length=math.hypot(b[0]-a[0],b[1]-a[1])
+        if length<4: continue
+        dx,dy=b[0]-a[0],b[1]-a[1]
+        denom=dx*dx+dy*dy
+        t=0.0 if denom==0 else max(0.0,min(1.0,((point.x-a[0])*dx+(point.y-a[1])*dy)/denom))
+        qx,qy=a[0]+t*dx,a[1]+t*dy
+        distance=math.hypot(point.x-qx,point.y-qy)
+        candidates.append((distance,-length,a,b,math.atan2(dy,dx)))
+    if not candidates: return None
+    distance,neg_length,a,b,angle=min(candidates,key=lambda x:(round(x[0],2),x[1]))
+    return a,b,-neg_length,angle
+
 def add_robinsons_detail(scene, feature, origin, report):
     geom=geom_transform(TO_METERS,shape(feature["geometry"]))
     polys=polygon_parts(geom)
@@ -305,7 +322,7 @@ def main():
         _,dist,bf,bgeom=candidates[0]
         key=(brand_key,fid(bf))
         if key in placed: continue
-        edge=longest_edge(max(polygon_parts(bgeom),key=lambda p:p.area))
+        edge=nearest_edge(max(polygon_parts(bgeom),key=lambda p:p.area),pt)
         if not edge:
             report["unmatched_store_pois"].append({"id":fid(store),"brand":brand_key,"reason":"matched footprint has no usable facade edge"})
             continue
@@ -323,7 +340,7 @@ def main():
         report["store_signs"].append({"brand":brand_key,"store_poi_id":fid(store),"building_osm_id":fid(bf),
             "poi_to_footprint_m":round(dist,2),"panel_width_m":width,"panel_height_m":height,
             "image_asset":"ermita/buildings/commercial_assets/7-eleven-logo.png" if is_seven else "ermita/buildings/commercial_assets/mcdonalds-golden-arches.png",
-            "placement":"separate textured quad placed just off the longest mapped facade edge",
+            "placement":"separate textured quad placed just off the facade edge nearest the mapped store POI",
             "source_note":"Logo asset is downloaded from the official 7-Eleven site / Wikimedia Commons public-domain McDonald's logo."})
     if not scene.geometry: raise RuntimeError("No commercial facade geometry was generated")
     OUT_DIR.mkdir(parents=True,exist_ok=True)
