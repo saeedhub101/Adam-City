@@ -60,7 +60,25 @@ const safeText=['coalesce',tag('name'),tag('official_name'),tag('alt_name'),''];
 const houseNo=['coalesce',tag('addr:housenumber'),tag('ref'),''];
 const sourceHeight=['coalesce',['to-number',tag('height')],['*',['to-number',tag('building:levels')],3.15],['*',['to-number',tag('levels')],3.15]];
 const buildingColor=['coalesce',tag('building:colour'),tag('building:color'),tag('colour'),'#c9c5bb'];
-function setVis(ids,on){ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')})}
+function setVis(ids,on){ids.forEach(id=>{if(map.getLayer(id)){try{map.setLayoutProperty(id,'visibility',on?'visible':'none')}catch(err){console.warn('Visibility toggle failed for '+id,err)}}})}
+function addLayerSafe(layer){try{map.addLayer(layer);return true}catch(err){console.error('Layer failed:',layer.id,err);say('تعذر إنشاء طبقة '+layer.id+': '+(err?.message||String(err)));return false}}
+// Wire controls immediately; missing layers are ignored until/if they are available.
+function bindControls(){
+  $('buildings').onchange=e=>setVis(['local-building-extrusions','local-building-footprints','local-building-roof-edges'],e.target.checked);
+  $('nativeOpenFreeMapBuildings').onchange=e=>setVis(openFreeMapBuildingLayerIds||[],e.target.checked);
+  $('openfreemapBuildings').onchange=e=>{const on=e.target.checked;setVis(['openfreemap-building-extrusions'],on);say(on?'طبقة OpenMapTiles المحلية مفعلة.':'تم إخفاء مباني OpenMapTiles المحلية.');};
+  $('numbers').onchange=e=>setVis(['building-house-numbers'],e.target.checked);
+  $('bNames').onchange=e=>setVis(['local-building-name-labels'],e.target.checked);
+  $('facade').onchange=e=>{const color=e.target.checked?buildingColor:'#c9c5bb';[['local-building-extrusions','fill-extrusion-color'],['local-building-footprints','fill-color'],['openfreemap-building-extrusions','fill-extrusion-color']].forEach(([id,prop])=>{if(map.getLayer(id)){try{map.setPaintProperty(id,prop,color)}catch(err){console.warn(err)}}})};
+  $('roads').onchange=e=>{setVis(['local-road-casing','local-road-surfaces'],e.target.checked);setVis(['local-street-labels'],e.target.checked&&$('rNames').checked)};
+  $('sidewalks').onchange=e=>setVis(['local-sidewalk-markings'],e.target.checked);
+  $('rNames').onchange=e=>setVis(['local-street-labels'],e.target.checked&&$('roads').checked);
+  $('boundary').onchange=e=>setVis(['ermita-boundary-fill','ermita-boundary-line'],e.target.checked);
+  $('terrain').onchange=e=>{try{map.setTerrain(e.target.checked?{source:'regional-terrain-dem',exaggeration:1.18}:null)}catch(err){console.warn('Terrain toggle failed',err);say('تعذر تغيير التضاريس: '+err.message)}};
+  $('baseMap').onchange=e=>{for(const l of map.getStyle().layers||[]){if(l.id==='background'||l.id?.startsWith('local-')||l.id?.startsWith('ermita-boundary')||l.id==='building-house-numbers'||(typeof openFreeMapBuildingLayerIds!=='undefined'&&openFreeMapBuildingLayerIds.includes(l.id)))continue;try{map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}catch(err){console.warn('Basemap toggle failed',l.id,err)}}};
+}
+let openFreeMapBuildingLayerIds=[];
+bindControls();
 map.on('load',async()=>{
  try{
   const pairs=await Promise.all(Object.entries(urls).map(async([k,u])=>{const r=await fetch(u);if(!r.ok)throw Error(k+' HTTP '+r.status);if(k==='housenumbers'||k==='openfreemapBuildings'){const lines=(await r.text()).split(/\r?\n/).filter(Boolean);const features=lines.map(line=>JSON.parse(line)).filter(f=>f&&f.type==='Feature');if(k==='openfreemapBuildings'){
@@ -87,7 +105,7 @@ map.on('load',async()=>{
   map.addSource('local-boundary',{type:'geojson',data:d.boundary});
   // Keep the rich OpenFreeMap streets, parks, water and place-name style; local verified OSM geometry overlays it.
   const layers=map.getStyle().layers||[];
-  const openFreeMapBuildingLayerIds=layers.filter(l=>/building/i.test(l.id||'')||/building/i.test(l['source-layer']||'')).map(l=>l.id);
+  openFreeMapBuildingLayerIds=layers.filter(l=>/building/i.test(l.id||'')||/building/i.test(l['source-layer']||'')).map(l=>l.id);
   // Keep the basemap's building styling separate; OSM source is the default visible building layer.
   setVis(openFreeMapBuildingLayerIds,false);
   map.addSource('regional-terrain-dem',{type:'raster-dem',tiles:['https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:15});
@@ -95,35 +113,23 @@ map.on('load',async()=>{
   try{map.setTerrain({source:'regional-terrain-dem',exaggeration:1.18})}catch(err){console.warn('Terrain disabled:',err);$('terrain').checked=false}
   try{map.setSky({'sky-color':'#a8c9df','sky-horizon-blend':0.45,'horizon-color':'#e7eee9','horizon-fog-blend':0.15,'fog-color':'#dce8e6','fog-ground-blend':0.15,'atmosphere-blend':0.7})}catch(err){console.warn('Sky disabled:',err)}
   // Keep the original OpenFreeMap style buildings visible by default; their checkbox controls only these style layers.
-  map.addLayer({id:'ermita-boundary-fill',type:'fill',source:'local-boundary',paint:{'fill-color':'#65d9b0','fill-opacity':0.045}});
-  map.addLayer({id:'ermita-boundary-line',type:'line',source:'local-boundary',paint:{'line-color':'#68e2b8','line-width':2,'line-dasharray':[2,1]}});
-  map.addLayer({id:'local-road-casing',type:'line',source:'local-roads',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#202326','line-opacity':.88,'line-width':['interpolate',['linear'],['zoom'],12,1,16,5,18,8]}});
-  map.addLayer({id:'local-road-surfaces',type:'line',source:'local-roads',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['match',['get','highway'],'motorway','#bfa78a','trunk','#c4ae91','primary','#c8b69c','secondary','#b8b4a8','tertiary','#c5c0b3','residential','#c8c4ba','service','#aaa99f','footway','#c9c5b7','pedestrian','#d2cbb9','steps','#b8b0a1','#bcb8ac'],'line-opacity':.98,'line-width':['interpolate',['linear'],['zoom'],11,.45,14,1.6,17,4.8]}});
-  map.addLayer({id:'local-sidewalk-markings',type:'line',source:'local-roads',filter:['in',tag('sidewalk'),['literal',['both','left','right','yes']]],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#e5dfce','line-opacity':.9,'line-width':['interpolate',['linear'],['zoom'],15,.5,18,1.8],'line-offset':['interpolate',['linear'],['zoom'],15,1,18,3]}});
-  map.addLayer({id:'local-building-footprints',type:'fill',source:'local-buildings',minzoom:12.8,filter:['!', ['any',['has','height',['get','tags']],['has','building:levels',['get','tags']],['has','levels',['get','tags']]]],paint:{'fill-color':buildingColor,'fill-opacity':0.92}});
-  map.addLayer({id:'local-building-extrusions',type:'fill-extrusion',source:'local-buildings',minzoom:13.2,filter:['any',['has','height',['get','tags']],['has','building:levels',['get','tags']],['has','levels',['get','tags']]],paint:{'fill-extrusion-color':buildingColor,'fill-extrusion-height':sourceHeight,'fill-extrusion-base':['coalesce',['to-number',tag('min_height')],['*',['to-number',tag('building:min_level')],3.15],0],'fill-extrusion-opacity':.98,'fill-extrusion-vertical-gradient':true}});
+  addLayerSafe({id:'ermita-boundary-fill',type:'fill',source:'local-boundary',paint:{'fill-color':'#65d9b0','fill-opacity':0.045}});
+  addLayerSafe({id:'ermita-boundary-line',type:'line',source:'local-boundary',paint:{'line-color':'#68e2b8','line-width':2,'line-dasharray':[2,1]}});
+  addLayerSafe({id:'local-road-casing',type:'line',source:'local-roads',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#202326','line-opacity':.88,'line-width':['interpolate',['linear'],['zoom'],12,1,16,5,18,8]}});
+  addLayerSafe({id:'local-road-surfaces',type:'line',source:'local-roads',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['match',['get','highway'],'motorway','#bfa78a','trunk','#c4ae91','primary','#c8b69c','secondary','#b8b4a8','tertiary','#c5c0b3','residential','#c8c4ba','service','#aaa99f','footway','#c9c5b7','pedestrian','#d2cbb9','steps','#b8b0a1','#bcb8ac'],'line-opacity':.98,'line-width':['interpolate',['linear'],['zoom'],11,.45,14,1.6,17,4.8]}});
+  addLayerSafe({id:'local-sidewalk-markings',type:'line',source:'local-roads',filter:['in',tag('sidewalk'),['literal',['both','left','right','yes']]],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#e5dfce','line-opacity':.9,'line-width':['interpolate',['linear'],['zoom'],15,.5,18,1.8],'line-offset':['interpolate',['linear'],['zoom'],15,1,18,3]}});
+  addLayerSafe({id:'local-building-footprints',type:'fill',source:'local-buildings',minzoom:12.8,filter:['!', ['any',['has','height',['get','tags']],['has','building:levels',['get','tags']],['has','levels',['get','tags']]]],paint:{'fill-color':buildingColor,'fill-opacity':0.92}});
+  addLayerSafe({id:'local-building-extrusions',type:'fill-extrusion',source:'local-buildings',minzoom:13.2,filter:['any',['has','height',['get','tags']],['has','building:levels',['get','tags']],['has','levels',['get','tags']]],paint:{'fill-extrusion-color':buildingColor,'fill-extrusion-height':sourceHeight,'fill-extrusion-base':['coalesce',['to-number',tag('min_height')],['*',['to-number',tag('building:min_level')],3.15],0],'fill-extrusion-opacity':.98,'fill-extrusion-vertical-gradient':true}});
   // OpenMapTiles building footprints from the repository's local GeoJSONL catalogue (separate from the OpenFreeMap basemap style).
-  map.addLayer({id:'openfreemap-building-extrusions',type:'fill-extrusion',source:'openfreemap-buildings',minzoom:13.2,layout:{visibility:'none'},paint:{'fill-extrusion-color':['coalesce',['get','colour'],['get','color'],['get','building:colour'], '#c9c5bb'],'fill-extrusion-height':['coalesce',['to-number',['get','height']],['to-number',['get','render_height']],['to-number',['get','basemap_render_height']],['to-number',['get','adam_height_m']],['*',['to-number',['get','building:levels']],3.15],3],'fill-extrusion-base':['coalesce',['to-number',['get','min_height']],['to-number',['get','render_min_height']],['to-number',['get','basemap_render_min_height']],0],'fill-extrusion-opacity':0.86,'fill-extrusion-vertical-gradient':true}});
+  addLayerSafe({id:'openfreemap-building-extrusions',type:'fill-extrusion',source:'openfreemap-buildings',minzoom:13.2,layout:{visibility:'none'},paint:{'fill-extrusion-color':['coalesce',['get','colour'],['get','color'],['get','building:colour'], '#c9c5bb'],'fill-extrusion-height':['coalesce',['to-number',['get','height']],['to-number',['get','render_height']],['to-number',['get','basemap_render_height']],['to-number',['get','adam_height_m']],['*',['to-number',['get','building:levels']],3.15],3],'fill-extrusion-base':['coalesce',['to-number',['get','min_height']],['to-number',['get','render_min_height']],['to-number',['get','basemap_render_min_height']],0],'fill-extrusion-opacity':0.86,'fill-extrusion-vertical-gradient':true}});
   // Microsoft footprints are a comparison overlay only: transparent fill and a vivid outline make mismatches easy to spot.
-  map.addLayer({id:'local-building-roof-edges',type:'line',source:'local-buildings',minzoom:14.5,paint:{'line-color':'#645f56','line-opacity':.6,'line-width':.6}});
+  addLayerSafe({id:'local-building-roof-edges',type:'line',source:'local-buildings',minzoom:14.5,paint:{'line-color':'#645f56','line-opacity':.6,'line-width':.6}});
   // Address numbers are polygon labels, not clickable point markers.
-  map.addLayer({id:'building-house-numbers',type:'symbol',source:'local-buildings',minzoom:16.1,filter:['!=',houseNo,''],layout:{'symbol-placement':'point','text-field':houseNo,'text-font':['Noto Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],16,9,19,13],'text-allow-overlap':false,'text-ignore-placement':false,'symbol-z-elevate':true,'text-anchor':'center'},paint:{'text-color':'#2c2924','text-halo-color':'#f8f2e5','text-halo-width':1.5,'text-halo-blur':.2}});
-  map.addLayer({id:'local-building-name-labels',type:'symbol',source:'local-buildings',minzoom:15.3,filter:['!=',safeText,''],layout:{'symbol-placement':'point','text-field':safeText,'text-font':['Noto Sans Regular'],'text-size':10,'text-max-width':9,'text-allow-overlap':false,'symbol-z-elevate':true},paint:{'text-color':'#f9f6ec','text-halo-color':'#363b3c','text-halo-width':1.4}});
-  map.addLayer({id:'local-street-labels',type:'symbol',source:'local-roads',minzoom:13.2,filter:['has','name'],layout:{'symbol-placement':'line','text-field':['coalesce',['get','name:en'],['get','name']],'text-font':['Noto Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],13,9,17,12],'text-max-angle':35},paint:{'text-color':'#fff8e9','text-halo-color':'#4b4b45','text-halo-width':1.5}});
+  addLayerSafe({id:'building-house-numbers',type:'symbol',source:'local-buildings',minzoom:16.1,filter:['!=',houseNo,''],layout:{'symbol-placement':'point','text-field':houseNo,'text-font':['Noto Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],16,9,19,13],'text-allow-overlap':false,'text-ignore-placement':false,'symbol-z-elevate':true,'text-anchor':'center'},paint:{'text-color':'#2c2924','text-halo-color':'#f8f2e5','text-halo-width':1.5,'text-halo-blur':.2}});
+  addLayerSafe({id:'local-building-name-labels',type:'symbol',source:'local-buildings',minzoom:15.3,filter:['!=',safeText,''],layout:{'symbol-placement':'point','text-field':safeText,'text-font':['Noto Sans Regular'],'text-size':10,'text-max-width':9,'text-allow-overlap':false,'symbol-z-elevate':true},paint:{'text-color':'#f9f6ec','text-halo-color':'#363b3c','text-halo-width':1.4}});
+  addLayerSafe({id:'local-street-labels',type:'symbol',source:'local-roads',minzoom:13.2,filter:['has','name'],layout:{'symbol-placement':'line','text-field':['coalesce',['get','name:en'],['get','name']],'text-font':['Noto Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],13,9,17,12],'text-max-angle':35},paint:{'text-color':'#fff8e9','text-halo-color':'#4b4b45','text-halo-width':1.5}});
   map.fitBounds([[120.9711,14.5732],[120.9931,14.5971]],{padding:{top:55,right:325,bottom:35,left:30},duration:0});
   say('تم تحميل '+d.buildings.features.length.toLocaleString('en-US')+' بصمة من بيانات OSM؛ المباني ذات الارتفاع أو عدد الطوابق الموثّق تظهر ثلاثية الأبعاد، والمباني التي تفتقد هذه البيانات تظهر كبصمات مسطّحة. الألوان من خصائص المصدر عند توفرها، وإلا لون محايد للعرض فقط.');
-  $('buildings').onchange=e=>setVis(['local-building-extrusions','local-building-footprints','local-building-roof-edges'],e.target.checked);
-  $('nativeOpenFreeMapBuildings').onchange=e=>setVis(openFreeMapBuildingLayerIds,e.target.checked);
-  $('openfreemapBuildings').onchange=e=>{const on=e.target.checked;setVis(['openfreemap-building-extrusions'],on);say(on?'مباني OpenMapTiles المحلية ظاهرة؛ عددها '+ofmBuildingFeatures.length.toLocaleString('en-US')+' بصمة.':'تم إخفاء مباني OpenMapTiles المحلية.');};
-  $('numbers').onchange=e=>setVis(['building-house-numbers'],e.target.checked);
-  $('bNames').onchange=e=>setVis(['local-building-name-labels'],e.target.checked);
-  $('facade').onchange=e=>{const color=e.target.checked?buildingColor:'#c9c5bb';[['local-building-extrusions','fill-extrusion-color'],['local-building-footprints','fill-color'],['openfreemap-building-extrusions','fill-extrusion-color']].forEach(([id,prop])=>{if(map.getLayer(id))map.setPaintProperty(id,prop,color)})};
-  $('roads').onchange=e=>setVis(['local-road-casing','local-road-surfaces','local-street-labels'],e.target.checked);
-  $('sidewalks').onchange=e=>setVis(['local-sidewalk-markings'],e.target.checked);
-  $('rNames').onchange=e=>setVis(['local-street-labels'],e.target.checked&&$('roads').checked);
-  $('boundary').onchange=e=>setVis(['ermita-boundary-fill','ermita-boundary-line'],e.target.checked);
-  $('terrain').onchange=e=>{try{map.setTerrain(e.target.checked?{source:'regional-terrain-dem',exaggeration:1.18}:null)}catch(err){console.warn('Terrain toggle failed',err)}};
-  $('baseMap').onchange=e=>{for(const l of map.getStyle().layers||[]){if(l.id==='background'||l.id?.startsWith('local-')||l.id?.startsWith('ermita-boundary')||l.id==='building-house-numbers'||openFreeMapBuildingLayerIds.includes(l.id))continue;try{map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}catch(_){}}};
  }catch(e){console.error(e);say('تعذر تحميل بيانات المدينة: '+e.message+' — راجع سجل Actions وملفات النشر.')}
 });
 })();
