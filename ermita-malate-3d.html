@@ -54,6 +54,8 @@
     const sourceId = 'local-openfreemap-tiles';
     const buildingFallbackSourceId = 'local-building-fallback';
     const buildingFallbackUrl = new URL('./ermita/maps/sources/openfreemap/building-fallback.geojson', window.location.href).href;
+    const groundFallbackSourceId = 'local-ground-fallback';
+    const groundFallbackUrl = new URL('./ermita/maps/sources/openfreemap/ground-fallback.geojson', window.location.href).href;
     const buildingLayer = 'local-buildings-3d';
     const roadLayers = ['local-road-casing','local-roads'];
     const status = document.getElementById('status');
@@ -75,23 +77,27 @@
             maxzoom: 14,
             attribution: 'OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors'
           },
-          // The source's z10-z12 tiles contain no building layer. A GeoJSON fallback
-          // made from local z14 buildings keeps those buildings visible while zooming out.
+          // Local z10-z12 tiles have sparse/missing feature layers. GeoJSON fallbacks
+          // made from z14 tiles keep buildings and ground features visible at all zooms.
           [buildingFallbackSourceId]: {
             type: 'geojson',
             data: buildingFallbackUrl,
-            maxzoom: 14,
-            buffer: 128
+            maxzoom: 14
+          },
+          [groundFallbackSourceId]: {
+            type: 'geojson',
+            data: groundFallbackUrl,
+            maxzoom: 14
           }
         },
         layers: [
           {id:'local-background',type:'background',paint:{'background-color':'#dce4e4'}},
-          {id:'local-landcover',type:'fill',source:sourceId,'source-layer':'landcover',paint:{'fill-color':'#cbdacb','fill-opacity':0.9}},
-          {id:'local-landuse',type:'fill',source:sourceId,'source-layer':'landuse',paint:{'fill-color':['match',['get','class'],'park','#a8c9a6','grass','#c5d9b9','forest','#8eaf8e','residential','#e4e1d7','commercial','#e5d9c6','industrial','#d7d2c9','#e4e1d7'],'fill-opacity':0.8}},
-          {id:'local-water',type:'fill',source:sourceId,'source-layer':'water',paint:{'fill-color':'#83c5df'}},
-          {id:'local-waterway',type:'line',source:sourceId,'source-layer':'waterway',paint:{'line-color':'#83c5df','line-width':['interpolate',['linear'],['zoom'],10,0.5,15,2.2]}},
-          {id:roadLayers[0],type:'line',source:sourceId,'source-layer':'transportation',paint:{'line-color':'#a5a9a7','line-width':['interpolate',['linear'],['zoom'],10,0.6,14,5,16,8]}},
-          {id:roadLayers[1],type:'line',source:sourceId,'source-layer':'transportation',paint:{'line-color':['match',['get','class'],'motorway','#f3c18b','trunk','#f3c18b','primary','#f5d7a4','secondary','#fff5d9','#fffdf7'],'line-width':['interpolate',['linear'],['zoom'],10,0.25,14,2.8,16,5.5]}},
+          {id:'local-landcover',type:'fill',source:groundFallbackSourceId,filter:['==',['get','source_layer'],'landcover'],paint:{'fill-color':'#cbdacb','fill-opacity':0.9}},
+          {id:'local-landuse',type:'fill',source:groundFallbackSourceId,filter:['==',['get','source_layer'],'landuse'],paint:{'fill-color':['match',['get','class'],'park','#a8c9a6','grass','#c5d9b9','forest','#8eaf8e','residential','#e4e1d7','commercial','#e5d9c6','industrial','#d7d2c9','#e4e1d7'],'fill-opacity':0.8}},
+          {id:'local-water',type:'fill',source:groundFallbackSourceId,filter:['==',['get','source_layer'],'water'],paint:{'fill-color':'#83c5df'}},
+          {id:'local-waterway',type:'line',source:groundFallbackSourceId,filter:['==',['get','source_layer'],'waterway'],paint:{'line-color':'#83c5df','line-width':['interpolate',['linear'],['zoom'],10,0.5,15,2.2]}},
+          {id:roadLayers[0],type:'line',source:groundFallbackSourceId,filter:['==',['get','source_layer'],'transportation'],paint:{'line-color':'#a5a9a7','line-width':['interpolate',['linear'],['zoom'],10,0.6,14,5,16,8]}},
+          {id:roadLayers[1],type:'line',source:groundFallbackSourceId,filter:['==',['get','source_layer'],'transportation'],paint:{'line-color':['match',['get','class'],'motorway','#f3c18b','trunk','#f3c18b','primary','#f5d7a4','secondary','#fff5d9','#fffdf7'],'line-width':['interpolate',['linear'],['zoom'],10,0.25,14,2.8,16,5.5]}},
           {id:buildingLayer,type:'fill-extrusion',source:buildingFallbackSourceId,filter:['==',['geometry-type'],'Polygon'],paint:{
             'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building_colour'],['match',['get','class'],'commercial','#c9b8a4','industrial','#b9b7b1','public','#c4c9ce','residential','#d8cdbd','#c9bfb0']],
             'fill-extrusion-height':['max',3,['case',['>', ['to-number',['get','render_height'],0],0],['to-number',['get','render_height'],0],['>', ['to-number',['get','height'],0],0],['to-number',['get','height'],0],['>', ['to-number',['get','building:levels'],0],0],['*',['to-number',['get','building:levels'],0],3.15],5]],
