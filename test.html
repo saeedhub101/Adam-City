@@ -32,6 +32,7 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <label class="row"><input type="checkbox" id="osm-administrative"> 9. administrative — الحدود الإدارية</label>
 <label class="row"><input type="checkbox" id="osm-places"> 10. places — المتاجر والطعام والصحة والتعليم والخدمات</label>
 <label class="row"><input type="checkbox" id="osm-nature"> 11. nature — المياه والأشجار والحدائق والغطاء النباتي</label>
+<label class="row"><input type="checkbox" id="osm-windows"> 12. windows — تفاصيل الواجهات والشبابيك</label>
 </div>
 <div class="status" id="status">جارٍ تحميل خريطة المصدر…</div><div id="error"></div>
 </section>
@@ -46,7 +47,7 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
  catch(e){errorBox.style.display='block';errorBox.textContent='تعذر تحميل نمط OpenFreeMap: '+e.message;status.textContent='تعذر تحميل الخريطة الأساسية.';return;}
  const originalLayers=style.layers.map(l=>({...l}));
  const baseBuildingIds=originalLayers.filter(l=>l.type==='fill-extrusion'&&(/building/i.test(l.id+' '+(l['source-layer']||'')))).map(l=>l.id);
- const map=new maplibregl.Map({container:'map',style,center:[120.9918,14.5707],zoom:15,pitch:55,bearing:-18,antialias:true});
+ const map=new maplibregl.Map({container:'map',style,center:[120.9918,14.5707],zoom:15,pitch:55,bearing:-18,antialias:true}); window.adamCityMap=map;
  map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');
  map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
  const visibility=(id,on)=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none');};
@@ -87,11 +88,59 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
    addSourceLayer('nature','osm-vegetation-src','complete_data/OSM/data/nature/ermita-trees-parks-vegetation.geojson','map','#71c982');
    // Bind all eleven OSM directory toggles; raw and tags are inventory/data tables rather than direct map layers.
    ['raw','features','tags','buildings','roads','thematic','pedestrian','addresses','administrative','places','nature'].forEach(bind);
+   document.getElementById('osm-windows').addEventListener('change',ev=>{window.adamWindowsEnabled=ev.target.checked; if(window.adamWindowsLayerReady && window.adamSetWindowsVisible) window.adamSetWindowsVisible(ev.target.checked); else if(ev.target.checked) status.textContent='جارٍ تحميل نموذج windows ثلاثي الأبعاد…';});
    document.getElementById('baseGround').addEventListener('change',ev=>originalLayers.filter(l=>!baseBuildingIds.includes(l.id)).forEach(l=>visibility(l.id,ev.target.checked)));
    document.getElementById('baseBuildings').addEventListener('change',ev=>setGroup(baseBuildingIds,ev.target.checked));
    status.textContent='الخريطة جاهزة. شغّل كل مجلد على حدة. مجلدا raw وtags لا يحتويان طبقات مكانية قابلة للرسم مباشرة.';
   }catch(e){errorBox.style.display='block';errorBox.textContent='تعذر تجهيز طبقات OSM: '+(e.message||e);status.textContent='تم تحميل الخريطة الأساسية، لكن بعض طبقات OSM لم تُجهّز.';}
  });
 })();
+</script>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
+const waitMap=()=>new Promise(resolve=>{const check=()=>{if(window.adamCityMap?.isStyleLoaded())resolve(window.adamCityMap);else setTimeout(check,100)};check()});
+try {
+ const map=await waitMap();
+ const modelUrl=new URL('complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb',location.href).href;
+ const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:120.9820416,lat:14.5850151943},115);
+ const meterScale=anchor.meterInMercatorCoordinateUnits();
+ let renderer,camera,scene,model;
+ const customLayer={
+  id:'windows-facade-details',type:'custom',renderingMode:'3d',
+  onAdd(mapInstance,gl){
+   renderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});
+   renderer.autoClear=false;
+   camera=new THREE.Camera();scene=new THREE.Scene();
+   scene.add(new THREE.AmbientLight(0xffffff,2.0));
+   const light=new THREE.DirectionalLight(0xffffff,2.2);light.position.set(0,-70,100).normalize();scene.add(light);
+   new GLTFLoader().load(modelUrl,gltf=>{
+    model=gltf.scene;
+    model.position.set(anchor.x,anchor.y,anchor.z);
+    model.scale.set(meterScale,-meterScale,meterScale);
+    model.rotation.x=Math.PI/2;
+    scene.add(model);
+    window.adamWindowsLayerReady=true;
+    window.adamSetWindowsVisible=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
+    if(!window.adamWindowsEnabled)model.visible=false;
+    const s=document.getElementById('status');if(s)s.textContent='تم تحميل نموذج windows؛ شغّل المفتاح رقم 12 لإظهار تفاصيل الواجهات والشبابيك.';
+    mapInstance.triggerRepaint();
+   },undefined,err=>{
+    const e=document.getElementById('error');e.style.display='block';e.textContent='تعذر تحميل نموذج windows: '+(err?.message||err);
+    document.getElementById('status').textContent='تعذر تحميل نموذج windows ثلاثي الأبعاد.';
+   });
+  },
+  render(gl,matrix){
+   if(!renderer||!model||!model.visible)return;
+   camera.projectionMatrix.fromArray(matrix);
+   camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+   renderer.resetState();renderer.render(scene,camera);
+   map.triggerRepaint();
+  }
+ };
+ map.addLayer(customLayer);
+} catch(err) {
+ const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر إعداد طبقة windows: '+(err?.message||err);}
+}
 </script>
 </body></html>
