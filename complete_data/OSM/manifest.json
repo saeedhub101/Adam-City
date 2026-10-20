@@ -47,13 +47,6 @@
       "description": "OSM building and building-part details"
     },
     {
-      "source_path": "ermita/maps/generated/ermita-building-details.csv",
-      "copied_path": "complete_data/OSM/data/buildings/ermita-building-details.csv",
-      "size_bytes": 318860,
-      "blob_sha": "f50ef7fbe1c5a7fc680065e9ac2dfceee3fa9d10",
-      "description": "OSM building attributes table"
-    },
-    {
       "source_path": "ermita/maps/generated/ermita-building_details.csv",
       "copied_path": "complete_data/OSM/data/buildings/ermita-building_details-legacy.csv",
       "size_bytes": 430871,
