@@ -164,7 +164,7 @@ document.getElementById('both').onclick=()=>fly([120.986,14.578],14.1);
 document.getElementById('reset').onclick=()=>map.easeTo({pitch:57,bearing:-18,duration:700});
 Object.entries(groups).forEach(([id,layers])=>{const el=document.getElementById(id);if(el)el.onchange=()=>toggleLayers(layers,el.checked)});
 const defaultBuildingColor=['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building_colour'],['match',['get','class'],'commercial','#c9b8a4','industrial','#b9b7b1','public','#c4c9ce','residential','#d8cdbd','#c9bfb0']];
-const osmAppearanceColor=['coalesce',['get','building:colour'],['get','building:color'],['get','colour'],['get','color'],['match',['downcase',['to-string',['coalesce',['get','building:material'],['get','facade:material'],['get','building:cladding'],'']]],'brick','#b66a50','bricks','#b66a50','glass','#7899a8','concrete','#a9aaa6','stone','#c5b79d','limestone','#d8cfb9','plaster','#d8d0c2','metal','#929da5','wood','#9c7352','#c9bfb0']]];
+const osmAppearanceColor=['coalesce',['get','building:colour'],['get','building:color'],['get','colour'],['get','color'],['match',['downcase',['to-string',['coalesce',['get','building:material'],['get','facade:material'],['get','building:cladding'],'']]],'brick','#b66a50','bricks','#b66a50','glass','#7899a8','concrete','#a9aaa6','stone','#c5b79d','limestone','#d8cfb9','plaster','#d8d0c2','metal','#929da5','wood','#9c7352','#c9bfb0']];
 function applyBuildingAppearance(){
  const colorsOn=document.getElementById('colors').checked;
  const osmOn=document.getElementById('osmAppearance').checked;
