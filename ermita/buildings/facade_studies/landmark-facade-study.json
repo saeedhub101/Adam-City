@@ -86,7 +86,54 @@
         "Do not assign the facade to a generic nearby polygon.",
         "Do not treat the National Museum complex as one building without confirming its separate footprints.",
         "Do not claim photogrammetric or surveyed accuracy."
-      ]
+      ],
+      "footprint_audit": {
+        "checked_file": "ermita/maps/generated/ermita-building-details.geojson",
+        "result": "No exact National Museum of Fine Arts / Old Legislative Building OSM polygon identified by name or geometry in the checked local building-detail data.",
+        "nearby_candidates": [
+          {
+            "osm_feature_id": "way/1120247726",
+            "distance_to_reference_coordinate_m": 56,
+            "approx_bbox_m": [
+              43,
+              26
+            ],
+            "tags": {
+              "building": "yes",
+              "height": "8"
+            },
+            "decision": "reject_as_unverified; footprint is too small to represent the full museum"
+          },
+          {
+            "osm_feature_id": "way/188204305",
+            "distance_to_reference_coordinate_m": 57,
+            "approx_bbox_m": [
+              0,
+              0
+            ],
+            "tags": {
+              "building": "yes",
+              "building:levels": "1"
+            },
+            "decision": "reject_as_unverified; small building and no identity tags"
+          },
+          {
+            "osm_feature_id": "way/188204302",
+            "distance_to_reference_coordinate_m": 74,
+            "approx_bbox_m": [
+              0,
+              0
+            ],
+            "tags": {
+              "building": "yes",
+              "building:levels": "1",
+              "height": "7"
+            },
+            "decision": "reject_as_unverified; small building and no identity tags"
+          }
+        ],
+        "required_action": "Import/identify the full Old Legislative Building footprint (including its actual outline/courtyard voids) before attaching custom facade geometry."
+      }
     },
     {
       "id": "LANDMARK-PGH-CANCER-INSTITUTE",
@@ -135,7 +182,55 @@
         "Do not attach this facade to PGH Central Block, OPD or another named building without evidence.",
         "Do not bake the tents, chairs, car or people into the building geometry.",
         "Do not infer exact floor heights or dimensions from one perspective photo."
-      ]
+      ],
+      "footprint_audit": {
+        "checked_file": "ermita/maps/generated/ermita-building-details.geojson",
+        "result": "A plausible historic hospital-style polygon exists nearby, but the current data does not identify it as the Cancer Institute.",
+        "nearby_candidates": [
+          {
+            "osm_feature_id": "way/16554344",
+            "distance_to_candidate_reference_point_m": 10,
+            "approx_bbox_m": [
+              133,
+              187
+            ],
+            "tags": {
+              "building": "hospital",
+              "building:architecture": "neoclassical",
+              "building:levels": "2",
+              "start_date": "1910-09"
+            },
+            "decision": "strong architectural candidate but identity not verified; do not assign yet"
+          },
+          {
+            "osm_feature_id": "way/90314484",
+            "distance_to_candidate_reference_point_m": 50,
+            "approx_bbox_m": [
+              0,
+              0
+            ],
+            "tags": {
+              "building": "hospital",
+              "building:levels": "7",
+              "name": "Central Block"
+            },
+            "decision": "not Cancer Institute based on current name tag; do not assign"
+          },
+          {
+            "osm_feature_id": "way/308702686",
+            "distance_to_candidate_reference_point_m": 67,
+            "approx_bbox_m": [
+              0,
+              0
+            ],
+            "tags": {
+              "building": "yes"
+            },
+            "decision": "unverified"
+          }
+        ],
+        "required_action": "Verify the Cancer Institute outline against the reference photo and campus map; record the confirmed OSM way/relation ID before generating its facade."
+      }
     }
   ],
   "next_implementation_gate": [
