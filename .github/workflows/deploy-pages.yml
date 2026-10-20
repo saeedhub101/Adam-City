@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 concurrency:
@@ -29,6 +29,7 @@ jobs:
           git sparse-checkout set --no-cone --stdin <<'EOF'
           /index.html
           /ermita-malate-3d.html
+          /scripts/import_openfreemap_ermita.py
           /backup/ermita/maps/generated/ermita-building-footprints.geojson
           /ermita/maps/generated/ermita-building-footprints.geojson
           /ermita/maps/generated/ermita-road-network.geojson
@@ -47,7 +48,27 @@ jobs:
           /ermita/3d/terrain/terrain-import-report.json
           /ermita/3d/exports/adam-city-complete.glb
           EOF
-          git checkout --detach FETCH_HEAD
+          git switch -C main FETCH_HEAD
+      - name: Complete missing OpenFreeMap zoom-14 tiles with a viewport buffer
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile
+          # Keep the native source zoom at 14 and add one tile of coverage around Ermita.
+          MIN_ZOOM=14 MAX_ZOOM=14 TILE_BUFFER=1 python3 scripts/import_openfreemap_ermita.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ermita/maps/sources/openfreemap/vector-tiles/14 \
+            ermita/maps/sources/openfreemap/tile-index.json \
+            ermita/maps/sources/openfreemap/import-report.json \
+            ermita/maps/sources/openfreemap/source-metadata.json \
+            ermita/maps/sources/openfreemap/README.md
+          if ! git diff --cached --quiet; then
+            git commit -m "Add buffered OpenFreeMap z14 tiles for 3D preview"
+            git push origin main
+          else
+            echo "OpenFreeMap zoom-14 tile coverage is already complete."
+          fi
       - name: Prepare 3D city and all browser assets
         shell: bash
         run: |
