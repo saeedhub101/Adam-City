@@ -34,7 +34,7 @@ jobs:
           test -f ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           test -f ermita/3d/terrain/ermita-terrain-surface.glb
           test -f ermita/3d/exports/adam-city-complete.glb
-          mkdir -p site/ermita/maps/generated site/ermita/maps/sources/openfreemap/layers site/ermita/maps/sources/microsoft-satellite-buildings site/assets site/ermita/streets site/ermita/maps/qa
+          mkdir -p site/ermita/maps/generated site/ermita/maps/sources/openfreemap/vector-tiles site/ermita/maps/sources/openfreemap/layers site/ermita/maps/sources/microsoft-satellite-buildings site/assets site/ermita/streets site/ermita/maps/qa
           # Publish basemap-derived footprints separately; keep the preserved OSM snapshot untouched.
           python3 - <<'PY'
           import json
@@ -54,6 +54,8 @@ jobs:
           cp ermita/maps/generated/ermita-road-network.geojson site/ermita/maps/generated/
           cp ermita/maps/sources/openfreemap/area-boundary.geojson site/ermita/maps/sources/openfreemap/
           cp ermita/maps/sources/openfreemap/source-metadata.json site/ermita/maps/sources/openfreemap/
+          # The standalone 3D page reads the original local PBF vector tiles; publish them too.
+          cp -a ermita/maps/sources/openfreemap/vector-tiles/. site/ermita/maps/sources/openfreemap/vector-tiles/
           cp ermita/maps/sources/openfreemap/layers/housenumber.geojsonl site/ermita/maps/sources/openfreemap/layers/
           # building.geojsonl was generated above from the basemap-derived footprint collection.
           cp ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson site/ermita/maps/sources/microsoft-satellite-buildings/
