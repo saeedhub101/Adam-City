@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101a23">
+  <title>Ermita + Malate | 3D Buildings</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.css">
+  <style>
+    :root{color-scheme:dark;--panel:rgba(16,26,35,.94);--line:#344654;--text:#eef4f7;--muted:#a7b8c4;--accent:#67d5c2}
+    *{box-sizing:border-box}
+    html,body,#map{width:100%;height:100%;margin:0}
+    body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#101a23;color:var(--text)}
+    #map{position:absolute;inset:0}
+    .panel{position:absolute;z-index:2;top:12px;right:12px;width:min(360px,calc(100vw - 24px));padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:0 10px 34px #0005;backdrop-filter:blur(12px)}
+    h1{font-size:17px;margin:0 0 5px;font-weight:750}
+    .sub{font-size:12px;line-height:1.6;color:var(--muted);margin-bottom:12px}
+    .buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    button{font:inherit;font-size:13px;color:var(--text);background:#243541;border:1px solid #435865;border-radius:9px;padding:10px 8px;cursor:pointer}
+    button:active{transform:scale(.98)}
+    button.primary{background:#164e4a;border-color:#277a70}
+    .row{display:flex;align-items:center;gap:9px;margin-top:12px;font-size:13px;color:#dce7ec}
+    input{accent-color:var(--accent);width:17px;height:17px}
+    .status{font-size:11px;color:var(--muted);line-height:1.55;margin-top:11px;padding-top:10px;border-top:1px solid var(--line)}
+    #error{display:none;margin-top:10px;padding:9px;border-radius:8px;background:#542c31;color:#ffe2e3;font-size:12px;direction:ltr;overflow-wrap:anywhere}
+    .attribution{position:absolute;z-index:2;bottom:10px;right:10px;background:#101a23e8;border:1px solid #344654;border-radius:7px;padding:6px 9px;font-size:10px;color:#d7e1e6;direction:ltr}
+    @media(max-width:520px){.panel{top:8px;right:8px;width:min(320px,calc(100vw - 16px));padding:11px}h1{font-size:15px}.sub{margin-bottom:8px}.status{margin-top:8px;padding-top:7px}}
+  </style>
+</head>
+<body>
+  <div id="map" aria-label="خريطة ثلاثية الأبعاد لمباني إرميتا ومالاتي"></div>
+  <section class="panel">
+    <h1>Ermita + Malate — مبانٍ ثلاثية الأبعاد</h1>
+    <div class="sub">صفحة جديدة مستقلة. مصدر بيانات الخريطة الوحيد هو بلاطات OpenFreeMap / OpenMapTiles المحلية داخل هذا المستودع.</div>
+    <div class="buttons">
+      <button class="primary" id="ermita">عرض Ermita</button>
+      <button class="primary" id="malate">عرض Malate</button>
+      <button id="both">عرض المنطقتين</button>
+      <button id="reset">إعادة زاوية الكاميرا</button>
+    </div>
+    <label class="row"><input type="checkbox" id="buildings" checked> إظهار المباني ثلاثية الأبعاد</label>
+    <label class="row"><input type="checkbox" id="roads" checked> إظهار الشوارع</label>
+    <div class="status" id="status">جارٍ تحميل البلاطات المحلية…</div>
+    <div id="error"></div>
+  </section>
+  <div class="attribution">OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors</div>
+  <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
+  <script>
+  (() => {
+    const tileBase = new URL('./ermita/maps/sources/openfreemap/vector-tiles/', window.location.href).href;
+    const tileTemplate = tileBase + '{z}/{x}/{y}.pbf';
+    const sourceId = 'local-openfreemap-tiles';
+    const buildingLayer = 'local-buildings-3d';
+    const roadLayers = ['local-road-casing','local-roads'];
+    const status = document.getElementById('status');
+    const errorBox = document.getElementById('error');
+    const map = new maplibregl.Map({
+      container: 'map',
+      center: [120.9860, 14.5780],
+      zoom: 14.1,
+      pitch: 62,
+      bearing: -18,
+      maxPitch: 80,
+      style: {
+        version: 8,
+        sources: {
+          [sourceId]: {
+            type: 'vector',
+            tiles: [tileTemplate],
+            minzoom: 10,
+            maxzoom: 14,
+            attribution: 'OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors'
+          }
+        },
+        layers: [
+          {id:'local-background',type:'background',paint:{'background-color':'#dce4e4'}},
+          {id:'local-landcover',type:'fill',source:sourceId,'source-layer':'landcover',paint:{'fill-color':'#cbdacb','fill-opacity':0.9}},
+          {id:'local-landuse',type:'fill',source:sourceId,'source-layer':'landuse',paint:{'fill-color':['match',['get','class'],'park','#a8c9a6','grass','#c5d9b9','forest','#8eaf8e','residential','#e4e1d7','commercial','#e5d9c6','industrial','#d7d2c9','#e4e1d7'],'fill-opacity':0.8}},
+          {id:'local-water',type:'fill',source:sourceId,'source-layer':'water',paint:{'fill-color':'#83c5df'}},
+          {id:'local-waterway',type:'line',source:sourceId,'source-layer':'waterway',paint:{'line-color':'#83c5df','line-width':['interpolate',['linear'],['zoom'],10,0.5,15,2.2]}},
+          {id:roadLayers[0],type:'line',source:sourceId,'source-layer':'transportation',paint:{'line-color':'#a5a9a7','line-width':['interpolate',['linear'],['zoom'],10,0.6,14,5,16,8]}},
+          {id:roadLayers[1],type:'line',source:sourceId,'source-layer':'transportation',paint:{'line-color':['match',['get','class'],'motorway','#f3c18b','trunk','#f3c18b','primary','#f5d7a4','secondary','#fff5d9','#fffdf7'],'line-width':['interpolate',['linear'],['zoom'],10,0.25,14,2.8,16,5.5]}},
+          {id:buildingLayer,type:'fill-extrusion',source:sourceId,'source-layer':'building',minzoom:12,filter:['==',['geometry-type'],'Polygon'],paint:{
+            'fill-extrusion-color':['case',['has','render_height'],'#c5b6a4',['has','height'],'#c5b6a4','#d2c7b9'],
+            'fill-extrusion-height':['max',2,['coalesce',['to-number',['get','render_height']],['to-number',['get','height']],['*',['to-number',['get','building:levels']],3.2],5]],
+            'fill-extrusion-base':['coalesce',['to-number',['get','render_min_height']],['to-number',['get','min_height']],0],
+            'fill-extrusion-opacity':0.96,
+            'fill-extrusion-vertical-gradient':true
+          }}
+        ]
+      }
+    });
+    map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');
+    map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
+    map.on('load', () => {
+      map.resize();
+      status.textContent = 'تم تحميل نمط الخريطة. جارٍ طلب بلاطات المباني المحلية عند مستوى التكبير الحالي.';
+    });
+    map.on('sourcedata', e => {
+      if (e.sourceId === sourceId && e.isSourceLoaded) {
+        status.textContent = 'مصدر البلاطات المحلية متصل. حرّك الخريطة أو كبّر لرؤية تفاصيل المباني المتاحة في البلاطات.';
+      }
+    });
+    let firstErrorShown = false;
+    map.on('error', e => {
+      console.error('Local OpenFreeMap tile error', e.error || e);
+      if (!firstErrorShown && e.error) {
+        firstErrorShown = true;
+        errorBox.style.display = 'block';
+        errorBox.textContent = (e.error.message || 'Tile loading error') + ' — tile URL: ' + tileTemplate;
+        status.textContent = 'حدث خطأ أثناء تحميل البلاطات المحلية. راجع رسالة الخطأ أدناه.';
+      }
+    });
+    const fly = (center, zoom, pitch=62, bearing=-18) => map.flyTo({center,zoom,pitch,bearing,duration:1100});
+    document.getElementById('ermita').addEventListener('click', () => fly([120.9821,14.5848],15.1,65,-18));
+    document.getElementById('malate').addEventListener('click', () => fly([120.9918,14.5707],15.1,65,-18));
+    document.getElementById('both').addEventListener('click', () => fly([120.9860,14.5780],14.1,62,-18));
+    document.getElementById('reset').addEventListener('click', () => map.easeTo({pitch:62,bearing:-18,duration:800}));
+    document.getElementById('buildings').addEventListener('change', e => map.setLayoutProperty(buildingLayer,'visibility',e.target.checked?'visible':'none'));
+    document.getElementById('roads').addEventListener('change', e => roadLayers.forEach(id => map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')));
+  })();
+  </script>
+</body>
+</html>
