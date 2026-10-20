@@ -194,6 +194,9 @@ jobs:
           mkdir -p site/ermita/maps/sources/openfreemap site/complete_data/OSM/data
           cp test.html site/test.html
           cp -a complete_data/OSM/data/. site/complete_data/OSM/data/
+          # Compress the large procedural facade GLB with Meshopt for much faster browser loading.
+          npx --yes @gltf-transform/cli optimize site/complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb /tmp/ermita-windows-optimized.glb --compress meshopt
+          mv /tmp/ermita-windows-optimized.glb site/complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb
           test -s site/complete_data/OSM/data/nature/ermita-water-and-natural-features.geojson
           test -s site/complete_data/OSM/data/buildings/ermita-building-footprints.geojson
           test -s site/complete_data/OSM/data/roads/ermita-road-network.geojson
