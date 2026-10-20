@@ -28,6 +28,10 @@ jobs:
           test -f backup/ermita/maps/generated/ermita-building-footprints.geojson
           test -f ermita/maps/generated/ermita-road-network.geojson
           test -f ermita/maps/sources/openfreemap/area-boundary.geojson
+          test -s ermita/maps/sources/openfreemap/vector-tiles/14/13697/7520.pbf
+          test -s ermita/maps/sources/openfreemap/vector-tiles/14/13697/7521.pbf
+          test -s ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
+          test -s ermita/maps/sources/openfreemap/vector-tiles/14/13698/7521.pbf
           test -f ermita/maps/sources/openfreemap/layers/housenumber.geojsonl
           test -f ermita/maps/generated/ermita-building-footprints.geojson
           test -f ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson
@@ -54,8 +58,14 @@ jobs:
           cp ermita/maps/generated/ermita-road-network.geojson site/ermita/maps/generated/
           cp ermita/maps/sources/openfreemap/area-boundary.geojson site/ermita/maps/sources/openfreemap/
           cp ermita/maps/sources/openfreemap/source-metadata.json site/ermita/maps/sources/openfreemap/
+          cp ermita/maps/sources/openfreemap/tile-index.json site/ermita/maps/sources/openfreemap/
           # The standalone 3D page reads the original local PBF vector tiles; publish them too.
           cp -a ermita/maps/sources/openfreemap/vector-tiles/. site/ermita/maps/sources/openfreemap/vector-tiles/
+          test -s site/ermita/maps/sources/openfreemap/vector-tiles/14/13697/7520.pbf
+          test -s site/ermita/maps/sources/openfreemap/vector-tiles/14/13697/7521.pbf
+          test -s site/ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
+          test -s site/ermita/maps/sources/openfreemap/vector-tiles/14/13698/7521.pbf
+          echo "Verified local building vector tiles in the published site."
           cp ermita/maps/sources/openfreemap/layers/housenumber.geojsonl site/ermita/maps/sources/openfreemap/layers/
           # building.geojsonl was generated above from the basemap-derived footprint collection.
           cp ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson site/ermita/maps/sources/microsoft-satellite-buildings/
