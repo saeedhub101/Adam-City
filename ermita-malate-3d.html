@@ -70,21 +70,23 @@ const localStyle = {
 version:8,glyphs:'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',
 sources:{
 tiles:{type:'vector',tiles:[tileBase+'{z}/{x}/{y}.pbf'],minzoom:10,maxzoom:14,attribution:'OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors'},
+buildings:{type:'geojson',data:buildingUrl,maxzoom:14},
+ground:{type:'geojson',data:groundUrl,maxzoom:14},
 osmBuildingDetails:{type:'geojson',data:new URL('./ermita/maps/generated/ermita-building-details.geojson',location.href).href,maxzoom:14}
 },
 layers:[
 {id:'bg',type:'background',paint:{'background-color':'#dce5e5'}},
-{id:'landcover',type:'fill',source:'tiles','source-layer':'landcover',paint:{'fill-color':'#cbdacb','fill-opacity':0.88}},
-{id:'landuse',type:'fill',source:'tiles','source-layer':'landuse',paint:{'fill-color':['match',['get','class'],'park','#a8c9a6','grass','#c5d9b9','forest','#8eaf8e','residential','#e4e1d7','commercial','#e5d9c6','industrial','#d7d2c9','#e4e1d7'],'fill-opacity':0.78}},
+{id:'landcover',type:'fill',source:'ground',filter:['==',['get','source_layer'],'landcover'],paint:{'fill-color':'#cbdacb','fill-opacity':0.88}},
+{id:'landuse',type:'fill',source:'ground',filter:['==',['get','source_layer'],'landuse'],paint:{'fill-color':['match',['get','class'],'park','#a8c9a6','grass','#c5d9b9','forest','#8eaf8e','residential','#e4e1d7','commercial','#e5d9c6','industrial','#d7d2c9','#e4e1d7'],'fill-opacity':0.78}},
 {id:'park-fill',type:'fill',source:'tiles','source-layer':'park',paint:{'fill-color':'#9fc79b','fill-opacity':0.7}},
-{id:'water-fill',type:'fill',source:'tiles','source-layer':'water',filter:['==',['geometry-type'],'Polygon'],paint:{'fill-color':'#83c5df'}},
+{id:'water-fill',type:'fill',source:'ground',filter:['==',['get','source_layer'],'water'],paint:{'fill-color':'#83c5df'}},
 {id:'water-vector',type:'fill',source:'tiles','source-layer':'water',filter:['==',['geometry-type'],'Polygon'],paint:{'fill-color':'#83c5df'}},
-{id:'waterway',type:'line',source:'tiles','source-layer':'waterway',paint:{'line-color':'#83c5df','line-width':['interpolate',['linear'],['zoom'],10,0.5,16,2.5]}},
+{id:'waterway',type:'line',source:'ground',filter:['==',['get','source_layer'],'waterway'],paint:{'line-color':'#83c5df','line-width':['interpolate',['linear'],['zoom'],10,0.5,16,2.5]}},
 {id:'waterway-vector',type:'line',source:'tiles','source-layer':'waterway',paint:{'line-color':'#83c5df','line-width':['interpolate',['linear'],['zoom'],10,0.5,16,2.5]}},
-{id:'road-casing',type:'line',source:'tiles','source-layer':'transportation',paint:{'line-color':'#a5a9a7','line-width':['interpolate',['linear'],['zoom'],10,0.7,14,5,16,8]}},
-{id:'roads',type:'line',source:'tiles','source-layer':'transportation',paint:{'line-color':['match',['get','class'],'motorway','#f3c18b','trunk','#f3c18b','primary','#f5d7a4','secondary','#fff5d9','#fffdf7'],'line-width':['interpolate',['linear'],['zoom'],10,0.25,14,2.8,16,5.5]}},
+{id:'road-casing',type:'line',source:'ground',filter:['==',['get','source_layer'],'transportation'],paint:{'line-color':'#a5a9a7','line-width':['interpolate',['linear'],['zoom'],10,0.7,14,5,16,8]}},
+{id:'roads',type:'line',source:'ground',filter:['==',['get','source_layer'],'transportation'],paint:{'line-color':['match',['get','class'],'motorway','#f3c18b','trunk','#f3c18b','primary','#f5d7a4','secondary','#fff5d9','#fffdf7'],'line-width':['interpolate',['linear'],['zoom'],10,0.25,14,2.8,16,5.5]}},
 {id:'roads-vector',type:'line',source:'tiles','source-layer':'transportation',paint:{'line-color':['match',['get','class'],'motorway','#f3c18b','trunk','#f3c18b','primary','#f5d7a4','secondary','#fff5d9','#fffdf7'],'line-width':['interpolate',['linear'],['zoom'],10,0.25,14,2.8,16,5.5]}},
-{id:'buildings-3d',type:'fill-extrusion',source:'tiles','source-layer':'building',filter:['==',['geometry-type'],'Polygon'],paint:{
+{id:'buildings-3d',type:'fill-extrusion',source:'buildings',filter:['==',['geometry-type'],'Polygon'],paint:{
 'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building_colour'],['match',['get','class'],'commercial','#c9b8a4','industrial','#b9b7b1','public','#c4c9ce','residential','#d8cdbd','#c9bfb0']],
 'fill-extrusion-height':['max',3,['case',['>', ['to-number',['get','render_height'],0],0],['to-number',['get','render_height'],0],['>', ['to-number',['get','height'],0],0],['to-number',['get','height'],0],['>', ['to-number',['get','building:levels'],0],0],['*',['to-number',['get','building:levels'],0],3.15],['>', ['to-number',['get','levels'],0],0],['*',['to-number',['get','levels'],0],3.15],5]],
 'fill-extrusion-base':['max',0,['case',['>', ['to-number',['get','render_min_height'],0],0],['to-number',['get','render_min_height'],0],['>', ['to-number',['get','min_height'],0],0],['to-number',['get','min_height'],0],0]],
