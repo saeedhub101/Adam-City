@@ -32,7 +32,8 @@ button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1
 <label class="row"><input type="checkbox" id="buildings" checked> مباني OpenFreeMap ثلاثية الأبعاد</label>
 <label class="row"><input type="checkbox" id="colors" checked> ألوان المباني من خصائص المصدر</label>
 <label class="row"><input type="checkbox" id="osmAppearance"> OSM — ألوان ومواد الواجهات من الوسوم، دون تغيير شكل المبنى أو ارتفاعه</label>
-<label class="row"><input type="checkbox" id="facadeModel"> تفاصيل الواجهات (نوافذ وأبواب ولافتات مولّدة)</label>
+<label class="row"><input type="checkbox" id="facadeModel"> تفاصيل الواجهات العامة (نوافذ وأبواب)</label>
+<label class="row"><input type="checkbox" id="landmarkFacades"> عمارة مخصصة: المتحف الوطني ومرشح واجهة PGH</label>
 <label class="row"><input type="checkbox" id="terrainModel"> نموذج المدينة الكامل GLB (مبانٍ + طرق + تضاريس)</label>
 <label class="row"><input type="checkbox" id="terrain"> تضاريس DEM (نموذج Copernicus)</label>
 <label class="row"><input type="checkbox" id="numbers" checked> أرقام المباني</label></div>
@@ -64,6 +65,8 @@ const groundUrl = base + 'ground-fallback.geojson';
 const modelUrl = new URL('./ermita/3d/exports/adam-city-complete.glb', location.href).href;
 const facadeModelUrl = new URL('./ermita/3d/generated/ermita-buildings-facade-details.glb', location.href).href;
 const facadeOriginUrl = new URL('./ermita/3d/generated/facade-model-origin.json', location.href).href;
+const landmarkModelUrl = new URL('./ermita/3d/landmarks/landmark-facade-details.glb', location.href).href;
+const landmarkOriginUrl = new URL('./ermita/3d/landmarks/landmark-facade-origin.json', location.href).href;
 const demUrl = new URL('./ermita/3d/terrain/ermita-copernicus-dem-cropped.tif', location.href).href;
 const status = document.getElementById('status'), errorBox = document.getElementById('error');
 const localStyle = {
@@ -138,6 +141,7 @@ const map = new maplibregl.Map({container:'map',center:[120.9918,14.5707],zoom:1
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
 let firstError=false, modelLayerAdded=false, modelLoading=false, modelLayer=null;
 let facadeLayerAdded=false, facadeLoading=false, facadeLayer=null;
+let landmarkLayerAdded=false, landmarkLoading=false, landmarkLayer=null;
 const toggleLayers=(ids,on)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')});
 const groups={
 buildings:['adam-local-buildings-3d'],osmAppearance:['adam-local-osm-building-info-labels'],ground:['adam-local-landcover','adam-local-landuse'],roads:['adam-local-road-casing','adam-local-roads','adam-local-roads-vector','adam-local-park-fill'],water:['adam-local-water-fill','adam-local-water-vector','adam-local-waterway','adam-local-waterway-vector'],
@@ -241,6 +245,62 @@ try{
  facadeToggle.checked=false;
 }
 }
+
+async function addLandmarkFacadeLayer(){
+ if(landmarkLoading || landmarkLayerAdded)return;
+ landmarkLoading=true;
+ const toggle=document.getElementById('landmarkFacades');
+ status.textContent='جارٍ تحميل طبقة العمارة المخصصة للمتحف الوطني وPGH…';
+ errorBox.style.display='none';
+ try{
+  if(!window.THREE || !window.THREE.GLTFLoader)throw new Error('مكتبات Three.js / GLTFLoader لم تُحمّل');
+  const originResponse=await fetch(landmarkOriginUrl,{cache:'no-store'});
+  if(!originResponse.ok)throw new Error('ملف محاذاة معالم المباني غير متاح ('+originResponse.status+')');
+  const origin=await originResponse.json();
+  if(!Number.isFinite(origin.longitude)||!Number.isFinite(origin.latitude)||!Number.isFinite(origin.anchor_altitude_m))throw new Error('إحداثيات محاذاة طبقة المعالم غير صالحة');
+  const response=await fetch(landmarkModelUrl,{cache:'no-store'});
+  if(!response.ok)throw new Error('ملف نموذج المعالم غير متاح ('+response.status+')');
+  const buffer=await response.arrayBuffer();
+  if(buffer.byteLength<20)throw new Error('ملف نموذج المعالم فارغ أو تالف');
+  const header=new DataView(buffer);
+  if(header.getUint32(0,true)!==0x46546c67 || header.getUint32(4,true)!==2 || header.getUint32(8,true)!==buffer.byteLength)throw new Error('فشل التحقق من ترويسة GLB');
+  const THREE=window.THREE;
+  landmarkLayer={id:'adam-landmark-facades',type:'custom',renderingMode:'3d',
+   onAdd:function(map,gl){
+    this.camera=new THREE.Camera();this.scene=new THREE.Scene();
+    this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});this.renderer.autoClear=false;
+    this.scene.add(new THREE.AmbientLight(0xffffff,1.65));
+    const light=new THREE.DirectionalLight(0xffffff,1.2);light.position.set(-40,-50,100).normalize();this.scene.add(light);
+    new THREE.GLTFLoader().parse(buffer,new URL('.',landmarkModelUrl).href,gltf=>{
+     this.model=gltf.scene;const bounds=new THREE.Box3().setFromObject(this.model);const size=bounds.getSize(new THREE.Vector3());
+     if(!Number.isFinite(size.x)||!Number.isFinite(size.y)||!Number.isFinite(size.z)||size.x<=0||size.y<=0||size.z<=0){
+      landmarkLoading=false;landmarkLayerAdded=false;toggle.checked=false;errorBox.style.display='block';errorBox.textContent='نموذج المعالم لا يحتوي هندسة صالحة.';return;
+     }
+     this.scene.add(this.model);landmarkLoading=false;status.textContent='تم تحميل طبقة العمارة المخصصة؛ ملاحظة: تطابق مبنى PGH ما زال مرشحًا غير مؤكد.';map.triggerRepaint();
+    },err=>{landmarkLoading=false;landmarkLayerAdded=false;toggle.checked=false;errorBox.style.display='block';errorBox.textContent='تعذر تحليل نموذج المعالم: '+(err.message||err);});
+   },
+   render:function(gl,matrix){
+    if(!this.model)return;
+    const mc=maplibregl.MercatorCoordinate.fromLngLat({lng:origin.longitude,lat:origin.latitude},origin.anchor_altitude_m);
+    const scale=mc.meterInMercatorCoordinateUnits();const m=new THREE.Matrix4().fromArray(matrix);
+    const local=new THREE.Matrix4().makeTranslation(mc.x,mc.y,mc.z).scale(new THREE.Vector3(scale,-scale,scale));
+    this.camera.projectionMatrix=m.multiply(local);this.camera.projectionMatrixInverse.copy(this.camera.projectionMatrix).invert();
+    this.renderer.resetState();this.renderer.render(this.scene,this.camera);
+   },
+   onRemove:function(){if(this.renderer)this.renderer.dispose();}
+  };
+  map.addLayer(landmarkLayer);landmarkLayerAdded=true;
+ }catch(e){
+  landmarkLoading=false;landmarkLayerAdded=false;landmarkLayer=null;toggle.checked=false;
+  errorBox.style.display='block';errorBox.textContent='تعذر تشغيل طبقة العمارة المخصصة: '+(e.message||e);
+  status.textContent='تعذر تحميل طبقة المعالم؛ راجع رسالة الخطأ.';
+ }
+}
+document.getElementById('landmarkFacades').onchange=async e=>{
+ if(e.target.checked)await addLandmarkFacadeLayer();
+ else{if(map.getLayer('adam-landmark-facades'))map.removeLayer('adam-landmark-facades');landmarkLayerAdded=false;landmarkLayer=null;landmarkLoading=false;}
+};
+
 document.getElementById('facadeModel').onchange=async e=>{
  if(e.target.checked)await addFacadeLayer();
  else {
