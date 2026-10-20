@@ -11,27 +11,27 @@
 
 | Layer | Total features in repository | File |
 |---|---:|---|
-| aerodrome_label | 41 | layers/aerodrome_label.geojsonl |
-| aeroway | 993 | layers/aeroway.geojsonl |
-| boundary | 446 | layers/boundary.geojsonl |
-| building | 658 | layers/building.geojsonl |
-| housenumber | 5582 | layers/housenumber.geojsonl |
-| landcover | 2299 | layers/landcover.geojsonl |
-| landuse | 4696 | layers/landuse.geojsonl |
-| mountain_peak | 791 | layers/mountain_peak.geojsonl |
-| park | 187 | layers/park.geojsonl |
-| place | 16341 | layers/place.geojsonl |
-| poi | 34881 | layers/poi.geojsonl |
-| transportation | 51574 | layers/transportation.geojsonl |
-| transportation_name | 5039 | layers/transportation_name.geojsonl |
-| water | 3849 | layers/water.geojsonl |
-| water_name | 143 | layers/water_name.geojsonl |
-| waterway | 5034 | layers/waterway.geojsonl |
+| aerodrome_label | 0 | layers/aerodrome_label.geojsonl |
+| aeroway | 0 | layers/aeroway.geojsonl |
+| boundary | 0 | layers/boundary.geojsonl |
+| building | 0 | layers/building.geojsonl |
+| housenumber | 1165 | layers/housenumber.geojsonl |
+| landcover | 0 | layers/landcover.geojsonl |
+| landuse | 0 | layers/landuse.geojsonl |
+| mountain_peak | 0 | layers/mountain_peak.geojsonl |
+| park | 0 | layers/park.geojsonl |
+| place | 0 | layers/place.geojsonl |
+| poi | 0 | layers/poi.geojsonl |
+| transportation | 0 | layers/transportation.geojsonl |
+| transportation_name | 0 | layers/transportation_name.geojsonl |
+| water | 0 | layers/water.geojsonl |
+| water_name | 0 | layers/water_name.geojsonl |
+| waterway | 0 | layers/waterway.geojsonl |
 
 ## Incremental import report
 
-- Existing valid tiles reused: 21
-- New valid tiles downloaded: 120
+- Existing valid tiles reused: 141
+- New valid tiles downloaded: 0
 - Unsupported zoom tiles skipped: 0
 - Empty/failed tiles: 0
 - Review import-report.json and tile-index.json for per-tile status.
