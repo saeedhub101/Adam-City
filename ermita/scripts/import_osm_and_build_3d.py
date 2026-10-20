@@ -132,6 +132,73 @@ def height_for(tags):
             return float(match.group()) * 3.2, "building levels x 3.2 m (estimated)"
     return 9.6, "default 3-storey estimate; unverified"
 
+def preserve_curated_building_edits(source_features, existing_path):
+    """Keep Adam City edits when rebuilding building exports from a fresh OSM snapshot.
+
+    Edit contract stored in feature.properties.adam_city:
+      tag_overrides: tags that must survive source refreshes
+      lock_geometry: true to keep the curated footprint instead of source geometry
+      user_created: true for a manually added building with no OSM counterpart
+
+    The raw OSM cache remains source data; curated changes live only in the canonical
+    building-detail export and are merged by stable OSM feature ID.
+    """
+    try:
+        previous = json.loads(existing_path.read_text(encoding="utf-8"))
+        previous_features = previous.get("features", []) if isinstance(previous, dict) else []
+    except (OSError, json.JSONDecodeError):
+        previous_features = []
+
+    def props_of(feature):
+        props = feature.get("properties")
+        return props if isinstance(props, dict) else {}
+
+    previous_by_id = {}
+    for feature in previous_features:
+        p = props_of(feature)
+        key = str(p.get("osm_feature_id", "")).strip()
+        if key:
+            previous_by_id[key] = feature
+
+    seen = set()
+    for feature in source_features:
+        props = props_of(feature)
+        key = str(props.get("osm_feature_id", "")).strip()
+        if not key:
+            continue
+        seen.add(key)
+        old = previous_by_id.get(key)
+        if not old:
+            continue
+        old_edit = props_of(old).get("adam_city")
+        if not isinstance(old_edit, dict):
+            continue
+        edit = json.loads(json.dumps(old_edit))
+        props["adam_city"] = edit
+        overrides = edit.get("tag_overrides", {})
+        if isinstance(overrides, dict) and overrides:
+            tags = props.get("tags")
+            if not isinstance(tags, dict):
+                tags = {}
+            tags.update(overrides)
+            props["tags"] = tags
+        if edit.get("lock_geometry") is True and old.get("geometry"):
+            feature["geometry"] = old["geometry"]
+
+    # Manually created buildings are retained across source imports. They must be
+    # explicitly marked to avoid preserving accidental stale source records.
+    for old in previous_features:
+        p = props_of(old)
+        edit = p.get("adam_city")
+        key = str(p.get("osm_feature_id", "")).strip()
+        if isinstance(edit, dict) and edit.get("user_created") is True and (not key or key not in seen):
+            source_features.append(old)
+            if key:
+                seen.add(key)
+
+    return source_features
+
+
 def main():
     # Reuse the committed raw cache and ask Overpass only for objects edited since
     # the last successful sync. A one-day overlap makes retries/checkpoint boundaries safe.
@@ -211,6 +278,11 @@ def main():
                 "addr_street": tags.get("addr:street", ""), "addr_housenumber": tags.get("addr:housenumber", ""),
                 "source": "OpenStreetMap contributors", "license": "ODbL 1.0",
             })
+
+    # Merge saved, explicitly namespaced Adam City edits before writing either building export.
+    buildings = preserve_curated_building_edits(
+        buildings, MAP_DIR / "ermita-building-details.geojson"
+    )
 
     building_collection = {
         "type": "FeatureCollection", "name": "Ermita building footprints from OpenStreetMap",
