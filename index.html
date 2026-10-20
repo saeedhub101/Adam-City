@@ -22,7 +22,8 @@
   <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
   <script>
     (() => {
-      const root = '/Adam-City/ermita/maps/sources/openfreemap/vector-tiles';
+      // Resolve against the deployed page URL so tile requests are absolute on GitHub Pages and local hosting.
+      const root = new URL('ermita/maps/sources/openfreemap/vector-tiles/', document.baseURI).href.replace(/\/$/, '');
       const source = 'openfreemap-local';
       const map = new maplibregl.Map({
         container: 'map',
