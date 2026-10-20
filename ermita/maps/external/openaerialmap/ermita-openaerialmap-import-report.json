@@ -1,9 +1,10 @@
 {
-  "source": "OpenAerialMap / Humanitarian OpenStreetMap Team imagery API",
-  "catalog_api": "https://api.imagery.hotosm.org/stac/search",
-  "retrieved_utc": "2026-10-19T17:54:01.038128+00:00",
+  "source": "OpenAerialMap / Humanitarian OpenStreetMap Team imagery catalog",
+  "catalog_url": "https://api.imagery.hotosm.org/stac/search",
+  "license_reference": "https://openaerialmap.org/about/",
+  "retrieved_utc": "2026-10-20T10:49:30.128277+00:00",
   "area_of_interest": {
-    "name": "Rizal Park / Ermita, Manila, Philippines",
+    "name": "Ermita / Rizal Park, Manila, Philippines",
     "bbox_wgs84": [
       120.972,
       14.572,
@@ -11,131 +12,129 @@
       14.593
     ]
   },
-  "retention_policy": "Only explicitly CC-BY-4.0 assets; <= 80 MiB; no Esri display tiles.",
-  "license_reference": "https://openaerialmap.org/about/",
-  "downloaded": [
+  "retention_policy": "Only direct raster assets explicitly marked CC-BY-4.0; max 80 MiB per asset and 300 MiB newly downloaded per run. Existing files are reused, never overwritten.",
+  "catalog_items_seen": 5,
+  "eligible_assets": [
     {
-      "id": "5b90f92da0d7280005fab355",
+      "item_id": "5b90f92da0d7280005fab355",
       "title": "Arroceros Forest Park",
       "datetime": null,
       "gsd_m": 0.05126,
-      "bbox_wgs84": [
+      "item_bbox_wgs84": [
         120.979078,
         14.592126,
         120.984291,
         14.596839
       ],
-      "producer_name": "Leonard G. Soriano and Ian Gongona",
-      "providers": null,
+      "producer": "Leonard G. Soriano and Ian Gongona",
       "license": "CC-BY-4.0",
-      "item_page": "https://map.openaerialmap.org/ (search by item ID: 5b90f92da0d7280005fab355)",
       "asset_key": "visual",
-      "asset_href": "https://oin-hotosm-temp.s3.amazonaws.com/5b90f8fda0d7280005fab353/0/5b90f8fda0d7280005fab354.tif",
       "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
       "asset_size": 17188832,
-      "repository_path": "ermita/maps/external/openaerialmap/ermita-5b90f92da0d7280005fab355.tif",
-      "downloaded_bytes": 17188832,
-      "sha256": "e4d79ed3eac911047b14c63f3adaa990c157aae8d25821398b97777f332544de",
-      "final_url": "https://oin-hotosm-temp.s3.amazonaws.com/5b90f8fda0d7280005fab353/0/5b90f8fda0d7280005fab354.tif"
-    }
-  ],
-  "candidates": [
-    {
-      "id": "635a06b55f1fd800066121e3",
-      "title": "Intramuros, Manila PHILIPPINES",
-      "datetime": null,
-      "gsd_m": 0.079221,
-      "bbox_wgs84": [
-        120.959963,
-        14.575982,
-        120.991033,
-        14.606885
-      ],
-      "producer_name": "DATUM PH",
-      "providers": null,
-      "license": "CC-BY-SA-4.0",
-      "item_page": "https://map.openaerialmap.org/ (search by item ID: 635a06b55f1fd800066121e3)",
-      "asset_key": "visual",
-      "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "asset_size": 1012871121
+      "extension": ".tif"
     },
     {
-      "id": "635a05775f1fd800066121e2",
-      "title": "Intramuros, Manila PHILIPPINES",
-      "datetime": null,
-      "gsd_m": 0.0396104,
-      "bbox_wgs84": [
-        120.960256,
-        14.580908,
-        120.982681,
-        14.597167
-      ],
-      "producer_name": "DATUM PH",
-      "providers": null,
-      "license": "CC-BY-SA-4.0",
-      "item_page": "https://map.openaerialmap.org/ (search by item ID: 635a05775f1fd800066121e2)",
-      "asset_key": "visual",
-      "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "asset_size": 211896546
-    },
-    {
-      "id": "Copernicus_DSM_COG_10_N14_00_E120_00_DEM",
-      "title": "Copernicus_DSM_COG_10_N14_00_E120_00_DEM",
-      "datetime": "2021-04-22T00:00:00Z",
-      "gsd_m": 30,
-      "bbox_wgs84": [
-        119.99986111111112,
-        14.00013888888889,
-        120.99986111111112,
-        15.00013888888889
-      ],
-      "producer_name": null,
-      "providers": null,
-      "license": "",
-      "item_page": "https://map.openaerialmap.org/ (search by item ID: Copernicus_DSM_COG_10_N14_00_E120_00_DEM)",
-      "asset_key": "data",
-      "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "asset_size": null
-    },
-    {
-      "id": "5b90f92da0d7280005fab355",
+      "item_id": "5b90f92da0d7280005fab355",
       "title": "Arroceros Forest Park",
       "datetime": null,
       "gsd_m": 0.05126,
-      "bbox_wgs84": [
+      "item_bbox_wgs84": [
         120.979078,
         14.592126,
         120.984291,
         14.596839
       ],
-      "producer_name": "Leonard G. Soriano and Ian Gongona",
-      "providers": null,
+      "producer": "Leonard G. Soriano and Ian Gongona",
       "license": "CC-BY-4.0",
-      "item_page": "https://map.openaerialmap.org/ (search by item ID: 5b90f92da0d7280005fab355)",
+      "asset_key": "thumbnail",
+      "asset_type": "image/png",
+      "asset_size": null,
+      "extension": ".png"
+    }
+  ],
+  "downloaded": [
+    {
+      "item_id": "5b90f92da0d7280005fab355",
+      "title": "Arroceros Forest Park",
+      "datetime": null,
+      "gsd_m": 0.05126,
+      "item_bbox_wgs84": [
+        120.979078,
+        14.592126,
+        120.984291,
+        14.596839
+      ],
+      "producer": "Leonard G. Soriano and Ian Gongona",
+      "license": "CC-BY-4.0",
       "asset_key": "visual",
       "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "asset_size": 17188832
+      "repository_path": "ermita/maps/external/openaerialmap/ermita-5b90f92da0d7280005fab355-visual.tif",
+      "bytes": 17188832,
+      "sha256": "e4d79ed3eac911047b14c63f3adaa990c157aae8d25821398b97777f332544de",
+      "final_url": "https://oin-hotosm-temp.s3.amazonaws.com/5b90f8fda0d7280005fab353/0/5b90f8fda0d7280005fab354.tif",
+      "attribution": "OpenAerialMap contributor and original provider; see item metadata"
     },
     {
-      "id": "59e62b793d6412ef722094ec",
-      "title": "ZZZ Landsat Test",
+      "item_id": "5b90f92da0d7280005fab355",
+      "title": "Arroceros Forest Park",
       "datetime": null,
-      "gsd_m": 31.353088067834776,
-      "bbox_wgs84": [
-        119.7771810782953,
-        13.382661519444977,
-        121.92320670797218,
-        15.521603742825059
+      "gsd_m": 0.05126,
+      "item_bbox_wgs84": [
+        120.979078,
+        14.592126,
+        120.984291,
+        14.596839
       ],
-      "producer_name": "USGS",
-      "providers": null,
-      "license": "",
-      "item_page": "https://map.openaerialmap.org/ (search by item ID: 59e62b793d6412ef722094ec)",
+      "producer": "Leonard G. Soriano and Ian Gongona",
+      "license": "CC-BY-4.0",
+      "asset_key": "thumbnail",
+      "asset_type": "image/png",
+      "repository_path": "ermita/maps/external/openaerialmap/ermita-5b90f92da0d7280005fab355-thumbnail.png",
+      "bytes": 568669,
+      "sha256": "04c85296ab7e5f731df43b0c51c74f185e7f3a68aa8f07d03062d1fc2062538c",
+      "final_url": "https://oin-hotosm-temp.s3.amazonaws.com/5b90f8fda0d7280005fab353/0/5b90f8fda0d7280005fab354.png",
+      "attribution": "OpenAerialMap contributor and original provider; see item metadata"
+    }
+  ],
+  "reused_existing": [],
+  "skipped": [
+    {
+      "item_id": "635a06b55f1fd800066121e3",
       "asset_key": "visual",
-      "asset_type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "asset_size": 9424747
+      "reason": "License not explicitly CC-BY-4.0; no download."
+    },
+    {
+      "item_id": "635a06b55f1fd800066121e3",
+      "asset_key": "thumbnail",
+      "reason": "License not explicitly CC-BY-4.0; no download."
+    },
+    {
+      "item_id": "635a05775f1fd800066121e2",
+      "asset_key": "visual",
+      "reason": "License not explicitly CC-BY-4.0; no download."
+    },
+    {
+      "item_id": "635a05775f1fd800066121e2",
+      "asset_key": "thumbnail",
+      "reason": "License not explicitly CC-BY-4.0; no download."
+    },
+    {
+      "item_id": "Copernicus_DSM_COG_10_N14_00_E120_00_DEM",
+      "asset_key": "data",
+      "reason": "License not explicitly CC-BY-4.0; no download."
+    },
+    {
+      "item_id": "59e62b793d6412ef722094ec",
+      "asset_key": "visual",
+      "reason": "License not explicitly CC-BY-4.0; no download."
+    },
+    {
+      "item_id": "59e62b793d6412ef722094ec",
+      "asset_key": "thumbnail",
+      "reason": "License not explicitly CC-BY-4.0; no download."
     }
   ],
   "warnings": [],
-  "catalog_item_count": 5
+  "new_bytes_downloaded": 17757501,
+  "status": "success"
 }
