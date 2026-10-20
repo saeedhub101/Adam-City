@@ -9,7 +9,7 @@
 *{box-sizing:border-box}html,body,#map{width:100%;height:100%;margin:0}body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#101a23;color:var(--text)}#map{position:absolute;inset:0}
 .panel{position:absolute;z-index:3;top:10px;right:10px;width:min(270px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--panel);box-shadow:0 8px 26px #0004;backdrop-filter:blur(12px)}
 .panel details{max-height:inherit}.panel summary{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;list-style:none;padding:10px 12px;font-size:13px;font-weight:700}.panel summary::-webkit-details-marker{display:none}.panel summary:after{content:"＋";color:var(--accent);font-size:16px}.panel details[open] summary:after{content:"−"}.panel-content{padding:0 11px 11px;overflow:auto;max-height:calc(100dvh - 70px)}
-h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(--muted);margin-bottom:9px}.buttons{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(--muted);margin-bottom:9px}.buttons{display:grid;grid-template-columns:1fr 1fr;gap:6px}.basemap-buttons{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 9px}.basemap-buttons button{font-weight:700}.basemap-buttons button[aria-pressed="true"]{border-color:var(--accent);background:#174b4b;color:#fff}
 button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1px solid #435865;border-radius:8px;padding:8px 6px;cursor:pointer}button:active{transform:scale(.98)}
 .group{border-top:1px solid var(--line);margin-top:9px;padding-top:6px}.group-title{font-size:11px;color:var(--accent);font-weight:700;margin-bottom:3px}
 .row{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:12px;color:#dce7ec;min-height:20px}input{accent-color:var(--accent);width:16px;height:16px;flex:0 0 auto}
@@ -22,6 +22,7 @@ button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1
 <section class="panel"><details id="layerControls">
 <summary>ADAM CITY · Ermita + Malate <span style="font-weight:400;color:var(--muted)">الطبقات</span></summary>
 <div class="panel-content">
+<div class="basemap-buttons" aria-label="Basemap selection"><button id="satelliteBasemap" type="button" aria-pressed="false">satellite basemap</button><button id="vectorBasemap" type="button" aria-pressed="true">Vector basemap</button></div>
 <div class="sub">طبقات من ملفات المستودع المحلية. الارتفاعات/التفاصيل التقديرية موضحة في خصائص المصدر؛ بيانات OpenFreeMap القصوى عند مستوى التكبير 14.</div>
 <div class="buttons"><button id="ermita">Ermita</button><button id="malate">Malate</button><button id="both">المنطقتان</button><button id="reset">إعادة زاوية الكاميرا</button></div>
 <div class="group"><div class="group-title">المباني والتضاريس ثلاثية الأبعاد</div>
@@ -61,11 +62,13 @@ const status = document.getElementById('status'), errorBox = document.getElement
 const map = new maplibregl.Map({container:'map',center:[120.9821,14.5848],zoom:15,pitch:57,bearing:-18,antialias:true,style:{
 version:8,glyphs:'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',
 sources:{
+satelliteImagery:{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,maxzoom:19,attribution:'Imagery © Esri, Maxar, Earthstar Geographics, and the GIS User Community'},
 tiles:{type:'vector',tiles:[tileBase+'{z}/{x}/{y}.pbf'],minzoom:10,maxzoom:14,attribution:'OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors'},
 buildings:{type:'geojson',data:buildingUrl,maxzoom:14},
 ground:{type:'geojson',data:groundUrl,maxzoom:14}
 },
 layers:[
+{id:'satellite-imagery',type:'raster',source:'satelliteImagery',layout:{visibility:'none'},paint:{'raster-opacity':1}},
 {id:'bg',type:'background',paint:{'background-color':'#dce5e5'}},
 {id:'landcover',type:'fill',source:'ground',filter:['==',['get','source_layer'],'landcover'],paint:{'fill-color':'#cbdacb','fill-opacity':0.88}},
 {id:'landuse',type:'fill',source:'ground',filter:['==',['get','source_layer'],'landuse'],paint:{'fill-color':['match',['get','class'],'park','#a8c9a6','grass','#c5d9b9','forest','#8eaf8e','residential','#e4e1d7','commercial','#e5d9c6','industrial','#d7d2c9','#e4e1d7'],'fill-opacity':0.78}},
@@ -95,6 +98,15 @@ layers:[
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
 let firstError=false, modelLayerAdded=false, modelLoading=false, modelLayer=null;
 const toggleLayers=(ids,on)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')});
+const vectorBasemapLayers=['bg','landcover','landuse','park-fill','water-fill','water-vector','waterway','waterway-vector','road-casing','roads','roads-vector','house-numbers','road-names','place-labels','poi-labels','water-names','boundary-lines','aeroway-lines','aerodrome-labels','mountain-peak-labels'];
+function setBasemap(mode){
+const satellite=mode==='satellite';
+if(map.getLayer('satellite-imagery'))map.setLayoutProperty('satellite-imagery','visibility',satellite?'visible':'none');
+vectorBasemapLayers.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',satellite?'none':'visible')});
+const satButton=document.getElementById('satelliteBasemap'),vecButton=document.getElementById('vectorBasemap');
+satButton.setAttribute('aria-pressed',satellite?'true':'false');vecButton.setAttribute('aria-pressed',satellite?'false':'true');
+status.textContent=satellite?'Basemap: satellite imagery · مباني المصدر المحلية تبقى ظاهرة للمقارنة.':'Basemap: vector · بلاطات OpenFreeMap/OpenMapTiles وبيانات المستودع.';
+}
 const groups={
 buildings:['buildings-3d'],ground:['landcover','landuse'],roads:['road-casing','roads','roads-vector','park-fill'],water:['water-fill','water-vector','waterway','waterway-vector'],
 roadNames:['road-names'],numbers:['house-numbers'],places:['place-labels'],pois:['poi-labels'],boundaries:['boundary-lines'],air:['aeroway-lines','aerodrome-labels'],waterNames:['water-names'],peaks:['mountain-peak-labels']
@@ -104,9 +116,11 @@ if(!map.isStyleLoaded())return;
 let visible=0;try{visible=map.queryRenderedFeatures({layers:['buildings-3d']}).length}catch(_){}
 status.textContent='Zoom '+map.getZoom().toFixed(1)+' · ميل '+Math.round(map.getPitch())+'° · مبانٍ مرئية '+visible+' · بلاطات المصدر حتى zoom 14؛ التكبير بعدها لا يضيف تفاصيل جديدة.';
 }
-map.on('load',()=>{map.resize();statusText();});
+map.on('load',()=>{map.resize();setBasemap('vector');statusText();});
 map.on('idle',statusText);
 map.on('error',e=>{console.error(e.error||e);if(!firstError){firstError=true;errorBox.style.display='block';errorBox.textContent=(e.error&&e.error.message)||e.message||'تعذر تحميل مورد؛ افحص الرابط أو اتصال الشبكة.';}});
+document.getElementById('satelliteBasemap').onclick=()=>setBasemap('satellite');
+document.getElementById('vectorBasemap').onclick=()=>setBasemap('vector');
 const fly=(center,zoom=15.2)=>map.flyTo({center,zoom,pitch:57,bearing:-18,duration:1000});
 document.getElementById('ermita').onclick=()=>fly([120.9821,14.5848]);
 document.getElementById('malate').onclick=()=>fly([120.9918,14.5707]);
