@@ -2,6 +2,9 @@ name: Deploy ADAM CITY Ermita 3D city
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'ermita/maps/sources/openfreemap/building-fallback.geojson'
+      - 'ermita/maps/sources/openfreemap/ground-fallback.geojson'
   workflow_dispatch:
 
 permissions:
@@ -47,22 +50,22 @@ jobs:
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13697/7521.pbf
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13698/7521.pbf
-          python3 -m pip install --disable-pip-version-check mapbox-vector-tile
-          mkdir -p site/ermita/maps/sources/openfreemap/vector-tiles
-          cp ermita-malate-3d.html site/ermita-malate-3d.html
-          cp -a ermita/maps/sources/openfreemap/vector-tiles/. site/ermita/maps/sources/openfreemap/vector-tiles/
-          # Build a low-zoom building fallback from local z14 PBFs. The original z10-z12
-          # tiles contain zero building features, so this preserves buildings while zooming out.
-          python3 - <<'PY'
-          import glob, json, math
+          mkdir -p site/ermita/maps/sources/openfreemap
+          # Existing repository data always wins; build only whichever fallback is missing.
+          if [[ ! -s ermita/maps/sources/openfreemap/building-fallback.geojson || ! -s ermita/maps/sources/openfreemap/ground-fallback.geojson ]]; then
+            python3 -m pip install --disable-pip-version-check mapbox-vector-tile
+            python3 - <<'PY'
+          import json, math
           from pathlib import Path
           import mapbox_vector_tile
 
-          root = Path('ermita/maps/sources/openfreemap/vector-tiles/14')
-          building_features = []
-          ground_features = []
-          seen_buildings = set()
-          seen_ground = set()
+          repo_dir = Path('ermita/maps/sources/openfreemap')
+          building_out = repo_dir / 'building-fallback.geojson'
+          ground_out = repo_dir / 'ground-fallback.geojson'
+          need_buildings = not (building_out.is_file() and building_out.stat().st_size > 0)
+          need_ground = not (ground_out.is_file() and ground_out.stat().st_size > 0)
+          building_features, ground_features = [], []
+          seen_buildings, seen_ground = set(), set()
           ground_layers = {'landcover', 'landuse', 'water', 'waterway', 'transportation'}
 
           def lonlat(x, y, z, extent):
@@ -79,12 +82,12 @@ jobs:
                   return [convert(item, tx, ty, extent) for item in coords]
               return coords
 
+          root = Path('ermita/maps/sources/openfreemap/vector-tiles/14')
           for path in sorted(root.glob('*/*.pbf')):
               x, y = int(path.parent.name), int(path.stem)
-              # Preserve standard MVT tile coordinates (y increases downward).
               decoded = mapbox_vector_tile.decode(path.read_bytes(), default_options={'y_coord_down': True})
               for layer_name, layer in decoded.items():
-                  if layer_name != 'building' and layer_name not in ground_layers:
+                  if (layer_name != 'building' and layer_name not in ground_layers) or (layer_name == 'building' and not need_buildings) or (layer_name != 'building' and not need_ground):
                       continue
                   extent = int(layer.get('extent', 4096))
                   for feature in layer.get('features', []):
@@ -93,49 +96,40 @@ jobs:
                           continue
                       if layer_name == 'building' and geometry.get('type') not in ('Polygon', 'MultiPolygon'):
                           continue
-                      out_geometry = {
-                          'type': geometry['type'],
-                          'coordinates': convert(geometry.get('coordinates'), x, y, extent)
-                      }
+                      out_geometry = {'type': geometry['type'], 'coordinates': convert(geometry.get('coordinates'), x, y, extent)}
                       props = dict(feature.get('properties') or {})
                       if layer_name == 'building':
                           signature = json.dumps([out_geometry, props], sort_keys=True, separators=(',', ':'))
-                          if signature in seen_buildings:
-                              continue
-                          seen_buildings.add(signature)
-                          building_features.append({'type':'Feature', 'geometry':out_geometry, 'properties':props})
+                          if signature not in seen_buildings:
+                              seen_buildings.add(signature)
+                              building_features.append({'type':'Feature', 'geometry':out_geometry, 'properties':props})
                       else:
                           props['source_layer'] = layer_name
                           signature = json.dumps([out_geometry, props], sort_keys=True, separators=(',', ':'))
-                          if signature in seen_ground:
-                              continue
-                          seen_ground.add(signature)
-                          ground_features.append({'type':'Feature', 'geometry':out_geometry, 'properties':props})
+                          if signature not in seen_ground:
+                              seen_ground.add(signature)
+                              ground_features.append({'type':'Feature', 'geometry':out_geometry, 'properties':props})
 
-          if not building_features:
-              raise SystemExit('No building polygons found in local z14 PBF tiles; refusing to publish an empty fallback.')
-          if not ground_features:
-              raise SystemExit('No ground/road features found in local z14 PBF tiles; refusing to publish an empty ground fallback.')
-
-          out_dir = Path('site/ermita/maps/sources/openfreemap')
-          out_dir.mkdir(parents=True, exist_ok=True)
-          building_out = out_dir / 'building-fallback.geojson'
-          ground_out = out_dir / 'ground-fallback.geojson'
-          building_payload = json.dumps({'type':'FeatureCollection','features':building_features}, separators=(',', ':'))
-          ground_payload = json.dumps({'type':'FeatureCollection','features':ground_features}, separators=(',', ':'))
-          building_out.write_text(building_payload, encoding='utf-8')
-          ground_out.write_text(ground_payload, encoding='utf-8')
-          # Also save the generated data in the repository so future local runs can use it directly.
-          repo_dir = Path('ermita/maps/sources/openfreemap')
-          repo_dir.mkdir(parents=True, exist_ok=True)
-          repo_building = repo_dir / 'building-fallback.geojson'
-          repo_ground = repo_dir / 'ground-fallback.geojson'
-          repo_building.write_text(building_payload, encoding='utf-8')
-          repo_ground.write_text(ground_payload, encoding='utf-8')
-          print(f'Generated {len(building_features)} building polygons ({building_out.stat().st_size} bytes)')
-          print(f'Generated {len(ground_features)} ground/road features ({ground_out.stat().st_size} bytes)')
+          if need_buildings:
+              if not building_features:
+                  raise SystemExit('No building polygons found; refusing to publish an empty fallback.')
+              building_out.write_text(json.dumps({'type':'FeatureCollection','features':building_features}, separators=(',', ':')), encoding='utf-8')
+              print(f'Generated missing building fallback: {len(building_features)} polygons, {building_out.stat().st_size} bytes')
+          else:
+              print(f'Reusing existing building fallback: {building_out.stat().st_size} bytes')
+          if need_ground:
+              if not ground_features:
+                  raise SystemExit('No ground/road features found; refusing to publish an empty fallback.')
+              ground_out.write_text(json.dumps({'type':'FeatureCollection','features':ground_features}, separators=(',', ':')), encoding='utf-8')
+              print(f'Generated missing ground fallback: {len(ground_features)} features, {ground_out.stat().st_size} bytes')
+          else:
+              print(f'Reusing existing ground fallback: {ground_out.stat().st_size} bytes')
           PY
-          # Commit the generated GeoJSON files to main for future local use.
+          fi
+          # Publish the repository copies, whether reused or newly generated.
+          cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/building-fallback.geojson
+          cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/ground-fallback.geojson
+          # Persist only new fallback data on main; ignore these paths in push triggers to avoid loops.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/saeedhub101/Adam-City.git"
@@ -144,7 +138,7 @@ jobs:
             git commit -m "Store generated building and ground fallback data"
             git push origin HEAD:main
           else
-            echo "Generated fallback files already match main; no repository commit needed."
+            echo "Fallback files already exist and are unchanged; no re-import or repository commit needed."
           fi
           # Keep the repository's root index.html deleted; publish a tiny redirect only in the artifact.
           printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=ermita-malate-3d.html"><title>ADAM CITY</title><a href="ermita-malate-3d.html">Open ADAM CITY 3D preview</a></html>' > site/index.html
