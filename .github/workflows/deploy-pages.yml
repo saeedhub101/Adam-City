@@ -70,12 +70,12 @@ jobs:
                   p=feature.get('properties') or {}; tags=p.get('tags') if isinstance(p.get('tags'),dict) else p
                   raw=tags.get('height'); height=None
                   if raw:
-                      m=re.search(r'\\d+(?:\\.\\d+)?',str(raw).replace(',','.'))
+                      m=re.search(r'\d+(?:\.\d+)?',str(raw).replace(',','.'))
                       if m and 1.5 <= float(m.group()) <= 500: height=float(m.group())
                   if height is None:
                       raw=tags.get('building:levels') or tags.get('levels')
                       if raw:
-                          m=re.search(r'\\d+(?:\\.\\d+)?',str(raw))
+                          m=re.search(r'\d+(?:\.\d+)?',str(raw))
                           if m and 1 <= float(m.group()) <= 150: height=float(m.group())*3.2
                   if height is None: height=9.6
                   for poly in polys:
@@ -90,7 +90,7 @@ jobs:
           lon=math.degrees(cx/R); lat=math.degrees(2*math.atan(math.exp(cy/R))-math.pi/2)
           out=Path('ermita/3d/generated/facade-model-origin.json')
           out.parent.mkdir(parents=True,exist_ok=True)
-          out.write_text(json.dumps({'longitude':lon,'latitude':lat,'anchor_altitude_m':maxz/2,'buildings_used':count,'origin_method':'Recomputed from the same OSM footprint geometry and height rules used to generate the facade GLB'},indent=2)+'\\n',encoding='utf-8')
+          out.write_text(json.dumps({'longitude':lon,'latitude':lat,'anchor_altitude_m':maxz/2,'buildings_used':count,'origin_method':'Recomputed from the same OSM footprint geometry and height rules used to generate the facade GLB'},indent=2)+'\n',encoding='utf-8')
           print('Facade GLB origin:', out.read_text())
           PY
           python3 ermita/scripts/import_openfreemap_ermita.py
