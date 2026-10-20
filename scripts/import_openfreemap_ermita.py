@@ -98,11 +98,15 @@ def main():
     tile_template, source_maxzoom = tile_url_from_style()
     effective_maxzoom = min(MAX_ZOOM, source_maxzoom)
     tile_set = set()
+    # Include a one-tile safety margin around the geocoded boundary. The map viewport
+    # extends beyond the administrative boundary, especially with a pitched 3D camera.
+    tile_buffer = max(0, int(os.environ.get("TILE_BUFFER", "1")))
     for z in range(MIN_ZOOM, MAX_ZOOM + 1):
         x0,y1 = xyz(west,south,z)
         x1,y0 = xyz(east,north,z)
-        for x in range(min(x0,x1),max(x0,x1)+1):
-            for y in range(min(y0,y1),max(y0,y1)+1):
+        n = 2 ** z
+        for x in range(max(0,min(x0,x1)-tile_buffer), min(n-1,max(x0,x1)+tile_buffer)+1):
+            for y in range(max(0,min(y0,y1)-tile_buffer), min(n-1,max(y0,y1)+tile_buffer)+1):
                 tile_set.add((z,x,y))
     tiles = sorted(tile_set)
     if len(tiles) > MAX_TILES:
