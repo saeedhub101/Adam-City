@@ -53,45 +53,74 @@ jobs:
           import glob, json, math
           from pathlib import Path
           import mapbox_vector_tile
+
           root = Path('ermita/maps/sources/openfreemap/vector-tiles/14')
-          features = []
-          seen = set()
+          building_features = []
+          ground_features = []
+          seen_buildings = set()
+          seen_ground = set()
+          ground_layers = {'landcover', 'landuse', 'water', 'waterway', 'transportation'}
+
           def lonlat(x, y, z, extent):
               n = 2 ** z
               gx, gy = x / extent, y / extent
               lon = gx / n * 360.0 - 180.0
               lat = math.degrees(math.atan(math.sinh(math.pi * (1 - 2 * gy / n))))
               return [lon, lat]
+
           def convert(coords, tx, ty, extent):
               if isinstance(coords, (list, tuple)) and len(coords) >= 2 and isinstance(coords[0], (int, float)) and isinstance(coords[1], (int, float)):
                   return lonlat(tx * extent + coords[0], ty * extent + coords[1], 14, extent) + list(coords[2:])
               if isinstance(coords, (list, tuple)):
                   return [convert(item, tx, ty, extent) for item in coords]
               return coords
+
           for path in sorted(root.glob('*/*.pbf')):
               x, y = int(path.parent.name), int(path.stem)
-              decoded = mapbox_vector_tile.decode(path.read_bytes())
-              layer = decoded.get('building')
-              if not layer:
-                  continue
-              extent = int(layer.get('extent', 4096))
-              for feature in layer.get('features', []):
-                  geometry = feature.get('geometry')
-                  if not geometry or geometry.get('type') not in ('Polygon', 'MultiPolygon'):
+              # Preserve standard MVT tile coordinates (y increases downward).
+              decoded = mapbox_vector_tile.decode(path.read_bytes(), default_options={'y_coord_down': True})
+              for layer_name, layer in decoded.items():
+                  if layer_name != 'building' and layer_name not in ground_layers:
                       continue
-                  out_geometry = {'type': geometry['type'], 'coordinates': convert(geometry.get('coordinates'), x, y, extent)}
-                  props = feature.get('properties') or {}
-                  signature = json.dumps([out_geometry, props], sort_keys=True, separators=(',', ':'))
-                  if signature in seen:
-                      continue
-                  seen.add(signature)
-                  features.append({'type':'Feature', 'id':feature.get('id'), 'geometry':out_geometry, 'properties':props})
-          if not features:
+                  extent = int(layer.get('extent', 4096))
+                  for feature in layer.get('features', []):
+                      geometry = feature.get('geometry')
+                      if not geometry or geometry.get('type') not in ('Polygon', 'MultiPolygon', 'LineString', 'MultiLineString'):
+                          continue
+                      if layer_name == 'building' and geometry.get('type') not in ('Polygon', 'MultiPolygon'):
+                          continue
+                      out_geometry = {
+                          'type': geometry['type'],
+                          'coordinates': convert(geometry.get('coordinates'), x, y, extent)
+                      }
+                      props = dict(feature.get('properties') or {})
+                      if layer_name == 'building':
+                          signature = json.dumps([out_geometry, props], sort_keys=True, separators=(',', ':'))
+                          if signature in seen_buildings:
+                              continue
+                          seen_buildings.add(signature)
+                          building_features.append({'type':'Feature', 'geometry':out_geometry, 'properties':props})
+                      else:
+                          props['source_layer'] = layer_name
+                          signature = json.dumps([out_geometry, props], sort_keys=True, separators=(',', ':'))
+                          if signature in seen_ground:
+                              continue
+                          seen_ground.add(signature)
+                          ground_features.append({'type':'Feature', 'geometry':out_geometry, 'properties':props})
+
+          if not building_features:
               raise SystemExit('No building polygons found in local z14 PBF tiles; refusing to publish an empty fallback.')
-          out = Path('site/ermita/maps/sources/openfreemap/building-fallback.geojson')
-          out.parent.mkdir(parents=True, exist_ok=True)
-          out.write_text(json.dumps({'type':'FeatureCollection','features':features}, separators=(',', ':')), encoding='utf-8')
-          print(f'Generated low-zoom fallback with {len(features)} building polygons from local z14 PBF tiles ({out.stat().st_size} bytes)')
+          if not ground_features:
+              raise SystemExit('No ground/road features found in local z14 PBF tiles; refusing to publish an empty ground fallback.')
+
+          out_dir = Path('site/ermita/maps/sources/openfreemap')
+          out_dir.mkdir(parents=True, exist_ok=True)
+          building_out = out_dir / 'building-fallback.geojson'
+          ground_out = out_dir / 'ground-fallback.geojson'
+          building_out.write_text(json.dumps({'type':'FeatureCollection','features':building_features}, separators=(',', ':')), encoding='utf-8')
+          ground_out.write_text(json.dumps({'type':'FeatureCollection','features':ground_features}, separators=(',', ':')), encoding='utf-8')
+          print(f'Generated {len(building_features)} building polygons ({building_out.stat().st_size} bytes)')
+          print(f'Generated {len(ground_features)} ground/road features ({ground_out.stat().st_size} bytes)')
           PY
           # Keep the repository's root index.html deleted; publish a tiny redirect only in the artifact.
           printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=ermita-malate-3d.html"><title>ADAM CITY</title><a href="ermita-malate-3d.html">Open ADAM CITY 3D preview</a></html>' > site/index.html
