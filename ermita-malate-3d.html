@@ -33,7 +33,7 @@ button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1
 <label class="row"><input type="checkbox" id="colors" checked> ألوان المباني من خصائص المصدر</label>
 <label class="row"><input type="checkbox" id="osmAppearance"> OSM — ألوان ومواد الواجهات من الوسوم، دون تغيير شكل المبنى أو ارتفاعه</label>
 <label class="row"><input type="checkbox" id="facadeModel"> تفاصيل الواجهات العامة (نوافذ وأبواب)</label>
-<label class="row"><input type="checkbox" id="landmarkFacades"> عمارة مخصصة: المتحف الوطني ومرشح واجهة PGH</label>
+<label class="row"><input type="checkbox" id="landmarkFacades"> عمارة مخصصة: المتحف الوطني (مطابقة PGH قيد التحقق)</label>
 <label class="row"><input type="checkbox" id="terrainModel"> نموذج المدينة الكامل GLB (مبانٍ + طرق + تضاريس)</label>
 <label class="row"><input type="checkbox" id="terrain"> تضاريس DEM (نموذج Copernicus)</label>
 <label class="row"><input type="checkbox" id="numbers" checked> أرقام المباني</label></div>
@@ -276,7 +276,7 @@ async function addLandmarkFacadeLayer(){
      if(!Number.isFinite(size.x)||!Number.isFinite(size.y)||!Number.isFinite(size.z)||size.x<=0||size.y<=0||size.z<=0){
       landmarkLoading=false;landmarkLayerAdded=false;toggle.checked=false;errorBox.style.display='block';errorBox.textContent='نموذج المعالم لا يحتوي هندسة صالحة.';return;
      }
-     this.scene.add(this.model);landmarkLoading=false;status.textContent='تم تحميل طبقة العمارة المخصصة؛ ملاحظة: تطابق مبنى PGH ما زال مرشحًا غير مؤكد.';map.triggerRepaint();
+     this.scene.add(this.model);landmarkLoading=false;status.textContent='تم تحميل تفاصيل المتحف الوطني. لم تُضف واجهة PGH بعد لأن مضلع المبنى الدقيق لم يُتحقق منه؛ لن نضع التفاصيل على مبنى خاطئ.';map.triggerRepaint();
     },err=>{landmarkLoading=false;landmarkLayerAdded=false;toggle.checked=false;errorBox.style.display='block';errorBox.textContent='تعذر تحليل نموذج المعالم: '+(err.message||err);});
    },
    render:function(gl,matrix){
