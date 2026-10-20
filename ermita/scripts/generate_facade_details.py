@@ -18,6 +18,7 @@ OUT_DIR = ROOT / "ermita/3d/generated"
 OUT_GLB = OUT_DIR / "ermita-buildings-facade-details.glb"
 OUT_CSV = OUT_DIR / "facade-signage-index.csv"
 TO_METERS = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True).transform
+TO_LONLAT = Transformer.from_crs("EPSG:3857", "EPSG:4326", always_xy=True).transform
 
 
 def tags_for(feature):
@@ -143,6 +144,20 @@ def main():
         raise RuntimeError("No facade details generated; inspect input footprints")
     combined = trimesh.util.concatenate(meshes)
     combined.export(OUT_GLB)
+    # Store the origin in the same run and from the exact polygons used by this GLB.
+    # Never recompute it later from all footprint records, which can be a different set.
+    longitude, latitude = TO_LONLAT(center[0], center[1])
+    origin = {
+        "longitude": longitude,
+        "latitude": latitude,
+        "anchor_altitude_m": center[2],
+        "buildings_used": len(prepared),
+        "origin_method": "Generated in the same run as the GLB from the exact prepared polygon bounds and height rules",
+        "coordinate_system": "EPSG:3857 local meters, recentered at (longitude, latitude, anchor_altitude_m)"
+    }
+    (OUT_DIR / "facade-model-origin.json").write_text(
+        json.dumps(origin, indent=2) + "\\n", encoding="utf-8"
+    )
     with OUT_CSV.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=list(signage[0].keys()))
         writer.writeheader()
@@ -152,7 +167,9 @@ def main():
         "license": "ODbL 1.0; attribution and share-alike obligations apply",
         "output_glb": str(OUT_GLB.relative_to(ROOT)),
         "output_signage_index": str(OUT_CSV.relative_to(ROOT)),
-        "building_polygon_parts": len(prepared), "window_panels": windows_count,
+        "building_polygon_parts": len(prepared), "glb_bytes": OUT_GLB.stat().st_size,
+        "model_center_epsg3857_m": {"x": center[0], "y": center[1], "z": center[2]},
+        "window_panels": windows_count,
         "door_placeholders": doors_count, "named_signboard_placeholders": panels_count,
         "placement": "EPSG:3857 meters; recentered using the same building extent as the extrusion model",
         "limitations": [
