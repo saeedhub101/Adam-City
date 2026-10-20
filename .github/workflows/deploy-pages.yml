@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -31,11 +31,15 @@ jobs:
           git sparse-checkout set --no-cone --stdin <<'EOF'
           /ermita-malate-3d.html
           /ermita/maps/sources/openfreemap/vector-tiles/
+          /ermita/maps/sources/openfreemap/building-fallback.geojson
+          /ermita/maps/sources/openfreemap/ground-fallback.geojson
           EOF
           git switch -C main FETCH_HEAD
 
       - name: Prepare the minimal static site
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           test -s ermita-malate-3d.html
@@ -117,11 +121,31 @@ jobs:
           out_dir.mkdir(parents=True, exist_ok=True)
           building_out = out_dir / 'building-fallback.geojson'
           ground_out = out_dir / 'ground-fallback.geojson'
-          building_out.write_text(json.dumps({'type':'FeatureCollection','features':building_features}, separators=(',', ':')), encoding='utf-8')
-          ground_out.write_text(json.dumps({'type':'FeatureCollection','features':ground_features}, separators=(',', ':')), encoding='utf-8')
+          building_payload = json.dumps({'type':'FeatureCollection','features':building_features}, separators=(',', ':'))
+          ground_payload = json.dumps({'type':'FeatureCollection','features':ground_features}, separators=(',', ':'))
+          building_out.write_text(building_payload, encoding='utf-8')
+          ground_out.write_text(ground_payload, encoding='utf-8')
+          # Also save the generated data in the repository so future local runs can use it directly.
+          repo_dir = Path('ermita/maps/sources/openfreemap')
+          repo_dir.mkdir(parents=True, exist_ok=True)
+          repo_building = repo_dir / 'building-fallback.geojson'
+          repo_ground = repo_dir / 'ground-fallback.geojson'
+          repo_building.write_text(building_payload, encoding='utf-8')
+          repo_ground.write_text(ground_payload, encoding='utf-8')
           print(f'Generated {len(building_features)} building polygons ({building_out.stat().st_size} bytes)')
           print(f'Generated {len(ground_features)} ground/road features ({ground_out.stat().st_size} bytes)')
           PY
+          # Commit the generated GeoJSON files to main for future local use.
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/saeedhub101/Adam-City.git"
+          git add ermita/maps/sources/openfreemap/building-fallback.geojson ermita/maps/sources/openfreemap/ground-fallback.geojson
+          if ! git diff --cached --quiet; then
+            git commit -m "Store generated building and ground fallback data"
+            git push origin HEAD:main
+          else
+            echo "Generated fallback files already match main; no repository commit needed."
+          fi
           # Keep the repository's root index.html deleted; publish a tiny redirect only in the artifact.
           printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=ermita-malate-3d.html"><title>ADAM CITY</title><a href="ermita-malate-3d.html">Open ADAM CITY 3D preview</a></html>' > site/index.html
           echo "Published files:"
