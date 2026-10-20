@@ -1,73 +1,50 @@
-# Repository organization migration report
+# Repository organization and verification report
 
-Date: 2026-10-20
+Updated: 2026-10-20  
 Branch: `main`
 
-## Completed in this pass
+## Current canonical layout
 
-- Added a root `README.md` that explains the project entry points and core data-preservation rules.
-- Added `docs/repository-structure.md` to define the purpose of the major directories and a consistent naming convention.
-- Moved both historical preview snapshots from `checkpoints/` into `backup/checkpoints/` after verifying each destination file's contents:
-  - `checkpoints/road-texture-before/index.html` → `backup/checkpoints/road-texture-before/index.html` (53,660 characters returned by the repository connector).
-  - `checkpoints/terrain-alignment-before/index.html` → `backup/checkpoints/terrain-alignment-before/index.html` (51,162 characters returned by the repository connector).
-- Removed the original checkpoint paths only after the destination copies were fetched and their lengths matched.
-- Kept the active preview at the root path `ermita-malate-3d.html`, which is referenced by the Pages deployment arrangement.
+- `README.md` — project entry point and data-preservation rules.
+- `docs/` — the canonical home for repository structure, source catalog, data policy, data audit, and this migration report.
+- `ermita/` — area-specific source data, derived data, QA, terrain, 3D assets, textures, and import/processing scripts.
+- `ermita/scripts/` — active Ermita scripts, including the OpenFreeMap importer.
+- `ermita/assets/textures/` — shared texture assets; `ermita/assets/README.md` documents their intended use and limitations.
+- `ermita-malate-3d.html` — the active 3D preview page.
+- `.github/workflows/deploy-pages.yml` — the sole tracked active workflow; it builds a minimal Pages artifact and creates the root redirect inside that artifact. A repository-root `index.html` is intentionally not tracked.
+- `kartaview/` and `backup/` — retained in place and excluded from this cleanup.
 
-## Why some existing directories were not renamed in this pass
+## Changes consolidated
 
-The current tree contains 1,999 tracked files, including a large `kartaview/` archive, a `backup/` archive, the `ermita/` data tree, and root-level `scripts/`. Existing CSV records, processing scripts, reports, HTML, and workflows contain paths into these locations. Moving these trees without a repository-wide reference migration and data validation would risk breaking image lookups, import jobs, or the deployed page. The naming guide therefore records the canonical intent and explicitly flags these as path contracts until a complete reference rewrite can be tested.
+- Moved the five repository-level policy/audit/catalog/structure/migration documents into `docs/` and normalized their filenames.
+- Moved the four Ermita import/preview scripts from the old root `scripts/` directory to `ermita/scripts/`; updated the Pages workflow and script root-path resolution.
+- Consolidated shared surface textures under `ermita/assets/textures/` and the usage guide at `ermita/assets/README.md`.
+- Updated the map, 3D, QA, inventory, and asset documentation to use current paths and describe the active preview and workflow accurately.
+- Clarified that Microsoft satellite-derived footprints and Google Open Buildings are separate stored datasets, not automatically active preview layers.
+- Clarified that `ermita/maps/generated/ermita-building-footprints.geojson` is Basemap/OpenMapTiles-derived according to the file-level audit and must not be treated as a pure OSM snapshot. The similarly named historical file under `backup/` is a different blob and must remain a separate preserved source.
+- Made the OpenFreeMap importer derive its repository root from its own file location rather than the process working directory.
 
-## Data-preservation guarantees
+## Structural checks at this revision
 
-- No source dataset was deleted as part of this pass.
-- No data was re-downloaded as part of this pass.
-- The only removed paths were the two old checkpoint paths, after copies were verified at their new archive paths.
-- No claim is made that the 3D preview or GitHub Pages deployment was tested by this organizational change.
+The recursive Git tree for the checked revision reported 2,000 tracked files and `truncated: false`.
 
-## Next validation boundary
+- No Python scripts remain under the old root `scripts/` path.
+- The old root-level uppercase policy/report filenames are absent; their canonical copies live under `docs/`.
+- The active preview exists at `ermita-malate-3d.html`; there is no tracked root `index.html` or non-archived `preview.html`.
+- `.github/workflows/` contains one tracked active workflow: `deploy-pages.yml`.
+- A Git-blob hash comparison found no byte-identical duplicate files outside `backup/` and `kartaview/`. This check deliberately excludes those preserved archives.
+- The two same-named building-footprint files under `ermita/` and `backup/` have different blob hashes and must not be deleted as duplicates.
+- The latest Pages workflow run for revision `af2d6f1c0a5ff5b291988be9c74890716d8abfbe` completed successfully.
 
-A full path migration should be done as a single planned operation: build an old-to-new path map, rewrite references across scripts/workflows/HTML/CSV/JSON/GeoJSON/Markdown, parse structured datasets, check all local asset references, then run the import and Pages workflows and inspect their results. Until those checks pass, the existing data-source directories should retain their paths.
+## Source integrity and safety rules
 
+1. Reuse valid committed source data first; import only missing or invalid assets.
+2. Keep provider datasets separate. Do not silently merge or overwrite OSM, OpenFreeMap/OpenMapTiles, Microsoft, or Google geometries.
+3. Keep original inputs, derived outputs, and import/QA reports traceable to their sources.
+4. Treat a successful workflow as deployment evidence, not proof that every map layer is visually or geometrically correct.
+5. Do not remove files from `backup/` or `kartaview/` as part of routine organization.
+6. Keep work on `main`; do not create project branches for routine cleanup.
 
-## Follow-up organization pass (2026-10-20)
+## Scope note
 
-- Moved the five repository-level policy, audit, catalog, structure, and migration documents into `docs/` and normalized their filenames to lowercase kebab-case.
-- Kept `README.md`, the active preview HTML, and `.github/workflows/` in place because they are deployment entry points. Moved the four Ermita-specific root importers into `ermita/scripts/` and updated the Pages workflow to use the new path.
-- Kept `ermita/`, `kartaview/`, and `backup/` at their current roots in this pass. They contain thousands of assets and references in scripts, CSV metadata, and HTML; moving them safely requires a repository-wide path migration and deployment/data-reference validation, not just moving directory entries. No data files were deleted as part of this documentation move.
-
-
-## Latest verification (2026-10-20)
-
-- Current branch head at this check: `60adc147730a7181bf13484cfa13024474e9f448`.
-- Recursive tree inspection: 2,000 tracked files, `truncated: false`.
-- Confirmed the five documentation files now exist under `docs/`, and the old root-level copies no longer exist.
-- Confirmed both historical checkpoint HTML files are present under `backup/checkpoints/`.
-- The remaining project/data directories were not wholesale moved because the active deployment workflow and source-indexing files depend on their current paths. The next safe phase is a reference-aware path migration with automated path checks, not a blind directory move.
-
-
-## Importer relocation verification (2026-10-20)
-
-- Moved `import_openfreemap_ermita.py`, `import_basemap_buildings.py`, `import_openaerialmap_ermita.py`, and `prepare_local_aerial_preview.py` from root `scripts/` to `ermita/scripts/`.
-- Updated `.github/workflows/deploy-pages.yml` sparse-checkout and execution paths for the OpenFreeMap importer.
-- Adjusted repository-root resolution in the moved basemap/OpenAerialMap/aerial-preview scripts.
-- Verified that no `.py` files remain in the former root `scripts/` directory and all four destination paths exist. The recursive Git tree still reports 2,000 tracked files and is not truncated.
-- This verifies path structure, not a completed GitHub Actions run or a visual browser test. The remaining `kartaview/`, `backup/`, and `ermita/` data hierarchy has not been relocated wholesale because its internal references require a larger migration and validation pass.
-
-
-## Shared texture consolidation (2026-10-20)
-
-Moved the asphalt, terrazzo sidewalk, painted masonry, and courtyard surface images from `ermita/buildings/` into `ermita/assets/textures/`. Updated `ermita/assets/README.md` and `ermita/3d/real-building-models.json`. Verified all four images exist at their new paths, none remain at the old paths, and the repository still contains 2,000 tracked files. Historical checkpoint pages under `backup/` were intentionally left untouched, as requested.
-
-
-## Final layout cleanup (2026-10-20)
-
-Moved the shared-asset usage guide from `ermita/buildings/ASSET_USAGE.md` to `ermita/assets/README.md`, corrected stale references to a non-existent `ermita/maps/preview.html`, and updated the Ermita overview and repository structure guide to reflect the active root preview page and current script locations. The `kartaview/` and `backup/` trees were intentionally excluded from this work as requested.
-
-
-## Documentation reconciliation (2026-10-20)
-
-- Corrected stale references to a missing root `index.html` and to removed deployment/export workflow filenames; the active Pages entry point is `ermita-malate-3d.html`, and the tracked workflow is `.github/workflows/deploy-pages.yml`.
-- Reconciled the 3D/maps/QA documentation with the committed source layout: the live preview uses OpenFreeMap and local tile-derived fallback layers; the generated footprint GeoJSON is Basemap/OpenMapTiles-derived according to the file-level audit; Google Open Buildings and Microsoft satellite-derived footprints are stored separately and are not assumed to be active preview layers.
-- Marked the initial layer inventory as historical planning guidance, not a current inventory.
-- Updated the data policy to prohibit source conflation rather than incorrectly declaring the committed Microsoft satellite-footprint dataset absent.
-- No changes were made to `kartaview/` or `backup/`.
+The structural checks above cover the tracked Git tree, exact duplicate blob hashes outside the excluded archives, the active workflow/page paths, and the named asset relocations. They do not claim that every building footprint is accurate, every external source is integrated into the preview, or every 3D feature has been visually verified against imagery.
