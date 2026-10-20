@@ -1,4 +1,4 @@
-# Ramon Magsaysay Center and street materials
+# Ramon Magsaysay Center model and shared material assets
 
 All paths below are repository-relative and should be reused instead of downloading duplicates.
 
@@ -9,7 +9,7 @@ All paths below are repository-relative and should be reused instead of download
 - Approximate map anchor: longitude 120.98245, latitude 14.5719 (Malate).
 - The map normalizes the GLB to an approximate 62 m height. The footprint, rotation, base elevation, and façade alignment still need visual verification against aerial imagery and the OSM footprint.
 
-## Materials
+## Shared textures (`ermita/assets/textures/`)
 - `CityStreetRoadAsphaltTwoLaneWorn001_COL_1K.jpeg` — asphalt texture used on generated street ribbons following mapped road centerlines.
 - `Mono-Terrazzo-Stack-Architextures.jpeg` — provisional sidewalk surface texture, applied to narrow strips on both sides of mapped streets. Replace only if a more appropriate local sidewalk texture is found.
 - `Painted-CMU-Block-Architextures.jpeg` — now assigned as a provisional texture map to the local Ramon Magsaysay GLB mesh materials. This is a generic painted masonry material, not a verified photo of the actual building facade; UV alignment and visual accuracy still need checking.
