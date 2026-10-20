@@ -263,15 +263,13 @@ async function addLandmarkFacadeLayer(){
   if(!window.THREE || !window.THREE.GLTFLoader)throw new Error('مكتبات Three.js / GLTFLoader لم تُحمّل');
   const originResponse=await fetch(landmarkOriginUrl,{cache:'no-store'});
   if(!originResponse.ok)throw new Error('ملف محاذاة معالم المباني غير متاح ('+originResponse.status+')');
-  const origin=await originResponse.json();commercialDiag('Origin JSON',JSON.stringify(origin));
+  const origin=await originResponse.json();
   if(!Number.isFinite(origin.longitude)||!Number.isFinite(origin.latitude)||!Number.isFinite(origin.anchor_altitude_m))throw new Error('إحداثيات محاذاة طبقة المعالم غير صالحة');
   const response=await fetch(landmarkModelUrl,{cache:'no-store'});
   if(!response.ok)throw new Error('ملف نموذج المعالم غير متاح ('+response.status+')');
-  const buffer=await response.arrayBuffer();commercialDiag('Bytes downloaded',buffer.byteLength+' bytes ('+(buffer.byteLength/1048576).toFixed(3)+' MiB)');
+  const buffer=await response.arrayBuffer();
   if(buffer.byteLength<20)throw new Error('ملف نموذج المعالم فارغ أو تالف');
   const header=new DataView(buffer);
-  commercialDiag('GLB magic',header.getUint32(0,true)===0x46546c67?'glTF OK':'INVALID');
-  commercialDiag('GLB version',header.getUint32(4,true));commercialDiag('GLB declared bytes',header.getUint32(8,true));
   if(header.getUint32(0,true)!==0x46546c67 || header.getUint32(4,true)!==2 || header.getUint32(8,true)!==buffer.byteLength)throw new Error('فشل التحقق من ترويسة GLB');
   const THREE=window.THREE;
   landmarkLayer={id:'adam-landmark-facades',type:'custom',renderingMode:'3d',
@@ -324,7 +322,7 @@ async function addCommercialFacadeLayer(){
   const originResponse=await fetch(commercialOriginUrl,{cache:'no-store'});
   commercialDiag('Origin HTTP',originResponse.status+' '+originResponse.statusText);
   if(!originResponse.ok)throw new Error('ملف محاذاة الواجهات التجارية غير متاح ('+originResponse.status+')');
-  const origin=await originResponse.json();
+  const origin=await originResponse.json();commercialDiag('Origin JSON',JSON.stringify(origin));
   if(!Number.isFinite(origin.longitude)||!Number.isFinite(origin.latitude)||!Number.isFinite(origin.anchor_altitude_m))throw new Error('إحداثيات طبقة الواجهات التجارية غير صالحة');
   commercialDiag('GLB URL',commercialModelUrl);
   const response=await fetch(commercialModelUrl,{cache:'no-store'});
@@ -332,9 +330,11 @@ async function addCommercialFacadeLayer(){
   commercialDiag('Content-Type',response.headers.get('content-type')||'(غير محدد)');
   commercialDiag('Content-Length header',response.headers.get('content-length')||'(غير محدد)');
   if(!response.ok)throw new Error('ملف الواجهات التجارية غير متاح ('+response.status+')');
-  const buffer=await response.arrayBuffer();
+  const buffer=await response.arrayBuffer();commercialDiag('Bytes downloaded',buffer.byteLength+' bytes ('+(buffer.byteLength/1048576).toFixed(3)+' MiB)');
   if(buffer.byteLength<20)throw new Error('ملف الواجهات التجارية فارغ أو تالف');
   const header=new DataView(buffer);
+  commercialDiag('GLB magic',header.getUint32(0,true)===0x46546c67?'glTF OK':'INVALID');
+  commercialDiag('GLB version',header.getUint32(4,true));commercialDiag('GLB declared bytes',header.getUint32(8,true));
   if(header.getUint32(0,true)!==0x46546c67 || header.getUint32(4,true)!==2 || header.getUint32(8,true)!==buffer.byteLength)throw new Error('فشل التحقق من ترويسة GLB');
   const THREE=window.THREE;
   commercialLayer={id:'adam-commercial-facades',type:'custom',renderingMode:'3d',
