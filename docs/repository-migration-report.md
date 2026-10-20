@@ -6,7 +6,7 @@ Branch: `main`
 ## Completed in this pass
 
 - Added a root `README.md` that explains the project entry points and core data-preservation rules.
-- Added `REPOSITORY_STRUCTURE.md` to define the purpose of the major directories and a consistent naming convention.
+- Added `docs/repository-structure.md` to define the purpose of the major directories and a consistent naming convention.
 - Moved both historical preview snapshots from `checkpoints/` into `backup/checkpoints/` after verifying each destination file's contents:
   - `checkpoints/road-texture-before/index.html` → `backup/checkpoints/road-texture-before/index.html` (53,660 characters returned by the repository connector).
   - `checkpoints/terrain-alignment-before/index.html` → `backup/checkpoints/terrain-alignment-before/index.html` (51,162 characters returned by the repository connector).
@@ -27,3 +27,10 @@ The current tree contains 1,999 tracked files, including a large `kartaview/` ar
 ## Next validation boundary
 
 A full path migration should be done as a single planned operation: build an old-to-new path map, rewrite references across scripts/workflows/HTML/CSV/JSON/GeoJSON/Markdown, parse structured datasets, check all local asset references, then run the import and Pages workflows and inspect their results. Until those checks pass, the existing data-source directories should retain their paths.
+
+
+## Follow-up organization pass (2026-10-20)
+
+- Moved the five repository-level policy, audit, catalog, structure, and migration documents into `docs/` and normalized their filenames to lowercase kebab-case.
+- Kept `README.md`, the active preview HTML, `.github/workflows/`, and deployment-required root `scripts/` paths in place because the active Pages workflow and links depend on them.
+- Kept `ermita/`, `kartaview/`, and `backup/` at their current roots in this pass. They contain thousands of assets and references in scripts, CSV metadata, and HTML; moving them safely requires a repository-wide path migration and deployment/data-reference validation, not just moving directory entries. No data files were deleted as part of this documentation move.
