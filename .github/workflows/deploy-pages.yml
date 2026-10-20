@@ -24,6 +24,7 @@ jobs:
         run: |
           set -euo pipefail
           test -f index.html
+          test -f ermita-malate-3d.html
           test -f backup/ermita/maps/generated/ermita-building-footprints.geojson
           test -f ermita/maps/generated/ermita-road-network.geojson
           test -f ermita/maps/sources/openfreemap/area-boundary.geojson
@@ -48,6 +49,7 @@ jobs:
           print(f'Prepared {len(features)} OpenFreeMap/OpenMapTiles building features')
           PY
           cp index.html site/index.html
+          cp ermita-malate-3d.html site/ermita-malate-3d.html
           cp backup/ermita/maps/generated/ermita-building-footprints.geojson site/ermita/maps/generated/ermita-osm-building-footprints.geojson
           cp ermita/maps/generated/ermita-road-network.geojson site/ermita/maps/generated/
           cp ermita/maps/sources/openfreemap/area-boundary.geojson site/ermita/maps/sources/openfreemap/
