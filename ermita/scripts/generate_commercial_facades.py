@@ -28,7 +28,7 @@ TO_METERS = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True).trans
 TO_LONLAT = Transformer.from_crs("EPSG:3857", "EPSG:4326", always_xy=True).transform
 HEADERS = {"User-Agent": "Adam-City/1.0 (open-data 3D facade research; https://github.com/saeedhub101/Adam-City)"}
 SEVEN_SVG = "https://www.7-eleven.com/assets/img/header/7e-logo-color.svg"
-MCD_LOGO = "https://corporate.mcdonalds.com/content/dam/sites/corp/nfl/newsroom/Golden%20Arches.png.coredownload.png"
+MCD_LOGO = "https://commons.wikimedia.org/wiki/Special:FilePath/McDonalds.png"
 
 def fetch(url, timeout=45):
     r = requests.get(url, headers=HEADERS, timeout=timeout)
@@ -45,7 +45,11 @@ def load_logo_assets():
         cairosvg.svg2png(bytestring=svg, write_to=str(seven_png), output_width=900, output_height=1200)
     mc_png = ASSET_DIR / "mcdonalds-golden-arches.png"
     if not mc_png.exists() or mc_png.stat().st_size < 200:
-        mc_png.write_bytes(fetch(MCD_LOGO))
+        raw = fetch(MCD_LOGO)
+        if b"<svg" in raw[:1000].lower():
+            cairosvg.svg2png(bytestring=raw, write_to=str(mc_png), output_width=1200, output_height=1050)
+        else:
+            mc_png.write_bytes(raw)
     return Image.open(seven_png).convert("RGBA"), Image.open(mc_png).convert("RGBA")
 
 def fetch_robinsons_reference_photos():
@@ -333,7 +337,7 @@ def main():
         "sign_panels_placed":len(report["store_signs"]),"unmatched_or_interior_pois":len(report["unmatched_store_pois"]),
         "glb_mesh_count":len(scene.geometry),"glb_bytes":len(glb)}
     report["logo_sources"]={"7-Eleven":"https://www.7-eleven.com/assets/img/header/7e-logo-color.svg",
-        "McDonald's":"https://corporate.mcdonalds.com/corpmcd/our-stories/media-assets-library/media-article/golden_arches_logo.html"}
+        "McDonald's":"https://commons.wikimedia.org/wiki/File:McDonalds.png"}
     OUT_REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     print(json.dumps(report["counts"],indent=2))
     if report["counts"]["sign_panels_placed"]<1: raise RuntimeError("No brand panels were placed; refusing to accept an empty signage model")
