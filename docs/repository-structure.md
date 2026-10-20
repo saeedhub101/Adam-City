@@ -53,3 +53,8 @@ This is the initial normalization guide, not a claim that every legacy filename 
 - `ermita-malate-3d.html`, `.nojekyll`, `.github/workflows/`: deployment entry point and GitHub Pages configuration; paths are part of the active deployment contract.
 
 The repository tree was checked recursively and GitHub reported `truncated: false`. The tracked file count remained 2,000 after the documentation move. No project data files were intentionally deleted in this organization pass.
+
+
+## Importer script placement
+
+The four Ermita-specific importers are organized under `ermita/scripts/`. The Pages workflow sparse-checkout and invocation use `ermita/scripts/import_openfreemap_ermita.py`. Moved scripts that resolve files relative to their own location were adjusted to keep repository-root paths stable.

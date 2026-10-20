@@ -7,7 +7,7 @@ from rasterio.enums import Resampling
 from rasterio.warp import transform_bounds
 from PIL import Image
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 source = ROOT / "ermita/maps/external/openaerialmap/ermita-5b90f92da0d7280005fab355.tif"
 output = source.with_suffix(".jpg")
 report_path = source.parent / "local-aerial-preview-report.json"

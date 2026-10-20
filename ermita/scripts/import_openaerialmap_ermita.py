@@ -11,7 +11,7 @@ from pathlib import Path
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "ermita" / "maps" / "external" / "openaerialmap"
 REPORT = OUT / "ermita-openaerialmap-import-report.json"
 SEARCH_URL = "https://api.imagery.hotosm.org/stac/search"

@@ -16,7 +16,7 @@ import mapbox_vector_tile
 from shapely.geometry import shape, mapping
 from shapely.ops import unary_union
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.join(REPO, "ermita/maps/external/ermita-basemap-building-footprints.geojson")
 OSM_INPUT = os.path.join(REPO, "backup/ermita/maps/generated/ermita-building-footprints.geojson")
 # Ermita + Malate working area

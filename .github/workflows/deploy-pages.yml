@@ -37,7 +37,7 @@ jobs:
           /ermita/3d/exports/adam-city-complete.glb
           /ermita/3d/exports/adam-city-complete-report.json
           /ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
-          /scripts/import_openfreemap_ermita.py
+          /ermita/scripts/import_openfreemap_ermita.py
           EOF
           git switch -C main FETCH_HEAD
 
@@ -49,7 +49,7 @@ jobs:
           set -euo pipefail
           test -s ermita-malate-3d.html
           python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile
-          python3 scripts/import_openfreemap_ermita.py
+          python3 ermita/scripts/import_openfreemap_ermita.py
           NEW_TILES="$(python3 -c "import json; print(json.load(open('ermita/maps/sources/openfreemap/import-report.json')).get('new_tiles_downloaded', 0))")"
           echo "New source tiles downloaded: $NEW_TILES"
           test -s ermita/maps/sources/openfreemap/vector-tiles/14/13697/7520.pbf
