@@ -161,7 +161,7 @@ def main():
     minx=min(g.bounds[0] for _,g,_,_ in geoms); miny=min(g.bounds[1] for _,g,_,_ in geoms)
     maxx=max(g.bounds[2] for _,g,_,_ in geoms); maxy=max(g.bounds[3] for _,g,_,_ in geoms)
     maxz=max(h for _,_,h,_ in geoms)
-    origin=((minx+maxx)/2,(miny+maxy)/2,maxz/2)
+    origin=((minx+maxx)/2,(miny+maxy)/2,0.0)
     scene=trimesh.Scene()
     generated=[]
     for fid,geom,height,style in geoms:
