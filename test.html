@@ -2,28 +2,36 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ADAM CITY — Test Layers</title>
+<title>ADAM CITY — OSM Layer Test</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.css">
 <style>
-:root{color-scheme:dark;--panel:rgba(16,26,35,.95);--line:#344654;--text:#eef4f7;--muted:#a7b8c4;--accent:#67d5c2}
+:root{color-scheme:dark;--panel:rgba(16,26,35,.96);--line:#344654;--text:#eef4f7;--muted:#a7b8c4;--accent:#67d5c2}
 *{box-sizing:border-box}html,body,#map{height:100%;width:100%;margin:0}body{font-family:system-ui,sans-serif;background:#101a23;color:var(--text)}#map{position:absolute;inset:0}
-.panel{position:absolute;z-index:5;top:10px;right:10px;width:min(290px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:0 8px 26px #0005;backdrop-filter:blur(12px)}
+.panel{position:absolute;z-index:5;top:10px;right:10px;width:min(310px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:0 8px 26px #0005;backdrop-filter:blur(12px)}
 h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(--muted);margin-bottom:10px}.group{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}.group-title{font-size:12px;color:var(--accent);font-weight:700;margin-bottom:5px}.row{display:flex;align-items:flex-start;gap:8px;margin:7px 0;font-size:12px;line-height:1.4}input{accent-color:var(--accent);width:16px;height:16px;flex:0 0 auto;margin-top:1px}.status{font-size:10px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere;margin-top:9px;border-top:1px solid var(--line);padding-top:8px}#error{display:none;color:#ffdadd;background:#542c31;padding:8px;border-radius:7px;font-size:11px;margin-top:8px;direction:ltr;overflow-wrap:anywhere}.attribution{position:absolute;bottom:8px;left:8px;z-index:2;background:#101a23df;padding:5px 8px;border-radius:6px;font-size:10px;direction:ltr}
-@media(max-width:520px){.panel{top:6px;right:6px;width:min(260px,calc(100vw - 12px));max-height:65dvh;padding:9px}h1{font-size:14px}.row{font-size:11px;margin:5px 0}}
+@media(max-width:520px){.panel{top:6px;right:6px;width:min(280px,calc(100vw - 12px));max-height:70dvh;padding:9px}h1{font-size:14px}.row{font-size:11px;margin:5px 0}}
 </style></head>
 <body>
 <div id="map" aria-label="خريطة ثلاثية الأبعاد لإرميتا ومالاتي"></div>
 <section class="panel">
 <h1>ADAM CITY · TEST</h1>
-<div class="sub">صفحة اختبار مستقلة. الأرضية ومباني المصدر الأصلي تعمل افتراضياً، ويمكن تشغيل طبقات OSM فوقها بشكل مستقل.</div>
+<div class="sub">مفتاحان للمصدر الأصلي، ثم 11 مفتاحاً منفصلاً لمجلدات البيانات داخل complete_data/OSM/data.</div>
 <div class="group"><div class="group-title">المصدر الأصلي للخريطة</div>
 <label class="row"><input type="checkbox" id="baseGround" checked> إظهار أرضية الخريطة الأصلية (الشوارع، المياه، الحدائق والتسميات)</label>
 <label class="row"><input type="checkbox" id="baseBuildings" checked> إظهار مباني المصدر الأصلية ثلاثية الأبعاد</label>
 </div>
-<div class="group"><div class="group-title">طبقات OpenStreetMap — OSM</div>
-<label class="row"><input type="checkbox" id="osmBuildings"> إظهار مباني OSM (البصمات والارتفاعات المتاحة)</label>
-<label class="row"><input type="checkbox" id="osmRoads"> إظهار شوارع وطرق OSM</label>
-<label class="row"><input type="checkbox" id="osmDetails"> إظهار تفاصيل مباني OSM (الأسماء والأنشطة)</label>
+<div class="group"><div class="group-title">مجلدات OSM — طبقات مستقلة</div>
+<label class="row"><input type="checkbox" id="osm-raw"> 1. raw — بيانات OSM الخام (ليست طبقة خريطة مباشرة)</label>
+<label class="row"><input type="checkbox" id="osm-features"> 2. features — جميع المعالم الجغرافية</label>
+<label class="row"><input type="checkbox" id="osm-tags"> 3. tags — جدول الوسوم (بيانات وصفية وليست طبقة مكانية)</label>
+<label class="row"><input type="checkbox" id="osm-buildings"> 4. buildings — بصمات المباني وتفاصيل الأسطح</label>
+<label class="row"><input type="checkbox" id="osm-roads"> 5. roads — الطرق وتفاصيل هندستها</label>
+<label class="row"><input type="checkbox" id="osm-thematic"> 6. thematic — المتاجر والعلامات والتفاصيل الموضوعية</label>
+<label class="row"><input type="checkbox" id="osm-pedestrian"> 7. pedestrian — تفاصيل المشاة</label>
+<label class="row"><input type="checkbox" id="osm-addresses"> 8. addresses — العناوين وأسماء الشوارع والرموز البريدية</label>
+<label class="row"><input type="checkbox" id="osm-administrative"> 9. administrative — الحدود الإدارية</label>
+<label class="row"><input type="checkbox" id="osm-places"> 10. places — المتاجر والطعام والصحة والتعليم والخدمات</label>
+<label class="row"><input type="checkbox" id="osm-nature"> 11. nature — المياه والأشجار والحدائق والغطاء النباتي</label>
 </div>
 <div class="status" id="status">جارٍ تحميل خريطة المصدر…</div><div id="error"></div>
 </section>
@@ -32,44 +40,57 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <script>
 (async function(){
  const status=document.getElementById('status'), errorBox=document.getElementById('error');
- const url=(p)=>new URL(p,location.href).href;
+ const url=p=>new URL(p,location.href).href;
  let style;
- try{
-   const res=await fetch('https://tiles.openfreemap.org/styles/liberty');
-   if(!res.ok) throw new Error('Style HTTP '+res.status);
-   style=await res.json();
- }catch(e){errorBox.style.display='block';errorBox.textContent='تعذر تحميل نمط OpenFreeMap: '+e.message;status.textContent='تعذر تحميل الخريطة الأساسية.';return;}
+ try{const res=await fetch('https://tiles.openfreemap.org/styles/liberty');if(!res.ok)throw new Error('Style HTTP '+res.status);style=await res.json();}
+ catch(e){errorBox.style.display='block';errorBox.textContent='تعذر تحميل نمط OpenFreeMap: '+e.message;status.textContent='تعذر تحميل الخريطة الأساسية.';return;}
  const originalLayers=style.layers.map(l=>({...l}));
- const baseBuildingIds=originalLayers.filter(l=>l.type==='fill-extrusion' && (/building/i.test(l.id+' '+(l['source-layer']||'')))).map(l=>l.id);
+ const baseBuildingIds=originalLayers.filter(l=>l.type==='fill-extrusion'&&(/building/i.test(l.id+' '+(l['source-layer']||'')))).map(l=>l.id);
  const map=new maplibregl.Map({container:'map',style,center:[120.9918,14.5707],zoom:15,pitch:55,bearing:-18,antialias:true});
  map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');
  map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
- const visibility=(id,on)=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')};
+ const visibility=(id,on)=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none');};
  const setGroup=(ids,on)=>ids.forEach(id=>visibility(id,on));
- map.on('error',e=>{if(e.error) {status.textContent='ملاحظة تحميل: '+e.error.message;}});
- map.on('load',async()=>{
-   try{
-    map.addSource('osm-footprints',{type:'geojson',data:url('complete_data/OSM/data/buildings/ermita-building-footprints.geojson'),maxzoom:14});
-    map.addLayer({id:'test-osm-buildings',type:'fill-extrusion',source:'osm-footprints',paint:{
-      'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],'#c8bca9'],
-      'fill-extrusion-height':['max',3,['case',['>', ['to-number',['get','height'],0],0],['to-number',['get','height'],0],['>', ['to-number',['get','building:levels'],0],0],['*',['to-number',['get','building:levels'],0],3.15],['>', ['to-number',['get','levels'],0],0],['*',['to-number',['get','levels'],0],3.15],5]],
-      'fill-extrusion-base':['max',0,['coalesce',['to-number',['get','min_height'],0],0]],
-      'fill-extrusion-opacity':0.96,'fill-extrusion-vertical-gradient':true
-    },layout:{visibility:'none'}});
-    map.addSource('osm-roads',{type:'geojson',data:url('complete_data/OSM/data/roads/ermita-road-network.geojson'),lineMetrics:true});
-    map.addLayer({id:'test-osm-roads-casing',type:'line',source:'osm-roads',layout:{visibility:'none','line-cap':'round','line-join':'round'},paint:{'line-color':'#6b6256','line-width':['interpolate',['linear'],['zoom'],11,1.2,15,5,18,8],'line-opacity':0.75}});
-    map.addLayer({id:'test-osm-roads',type:'line',source:'osm-roads',layout:{visibility:'none','line-cap':'round','line-join':'round'},paint:{'line-color':'#fff0c8','line-width':['interpolate',['linear'],['zoom'],11,0.5,15,2.7,18,5]}});
-    map.addSource('osm-building-details',{type:'geojson',data:url('complete_data/OSM/data/buildings/ermita-building-details.geojson'),maxzoom:14});
-    map.addLayer({id:'test-osm-details',type:'symbol',source:'osm-building-details',minzoom:15,layout:{visibility:'none','text-field':['coalesce',['get','name',['get','tags']],['get','brand',['get','tags']],['get','shop',['get','tags']],['get','amenity',['get','tags']]],'text-font':['Open Sans Regular'],'text-size':11,'text-max-width':10},paint:{'text-color':'#26343a','text-halo-color':'#fff','text-halo-width':1.5}});
-    status.textContent='الخريطة جاهزة. طبقات OSM تُحمّل عند تشغيلها. طبقة المباني: complete_data/OSM؛ الطرق: complete_data/OSM.';
-   }catch(e){errorBox.style.display='block';errorBox.textContent='تعذر تجهيز طبقات OSM: '+(e.message||e);status.textContent='تم تحميل الخريطة الأساسية، لكن بعض طبقات OSM لم تُجهّز.';}
-   document.getElementById('baseGround').addEventListener('change',ev=>{
-     const on=ev.target.checked; originalLayers.filter(l=>!baseBuildingIds.includes(l.id)).forEach(l=>visibility(l.id,on));
-   });
+ const groups={raw:[],features:[],tags:[],buildings:[],roads:[],thematic:[],pedestrian:[],addresses:[],administrative:[],places:[],nature:[]};
+ function addSourceLayer(key,sourceId,path,kind,color){
+   map.addSource(sourceId,{type:'geojson',data:url(path)});
+   const ids=[];
+   if(kind==='buildings'){
+     const id=sourceId+'-3d';map.addLayer({id,type:'fill-extrusion',source:sourceId,layout:{visibility:'none'},paint:{
+       'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],color||'#c8bca9'],
+       'fill-extrusion-height':['max',3,['case',['>', ['to-number',['get','height'],0],0],['to-number',['get','height'],0],['>', ['to-number',['get','building:levels'],0],0],['*',['to-number',['get','building:levels'],0],3.15],['>', ['to-number',['get','levels'],0],0],['*',['to-number',['get','levels'],0],3.15],5]],
+       'fill-extrusion-base':['max',0,['coalesce',['to-number',['get','min_height'],0],0]],'fill-extrusion-opacity':0.92,'fill-extrusion-vertical-gradient':true}});ids.push(id);
+   }else{
+     const fill=sourceId+'-fill',line=sourceId+'-line',circle=sourceId+'-point';
+     map.addLayer({id:fill,type:'fill',source:sourceId,layout:{visibility:'none'},paint:{'fill-color':color||'#5aa99b','fill-opacity':0.24,'fill-outline-color':color||'#5aa99b'}});ids.push(fill);
+     map.addLayer({id:line,type:'line',source:sourceId,layout:{visibility:'none','line-cap':'round','line-join':'round'},paint:{'line-color':color||'#5aa99b','line-width':['interpolate',['linear'],['zoom'],10,1,16,2.5],'line-opacity':0.9}});ids.push(line);
+     map.addLayer({id:circle,type:'circle',source:sourceId,layout:{visibility:'none'},paint:{'circle-radius':['interpolate',['linear'],['zoom'],10,2,16,5],'circle-color':color||'#5aa99b','circle-stroke-color':'#ffffff','circle-stroke-width':0.7}});ids.push(circle);
+   }
+   groups[key].push(...ids);
+ }
+ function bind(key){const el=document.getElementById('osm-'+key);el.addEventListener('change',()=>{setGroup(groups[key],el.checked);if(key==='raw'||key==='tags')status.textContent=key==='raw'?'raw يحتوي بيانات المصدر الخام، ولا يُرسم مباشرة على الخريطة.':'tags عبارة عن جداول وسوم CSV، ولا تُرسم مباشرة كمعالم جغرافية.';});}
+ map.on('error',e=>{if(e.error)status.textContent='ملاحظة تحميل: '+e.error.message;});
+ map.on('load',()=>{
+  try{
+   addSourceLayer('features','osm-features-src','complete_data/OSM/data/features/ermita-features.geojson','map','#8ab5c5');
+   addSourceLayer('buildings','osm-building-footprints-src','complete_data/OSM/data/buildings/ermita-building-footprints.geojson','buildings','#c8bca9');
+   addSourceLayer('buildings','osm-building-roofs-src','complete_data/OSM/data/buildings/ermita-building-roof-details.geojson','buildings','#d6a477');
+   addSourceLayer('roads','osm-roads-src','complete_data/OSM/data/roads/ermita-road-network.geojson','map','#f0c979');
+   addSourceLayer('roads','osm-road-engineering-src','complete_data/OSM/data/roads/ermita-road-engineering-details.geojson','map','#e28c63');
+   addSourceLayer('thematic','osm-branded-stores-src','complete_data/OSM/data/thematic/ermita-branded-stores.geojson','map','#e9a5d1');
+   addSourceLayer('thematic','osm-signals-src','complete_data/OSM/data/thematic/ermita-street-signs-and-signals.geojson','map','#ffd166');
+   addSourceLayer('pedestrian','osm-pedestrian-src','complete_data/OSM/data/pedestrian/ermita-pedestrian-street-details.geojson','map','#9ee493');
+   addSourceLayer('addresses','osm-addresses-src','complete_data/OSM/data/addresses/ermita-addresses-street-names-postcodes.geojson','map','#f4f1bb');
+   addSourceLayer('administrative','osm-admin-src','complete_data/OSM/data/administrative/ermita-administrative-boundaries.geojson','map','#a78bfa');
+   addSourceLayer('places','osm-places-src','complete_data/OSM/data/places/ermita-shops-food-health-education-religion-services.geojson','map','#ff8fab');
+   addSourceLayer('nature','osm-water-src','complete_data/OSM/data/nature/ermita-water-and-natural-features.geojson','map','#67c9e8');
+   addSourceLayer('nature','osm-vegetation-src','complete_data/OSM/data/nature/ermita-trees-parks-vegetation.geojson','map','#71c982');
+   // Bind all eleven OSM directory toggles; raw and tags are inventory/data tables rather than direct map layers.
+   ['raw','features','tags','buildings','roads','thematic','pedestrian','addresses','administrative','places','nature'].forEach(bind);
+   document.getElementById('baseGround').addEventListener('change',ev=>originalLayers.filter(l=>!baseBuildingIds.includes(l.id)).forEach(l=>visibility(l.id,ev.target.checked)));
    document.getElementById('baseBuildings').addEventListener('change',ev=>setGroup(baseBuildingIds,ev.target.checked));
-   document.getElementById('osmBuildings').addEventListener('change',ev=>visibility('test-osm-buildings',ev.target.checked));
-   document.getElementById('osmRoads').addEventListener('change',ev=>setGroup(['test-osm-roads-casing','test-osm-roads'],ev.target.checked));
-   document.getElementById('osmDetails').addEventListener('change',ev=>visibility('test-osm-details',ev.target.checked));
+   status.textContent='الخريطة جاهزة. شغّل كل مجلد على حدة. مجلدا raw وtags لا يحتويان طبقات مكانية قابلة للرسم مباشرة.';
+  }catch(e){errorBox.style.display='block';errorBox.textContent='تعذر تجهيز طبقات OSM: '+(e.message||e);status.textContent='تم تحميل الخريطة الأساسية، لكن بعض طبقات OSM لم تُجهّز.';}
  });
 })();
 </script>
