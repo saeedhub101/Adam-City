@@ -40,6 +40,7 @@ jobs:
           /ermita/3d/generated/facade-details-report.json
           /ermita/3d/generated/facade-model-origin.json
           /ermita/3d/generated/facade-signage-index.csv
+          /ermita/3d/generated/facade-generation.sha256
           /ermita/3d/landmarks/
           /ermita/3d/exports/adam-city-complete.glb
           /ermita/3d/exports/adam-city-complete-report.json
@@ -58,17 +59,28 @@ jobs:
           set -euo pipefail
           test -s ermita-malate-3d.html
           python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh
-          # Repository-first cache policy: reuse committed generated assets; generate only missing outputs.
-          if [[ ! -s ermita/3d/generated/ermita-buildings-facade-details.glb || ! -s ermita/3d/generated/facade-details-report.json || ! -s ermita/3d/generated/facade-signage-index.csv ]]; then
+          # Fingerprints invalidate only outputs whose generator, source data, or contract changed.
+          # Stable hashes intentionally exclude timestamps and CI-run metadata.
+          FACADE_FINGERPRINT="$( { printf 'contract=1\\n'; sha256sum ermita/scripts/generate_facade_details.py ermita/maps/generated/ermita-building-details.geojson; } | sha256sum | awk '{print $1}')"
+          LANDMARK_FINGERPRINT="$( { printf 'contract=2\\n'; sha256sum ermita/scripts/generate_landmark_facades.py ermita/maps/generated/ermita-building-details.geojson; } | sha256sum | awk '{print $1}')"
+          FACADE_STALE=0
+          LANDMARK_STALE=0
+          if [[ ! -s ermita/3d/generated/facade-generation.sha256 ]] || [[ "$(cat ermita/3d/generated/facade-generation.sha256 2>/dev/null || true)" != "$FACADE_FINGERPRINT" ]]; then FACADE_STALE=1; fi
+          if [[ ! -s ermita/3d/landmarks/landmark-generation.sha256 ]] || [[ "$(cat ermita/3d/landmarks/landmark-generation.sha256 2>/dev/null || true)" != "$LANDMARK_FINGERPRINT" ]]; then LANDMARK_STALE=1; fi
+          # Reuse committed assets only when complete AND the generation fingerprint still matches.
+          if [[ ! -s ermita/3d/generated/ermita-buildings-facade-details.glb || ! -s ermita/3d/generated/facade-details-report.json || ! -s ermita/3d/generated/facade-signage-index.csv || ! -s ermita/3d/generated/facade-model-origin.json || "$FACADE_STALE" -eq 1 ]]; then
+            echo "Facade assets missing or stale; regenerating only the facade asset family."
             python3 ermita/scripts/generate_facade_details.py
+            printf '%s\\n' "$FACADE_FINGERPRINT" > ermita/3d/generated/facade-generation.sha256
           else
-            echo "Reusing committed facade GLB, report, and signage index."
+            echo "Reusing committed facade assets; generator and source fingerprints match."
           fi
-          # Landmark outputs are a durable repository cache too; call Overpass only when an output is missing.
-          if [[ ! -s ermita/3d/landmarks/landmark-facade-details.glb || ! -s ermita/3d/landmarks/landmark-facade-origin.json || ! -s ermita/3d/landmarks/landmark-facade-report.json ]]; then
+          if [[ ! -s ermita/3d/landmarks/landmark-facade-details.glb || ! -s ermita/3d/landmarks/landmark-facade-origin.json || ! -s ermita/3d/landmarks/landmark-facade-report.json || "$LANDMARK_STALE" -eq 1 ]]; then
+            echo "Landmark assets missing or stale; regenerating the landmark asset family."
             python3 ermita/scripts/generate_landmark_facades.py
+            printf '%s\\n' "$LANDMARK_FINGERPRINT" > ermita/3d/landmarks/landmark-generation.sha256
           else
-            echo "Reusing committed landmark facade GLB, origin, and report; no Overpass request needed."
+            echo "Reusing committed landmark assets; generator and source fingerprints match; no Overpass request needed."
           fi
           # Generate the facade origin only if it is missing. It is stored in main after generation.
           if [[ ! -s ermita/3d/generated/facade-model-origin.json ]]; then
@@ -274,9 +286,11 @@ jobs:
           test -s ermita/3d/generated/ermita-buildings-facade-details.glb
           test -s ermita/3d/generated/facade-signage-index.csv
           test -s ermita/3d/generated/facade-details-report.json
+          test -s ermita/3d/generated/facade-generation.sha256
           test -s ermita/3d/landmarks/landmark-facade-details.glb
           test -s ermita/3d/landmarks/landmark-facade-origin.json
           test -s ermita/3d/landmarks/landmark-facade-report.json
+          test -s ermita/3d/landmarks/landmark-generation.sha256
           # Save every newly imported/generated asset to main. Existing committed outputs are reused.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -285,8 +299,8 @@ jobs:
             git add ermita/maps/sources/openfreemap/
           fi
           # Persist the generated alignment file in main as well as publishing it, so the page never depends on a temporary CI-only asset.
-          git add ermita/3d/generated/facade-model-origin.json ermita/3d/generated/ermita-buildings-facade-details.glb ermita/3d/generated/facade-signage-index.csv ermita/3d/generated/facade-details-report.json
-          git add ermita/3d/landmarks/landmark-facade-details.glb ermita/3d/landmarks/landmark-facade-origin.json ermita/3d/landmarks/landmark-facade-report.json
+          git add ermita/3d/generated/facade-model-origin.json ermita/3d/generated/ermita-buildings-facade-details.glb ermita/3d/generated/facade-signage-index.csv ermita/3d/generated/facade-details-report.json ermita/3d/generated/facade-generation.sha256
+          git add ermita/3d/landmarks/landmark-facade-details.glb ermita/3d/landmarks/landmark-facade-origin.json ermita/3d/landmarks/landmark-facade-report.json ermita/3d/landmarks/landmark-generation.sha256
           if ! git diff --cached --quiet; then
             git commit -m "Store generated building and ground fallback data"
             git push origin HEAD:main
