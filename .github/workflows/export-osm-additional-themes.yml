@@ -1,0 +1,63 @@
+name: Export additional OSM themes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ermita/scripts/export_osm_additional_themes.py'
+      - '.github/workflows/export-osm-additional-themes.yml'
+      - 'ermita/maps/generated/ermita-features.geojson'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: export-osm-additional-themes
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - name: Export separate additional OSM themes
+        run: python3 ermita/scripts/export_osm_additional_themes.py
+      - name: Validate outputs and inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in \
+            complete_data/OSM/data/addresses/ermita-addresses-street-names-postcodes.csv \
+            complete_data/OSM/data/addresses/ermita-addresses-street-names-postcodes.geojson \
+            complete_data/OSM/data/administrative/ermita-administrative-boundaries.csv \
+            complete_data/OSM/data/administrative/ermita-administrative-boundaries.geojson \
+            complete_data/OSM/data/places/ermita-shops-food-health-education-religion-services.csv \
+            complete_data/OSM/data/places/ermita-shops-food-health-education-religion-services.geojson \
+            complete_data/OSM/data/nature/ermita-water-and-natural-features.csv \
+            complete_data/OSM/data/nature/ermita-water-and-natural-features.geojson \
+            complete_data/OSM/data/nature/ermita-trees-parks-vegetation.csv \
+            complete_data/OSM/data/nature/ermita-trees-parks-vegetation.geojson \
+            complete_data/OSM/quality/osm-additional-theme-export-report.json \
+            complete_data/OSM/manifest.json \
+            complete_data/OSM/README.md; do
+            test -s "$f"
+          done
+      - name: Commit organized datasets and inventory to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add complete_data/OSM/data/addresses/ complete_data/OSM/data/administrative/ complete_data/OSM/data/places/ complete_data/OSM/data/nature/ complete_data/OSM/quality/osm-additional-theme-export-report.json complete_data/OSM/manifest.json complete_data/OSM/README.md
+          if git diff --cached --quiet; then
+            echo "No changes in additional OSM themes."
+            exit 0
+          fi
+          git commit -m "Export additional OSM address service water and vegetation themes"
+          git push origin HEAD:main
