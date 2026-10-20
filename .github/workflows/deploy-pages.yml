@@ -19,14 +19,12 @@ jobs:
     steps:
       - name: Fetch only deployment inputs from the 1.5 GB repository
         shell: bash
-        env:
-          GITHUB_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
           git init .
           git remote add origin https://github.com/saeedhub101/Adam-City.git
           # Partial clone downloads Git objects lazily; sparse checkout materializes only required files.
-          git -c protocol.version=2 fetch --depth=1 --filter=blob:none origin "$GITHUB_SHA"
+          git -c protocol.version=2 fetch --depth=1 --filter=blob:none origin main
           git sparse-checkout init --no-cone
           git sparse-checkout set --no-cone --stdin <<'EOF'
           /index.html
