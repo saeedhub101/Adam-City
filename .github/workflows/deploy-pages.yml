@@ -191,6 +191,9 @@ jobs:
               print(f'Reusing existing ground fallback: {ground_out.stat().st_size} bytes')
           PY
           fi
+          # Refresh the published fallback files after any rebuild above.
+          cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/building-fallback.geojson
+          cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/ground-fallback.geojson
           # Publish the repository copies, whether reused or newly generated.
           mkdir -p site/ermita/maps/generated site/ermita/3d/generated site/ermita/3d/exports site/ermita/3d/terrain
           cp ermita/maps/generated/ermita-building-details.geojson site/ermita/maps/generated/ermita-building-details.geojson
