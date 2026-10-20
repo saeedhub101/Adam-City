@@ -17,32 +17,39 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout only files needed for the 3D site
-        uses: actions/checkout@v4
-        with:
-          # The repository is about 1.5 GB; fetch only the files used by this deployment.
-          filter: blob:none
-          sparse-checkout: |
-            /index.html
-            /ermita-malate-3d.html
-            /backup/ermita/maps/generated/ermita-building-footprints.geojson
-            /ermita/maps/generated/ermita-building-footprints.geojson
-            /ermita/maps/generated/ermita-road-network.geojson
-            /ermita/maps/generated/ermita-building-details.csv
-            /ermita/maps/qa/building-height-evidence.csv
-            /ermita/maps/sources/openfreemap/area-boundary.geojson
-            /ermita/maps/sources/openfreemap/source-metadata.json
-            /ermita/maps/sources/openfreemap/tile-index.json
-            /ermita/maps/sources/openfreemap/layers/housenumber.geojsonl
-            /ermita/maps/sources/openfreemap/vector-tiles/
-            /ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson
-            /ermita/streets/street_segments.csv
-            /ermita/streets/street_names.csv
-            /ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
-            /ermita/3d/terrain/ermita-terrain-surface.glb
-            /ermita/3d/terrain/terrain-import-report.json
-            /ermita/3d/exports/adam-city-complete.glb
-          sparse-checkout-cone-mode: false
+      - name: Fetch only deployment inputs from the 1.5 GB repository
+        shell: bash
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin https://github.com/saeedhub101/Adam-City.git
+          # Partial clone downloads Git objects lazily; sparse checkout materializes only required files.
+          git -c protocol.version=2 fetch --depth=1 --filter=blob:none origin "$GITHUB_SHA"
+          git sparse-checkout init --no-cone
+          git sparse-checkout set --no-cone --stdin <<'EOF'
+          /index.html
+          /ermita-malate-3d.html
+          /backup/ermita/maps/generated/ermita-building-footprints.geojson
+          /ermita/maps/generated/ermita-building-footprints.geojson
+          /ermita/maps/generated/ermita-road-network.geojson
+          /ermita/maps/generated/ermita-building-details.csv
+          /ermita/maps/qa/building-height-evidence.csv
+          /ermita/maps/sources/openfreemap/area-boundary.geojson
+          /ermita/maps/sources/openfreemap/source-metadata.json
+          /ermita/maps/sources/openfreemap/tile-index.json
+          /ermita/maps/sources/openfreemap/layers/housenumber.geojsonl
+          /ermita/maps/sources/openfreemap/vector-tiles/
+          /ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson
+          /ermita/streets/street_segments.csv
+          /ermita/streets/street_names.csv
+          /ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
+          /ermita/3d/terrain/ermita-terrain-surface.glb
+          /ermita/3d/terrain/terrain-import-report.json
+          /ermita/3d/exports/adam-city-complete.glb
+          EOF
+          git checkout --detach FETCH_HEAD
       - name: Prepare 3D city and all browser assets
         shell: bash
         run: |
