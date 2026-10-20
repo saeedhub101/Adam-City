@@ -31,6 +31,7 @@ button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1
 <div class="group"><div class="group-title">المباني والتضاريس ثلاثية الأبعاد</div>
 <label class="row"><input type="checkbox" id="buildings" checked> مباني OpenFreeMap ثلاثية الأبعاد</label>
 <label class="row"><input type="checkbox" id="colors" checked> ألوان المباني من خصائص المصدر</label>
+<label class="row"><input type="checkbox" id="microsoft"> Microsoft — بصمات المباني للمقارنة فوق مباني OpenFreeMap</label>
 <label class="row"><input type="checkbox" id="terrainModel"> نموذج المدينة الكامل GLB (مبانٍ + طرق + تضاريس)</label>
 <label class="row"><input type="checkbox" id="terrain"> تضاريس DEM (نموذج Copernicus)</label>
 <label class="row"><input type="checkbox" id="numbers" checked> أرقام المباني</label></div>
@@ -49,7 +50,7 @@ button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1
 <label class="row"><input type="checkbox" id="peaks" checked> القمم والارتفاعات المسماة</label></div>
 <div class="status" id="status">جارٍ تحميل البلاطات والبيانات المحلية…</div><div id="error"></div>
 </div></details></section>
-<div class="attribution">OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors · DEM © Copernicus / DLR / Airbus</div>
+<div class="attribution">OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors · Microsoft building footprints (ODbL) · DEM © Copernicus / DLR / Airbus</div>
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -67,6 +68,7 @@ version:8,glyphs:'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',
 sources:{
 tiles:{type:'vector',tiles:[tileBase+'{z}/{x}/{y}.pbf'],minzoom:10,maxzoom:14,attribution:'OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors'},
 buildings:{type:'geojson',data:buildingUrl,maxzoom:14},
+microsoftFootprints:{type:'geojson',data:new URL('./ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson',location.href).href,maxzoom:14},
 ground:{type:'geojson',data:groundUrl,maxzoom:14}
 },
 layers:[
@@ -86,6 +88,8 @@ layers:[
 'fill-extrusion-height':['max',3,['case',['>', ['to-number',['get','render_height'],0],0],['to-number',['get','render_height'],0],['>', ['to-number',['get','height'],0],0],['to-number',['get','height'],0],['>', ['to-number',['get','building:levels'],0],0],['*',['to-number',['get','building:levels'],0],3.15],['>', ['to-number',['get','levels'],0],0],['*',['to-number',['get','levels'],0],3.15],5]],
 'fill-extrusion-base':['max',0,['case',['>', ['to-number',['get','render_min_height'],0],0],['to-number',['get','render_min_height'],0],['>', ['to-number',['get','min_height'],0],0],['to-number',['get','min_height'],0],0]],
 'fill-extrusion-opacity':0.97,'fill-extrusion-vertical-gradient':true}},
+{id:'microsoft-footprints-fill',type:'fill',source:'microsoftFootprints',layout:{visibility:'none'},paint:{'fill-color':'#00b8d9','fill-opacity':0.24}},
+{id:'microsoft-footprints-outline',type:'line',source:'microsoftFootprints',layout:{visibility:'none'},paint:{'line-color':'#f59e0b','line-width':['interpolate',['linear'],['zoom'],10,0.8,15,2.2,18,3.5],'line-opacity':0.98}},
 {id:'house-numbers',type:'symbol',source:'tiles','source-layer':'housenumber',minzoom:15,layout:{'text-field':['coalesce',['to-string',['get','housenumber']],['to-string',['get','addr:housenumber']]],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],15,9,18,13],'text-allow-overlap':false},paint:{'text-color':'#202b32','text-halo-color':'#fff','text-halo-width':1.5}},
 {id:'road-names',type:'symbol',source:'tiles','source-layer':'transportation_name',minzoom:13,layout:{'symbol-placement':'line','text-field':['coalesce',['get','name:en'],['get','name']], 'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],13,10,17,14],'text-max-angle':35},paint:{'text-color':'#46545a','text-halo-color':'#fff','text-halo-width':1.5}},
 {id:'place-labels',type:'symbol',source:'tiles','source-layer':'place',layout:{'text-field':['coalesce',['get','name:en'],['get','name']],'text-font':['Open Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],10,10,15,14]},paint:{'text-color':'#35454b','text-halo-color':'#fff','text-halo-width':1.6}},
@@ -128,7 +132,7 @@ map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-l
 let firstError=false, modelLayerAdded=false, modelLoading=false, modelLayer=null;
 const toggleLayers=(ids,on)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')});
 const groups={
-buildings:['adam-local-buildings-3d'],ground:['adam-local-landcover','adam-local-landuse'],roads:['adam-local-road-casing','adam-local-roads','adam-local-roads-vector','adam-local-park-fill'],water:['adam-local-water-fill','adam-local-water-vector','adam-local-waterway','adam-local-waterway-vector'],
+buildings:['adam-local-buildings-3d'],microsoft:['adam-local-microsoft-footprints-fill','adam-local-microsoft-footprints-outline'],ground:['adam-local-landcover','adam-local-landuse'],roads:['adam-local-road-casing','adam-local-roads','adam-local-roads-vector','adam-local-park-fill'],water:['adam-local-water-fill','adam-local-water-vector','adam-local-waterway','adam-local-waterway-vector'],
 roadNames:['adam-local-road-names'],numbers:['adam-local-house-numbers'],places:['adam-local-place-labels'],pois:['adam-local-poi-labels'],boundaries:['adam-local-boundary-lines'],air:['adam-local-aeroway-lines','adam-local-aerodrome-labels'],waterNames:['adam-local-water-names'],peaks:['adam-local-mountain-peak-labels']
 };
 function statusText(){
