@@ -183,7 +183,7 @@ const facadeToggle=document.getElementById('facadeModel');
 status.textContent='جارٍ تحميل نوافذ مولّدة من مضلعات وارتفاعات OSM…';
 errorBox.style.display='none';
 try{
- if(!window.THREE || !THREE.GLTFLoader)throw new Error('مكتبات Three.js / GLTFLoader لم تُحمّل');
+ if(!window.THREE || !window.THREE.GLTFLoader)throw new Error('مكتبات Three.js / GLTFLoader لم تُحمّل');
  const originResponse=await fetch(facadeOriginUrl,{cache:'no-store'});
  if(!originResponse.ok)throw new Error('ملف محاذاة نموذج الواجهات غير موجود ('+originResponse.status+'): '+facadeOriginUrl);
  const origin=await originResponse.json();
