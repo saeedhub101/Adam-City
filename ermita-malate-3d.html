@@ -179,10 +179,17 @@ document.getElementById('osmAppearance').onchange=applyBuildingAppearance;
 async function addFacadeLayer(){
 if(facadeLoading || facadeLayerAdded)return;
 facadeLoading=true;
+const facadeToggle=document.getElementById('facadeModel');
+status.textContent='جارٍ تحميل نوافذ مولّدة من مضلعات وارتفاعات OSM…';
+errorBox.style.display='none';
 try{
- const [originResponse]=await Promise.all([fetch(facadeOriginUrl)]);
- if(!originResponse.ok)throw new Error('ملف محاذاة نموذج الواجهات غير موجود ('+originResponse.status+')');
+ if(!window.THREE || !THREE.GLTFLoader)throw new Error('مكتبات Three.js / GLTFLoader لم تُحمّل');
+ const originResponse=await fetch(facadeOriginUrl,{cache:'no-store'});
+ if(!originResponse.ok)throw new Error('ملف محاذاة نموذج الواجهات غير موجود ('+originResponse.status+'): '+facadeOriginUrl);
  const origin=await originResponse.json();
+ if(!Number.isFinite(origin.longitude)||!Number.isFinite(origin.latitude)||!Number.isFinite(origin.anchor_altitude_m))throw new Error('إحداثيات محاذاة نموذج النوافذ غير صالحة');
+ const modelResponse=await fetch(facadeModelUrl,{method:'HEAD',cache:'no-store'});
+ if(!modelResponse.ok)throw new Error('ملف نموذج النوافذ غير متاح ('+modelResponse.status+'): '+facadeModelUrl);
  const THREE=window.THREE;
  facadeLayer={id:'adam-facade-details-model',type:'custom',renderingMode:'3d',
  onAdd:function(map,gl){
@@ -190,11 +197,21 @@ try{
   this.scene.add(new THREE.AmbientLight(0xffffff,1.5));
   const light=new THREE.DirectionalLight(0xffffff,1.1);light.position.set(-40,-50,100).normalize();this.scene.add(light);
   const loader=new THREE.GLTFLoader();
-  loader.load(facadeModelUrl,gltf=>{this.model=gltf.scene;this.scene.add(this.model);map.triggerRepaint();},undefined,err=>{facadeLoading=false;errorBox.style.display='block';errorBox.textContent='تعذر تحميل تفاصيل الواجهات: '+(err.message||err);});
+  loader.load(facadeModelUrl,gltf=>{
+   this.model=gltf.scene;this.scene.add(this.model);facadeLoading=false;
+   status.textContent='تم تحميل طبقة النوافذ من نموذج OSM. هذه نوافذ تقديرية مبنية على بصمات المباني ووسوم الارتفاع/الطوابق.';
+   map.triggerRepaint();
+  },event=>{
+   if(event.lengthComputable)status.textContent='تحميل نموذج النوافذ: '+Math.round(event.loaded/event.total*100)+'%';
+  },err=>{
+   facadeLoading=false;facadeLayerAdded=false;
+   errorBox.style.display='block';errorBox.textContent='فشل تحميل نموذج النوافذ: '+(err.message||err);
+   status.textContent='تعذر تحميل طبقة النوافذ؛ ألغِ التحديد ثم أعد تفعيله للمحاولة مجددًا.';
+  });
  },
  render:function(gl,matrix){
   if(!this.model)return;
-  const mc=maplibregl.MercatorCoordinate.fromLngLat({lng:origin.longitude,lat:origin.latitude},origin.anchor_altitude_m||0);
+  const mc=maplibregl.MercatorCoordinate.fromLngLat({lng:origin.longitude,lat:origin.latitude},origin.anchor_altitude_m);
   const s=mc.meterInMercatorCoordinateUnits();
   const m=new THREE.Matrix4().fromArray(matrix);
   const l=new THREE.Matrix4().makeTranslation(mc.x,mc.y,mc.z).scale(new THREE.Vector3(s,-s,s));
@@ -203,8 +220,13 @@ try{
  },
  onRemove:function(){if(this.renderer)this.renderer.dispose();}
  };
- map.addLayer(facadeLayer);facadeLayerAdded=true;facadeLoading=false;
-}catch(e){facadeLoading=false;errorBox.style.display='block';errorBox.textContent='تعذر تشغيل نموذج الواجهات: '+(e.message||e);document.getElementById('facadeModel').checked=false;}
+ map.addLayer(facadeLayer);facadeLayerAdded=true;
+}catch(e){
+ facadeLoading=false;facadeLayerAdded=false;facadeLayer=null;
+ errorBox.style.display='block';errorBox.textContent='تعذر تشغيل طبقة النوافذ: '+(e.message||e);
+ status.textContent='تعذر تشغيل طبقة النوافذ. راجع رسالة الخطأ الظاهرة.';
+ facadeToggle.checked=false;
+}
 }
 document.getElementById('facadeModel').onchange=async e=>{
  if(e.target.checked)await addFacadeLayer();
