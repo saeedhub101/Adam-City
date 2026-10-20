@@ -254,7 +254,7 @@ def main():
     origin=((minx+maxx)/2,(miny+maxy)/2,0.0)
     seven_img,mc_img=load_logo_assets()
     photo_refs=fetch_robinsons_reference_photos()
-    (PHOTO_DIR / "reference-index.json").write_text(json.dumps({"subject":"Robinsons Manila","photos":photo_refs,"note":"Reference photographs are used for visual research; generated geometry is procedural, not photogrammetry."},indent=2,ensure_ascii=False)+"\\n",encoding="utf-8")
+    (PHOTO_DIR / "reference-index.json").write_text(json.dumps({"subject":"Robinsons Manila","photos":photo_refs,"note":"Reference photographs are used for visual research; generated geometry is procedural, not photogrammetry."},indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     scene=trimesh.Scene()
     report={"generated_utc":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime()),"source_files":[str(MAP_FILE.relative_to(ROOT)),str(STORES_FILE.relative_to(ROOT))],
         "photo_references":photo_refs,"store_signs":[],"unmatched_store_pois":[],"notes":["Image signage is a separate textured 3D panel; it does not overwrite building textures.","Store POIs inside the Robinsons mall footprint are reported but not placed on the outside mall wall.","Only explicitly named Robinsons Manila footprint was used for mall detail."]}
