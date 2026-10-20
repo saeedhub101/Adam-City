@@ -178,6 +178,20 @@
       "size_bytes": 3683,
       "blob_sha": "b7b10342b3f19b1aff275b3ace25af66b4a263a0",
       "description": "Existing height evidence audit script"
+    },
+    {
+      "source_path": "ermita/maps/queries/ermita-core-features.overpassql",
+      "copied_path": "complete_data/OSM/queries/ermita-core-features.overpassql",
+      "size_bytes": 1029,
+      "blob_sha": "e887c817850c1895ff980d9a6c50caa9a587739c",
+      "description": "Overpass query used to retrieve OSM roads, buildings and tagged features"
+    },
+    {
+      "source_path": "ermita/maps/generated/road-network-export-report.json",
+      "copied_path": "complete_data/OSM/quality/road-network-export-report.json",
+      "size_bytes": 1351,
+      "blob_sha": "7e19bc6f4e636dd84a92c3d0d51815646d042b8c",
+      "description": "Report documenting the OSM road-network export and counts"
     }
   ]
 }
