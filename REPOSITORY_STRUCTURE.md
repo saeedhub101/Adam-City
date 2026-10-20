@@ -17,7 +17,7 @@ This guide records the intended organization while preserving paths referenced b
 | `scripts/` | Root-level importers required by the active deployment workflow | Do not move until workflow references and importer paths are updated together. |
 | `kartaview/` | KartaView imagery, metadata, indexes, and facade-review artifacts | Retain this path until CSV records and scripts that use root-relative `kartaview/...` paths are migrated together. |
 | `backup/` | Historical/original snapshots and recoverable copies | Treat as read-only except for explicit restoration/migration. A backup is not automatically the active dataset. |
-| `checkpoints/` | Historical page snapshots saved before earlier changes | Reference-only; not the active deployed page. |
+| `backup/checkpoints/` | Historical page snapshots saved before earlier changes | Reference-only archive; not the active deployed page. |
 | `ermita-malate-3d.html` | Current 3D preview entry point used by the Pages workflow | Keep at repository root while the deployment workflow expects this path. |
 
 ## Naming convention
