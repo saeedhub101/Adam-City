@@ -1,14 +1,19 @@
-# Commercial markets and storefront signage
+# OSM Markets — commercial signage assets
 
-This folder contains the derived 3D commercial facade model and source inputs for Robinsons Manila, 7-Eleven, and McDonald's.
+This folder stores the Robinsons Manila, 7-Eleven, and McDonald's assets used by the Adam-City test preview.
 
-- `commercial-facades.glb`: 3D GLB with the procedural Robinsons Manila facade and textured brand-sign panels.
-- `commercial-facades-origin.json`: local EPSG:3857 origin used to position the GLB in MapLibre/Three.js.
-- `commercial-facades-report.json`: generation report, matching decisions, and source/photo attributions.
-- `ermita-branded-stores.geojson`: OSM store points/polygons used by the generator.
-- `assets/`: brand image assets used as textures.
-- `reference_photos/robinsons-manila/`: licensed reference images and their index.
+- `commercial-facades.glb` — combined 3D model with procedural Robinsons facade geometry and textured 7-Eleven/McDonald's sign panels.
+- `commercial-facades-origin.json` — origin used to position the GLB in the map.
+- `commercial-facades-report.json` — generation report, storefront matches and source attribution.
+- `ermita-branded-stores.geojson` — storefront features used by the generator.
+- `assets/` — image textures and logo source.
+- `reference_photos/robinsons-manila/` — reference photos and attribution index.
+- `commercial-generation.sha256` — generation hash.
 
-The preview uses the same MapLibre custom-layer + Three.js matrix transformation pattern as the working windows GLB. The Robinsons facade is procedural and approximate; it is not a surveyed or photogrammetric model. The original building footprints remain canonical and are not replaced by this GLB.
+## Preview rendering method
 
-To regenerate, run `python ermita/scripts/generate_commercial_facades.py`. Its inputs/outputs now use this folder for market-specific files.
+The signage model is loaded in the same JavaScript module and with the same Three.js instance as the working windows GLB. It uses a MapLibre custom layer with `renderingMode: '3d'`, a GLTFLoader with MeshoptDecoder, the map's `defaultProjectionData.mainMatrix`, and a model transform built from `MercatorCoordinate.fromLngLat`. GLB X/Y are EPSG:3857 projected metres, so the horizontal scale uses `meterInMercatorCoordinateUnits() * cos(latitude)`; vertical Z uses `meterInMercatorCoordinateUnits()`. The layer is kept above the OSM extrusion/window layer. The original windows materials are preserved; no green debug recoloring, anchor cube, or bounds helper remains.
+
+The Robinsons facade is a procedural visual approximation, not a surveyed or photogrammetric model. The GLB is an independent visual detail layer and does not replace building footprints.
+
+Regeneration script: `ermita/scripts/generate_commercial_facades.py`.

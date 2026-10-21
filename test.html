@@ -167,50 +167,18 @@ try {
    loader.setMeshoptDecoder(MeshoptDecoder);
    loader.load(modelUrl,gltf=>{
     model=gltf.scene;
-    // Diagnostic mode: force every mesh in the GLB to vivid green, independent of building layers.
-    let windowsMeshCount=0;
-    model.traverse(object=>{
-     if(!object.isMesh)return;
-     windowsMeshCount++;
-     object.material=new THREE.MeshStandardMaterial({color:0x00ff00,emissive:0x00a000,emissiveIntensity:1.0,roughness:0.72,metalness:0,side:THREE.DoubleSide});
-     object.material.needsUpdate=true;
-    });
-    // Measure actual GLB bounds and vertex counts before drawing.
-    model.updateMatrixWorld(true);
-    const modelBounds=new THREE.Box3().setFromObject(model);
-    const boundsSize=new THREE.Vector3();
-    const boundsCenter=new THREE.Vector3();
-    modelBounds.getSize(boundsSize);
-    modelBounds.getCenter(boundsCenter);
-    let windowsVertexCount=0;
-    model.traverse(object=>{
-     if(object.isMesh && object.geometry?.attributes?.position)
-      windowsVertexCount+=object.geometry.attributes.position.count;
-    });
-    // GLB coordinates are local metres, recentered around the origin.
-    model.position.set(0,0,0);
-    model.scale.set(1,1,1);
-    // Independent green diagnostic marker at the exact anchor, plus a bounds helper.
-    const marker=new THREE.Mesh(
-     new THREE.BoxGeometry(8,8,8),
-     new THREE.MeshBasicMaterial({color:0x00ff00,wireframe:true,depthTest:false})
-    );
-    marker.name='windows-anchor-diagnostic';
-    scene.add(marker);
-    const boundsHelper=new THREE.Box3Helper(modelBounds,0x00ff00);
-    boundsHelper.name='windows-bounds-diagnostic';
-    boundsHelper.material.depthTest=false;
-    scene.add(boundsHelper);
-    scene.add(model);
+    // Preserve original GLB materials and textures; diagnostic recoloring and markers are disabled.
+     let windowsMeshCount=0;
+     model.traverse(object=>{if(object.isMesh)windowsMeshCount++;});
+     model.position.set(0,0,0);
+     model.scale.set(1,1,1);
+     scene.add(model);
     window.adamWindowsLayerReady=true;
     window.adamSetWindowsVisible=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
     model.visible=!!document.getElementById('osm-windows')?.checked;
-    const fmt=n=>Number.isFinite(n)?n.toFixed(1):String(n);
     const s=document.getElementById('status');
-    if(s)s.textContent='GLB loaded | meshes='+windowsMeshCount+' | vertices='+windowsVertexCount+
-     ' | bounds X['+fmt(modelBounds.min.x)+','+fmt(modelBounds.max.x)+'] Y['+fmt(modelBounds.min.y)+','+fmt(modelBounds.max.y)+'] Z['+fmt(modelBounds.min.z)+','+fmt(modelBounds.max.z)+'] m'+
-     ' | size '+fmt(boundsSize.x)+'×'+fmt(boundsSize.y)+'×'+fmt(boundsSize.z)+' m | green anchor marker + bounds | toggle '+(model.visible?'ON':'OFF');
-    // Ensure this diagnostic layer is above the map's building/extrusion layers.
+     if(s)s.textContent='تم تحميل نموذج windows ثلاثي الأبعاد | meshes='+windowsMeshCount;
+     // Ensure this diagnostic layer is above the map's building/extrusion layers.
     if(mapInstance.getLayer('windows-facade-details')) mapInstance.moveLayer('windows-facade-details');
     // Commercial signs must stay above the facade/window meshes when both GLBs are enabled.
     if(mapInstance.getLayer('commercial-signage-3d')) mapInstance.moveLayer('commercial-signage-3d');
@@ -331,72 +299,6 @@ try {
 
 
 
-<script type="module">
-import * as THREE from 'three';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
-import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.0/meshopt_decoder.module.js';
-const signageToggle=document.getElementById('commercial-signage');
-window.adamCommercialEnabled=!!signageToggle?.checked;
-signageToggle?.addEventListener('change',ev=>{
- window.adamCommercialEnabled=ev.target.checked;
- if(window.adamCommercialLayerReady && window.adamSetCommercialVisible) window.adamSetCommercialVisible(ev.target.checked);
- else if(ev.target.checked){const s=document.getElementById('status');if(s)s.textContent='جارٍ تحميل نموذج يافطات المتاجر ثلاثي الأبعاد…';}
-});
-const waitMapForCommercial=()=>new Promise(resolve=>{const check=()=>{if(window.adamCityMap?.isStyleLoaded())resolve(window.adamCityMap);else setTimeout(check,100)};check();});
-try{
- const map=await waitMapForCommercial();
- const modelUrl=new URL('complete_data/odm/markets/commercial-facades.glb',location.href).href;
- const originUrl=new URL('complete_data/odm/markets/commercial-facades-origin.json',location.href).href;
- const originResponse=await fetch(originUrl);if(!originResponse.ok)throw new Error('Origin JSON HTTP '+originResponse.status);
- const origin=await originResponse.json();
- const lat=Number(origin.latitude);
- const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:Number(origin.longitude),lat},Number(origin.anchor_altitude_m||0));
- const meterScale=anchor.meterInMercatorCoordinateUnits();
- const projectedMeterScale=meterScale*Math.cos(lat*Math.PI/180);
- let renderer,camera,scene,model;
- const customLayer={
-  id:'commercial-signage-3d',type:'custom',renderingMode:'3d',
-  onAdd(mapInstance,gl){
-   renderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});
-   renderer.autoClear=false;camera=new THREE.Camera();scene=new THREE.Scene();
-   scene.add(new THREE.AmbientLight(0xffffff,2.0));
-   const light=new THREE.DirectionalLight(0xffffff,2.2);light.position.set(0,-70,100).normalize();scene.add(light);
-   const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
-   loader.load(modelUrl,gltf=>{
-    model=gltf.scene;model.position.set(0,0,0);model.scale.set(1,1,1);
-    let meshes=0;model.traverse(o=>{if(o.isMesh)meshes++;});
-    scene.add(model);window.adamCommercialLayerReady=true;
-    window.adamSetCommercialVisible=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
-    model.visible=!!document.getElementById('commercial-signage')?.checked;
-    const s=document.getElementById('status');if(s)s.textContent='يافطات المتاجر جاهزة | meshes='+meshes+' | Robinsons + 7-Eleven + McDonald’s | '+(model.visible?'ON':'OFF');
-    if(mapInstance.getLayer('commercial-signage-3d'))mapInstance.moveLayer('commercial-signage-3d');
-    mapInstance.triggerRepaint();
-   },progress=>{
-    const s=document.getElementById('status');
-    if(s)s.textContent=progress.total?'جارٍ تحميل يافطات المتاجر: '+Math.round(progress.loaded/progress.total*100)+'%':'جارٍ تنزيل نموذج يافطات المتاجر…';
-   },err=>{
-    const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر تحميل نموذج يافطات المتاجر: '+(err?.message||err);}
-   });
-  },
-  render(gl,args){
-   if(!renderer||!model||!model.visible)return;
-   const mainMatrix=args?.defaultProjectionData?.mainMatrix;
-   if(!mainMatrix)return;
-   const values=Object.values(mainMatrix);
-   if(values.length!==16||values.some(v=>!Number.isFinite(Number(v))))return;
-   const projection=new THREE.Matrix4().fromArray(values.map(Number));
-   const transform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
-    .scale(new THREE.Vector3(projectedMeterScale,-projectedMeterScale,meterScale));
-   camera.projectionMatrix.copy(projection).multiply(transform);
-   camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
-   renderer.resetState();renderer.render(scene,camera);renderer.resetState();
-  }
- };
- map.addLayer(customLayer);
- if(map.getLayer('commercial-signage-3d'))map.moveLayer('commercial-signage-3d');
-}catch(err){
- const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر إعداد يافطات المتاجر: '+(err?.message||err);}
-}
-</script>
+
 
 </body></html>
