@@ -2,7 +2,7 @@
 
 This folder stores the Robinsons Manila, 7-Eleven, and McDonald's assets used by the Adam-City test preview.
 
-- `commercial-facades.glb` — combined 3D model with procedural Robinsons facade geometry and textured 7-Eleven/McDonald's sign panels.
+- `robenson.glb` — combined 3D model with procedural Robinsons facade geometry and textured 7-Eleven/McDonald's sign panels.
 - `commercial-facades-origin.json` — origin used to position the GLB in the map.
 - `commercial-facades-report.json` — generation report, storefront matches and source attribution.
 - `ermita-branded-stores.geojson` — storefront features used by the generator.
