@@ -1,0 +1,53 @@
+{
+  "output": "complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb",
+  "buildings_exported": 13082,
+  "unique_osm_building_ids": 20,
+  "road_segments_used": 26,
+  "road_feature_ids": [
+    "way/4486368",
+    "way/22739770",
+    "way/87749979",
+    "way/89847354",
+    "way/89847356",
+    "way/91881369",
+    "way/710691897",
+    "way/710691899",
+    "way/710691900",
+    "way/710691901",
+    "way/710691902",
+    "way/710691903",
+    "way/710691904",
+    "way/710691905",
+    "way/710691906",
+    "way/791645319",
+    "way/791645321",
+    "way/923242320",
+    "way/1017467604",
+    "way/1017467605",
+    "way/1118556764",
+    "way/1186652626",
+    "way/1240407758",
+    "way/1240407760",
+    "way/1311371327",
+    "way/1330593350"
+  ],
+  "selection_buffer_m": 70.0,
+  "material_counts": {
+    "sandstone": 2182,
+    "muted terracotta": 2181,
+    "glass blue grey": 2179,
+    "limestone warm": 2179,
+    "painted ivory": 2180,
+    "concrete grey": 2181
+  },
+  "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
+  "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
+  "height_method": "OSM height, then building:levels \u00d7 3.2 m, then 9.6 m fallback.",
+  "limitations": [
+    "This is a PBR-ready geometry/material test asset, not photogrammetry or a surveyed facade reconstruction.",
+    "Where OSM does not provide facade colour/material, conservative varied architectural neutral materials are placeholders and should be replaced with photo-verified values.",
+    "Vertical ground elevations are not baked into this GLB; anchor altitude is 0 m and existing terrain/building layers remain unchanged."
+  ],
+  "source": "OpenStreetMap contributors, ODbL 1.0",
+  "skipped_invalid_features": 0
+}

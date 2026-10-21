@@ -1,0 +1,32 @@
+{
+  "longitude": 120.98599399999999,
+  "latitude": 14.583583059007465,
+  "anchor_altitude_m": 0.0,
+  "buildings_exported": 13082,
+  "osm_building_ids": [
+    "way/308700123",
+    "way/308706322",
+    "way/308706323",
+    "way/575422161",
+    "way/575422162",
+    "way/575422164",
+    "way/822386807",
+    "way/822386809",
+    "way/822386811",
+    "way/822386813",
+    "way/822386814",
+    "way/822386816",
+    "way/822386824",
+    "way/822386826",
+    "way/823662686",
+    "way/89760235",
+    "way/89831108",
+    "way/89831422",
+    "way/90134167",
+    "way/90308376"
+  ],
+  "buffer_m": 70.0,
+  "road_segments_used": 26,
+  "coordinate_system": "EPSG:3857 local metres centered at longitude/latitude; local Z starts at 0 m",
+  "origin_method": "Bounding-box center of selected OSM building footprints, selected by intersection with 70 m buffer around mapped Roxas Boulevard road geometry."
+}
