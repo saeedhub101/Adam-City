@@ -151,7 +151,8 @@ def main():
             print(f"Roof skipped for {fid or name or 'unnamed building'}: {exc}")
         # Facade skins add low-relief color/material to all exterior faces.
         ring = list(poly.exterior.coords)
-        for a, b in zip(ring[:-1], ring[1:]):
+        sign_edge_index = max(range(len(ring)-1), key=lambda i: math.dist(ring[i], ring[i+1])) if len(ring) > 1 else -1
+        for edge_index, (a, b) in enumerate(zip(ring[:-1], ring[1:])):
             dx, dy = b[0]-a[0], b[1]-a[1]
             length = math.hypot(dx,dy)
             if length < 4.5:
@@ -199,7 +200,7 @@ def main():
                 if height >= 2.4:
                     door_meshes.append(box_at((cx,cy,0.95-center[2]),(0.95,0.12,1.9),angle,[83,65,48,255]))
                     doors_count += 1
-                if name:
+                if name and edge_index == sign_edge_index:
                     # Mount an actual textured sign plane; text comes only from the mapped OSM name/brand.
                     sx = a[0] + ux*along + nx*0.13 - center[0]
                     sy = a[1] + uy*along + ny*0.13 - center[1]
