@@ -22,6 +22,7 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <label class="row"><input type="checkbox" id="baseGround" checked> إظهار أرضية الخريطة الأصلية (الشوارع، المياه، الحدائق والتسميات)</label>
 <label class="row"><input type="checkbox" id="baseBuildings" checked> إظهار مباني المصدر الأصلية ثلاثية الأبعاد</label>
 <label class="row"><input type="checkbox" id="commercial-signage" checked> إظهار يافطات Robinsons و7-Eleven وMcDonald’s</label>
+<label class="row"><input type="checkbox" id="pedro-gil-decal"> تجربة Decal مصوّر على واجهة مبنى Pedro Gil</label>
 </div>
 <div class="group"><div class="group-title">مجلدات OSM — طبقات مستقلة</div>
 <label class="row"><input type="checkbox" id="osm-raw"> 1. raw — بيانات OSM الخام (ليست طبقة خريطة مباشرة)</label>
@@ -293,6 +294,75 @@ try {
   if(map.getLayer('commercial-signage-3d'))map.moveLayer('commercial-signage-3d');
  } catch(err) {
   const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر إعداد يافطات المتاجر: '+(err?.message||err);}
+ }
+
+ // Isolated image decal test on the OSM-matched 7-Eleven building along Pedro Gil Street.
+ // This layer shares the exact commercial origin and the documented MapLibre/Three.js transform.
+ const decalToggle=document.getElementById('pedro-gil-decal');
+ window.adamPedroGilDecalEnabled=!!decalToggle?.checked;
+ decalToggle?.addEventListener('change',ev=>{
+  window.adamPedroGilDecalEnabled=ev.target.checked;
+  if(window.adamPedroGilDecalLayerReady && window.adamSetPedroGilDecalVisible) window.adamSetPedroGilDecalVisible(ev.target.checked);
+  else if(ev.target.checked){const s=document.getElementById('status');if(s)s.textContent='جارٍ تحميل صورة Decal لمبنى Pedro Gil…';}
+ });
+ try {
+  const map=await waitMap();
+  const modelUrl=new URL('complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb',location.href).href;
+  const originUrl=new URL('complete_data/OSM/Markets/commercial-facades-origin.json',location.href).href;
+  const response=await fetch(originUrl);
+  if(!response.ok)throw new Error('Origin JSON HTTP '+response.status);
+  const origin=await response.json();
+  const lat=Number(origin.latitude);
+  const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:Number(origin.longitude),lat},Number(origin.anchor_altitude_m||0));
+  const meterScale=anchor.meterInMercatorCoordinateUnits();
+  const projectedMeterScale=meterScale*Math.cos(lat*Math.PI/180);
+  let decalRenderer,decalCamera,decalScene,decalModel;
+  const decalLayer={
+   id:'pedro-gil-image-decal-3d',type:'custom',renderingMode:'3d',
+   onAdd(mapInstance,gl){
+    decalRenderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});
+    decalRenderer.autoClear=false;
+    decalCamera=new THREE.Camera();decalScene=new THREE.Scene();
+    decalScene.add(new THREE.AmbientLight(0xffffff,2.0));
+    const light=new THREE.DirectionalLight(0xffffff,1.6);light.position.set(0,-70,100).normalize();decalScene.add(light);
+    const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
+    loader.load(modelUrl,gltf=>{
+     decalModel=gltf.scene;decalModel.position.set(0,0,0);decalModel.scale.set(1,1,1);
+     let meshes=0;decalModel.traverse(o=>{if(o.isMesh)meshes++;});
+     decalScene.add(decalModel);
+     window.adamPedroGilDecalLayerReady=true;
+     window.adamSetPedroGilDecalVisible=visible=>{if(decalModel)decalModel.visible=visible;mapInstance.triggerRepaint();};
+     decalModel.visible=!!document.getElementById('pedro-gil-decal')?.checked;
+     const s=document.getElementById('status');
+     if(s)s.textContent='Pedro Gil Decal محمّل | meshes='+meshes+' | '+(decalModel.visible?'مفعّل':'مخفي');
+     if(mapInstance.getLayer('pedro-gil-image-decal-3d'))mapInstance.moveLayer('pedro-gil-image-decal-3d');
+     mapInstance.triggerRepaint();
+    },progress=>{
+     const s=document.getElementById('status');
+     if(s)s.textContent=progress.total?'جارٍ تحميل Decal: '+Math.round(progress.loaded/progress.total*100)+'%':'جارٍ تنزيل نموذج Decal…';
+    },err=>{
+     const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر تحميل Decal Pedro Gil: '+(err?.message||err);}
+     const s=document.getElementById('status');if(s)s.textContent='فشل تحميل Decal Pedro Gil.';
+    });
+   },
+   render(gl,args){
+    if(!decalRenderer||!decalModel||!decalModel.visible)return;
+    const mainMatrix=args?.defaultProjectionData?.mainMatrix;
+    if(!mainMatrix)return;
+    const values=Object.values(mainMatrix);
+    if(values.length!==16||values.some(v=>!Number.isFinite(Number(v))))return;
+    const projection=new THREE.Matrix4().fromArray(values.map(Number));
+    const transform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
+     .scale(new THREE.Vector3(projectedMeterScale,-projectedMeterScale,meterScale));
+    decalCamera.projectionMatrix.copy(projection).multiply(transform);
+    decalCamera.projectionMatrixInverse.copy(decalCamera.projectionMatrix).invert();
+    decalRenderer.resetState();decalRenderer.render(decalScene,decalCamera);decalRenderer.resetState();
+   }
+  };
+  map.addLayer(decalLayer);
+  if(map.getLayer('pedro-gil-image-decal-3d'))map.moveLayer('pedro-gil-image-decal-3d');
+ } catch(err) {
+  const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر إعداد Decal Pedro Gil: '+(err?.message||err);}
  }
 
 </script>
