@@ -36,6 +36,7 @@ jobs:
           git sparse-checkout init --no-cone
           git sparse-checkout set --no-cone --stdin <<'EOF'
           /ermita-malate-3d.html
+          /roxas-boulevard-model.html
           /google-photorealistic-3d-tiles.html
           /test.html
           /complete_data/OSM/data/
@@ -235,6 +236,8 @@ jobs:
           test -s site/test.html
           test -s site/complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb
           cp ermita-malate-3d.html site/ermita-malate-3d.html
+          cp roxas-boulevard-model.html site/roxas-boulevard-model.html
+          test -s site/roxas-boulevard-model.html
           cp google-photorealistic-3d-tiles.html site/google-photorealistic-3d-tiles.html
           cp -a ermita/maps/sources/openfreemap/vector-tiles site/ermita/maps/sources/openfreemap/
           # The preview uses the committed GeoJSON fallbacks for building extrusion and ground/roads.
@@ -404,7 +407,7 @@ jobs:
             echo "Fallback files already exist and are unchanged; no re-import or repository commit needed."
           fi
           # Keep the repository's root index.html deleted; publish a tiny redirect only in the artifact.
-          printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=ermita-malate-3d.html"><title>ADAM CITY</title><a href="ermita-malate-3d.html">Open ADAM CITY 3D preview</a></html>' > site/index.html
+          printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=roxas-boulevard-model.html"><title>Roxas Boulevard 3D Model</title><a href="roxas-boulevard-model.html">Open Roxas Boulevard 3D model</a></html>' > site/index.html
           echo "Published files:"
           du -sh site
           find site -type f -name '*.pbf' | wc -l
