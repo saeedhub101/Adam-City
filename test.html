@@ -360,7 +360,7 @@ try {
    }
   };
   map.addLayer(decalLayer);
-  if(map.getLayer('pedro-gil-image-decal-3d'))map.moveLayer('all-7-eleven-plane-textures-3d');
+  if(map.getLayer('all-7-eleven-plane-textures-3d'))map.moveLayer('all-7-eleven-plane-textures-3d');
  } catch(err) {
   const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر إعداد Decal Pedro Gil: '+(err?.message||err);}
  }
