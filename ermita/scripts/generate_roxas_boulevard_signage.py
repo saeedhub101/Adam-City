@@ -86,6 +86,14 @@ def main():
                 if poly.area >= 8: selected.append({"id":feature_id(f),"poly":poly,"tags":t,"height":height_of(t)})
         except Exception: continue
     if not selected: raise RuntimeError("No building footprints selected for Roxas Boulevard")
+    # The source contains multiple building-part polygons per OSM building. Keep one
+    # representative footprint per OSM ID so a tower does not receive hundreds of duplicate signs.
+    by_id={}
+    for item in selected:
+        key=item["id"] or f"unnamed-part-{len(by_id)}"
+        if key not in by_id or item["poly"].area > by_id[key]["poly"].area:
+            by_id[key]=item
+    selected=list(by_id.values())
     # Assign each named store/amenity node to its closest selected footprint only when the
     # point lies in/very close to that footprint. KartaView data are deliberately not used.
     polys=[x["poly"] for x in selected]
