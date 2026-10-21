@@ -111,6 +111,9 @@ def pbr_for(tags, index):
         known = ("National Library pale concrete and tinted glazing", [0.80, 0.81, 0.78, 1], 0.02, 0.78)
     if osm_id == "way/314226156":
         known = ("National Planetarium white dome concrete", [0.83, 0.83, 0.79, 1], 0.01, 0.84)
+    if osm_id == "way/89770558":
+        # Photo shows dark grey/blue cladding, tinted glazing and a strong red entrance canopy.
+        known = ("Red Planet Manila Bay dark cladding", [0.22, 0.24, 0.26, 1], 0.03, 0.62)
     if "1322 golden empire" in identity or "golden empire tower" in identity:
         known = ("Golden Empire reflective gold glass", [0.52, 0.42, 0.25, 1], 0.24, 0.22)
     elif "grand riviera suites" in identity:
@@ -618,6 +621,46 @@ def facade_planetarium_dome_mesh(poly, total_height, tags):
     return mesh
 
 
+def facade_red_planet_canopy_mesh(poly, height, tags):
+    """Photo-derived red entrance canopy on Red Planet Manila Bay's street frontage."""
+    if str(tags.get("osm_feature_id") or "") != "way/89770558" or height < 12:
+        return None
+    vertices, faces = [], []
+    minx = poly.bounds[0]
+    zc, thickness, offset = min(3.25, height*0.28), 0.62, 0.19
+    for a, b in zip(list(poly.exterior.coords)[:-1], list(poly.exterior.coords)[1:]):
+        dx, dy = b[0]-a[0], b[1]-a[1]
+        length = math.hypot(dx, dy)
+        if length < 4:
+            continue
+        tx, ty = dx/length, dy/length
+        if poly.exterior.is_ccw:
+            nx, ny = ty, -tx
+        else:
+            nx, ny = -ty, tx
+        midpoint_x = (a[0]+b[0])/2
+        # The reference image shows the bright red sign/canopy facing the street.
+        if nx > -0.5 or midpoint_x > minx + 1.5:
+            continue
+        base = len(vertices)
+        vertices.extend([
+            [a[0]+nx*offset,a[1]+ny*offset,zc-thickness/2],
+            [b[0]+nx*offset,b[1]+ny*offset,zc-thickness/2],
+            [b[0]+nx*offset,b[1]+ny*offset,zc+thickness/2],
+            [a[0]+nx*offset,a[1]+ny*offset,zc+thickness/2],
+        ])
+        faces.extend([[base,base+1,base+2],[base,base+2,base+3]])
+    if not faces:
+        return None
+    mesh=trimesh.Trimesh(vertices=np.asarray(vertices),faces=np.asarray(faces),process=False)
+    mesh.visual=trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
+        name="Red_Planet_Hotels_red_canopy",
+        baseColorFactor=[219, 22, 39, 255], metallicFactor=0.02, roughnessFactor=0.48,
+        alphaMode="OPAQUE", doubleSided=True
+    ))
+    return mesh
+
+
 def facade_base_mesh(poly, height, tags, part_index):
     """Add photo-derived street-level podium finishes on Sunny Bay and Bayview Park Hotel."""
     fid = str(tags.get("osm_feature_id") or "")
@@ -627,6 +670,9 @@ def facade_base_mesh(poly, height, tags, part_index):
     elif fid == "way/87754850" and height >= 35:
         base_height = min(5.5, height * 0.14)
         base_color, material_name = [139, 132, 121, 255], "Bayview_Park_Hotel_stone_glass_podium"
+    elif fid == "way/89770558" and height >= 12:
+        base_height = min(2.8, height * 0.18)
+        base_color, material_name = [31, 34, 37, 255], "Red_Planet_dark_glass_street_base"
     else:
         return None
     vertices, faces = [], []
@@ -802,6 +848,7 @@ def main():
     facade_base_parts = 0
     facade_historic_mesh_parts = 0
     facade_planetarium_dome_parts = 0
+    facade_red_planet_canopy_parts = 0
     facade_special_mass_overrides = 0
     used_ids = set()
     for i, item in enumerate(selected):
@@ -866,6 +913,7 @@ def main():
             (facade_upper_band_mesh(poly, height, tags), "photo_upper_bands"),
             (facade_vertical_fin_mesh(poly, mass_height, tags), "photo_vertical_fins"),
             (facade_planetarium_dome_mesh(poly, height, tags), "photo_planetarium_dome"),
+            (facade_red_planet_canopy_mesh(poly, height, tags), "photo_red_planet_canopy"),
         ):
             if special_mesh is not None:
                 special_mesh.apply_translation([-cx, -cy, 0.0])
@@ -874,6 +922,8 @@ def main():
                 facade_accent_parts += 1
                 if special_name == "photo_planetarium_dome":
                     facade_planetarium_dome_parts += 1
+                if special_name == "photo_red_planet_canopy":
+                    facade_red_planet_canopy_parts += 1
         if item["id"]:
             used_ids.add(item["id"])
             entry = building_inventory.setdefault(item["id"], {
@@ -913,10 +963,11 @@ def main():
         "facade_window_boxes": facade_window_boxes,
         "facade_historic_photo_mesh_parts": facade_historic_mesh_parts,
         "facade_planetarium_dome_parts": facade_planetarium_dome_parts,
+        "facade_red_planet_canopy_parts": facade_red_planet_canopy_parts,
         "facade_special_mass_overrides": facade_special_mass_overrides,
         "facade_accent_parts": facade_accent_parts,
         "facade_base_parts": facade_base_parts,
-        "facade_detail_method": "Procedural edge-aligned glazing for tall buildings; photo-informed spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, Eton Baypark, Sunny Bay Suites, and Bayview Park Hotel; National Library uses pale concrete bands and vertical fins; Luneta Hotel uses arched dark glazing and wrought-iron balcony rails; National Planetarium uses a separate 16 m hemispherical dome above its low hall. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
+        "facade_detail_method": "Procedural edge-aligned glazing for tall buildings; photo-informed spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, Eton Baypark, Sunny Bay Suites, Bayview Park Hotel, and Red Planet Manila Bay; National Library uses pale concrete bands and vertical fins; Luneta Hotel uses arched dark glazing and wrought-iron balcony rails; National Planetarium uses a separate 16 m hemispherical dome above its low hall. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
         "visual_reference_checks": [
             {"building": "Pearl of the Orient Tower", "url": "https://www.tectonium.com/pearl-of-the-orient-tower/", "observed": "blue-grey upper tower, repetitive pale horizontal bands, distinct pink horizontal podium"},
             {"building": "1322 Golden Empire Tower", "url": "https://gfparchitects.com/project/1322-golden-empire-tower/", "observed": "warm gold reflective glazing and strong repeated horizontal floor divisions"},
@@ -925,7 +976,8 @@ def main():
             {"building": "Luneta Hotel", "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Ph-mm-manila-ermita-kalaw_ave.-luneta_hotel_%282014%29.JPG", "observed": "pale yellow historic facade, arched openings and dark wrought-iron balconies"},
             {"building": "Bayview Park Hotel Manila", "url": "https://images.trvl-media.com/hotels/1000000/530000/522400/522347/81dac4c5_z.jpg", "observed": "orange Art Moderne facade, repeated window grid, dark floor reveals and stone/glass street-level podium"},
             {"building": "National Library of the Philippines", "url": "https://commons.wikimedia.org/wiki/File:National_Library_of_the_Philippines_in_February_2026_1.jpg", "observed": "six-storey pale concrete facade with large tinted glazing and strong vertical fins"},
-            {"building": "National Planetarium", "url": "https://commons.wikimedia.org/wiki/File:02609jfManila_Ermita_Planetarium_Rizal_Park_Padre_Burgos_Streets_Buildings_Landmarksfvf_18.jpg", "observed": "low rectangular hall with a prominent 16 m white hemispherical dome"}
+            {"building": "National Planetarium", "url": "https://commons.wikimedia.org/wiki/File:02609jfManila_Ermita_Planetarium_Rizal_Park_Padre_Burgos_Streets_Buildings_Landmarksfvf_18.jpg", "observed": "low rectangular hall with a prominent 16 m white hemispherical dome and curved entrance canopy"},
+            {"building": "Red Planet Manila Bay", "url": "https://res.klook.com/klook-hotel/image/upload/travelapi/20000000/19730000/19720900/19720865/a1174614_z.jpg", "observed": "dark grey/blue facade, tinted windows, bright red horizontal entrance canopy and dark glazed street-level base"}
         ],
         "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
         "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
