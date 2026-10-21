@@ -19,3 +19,16 @@ Source geometry: `ermita/maps/generated/ermita-building-details.geojson` (OpenSt
 
 ## Detailed queue
 See `building-match-audit.csv` in this directory.
+
+
+## New high-value reference sources found (2026-10-21)
+
+### National Museum of Fine Arts — architectural elevations and dimensions
+The National Museum of the Philippines' official bidding documents describe the National Museum of Fine Arts building and include facade photographs, elevation drawings, and stated dimensions for the facade along Padre Burgos Avenue: 118.85 m long by 24.3 m high. Other document editions describe the Finance Road and Taft Avenue sides. These are substantially better references for matching the long neoclassical facade than generic street photos.
+
+- Official National Museum of the Philippines complex documents (2024): https://weblinks.nationalmuseum.gov.ph/wp-content/uploads/2024/08/14130015/Bidding-Documents.pdf
+- Official National Museum of the Philippines complex documents (2025): https://weblinks.nationalmuseum.gov.ph/wp-content/uploads/2025/05/22085545/Bidding-Documents-monumental.pdf
+- Additional public photo with camera location metadata (CC0): https://commons.wikimedia.org/wiki/File:National_Museum_of_Fine_Arts_of_the_Philippines_Building.jpg
+- Additional facade photograph (CC BY 4.0): https://commons.wikimedia.org/wiki/File:National_Museum_of_Fine_Arts_fa%C3%A7ade_golden_hour_(Manila,_2024).jpg
+
+**Important status:** These sources are now identified for targeted review, but they are not marked as imported, visually approved for texture projection, or integrated into a GLB by this note. The official elevations are suitable for dimensional/facade comparison; roof matching still requires overhead or elevated views.
