@@ -33,12 +33,15 @@
   ],
   "selection_buffer_m": 70.0,
   "material_counts": {
-    "sandstone": 2199,
-    "glass blue grey": 2192,
+    "sandstone": 2198,
+    "glass blue grey": 2191,
     "painted ivory": 2156,
-    "limestone warm": 2142,
+    "limestone warm": 2141,
     "muted terracotta": 2256,
     "concrete grey": 2112,
+    "Bayview Park Hotel orange facade": 1,
+    "National Planetarium white dome concrete": 1,
+    "National Library pale concrete and tinted glazing": 1,
     "Hotel warm painted facade": 3,
     "Grand Riviera pale concrete and blue glazing": 4,
     "Luneta Hotel pale historic facade": 1,
@@ -782,11 +785,11 @@
       "building": "yes",
       "levels_tag": "",
       "height_tag_m": "5",
-      "height_used_m": 5.0,
+      "height_used_m": 46.0,
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "glass blue grey"
+      "material_assigned": "Bayview Park Hotel orange facade"
     },
     "way/308700127": {
       "name": "",
@@ -991,11 +994,11 @@
       "building": "yes",
       "levels_tag": "",
       "height_tag_m": "5",
-      "height_used_m": 5.0,
+      "height_used_m": 16.0,
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "sandstone"
+      "material_assigned": "National Planetarium white dome concrete"
     },
     "way/267171369": {
       "name": "",
@@ -1266,11 +1269,11 @@
       "building": "public",
       "levels_tag": "",
       "height_tag_m": "5",
-      "height_used_m": 5.0,
+      "height_used_m": 34.0,
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "limestone warm"
+      "material_assigned": "National Library pale concrete and tinted glazing"
     },
     "way/1452484569": {
       "name": "",
@@ -8658,12 +8661,14 @@
   "detail_matched_footprint_parts": 804,
   "detail_matched_named_parts": 174,
   "detail_matched_unique_osm_ids": 767,
-  "facade_detail_parts": 198,
-  "facade_window_boxes": 76825,
+  "facade_detail_parts": 200,
+  "facade_window_boxes": 77757,
   "facade_historic_photo_mesh_parts": 1,
-  "facade_accent_parts": 26,
+  "facade_planetarium_dome_parts": 1,
+  "facade_special_mass_overrides": 1,
+  "facade_accent_parts": 30,
   "facade_base_parts": 1,
-  "facade_detail_method": "Procedural edge-aligned glazing for tall buildings; photo-informed spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, Eton Baypark, and Sunny Bay Suites; Luneta Hotel uses custom arched dark glazing and wrought-iron balcony rails. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
+  "facade_detail_method": "Procedural edge-aligned glazing for tall buildings; photo-informed spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, Eton Baypark, Sunny Bay Suites, and Bayview Park Hotel; National Library uses pale concrete bands and vertical fins; Luneta Hotel uses arched dark glazing and wrought-iron balcony rails; National Planetarium uses a separate 16 m hemispherical dome above its low hall. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
   "visual_reference_checks": [
     {
       "building": "Pearl of the Orient Tower",
@@ -8689,6 +8694,21 @@
       "building": "Luneta Hotel",
       "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Ph-mm-manila-ermita-kalaw_ave.-luneta_hotel_%282014%29.JPG",
       "observed": "pale yellow historic facade, arched openings and dark wrought-iron balconies"
+    },
+    {
+      "building": "Bayview Park Hotel Manila",
+      "url": "https://images.trvl-media.com/hotels/1000000/530000/522400/522347/81dac4c5_z.jpg",
+      "observed": "orange Art Moderne facade, repeated window grid, dark floor reveals and stone/glass street-level podium"
+    },
+    {
+      "building": "National Library of the Philippines",
+      "url": "https://commons.wikimedia.org/wiki/File:National_Library_of_the_Philippines_in_February_2026_1.jpg",
+      "observed": "six-storey pale concrete facade with large tinted glazing and strong vertical fins"
+    },
+    {
+      "building": "National Planetarium",
+      "url": "https://commons.wikimedia.org/wiki/File:02609jfManila_Ermita_Planetarium_Rizal_Park_Padre_Burgos_Streets_Buildings_Landmarksfvf_18.jpg",
+      "observed": "low rectangular hall with a prominent 16 m white hemispherical dome"
     }
   ],
   "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
