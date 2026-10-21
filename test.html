@@ -22,7 +22,7 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <label class="row"><input type="checkbox" id="baseGround" checked> إظهار أرضية الخريطة الأصلية (الشوارع، المياه، الحدائق والتسميات)</label>
 <label class="row"><input type="checkbox" id="baseBuildings" checked> إظهار مباني المصدر الأصلية ثلاثية الأبعاد</label>
 <label class="row"><input type="checkbox" id="commercial-signage" checked> إظهار يافطات Robinsons و7-Eleven وMcDonald’s</label>
-<label class="row"><input type="checkbox" id="pedro-gil-decal"> تجربة Decal مصوّر على واجهة مبنى Pedro Gil</label>
+<label class="row"><input type="checkbox" id="pedro-gil-decal"> Plane Texture — يافطات جميع فروع 7-Eleven</label>
 </div>
 <div class="group"><div class="group-title">مجلدات OSM — طبقات مستقلة</div>
 <label class="row"><input type="checkbox" id="osm-raw"> 1. raw — بيانات OSM الخام (ليست طبقة خريطة مباشرة)</label>
@@ -299,15 +299,15 @@ try {
  // Isolated image decal test on the OSM-matched 7-Eleven building along Pedro Gil Street.
  // This layer shares the exact commercial origin and the documented MapLibre/Three.js transform.
  const decalToggle=document.getElementById('pedro-gil-decal');
- window.adamPedroGilDecalEnabled=!!decalToggle?.checked;
+ window.adamAll7ElevenPlaneTexturesEnabled=!!decalToggle?.checked;
  decalToggle?.addEventListener('change',ev=>{
   window.adamPedroGilDecalEnabled=ev.target.checked;
-  if(window.adamPedroGilDecalLayerReady && window.adamSetPedroGilDecalVisible) window.adamSetPedroGilDecalVisible(ev.target.checked);
-  else if(ev.target.checked){const s=document.getElementById('status');if(s)s.textContent='جارٍ تحميل صورة Decal لمبنى Pedro Gil…';}
+  if(window.adamAll7ElevenPlaneTexturesLayerReady && window.adamSetAll7ElevenPlaneTexturesVisible) window.adamSetPedroGilDecalVisible(ev.target.checked);
+  else if(ev.target.checked){const s=document.getElementById('status');if(s)s.textContent='جارٍ تحميل Plane Texture لجميع فروع 7-Eleven…';}
  });
  try {
   const map=await waitMap();
-  const modelUrl=new URL('complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb',location.href).href;
+  const modelUrl=new URL('complete_data/OSM/Buildings/Markets/facidals/all-7eleven-plane-textures.glb',location.href).href;
   const originUrl=new URL('complete_data/OSM/Markets/commercial-facades-origin.json',location.href).href;
   const response=await fetch(originUrl);
   if(!response.ok)throw new Error('Origin JSON HTTP '+response.status);
@@ -318,7 +318,7 @@ try {
   const projectedMeterScale=meterScale*Math.cos(lat*Math.PI/180);
   let decalRenderer,decalCamera,decalScene,decalModel;
   const decalLayer={
-   id:'pedro-gil-image-decal-3d',type:'custom',renderingMode:'3d',
+   id:'all-7eleven-plane-textures-3d',type:'custom',renderingMode:'3d',
    onAdd(mapInstance,gl){
     decalRenderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});
     decalRenderer.autoClear=false;
@@ -334,15 +334,15 @@ try {
      window.adamSetPedroGilDecalVisible=visible=>{if(decalModel)decalModel.visible=visible;mapInstance.triggerRepaint();};
      decalModel.visible=!!document.getElementById('pedro-gil-decal')?.checked;
      const s=document.getElementById('status');
-     if(s)s.textContent='Pedro Gil Decal محمّل | meshes='+meshes+' | '+(decalModel.visible?'مفعّل':'مخفي');
-     if(mapInstance.getLayer('pedro-gil-image-decal-3d'))mapInstance.moveLayer('pedro-gil-image-decal-3d');
+     if(s)s.textContent='Plane Texture لجميع فروع 7-Eleven محمّل | meshes='+meshes+' | '+(decalModel.visible?'مفعّل':'مخفي');
+     if(mapInstance.getLayer('all-7-eleven-plane-textures-3d'))mapInstance.moveLayer('pedro-gil-image-decal-3d');
      mapInstance.triggerRepaint();
     },progress=>{
      const s=document.getElementById('status');
      if(s)s.textContent=progress.total?'جارٍ تحميل Decal: '+Math.round(progress.loaded/progress.total*100)+'%':'جارٍ تنزيل نموذج Decal…';
     },err=>{
-     const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر تحميل Decal Pedro Gil: '+(err?.message||err);}
-     const s=document.getElementById('status');if(s)s.textContent='فشل تحميل Decal Pedro Gil.';
+     const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر تحميل Plane Texture لجميع فروع 7-Eleven: '+(err?.message||err);}
+     const s=document.getElementById('status');if(s)s.textContent='فشل تحميل Plane Texture لجميع فروع 7-Eleven.';
     });
    },
    render(gl,args){
