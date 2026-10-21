@@ -225,6 +225,8 @@ def main():
     corridor = road_union.buffer(BUFFER_M)
     selected = []
     skipped = 0
+    duplicate_footprints_removed = 0
+    seen_footprints = set()
     for feature in building_data.get("features", []):
         if not feature.get("geometry"):
             continue
@@ -240,6 +242,13 @@ def main():
             for poly in polygon_parts(g):
                 if poly.is_empty or not poly.is_valid or poly.area < 8:
                     continue
+                # The source export can repeat the same footprint many times. Keep one
+                # copy per exact polygon geometry before making massing or facade details.
+                footprint_key = poly.wkb
+                if footprint_key in seen_footprints:
+                    duplicate_footprints_removed += 1
+                    continue
+                seen_footprints.add(footprint_key)
                 selected.append({"id": fid, "tags": tags, "poly": poly, "height": height_of(tags)})
         except Exception:
             skipped += 1
