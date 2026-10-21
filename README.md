@@ -8,6 +8,7 @@ A source-traceable 3D city-data project focused on Ermita and Malate, Manila.
 - [Data asset policy](docs/data-asset-policy.md)
 - [Data source catalog](docs/data-source-catalog.md)
 - [Data audit report](docs/data-audit-report.md)
+- [MapLibre + Three.js GLB rendering and coordinate rules](docs/maplibre-threejs-glb-rendering.md)
 - [3D preview page](ermita-malate-3d.html)
 
 ## Core rules
