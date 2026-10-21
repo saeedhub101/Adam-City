@@ -8658,9 +8658,26 @@
   "detail_matched_unique_osm_ids": 767,
   "facade_detail_parts": 198,
   "facade_window_boxes": 76981,
-  "facade_accent_parts": 5,
+  "facade_accent_parts": 23,
   "facade_base_parts": 1,
-  "facade_detail_method": "Procedural edge-aligned glazing boxes generated across the full tagged floor count (up to 60 floors); named landmark palettes override contradictory generic source material tags. This remains a geometry-derived approximation pending per-building photographic validation.",
+  "facade_detail_method": "Procedural edge-aligned glazing plus photo-informed, building-specific spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, and Sunny Bay Suites. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
+  "visual_reference_checks": [
+    {
+      "building": "Pearl of the Orient Tower",
+      "url": "https://www.tectonium.com/pearl-of-the-orient-tower/",
+      "observed": "blue-grey upper tower, repetitive pale horizontal bands, distinct pink horizontal podium"
+    },
+    {
+      "building": "1322 Golden Empire Tower",
+      "url": "https://gfparchitects.com/project/1322-golden-empire-tower/",
+      "observed": "warm gold reflective glazing and strong repeated horizontal floor divisions"
+    },
+    {
+      "building": "Grand Riviera Suites",
+      "url": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/428049742.jpg",
+      "observed": "blue glazing, pale projecting floor slabs, pink/red framing concentrated on lower facade"
+    }
+  ],
   "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
   "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
   "height_method": "Verified landmark overrides first; otherwise validate OSM height against floor count, then building:levels \u00d7 3.2 m, then 9.6 m fallback.",
