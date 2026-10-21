@@ -124,11 +124,11 @@ def facade_window_mesh(poly, height, tags, part_index):
     """Create restrained, edge-aligned window glazing for an existing footprint.
     This adds actual facade geometry to the existing massing; it never replaces footprints.
     """
-    if poly.area < 80 or height < 5:
+    if poly.area < 250 or height < 12:
         return None
     levels = positive_number(tags.get("building:levels") or tags.get("levels"), 1, 150)
     floors = int(round(levels)) if levels else max(2, int(round(height / 3.2)))
-    floors = max(2, min(floors, 18))
+    floors = max(2, min(floors, 12))
     floor_h = height / floors
     window_h = min(1.45, max(0.75, floor_h * 0.52))
     # Use a deterministic but restrained glazing/frame variation by OSM identity.
@@ -151,7 +151,7 @@ def facade_window_mesh(poly, height, tags, part_index):
             nx, ny = ty, -tx
         else:
             nx, ny = -ty, tx
-        count = max(1, min(8, int(length // 2.5)))
+        count = max(1, min(5, int(length // 3.0)))
         usable = min(1.25, (length / count) * 0.48)
         if usable < 0.45:
             continue
