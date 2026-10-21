@@ -8670,9 +8670,9 @@
   "facade_planetarium_dome_parts": 1,
   "facade_red_planet_canopy_parts": 1,
   "facade_special_mass_overrides": 1,
-  "facade_accent_parts": 31,
+  "facade_accent_parts": 45,
   "facade_base_parts": 3,
-  "facade_detail_method": "Procedural edge-aligned glazing for tall buildings; photo-informed spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, Eton Baypark, Sunny Bay Suites, Bayview Park Hotel, and Red Planet Manila Bay; National Library uses pale concrete bands and vertical fins; Luneta Hotel uses arched dark glazing and wrought-iron balcony rails; National Planetarium uses a separate 16 m hemispherical dome above its low hall. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
+  "facade_detail_method": "Procedural edge-aligned glazing for tall buildings; photo-informed pink podiums and pale spandrels for Pearl of the Orient and Grand Riviera; gold vertical mullions and floor bands for 1322 Golden Empire Tower; Eton Baypark has red/grey vertical fins; Sunny Bay Suites, Bayview Park Hotel, and Red Planet Manila Bay have photo-informed podium/canopy details; National Library uses pale concrete bands and vertical fins; Luneta Hotel uses arched dark glazing and wrought-iron balcony rails; National Planetarium uses a separate 16 m hemispherical dome above its low hall. Generic opaque facades use a tiled painted-CMU albedo; all remaining unnamed facades still require individual photo validation.",
   "visual_reference_checks": [
     {
       "building": "Pearl of the Orient Tower",
