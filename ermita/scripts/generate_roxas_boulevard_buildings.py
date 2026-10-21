@@ -161,10 +161,89 @@ def pbr_for(tags, index):
         elif "green" in colour: base = [0.36,0.48,0.34,1]
     return label, base, metal, rough
 
+def facade_historic_window_mesh(poly, height, part_index):
+    """Build arched dark window panels and iron balcony rails for the photographed Luneta Hotel facade."""
+    floors = 6
+    floor_h = height / floors
+    vertices, faces = [], []
+    exterior = list(poly.exterior.coords)
+    for edge_index, (a, b) in enumerate(zip(exterior[:-1], exterior[1:])):
+        dx, dy = b[0]-a[0], b[1]-a[1]
+        length = math.hypot(dx, dy)
+        if length < 5:
+            continue
+        tx, ty = dx/length, dy/length
+        if poly.exterior.is_ccw:
+            nx, ny = ty, -tx
+        else:
+            nx, ny = -ty, tx
+        count = max(2, min(7, int(length // 2.8)))
+        width = min(1.15, length/count*0.48)
+        for floor in range(floors):
+            bottom = floor*floor_h + 0.58
+            rect_h = min(1.10, floor_h*0.42)
+            arch_r = width*0.5
+            for j in range(count):
+                along = length*(j+0.5)/count
+                cx, cy = a[0]+tx*along, a[1]+ty*along
+                # Arched panel outline: vertical jambs and a semicircular crown.
+                boundary = [
+                    (-width/2, bottom), (width/2, bottom),
+                    (width/2, bottom+rect_h)
+                ]
+                for k in range(1, 8):
+                    theta = math.pi*k/8
+                    boundary.append((arch_r*math.cos(theta), bottom+rect_h+arch_r*math.sin(theta)))
+                boundary.append((-width/2, bottom+rect_h))
+                center_u = sum(p[0] for p in boundary)/len(boundary)
+                center_z = sum(p[1] for p in boundary)/len(boundary)
+                base = len(vertices)
+                for u, z in boundary:
+                    vertices.append([cx+tx*u+nx*0.06, cy+ty*u+ny*0.06, z])
+                vertices.append([cx+tx*center_u+nx*0.06, cy+ty*center_u+ny*0.06, center_z])
+                center_idx = base+len(boundary)
+                for k in range(len(boundary)):
+                    faces.append([center_idx, base+k, base+(k+1)%len(boundary)])
+                # Wrought-iron balcony rail below the window: top rail and four uprights.
+                if floor > 0:
+                    rail_z = floor*floor_h + 0.78
+                    rail_y = 0.42
+                    rail_width = width*0.92
+                    # Top rail as a thin horizontal strip in the facade plane.
+                    rail_base = len(vertices)
+                    vertices.extend([
+                        [cx-tx*rail_width/2+nx*rail_y, cy-ty*rail_width/2+ny*rail_y, rail_z+0.62],
+                        [cx+tx*rail_width/2+nx*rail_y, cy+ty*rail_width/2+ny*rail_y, rail_z+0.62],
+                        [cx+tx*rail_width/2+nx*rail_y, cy+ty*rail_width/2+ny*rail_y, rail_z+0.68],
+                        [cx-tx*rail_width/2+nx*rail_y, cy-ty*rail_width/2+ny*rail_y, rail_z+0.68],
+                    ])
+                    faces.extend([[rail_base,rail_base+1,rail_base+2],[rail_base,rail_base+2,rail_base+3]])
+                    for post in (-0.5, -0.17, 0.17, 0.5):
+                        pu = rail_width*post
+                        post_base = len(vertices)
+                        px, py = cx+tx*pu+nx*rail_y, cy+ty*pu+ny*rail_y
+                        vertices.extend([
+                            [px-tx*0.018,py-ty*0.018,rail_z+0.08],
+                            [px+tx*0.018,py+ty*0.018,rail_z+0.08],
+                            [px+tx*0.018,py+ty*0.018,rail_z+0.66],
+                            [px-tx*0.018,py-ty*0.018,rail_z+0.66],
+                        ])
+                        faces.extend([[post_base,post_base+1,post_base+2],[post_base,post_base+2,post_base+3]])
+    if not faces:
+        return None
+    mesh = trimesh.Trimesh(vertices=np.asarray(vertices), faces=np.asarray(faces), process=False)
+    mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
+        name="Luneta_Hotel_arched_glazing_and_wrought_iron",
+        baseColorFactor=[42, 49, 48, 255], metallicFactor=0.28, roughnessFactor=0.48,
+        alphaMode="OPAQUE"
+    ))
+    return mesh
+
+
 def facade_window_mesh(poly, height, tags, part_index):
-    """Create restrained, edge-aligned window glazing for an existing footprint.
-    This adds actual facade geometry to the existing massing; it never replaces footprints.
-    """
+    """Create edge-aligned facade glazing; use photo-derived arches for the historic Luneta Hotel."""
+    if str(tags.get("osm_feature_id") or "") == "way/136842220" and height >= 15:
+        return facade_historic_window_mesh(poly, height, part_index)
     if poly.area < 250 or height < 12:
         return None
     fid = str(tags.get("osm_feature_id") or "")
@@ -644,6 +723,7 @@ def main():
     facade_window_boxes = 0
     facade_accent_parts = 0
     facade_base_parts = 0
+    facade_historic_mesh_parts = 0
     used_ids = set()
     for i, item in enumerate(selected):
         poly, height = item["poly"], item["height"]
@@ -679,7 +759,10 @@ def main():
             glazing_node = f"{node}_glazing_{i}"
             scene.add_geometry(glazing, node_name=glazing_node, geom_name=glazing_node)
             facade_detail_parts += 1
-            facade_window_boxes += len(glazing.faces) // 12
+            if str(tags.get("osm_feature_id") or "") == "way/136842220":
+                facade_historic_mesh_parts += 1
+            else:
+                facade_window_boxes += len(glazing.faces) // 12
         accents = facade_accent_mesh(poly, height, tags, i)
         if accents is not None:
             accents.apply_translation([-cx, -cy, 0.0])
@@ -740,6 +823,7 @@ def main():
         "detail_matched_unique_osm_ids": len(detail_matched_ids),
         "facade_detail_parts": facade_detail_parts,
         "facade_window_boxes": facade_window_boxes,
+        "facade_historic_photo_mesh_parts": facade_historic_mesh_parts,
         "facade_accent_parts": facade_accent_parts,
         "facade_base_parts": facade_base_parts,
         "facade_detail_method": "Procedural edge-aligned glazing plus photo-informed, building-specific spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, and Sunny Bay Suites. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
