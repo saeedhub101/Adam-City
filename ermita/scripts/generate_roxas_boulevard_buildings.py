@@ -91,6 +91,13 @@ def pbr_for(tags, index):
         known = ("1322 Golden Empire reflective gold glass", [0.52, 0.42, 0.25, 1], 0.24, 0.22)
     elif osm_id in eton_ids:
         known = ("Eton Baypark light facade", [0.78, 0.76, 0.70, 1], 0.04, 0.62)
+    if osm_id == "way/575422164":
+        # Official Eton Properties imagery shows a red-and-grey 29-storey tower,
+        # not a uniform cream block.
+        known = ("Eton Baypark red grey tower facade", [0.69, 0.67, 0.64, 1], 0.04, 0.58)
+    if osm_id == "way/136842220":
+        # The verified Luneta Hotel photo shows a pale yellow historic facade and dark ironwork.
+        known = ("Luneta Hotel pale historic facade", [0.78, 0.72, 0.54, 1], 0.01, 0.82)
     if "1322 golden empire" in identity or "golden empire tower" in identity:
         known = ("Golden Empire reflective gold glass", [0.52, 0.42, 0.25, 1], 0.24, 0.22)
     elif "grand riviera suites" in identity:
@@ -282,6 +289,21 @@ def facade_accent_mesh(poly, height, tags, part_index):
         color = [215, 198, 164, 255]
         material_name = "Grand_Riviera_pale_projecting_floor_bands"
         metallic, roughness = 0.03, 0.54
+    elif fid == "way/575422164" and height >= 70:
+        # Eton Properties' official project image shows a 29-floor red/grey tower
+        # with strong repeated horizontal slab lines.
+        floors = 29
+        offset, thickness = 0.12, 0.13
+        color = [194, 190, 183, 255]
+        material_name = "Eton_Baypark_grey_floor_spandrels"
+        metallic, roughness = 0.03, 0.58
+    elif fid == "way/136842220" and height >= 15:
+        # Luneta Hotel photo: pale yellow walls with projecting historic cornices.
+        floors = 6
+        offset, thickness = 0.16, 0.16
+        color = [229, 216, 174, 255]
+        material_name = "Luneta_Hotel_pale_cornice_bands"
+        metallic, roughness = 0.01, 0.82
     elif fid in sunny_bay_ids and height >= 20:
         floors = 13
         offset, thickness = 0.24, 0.16
@@ -400,6 +422,46 @@ def facade_upper_band_mesh(poly, height, tags):
     mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
         name="Pearl_of_the_Orient_pale_upper_spandrels",
         baseColorFactor=[193, 203, 207, 255], metallicFactor=0.08, roughnessFactor=0.42,
+        alphaMode="OPAQUE"
+    ))
+    return mesh
+
+
+def facade_vertical_fin_mesh(poly, height, tags):
+    """Photo-informed vertical terracotta fins on Eton Baypark's tower."""
+    fid = str(tags.get("osm_feature_id") or "")
+    if fid != "way/575422164" or height < 70:
+        return None
+    vertices, faces = [], []
+    for a, b in zip(list(poly.exterior.coords)[:-1], list(poly.exterior.coords)[1:]):
+        dx, dy = b[0]-a[0], b[1]-a[1]
+        length = math.hypot(dx, dy)
+        if length < 9:
+            continue
+        tx, ty = dx/length, dy/length
+        if poly.exterior.is_ccw:
+            nx, ny = ty, -tx
+        else:
+            nx, ny = -ty, tx
+        # Three narrow vertical red panels per long facade edge, matching the official
+        # tower photograph's red vertical strips between grey window bays.
+        for fraction in (0.18, 0.42, 0.66, 0.90):
+            cx, cy = a[0]+dx*fraction, a[1]+dy*fraction
+            half = min(0.23, length*0.025)
+            base = len(vertices)
+            vertices.extend([
+                [cx-tx*half+nx*0.105, cy-ty*half+ny*0.105, 0.25],
+                [cx+tx*half+nx*0.105, cy+ty*half+ny*0.105, 0.25],
+                [cx+tx*half+nx*0.105, cy+ty*half+ny*0.105, height-0.25],
+                [cx-tx*half+nx*0.105, cy-ty*half+ny*0.105, height-0.25],
+            ])
+            faces.extend([[base, base+1, base+2], [base, base+2, base+3]])
+    if not faces:
+        return None
+    mesh = trimesh.Trimesh(vertices=np.asarray(vertices), faces=np.asarray(faces), process=False)
+    mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
+        name="Eton_Baypark_terracotta_vertical_fins",
+        baseColorFactor=[157, 76, 67, 255], metallicFactor=0.02, roughnessFactor=0.7,
         alphaMode="OPAQUE"
     ))
     return mesh
@@ -634,6 +696,7 @@ def main():
         for special_mesh, special_name in (
             (facade_podium_mesh(poly, height, tags), "photo_podium"),
             (facade_upper_band_mesh(poly, height, tags), "photo_upper_bands"),
+            (facade_vertical_fin_mesh(poly, height, tags), "photo_vertical_fins"),
         ):
             if special_mesh is not None:
                 special_mesh.apply_translation([-cx, -cy, 0.0])
@@ -683,7 +746,9 @@ def main():
         "visual_reference_checks": [
             {"building": "Pearl of the Orient Tower", "url": "https://www.tectonium.com/pearl-of-the-orient-tower/", "observed": "blue-grey upper tower, repetitive pale horizontal bands, distinct pink horizontal podium"},
             {"building": "1322 Golden Empire Tower", "url": "https://gfparchitects.com/project/1322-golden-empire-tower/", "observed": "warm gold reflective glazing and strong repeated horizontal floor divisions"},
-            {"building": "Grand Riviera Suites", "url": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/428049742.jpg", "observed": "blue glazing, pale projecting floor slabs, pink/red framing concentrated on lower facade"}
+            {"building": "Grand Riviera Suites", "url": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/428049742.jpg", "observed": "blue glazing, pale projecting floor slabs, pink/red framing concentrated on lower facade"},
+            {"building": "Eton Baypark Manila", "url": "https://eton.com.ph/wp-content/uploads/2020/02/EBM1-1200x675.jpg", "observed": "29-storey red-and-grey tower with vertical terracotta strips and repeated floor divisions"},
+            {"building": "Luneta Hotel", "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Ph-mm-manila-ermita-kalaw_ave.-luneta_hotel_%282014%29.JPG", "observed": "pale yellow historic facade, arched openings and dark wrought-iron balconies"}
         ],
         "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
         "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
