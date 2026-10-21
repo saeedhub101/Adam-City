@@ -8,6 +8,7 @@ import csv, json, math, re, hashlib
 from pathlib import Path
 
 import trimesh
+from PIL import Image, ImageDraw, ImageFont
 from pyproj import Transformer
 from shapely.geometry import shape
 from shapely.ops import transform as geom_transform
@@ -95,6 +96,19 @@ def main():
     door_meshes = []
     sign_meshes = []
     signage = []
+    # Real readable OSM-derived storefront names: a shared atlas avoids blank gold panels.
+    sign_tile_w, sign_tile_h, sign_cols = 128, 64, 32
+    sign_rows = max(1, math.ceil(len(prepared) / sign_cols))
+    sign_atlas = Image.new('RGBA', (sign_cols * sign_tile_w, sign_rows * sign_tile_h), (24, 31, 36, 255))
+    sign_draw = ImageDraw.Draw(sign_atlas)
+    try:
+        sign_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 13)
+        sign_small_font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 9)
+    except OSError:
+        sign_font = ImageFont.load_default()
+        sign_small_font = ImageFont.load_default()
+    sign_quad_vertices, sign_quad_faces, sign_quad_uv = [], [], []
+    sign_slot = 0
     windows_count = doors_count = panels_count = 0
 
     for poly, height, tags, feature in prepared:
@@ -186,9 +200,43 @@ def main():
                     door_meshes.append(box_at((cx,cy,0.95-center[2]),(0.95,0.12,1.9),angle,[83,65,48,255]))
                     doors_count += 1
                 if name:
-                    sx = a[0] + ux*along + nx*0.10 - center[0]
-                    sy = a[1] + uy*along + ny*0.10 - center[1]
-                    sign_meshes.append(box_at((sx,sy,2.25-center[2]),(min(3.2,max(1.4,len(str(name))*0.12)),0.14,0.48),angle,[190,158,83,255]))
+                    # Mount an actual textured sign plane; text comes only from the mapped OSM name/brand.
+                    sx = a[0] + ux*along + nx*0.13 - center[0]
+                    sy = a[1] + uy*along + ny*0.13 - center[1]
+                    sign_width = min(3.2, max(1.4, len(str(name))*0.12))
+                    slot = sign_slot
+                    col, row = slot % sign_cols, slot // sign_cols
+                    px, py = col*sign_tile_w, row*sign_tile_h
+                    sign_draw.rectangle((px, py, px+sign_tile_w-1, py+sign_tile_h-1), fill=(28, 35, 40, 255))
+                    sign_draw.rectangle((px+2, py+2, px+sign_tile_w-3, py+sign_tile_h-3), outline=(206, 174, 104, 255), width=2)
+                    label = str(name).strip()
+                    if len(label) > 30:
+                        label = label[:28] + '…'
+                    # Fit the label horizontally rather than producing unreadable clipped fragments.
+                    font_size = 13
+                    while font_size > 7 and sign_draw.textbbox((0,0), label, font=sign_font)[2] > sign_tile_w-12:
+                        font_size -= 1
+                        try: font_use = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', font_size)
+                        except OSError: font_use = sign_small_font
+                    try: font_use = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', font_size)
+                    except OSError: font_use = sign_font
+                    bb = sign_draw.textbbox((0,0), label, font=font_use)
+                    sign_draw.text((px+(sign_tile_w-(bb[2]-bb[0]))/2, py+8), label, font=font_use, fill=(248, 245, 235, 255))
+                    sublabel = str(tags.get('brand') or tags.get('shop') or tags.get('amenity') or '')
+                    if sublabel and sublabel.lower() != label.lower():
+                        sign_draw.text((px+5, py+44), sublabel[:22], font=sign_small_font, fill=(223, 190, 120, 255))
+                    half = sign_width/2
+                    z0, z1 = 2.02-center[2], 2.50-center[2]
+                    base = len(sign_quad_vertices)
+                    sign_quad_vertices.extend([
+                        [sx-ux*half, sy-uy*half, z0], [sx+ux*half, sy+uy*half, z0],
+                        [sx+ux*half, sy+uy*half, z1], [sx-ux*half, sy-uy*half, z1]
+                    ])
+                    sign_quad_faces.extend([[base,base+1,base+2],[base,base+2,base+3]])
+                    u0, u1 = px/(sign_cols*sign_tile_w), (px+sign_tile_w)/(sign_cols*sign_tile_w)
+                    v0, v1 = py/(sign_rows*sign_tile_h), (py+sign_tile_h)/(sign_rows*sign_tile_h)
+                    sign_quad_uv.extend([[u0,1-v1],[u1,1-v1],[u1,1-v0],[u0,1-v0]])
+                    sign_slot += 1
                     panels_count += 1
         signage.append({
             "osm_feature_id": fid, "mapped_name_or_use": name,
@@ -233,12 +281,18 @@ def main():
             material=pbr_material([83, 65, 48, 255], metallic=0.0, roughness=0.78)
         )
         scene.add_geometry(doors, geom_name="doors", node_name="doors")
-    if sign_meshes:
-        signs = trimesh.util.concatenate(sign_meshes)
-        signs.visual = trimesh.visual.TextureVisuals(
-            material=pbr_material([190, 158, 83, 255], metallic=0.05, roughness=0.52)
+    if sign_quad_vertices:
+        signs = trimesh.Trimesh(vertices=sign_quad_vertices, faces=sign_quad_faces, process=False)
+        sign_material = trimesh.visual.material.PBRMaterial(
+            name="OSM mapped building names and storefront signage",
+            baseColorFactor=[255,255,255,255],
+            baseColorTexture=sign_atlas,
+            metallicFactor=0.02,
+            roughnessFactor=0.62,
+            doubleSided=True,
         )
-        scene.add_geometry(signs, geom_name="signboards", node_name="signboards")
+        signs.visual = trimesh.visual.TextureVisuals(uv=sign_quad_uv, material=sign_material)
+        scene.add_geometry(signs, geom_name="textured_signage", node_name="textured_signage")
     scene.export(OUT_GLB)
     # Store the origin in the same run and from the exact polygons used by this GLB.
     # Never recompute it later from all footprint records, which can be a different set.
@@ -266,12 +320,12 @@ def main():
         "building_polygon_parts": len(prepared), "glb_bytes": OUT_GLB.stat().st_size,
         "model_center_epsg3857_m": {"x": center[0], "y": center[1], "z": center[2]},
         "facade_skin_segments": len(wall_meshes), "roof_surfaces": len(roof_meshes), "window_panels": windows_count, "window_frames": len(frame_meshes), "window_sills": len(sill_meshes), "balcony_parts": len(balcony_meshes),
-        "door_placeholders": doors_count, "named_signboard_placeholders": panels_count,
+        "door_placeholders": doors_count, "textured_osm_signboards": panels_count,
         "placement": "EPSG:3857 meters; recentered using the same building extent as the extrusion model",
         "limitations": [
             "Facade skins and roof surfaces use tag-based color variants, but are approximations rather than photo-matched finishes. Windows, frames, sills, balconies, doors and signboards remain procedural details, not surveyed architectural features.",
             "Floor counts are estimated if OSM building:levels is absent.",
-            "Signboard names are drawn from available OSM name/brand/shop/amenity tags; actual typography, logos, colors and wording are not reconstructed.",
+            "Signboard text is rendered from available OSM name/brand/shop/amenity tags into a shared texture atlas; brand logos and exact photographed sign designs are not reconstructed.",
             "No facade photographs, photogrammetry, or street-level imagery are included."
         ]
     }
