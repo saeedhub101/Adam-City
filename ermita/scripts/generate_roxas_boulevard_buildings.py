@@ -57,6 +57,12 @@ def height_of(tags):
         return 230.0
     if fid == "way/90308376":  # 1322 Golden Empire Tower; source height conflicts with 55 levels
         return 203.0
+    if fid == "way/87754850":  # Bayview Park Hotel: verified 14-floor hotel
+        return 46.0
+    if fid == "way/314226123":  # National Library: six-storey building, 34 m
+        return 34.0
+    if fid == "way/314226156":  # National Planetarium: 16 m dome
+        return 16.0
     h = positive_number(tags.get("height"), 2, 500)
     levels = positive_number(tags.get("building:levels") or tags.get("levels"), 1, 150)
     # Reject obviously incompatible height/level pairs instead of creating a tower only 38 m tall.
@@ -98,6 +104,13 @@ def pbr_for(tags, index):
     if osm_id == "way/136842220":
         # The verified Luneta Hotel photo shows a pale yellow historic facade and dark ironwork.
         known = ("Luneta Hotel pale historic facade", [0.78, 0.72, 0.54, 1], 0.01, 0.82)
+    if osm_id == "way/87754850":
+        # Hotel photo references show the characteristic orange cladding and dark window grid.
+        known = ("Bayview Park Hotel orange facade", [0.76, 0.31, 0.14, 1], 0.01, 0.76)
+    if osm_id == "way/314226123":
+        known = ("National Library pale concrete and tinted glazing", [0.80, 0.81, 0.78, 1], 0.02, 0.78)
+    if osm_id == "way/314226156":
+        known = ("National Planetarium white dome concrete", [0.83, 0.83, 0.79, 1], 0.01, 0.84)
     if "1322 golden empire" in identity or "golden empire tower" in identity:
         known = ("Golden Empire reflective gold glass", [0.52, 0.42, 0.25, 1], 0.24, 0.22)
     elif "grand riviera suites" in identity:
@@ -252,6 +265,7 @@ def facade_window_mesh(poly, height, tags, part_index):
         "way/575422162": 57,
         "way/90308376": 55, "way/822386807": 55, "way/822386809": 54, "way/822386811": 56,
         "way/575422164": 29, "way/89760235": 8, "way/822386824": 11,
+        "way/87754850": 14, "way/314226123": 6,
     }
     levels = positive_number(tags.get("building:levels") or tags.get("levels"), 1, 150)
     floors = landmark_floors.get(fid, int(round(levels)) if levels else max(2, int(round(height / 3.2))))
@@ -383,6 +397,20 @@ def facade_accent_mesh(poly, height, tags, part_index):
         color = [229, 216, 174, 255]
         material_name = "Luneta_Hotel_pale_cornice_bands"
         metallic, roughness = 0.01, 0.82
+    elif fid == "way/87754850" and height >= 35:
+        # Bayview Park Hotel: orange Art Moderne facade with dark horizontal floor divisions.
+        floors = 14
+        offset, thickness = 0.11, 0.075
+        color = [101, 72, 57, 255]
+        material_name = "Bayview_Park_Hotel_dark_floor_reveals"
+        metallic, roughness = 0.01, 0.78
+    elif fid == "way/314226123" and height >= 25:
+        # National Library: broad pale horizontal concrete bands between tall window bays.
+        floors = 6
+        offset, thickness = 0.13, 0.18
+        color = [216, 218, 213, 255]
+        material_name = "National_Library_pale_concrete_spandrels"
+        metallic, roughness = 0.01, 0.80
     elif fid in sunny_bay_ids and height >= 20:
         floors = 13
         offset, thickness = 0.24, 0.16
@@ -507,9 +535,20 @@ def facade_upper_band_mesh(poly, height, tags):
 
 
 def facade_vertical_fin_mesh(poly, height, tags):
-    """Photo-informed vertical terracotta fins on Eton Baypark's tower."""
+    """Photo-informed vertical fins for Eton Baypark and the National Library."""
     fid = str(tags.get("osm_feature_id") or "")
-    if fid != "way/575422164" or height < 70:
+    if fid == "way/575422164" and height >= 70:
+        fractions = (0.18, 0.42, 0.66, 0.90)
+        half_width, offset = 0.23, 0.105
+        color = [157, 76, 67, 255]
+        name, roughness = "Eton_Baypark_terracotta_vertical_fins", 0.70
+    elif fid == "way/314226123" and height >= 25:
+        # The reference facade has strong white concrete fins dividing large tinted bays.
+        fractions = (0.10, 0.30, 0.50, 0.70, 0.90)
+        half_width, offset = 0.16, 0.10
+        color = [226, 228, 223, 255]
+        name, roughness = "National_Library_white_concrete_vertical_fins", 0.78
+    else:
         return None
     vertices, faces = [], []
     for a, b in zip(list(poly.exterior.coords)[:-1], list(poly.exterior.coords)[1:]):
@@ -522,37 +561,76 @@ def facade_vertical_fin_mesh(poly, height, tags):
             nx, ny = ty, -tx
         else:
             nx, ny = -ty, tx
-        # Three narrow vertical red panels per long facade edge, matching the official
-        # tower photograph's red vertical strips between grey window bays.
-        for fraction in (0.18, 0.42, 0.66, 0.90):
+        for fraction in fractions:
             cx, cy = a[0]+dx*fraction, a[1]+dy*fraction
-            half = min(0.23, length*0.025)
+            half = min(half_width, length*0.025)
             base = len(vertices)
             vertices.extend([
-                [cx-tx*half+nx*0.105, cy-ty*half+ny*0.105, 0.25],
-                [cx+tx*half+nx*0.105, cy+ty*half+ny*0.105, 0.25],
-                [cx+tx*half+nx*0.105, cy+ty*half+ny*0.105, height-0.25],
-                [cx-tx*half+nx*0.105, cy-ty*half+ny*0.105, height-0.25],
+                [cx-tx*half+nx*offset, cy-ty*half+ny*offset, 0.25],
+                [cx+tx*half+nx*offset, cy+ty*half+ny*offset, 0.25],
+                [cx+tx*half+nx*offset, cy+ty*half+ny*offset, height-0.25],
+                [cx-tx*half+nx*offset, cy-ty*half+ny*offset, height-0.25],
             ])
             faces.extend([[base, base+1, base+2], [base, base+2, base+3]])
     if not faces:
         return None
     mesh = trimesh.Trimesh(vertices=np.asarray(vertices), faces=np.asarray(faces), process=False)
     mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
-        name="Eton_Baypark_terracotta_vertical_fins",
-        baseColorFactor=[157, 76, 67, 255], metallicFactor=0.02, roughnessFactor=0.7,
-        alphaMode="OPAQUE"
+        name=name, baseColorFactor=color, metallicFactor=0.02, roughnessFactor=roughness,
+        alphaMode="OPAQUE", doubleSided=True
+    ))
+    return mesh
+
+
+def facade_planetarium_dome_mesh(poly, total_height, tags):
+    """Create the documented 16 m National Planetarium hemisphere, not a rectangular block."""
+    if str(tags.get("osm_feature_id") or "") != "way/314226156" or total_height < 14:
+        return None
+    radius = 8.0
+    base_z = total_height - radius
+    cx, cy = poly.centroid.x, poly.centroid.y
+    segments, rings = 48, 12
+    vertices, faces = [], []
+    for ring in range(rings):
+        phi = (math.pi/2) * (ring/rings)
+        rr = radius*math.cos(phi)
+        z = base_z + radius*math.sin(phi)
+        for seg in range(segments):
+            angle = 2*math.pi*seg/segments
+            vertices.append([cx+rr*math.cos(angle), cy+rr*math.sin(angle), z])
+    top_index = len(vertices)
+    vertices.append([cx, cy, base_z+radius])
+    for ring in range(rings-1):
+        start, nxt = ring*segments, (ring+1)*segments
+        for seg in range(segments):
+            a, b = start+seg, start+(seg+1)%segments
+            c, d = nxt+(seg+1)%segments, nxt+seg
+            faces.extend([[a,b,c],[a,c,d]])
+    last = (rings-1)*segments
+    for seg in range(segments):
+        faces.append([last+seg,last+(seg+1)%segments,top_index])
+    mesh = trimesh.Trimesh(vertices=np.asarray(vertices), faces=np.asarray(faces), process=False)
+    mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
+        name="National_Planetarium_white_dome",
+        baseColorFactor=[226, 227, 222, 255], metallicFactor=0.01, roughnessFactor=0.82,
+        alphaMode="OPAQUE", doubleSided=True
     ))
     return mesh
 
 
 def facade_base_mesh(poly, height, tags, part_index):
-    """Add Sunny Bay Suites' dark-tiled entrance base to its west-facing frontage."""
-    if str(tags.get("osm_feature_id") or "") != "way/267171200" or height < 20:
+    """Add photo-derived street-level podium finishes on Sunny Bay and Bayview Park Hotel."""
+    fid = str(tags.get("osm_feature_id") or "")
+    if fid == "way/267171200" and height >= 20:
+        base_height = min(3.2, height * 0.12)
+        base_color, material_name = [44, 47, 49, 255], "Sunny_Bay_Suites_charcoal_tile_entrance"
+    elif fid == "way/87754850" and height >= 35:
+        base_height = min(5.5, height * 0.14)
+        base_color, material_name = [139, 132, 121, 255], "Bayview_Park_Hotel_stone_glass_podium"
+    else:
         return None
     vertices, faces = [], []
     minx = poly.bounds[0]
-    base_height = min(3.2, height * 0.12)
     for a, b in zip(list(poly.exterior.coords)[:-1], list(poly.exterior.coords)[1:]):
         dx, dy = b[0]-a[0], b[1]-a[1]
         length = math.hypot(dx, dy)
@@ -580,9 +658,8 @@ def facade_base_mesh(poly, height, tags, part_index):
         return None
     mesh = trimesh.Trimesh(vertices=np.asarray(vertices), faces=np.asarray(faces), process=False)
     mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
-        name="Sunny_Bay_Suites_charcoal_tile_entrance",
-        baseColorFactor=[44, 47, 49, 255], metallicFactor=0.02, roughnessFactor=0.78,
-        alphaMode="OPAQUE"
+        name=material_name, baseColorFactor=base_color, metallicFactor=0.02, roughnessFactor=0.78,
+        alphaMode="OPAQUE", doubleSided=True
     ))
     return mesh
 
@@ -724,6 +801,8 @@ def main():
     facade_accent_parts = 0
     facade_base_parts = 0
     facade_historic_mesh_parts = 0
+    facade_planetarium_dome_parts = 0
+    facade_special_mass_overrides = 0
     used_ids = set()
     for i, item in enumerate(selected):
         poly, height = item["poly"], item["height"]
@@ -733,9 +812,15 @@ def main():
         # feature ID, so unrelated buildings do not all inherit one facade colour.
         centroid = poly.centroid
         tags["_facade_style_key"] = f"{centroid.x:.1f}:{centroid.y:.1f}:{poly.area:.1f}"
+        # The National Planetarium is a low hall with a 16 m dome; model its hall at
+        # 8 m and the separately modeled hemisphere from 8 m to the verified 16 m top.
+        fid = str(tags.get("osm_feature_id") or "")
+        mass_height = 8.0 if fid == "way/314226156" else height
+        if fid == "way/314226156":
+            facade_special_mass_overrides += 1
         # GLB local frame is centered on the corridor origin. Vertical base is local 0.
         local = trimesh.creation.extrude_polygon(
-            geom_transform(lambda x, y, z=None: (x-cx, y-cy), poly), height, engine="earcut"
+            geom_transform(lambda x, y, z=None: (x-cx, y-cy), poly), mass_height, engine="earcut"
         )
         label, rgba, metal, rough = pbr_for(tags, i)
         material = trimesh.visual.material.PBRMaterial(
@@ -752,7 +837,7 @@ def main():
         scene.add_geometry(local, node_name=f"{node}_mass_{i}", geom_name=f"{node}_mass_{i}")
         # Add visible, edge-aligned glazing to the existing building massing.
         # Geometry remains derived from the selected OSM footprint and height.
-        glazing = facade_window_mesh(poly, height, tags, i)
+        glazing = facade_window_mesh(poly, mass_height, tags, i)
         if glazing is not None:
             # Match the exact same centered local coordinate frame as the extruded mass.
             glazing.apply_translation([-cx, -cy, 0.0])
@@ -763,13 +848,13 @@ def main():
                 facade_historic_mesh_parts += 1
             else:
                 facade_window_boxes += len(glazing.faces) // 12
-        accents = facade_accent_mesh(poly, height, tags, i)
+        accents = facade_accent_mesh(poly, mass_height, tags, i)
         if accents is not None:
             accents.apply_translation([-cx, -cy, 0.0])
             accent_node = f"{node}_facade_accents_{i}"
             scene.add_geometry(accents, node_name=accent_node, geom_name=accent_node)
             facade_accent_parts += 1
-        base_mesh = facade_base_mesh(poly, height, tags, i)
+        base_mesh = facade_base_mesh(poly, mass_height, tags, i)
         if base_mesh is not None:
             base_mesh.apply_translation([-cx, -cy, 0.0])
             base_node = f"{node}_facade_base_{i}"
@@ -779,13 +864,16 @@ def main():
         for special_mesh, special_name in (
             (facade_podium_mesh(poly, height, tags), "photo_podium"),
             (facade_upper_band_mesh(poly, height, tags), "photo_upper_bands"),
-            (facade_vertical_fin_mesh(poly, height, tags), "photo_vertical_fins"),
+            (facade_vertical_fin_mesh(poly, mass_height, tags), "photo_vertical_fins"),
+            (facade_planetarium_dome_mesh(poly, height, tags), "photo_planetarium_dome"),
         ):
             if special_mesh is not None:
                 special_mesh.apply_translation([-cx, -cy, 0.0])
                 special_node = f"{node}_{special_name}_{i}"
                 scene.add_geometry(special_mesh, node_name=special_node, geom_name=special_node)
                 facade_accent_parts += 1
+                if special_name == "photo_planetarium_dome":
+                    facade_planetarium_dome_parts += 1
         if item["id"]:
             used_ids.add(item["id"])
             entry = building_inventory.setdefault(item["id"], {
@@ -824,15 +912,20 @@ def main():
         "facade_detail_parts": facade_detail_parts,
         "facade_window_boxes": facade_window_boxes,
         "facade_historic_photo_mesh_parts": facade_historic_mesh_parts,
+        "facade_planetarium_dome_parts": facade_planetarium_dome_parts,
+        "facade_special_mass_overrides": facade_special_mass_overrides,
         "facade_accent_parts": facade_accent_parts,
         "facade_base_parts": facade_base_parts,
-        "facade_detail_method": "Procedural edge-aligned glazing for tall buildings; photo-informed spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, Eton Baypark, and Sunny Bay Suites; Luneta Hotel uses custom arched dark glazing and wrought-iron balcony rails. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
+        "facade_detail_method": "Procedural edge-aligned glazing for tall buildings; photo-informed spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, Eton Baypark, Sunny Bay Suites, and Bayview Park Hotel; National Library uses pale concrete bands and vertical fins; Luneta Hotel uses arched dark glazing and wrought-iron balcony rails; National Planetarium uses a separate 16 m hemispherical dome above its low hall. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
         "visual_reference_checks": [
             {"building": "Pearl of the Orient Tower", "url": "https://www.tectonium.com/pearl-of-the-orient-tower/", "observed": "blue-grey upper tower, repetitive pale horizontal bands, distinct pink horizontal podium"},
             {"building": "1322 Golden Empire Tower", "url": "https://gfparchitects.com/project/1322-golden-empire-tower/", "observed": "warm gold reflective glazing and strong repeated horizontal floor divisions"},
             {"building": "Grand Riviera Suites", "url": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/428049742.jpg", "observed": "blue glazing, pale projecting floor slabs, pink/red framing concentrated on lower facade"},
             {"building": "Eton Baypark Manila", "url": "https://eton.com.ph/wp-content/uploads/2020/02/EBM1-1200x675.jpg", "observed": "29-storey red-and-grey tower with vertical terracotta strips and repeated floor divisions"},
-            {"building": "Luneta Hotel", "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Ph-mm-manila-ermita-kalaw_ave.-luneta_hotel_%282014%29.JPG", "observed": "pale yellow historic facade, arched openings and dark wrought-iron balconies"}
+            {"building": "Luneta Hotel", "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Ph-mm-manila-ermita-kalaw_ave.-luneta_hotel_%282014%29.JPG", "observed": "pale yellow historic facade, arched openings and dark wrought-iron balconies"},
+            {"building": "Bayview Park Hotel Manila", "url": "https://images.trvl-media.com/hotels/1000000/530000/522400/522347/81dac4c5_z.jpg", "observed": "orange Art Moderne facade, repeated window grid, dark floor reveals and stone/glass street-level podium"},
+            {"building": "National Library of the Philippines", "url": "https://commons.wikimedia.org/wiki/File:National_Library_of_the_Philippines_in_February_2026_1.jpg", "observed": "six-storey pale concrete facade with large tinted glazing and strong vertical fins"},
+            {"building": "National Planetarium", "url": "https://commons.wikimedia.org/wiki/File:02609jfManila_Ermita_Planetarium_Rizal_Park_Padre_Burgos_Streets_Buildings_Landmarksfvf_18.jpg", "observed": "low rectangular hall with a prominent 16 m white hemispherical dome"}
         ],
         "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
         "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
