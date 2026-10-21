@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Generate a source-traceable signage overlay for the Roxas Boulevard GLB.
 
+Deployment smoke-tested with the current Pages workflow.
+
 Sign text is taken from the repository's OSM building and address/business records.
 This generator never invents business names or house numbers. Unknown signage is
 reported as missing instead of being mislabeled as photo-verified.
