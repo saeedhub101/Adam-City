@@ -1,6 +1,0 @@
-height_method,value
-OSM height tag,Use numeric height=* where plausible
-OSM levels tag,building:levels or levels multiplied by 3.2 m
-Fallback,9.6 m (3-storey estimate; unverified)
-coordinates,"EPSG:3857 meters, recentered for GLB"
-limitation,Extruded building volumes only; no textures or photogrammetry
