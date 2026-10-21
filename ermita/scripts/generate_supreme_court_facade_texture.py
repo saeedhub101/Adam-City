@@ -53,11 +53,12 @@ def main():
     left=(cx-ux*width/2,cy-uy*width/2)
     right=(cx+ux*width/2,cy+uy*width/2)
     z0,z1=0.65,0.65+height
-    # Coordinates are absolute EPSG:3857 projected metres; renderer applies the project's
-    # documented shared local-origin transform.
+    # GLB coordinates are projected-metre offsets from the exact shared origin in
+    # complete_data/OSM/Markets/commercial-facades-origin.json.
+    origin_x,origin_y=PROJECT(120.98204159999997,14.58501519429619)
     vertices=[
-      [left[0],left[1],z0],[right[0],right[1],z0],
-      [right[0],right[1],z1],[left[0],left[1],z1]
+      [left[0]-origin_x,left[1]-origin_y,z0],[right[0]-origin_x,right[1]-origin_y,z0],
+      [right[0]-origin_x,right[1]-origin_y,z1],[left[0]-origin_x,left[1]-origin_y,z1]
     ]
     faces=[[0,1,2],[0,2,3]]
     mesh=trimesh.Trimesh(vertices=vertices,faces=faces,process=False)
