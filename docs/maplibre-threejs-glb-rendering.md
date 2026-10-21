@@ -72,7 +72,7 @@ If a future GLB is authored in local **ground metres** rather than EPSG:3857 pro
 
 ## 4. Keep the model origin tied to the generated GLB
 
-The origin JSON is written by the same generation run as the GLB and uses the exact set of prepared building polygons. Do not estimate a new anchor from the map center or from a different footprint dataset. Avoid rounded or separately copied origin values where the origin JSON can be loaded directly.
+The origin JSON is written by the same generation run as the GLB and uses the exact set of prepared building polygons. The active `test.html` fetches this JSON and uses its longitude, latitude, and anchor altitude directly. Do not estimate a new anchor from the map center or from a different footprint dataset, and do not replace the fetched values with rounded hard-coded coordinates.
 
 For alignment QA, verify these items before regenerating the GLB:
 
