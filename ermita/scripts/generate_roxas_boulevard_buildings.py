@@ -86,7 +86,7 @@ def pbr_for(tags, index):
     elif osm_id in eton_ids:
         known = ("Eton Baypark light facade", [0.78, 0.76, 0.70, 1], 0.04, 0.62)
     if "1322 golden empire" in identity or "golden empire tower" in identity:
-        known = ("Golden Empire blue-grey curtain wall", [0.42, 0.52, 0.57, 1], 0.16, 0.30)
+        known = ("Golden Empire reflective gold glass", [0.52, 0.42, 0.25, 1], 0.24, 0.22)
     elif "grand riviera suites" in identity:
         known = ("Grand Riviera pale concrete and blue glazing", [0.76, 0.77, 0.73, 1], 0.05, 0.55)
     elif "eton baypark" in identity:
@@ -157,7 +157,7 @@ def facade_window_mesh(poly, height, tags, part_index):
         "way/575422164": 29, "way/89760235": 29,
     }
     levels = positive_number(tags.get("building:levels") or tags.get("levels"), 1, 150)
-    floors = landmark_floors.get(fid, int(round(levels)) if levels else max(2, int(round(height / 3.2)))
+    floors = landmark_floors.get(fid, int(round(levels)) if levels else max(2, int(round(height / 3.2))))
     # Render the full visible floor rhythm, not just the first 12 floors of a high-rise.
     floors = max(2, min(floors, 60))
     floor_h = height / floors
