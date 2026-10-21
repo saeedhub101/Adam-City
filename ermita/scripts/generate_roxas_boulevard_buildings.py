@@ -354,11 +354,16 @@ def main():
             # Include footprints within the 70 m corridor, but keep full footprint geometry.
             if not corridor.intersects(g):
                 continue
-            tags = tags_of(feature)
-            fid = str(tags.get("osm_feature_id") or feature.get("id") or "")
+            base_tags = tags_of(feature)
+            base_fid = str(base_tags.get("osm_feature_id") or feature.get("id") or "")
             for poly in polygon_parts(g):
                 if poly.is_empty or not poly.is_valid or poly.area < 8:
                     continue
+                # Reset identity and tags for EACH polygon component. A MultiPolygon may
+                # contain many disconnected buildings; never leak a match from one part
+                # into the next component of the same source feature.
+                tags = dict(base_tags)
+                fid = base_fid
                 # The source export can repeat the same footprint many times. Keep one
                 # copy per exact polygon geometry before making massing or facade details.
                 footprint_key = poly.wkb
