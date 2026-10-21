@@ -8665,11 +8665,13 @@
   "facade_detail_parts": 200,
   "facade_window_boxes": 77757,
   "facade_historic_photo_mesh_parts": 1,
+  "facade_textured_shell_parts": 6947,
+  "facade_texture_method": "Inspected Painted-CMU-Block albedo tiled at approximately 2.4 m per repeat on generic opaque facade shells; landmark glass and custom profiles are excluded.",
   "facade_planetarium_dome_parts": 1,
-  "facade_red_planet_canopy_parts": 0,
+  "facade_red_planet_canopy_parts": 1,
   "facade_special_mass_overrides": 1,
-  "facade_accent_parts": 30,
-  "facade_base_parts": 1,
+  "facade_accent_parts": 31,
+  "facade_base_parts": 3,
   "facade_detail_method": "Procedural edge-aligned glazing for tall buildings; photo-informed spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, Eton Baypark, Sunny Bay Suites, Bayview Park Hotel, and Red Planet Manila Bay; National Library uses pale concrete bands and vertical fins; Luneta Hotel uses arched dark glazing and wrought-iron balcony rails; National Planetarium uses a separate 16 m hemispherical dome above its low hall. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
   "visual_reference_checks": [
     {
