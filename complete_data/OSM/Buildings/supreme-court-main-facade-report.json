@@ -1,0 +1,14 @@
+{
+  "target": "Supreme Court Main Building",
+  "osm_feature_id": "way/156307566",
+  "method": "single photographic Plane Texture overlay on the existing OSM extrusion; no replacement geometry",
+  "glb": "complete_data/OSM/Buildings/supreme-court-main-facade.glb",
+  "texture": "complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg",
+  "source_photo": "https://commons.wikimedia.org/wiki/File:Supreme_Court_in_Manila.JPG",
+  "photographer": "Aerous",
+  "license": "CC BY-SA 3.0",
+  "photo_crop": "central portico, columns, entrance, frieze; cropped from the 4272x2848 source",
+  "panel_width_m": 15.0,
+  "panel_height_m": 9.63,
+  "limitations": "A first real-world visual test. It is a single-view photographic decal, so the photo will not wrap around corners; inspect alignment in the map before adjusting placement."
+}
