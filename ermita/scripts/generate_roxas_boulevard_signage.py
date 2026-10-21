@@ -174,7 +174,9 @@ def main():
         width=min(8.0,max(1.5,len(s["name"])*0.23+0.7),length*0.76)
         height=min(1.15,max(0.42,width*0.18))
         # OSM way winding is not a reliable facade-facing signal: make each panel outward on this edge.
-        off=0.11
+        # Keep the plaque clearly outside the building's facade/detail meshes; 0.11 m was
+        # buried behind the generated wall shells, so Three.js loaded the GLB but hid the signs.
+        off=0.85
         center_u=length*0.5
         px=a[0]+tx*center_u+nx*off; py=a[1]+ty*center_u+ny*off
         verts=[
