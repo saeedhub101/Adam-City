@@ -97,6 +97,8 @@ def pbr_for(tags, index):
         known = ("Grand Riviera pale concrete and blue glazing", [0.76, 0.77, 0.73, 1], 0.05, 0.55)
     elif "eton baypark" in identity:
         known = ("Eton Baypark light facade", [0.78, 0.76, 0.68, 1], 0.04, 0.62)
+    elif "sunny bay suites" in identity:
+        known = ("Sunny Bay Suites cream facade and charcoal glazing", [0.78, 0.72, 0.60, 1], 0.02, 0.72)
     elif "maritime plaza" in identity:
         known = ("Maritime Plaza light commercial facade", [0.72, 0.70, 0.63, 1], 0.03, 0.68)
     elif "swagman hotel" in identity or "tropical mansion" in identity:
@@ -246,13 +248,26 @@ def facade_window_mesh(poly, height, tags, part_index):
 
 
 def facade_accent_mesh(poly, height, tags, part_index):
-    """Add photo-informed horizontal pink facade bands to Pearl of the Orient Tower."""
+    """Add reference-informed facade bands to identifiable landmark buildings."""
     fid = str(tags.get("osm_feature_id") or "")
     pearl_ids = {"way/575422161", "way/822386813", "way/822386814", "way/822386816"}
-    if fid not in pearl_ids or height < 30:
+    sunny_bay_ids = {"way/267171200"}
+    if fid in pearl_ids and height >= 30:
+        levels_by_id = {"way/575422161": 42, "way/822386813": 40, "way/822386814": 40, "way/822386816": 42}
+        floors = levels_by_id[fid]
+        offset, thickness = 0.075, 0.11
+        color = [211, 130, 153, 255]
+        material_name = "Pearl_of_the_Orient_pink_spandrel_bands"
+        metallic, roughness = 0.02, 0.68
+    elif fid in sunny_bay_ids and height >= 20:
+        floors = 13
+        # Sunny Bay Suites has light cream balcony slabs over dark glazing.
+        offset, thickness = 0.24, 0.16
+        color = [224, 213, 190, 255]
+        material_name = "Sunny_Bay_Suites_cream_balcony_slabs"
+        metallic, roughness = 0.02, 0.72
+    else:
         return None
-    levels_by_id = {"way/575422161": 42, "way/822386813": 40, "way/822386814": 40, "way/822386816": 42}
-    floors = levels_by_id[fid]
     floor_h = height / floors
     vertices, faces = [], []
     exterior = list(poly.exterior.coords)
@@ -268,12 +283,11 @@ def facade_accent_mesh(poly, height, tags, part_index):
             nx, ny = -ty, tx
         for floor in range(1, floors):
             z = floor * floor_h
-            # Thin pink spandrel strip slightly proud of the wall surface.
             points = [
-                [a[0]+nx*0.075, a[1]+ny*0.075, z-0.055],
-                [b[0]+nx*0.075, b[1]+ny*0.075, z-0.055],
-                [b[0]+nx*0.075, b[1]+ny*0.075, z+0.055],
-                [a[0]+nx*0.075, a[1]+ny*0.075, z+0.055],
+                [a[0]+nx*offset, a[1]+ny*offset, z-thickness/2],
+                [b[0]+nx*offset, b[1]+ny*offset, z-thickness/2],
+                [b[0]+nx*offset, b[1]+ny*offset, z+thickness/2],
+                [a[0]+nx*offset, a[1]+ny*offset, z+thickness/2],
             ]
             base = len(vertices)
             vertices.extend(points)
@@ -282,12 +296,51 @@ def facade_accent_mesh(poly, height, tags, part_index):
         return None
     mesh = trimesh.Trimesh(vertices=np.asarray(vertices), faces=np.asarray(faces), process=False)
     mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
-        name="Pearl_of_the_Orient_pink_spandrel_bands",
-        baseColorFactor=[211, 130, 153, 255],
-        metallicFactor=0.02, roughnessFactor=0.68, alphaMode="OPAQUE"
+        name=material_name, baseColorFactor=color,
+        metallicFactor=metallic, roughnessFactor=roughness, alphaMode="OPAQUE"
     ))
     return mesh
 
+
+def facade_base_mesh(poly, height, tags, part_index):
+    """Add Sunny Bay Suites' dark-tiled entrance base to its west-facing frontage."""
+    if str(tags.get("osm_feature_id") or "") != "way/267171200" or height < 20:
+        return None
+    vertices, faces = [], []
+    minx = poly.bounds[0]
+    base_height = min(3.2, height * 0.12)
+    for a, b in zip(list(poly.exterior.coords)[:-1], list(poly.exterior.coords)[1:]):
+        dx, dy = b[0]-a[0], b[1]-a[1]
+        length = math.hypot(dx, dy)
+        if length < 3:
+            continue
+        tx, ty = dx/length, dy/length
+        if poly.exterior.is_ccw:
+            nx, ny = ty, -tx
+        else:
+            nx, ny = -ty, tx
+        midpoint_x = (a[0] + b[0]) / 2
+        # The building faces Roxas Boulevard/Manila Bay to the west (negative X normal).
+        if nx > -0.5 or midpoint_x > minx + 1.5:
+            continue
+        points = [
+            [a[0]+nx*0.10, a[1]+ny*0.10, 0.08],
+            [b[0]+nx*0.10, b[1]+ny*0.10, 0.08],
+            [b[0]+nx*0.10, b[1]+ny*0.10, base_height],
+            [a[0]+nx*0.10, a[1]+ny*0.10, base_height],
+        ]
+        base = len(vertices)
+        vertices.extend(points)
+        faces.extend([[base, base+1, base+2], [base, base+2, base+3]])
+    if not faces:
+        return None
+    mesh = trimesh.Trimesh(vertices=np.asarray(vertices), faces=np.asarray(faces), process=False)
+    mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
+        name="Sunny_Bay_Suites_charcoal_tile_entrance",
+        baseColorFactor=[44, 47, 49, 255], metallicFactor=0.02, roughnessFactor=0.78,
+        alphaMode="OPAQUE"
+    ))
+    return mesh
 
 def main():
     for p in (BUILDINGS, DETAILS, ROADS):
@@ -425,6 +478,7 @@ def main():
     facade_detail_parts = 0
     facade_window_boxes = 0
     facade_accent_parts = 0
+    facade_base_parts = 0
     used_ids = set()
     for i, item in enumerate(selected):
         poly, height = item["poly"], item["height"]
@@ -467,6 +521,12 @@ def main():
             accent_node = f"{node}_facade_accents_{i}"
             scene.add_geometry(accents, node_name=accent_node, geom_name=accent_node)
             facade_accent_parts += 1
+        base_mesh = facade_base_mesh(poly, height, tags, i)
+        if base_mesh is not None:
+            base_mesh.apply_translation([-cx, -cy, 0.0])
+            base_node = f"{node}_facade_base_{i}"
+            scene.add_geometry(base_mesh, node_name=base_node, geom_name=base_node)
+            facade_base_parts += 1
         if item["id"]:
             used_ids.add(item["id"])
             entry = building_inventory.setdefault(item["id"], {
@@ -505,6 +565,7 @@ def main():
         "facade_detail_parts": facade_detail_parts,
         "facade_window_boxes": facade_window_boxes,
         "facade_accent_parts": facade_accent_parts,
+        "facade_base_parts": facade_base_parts,
         "facade_detail_method": "Procedural edge-aligned glazing boxes generated across the full tagged floor count (up to 60 floors); named landmark palettes override contradictory generic source material tags. This remains a geometry-derived approximation pending per-building photographic validation.",
         "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
         "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
