@@ -80,7 +80,7 @@ jobs:
         run: |
           set -euo pipefail
           test -s ermita-malate-3d.html
-          python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh mapbox-earcut pillow cairosvg
+          python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh mapbox-earcut pillow cairosvg scipy
           # Regenerate landmark facade geometry from the checked-in source and current script.
           # The committed GLB/report can be stale after source-code edits, so build it here.
           python3 ermita/scripts/generate_landmark_facades.py
