@@ -34,18 +34,18 @@
   "selection_buffer_m": 70.0,
   "material_counts": {
     "sandstone": 2167,
-    "muted terracotta": 2250,
+    "muted terracotta": 2251,
     "glass blue grey": 2166,
-    "limestone warm": 2156,
+    "limestone warm": 2157,
     "painted ivory": 2157,
     "concrete grey": 2164,
-    "Eton Baypark light facade": 1,
-    "Golden Empire blue-grey curtain wall": 3,
-    "1322 Golden Empire blue-grey glass": 8,
+    "Eton Baypark light facade": 2,
+    "Golden Empire reflective gold glass": 3,
     "Victoria Building pale concrete": 1,
     "Grand Riviera pale concrete and blue glazing": 3,
     "Hotel warm painted facade": 2,
-    "Pearl of the Orient blue glass": 2
+    "Pearl of the Orient blue glass": 4,
+    "1322 Golden Empire reflective gold glass": 3
   },
   "building_inventory": {
     "way/308706322": {
@@ -112,7 +112,7 @@
       "material_tag": "wood",
       "colour_tag": "#d48741",
       "footprint_parts": 3,
-      "material_assigned": "Golden Empire blue-grey curtain wall"
+      "material_assigned": "Golden Empire reflective gold glass"
     },
     "way/822386824": {
       "name": "",
@@ -123,7 +123,7 @@
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "1322 Golden Empire blue-grey glass"
+      "material_assigned": "muted terracotta"
     },
     "way/90134167": {
       "name": "Victoria Building",
@@ -141,7 +141,7 @@
       "building": "residential",
       "levels_tag": "6",
       "height_tag_m": "52",
-      "height_used_m": 52.0,
+      "height_used_m": 230.0,
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 3,
@@ -152,7 +152,7 @@
       "building": "yes",
       "levels_tag": "4",
       "height_tag_m": "54",
-      "height_used_m": 54.0,
+      "height_used_m": 12.8,
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 2,
@@ -178,7 +178,7 @@
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "1322 Golden Empire blue-grey glass"
+      "material_assigned": "limestone warm"
     },
     "way/575422164": {
       "name": "",
@@ -189,7 +189,7 @@
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "Pearl of the Orient blue glass"
+      "material_assigned": "Eton Baypark light facade"
     },
     "way/822386813": {
       "name": "",
@@ -200,7 +200,7 @@
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "1322 Golden Empire blue-grey glass"
+      "material_assigned": "Pearl of the Orient blue glass"
     },
     "way/822386814": {
       "name": "",
@@ -211,7 +211,7 @@
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "1322 Golden Empire blue-grey glass"
+      "material_assigned": "Pearl of the Orient blue glass"
     },
     "way/822386816": {
       "name": "",
@@ -222,7 +222,7 @@
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "1322 Golden Empire blue-grey glass"
+      "material_assigned": "Pearl of the Orient blue glass"
     },
     "way/822386809": {
       "name": "",
@@ -233,7 +233,7 @@
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "1322 Golden Empire blue-grey glass"
+      "material_assigned": "1322 Golden Empire reflective gold glass"
     },
     "way/822386807": {
       "name": "",
@@ -244,7 +244,7 @@
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "1322 Golden Empire blue-grey glass"
+      "material_assigned": "1322 Golden Empire reflective gold glass"
     },
     "way/822386811": {
       "name": "",
@@ -255,7 +255,7 @@
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "1322 Golden Empire blue-grey glass"
+      "material_assigned": "1322 Golden Empire reflective gold glass"
     },
     "way/575422161": {
       "name": "",
@@ -270,7 +270,8 @@
     }
   },
   "facade_detail_parts": 198,
-  "facade_window_boxes": 72275,
+  "facade_window_boxes": 78477,
+  "facade_accent_parts": 4,
   "facade_detail_method": "Procedural edge-aligned glazing boxes generated across the full tagged floor count (up to 60 floors); named landmark palettes override contradictory generic source material tags. This remains a geometry-derived approximation pending per-building photographic validation.",
   "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
   "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
