@@ -49,9 +49,11 @@ def height_of(tags):
     # Correct known, demonstrably inconsistent OSM height tags for landmark towers.
     # These overrides are based on the named building / verified published building data.
     fid = str(tags.get("osm_feature_id") or "")
-    if fid == "way/575422161":  # Pearl of the Orient Tower: 42 floors, approx. 168 m
+    if fid in ("way/575422161", "way/822386816"):  # Pearl of the Orient Tower: approx. 168 m
         return 168.0
-    if fid == "way/90308376":  # 1322 Golden Empire Tower; source height 38.5 m conflicts with 55 levels
+    if fid == "way/575422162":  # Grand Riviera Suites: verified 57 floors, 230 m
+        return 230.0
+    if fid == "way/90308376":  # 1322 Golden Empire Tower; source height conflicts with 55 levels
         return 203.0
     h = positive_number(tags.get("height"), 2, 500)
     levels = positive_number(tags.get("building:levels") or tags.get("levels"), 1, 150)
@@ -74,10 +76,15 @@ def pbr_for(tags, index):
     # Photo-informed architectural palettes for identified buildings in the corridor.
     # These affect the facade finish; window geometry is added separately below.
     known = None
-    if osm_id in ("way/575422161", "way/575422163", "way/575422164"):
-        known = ("Pearl of the Orient blue glass", [0.34, 0.48, 0.58, 1], 0.16, 0.28)
-    elif osm_id == "way/90308376" or osm_id.startswith("way/82238680") or osm_id.startswith("way/82238681") or osm_id.startswith("way/82238682"):
-        known = ("1322 Golden Empire blue-grey glass", [0.42, 0.52, 0.57, 1], 0.16, 0.30)
+    pearl_ids = {"way/575422161", "way/822386813", "way/822386814", "way/822386816"}
+    golden_empire_ids = {"way/90308376", "way/822386807", "way/822386809", "way/822386811"}
+    eton_ids = {"way/575422164", "way/89760235"}
+    if osm_id in pearl_ids:
+        known = ("Pearl of the Orient blue glass", [0.28, 0.43, 0.56, 1], 0.16, 0.28)
+    elif osm_id in golden_empire_ids:
+        known = ("1322 Golden Empire reflective gold glass", [0.52, 0.42, 0.25, 1], 0.24, 0.22)
+    elif osm_id in eton_ids:
+        known = ("Eton Baypark light facade", [0.78, 0.76, 0.70, 1], 0.04, 0.62)
     if "1322 golden empire" in identity or "golden empire tower" in identity:
         known = ("Golden Empire blue-grey curtain wall", [0.42, 0.52, 0.57, 1], 0.16, 0.30)
     elif "grand riviera suites" in identity:
@@ -142,8 +149,15 @@ def facade_window_mesh(poly, height, tags, part_index):
     """
     if poly.area < 250 or height < 12:
         return None
+    fid = str(tags.get("osm_feature_id") or "")
+    landmark_floors = {
+        "way/575422161": 42, "way/822386813": 40, "way/822386814": 40, "way/822386816": 42,
+        "way/575422162": 57,
+        "way/90308376": 55, "way/822386807": 55, "way/822386809": 54, "way/822386811": 56,
+        "way/575422164": 29, "way/89760235": 29,
+    }
     levels = positive_number(tags.get("building:levels") or tags.get("levels"), 1, 150)
-    floors = int(round(levels)) if levels else max(2, int(round(height / 3.2)))
+    floors = landmark_floors.get(fid, int(round(levels)) if levels else max(2, int(round(height / 3.2)))
     # Render the full visible floor rhythm, not just the first 12 floors of a high-rise.
     floors = max(2, min(floors, 60))
     floor_h = height / floors
@@ -205,11 +219,63 @@ def facade_window_mesh(poly, height, tags, part_index):
     if not faces:
         return None
     mesh = trimesh.Trimesh(vertices=np.asarray(vertices), faces=np.asarray(faces), process=False)
-    glass = glass_colors[seed % len(glass_colors)]
+    fid = str(tags.get("osm_feature_id") or "")
+    if fid in {"way/90308376", "way/822386807", "way/822386809", "way/822386811"}:
+        glass = [0.43, 0.34, 0.19, 1.0]  # gold/green reflective curtain wall
+    elif fid in {"way/575422161", "way/822386813", "way/822386814", "way/822386816"}:
+        glass = [0.12, 0.25, 0.38, 1.0]  # blue glass
+    else:
+        glass = glass_colors[seed % len(glass_colors)]
     mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
-        name="photo_informed_glazing_variation",
+        name="landmark_tinted_glazing" if fid in {"way/90308376", "way/822386807", "way/822386809", "way/822386811", "way/575422161", "way/822386813", "way/822386814", "way/822386816"} else "photo_informed_glazing_variation",
         baseColorFactor=[int(255*c) for c in glass[:3]] + [255],
-        metallicFactor=0.18, roughnessFactor=0.24, alphaMode="OPAQUE"
+        metallicFactor=0.24 if fid in {"way/90308376", "way/822386807", "way/822386809", "way/822386811"} else 0.18,
+        roughnessFactor=0.22 if fid in {"way/90308376", "way/822386807", "way/822386809", "way/822386811"} else 0.24,
+        alphaMode="OPAQUE"
+    ))
+    return mesh
+
+
+def facade_accent_mesh(poly, height, tags, part_index):
+    """Add photo-informed horizontal pink facade bands to Pearl of the Orient Tower."""
+    fid = str(tags.get("osm_feature_id") or "")
+    pearl_ids = {"way/575422161", "way/822386813", "way/822386814", "way/822386816"}
+    if fid not in pearl_ids or height < 30:
+        return None
+    levels_by_id = {"way/575422161": 42, "way/822386813": 40, "way/822386814": 40, "way/822386816": 42}
+    floors = levels_by_id[fid]
+    floor_h = height / floors
+    vertices, faces = [], []
+    exterior = list(poly.exterior.coords)
+    for a, b in zip(exterior[:-1], exterior[1:]):
+        dx, dy = b[0]-a[0], b[1]-a[1]
+        length = math.hypot(dx, dy)
+        if length < 4:
+            continue
+        tx, ty = dx/length, dy/length
+        if poly.exterior.is_ccw:
+            nx, ny = ty, -tx
+        else:
+            nx, ny = -ty, tx
+        for floor in range(1, floors):
+            z = floor * floor_h
+            # Thin pink spandrel strip slightly proud of the wall surface.
+            points = [
+                [a[0]+nx*0.075, a[1]+ny*0.075, z-0.055],
+                [b[0]+nx*0.075, b[1]+ny*0.075, z-0.055],
+                [b[0]+nx*0.075, b[1]+ny*0.075, z+0.055],
+                [a[0]+nx*0.075, a[1]+ny*0.075, z+0.055],
+            ]
+            base = len(vertices)
+            vertices.extend(points)
+            faces.extend([[base, base+1, base+2], [base, base+2, base+3]])
+    if not faces:
+        return None
+    mesh = trimesh.Trimesh(vertices=np.asarray(vertices), faces=np.asarray(faces), process=False)
+    mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
+        name="Pearl_of_the_Orient_pink_spandrel_bands",
+        baseColorFactor=[211, 130, 153, 255],
+        metallicFactor=0.02, roughnessFactor=0.68, alphaMode="OPAQUE"
     ))
     return mesh
 
@@ -280,6 +346,7 @@ def main():
     building_inventory = {}
     facade_detail_parts = 0
     facade_window_boxes = 0
+    facade_accent_parts = 0
     used_ids = set()
     for i, item in enumerate(selected):
         poly, tags, height = item["poly"], item["tags"], item["height"]
@@ -310,6 +377,12 @@ def main():
             scene.add_geometry(glazing, node_name=glazing_node, geom_name=glazing_node)
             facade_detail_parts += 1
             facade_window_boxes += len(glazing.faces) // 12
+        accents = facade_accent_mesh(poly, height, tags, i)
+        if accents is not None:
+            accents.apply_translation([-cx, -cy, 0.0])
+            accent_node = f"{node}_facade_accents_{i}"
+            scene.add_geometry(accents, node_name=accent_node, geom_name=accent_node)
+            facade_accent_parts += 1
         if item["id"]:
             used_ids.add(item["id"])
             entry = building_inventory.setdefault(item["id"], {
@@ -343,6 +416,7 @@ def main():
         "building_inventory": building_inventory,
         "facade_detail_parts": facade_detail_parts,
         "facade_window_boxes": facade_window_boxes,
+        "facade_accent_parts": facade_accent_parts,
         "facade_detail_method": "Procedural edge-aligned glazing boxes generated across the full tagged floor count (up to 60 floors); named landmark palettes override contradictory generic source material tags. This remains a geometry-derived approximation pending per-building photographic validation.",
         "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
         "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
