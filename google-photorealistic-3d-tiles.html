@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101820">
+<title>ADAM CITY — Google Photorealistic 3D Tiles Test</title>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/cesiumjs/1.105/Build/Cesium/Widgets/widgets.css">
+<script src="https://ajax.googleapis.com/ajax/libs/cesiumjs/1.105/Build/Cesium/Cesium.js"></script>
+<style>
+*{box-sizing:border-box}html,body,#cesiumContainer{width:100%;height:100%;margin:0;overflow:hidden}body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#101820;color:#f3f6f8}#cesiumContainer{position:absolute;inset:0}.panel{position:absolute;z-index:10;top:12px;left:12px;width:min(340px,calc(100vw - 24px));padding:14px;border:1px solid #41505c;border-radius:12px;background:rgba(13,24,33,.94);box-shadow:0 8px 28px #0006}.title{font-size:16px;font-weight:750;margin-bottom:6px}.desc{font-size:12px;line-height:1.5;color:#c0cbd3;margin-bottom:12px}label{display:block;font-size:12px;color:#d6e0e7;margin:8px 0 5px}input{width:100%;padding:10px;border:1px solid #526371;border-radius:7px;background:#101820;color:#fff;font-size:14px}button{width:100%;margin-top:10px;padding:10px;border:0;border-radius:7px;background:#65d6c2;color:#08221e;font-size:14px;font-weight:750;cursor:pointer}button:disabled{opacity:.6;cursor:wait}#status{font-size:12px;line-height:1.45;color:#d4e3e8;margin-top:10px;overflow-wrap:anywhere}.small{font-size:11px;color:#aab9c3;margin-top:8px;line-height:1.45}.cesium-viewer-bottom{bottom:4px!important}@media(max-width:600px){.panel{top:8px;left:8px;padding:11px;width:min(310px,calc(100vw - 16px))}}
+</style>
+</head>
+<body>
+<div id="cesiumContainer"></div>
+<section class="panel" aria-label="Google 3D Tiles setup">
+  <div class="title">ADAM CITY · Google 3D Tiles</div>
+  <div class="desc">Isolated test viewer for Ermita, Manila. Enter your Google Maps Platform API key here; it is used only in this browser session and is not saved to the repository.</div>
+  <label for="apiKey">Google Maps Platform API key</label>
+  <input id="apiKey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste API key">
+  <button id="loadBtn">Load Photorealistic 3D Tiles</button>
+  <div id="status" role="status">Ready. This page does not contain an API key.</div>
+  <div class="small">Requires Map Tiles API and valid billing/quotas. Google attribution is enabled in the viewer. Restrict the key to your GitHub Pages website in Google Cloud Console.</div>
+</section>
+<script>
+(() => {
+  const status = document.getElementById('status');
+  const button = document.getElementById('loadBtn');
+  const keyInput = document.getElementById('apiKey');
+  let viewer = null;
+  let tileset = null;
+  function setStatus(message){ status.textContent = message; }
+  async function loadTiles(){
+    const key = keyInput.value.trim();
+    if(!key){ setStatus('Enter your API key to start. The key is not stored by this page.'); return; }
+    button.disabled = true;
+    setStatus('Initializing CesiumJS…');
+    try {
+      if(viewer){ viewer.destroy(); viewer = null; tileset = null; }
+      viewer = new Cesium.Viewer('cesiumContainer', {
+        animation:false, timeline:false, baseLayerPicker:false, geocoder:false,
+        homeButton:true, sceneModePicker:false, navigationHelpButton:true,
+        infoBox:false, selectionIndicator:false, imageryProvider:false,
+        baseLayer:false, terrainProvider:new Cesium.EllipsoidTerrainProvider(),
+        skyAtmosphere:false, requestRenderMode:false
+      });
+      viewer.scene.globe.show = false;
+      viewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#101820');
+      setStatus('Requesting Google Photorealistic 3D Tiles…');
+      tileset = await Cesium.Cesium3DTileset.fromUrl(
+        'https://tile.googleapis.com/v1/3dtiles/root.json?key=' + encodeURIComponent(key),
+        {showCreditsOnScreen:true}
+      );
+      viewer.scene.primitives.add(tileset);
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(120.9822,14.5833,1800),
+        orientation:{heading:Cesium.Math.toRadians(15),pitch:Cesium.Math.toRadians(-35),roll:0},
+        duration:2
+      });
+      tileset.initialTilesLoaded.addEventListener(() => setStatus('Tiles loaded. Explore Ermita, Manila. If the view is blank, check the API key, API restrictions, billing, and browser console.'));
+      setStatus('Tileset connected. Loading detailed city tiles…');
+    } catch(error) {
+      console.error(error);
+      setStatus('Could not load tiles: ' + (error && error.message ? error.message : String(error)) + '. Check that Map Tiles API is enabled, the key allows this website, and billing/quota are valid.');
+    } finally {
+      button.disabled = false;
+    }
+  }
+  button.addEventListener('click', loadTiles);
+  keyInput.addEventListener('keydown', event => { if(event.key === 'Enter') loadTiles(); });
+})();
+</script>
+</body>
+</html>
