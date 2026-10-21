@@ -8659,10 +8659,11 @@
   "detail_matched_named_parts": 174,
   "detail_matched_unique_osm_ids": 767,
   "facade_detail_parts": 198,
-  "facade_window_boxes": 76981,
+  "facade_window_boxes": 76825,
+  "facade_historic_photo_mesh_parts": 1,
   "facade_accent_parts": 26,
   "facade_base_parts": 1,
-  "facade_detail_method": "Procedural edge-aligned glazing plus photo-informed, building-specific spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, and Sunny Bay Suites. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
+  "facade_detail_method": "Procedural edge-aligned glazing for tall buildings; photo-informed spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, Eton Baypark, and Sunny Bay Suites; Luneta Hotel uses custom arched dark glazing and wrought-iron balcony rails. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
   "visual_reference_checks": [
     {
       "building": "Pearl of the Orient Tower",
