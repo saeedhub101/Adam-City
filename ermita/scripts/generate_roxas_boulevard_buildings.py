@@ -96,6 +96,83 @@ def pbr_for(tags, index):
         elif "green" in colour: base = [0.36,0.48,0.34,1]
     return label, base, metal, rough
 
+def facade_window_mesh(poly, height, tags, part_index):
+    """Create restrained, edge-aligned window glazing for an existing footprint.
+    This adds actual facade geometry to the existing massing; it never replaces footprints.
+    """
+    if poly.area < 80 or height < 5:
+        return None
+    levels = positive_number(tags.get("building:levels") or tags.get("levels"), 1, 150)
+    floors = int(round(levels)) if levels else max(2, int(round(height / 3.2)))
+    floors = max(2, min(floors, 18))
+    floor_h = height / floors
+    window_h = min(1.45, max(0.75, floor_h * 0.52))
+    # Use a deterministic but restrained glazing/frame variation by OSM identity.
+    seed = sum(ord(c) for c in str(tags.get("osm_feature_id") or tags.get("name") or part_index))
+    glass_colors = [
+        [0.10, 0.22, 0.29, 1.0], [0.16, 0.31, 0.39, 1.0],
+        [0.25, 0.35, 0.38, 1.0], [0.12, 0.25, 0.34, 1.0]
+    ]
+    vertices, faces = [], []
+    exterior = list(poly.exterior.coords)
+    # OSM footprints are in projected metres; walls rise vertically from local Z=0.
+    for edge_index, (a, b) in enumerate(zip(exterior[:-1], exterior[1:])):
+        dx, dy = b[0]-a[0], b[1]-a[1]
+        length = math.hypot(dx, dy)
+        if length < 5.0:
+            continue
+        tx, ty = dx/length, dy/length
+        # Exterior normal depends on ring winding.
+        if poly.exterior.is_ccw:
+            nx, ny = ty, -tx
+        else:
+            nx, ny = -ty, tx
+        count = max(1, min(8, int(length // 2.5)))
+        usable = min(1.25, (length / count) * 0.48)
+        if usable < 0.45:
+            continue
+        for floor in range(floors):
+            zc = floor * floor_h + floor_h * 0.53
+            if zc + window_h/2 >= height - 0.25:
+                continue
+            for j in range(count):
+                along = length * (j + 0.5) / count
+                # Small deterministic spacing variations prevent a perfectly repetitive toy look.
+                ww = usable * (0.90 if (j + floor + seed) % 5 == 0 else 1.0)
+                hh = window_h * (0.90 if (edge_index + floor + seed) % 7 == 0 else 1.0)
+                cx = a[0] + tx*along + nx*0.045
+                cy = a[1] + ty*along + ny*0.045
+                # Oriented shallow box, with its broad face parallel to the wall.
+                corners = []
+                for u, v, z in [
+                    (-ww/2,-0.025,zc-hh/2),(ww/2,-0.025,zc-hh/2),
+                    (ww/2,0.025,zc-hh/2),(-ww/2,0.025,zc-hh/2),
+                    (-ww/2,-0.025,zc+hh/2),(ww/2,-0.025,zc+hh/2),
+                    (ww/2,0.025,zc+hh/2),(-ww/2,0.025,zc+hh/2)
+                ]:
+                    corners.append([cx + tx*u + nx*v, cy + ty*u + ny*v, z])
+                base = len(vertices)
+                vertices.extend(corners)
+                faces.extend([
+                    [base+0,base+1,base+2],[base+0,base+2,base+3],
+                    [base+4,base+6,base+5],[base+4,base+7,base+6],
+                    [base+0,base+4,base+5],[base+0,base+5,base+1],
+                    [base+1,base+5,base+6],[base+1,base+6,base+2],
+                    [base+2,base+6,base+7],[base+2,base+7,base+3],
+                    [base+3,base+7,base+4],[base+3,base+4,base+0]
+                ])
+    if not faces:
+        return None
+    mesh = trimesh.Trimesh(vertices=np.asarray(vertices), faces=np.asarray(faces), process=False)
+    glass = glass_colors[seed % len(glass_colors)]
+    mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
+        name="photo_informed_glazing_variation",
+        baseColorFactor=[int(255*c) for c in glass[:3]] + [255],
+        metallicFactor=0.18, roughnessFactor=0.24, alphaMode="OPAQUE"
+    ))
+    return mesh
+
+
 def main():
     for p in (BUILDINGS, ROADS):
         if not p.is_file() or p.stat().st_size < 20:
@@ -169,7 +246,13 @@ def main():
         local.visual = trimesh.visual.TextureVisuals(material=material)
         # Stable descriptive node names aid inspection in Blender/3D viewers.
         node = (item["id"] or f"roxas-building-{i+1}").replace("/", "_")
-        scene.add_geometry(local, node_name=node, geom_name=node)
+        scene.add_geometry(local, node_name=f"{node}_mass_{i}", geom_name=f"{node}_mass_{i}")
+        # Add visible, edge-aligned glazing to the existing building massing.
+        # Geometry remains derived from the selected OSM footprint and height.
+        glazing = facade_window_mesh(poly, height, tags, i)
+        if glazing is not None:
+            glazing_node = f"{node}_glazing_{i}"
+            scene.add_geometry(glazing, node_name=glazing_node, geom_name=glazing_node)
         if item["id"]: used_ids.add(item["id"])
         material_stats[label] = material_stats.get(label, 0) + 1
     OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -190,8 +273,8 @@ def main():
         "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
         "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
         "height_method": "OSM height, then building:levels × 3.2 m, then 9.6 m fallback.",
-        "limitations": ["This is a PBR-ready geometry/material test asset, not photogrammetry or a surveyed facade reconstruction.",
-                       "Where OSM does not provide facade colour/material, conservative varied architectural neutral materials are placeholders and should be replaced with photo-verified values.",
+        "limitations": ["Existing OSM footprint extrusions are retained and augmented with edge-aligned glazing geometry and PBR glass materials; this is a procedural facade-detail pass, not a claim of per-building photogrammetric reconstruction.",
+                       "Exact building-specific paint colours, ornamental elements, signage and facade proportions still require photo verification for each identified building; OSM alone does not encode those details.",
                        "Vertical ground elevations are not baked into this GLB; anchor altitude is 0 m and existing terrain/building layers remain unchanged."],
         "source": "OpenStreetMap contributors, ODbL 1.0",
         "skipped_invalid_features": skipped,
