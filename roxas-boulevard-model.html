@@ -12,6 +12,10 @@
 .panel{position:fixed;z-index:2;left:16px;top:16px;width:min(350px,calc(100vw - 32px));padding:16px 17px;background:rgba(16,22,29,.88);border:1px solid rgba(255,255,255,.14);border-radius:14px;backdrop-filter:blur(12px);box-shadow:0 12px 40px #0005}
 h1{font-size:17px;line-height:1.25;margin:0 0 6px;font-weight:700}.sub{font-size:12px;color:#aeb9c5;line-height:1.5;margin-bottom:12px}
 .status{font-size:12px;line-height:1.5;color:#d9e4ee;overflow-wrap:anywhere}.status.error{color:#ffb0a8}
+.layers{display:grid;gap:9px;margin:12px 0;padding:10px 0;border-top:1px solid #ffffff20;border-bottom:1px solid #ffffff20}
+.layer{display:flex;align-items:center;gap:9px;font-size:13px;cursor:pointer;user-select:none}
+.layer input{width:17px;height:17px;accent-color:#67c5ff;cursor:pointer}
+.layer small{margin-left:auto;color:#9eabb8;font-size:11px}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 button{border:1px solid #526170;background:#273440;color:#fff;border-radius:8px;padding:8px 11px;font:inherit;font-size:12px;cursor:pointer}
 button:hover{background:#354756}
@@ -27,6 +31,10 @@ a{color:#9dd7ff}
 <h1>Roxas Boulevard — 3D Buildings</h1>
 <div class="sub">ADAM CITY · Standalone GLB viewer · Manila, Philippines</div>
 <div id="status" class="status" role="status" aria-live="polite">Preparing 3D scene…</div>
+<div class="layers" aria-label="3D layer visibility">
+<label class="layer"><input id="buildings-toggle" type="checkbox" checked><span>Buildings</span><small>GLB</small></label>
+<label class="layer"><input id="signage-toggle" type="checkbox" checked><span>Signboards & names</span><small>separate GLB</small></label>
+</div>
 <div class="actions"><button id="fit">Fit model</button><button id="top">Top view</button><button id="reset">Reset view</button><button id="wire">Wireframe</button></div>
 <div class="sub" style="margin:12px 0 0">Model file: <a href="complete_data/OSM/data/buildings/roxas-boulevard/roxas%20bulivard%20buildings.glb">open GLB directly</a></div>
 </section>
@@ -67,16 +75,18 @@ setStatus('Loading the Roxas Boulevard GLB…');
 const modelUrl=new URL('complete_data/OSM/data/buildings/roxas-boulevard/roxas%20bulivard%20buildings.glb',document.baseURI).href;
 const loader=new GLTFLoader();
 loader.load(modelUrl,gltf=>{
- model=gltf.scene;scene.add(model);
+ model=gltf.scene;model.visible=document.querySelector('#buildings-toggle').checked;scene.add(model);
  model.traverse(o=>{if(o.isMesh){o.frustumCulled=true;if(o.material){const mats=Array.isArray(o.material)?o.material:[o.material];for(const m of mats){originalMaterials.push({m,wire:m.wireframe});if('envMapIntensity'in m)m.envMapIntensity=1.15;m.needsUpdate=true;}}}});
  fit();setStatus('Buildings loaded. Loading source-tagged building and shop signs…');
  const signsUrl=new URL('complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb',document.baseURI).href;
  loader.load(signsUrl,sg=>{
-   signage=sg.scene;scene.add(signage);
+   signage=sg.scene;signage.visible=document.querySelector('#signage-toggle').checked;scene.add(signage);
    signage.traverse(o=>{if(o.isMesh){o.frustumCulled=true;if(o.material){const mats=Array.isArray(o.material)?o.material:[o.material];for(const m of mats){originalMaterials.push({m,wire:m.wireframe});m.needsUpdate=true;}}}});
    setStatus('Buildings and signage overlay loaded. Rotate or zoom to inspect. Sign wording comes from mapped source tags; exact photo matching is not yet verified.');
  },undefined,e=>{console.error(e);setStatus('Buildings loaded, but the signage overlay failed to load: '+(e?.message||'unknown error'),true)});
 },xhr=>{if(xhr.total)setStatus('Loading building model… '+Math.round(xhr.loaded/xhr.total*100)+'%');else setStatus('Downloading building model… '+Math.round(xhr.loaded/1024/1024)+' MB')},err=>{console.error(err);setStatus('Could not load the GLB. Check network access and reload. Details: '+(err?.message||'unknown error'),true)});
+document.querySelector('#buildings-toggle').addEventListener('change',e=>{if(model)model.visible=e.target.checked});
+document.querySelector('#signage-toggle').addEventListener('change',e=>{if(signage)signage.visible=e.target.checked});
 document.querySelector('#fit').onclick=()=>fit(false);
 document.querySelector('#top').onclick=()=>fit(true);
 document.querySelector('#reset').onclick=()=>fit(false);
