@@ -29,7 +29,7 @@ REPORT = OUT / "roxas-boulevard-signage-report.json"
 TO_METERS = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True).transform
 FROM_METERS = Transformer.from_crs("EPSG:3857", "EPSG:4326", always_xy=True).transform
 BUFFER_M = 70.0
-ATLAS_TILE_W, ATLAS_TILE_H, ATLAS_COLS = 512, 160, 6
+ATLAS_TILE_W, ATLAS_TILE_H, ATLAS_COLS = 768, 256, 6
 
 def tags_of(f):
     p=f.get("properties") or {}
