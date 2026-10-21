@@ -171,8 +171,8 @@ def main():
         # Keep plaques near the front/lower facade; storefront panels sit lower than tower name signs.
         is_shop=bool(s["brand"] or any(k in s["name"].lower() for k in ("shop","store","restaurant","cafe","drug","market","bank")))
         z=min(max(2.4, s["height"]*0.18), max(2.5,s["height"]-0.8)) if is_shop else min(max(3.2,s["height"]*0.72),max(3.3,s["height"]-0.8))
-        width=min(18.0,max(2.8,len(s["name"])*0.45+1.2),length*0.92)
-        height=min(3.2,max(1.0,width*0.28))
+        width=min(24.0,max(4.2,len(s["name"])*0.78+2.0),length*0.94)
+        height=min(5.0,max(1.8,width*0.36))
         # OSM way winding is not a reliable facade-facing signal: make each panel outward on this edge.
         # Keep the plaque clearly outside the building's facade/detail meshes; 0.11 m was
         # buried behind the generated wall shells, so Three.js loaded the GLB but hid the signs.
