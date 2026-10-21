@@ -251,6 +251,8 @@ def main():
         # Geometry remains derived from the selected OSM footprint and height.
         glazing = facade_window_mesh(poly, height, tags, i)
         if glazing is not None:
+            # Match the exact same centered local coordinate frame as the extruded mass.
+            glazing.apply_translation([-cx, -cy, 0.0])
             glazing_node = f"{node}_glazing_{i}"
             scene.add_geometry(glazing, node_name=glazing_node, geom_name=glazing_node)
         if item["id"]: used_ids.add(item["id"])
