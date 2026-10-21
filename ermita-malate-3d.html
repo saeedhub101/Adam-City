@@ -35,6 +35,7 @@ button{font:inherit;font-size:12px;color:var(--text);background:#243541;border:1
 <label class="row"><input type="checkbox" id="facadeModel"> تفاصيل الواجهات العامة (نوافذ وأبواب)</label>
 <label class="row"><input type="checkbox" id="landmarkFacades"> عمارة مخصصة: المتحف الوطني (مطابقة PGH قيد التحقق)</label>
 <label class="row"><input type="checkbox" id="commercialFacades" checked> واجهات تجارية حقيقية: Robinsons + لوحات 7-Eleven وMcDonald’s</label>
+<label class="row"><input type="checkbox" id="roxasBuildings"> نموذج Roxas Boulevard المحسّن بصريًا (GLB مستقل)</label>
 <label class="row"><input type="checkbox" id="terrainModel"> نموذج المدينة الكامل GLB (مبانٍ + طرق + تضاريس)</label>
 <label class="row"><input type="checkbox" id="terrain"> تضاريس DEM (نموذج Copernicus)</label>
 <label class="row"><input type="checkbox" id="numbers" checked> أرقام المباني</label></div>
@@ -73,6 +74,8 @@ const landmarkModelUrl = new URL('./ermita/3d/landmarks/landmark-facade-details.
 const landmarkOriginUrl = new URL('./ermita/3d/landmarks/landmark-facade-origin.json', location.href).href;
 const commercialModelUrl = new URL('./ermita/3d/commercial/commercial-facades.glb', location.href).href;
 const commercialOriginUrl = new URL('./ermita/3d/commercial/commercial-facades-origin.json', location.href).href;
+const roxasModelUrl = new URL('./complete_data/OSM/data/buildings/roxas-boulevard/roxas%20bulivard%20buildings.glb', location.href).href;
+const roxasOriginUrl = new URL('./complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json', location.href).href;
 const demUrl = new URL('./ermita/3d/terrain/ermita-copernicus-dem-cropped.tif', location.href).href;
 const status = document.getElementById('status'), errorBox = document.getElementById('error');
 const localStyle = {
@@ -149,6 +152,7 @@ let firstError=false, modelLayerAdded=false, modelLoading=false, modelLayer=null
 let facadeLayerAdded=false, facadeLoading=false, facadeLayer=null;
 let landmarkLayerAdded=false, landmarkLoading=false, landmarkLayer=null;
 let commercialLayerAdded=false, commercialLoading=false, commercialLayer=null;
+let roxasLayerAdded=false, roxasLoading=false, roxasLayer=null;
 const toggleLayers=(ids,on)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')});
 const groups={
 buildings:['adam-local-buildings-3d'],osmAppearance:['adam-local-osm-building-info-labels'],ground:['adam-local-landcover','adam-local-landuse'],roads:['adam-local-road-casing','adam-local-roads','adam-local-roads-vector','adam-local-park-fill'],water:['adam-local-water-fill','adam-local-water-vector','adam-local-waterway','adam-local-waterway-vector'],
@@ -389,6 +393,69 @@ document.getElementById('retryCommercialDiagnostic').onclick=async()=>{
 document.getElementById('commercialFacades').onchange=async e=>{
  if(e.target.checked)await addCommercialFacadeLayer();
  else{if(map.getLayer('adam-commercial-facades'))map.removeLayer('adam-commercial-facades');commercialLayerAdded=false;commercialLayer=null;commercialLoading=false;}
+};
+
+async function addRoxasBuildingLayer(){
+ if(roxasLoading || roxasLayerAdded)return;
+ roxasLoading=true;
+ const toggle=document.getElementById('roxasBuildings');
+ status.textContent='جارٍ تحميل نموذج Roxas Boulevard المحسّن…';
+ errorBox.style.display='none';
+ try{
+  if(!window.THREE || !window.THREE.GLTFLoader)throw new Error('مكتبات Three.js / GLTFLoader لم تُحمّل');
+  const originResponse=await fetch(roxasOriginUrl,{cache:'no-store'});
+  if(!originResponse.ok)throw new Error('ملف إحداثيات نموذج Roxas Boulevard غير متاح ('+originResponse.status+')');
+  const origin=await originResponse.json();
+  if(!Number.isFinite(origin.longitude)||!Number.isFinite(origin.latitude)||!Number.isFinite(origin.anchor_altitude_m))throw new Error('إحداثيات النموذج غير صالحة');
+  const response=await fetch(roxasModelUrl,{cache:'no-store'});
+  if(!response.ok)throw new Error('ملف GLB الخاص بـ Roxas Boulevard غير متاح ('+response.status+')');
+  const buffer=await response.arrayBuffer();
+  if(buffer.byteLength<20)throw new Error('ملف GLB فارغ أو تالف');
+  const header=new DataView(buffer);
+  if(header.getUint32(0,true)!==0x46546c67 || header.getUint32(4,true)!==2 || header.getUint32(8,true)!==buffer.byteLength)throw new Error('فشل التحقق من ترويسة GLB');
+  const THREE=window.THREE;
+  roxasLayer={id:'adam-roxas-boulevard-buildings',type:'custom',renderingMode:'3d',
+   onAdd:function(map,gl){
+    this.camera=new THREE.Camera();this.scene=new THREE.Scene();
+    this.renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});this.renderer.autoClear=false;
+    this.scene.add(new THREE.AmbientLight(0xffffff,1.55));
+    const light=new THREE.DirectionalLight(0xffffff,1.15);light.position.set(-40,-50,100).normalize();this.scene.add(light);
+    new THREE.GLTFLoader().parse(buffer,new URL('.',roxasModelUrl).href,gltf=>{
+     this.model=gltf.scene;
+     const bounds=new THREE.Box3().setFromObject(this.model), size=bounds.getSize(new THREE.Vector3());
+     if(!Number.isFinite(size.x)||!Number.isFinite(size.y)||!Number.isFinite(size.z)||size.x<=0||size.y<=0||size.z<=0){
+      roxasLoading=false;roxasLayerAdded=false;toggle.checked=false;errorBox.style.display='block';errorBox.textContent='نموذج Roxas Boulevard لا يحتوي هندسة صالحة.';return;
+     }
+     let meshes=0,materials=0;
+     this.model.traverse(obj=>{if(obj.isMesh){meshes++;materials+=Array.isArray(obj.material)?obj.material.length:(obj.material?1:0);}});
+     this.scene.add(this.model);roxasLoading=false;
+     status.textContent='تم تحميل نموذج Roxas Boulevard: '+meshes+' أجزاء هندسية، '+materials+' مواد PBR. يشمل 782 معرّف مبنى وفق تقرير التوليد.';
+     map.easeTo({center:[origin.longitude,origin.latitude],zoom:14.5,pitch:54,bearing:-12,duration:800});map.triggerRepaint();
+    },err=>{roxasLoading=false;roxasLayerAdded=false;toggle.checked=false;errorBox.style.display='block';errorBox.textContent='تعذر تحليل نموذج Roxas Boulevard: '+(err.message||err);});
+   },
+   render:function(gl,matrix){
+    if(!this.model)return;
+    const mc=maplibregl.MercatorCoordinate.fromLngLat({lng:origin.longitude,lat:origin.latitude},origin.anchor_altitude_m);
+    const scale=mc.meterInMercatorCoordinateUnits();const m=new THREE.Matrix4().fromArray(matrix);
+    const local=new THREE.Matrix4().makeTranslation(mc.x,mc.y,mc.z).scale(new THREE.Vector3(scale,-scale,scale));
+    this.camera.projectionMatrix=m.multiply(local);this.camera.projectionMatrixInverse.copy(this.camera.projectionMatrix).invert();
+    this.renderer.resetState();this.renderer.render(this.scene,this.camera);
+   },
+   onRemove:function(){if(this.renderer)this.renderer.dispose();}
+  };
+  map.addLayer(roxasLayer);roxasLayerAdded=true;
+ }catch(e){
+  roxasLoading=false;roxasLayerAdded=false;roxasLayer=null;toggle.checked=false;
+  errorBox.style.display='block';errorBox.textContent='تعذر تحميل نموذج Roxas Boulevard: '+(e.message||e);
+  status.textContent='تعذر تحميل نموذج Roxas Boulevard؛ راجع رسالة الخطأ.';
+ }
+}
+document.getElementById('roxasBuildings').onchange=async e=>{
+ if(e.target.checked)await addRoxasBuildingLayer();
+ else{
+  if(map.getLayer('adam-roxas-boulevard-buildings'))map.removeLayer('adam-roxas-boulevard-buildings');
+  roxasLayerAdded=false;roxasLayer=null;roxasLoading=false;
+ }
 };
 
 document.getElementById('facadeModel').onchange=async e=>{
