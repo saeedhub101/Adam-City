@@ -16,3 +16,13 @@
 13. Persist all newly imported source tiles, decoded layer records, generated fallback datasets, and their provenance/QA reports to `main` in the same deployment workflow. Do not leave generated data only in a temporary runner or Pages artifact.
 14. Rebuild derived fallback datasets only when they are missing or when new source tiles have been added. Reuse existing fallbacks unchanged when the source set has not changed.
 15. Validate generated GeoJSON counts and non-empty files before publishing. A successful deployment must not be treated as proof that the map rendered correctly; report the actual checks performed.
+
+
+## 16. Validated current facade/windows preview — preserve as-is (2026-10-21)
+
+- The user has visually tested the current preview and confirmed that the buildings, windows, and map layers display correctly. Treat this current state as the accepted working baseline.
+- Do not restore the older `backup/` building/facade assets merely because an audit report describes a source-path discrepancy. The user considers the older building data incorrect for the current preview.
+- Do not change coordinates, model origin, transforms, geometry inputs, GLB assets, or layer wiring as part of documentation/audit work. Any such change requires a separate explicit request and evidence of a reproducible defect.
+- The current facade generator script `ermita/scripts/generate_facade_details.py` uses `ermita/maps/generated/ermita-building-details.geojson` as `MAP_FILE`, and writes `ermita/3d/generated/ermita-buildings-facade-details.glb`. The committed `ermita/3d/generated/facade-model-origin.json` records 1,468 building polygon parts and the model origin/coordinate convention. These are provenance facts; they do not by themselves prove that the preview's visual alignment is wrong.
+- Reports that compare `ermita-building-footprints.geojson` with a backup OSM file must be treated as dataset provenance/audit notes, not as an instruction to replace the current working inputs. Reconcile stale report assumptions with the user's visually validated current state before proposing data changes.
+- Current user-confirmed requirement: preserve the current complete window/building appearance; no rollback to previous building data and no coordinate/file edits unless explicitly requested.
