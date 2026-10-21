@@ -148,7 +148,7 @@ try {
     model=gltf.scene;
     model.position.set(anchor.x,anchor.y,anchor.z);
     model.scale.set(meterScale,-meterScale,meterScale);
-    model.rotation.x=Math.PI/2;
+    // GLB is already Z-up in local EPSG:3857 metres; keep Z vertical for MapLibre.
     scene.add(model);
     window.adamWindowsLayerReady=true;
     window.adamSetWindowsVisible=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
