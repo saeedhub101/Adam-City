@@ -104,10 +104,15 @@ def pbr_for(tags, index):
     elif "metal" in material or "steel" in material or "aluminium" in material or "aluminum" in material:
         chosen = ("metal panels", [0.48, 0.52, 0.52, 1], 0.65, 0.34)
     if chosen is None:
-        chosen = palette[(index * 7 + len(btype)) % len(palette)]
-        # Office/hotel buildings tend to have more glazing; use a low-metalness,
-        # smoother cool facade only as a neutral fallback, not a claimed survey fact.
-        if any(x in btype for x in ("office", "hotel", "commercial")) and index % 3 == 0:
+        # Keep every polygon part of the same OSM building visually consistent.
+        # Do not assign colours by loop index: that made one real building change
+        # colour between adjacent parts.
+        style_key = osm_id or identity or str(index)
+        style_seed = sum(ord(c) for c in style_key) + len(btype)
+        chosen = palette[style_seed % len(palette)]
+        # Office/hotel buildings tend to have more glazing; only use this as a
+        # conservative fallback when source tags do not specify a material.
+        if any(x in btype for x in ("office", "hotel", "commercial")) and style_seed % 3 == 0:
             chosen = palette[5]
     label, base, metal, rough = chosen
     if colour:
