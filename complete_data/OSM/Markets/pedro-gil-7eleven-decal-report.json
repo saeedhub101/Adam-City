@@ -1,0 +1,20 @@
+{
+  "target_store_osm_id": "node/12342809738",
+  "target_store_name": "7-Eleven",
+  "target_store_street": "Pedro Gil Street",
+  "matched_building_osm_id": "way/308673829",
+  "matched_building_name": "Nestor Building",
+  "poi_to_building_distance_m": 0.0,
+  "poi_to_selected_facade_edge_m": 0.99,
+  "facade_edge_length_m": 39.32,
+  "decal_width_m": 1.24,
+  "decal_height_m": 1.65,
+  "decal_center_height_m": 2.45,
+  "facade_offset_m": 0.08,
+  "origin_file": "complete_data/OSM/Markets/commercial-facades-origin.json",
+  "image_asset": "complete_data/OSM/Markets/assets/7-eleven-pedro-gil-decal.png",
+  "image_source": "https://www.7-eleven.com/assets/img/header/7e-logo-color.svg",
+  "source_note": "Official 7-Eleven logo converted to a transparent PNG and applied as a flat image decal. This is a signage-placement experiment, not a surveyed facade reconstruction.",
+  "glb_path": "complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb",
+  "glb_bytes": 32804
+}
