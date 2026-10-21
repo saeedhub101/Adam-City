@@ -1,8 +1,8 @@
 # OSM Markets — commercial signage assets
 
-This folder stores the Robinsons Manila, 7-Eleven, and McDonald's assets used by the Adam-City test preview.
+This folder stores the source metadata and supporting data for Robinsons Manila, 7-Eleven, and McDonald's signage used by the Adam-City preview. The GLB overlay itself is organized under `complete_data/OSM/Buildings/Markets/facidals/robenson.glb`.
 
-- `robenson.glb` — combined 3D model with procedural Robinsons facade geometry and textured 7-Eleven/McDonald's sign panels.
+- `../Buildings/Markets/facidals/robenson.glb` — signage/facade overlay for store fronts, not a complete standalone shop/building model. It contains procedural Robinsons facade detail plus textured 7-Eleven/McDonald's sign panels.
 - `commercial-facades-origin.json` — origin used to position the GLB in the map.
 - `commercial-facades-report.json` — generation report, storefront matches and source attribution.
 - `ermita-branded-stores.geojson` — storefront features used by the generator.

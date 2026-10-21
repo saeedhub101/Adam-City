@@ -35,10 +35,11 @@ jobs:
           /ermita-malate-3d.html
           /test.html
           /complete_data/OSM/data/
+          /complete_data/OSM/Markets/
+          /complete_data/OSM/Buildings/Markets/facidals/
           /ermita/maps/sources/openfreemap/
           /ermita/maps/generated/ermita-building-details.geojson
           /ermita/maps/generated/ermita-building-footprints.geojson
-          /ermita/maps/generated/ermita-branded-stores.geojson
           /ermita/3d/generated/ermita-buildings-facade-details.glb
           /ermita/3d/generated/facade-details-report.json
           /ermita/3d/generated/facade-model-origin.json
@@ -89,17 +90,7 @@ jobs:
           else
             echo "Reusing committed landmark assets; generator and source fingerprints match; no Overpass request needed."
           fi
-          # Commercial facade generation is independently fingerprinted and does not overwrite other building edits.
-          COMMERCIAL_FINGERPRINT="$( { printf 'contract=1\n'; sha256sum ermita/scripts/generate_commercial_facades.py ermita/maps/generated/ermita-building-details.geojson ermita/maps/generated/ermita-branded-stores.geojson; } | sha256sum | awk '{print $1}')"
-          COMMERCIAL_STALE=0
-          if [[ ! -s ermita/3d/commercial/commercial-generation.sha256 ]] || [[ "$(cat ermita/3d/commercial/commercial-generation.sha256 2>/dev/null || true)" != "$COMMERCIAL_FINGERPRINT" ]]; then COMMERCIAL_STALE=1; fi
-          if [[ ! -s ermita/3d/commercial/commercial-facades.glb || ! -s ermita/3d/commercial/commercial-facades-origin.json || ! -s ermita/3d/commercial/commercial-facades-report.json || "$COMMERCIAL_STALE" -eq 1 ]]; then
-            echo "Commercial facade assets missing or stale; generating Robinsons facade and brand image-sign panels."
-            python3 ermita/scripts/generate_commercial_facades.py
-            printf '%s\n' "$COMMERCIAL_FINGERPRINT" > ermita/3d/commercial/commercial-generation.sha256
-          else
-            echo "Reusing committed commercial facade assets; source and generator fingerprints match."
-          fi
+          # Reuse the committed commercial signage overlay from complete_data; do not regenerate it during deployment.
           # Generate the facade origin only if it is missing. It is stored in main after generation.
           if [[ ! -s ermita/3d/generated/facade-model-origin.json ]]; then
           # Calculate the origin only from the exact building IDs in the GLB's own index.
@@ -286,7 +277,7 @@ jobs:
           cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/building-fallback.geojson
           cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/ground-fallback.geojson
           # Publish the repository copies, whether reused or newly generated.
-          mkdir -p site/ermita/maps/generated site/ermita/3d/generated site/ermita/3d/exports site/ermita/3d/terrain site/ermita/3d/landmarks site/ermita/3d/commercial
+          mkdir -p site/ermita/maps/generated site/ermita/3d/generated site/ermita/3d/exports site/ermita/3d/terrain site/ermita/3d/landmarks site/ermita/3d/commercial site/complete_data/OSM/Markets site/complete_data/OSM/Buildings/Markets/facidals
           cp ermita/maps/generated/ermita-building-details.geojson site/ermita/maps/generated/ermita-building-details.geojson
           cp ermita/3d/generated/ermita-buildings-facade-details.glb site/ermita/3d/generated/ermita-buildings-facade-details.glb
           cp ermita/3d/generated/facade-model-origin.json site/ermita/3d/generated/facade-model-origin.json
@@ -294,9 +285,11 @@ jobs:
           cp ermita/3d/landmarks/landmark-facade-details.glb site/ermita/3d/landmarks/landmark-facade-details.glb
           cp ermita/3d/landmarks/landmark-facade-origin.json site/ermita/3d/landmarks/landmark-facade-origin.json
           cp ermita/3d/landmarks/landmark-facade-report.json site/ermita/3d/landmarks/landmark-facade-report.json
-          cp ermita/3d/commercial/commercial-facades.glb site/ermita/3d/commercial/commercial-facades.glb
-          cp ermita/3d/commercial/commercial-facades-origin.json site/ermita/3d/commercial/commercial-facades-origin.json
-          cp ermita/3d/commercial/commercial-facades-report.json site/ermita/3d/commercial/commercial-facades-report.json
+          cp complete_data/OSM/Buildings/Markets/facidals/robenson.glb site/ermita/3d/commercial/commercial-facades.glb
+          cp complete_data/OSM/Markets/commercial-facades-origin.json site/ermita/3d/commercial/commercial-facades-origin.json
+          cp complete_data/OSM/Markets/commercial-facades-report.json site/ermita/3d/commercial/commercial-facades-report.json
+          cp -a complete_data/OSM/Markets/. site/complete_data/OSM/Markets/
+          cp complete_data/OSM/Buildings/Markets/facidals/robenson.glb site/complete_data/OSM/Buildings/Markets/facidals/robenson.glb
           cp ermita/3d/exports/adam-city-complete.glb site/ermita/3d/exports/adam-city-complete.glb
           cp ermita/3d/terrain/ermita-copernicus-dem-cropped.tif site/ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           test -s site/ermita/3d/exports/adam-city-complete.glb
@@ -325,10 +318,10 @@ jobs:
           test -s ermita/3d/landmarks/landmark-facade-origin.json
           test -s ermita/3d/landmarks/landmark-facade-report.json
           test -s ermita/3d/landmarks/landmark-generation.sha256
-          test -s ermita/3d/commercial/commercial-facades.glb
-          test -s ermita/3d/commercial/commercial-facades-origin.json
-          test -s ermita/3d/commercial/commercial-facades-report.json
-          test -s ermita/3d/commercial/commercial-generation.sha256
+          test -s complete_data/OSM/Buildings/Markets/facidals/robenson.glb
+          test -s complete_data/OSM/Markets/commercial-facades-origin.json
+          test -s complete_data/OSM/Markets/commercial-facades-report.json
+          test -s complete_data/OSM/Markets/commercial-generation.sha256
           # Save every newly imported/generated asset to main. Existing committed outputs are reused.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -339,7 +332,7 @@ jobs:
           # Persist the generated alignment file in main as well as publishing it, so the page never depends on a temporary CI-only asset.
           git add ermita/3d/generated/facade-model-origin.json ermita/3d/generated/ermita-buildings-facade-details.glb ermita/3d/generated/facade-signage-index.csv ermita/3d/generated/facade-details-report.json ermita/3d/generated/facade-generation.sha256
           git add ermita/3d/landmarks/landmark-facade-details.glb ermita/3d/landmarks/landmark-facade-origin.json ermita/3d/landmarks/landmark-facade-report.json ermita/3d/landmarks/landmark-generation.sha256
-          git add ermita/3d/commercial/ ermita/buildings/commercial_assets/ ermita/buildings/reference_photos/robinsons-manila/
+          git add complete_data/OSM/Markets/ complete_data/OSM/Buildings/Markets/facidals/
           if ! git diff --cached --quiet; then
             git commit -m "Store generated building and ground fallback data"
             git push origin HEAD:main

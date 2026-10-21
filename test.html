@@ -236,7 +236,7 @@ try {
  });
  try {
   const map=await waitMap();
-  const modelUrl=new URL('complete_data/OSM/Markets/robenson.glb',location.href).href;
+  const modelUrl=new URL('complete_data/OSM/Buildings/Markets/facidals/robenson.glb',location.href).href;
   const originUrl=new URL('complete_data/OSM/Markets/commercial-facades-origin.json',location.href).href;
   const response=await fetch(originUrl);
   if(!response.ok)throw new Error('Origin JSON HTTP '+response.status);
