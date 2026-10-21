@@ -936,6 +936,7 @@ def main():
     facade_base_parts = 0
     facade_historic_mesh_parts = 0
     facade_texture_parts = 0
+    texture_batches = {}
     facade_planetarium_dome_parts = 0
     facade_red_planet_canopy_parts = 0
     facade_special_mass_overrides = 0
@@ -976,8 +977,16 @@ def main():
         textured_facade = facade_texture_mesh(poly, mass_height, tags, label, rgba, metal, rough)
         if textured_facade is not None:
             textured_facade.apply_translation([-cx, -cy, 0.0])
-            texture_node = f"{node}_textured_facade_{i}"
-            scene.add_geometry(textured_facade, node_name=texture_node, geom_name=texture_node)
+            # Merge wall shells by shared PBR material. This keeps thousands of wall
+            # quads lightweight in GLB instead of creating one scene node per building part.
+            texture_material = textured_facade.visual.material
+            batch = texture_batches.setdefault(id(texture_material), {
+                "vertices": [], "faces": [], "uvs": [], "vertex_count": 0, "material": texture_material
+            })
+            batch["vertices"].append(np.asarray(textured_facade.vertices))
+            batch["faces"].append(np.asarray(textured_facade.faces, dtype=np.int64) + batch["vertex_count"])
+            batch["uvs"].append(np.asarray(textured_facade.visual.uv))
+            batch["vertex_count"] += len(textured_facade.vertices)
             facade_texture_parts += 1
         # Add visible, edge-aligned glazing to the existing building massing.
         # Geometry remains derived from the selected OSM footprint and height.
@@ -1036,6 +1045,18 @@ def main():
             })
             entry["footprint_parts"] += 1
         material_stats[label] = material_stats.get(label, 0) + 1
+    # Add one combined textured-shell mesh per cached PBR material.
+    for batch_index, batch in enumerate(texture_batches.values()):
+        combined = trimesh.Trimesh(
+            vertices=np.concatenate(batch["vertices"], axis=0),
+            faces=np.concatenate(batch["faces"], axis=0),
+            process=False,
+        )
+        combined.visual = trimesh.visual.TextureVisuals(
+            uv=np.concatenate(batch["uvs"], axis=0), material=batch["material"]
+        )
+        texture_node = f"roxas_textured_facades_material_{batch_index+1}"
+        scene.add_geometry(combined, node_name=texture_node, geom_name=texture_node)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     OUT_GLB.write_bytes(scene.export(file_type="glb"))
     origin = {
