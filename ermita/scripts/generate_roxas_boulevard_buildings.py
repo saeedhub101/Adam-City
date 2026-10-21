@@ -248,20 +248,42 @@ def facade_window_mesh(poly, height, tags, part_index):
 
 
 def facade_accent_mesh(poly, height, tags, part_index):
-    """Add reference-informed facade bands to identifiable landmark buildings."""
+    """Add facade bands only where a named/identified building has a visible photo reference.
+
+    Visual checks used:
+    - Pearl of the Orient: blue-grey upper tower and a distinctly pink horizontal podium.
+      https://www.tectonium.com/pearl-of-the-orient-tower/
+    - 1322 Golden Empire: warm reflective gold glazing with strong horizontal floor bands.
+      https://gfparchitects.com/project/1322-golden-empire-tower/
+    - Grand Riviera Suites: blue glazing, pale projecting floor slabs and pink/red framing.
+      https://cf.bstatic.com/xdata/images/hotel/max1024x768/428049742.jpg
+    The images are visual references only; no unlicensed photo pixels are baked into the GLB.
+    """
     fid = str(tags.get("osm_feature_id") or "")
     pearl_ids = {"way/575422161", "way/822386813", "way/822386814", "way/822386816"}
+    golden_empire_ids = {"way/90308376", "way/822386807", "way/822386809", "way/822386811"}
+    grand_riviera_ids = {"way/575422162"}
     sunny_bay_ids = {"way/267171200"}
     if fid in pearl_ids and height >= 30:
-        levels_by_id = {"way/575422161": 42, "way/822386813": 40, "way/822386814": 40, "way/822386816": 42}
-        floors = levels_by_id[fid]
-        offset, thickness = 0.075, 0.11
+        floors = 42 if fid in {"way/575422161", "way/822386816"} else 40
+        offset, thickness = 0.085, 0.12
         color = [211, 130, 153, 255]
-        material_name = "Pearl_of_the_Orient_pink_spandrel_bands"
+        material_name = "Pearl_of_the_Orient_pink_podium_bands"
         metallic, roughness = 0.02, 0.68
+    elif fid in golden_empire_ids and height >= 30:
+        floors = 55
+        offset, thickness = 0.12, 0.15
+        color = [199, 179, 132, 255]
+        material_name = "Golden_Empire_warm_gold_floor_spandrels"
+        metallic, roughness = 0.16, 0.34
+    elif fid in grand_riviera_ids and height >= 30:
+        floors = 57
+        offset, thickness = 0.20, 0.22
+        color = [215, 198, 164, 255]
+        material_name = "Grand_Riviera_pale_projecting_floor_bands"
+        metallic, roughness = 0.03, 0.54
     elif fid in sunny_bay_ids and height >= 20:
         floors = 13
-        # Sunny Bay Suites has light cream balcony slabs over dark glazing.
         offset, thickness = 0.24, 0.16
         color = [224, 213, 190, 255]
         material_name = "Sunny_Bay_Suites_cream_balcony_slabs"
@@ -282,6 +304,10 @@ def facade_accent_mesh(poly, height, tags, part_index):
         else:
             nx, ny = -ty, tx
         for floor in range(1, floors):
+            # Photo shows Pearl's pink spandrels concentrated on its lower podium;
+            # the upper tower is predominantly blue-grey with pale horizontal bands.
+            if fid in pearl_ids and floor > 12:
+                continue
             z = floor * floor_h
             points = [
                 [a[0]+nx*offset, a[1]+ny*offset, z-thickness/2],
@@ -298,6 +324,83 @@ def facade_accent_mesh(poly, height, tags, part_index):
     mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
         name=material_name, baseColorFactor=color,
         metallicFactor=metallic, roughnessFactor=roughness, alphaMode="OPAQUE"
+    ))
+    return mesh
+
+
+def facade_podium_mesh(poly, height, tags):
+    """Overlay the Pearl of the Orient's photographed pink lower podium, behind glazing."""
+    fid = str(tags.get("osm_feature_id") or "")
+    pearl_ids = {"way/575422161", "way/822386813", "way/822386814", "way/822386816"}
+    if fid not in pearl_ids or height < 30:
+        return None
+    floors = 42 if fid in {"way/575422161", "way/822386816"} else 40
+    podium_top = height * (12.0 / floors)
+    vertices, faces = [], []
+    for a, b in zip(list(poly.exterior.coords)[:-1], list(poly.exterior.coords)[1:]):
+        dx, dy = b[0]-a[0], b[1]-a[1]
+        length = math.hypot(dx, dy)
+        if length < 4:
+            continue
+        if poly.exterior.is_ccw:
+            nx, ny = dy/length, -dx/length
+        else:
+            nx, ny = -dy/length, dx/length
+        base = len(vertices)
+        vertices.extend([
+            [a[0]+nx*0.026, a[1]+ny*0.026, 0.08],
+            [b[0]+nx*0.026, b[1]+ny*0.026, 0.08],
+            [b[0]+nx*0.026, b[1]+ny*0.026, podium_top],
+            [a[0]+nx*0.026, a[1]+ny*0.026, podium_top],
+        ])
+        faces.extend([[base, base+1, base+2], [base, base+2, base+3]])
+    if not faces:
+        return None
+    mesh = trimesh.Trimesh(vertices=np.asarray(vertices), faces=np.asarray(faces), process=False)
+    mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
+        name="Pearl_of_the_Orient_pink_podium_wall",
+        baseColorFactor=[176, 107, 120, 255], metallicFactor=0.01, roughnessFactor=0.72,
+        alphaMode="OPAQUE"
+    ))
+    return mesh
+
+
+def facade_upper_band_mesh(poly, height, tags):
+    """Add Pearl's pale horizontal spandrels above its pink podium, as seen in facade photos."""
+    fid = str(tags.get("osm_feature_id") or "")
+    pearl_ids = {"way/575422161", "way/822386813", "way/822386814", "way/822386816"}
+    if fid not in pearl_ids or height < 30:
+        return None
+    floors = 42 if fid in {"way/575422161", "way/822386816"} else 40
+    floor_h = height / floors
+    vertices, faces = [], []
+    for a, b in zip(list(poly.exterior.coords)[:-1], list(poly.exterior.coords)[1:]):
+        dx, dy = b[0]-a[0], b[1]-a[1]
+        length = math.hypot(dx, dy)
+        if length < 4:
+            continue
+        tx, ty = dx/length, dy/length
+        if poly.exterior.is_ccw:
+            nx, ny = ty, -tx
+        else:
+            nx, ny = -ty, tx
+        for floor in range(13, floors):
+            z = floor * floor_h
+            base = len(vertices)
+            vertices.extend([
+                [a[0]+nx*0.09, a[1]+ny*0.09, z-0.065],
+                [b[0]+nx*0.09, b[1]+ny*0.09, z-0.065],
+                [b[0]+nx*0.09, b[1]+ny*0.09, z+0.065],
+                [a[0]+nx*0.09, a[1]+ny*0.09, z+0.065],
+            ])
+            faces.extend([[base, base+1, base+2], [base, base+2, base+3]])
+    if not faces:
+        return None
+    mesh = trimesh.Trimesh(vertices=np.asarray(vertices), faces=np.asarray(faces), process=False)
+    mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
+        name="Pearl_of_the_Orient_pale_upper_spandrels",
+        baseColorFactor=[193, 203, 207, 255], metallicFactor=0.08, roughnessFactor=0.42,
+        alphaMode="OPAQUE"
     ))
     return mesh
 
@@ -527,6 +630,16 @@ def main():
             base_node = f"{node}_facade_base_{i}"
             scene.add_geometry(base_mesh, node_name=base_node, geom_name=base_node)
             facade_base_parts += 1
+        # Photo-derived landmark-specific podium and floor-band geometry.
+        for special_mesh, special_name in (
+            (facade_podium_mesh(poly, height, tags), "photo_podium"),
+            (facade_upper_band_mesh(poly, height, tags), "photo_upper_bands"),
+        ):
+            if special_mesh is not None:
+                special_mesh.apply_translation([-cx, -cy, 0.0])
+                special_node = f"{node}_{special_name}_{i}"
+                scene.add_geometry(special_mesh, node_name=special_node, geom_name=special_node)
+                facade_accent_parts += 1
         if item["id"]:
             used_ids.add(item["id"])
             entry = building_inventory.setdefault(item["id"], {
@@ -566,7 +679,12 @@ def main():
         "facade_window_boxes": facade_window_boxes,
         "facade_accent_parts": facade_accent_parts,
         "facade_base_parts": facade_base_parts,
-        "facade_detail_method": "Procedural edge-aligned glazing boxes generated across the full tagged floor count (up to 60 floors); named landmark palettes override contradictory generic source material tags. This remains a geometry-derived approximation pending per-building photographic validation.",
+        "facade_detail_method": "Procedural edge-aligned glazing plus photo-informed, building-specific spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, and Sunny Bay Suites. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
+        "visual_reference_checks": [
+            {"building": "Pearl of the Orient Tower", "url": "https://www.tectonium.com/pearl-of-the-orient-tower/", "observed": "blue-grey upper tower, repetitive pale horizontal bands, distinct pink horizontal podium"},
+            {"building": "1322 Golden Empire Tower", "url": "https://gfparchitects.com/project/1322-golden-empire-tower/", "observed": "warm gold reflective glazing and strong repeated horizontal floor divisions"},
+            {"building": "Grand Riviera Suites", "url": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/428049742.jpg", "observed": "blue glazing, pale projecting floor slabs, pink/red framing concentrated on lower facade"}
+        ],
         "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
         "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
         "height_method": "Verified landmark overrides first; otherwise validate OSM height against floor count, then building:levels × 3.2 m, then 9.6 m fallback.",
