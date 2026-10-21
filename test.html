@@ -35,6 +35,7 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <label class="row"><input type="checkbox" id="osm-places"> 10. places — المتاجر والطعام والصحة والتعليم والخدمات</label>
 <label class="row"><input type="checkbox" id="osm-nature"> 11. nature — المياه والأشجار والحدائق والغطاء النباتي</label>
 <label class="row"><input type="checkbox" id="osm-windows"> 12. windows — تفاصيل الواجهات والشبابيك</label>
+<label class="row"><input type="checkbox" id="commercial-signage" checked> 13. يافطات المتاجر — Robinsons و7-Eleven وMcDonald’s (GLB)</label>
 </div>
 <div class="status" id="status">جارٍ تحميل خريطة المصدر…</div><div id="error"></div>
 </section>
@@ -254,4 +255,73 @@ try {
  const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر إعداد طبقة windows: '+(err?.message||err);}
 }
 </script>
+
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.0/meshopt_decoder.module.js';
+const signageToggle=document.getElementById('commercial-signage');
+window.adamCommercialEnabled=!!signageToggle?.checked;
+signageToggle?.addEventListener('change',ev=>{
+ window.adamCommercialEnabled=ev.target.checked;
+ if(window.adamCommercialLayerReady && window.adamSetCommercialVisible) window.adamSetCommercialVisible(ev.target.checked);
+ else if(ev.target.checked){const s=document.getElementById('status');if(s)s.textContent='جارٍ تحميل نموذج يافطات المتاجر ثلاثي الأبعاد…';}
+});
+const waitMapForCommercial=()=>new Promise(resolve=>{const check=()=>{if(window.adamCityMap?.isStyleLoaded())resolve(window.adamCityMap);else setTimeout(check,100)};check();});
+try{
+ const map=await waitMapForCommercial();
+ const modelUrl=new URL('complete_data/odm/markets/commercial-facades.glb',location.href).href;
+ const originUrl=new URL('complete_data/odm/markets/commercial-facades-origin.json',location.href).href;
+ const originResponse=await fetch(originUrl);if(!originResponse.ok)throw new Error('Origin JSON HTTP '+originResponse.status);
+ const origin=await originResponse.json();
+ const lat=Number(origin.latitude);
+ const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:Number(origin.longitude),lat},Number(origin.anchor_altitude_m||0));
+ const meterScale=anchor.meterInMercatorCoordinateUnits();
+ const projectedMeterScale=meterScale*Math.cos(lat*Math.PI/180);
+ let renderer,camera,scene,model;
+ const customLayer={
+  id:'commercial-signage-3d',type:'custom',renderingMode:'3d',
+  onAdd(mapInstance,gl){
+   renderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});
+   renderer.autoClear=false;camera=new THREE.Camera();scene=new THREE.Scene();
+   scene.add(new THREE.AmbientLight(0xffffff,2.0));
+   const light=new THREE.DirectionalLight(0xffffff,2.2);light.position.set(0,-70,100).normalize();scene.add(light);
+   const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
+   loader.load(modelUrl,gltf=>{
+    model=gltf.scene;model.position.set(0,0,0);model.scale.set(1,1,1);
+    let meshes=0;model.traverse(o=>{if(o.isMesh)meshes++;});
+    scene.add(model);window.adamCommercialLayerReady=true;
+    window.adamSetCommercialVisible=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
+    model.visible=!!document.getElementById('commercial-signage')?.checked;
+    const s=document.getElementById('status');if(s)s.textContent='يافطات المتاجر جاهزة | meshes='+meshes+' | Robinsons + 7-Eleven + McDonald’s | '+(model.visible?'ON':'OFF');
+    if(mapInstance.getLayer('commercial-signage-3d'))mapInstance.moveLayer('commercial-signage-3d');
+    mapInstance.triggerRepaint();
+   },progress=>{
+    const s=document.getElementById('status');
+    if(s)s.textContent=progress.total?'جارٍ تحميل يافطات المتاجر: '+Math.round(progress.loaded/progress.total*100)+'%':'جارٍ تنزيل نموذج يافطات المتاجر…';
+   },err=>{
+    const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر تحميل نموذج يافطات المتاجر: '+(err?.message||err);}
+   });
+  },
+  render(gl,args){
+   if(!renderer||!model||!model.visible)return;
+   const mainMatrix=args?.defaultProjectionData?.mainMatrix;
+   if(!mainMatrix)return;
+   const values=Object.values(mainMatrix);
+   if(values.length!==16||values.some(v=>!Number.isFinite(Number(v))))return;
+   const projection=new THREE.Matrix4().fromArray(values.map(Number));
+   const transform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
+    .scale(new THREE.Vector3(projectedMeterScale,-projectedMeterScale,meterScale));
+   camera.projectionMatrix.copy(projection).multiply(transform);
+   camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+   renderer.resetState();renderer.render(scene,camera);renderer.resetState();
+  }
+ };
+ map.addLayer(customLayer);
+ if(map.getLayer('commercial-signage-3d'))map.moveLayer('commercial-signage-3d');
+}catch(err){
+ const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر إعداد يافطات المتاجر: '+(err?.message||err);}
+}
+</script>
+
 </body></html>

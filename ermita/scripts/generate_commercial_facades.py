@@ -17,10 +17,10 @@ from shapely.ops import transform as geom_transform
 
 ROOT = Path(__file__).resolve().parents[2]
 MAP_FILE = ROOT / "ermita/maps/generated/ermita-building-details.geojson"
-STORES_FILE = ROOT / "ermita/maps/generated/ermita-branded-stores.geojson"
-OUT_DIR = ROOT / "ermita/3d/commercial"
-ASSET_DIR = ROOT / "ermita/buildings/commercial_assets"
-PHOTO_DIR = ROOT / "ermita/buildings/reference_photos/robinsons-manila"
+STORES_FILE = ROOT / "complete_data/odm/markets/ermita-branded-stores.geojson"
+OUT_DIR = ROOT / "complete_data/odm/markets"
+ASSET_DIR = ROOT / "complete_data/odm/markets/assets"
+PHOTO_DIR = ROOT / "complete_data/odm/markets/reference_photos/robinsons-manila"
 OUT_GLB = OUT_DIR / "commercial-facades.glb"
 OUT_ORIGIN = OUT_DIR / "commercial-facades-origin.json"
 OUT_REPORT = OUT_DIR / "commercial-facades-report.json"
@@ -339,7 +339,7 @@ def main():
         placed.add(key)
         report["store_signs"].append({"brand":brand_key,"store_poi_id":fid(store),"building_osm_id":fid(bf),
             "poi_to_footprint_m":round(dist,2),"panel_width_m":width,"panel_height_m":height,
-            "image_asset":"ermita/buildings/commercial_assets/7-eleven-logo.png" if is_seven else "ermita/buildings/commercial_assets/mcdonalds-golden-arches.png",
+            "image_asset":"complete_data/odm/markets/assets/7-eleven-logo.png" if is_seven else "complete_data/odm/markets/assets/mcdonalds-golden-arches.png",
             "placement":"separate textured quad placed just off the facade edge nearest the mapped store POI",
             "source_note":"Logo asset is downloaded from the official 7-Eleven site / Wikimedia Commons public-domain McDonald's logo."})
     if not scene.geometry: raise RuntimeError("No commercial facade geometry was generated")
