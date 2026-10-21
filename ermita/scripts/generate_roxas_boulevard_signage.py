@@ -171,8 +171,10 @@ def main():
         # Keep plaques near the front/lower facade; storefront panels sit lower than tower name signs.
         is_shop=bool(s["brand"] or any(k in s["name"].lower() for k in ("shop","store","restaurant","cafe","drug","market","bank")))
         z=min(max(2.4, s["height"]*0.18), max(2.5,s["height"]-0.8)) if is_shop else min(max(3.2,s["height"]*0.72),max(3.3,s["height"]-0.8))
-        width=min(24.0,max(4.2,len(s["name"])*0.78+2.0),length*0.94)
-        height=min(5.0,max(1.8,width*0.36))
+        # Keep signs visible but within plausible storefront/facade proportions; the previous
+        # 24 m x 5 m caps made ordinary business names look like giant billboards.
+        width=min(14.0,max(3.0,len(s["name"])*0.46+1.2),length*0.86)
+        height=min(2.6,max(0.9,width*0.20))
         # OSM way winding is not a reliable facade-facing signal: make each panel outward on this edge.
         # Keep the plaque clearly outside the building's facade/detail meshes; 0.11 m was
         # buried behind the generated wall shells, so Three.js loaded the GLB but hid the signs.
@@ -207,12 +209,17 @@ def main():
         draw.rounded_rectangle((x0+1,y0+1,x0+ATLAS_TILE_W-2,y0+ATLAS_TILE_H-2),radius=8,fill=bg,outline=(45,48,49),width=2)
         # Brand/name on first line, address/number on second when known.
         maxw=ATLAS_TILE_W-48
+        # Fit the complete source name instead of cutting it into a misleading fragment.
         label=name
-        while draw.textbbox((0,0),label,font=font_bold)[2]>maxw and len(label)>5:
-            label=label[:-1]
-        if label!=name: label=label.rstrip()+"…"
-        bb=draw.textbbox((0,0),label,font=font_bold)
-        draw.text((x0+(ATLAS_TILE_W-(bb[2]-bb[0]))/2,y0+42),label,font=font_bold,fill=fg)
+        label_font=font_bold
+        for size in range(48,23,-2):
+            candidate=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",size)
+            if draw.textbbox((0,0),label,font=candidate)[2] <= maxw:
+                label_font=candidate
+                break
+        bb=draw.textbbox((0,0),label,font=label_font)
+        label_h=bb[3]-bb[1]
+        draw.text((x0+(ATLAS_TILE_W-(bb[2]-bb[0]))/2,y0+max(24,(ATLAS_TILE_H-label_h)//2-10)),label,font=label_font,fill=fg)
         detail=s["number"] or ("ROXAS BOULEVARD" if not is_shop else "")
         if detail:
             bb=draw.textbbox((0,0),detail,font=font_small)
