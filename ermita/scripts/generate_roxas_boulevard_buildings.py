@@ -46,9 +46,19 @@ def positive_number(value, low, high):
         return None
 
 def height_of(tags):
+    # Correct known, demonstrably inconsistent OSM height tags for landmark towers.
+    # These overrides are based on the named building / verified published building data.
+    fid = str(tags.get("osm_feature_id") or "")
+    if fid == "way/575422161":  # Pearl of the Orient Tower: 42 floors, approx. 168 m
+        return 168.0
+    if fid == "way/90308376":  # 1322 Golden Empire Tower; source height 38.5 m conflicts with 55 levels
+        return 203.0
     h = positive_number(tags.get("height"), 2, 500)
-    if h is not None: return h
     levels = positive_number(tags.get("building:levels") or tags.get("levels"), 1, 150)
+    # Reject obviously incompatible height/level pairs instead of creating a tower only 38 m tall.
+    if h is not None and levels is not None and levels >= 8 and h < levels * 2.0:
+        return levels * 3.2
+    if h is not None: return h
     return levels * 3.2 if levels is not None else 9.6
 
 def normalized(value):
@@ -80,7 +90,8 @@ def pbr_for(tags, index):
         known = ("Hotel warm painted facade", [0.72, 0.62, 0.48, 1], 0.02, 0.78)
     elif "victoria building" in identity:
         known = ("Victoria Building pale concrete", [0.73, 0.71, 0.65, 1], 0.02, 0.82)
-    if known is not None and not colour and not material:
+    # Curated landmark appearance takes priority over conflicting/inaccurate generic OSM material tags.
+    if known is not None:
         return known
     # Prefer explicit source colour/material tags when present. For untagged buildings,
     # use restrained, varied architectural neutrals rather than a single city-wide tint.
@@ -133,7 +144,8 @@ def facade_window_mesh(poly, height, tags, part_index):
         return None
     levels = positive_number(tags.get("building:levels") or tags.get("levels"), 1, 150)
     floors = int(round(levels)) if levels else max(2, int(round(height / 3.2)))
-    floors = max(2, min(floors, 12))
+    # Render the full visible floor rhythm, not just the first 12 floors of a high-rise.
+    floors = max(2, min(floors, 60))
     floor_h = height / floors
     window_h = min(1.45, max(0.75, floor_h * 0.52))
     # Use a deterministic but restrained glazing/frame variation by OSM identity.
@@ -156,7 +168,7 @@ def facade_window_mesh(poly, height, tags, part_index):
             nx, ny = ty, -tx
         else:
             nx, ny = -ty, tx
-        count = max(1, min(5, int(length // 3.0)))
+        count = max(1, min(12, int(length // 3.0)))
         usable = min(1.25, (length / count) * 0.48)
         if usable < 0.45:
             continue
@@ -265,6 +277,7 @@ def main():
     lon, lat = FROM_METERS(cx, cy)
     scene = trimesh.Scene()
     material_stats = {}
+    building_inventory = {}
     facade_detail_parts = 0
     facade_window_boxes = 0
     used_ids = set()
@@ -297,7 +310,20 @@ def main():
             scene.add_geometry(glazing, node_name=glazing_node, geom_name=glazing_node)
             facade_detail_parts += 1
             facade_window_boxes += len(glazing.faces) // 12
-        if item["id"]: used_ids.add(item["id"])
+        if item["id"]:
+            used_ids.add(item["id"])
+            entry = building_inventory.setdefault(item["id"], {
+                "name": tags.get("name") or tags.get("official_name") or "",
+                "building": tags.get("building") or "",
+                "levels_tag": tags.get("building:levels") or tags.get("levels") or "",
+                "height_tag_m": tags.get("height") or "",
+                "height_used_m": float(height),
+                "material_tag": tags.get("building:material") or tags.get("facade:material") or tags.get("material") or "",
+                "colour_tag": tags.get("building:colour") or tags.get("building:color") or tags.get("colour") or tags.get("color") or "",
+                "footprint_parts": 0,
+                "material_assigned": label,
+            })
+            entry["footprint_parts"] += 1
         material_stats[label] = material_stats.get(label, 0) + 1
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     OUT_GLB.write_bytes(scene.export(file_type="glb"))
@@ -314,14 +340,15 @@ def main():
         "unique_osm_building_ids": len(used_ids), "road_segments_used": len(matched_road_ids),
         "road_feature_ids": matched_road_ids, "selection_buffer_m": BUFFER_M,
         "material_counts": material_stats,
+        "building_inventory": building_inventory,
         "facade_detail_parts": facade_detail_parts,
         "facade_window_boxes": facade_window_boxes,
-        "facade_detail_method": "Procedural edge-aligned glazing boxes on selected building footprints; source-tagged building colours/materials take priority, named landmark palettes are applied where identified.",
+        "facade_detail_method": "Procedural edge-aligned glazing boxes generated across the full tagged floor count (up to 60 floors); named landmark palettes override contradictory generic source material tags. This remains a geometry-derived approximation pending per-building photographic validation.",
         "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
         "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
         "height_method": "OSM height, then building:levels × 3.2 m, then 9.6 m fallback.",
-        "limitations": ["Existing OSM footprint extrusions are retained and augmented with edge-aligned glazing geometry and PBR glass materials; this is a procedural facade-detail pass, not a claim of per-building photogrammetric reconstruction.",
-                       "Exact building-specific paint colours, ornamental elements, signage and facade proportions still require photo verification for each identified building; OSM alone does not encode those details.",
+        "limitations": ["This pass corrects known tower height-tag conflicts and generates facade glazing through the full tagged floor count; it does not yet constitute exact photogrammetric reconstruction.",
+                       "Per-building facade proportions, balconies, crown shapes, ornament, signs, and exact colour/texture still require individual reference-photo matching and validation.",
                        "Vertical ground elevations are not baked into this GLB; anchor altitude is 0 m and existing terrain/building layers remain unchanged."],
         "source": "OpenStreetMap contributors, ODbL 1.0",
         "skipped_invalid_features": skipped,
