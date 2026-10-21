@@ -47,6 +47,7 @@ jobs:
           /complete_data/OSM/Buildings/reference_images/
           /ermita/scripts/generate_supreme_court_facade_texture.py
           /ermita/scripts/generate_roxas_boulevard_buildings.py
+          /ermita/scripts/generate_roxas_boulevard_signage.py
           /ermita/assets/textures/Painted-CMU-Block-Architextures.jpeg
           /ermita/maps/sources/openfreemap/
           /ermita/maps/generated/ermita-building-details.geojson
@@ -82,6 +83,18 @@ jobs:
           python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh mapbox-earcut pillow cairosvg
           # Build a standalone PBR GLB for buildings whose footprints lie along mapped Roxas Boulevard segments.
           python3 ermita/scripts/generate_roxas_boulevard_buildings.py
+          # Generate source-tagged building/store signs and address plaques in a separately verifiable overlay.
+          python3 ermita/scripts/generate_roxas_boulevard_signage.py
+          test -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb
+          test -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json')
+          r=json.loads(p.read_text())
+          assert r.get('sign_panels_generated',0)>0, 'No signage panels generated'
+          print('Validated Roxas signage:', r.get('sign_panels_generated'), 'panels on', r.get('buildings_with_at_least_one_sign'), 'building footprints; unlabelled:', r.get('unlabelled_building_parts'))
+          PY
           # Fail deployment rather than silently publishing the old flat-material GLB.
           python3 - <<'PY'
           import json
@@ -343,6 +356,8 @@ jobs:
           cp "complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb" "site/complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb"
           cp complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json
           cp complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json
+          cp complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb
+          cp complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json
           cp ermita/3d/exports/adam-city-complete.glb site/ermita/3d/exports/adam-city-complete.glb
           cp ermita/3d/terrain/ermita-copernicus-dem-cropped.tif site/ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           test -s site/ermita/3d/exports/adam-city-complete.glb
@@ -367,6 +382,8 @@ jobs:
           test -s "site/complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb"
           test -s site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json
           test -s site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json
+          test -s site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb
+          test -s site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json
           # Validate all generated artifacts before publishing or persisting them.
           test -s ermita/3d/generated/facade-model-origin.json
           test -s ermita/3d/generated/ermita-buildings-facade-details.glb
@@ -397,6 +414,7 @@ jobs:
           # Persist the generated alignment file in main as well as publishing it, so the page never depends on a temporary CI-only asset.
           git add ermita/3d/generated/facade-model-origin.json ermita/3d/generated/ermita-buildings-facade-details.glb ermita/3d/generated/facade-signage-index.csv ermita/3d/generated/facade-details-report.json ermita/3d/generated/facade-generation.sha256
           git add ermita/3d/landmarks/landmark-facade-details.glb ermita/3d/landmarks/landmark-facade-origin.json ermita/3d/landmarks/landmark-facade-report.json ermita/3d/landmarks/landmark-generation.sha256
+          git add complete_data/OSM/data/buildings/roxas-boulevard/roxas\ boulevard\ buildings.glb complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json
           git add complete_data/OSM/Markets/ complete_data/OSM/Buildings/Markets/facidals/
           git add complete_data/OSM/Buildings/supreme-court-main-facade.glb complete_data/OSM/Buildings/supreme-court-main-facade-report.json complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg
           git add complete_data/OSM/data/buildings/roxas-boulevard/
