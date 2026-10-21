@@ -34,7 +34,7 @@
   "selection_buffer_m": 70.0,
   "material_counts": {
     "sandstone": 2199,
-    "glass blue grey": 2194,
+    "glass blue grey": 2193,
     "painted ivory": 2156,
     "limestone warm": 2142,
     "muted terracotta": 2256,
@@ -43,6 +43,7 @@
     "Grand Riviera pale concrete and blue glazing": 4,
     "Eton Baypark light facade": 3,
     "Golden Empire reflective gold glass": 3,
+    "Sunny Bay Suites cream facade and charcoal glazing": 1,
     "Victoria Building pale concrete": 1,
     "Pearl of the Orient blue glass": 4,
     "1322 Golden Empire reflective gold glass": 3
@@ -2807,7 +2808,7 @@
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "glass blue grey"
+      "material_assigned": "Sunny Bay Suites cream facade and charcoal glazing"
     },
     "way/823351017": {
       "name": "",
@@ -8657,7 +8658,8 @@
   "detail_matched_unique_osm_ids": 767,
   "facade_detail_parts": 198,
   "facade_window_boxes": 76981,
-  "facade_accent_parts": 4,
+  "facade_accent_parts": 5,
+  "facade_base_parts": 1,
   "facade_detail_method": "Procedural edge-aligned glazing boxes generated across the full tagged floor count (up to 60 floors); named landmark palettes override contradictory generic source material tags. This remains a geometry-derived approximation pending per-building photographic validation.",
   "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
   "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
