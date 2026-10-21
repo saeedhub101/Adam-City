@@ -139,8 +139,13 @@ const waitMap=()=>new Promise(resolve=>{const check=()=>{if(window.adamCityMap?.
 try {
  const map=await waitMap();
  const modelUrl=new URL('complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb',location.href).href;
- const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:120.9820416,lat:14.5850151943},115);
+ // These are the exact GLB origin values from complete_data/OSM/data/buildings/windows/facade-model-origin.json.
+ const anchorLatitude=14.58501519429619;
+ const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:120.98204159999997,lat:anchorLatitude},115);
+ // GLB X/Y are EPSG:3857 projected metres, not ground-distance metres.
+ // Convert projected X/Y with 1 / Earth circumference; meterScale is for true ground metres (e.g. Z altitude).
  const meterScale=anchor.meterInMercatorCoordinateUnits();
+ const projectedMeterScale=meterScale*Math.cos(anchorLatitude*Math.PI/180);
  let renderer,camera,scene,model;
  const customLayer={
   id:'windows-facade-details',type:'custom',renderingMode:'3d',
@@ -228,7 +233,7 @@ try {
    const mapProjection=new THREE.Matrix4().fromArray(matrixValues.map(Number));
    const modelTransform=new THREE.Matrix4()
     .makeTranslation(anchor.x,anchor.y,anchor.z)
-    .scale(new THREE.Vector3(meterScale,-meterScale,meterScale));
+    .scale(new THREE.Vector3(projectedMeterScale,-projectedMeterScale,meterScale));
    camera.projectionMatrix.copy(mapProjection).multiply(modelTransform);
    camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
    renderer.resetState();
