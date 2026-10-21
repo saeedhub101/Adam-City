@@ -90,11 +90,16 @@ jobs:
           assert glb.is_file() and glb.stat().st_size > 1000, 'Roxas GLB is missing or unexpectedly small'
           assert report.get('facade_detail_parts', 0) > 0, 'Roxas facade detail geometry was not generated'
           assert report.get('facade_window_boxes', 0) > 0, 'Roxas window glazing was not generated'
+          assert report.get('facade_textured_shell_parts', 0) > 0, 'Inspected painted-CMU texture shells were not generated'
+          assert report.get('facade_planetarium_dome_parts', 0) >= 1, 'National Planetarium dome geometry was not generated'
           print('Validated Roxas facade GLB:', json.dumps({
               'bytes': glb.stat().st_size,
               'footprint_parts': report.get('buildings_exported'),
               'facade_detail_parts': report.get('facade_detail_parts'),
-              'window_boxes': report.get('facade_window_boxes')
+              'window_boxes': report.get('facade_window_boxes'),
+              'textured_shell_parts': report.get('facade_textured_shell_parts'),
+              'planetarium_dome_parts': report.get('facade_planetarium_dome_parts'),
+              'red_planet_canopy_parts': report.get('facade_red_planet_canopy_parts')
           }))
           PY
           # Build the isolated Pedro Gil image-decal test from the mapped OSM footprint and official transparent logo.
