@@ -34,17 +34,19 @@
   "selection_buffer_m": 70.0,
   "material_counts": {
     "sandstone": 2199,
-    "glass blue grey": 2193,
+    "glass blue grey": 2192,
     "painted ivory": 2156,
     "limestone warm": 2142,
     "muted terracotta": 2256,
     "concrete grey": 2112,
     "Hotel warm painted facade": 3,
     "Grand Riviera pale concrete and blue glazing": 4,
-    "Eton Baypark light facade": 3,
+    "Luneta Hotel pale historic facade": 1,
+    "Eton Baypark light facade": 2,
     "Golden Empire reflective gold glass": 3,
     "Sunny Bay Suites cream facade and charcoal glazing": 1,
     "Victoria Building pale concrete": 1,
+    "Eton Baypark red grey tower facade": 1,
     "Pearl of the Orient blue glass": 4,
     "1322 Golden Empire reflective gold glass": 3
   },
@@ -2467,7 +2469,7 @@
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "glass blue grey"
+      "material_assigned": "Luneta Hotel pale historic facade"
     },
     "way/308699810": {
       "name": "",
@@ -2885,7 +2887,7 @@
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "Eton Baypark light facade"
+      "material_assigned": "Eton Baypark red grey tower facade"
     },
     "way/822386813": {
       "name": "",
@@ -8658,7 +8660,7 @@
   "detail_matched_unique_osm_ids": 767,
   "facade_detail_parts": 198,
   "facade_window_boxes": 76981,
-  "facade_accent_parts": 23,
+  "facade_accent_parts": 26,
   "facade_base_parts": 1,
   "facade_detail_method": "Procedural edge-aligned glazing plus photo-informed, building-specific spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, and Sunny Bay Suites. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
   "visual_reference_checks": [
@@ -8676,6 +8678,16 @@
       "building": "Grand Riviera Suites",
       "url": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/428049742.jpg",
       "observed": "blue glazing, pale projecting floor slabs, pink/red framing concentrated on lower facade"
+    },
+    {
+      "building": "Eton Baypark Manila",
+      "url": "https://eton.com.ph/wp-content/uploads/2020/02/EBM1-1200x675.jpg",
+      "observed": "29-storey red-and-grey tower with vertical terracotta strips and repeated floor divisions"
+    },
+    {
+      "building": "Luneta Hotel",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Ph-mm-manila-ermita-kalaw_ave.-luneta_hotel_%282014%29.JPG",
+      "observed": "pale yellow historic facade, arched openings and dark wrought-iron balconies"
     }
   ],
   "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
