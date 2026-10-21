@@ -84,6 +84,19 @@ jobs:
           # Regenerate landmark facade geometry from the checked-in source and current script.
           # The committed GLB/report can be stale after source-code edits, so build it here.
           python3 ermita/scripts/generate_landmark_facades.py
+          # Regenerate facade and roof detail overlays for the full Ermita building set.
+          python3 ermita/scripts/generate_facade_details.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('ermita/3d/generated/facade-details-report.json').read_text())
+          glb = Path('ermita/3d/generated/ermita-buildings-facade-details.glb')
+          assert glb.is_file() and glb.stat().st_size > 1000000, 'Facade-detail GLB is missing or unexpectedly small'
+          assert report.get('building_polygon_parts', 0) >= 1000, 'Full Ermita building set was not processed'
+          assert report.get('facade_skin_segments', 0) >= 1000, 'Facade skins were not generated across the building set'
+          assert report.get('roof_surfaces', 0) >= 1000, 'Roof surfaces were not generated across the building set'
+          print('Validated city-wide facade/roof overlay:', report['building_polygon_parts'], 'building parts;', report['facade_skin_segments'], 'facade segments;', report['roof_surfaces'], 'roof surfaces')
+          PY
           python3 - <<'PY'
           import json
           from pathlib import Path
