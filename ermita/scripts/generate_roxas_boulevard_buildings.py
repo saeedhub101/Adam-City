@@ -84,7 +84,7 @@ def pbr_for(tags, index):
     known = None
     pearl_ids = {"way/575422161", "way/822386813", "way/822386814", "way/822386816"}
     golden_empire_ids = {"way/90308376", "way/822386807", "way/822386809", "way/822386811"}
-    eton_ids = {"way/575422164", "way/89760235"}
+    eton_ids = {"way/575422164", "way/89760235", "way/822386824"}
     if osm_id in pearl_ids:
         known = ("Pearl of the Orient blue glass", [0.28, 0.43, 0.56, 1], 0.16, 0.28)
     elif osm_id in golden_empire_ids:
@@ -160,7 +160,7 @@ def facade_window_mesh(poly, height, tags, part_index):
         "way/575422161": 42, "way/822386813": 40, "way/822386814": 40, "way/822386816": 42,
         "way/575422162": 57,
         "way/90308376": 55, "way/822386807": 55, "way/822386809": 54, "way/822386811": 56,
-        "way/575422164": 29, "way/89760235": 8,
+        "way/575422164": 29, "way/89760235": 8, "way/822386824": 11,
     }
     levels = positive_number(tags.get("building:levels") or tags.get("levels"), 1, 150)
     floors = landmark_floors.get(fid, int(round(levels)) if levels else max(2, int(round(height / 3.2))))
