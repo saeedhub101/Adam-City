@@ -162,16 +162,41 @@ try {
      object.material=new THREE.MeshStandardMaterial({color:0x00ff00,emissive:0x00a000,emissiveIntensity:1.0,roughness:0.72,metalness:0,side:THREE.DoubleSide});
      object.material.needsUpdate=true;
     });
-    // Keep GLB vertices in their local metre coordinates. The MapLibre transform
-    // is composed into the camera matrix during render to avoid losing precision
-    // when tiny Mercator coordinates are combined with large projected geometry.
+    // Measure actual GLB bounds and vertex counts before drawing.
+    model.updateMatrixWorld(true);
+    const modelBounds=new THREE.Box3().setFromObject(model);
+    const boundsSize=new THREE.Vector3();
+    const boundsCenter=new THREE.Vector3();
+    modelBounds.getSize(boundsSize);
+    modelBounds.getCenter(boundsCenter);
+    let windowsVertexCount=0;
+    model.traverse(object=>{
+     if(object.isMesh && object.geometry?.attributes?.position)
+      windowsVertexCount+=object.geometry.attributes.position.count;
+    });
+    // GLB coordinates are local metres, recentered around the origin.
     model.position.set(0,0,0);
     model.scale.set(1,1,1);
+    // Independent green diagnostic marker at the exact anchor, plus a bounds helper.
+    const marker=new THREE.Mesh(
+     new THREE.BoxGeometry(8,8,8),
+     new THREE.MeshBasicMaterial({color:0x00ff00,wireframe:true,depthTest:false})
+    );
+    marker.name='windows-anchor-diagnostic';
+    scene.add(marker);
+    const boundsHelper=new THREE.Box3Helper(modelBounds,0x00ff00);
+    boundsHelper.name='windows-bounds-diagnostic';
+    boundsHelper.material.depthTest=false;
+    scene.add(boundsHelper);
     scene.add(model);
     window.adamWindowsLayerReady=true;
     window.adamSetWindowsVisible=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
     model.visible=!!document.getElementById('osm-windows')?.checked;
-    const s=document.getElementById('status');if(s)s.textContent='تم تحميل نموذج windows؛ عدد المجسمات: '+windowsMeshCount+'؛ اللون التشخيصي أخضر. المفتاح 12: '+(model.visible?'مفعّل':'متوقف')+'.';
+    const fmt=n=>Number.isFinite(n)?n.toFixed(1):String(n);
+    const s=document.getElementById('status');
+    if(s)s.textContent='GLB loaded | meshes='+windowsMeshCount+' | vertices='+windowsVertexCount+
+     ' | bounds X['+fmt(modelBounds.min.x)+','+fmt(modelBounds.max.x)+'] Y['+fmt(modelBounds.min.y)+','+fmt(modelBounds.max.y)+'] Z['+fmt(modelBounds.min.z)+','+fmt(modelBounds.max.z)+'] m'+
+     ' | size '+fmt(boundsSize.x)+'×'+fmt(boundsSize.y)+'×'+fmt(boundsSize.z)+' m | green anchor marker + bounds | toggle '+(model.visible?'ON':'OFF');
     // Ensure this diagnostic layer is above the map's building/extrusion layers.
     if(mapInstance.getLayer('windows-facade-details')) mapInstance.moveLayer('windows-facade-details');
     mapInstance.triggerRepaint();
@@ -186,14 +211,15 @@ try {
   },
   render(gl,matrix){
    if(!renderer||!model||!model.visible)return;
-   camera.projectionMatrix.fromArray(matrix);
+   const mapProjection=new THREE.Matrix4().fromArray(matrix);
    const modelTransform=new THREE.Matrix4()
     .makeTranslation(anchor.x,anchor.y,anchor.z)
     .scale(new THREE.Vector3(meterScale,-meterScale,meterScale));
-   camera.projectionMatrix.multiply(modelTransform);
+   camera.projectionMatrix.copy(mapProjection).multiply(modelTransform);
    camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
-   renderer.resetState();renderer.render(scene,camera);
-   map.triggerRepaint();
+   renderer.resetState();
+   renderer.render(scene,camera);
+   renderer.resetState();
   }
  };
  map.addLayer(customLayer);
