@@ -79,6 +79,22 @@ jobs:
           python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh mapbox-earcut pillow cairosvg
           # Build a standalone PBR GLB for buildings whose footprints lie along mapped Roxas Boulevard segments.
           python3 ermita/scripts/generate_roxas_boulevard_buildings.py
+          # Fail deployment rather than silently publishing the old flat-material GLB.
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json').read_text())
+          glb = Path('complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb')
+          assert glb.is_file() and glb.stat().st_size > 1000, 'Roxas GLB is missing or unexpectedly small'
+          assert report.get('facade_detail_parts', 0) > 0, 'Roxas facade detail geometry was not generated'
+          assert report.get('facade_window_boxes', 0) > 0, 'Roxas window glazing was not generated'
+          print('Validated Roxas facade GLB:', json.dumps({
+              'bytes': glb.stat().st_size,
+              'footprint_parts': report.get('buildings_exported'),
+              'facade_detail_parts': report.get('facade_detail_parts'),
+              'window_boxes': report.get('facade_window_boxes')
+          }))
+          PY
           # Build the isolated Pedro Gil image-decal test from the mapped OSM footprint and official transparent logo.
           python3 ermita/scripts/generate_pedro_gil_decal.py
           # Build a separate flat Plane Texture overlay for every mapped 7-Eleven store.
