@@ -58,6 +58,25 @@ def pbr_for(tags, index):
     material = normalized(tags.get("building:material") or tags.get("facade:material") or tags.get("material"))
     colour = normalized(tags.get("building:colour") or tags.get("building:color") or tags.get("colour") or tags.get("color"))
     btype = normalized(tags.get("building"))
+    identity = normalized(" ".join(str(tags.get(k) or "") for k in
+        ("name", "official_name", "brand", "building:architecture", "tourism", "amenity")))
+    # Photo-informed architectural palettes for identified buildings in the corridor.
+    # These affect the facade finish; window geometry is added separately below.
+    known = None
+    if "1322 golden empire" in identity or "golden empire tower" in identity:
+        known = ("Golden Empire blue-grey curtain wall", [0.42, 0.52, 0.57, 1], 0.16, 0.30)
+    elif "grand riviera suites" in identity:
+        known = ("Grand Riviera pale concrete and blue glazing", [0.76, 0.77, 0.73, 1], 0.05, 0.55)
+    elif "eton baypark" in identity:
+        known = ("Eton Baypark light facade", [0.78, 0.76, 0.68, 1], 0.04, 0.62)
+    elif "maritime plaza" in identity:
+        known = ("Maritime Plaza light commercial facade", [0.72, 0.70, 0.63, 1], 0.03, 0.68)
+    elif "swagman hotel" in identity or "tropical mansion" in identity:
+        known = ("Hotel warm painted facade", [0.72, 0.62, 0.48, 1], 0.02, 0.78)
+    elif "victoria building" in identity:
+        known = ("Victoria Building pale concrete", [0.73, 0.71, 0.65, 1], 0.02, 0.82)
+    if known is not None and not colour and not material:
+        return known
     # Prefer explicit source colour/material tags when present. For untagged buildings,
     # use restrained, varied architectural neutrals rather than a single city-wide tint.
     palette = [
@@ -227,6 +246,8 @@ def main():
     lon, lat = FROM_METERS(cx, cy)
     scene = trimesh.Scene()
     material_stats = {}
+    facade_detail_parts = 0
+    facade_window_boxes = 0
     used_ids = set()
     for i, item in enumerate(selected):
         poly, tags, height = item["poly"], item["tags"], item["height"]
@@ -255,6 +276,8 @@ def main():
             glazing.apply_translation([-cx, -cy, 0.0])
             glazing_node = f"{node}_glazing_{i}"
             scene.add_geometry(glazing, node_name=glazing_node, geom_name=glazing_node)
+            facade_detail_parts += 1
+            facade_window_boxes += len(glazing.faces) // 12
         if item["id"]: used_ids.add(item["id"])
         material_stats[label] = material_stats.get(label, 0) + 1
     OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -272,6 +295,9 @@ def main():
         "unique_osm_building_ids": len(used_ids), "road_segments_used": len(matched_road_ids),
         "road_feature_ids": matched_road_ids, "selection_buffer_m": BUFFER_M,
         "material_counts": material_stats,
+        "facade_detail_parts": facade_detail_parts,
+        "facade_window_boxes": facade_window_boxes,
+        "facade_detail_method": "Procedural edge-aligned glazing boxes on selected building footprints; source-tagged building colours/materials take priority, named landmark palettes are applied where identified.",
         "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
         "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
         "height_method": "OSM height, then building:levels × 3.2 m, then 9.6 m fallback.",
