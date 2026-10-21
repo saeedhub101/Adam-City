@@ -148,8 +148,8 @@ def main():
     atlas=Image.new("RGB",(ATLAS_TILE_W*ATLAS_COLS,ATLAS_TILE_H*rows),(238,235,225))
     draw=ImageDraw.Draw(atlas)
     try:
-        font_bold=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",34)
-        font_small=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",20)
+        font_bold=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",48)
+        font_small=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",30)
     except OSError:
         font_bold=ImageFont.load_default(); font_small=ImageFont.load_default()
     vertices=[]; faces=[]; uvs=[]; records=[]
@@ -206,17 +206,17 @@ def main():
         else: bg,fg=(232,226,210),(40,45,49)
         draw.rounded_rectangle((x0+1,y0+1,x0+ATLAS_TILE_W-2,y0+ATLAS_TILE_H-2),radius=8,fill=bg,outline=(45,48,49),width=2)
         # Brand/name on first line, address/number on second when known.
-        maxw=ATLAS_TILE_W-36
+        maxw=ATLAS_TILE_W-48
         label=name
         while draw.textbbox((0,0),label,font=font_bold)[2]>maxw and len(label)>5:
             label=label[:-1]
         if label!=name: label=label.rstrip()+"…"
         bb=draw.textbbox((0,0),label,font=font_bold)
-        draw.text((x0+(ATLAS_TILE_W-(bb[2]-bb[0]))/2,y0+24),label,font=font_bold,fill=fg)
+        draw.text((x0+(ATLAS_TILE_W-(bb[2]-bb[0]))/2,y0+42),label,font=font_bold,fill=fg)
         detail=s["number"] or ("ROXAS BOULEVARD" if not is_shop else "")
         if detail:
             bb=draw.textbbox((0,0),detail,font=font_small)
-            draw.text((x0+(ATLAS_TILE_W-(bb[2]-bb[0]))/2,y0+100),detail,font=font_small,fill=fg)
+            draw.text((x0+(ATLAS_TILE_W-(bb[2]-bb[0]))/2,y0+174),detail,font=font_small,fill=fg)
         records.append({k:s[k] for k in ("building_id","name","number","brand","source_id","source","sign_index")} | {"sign_width_m":round(width,2),"sign_height_m":round(height,2),"placement":"longest exterior footprint edge; estimated facade height","exact_photo_match":False})
     if not vertices: raise RuntimeError("No valid sign panels generated")
     mat=trimesh.visual.material.PBRMaterial(name="OSM_name_and_storefront_signage_atlas",
