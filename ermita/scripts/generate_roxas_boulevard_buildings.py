@@ -11,6 +11,7 @@ from pathlib import Path
 
 import numpy as np
 import trimesh
+from PIL import Image
 from pyproj import Transformer
 from shapely.geometry import shape, Polygon, MultiPolygon, GeometryCollection
 from shapely.ops import transform as geom_transform
@@ -27,6 +28,9 @@ REPORT = OUT_DIR / "roxas-bulivard-buildings-report.json"
 TO_METERS = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True).transform
 FROM_METERS = Transformer.from_crs("EPSG:3857", "EPSG:4326", always_xy=True).transform
 BUFFER_M = 70.0
+PAINTED_CMU_TEXTURE = ROOT / "ermita/assets/textures/Painted-CMU-Block-Architextures.jpeg"
+_PAINTED_CMU_IMAGE = None
+_TEXTURE_MATERIAL_CACHE = {}
 
 def tags_of(feature):
     props = feature.get("properties") or {}
@@ -176,6 +180,73 @@ def pbr_for(tags, index):
         elif "brown" in colour: base = [0.43,0.31,0.23,1]
         elif "green" in colour: base = [0.36,0.48,0.34,1]
     return label, base, metal, rough
+
+def facade_texture_mesh(poly, height, tags, label, rgba, metallic, roughness):
+    """Tile the inspected painted-CMU albedo over generic opaque facades; keep landmarks/glass distinct."""
+    global _PAINTED_CMU_IMAGE
+    fid = str(tags.get("osm_feature_id") or "")
+    no_texture_ids = {
+        "way/575422161", "way/822386813", "way/822386814", "way/822386816",
+        "way/575422162", "way/90308376", "way/822386807", "way/822386809", "way/822386811",
+        "way/575422164", "way/89760235", "way/822386824", "way/267171200",
+        "way/136842220", "way/314226156", "way/89770558",
+    }
+    if fid in no_texture_ids or height < 4.5 or poly.area < 80:
+        return None
+    low_label = str(label).lower()
+    # Keep curtain-wall/glass buildings smooth; National Library has both concrete fins and glass,
+    # so its opaque wall bays are allowed to receive the subtle concrete texture.
+    if ("glass" in low_label or "glazing" in low_label) and fid != "way/314226123":
+        return None
+    if _PAINTED_CMU_IMAGE is None:
+        if not PAINTED_CMU_TEXTURE.is_file():
+            raise FileNotFoundError(f"Required facade texture is missing: {PAINTED_CMU_TEXTURE}")
+        _PAINTED_CMU_IMAGE = Image.open(PAINTED_CMU_TEXTURE).convert("RGB")
+    key = (str(label), tuple(round(float(c), 3) for c in rgba[:3]),
+           round(float(metallic), 3), round(float(roughness), 3))
+    material = _TEXTURE_MATERIAL_CACHE.get(key)
+    if material is None:
+        material = trimesh.visual.material.PBRMaterial(
+            name=(str(label).replace(" ", "_") + "_painted_CMU_texture"),
+            baseColorFactor=[int(255*float(c)) for c in rgba[:3]] + [255],
+            baseColorTexture=_PAINTED_CMU_IMAGE,
+            metallicFactor=float(metallic),
+            roughnessFactor=max(0.72, float(roughness)),
+            alphaMode="OPAQUE",
+            doubleSided=True,
+        )
+        _TEXTURE_MATERIAL_CACHE[key] = material
+    vertices, faces, uvs = [], [], []
+    tile_m = 2.4  # approximately four block courses per 2.4 m repeat in the inspected albedo.
+    for a, b in zip(list(poly.exterior.coords)[:-1], list(poly.exterior.coords)[1:]):
+        dx, dy = b[0]-a[0], b[1]-a[1]
+        length = math.hypot(dx, dy)
+        if length < 3.0:
+            continue
+        tx, ty = dx/length, dy/length
+        if poly.exterior.is_ccw:
+            nx, ny = ty, -tx
+        else:
+            nx, ny = -ty, tx
+        offset = 0.028
+        base = len(vertices)
+        vertices.extend([
+            [a[0]+nx*offset, a[1]+ny*offset, 0.04],
+            [b[0]+nx*offset, b[1]+ny*offset, 0.04],
+            [b[0]+nx*offset, b[1]+ny*offset, height-0.04],
+            [a[0]+nx*offset, a[1]+ny*offset, height-0.04],
+        ])
+        uvs.extend([
+            [0.0, 0.0], [length/tile_m, 0.0],
+            [length/tile_m, height/tile_m], [0.0, height/tile_m],
+        ])
+        faces.extend([[base, base+1, base+2], [base, base+2, base+3]])
+    if not faces:
+        return None
+    mesh = trimesh.Trimesh(vertices=np.asarray(vertices), faces=np.asarray(faces), process=False)
+    mesh.visual = trimesh.visual.TextureVisuals(uv=np.asarray(uvs), material=material)
+    return mesh
+
 
 def facade_historic_window_mesh(poly, height, part_index):
     """Build arched dark window panels and iron balcony rails for the photographed Luneta Hotel facade."""
@@ -853,6 +924,7 @@ def main():
     facade_accent_parts = 0
     facade_base_parts = 0
     facade_historic_mesh_parts = 0
+    facade_texture_parts = 0
     facade_planetarium_dome_parts = 0
     facade_red_planet_canopy_parts = 0
     facade_special_mass_overrides = 0
@@ -888,6 +960,14 @@ def main():
         # Stable descriptive node names aid inspection in Blender/3D viewers.
         node = (item["id"] or f"roxas-building-{i+1}").replace("/", "_")
         scene.add_geometry(local, node_name=f"{node}_mass_{i}", geom_name=f"{node}_mass_{i}")
+        # Add a tiled albedo shell to opaque generic facades, while keeping identified glass
+        # towers and photographed landmark profiles on their own materials.
+        textured_facade = facade_texture_mesh(poly, mass_height, tags, label, rgba, metal, rough)
+        if textured_facade is not None:
+            textured_facade.apply_translation([-cx, -cy, 0.0])
+            texture_node = f"{node}_textured_facade_{i}"
+            scene.add_geometry(textured_facade, node_name=texture_node, geom_name=texture_node)
+            facade_texture_parts += 1
         # Add visible, edge-aligned glazing to the existing building massing.
         # Geometry remains derived from the selected OSM footprint and height.
         glazing = facade_window_mesh(poly, mass_height, tags, i)
@@ -968,6 +1048,8 @@ def main():
         "facade_detail_parts": facade_detail_parts,
         "facade_window_boxes": facade_window_boxes,
         "facade_historic_photo_mesh_parts": facade_historic_mesh_parts,
+        "facade_textured_shell_parts": facade_texture_parts,
+        "facade_texture_method": "Inspected Painted-CMU-Block albedo tiled at approximately 2.4 m per repeat on generic opaque facade shells; landmark glass and custom profiles are excluded.",
         "facade_planetarium_dome_parts": facade_planetarium_dome_parts,
         "facade_red_planet_canopy_parts": facade_red_planet_canopy_parts,
         "facade_special_mass_overrides": facade_special_mass_overrides,
