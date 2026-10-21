@@ -1,7 +1,7 @@
 {
   "output": "complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb",
   "buildings_exported": 13080,
-  "unique_osm_building_ids": 20,
+  "unique_osm_building_ids": 34,
   "road_segments_used": 26,
   "road_feature_ids": [
     "way/4486368",
@@ -33,21 +33,43 @@
   ],
   "selection_buffer_m": 70.0,
   "material_counts": {
-    "sandstone": 2167,
-    "muted terracotta": 2251,
-    "glass blue grey": 2166,
-    "limestone warm": 2157,
-    "painted ivory": 2157,
-    "concrete grey": 2164,
-    "Eton Baypark light facade": 2,
+    "sandstone": 50,
+    "muted terracotta": 560,
+    "glass blue grey": 11935,
+    "limestone warm": 263,
+    "Eton Baypark light facade": 3,
     "Golden Empire reflective gold glass": 3,
+    "concrete grey": 209,
     "Victoria Building pale concrete": 1,
     "Grand Riviera pale concrete and blue glazing": 3,
     "Hotel warm painted facade": 2,
     "Pearl of the Orient blue glass": 4,
-    "1322 Golden Empire reflective gold glass": 3
+    "1322 Golden Empire reflective gold glass": 3,
+    "painted ivory": 44
   },
   "building_inventory": {
+    "way/267171252": {
+      "name": "",
+      "building": "yes",
+      "levels_tag": "1",
+      "height_tag_m": "4",
+      "height_used_m": 4.0,
+      "material_tag": "",
+      "colour_tag": "",
+      "footprint_parts": 94,
+      "material_assigned": "limestone warm"
+    },
+    "way/1421827387": {
+      "name": "",
+      "building": "yes",
+      "levels_tag": "",
+      "height_tag_m": "5",
+      "height_used_m": 5.0,
+      "material_tag": "",
+      "colour_tag": "",
+      "footprint_parts": 141,
+      "material_assigned": "muted terracotta"
+    },
     "way/308706322": {
       "name": "",
       "building": "yes",
@@ -81,6 +103,50 @@
       "footprint_parts": 1,
       "material_assigned": "sandstone"
     },
+    "way/267205342": {
+      "name": "",
+      "building": "yes",
+      "levels_tag": "4",
+      "height_tag_m": "15",
+      "height_used_m": 15.0,
+      "material_tag": "",
+      "colour_tag": "",
+      "footprint_parts": 28,
+      "material_assigned": "muted terracotta"
+    },
+    "way/89774527": {
+      "name": "Felcor Espiritu Building",
+      "building": "yes",
+      "levels_tag": "5",
+      "height_tag_m": "19",
+      "height_used_m": 19.0,
+      "material_tag": "",
+      "colour_tag": "",
+      "footprint_parts": 21,
+      "material_assigned": "muted terracotta"
+    },
+    "way/823662684": {
+      "name": "",
+      "building": "yes",
+      "levels_tag": "6",
+      "height_tag_m": "22",
+      "height_used_m": 22.0,
+      "material_tag": "",
+      "colour_tag": "",
+      "footprint_parts": 89,
+      "material_assigned": "limestone warm"
+    },
+    "way/89831340": {
+      "name": "Lourdes Mansion",
+      "building": "yes",
+      "levels_tag": "7",
+      "height_tag_m": "26",
+      "height_used_m": 26.0,
+      "material_tag": "",
+      "colour_tag": "",
+      "footprint_parts": 12,
+      "material_assigned": "sandstone"
+    },
     "way/89760235": {
       "name": "Eton Baypark Manila",
       "building": "yes",
@@ -103,6 +169,17 @@
       "footprint_parts": 7,
       "material_assigned": "glass blue grey"
     },
+    "way/103494320": {
+      "name": "L & S Building",
+      "building": "commercial",
+      "levels_tag": "10",
+      "height_tag_m": "37",
+      "height_used_m": 37.0,
+      "material_tag": "",
+      "colour_tag": "",
+      "footprint_parts": 19,
+      "material_assigned": "glass blue grey"
+    },
     "way/90308376": {
       "name": "1322 Golden Empire Tower",
       "building": "yes",
@@ -123,7 +200,40 @@
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
+      "material_assigned": "Eton Baypark light facade"
+    },
+    "way/404366639": {
+      "name": "",
+      "building": "yes",
+      "levels_tag": "12",
+      "height_tag_m": "42.9",
+      "height_used_m": 42.9,
+      "material_tag": "",
+      "colour_tag": "",
+      "footprint_parts": 3,
+      "material_assigned": "concrete grey"
+    },
+    "way/308695378": {
+      "name": "",
+      "building": "yes",
+      "levels_tag": "13",
+      "height_tag_m": "46.4",
+      "height_used_m": 46.4,
+      "material_tag": "",
+      "colour_tag": "",
+      "footprint_parts": 2,
       "material_assigned": "muted terracotta"
+    },
+    "way/267171200": {
+      "name": "Sunny Bay Suites",
+      "building": "yes",
+      "levels_tag": "13",
+      "height_tag_m": "48",
+      "height_used_m": 48.0,
+      "material_tag": "",
+      "colour_tag": "",
+      "footprint_parts": 4,
+      "material_assigned": "glass blue grey"
     },
     "way/90134167": {
       "name": "Victoria Building",
@@ -267,15 +377,63 @@
       "colour_tag": "",
       "footprint_parts": 1,
       "material_assigned": "Pearl of the Orient blue glass"
+    },
+    "way/267205334": {
+      "name": "",
+      "building": "yes",
+      "levels_tag": "",
+      "height_tag_m": "5",
+      "height_used_m": 5.0,
+      "material_tag": "",
+      "colour_tag": "",
+      "footprint_parts": 11863,
+      "material_assigned": "glass blue grey"
+    },
+    "way/308673853": {
+      "name": "Salud Building",
+      "building": "yes",
+      "levels_tag": "2",
+      "height_tag_m": "8",
+      "height_used_m": 8.0,
+      "material_tag": "",
+      "colour_tag": "",
+      "footprint_parts": 244,
+      "material_assigned": "muted terracotta"
+    },
+    "way/308673851": {
+      "name": "",
+      "building": "yes",
+      "levels_tag": "3",
+      "height_tag_m": "11",
+      "height_used_m": 11.0,
+      "material_tag": "",
+      "colour_tag": "",
+      "footprint_parts": 165,
+      "material_assigned": "concrete grey"
+    },
+    "way/267171201": {
+      "name": "S & L Building",
+      "building": "yes",
+      "levels_tag": "7",
+      "height_tag_m": "26",
+      "height_used_m": 26.0,
+      "material_tag": "",
+      "colour_tag": "",
+      "footprint_parts": 37,
+      "material_assigned": "limestone warm"
     }
   },
+  "detail_polygon_count": 1528,
+  "detail_matched_footprint_parts": 15,
+  "detail_matched_named_parts": 7,
+  "detail_matched_unique_osm_ids": 14,
   "facade_detail_parts": 198,
-  "facade_window_boxes": 78477,
+  "facade_window_boxes": 71743,
   "facade_accent_parts": 4,
   "facade_detail_method": "Procedural edge-aligned glazing boxes generated across the full tagged floor count (up to 60 floors); named landmark palettes override contradictory generic source material tags. This remains a geometry-derived approximation pending per-building photographic validation.",
   "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
   "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
-  "height_method": "OSM height, then building:levels \u00d7 3.2 m, then 9.6 m fallback.",
+  "height_method": "Verified landmark overrides first; otherwise validate OSM height against floor count, then building:levels \u00d7 3.2 m, then 9.6 m fallback.",
   "limitations": [
     "This pass corrects known tower height-tag conflicts and generates facade glazing through the full tagged floor count; it does not yet constitute exact photogrammetric reconstruction.",
     "Per-building facade proportions, balconies, crown shapes, ornament, signs, and exact colour/texture still require individual reference-photo matching and validation.",
