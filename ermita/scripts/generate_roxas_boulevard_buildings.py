@@ -640,8 +640,9 @@ def facade_red_planet_canopy_mesh(poly, height, tags):
             nx, ny = -ty, tx
         midpoint_x = (a[0]+b[0])/2
         # The reference image shows the bright red sign/canopy facing the street.
-        if nx > -0.5 or midpoint_x > minx + 1.5:
+        if midpoint_x > minx + 1.5:
             continue
+        nx, ny = -1.0, 0.0
         base = len(vertices)
         vertices.extend([
             [a[0]+nx*offset,a[1]+ny*offset,zc-thickness/2],
@@ -689,7 +690,12 @@ def facade_base_mesh(poly, height, tags, part_index):
             nx, ny = -ty, tx
         midpoint_x = (a[0] + b[0]) / 2
         # The building faces Roxas Boulevard/Manila Bay to the west (negative X normal).
-        if nx > -0.5 or midpoint_x > minx + 1.5:
+        if fid in {"way/87754850", "way/89770558"}:
+            # These two photo references show their principal entrance on the west street edge.
+            if midpoint_x > minx + 1.5:
+                continue
+            nx, ny = -1.0, 0.0
+        elif nx > -0.5 or midpoint_x > minx + 1.5:
             continue
         points = [
             [a[0]+nx*0.10, a[1]+ny*0.10, 0.08],
