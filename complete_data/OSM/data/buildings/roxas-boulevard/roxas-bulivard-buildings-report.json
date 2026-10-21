@@ -37,11 +37,12 @@
     "glass blue grey": 2191,
     "painted ivory": 2156,
     "limestone warm": 2141,
-    "muted terracotta": 2256,
+    "muted terracotta": 2255,
     "concrete grey": 2112,
     "Bayview Park Hotel orange facade": 1,
     "National Planetarium white dome concrete": 1,
     "National Library pale concrete and tinted glazing": 1,
+    "Red Planet Manila Bay dark cladding": 1,
     "Hotel warm painted facade": 3,
     "Grand Riviera pale concrete and blue glazing": 4,
     "Luneta Hotel pale historic facade": 1,
@@ -1823,7 +1824,7 @@
       "material_tag": "",
       "colour_tag": "",
       "footprint_parts": 1,
-      "material_assigned": "muted terracotta"
+      "material_assigned": "Red Planet Manila Bay dark cladding"
     },
     "way/89781189": {
       "name": "Rosas Garden",
@@ -8665,10 +8666,11 @@
   "facade_window_boxes": 77757,
   "facade_historic_photo_mesh_parts": 1,
   "facade_planetarium_dome_parts": 1,
+  "facade_red_planet_canopy_parts": 0,
   "facade_special_mass_overrides": 1,
   "facade_accent_parts": 30,
   "facade_base_parts": 1,
-  "facade_detail_method": "Procedural edge-aligned glazing for tall buildings; photo-informed spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, Eton Baypark, Sunny Bay Suites, and Bayview Park Hotel; National Library uses pale concrete bands and vertical fins; Luneta Hotel uses arched dark glazing and wrought-iron balcony rails; National Planetarium uses a separate 16 m hemispherical dome above its low hall. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
+  "facade_detail_method": "Procedural edge-aligned glazing for tall buildings; photo-informed spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, Eton Baypark, Sunny Bay Suites, Bayview Park Hotel, and Red Planet Manila Bay; National Library uses pale concrete bands and vertical fins; Luneta Hotel uses arched dark glazing and wrought-iron balcony rails; National Planetarium uses a separate 16 m hemispherical dome above its low hall. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
   "visual_reference_checks": [
     {
       "building": "Pearl of the Orient Tower",
@@ -8708,7 +8710,12 @@
     {
       "building": "National Planetarium",
       "url": "https://commons.wikimedia.org/wiki/File:02609jfManila_Ermita_Planetarium_Rizal_Park_Padre_Burgos_Streets_Buildings_Landmarksfvf_18.jpg",
-      "observed": "low rectangular hall with a prominent 16 m white hemispherical dome"
+      "observed": "low rectangular hall with a prominent 16 m white hemispherical dome and curved entrance canopy"
+    },
+    {
+      "building": "Red Planet Manila Bay",
+      "url": "https://res.klook.com/klook-hotel/image/upload/travelapi/20000000/19730000/19720900/19720865/a1174614_z.jpg",
+      "observed": "dark grey/blue facade, tinted windows, bright red horizontal entrance canopy and dark glazed street-level base"
     }
   ],
   "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
