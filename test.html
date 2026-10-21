@@ -211,6 +211,8 @@ try {
      ' | size '+fmt(boundsSize.x)+'×'+fmt(boundsSize.y)+'×'+fmt(boundsSize.z)+' m | green anchor marker + bounds | toggle '+(model.visible?'ON':'OFF');
     // Ensure this diagnostic layer is above the map's building/extrusion layers.
     if(mapInstance.getLayer('windows-facade-details')) mapInstance.moveLayer('windows-facade-details');
+    // Commercial signs must stay above the facade/window meshes when both GLBs are enabled.
+    if(mapInstance.getLayer('commercial-signage-3d')) mapInstance.moveLayer('commercial-signage-3d');
     mapInstance.triggerRepaint();
    },progress=>{
     const s=document.getElementById('status');
