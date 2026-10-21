@@ -162,9 +162,11 @@ try {
      object.material=new THREE.MeshStandardMaterial({color:0x00ff00,emissive:0x00a000,emissiveIntensity:1.0,roughness:0.72,metalness:0,side:THREE.DoubleSide});
      object.material.needsUpdate=true;
     });
-    model.position.set(anchor.x,anchor.y,anchor.z);
-    model.scale.set(meterScale,-meterScale,meterScale);
-    // GLB is already Z-up in local EPSG:3857 metres; keep Z vertical for MapLibre.
+    // Keep GLB vertices in their local metre coordinates. The MapLibre transform
+    // is composed into the camera matrix during render to avoid losing precision
+    // when tiny Mercator coordinates are combined with large projected geometry.
+    model.position.set(0,0,0);
+    model.scale.set(1,1,1);
     scene.add(model);
     window.adamWindowsLayerReady=true;
     window.adamSetWindowsVisible=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
@@ -185,6 +187,10 @@ try {
   render(gl,matrix){
    if(!renderer||!model||!model.visible)return;
    camera.projectionMatrix.fromArray(matrix);
+   const modelTransform=new THREE.Matrix4()
+    .makeTranslation(anchor.x,anchor.y,anchor.z)
+    .scale(new THREE.Vector3(meterScale,-meterScale,meterScale));
+   camera.projectionMatrix.multiply(modelTransform);
    camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
    renderer.resetState();renderer.render(scene,camera);
    map.triggerRepaint();
