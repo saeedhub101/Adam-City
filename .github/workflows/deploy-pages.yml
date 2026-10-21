@@ -81,6 +81,20 @@ jobs:
           set -euo pipefail
           test -s ermita-malate-3d.html
           python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh mapbox-earcut pillow cairosvg
+          # Regenerate landmark facade geometry from the checked-in source and current script.
+          # The committed GLB/report can be stale after source-code edits, so build it here.
+          python3 ermita/scripts/generate_landmark_facades.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('ermita/3d/landmarks/landmark-facade-report.json').read_text())
+          glb = Path('ermita/3d/landmarks/landmark-facade-details.glb')
+          assert glb.is_file() and glb.stat().st_size > 1000, 'Landmark facade GLB was not generated'
+          targets = report.get('targets', [])
+          museum = next((item for item in targets if item.get('target_id') == 'relation/61326'), None)
+          assert museum and abs(float(museum.get('approx_height_m', 0)) - 24.3) < 0.01, 'National Museum model did not use the source-backed 24.3 m height'
+          print('Validated regenerated landmark facade:', glb.stat().st_size, 'bytes; National Museum reference height:', museum['approx_height_m'], 'm')
+          PY
           # Build a standalone PBR GLB for buildings whose footprints lie along mapped Roxas Boulevard segments.
           python3 ermita/scripts/generate_roxas_boulevard_buildings.py
           # Generate source-tagged building/store signs and address plaques in a separately verifiable overlay.
