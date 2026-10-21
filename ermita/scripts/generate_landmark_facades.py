@@ -175,7 +175,9 @@ def main():
     museum=geom_transform(TO_METERS,museum_polygon())
     # Do not place PGH details on the nearby unnamed 133 x 187 m hospital polygon:
     # it is not a verified Cancer Institute footprint and may cover several structures.
-    geoms=[('relation/61326',museum,24.0,{'stone':[222,216,202,255],'trim':[197,185,164,255],'roof':[126,80,66,255]})]
+    # Official National Museum procurement documents specify the long facade at 24.3 m high.
+    # Keep this as a source-backed reference dimension, not an inferred generic height.
+    geoms=[('relation/61326',museum,24.3,{'stone':[222,216,202,255],'trim':[197,185,164,255],'roof':[126,80,66,255]})]
     minx=min(g.bounds[0] for _,g,_,_ in geoms); miny=min(g.bounds[1] for _,g,_,_ in geoms)
     maxx=max(g.bounds[2] for _,g,_,_ in geoms); maxy=max(g.bounds[3] for _,g,_,_ in geoms)
     maxz=max(h for _,_,h,_ in geoms)
