@@ -86,6 +86,8 @@ def main():
     if not prepared:
         raise RuntimeError("No valid building polygons available for facade generation")
     center = ((minx+maxx)/2, (miny+maxy)/2, maxz/2)
+    wall_meshes = []
+    roof_meshes = []
     window_meshes = []
     frame_meshes = []
     sill_meshes = []
@@ -109,7 +111,31 @@ def main():
         seed = int(hashlib.sha256(str(fid or name or len(prepared)).encode()).hexdigest()[:8], 16)
         frame_color = ([218, 211, 195, 255] if seed % 5 in (0, 1) else [76, 72, 66, 255] if seed % 5 in (2, 3) else [156, 151, 139, 255])
         glass_color = ([87, 135, 157, 220] if seed % 4 == 0 else [112, 153, 170, 205] if seed % 4 == 1 else [75, 105, 119, 220] if seed % 4 == 2 else [151, 181, 190, 190])
-        # Only exterior walls; window rows and panels sit just outside the footprint.
+        # Stable per-building material variants, biased by mapped material/use tags.
+        building_type = str(tags.get("building") or tags.get("building:use") or "").lower()
+        material_tag = str(tags.get("building:material") or tags.get("building:facade:material") or "").lower()
+        palette = ([205, 194, 174, 255], [220, 215, 201, 255], [177, 169, 151, 255])
+        if any(k in material_tag for k in ("glass", "curtain", "metal")) or building_type in ("office", "commercial", "hotel"):
+            palette = ([143, 163, 169, 255], [164, 178, 180, 255], [124, 145, 151, 255])
+        elif any(k in material_tag for k in ("brick", "stone", "concrete")):
+            palette = ([173, 143, 119, 255], [194, 171, 146, 255], [157, 151, 139, 255])
+        wall_color = palette[seed % len(palette)]
+        roof_tag = str(tags.get("roof:material") or tags.get("roof:colour") or "").lower()
+        roof_palette = ([104, 108, 105, 255], [127, 119, 105, 255], [145, 139, 126, 255])
+        if any(k in roof_tag for k in ("red", "tile", "terracotta")):
+            roof_palette = ([137, 77, 57, 255], [157, 91, 66, 255])
+        roof_color = roof_palette[seed % len(roof_palette)]
+        # Add a thin roof plate at the mapped building height.
+        try:
+            from shapely.affinity import translate as shift_geometry
+            local_poly = shift_geometry(poly, xoff=-center[0], yoff=-center[1])
+            roof = trimesh.creation.extrude_polygon(local_poly, height=0.12)
+            roof.apply_translation([0, 0, height - center[2] + 0.015])
+            roof.visual.face_colors = roof_color
+            roof_meshes.append(roof)
+        except Exception as exc:
+            print(f"Roof skipped for {fid or name or 'unnamed building'}: {exc}")
+        # Facade skins add low-relief color/material to all exterior faces.
         ring = list(poly.exterior.coords)
         for a, b in zip(ring[:-1], ring[1:]):
             dx, dy = b[0]-a[0], b[1]-a[1]
@@ -119,6 +145,8 @@ def main():
             ux, uy = dx/length, dy/length
             nx, ny = -uy, ux
             angle = math.atan2(dy, dx)
+            wall = box_at(((a[0]+b[0])/2-center[0], (a[1]+b[1])/2-center[1], height/2-center[2]), (length, 0.055, height), angle, wall_color)
+            wall_meshes.append(wall)
             # Place 1–2 m from corners and avoid excessive tiny windows.
             spacing = 3.0
             count = min(55, max(0, int((length-2.0)/spacing)))
@@ -175,6 +203,12 @@ def main():
 
     # Separate geometry groups preserve independent glTF materials for glass and opaque details.
     scene = trimesh.Scene()
+    if wall_meshes:
+        walls = trimesh.util.concatenate(wall_meshes)
+        scene.add_geometry(walls, geom_name="building_facade_skins", node_name="building_facade_skins")
+    if roof_meshes:
+        roofs = trimesh.util.concatenate(roof_meshes)
+        scene.add_geometry(roofs, geom_name="building_roof_surfaces", node_name="building_roof_surfaces")
     if frame_meshes:
         frames = trimesh.util.concatenate(frame_meshes)
         frames.visual = trimesh.visual.TextureVisuals(material=pbr_material([156, 151, 139, 255], metallic=0.0, roughness=0.82))
@@ -231,11 +265,11 @@ def main():
         "output_signage_index": str(OUT_CSV.relative_to(ROOT)),
         "building_polygon_parts": len(prepared), "glb_bytes": OUT_GLB.stat().st_size,
         "model_center_epsg3857_m": {"x": center[0], "y": center[1], "z": center[2]},
-        "window_panels": windows_count, "window_frames": len(frame_meshes), "window_sills": len(sill_meshes), "balcony_parts": len(balcony_meshes),
+        "facade_skin_segments": len(wall_meshes), "roof_surfaces": len(roof_meshes), "window_panels": windows_count, "window_frames": len(frame_meshes), "window_sills": len(sill_meshes), "balcony_parts": len(balcony_meshes),
         "door_placeholders": doors_count, "named_signboard_placeholders": panels_count,
         "placement": "EPSG:3857 meters; recentered using the same building extent as the extrusion model",
         "limitations": [
-            "Windows, frames, sills, balconies, doors and signboards are procedural visual details, not surveyed architectural features.",
+            "Facade skins and roof surfaces use tag-based color variants, but are approximations rather than photo-matched finishes. Windows, frames, sills, balconies, doors and signboards remain procedural details, not surveyed architectural features.",
             "Floor counts are estimated if OSM building:levels is absent.",
             "Signboard names are drawn from available OSM name/brand/shop/amenity tags; actual typography, logos, colors and wording are not reconstructed.",
             "No facade photographs, photogrammetry, or street-level imagery are included."
