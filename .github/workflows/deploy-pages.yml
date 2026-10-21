@@ -414,7 +414,6 @@ jobs:
           # Persist the generated alignment file in main as well as publishing it, so the page never depends on a temporary CI-only asset.
           git add ermita/3d/generated/facade-model-origin.json ermita/3d/generated/ermita-buildings-facade-details.glb ermita/3d/generated/facade-signage-index.csv ermita/3d/generated/facade-details-report.json ermita/3d/generated/facade-generation.sha256
           git add ermita/3d/landmarks/landmark-facade-details.glb ermita/3d/landmarks/landmark-facade-origin.json ermita/3d/landmarks/landmark-facade-report.json ermita/3d/landmarks/landmark-generation.sha256
-          git add complete_data/OSM/data/buildings/roxas-boulevard/roxas\ boulevard\ buildings.glb complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json
           git add complete_data/OSM/Markets/ complete_data/OSM/Buildings/Markets/facidals/
           git add complete_data/OSM/Buildings/supreme-court-main-facade.glb complete_data/OSM/Buildings/supreme-court-main-facade-report.json complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg
           git add complete_data/OSM/data/buildings/roxas-boulevard/
