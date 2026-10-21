@@ -139,9 +139,15 @@ const waitMap=()=>new Promise(resolve=>{const check=()=>{if(window.adamCityMap?.
 try {
  const map=await waitMap();
  const modelUrl=new URL('complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb',location.href).href;
- // These are the exact GLB origin values from complete_data/OSM/data/buildings/windows/facade-model-origin.json.
- const anchorLatitude=14.58501519429619;
- const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:120.98204159999997,lat:anchorLatitude},115);
+ const originUrl=new URL('complete_data/OSM/data/buildings/windows/facade-model-origin.json',location.href).href;
+ const originResponse=await fetch(originUrl);
+ if(!originResponse.ok)throw new Error('Origin JSON HTTP '+originResponse.status);
+ const origin=await originResponse.json();
+ const anchorLatitude=Number(origin.latitude);
+ const anchor=maplibregl.MercatorCoordinate.fromLngLat(
+  {lng:Number(origin.longitude),lat:anchorLatitude},
+  Number(origin.anchor_altitude_m)
+ );
  // GLB X/Y are EPSG:3857 projected metres, not ground-distance metres.
  // Convert projected X/Y with 1 / Earth circumference; meterScale is for true ground metres (e.g. Z altitude).
  const meterScale=anchor.meterInMercatorCoordinateUnits();
