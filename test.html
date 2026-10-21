@@ -22,7 +22,7 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <label class="row"><input type="checkbox" id="baseGround" checked> إظهار أرضية الخريطة الأصلية (الشوارع، المياه، الحدائق والتسميات)</label>
 <label class="row"><input type="checkbox" id="baseBuildings" checked> إظهار مباني المصدر الأصلية ثلاثية الأبعاد</label>
 <label class="row"><input type="checkbox" id="commercial-signage" checked> إظهار يافطات Robinsons و7-Eleven وMcDonald’s</label>
-<label class="row"><input type="checkbox" id="pedro-gil-decal"> Plane Texture — يافطات جميع فروع 7-Eleven</label>
+<label class="row"><input type="checkbox" id="pedro-gil-decal"> Plane Texture — يافطات جميع فروع 7-Eleven</label>\n<label class="row"><input type="checkbox" id="supreme-court-facade"> Supreme Court — صورة واجهة حقيقية (Plane Texture)</label>
 </div>
 <div class="group"><div class="group-title">مجلدات OSM — طبقات مستقلة</div>
 <label class="row"><input type="checkbox" id="osm-raw"> 1. raw — بيانات OSM الخام (ليست طبقة خريطة مباشرة)</label>
@@ -42,7 +42,59 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <div class="status" id="status">جارٍ تحميل خريطة المصدر…</div><div id="error"></div>
 </section>
 <div class="attribution">OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors</div>
-<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js">
+ // Photographic facade decal test for the mapped Supreme Court Main Building (way/156307566).
+ // This is an independent image plane over the existing OSM building; it does not replace geometry.
+ const courtToggle=document.getElementById('supreme-court-facade');
+ courtToggle?.addEventListener('change',ev=>{
+  window.adamCourtFacadeVisible=ev.target.checked;
+  if(window.adamCourtFacadeSetVisible)window.adamCourtFacadeSetVisible(ev.target.checked);
+  else if(ev.target.checked){const s=document.getElementById('status');if(s)s.textContent='جارٍ تحميل خامة واجهة المحكمة العليا…';}
+ });
+ try {
+  const map=await waitMap();
+  const modelUrl=new URL('complete_data/OSM/Buildings/supreme-court-main-facade.glb',location.href).href;
+  const originUrl=new URL('complete_data/OSM/Markets/commercial-facades-origin.json',location.href).href;
+  const response=await fetch(originUrl);if(!response.ok)throw new Error('Origin JSON HTTP '+response.status);
+  const origin=await response.json(),lat=Number(origin.latitude);
+  const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:Number(origin.longitude),lat},Number(origin.anchor_altitude_m||0));
+  const meterScale=anchor.meterInMercatorCoordinateUnits(),projectedMeterScale=meterScale*Math.cos(lat*Math.PI/180);
+  let renderer,camera,scene,model;
+  const layer={
+   id:'supreme-court-photo-facade-3d',type:'custom',renderingMode:'3d',
+   onAdd(mapInstance,gl){
+    renderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;
+    camera=new THREE.Camera();scene=new THREE.Scene();scene.add(new THREE.AmbientLight(0xffffff,2.0));
+    const light=new THREE.DirectionalLight(0xffffff,1.6);light.position.set(0,-70,100).normalize();scene.add(light);
+    const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
+    loader.load(modelUrl,gltf=>{
+     model=gltf.scene;scene.add(model);
+     window.adamCourtFacadeSetVisible=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
+     model.visible=!!document.getElementById('supreme-court-facade')?.checked;
+     const status=document.getElementById('status');if(status)status.textContent='خامة واجهة المحكمة العليا محمّلة؛ المبنى الأصلي محفوظ.';
+     if(mapInstance.getLayer('supreme-court-photo-facade-3d'))mapInstance.moveLayer('supreme-court-photo-facade-3d');
+     mapInstance.triggerRepaint();
+    },undefined,err=>{
+     const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر تحميل خامة واجهة المحكمة العليا: '+(err?.message||err);}
+    });
+   },
+   render(gl,args){
+    if(!renderer||!model||!model.visible)return;
+    const mainMatrix=args?.defaultProjectionData?.mainMatrix;if(!mainMatrix)return;
+    const values=Object.values(mainMatrix);if(values.length!==16||values.some(v=>!Number.isFinite(Number(v))))return;
+    const projection=new THREE.Matrix4().fromArray(values.map(Number));
+    const transform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
+      .scale(new THREE.Vector3(projectedMeterScale,-projectedMeterScale,meterScale));
+    camera.projectionMatrix.copy(projection).multiply(transform);camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+    renderer.resetState();renderer.render(scene,camera);renderer.resetState();
+   }
+  };
+  map.addLayer(layer);if(map.getLayer('supreme-court-photo-facade-3d'))map.moveLayer('supreme-court-photo-facade-3d');
+ } catch(err) {
+  const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر إعداد خامة واجهة المحكمة العليا: '+(err?.message||err);}
+ }
+
+</script>
 <script>
 (async function(){
  const status=document.getElementById('status'), errorBox=document.getElementById('error');
