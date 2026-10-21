@@ -4,7 +4,10 @@ on:
     branches: [main]
     paths-ignore:
       - 'ermita/maps/sources/openfreemap/building-fallback.geojson'
-      - 'ermita/maps/sources/openfreemap/ground-fallback.geojson'\n      - 'complete_data/OSM/Buildings/supreme-court-main-facade.glb'\n      - 'complete_data/OSM/Buildings/supreme-court-main-facade-report.json'\n      - 'complete_data/OSM/Buildings/reference_images/**'
+      - 'ermita/maps/sources/openfreemap/ground-fallback.geojson'
+      - 'complete_data/OSM/Buildings/supreme-court-main-facade.glb'
+      - 'complete_data/OSM/Buildings/supreme-court-main-facade-report.json'
+      - 'complete_data/OSM/Buildings/reference_images/**'
   workflow_dispatch:
 
 permissions:
@@ -36,7 +39,11 @@ jobs:
           /test.html
           /complete_data/OSM/data/
           /complete_data/OSM/Markets/
-          /complete_data/OSM/Buildings/Markets/facidals/\n          /complete_data/OSM/Buildings/supreme-court-main-facade.glb\n          /complete_data/OSM/Buildings/supreme-court-main-facade-report.json\n          /complete_data/OSM/Buildings/reference_images/\n          /ermita/scripts/generate_supreme_court_facade_texture.py
+          /complete_data/OSM/Buildings/Markets/facidals/
+          /complete_data/OSM/Buildings/supreme-court-main-facade.glb
+          /complete_data/OSM/Buildings/supreme-court-main-facade-report.json
+          /complete_data/OSM/Buildings/reference_images/
+          /ermita/scripts/generate_supreme_court_facade_texture.py
           /ermita/maps/sources/openfreemap/
           /ermita/maps/generated/ermita-building-details.geojson
           /ermita/maps/generated/ermita-building-footprints.geojson
@@ -72,7 +79,9 @@ jobs:
           # Build the isolated Pedro Gil image-decal test from the mapped OSM footprint and official transparent logo.
           python3 ermita/scripts/generate_pedro_gil_decal.py
           # Build a separate flat Plane Texture overlay for every mapped 7-Eleven store.
-          python3 ermita/scripts/generate_all_7eleven_plane_textures.py\n          # Build a photographic facade Plane Texture for the existing Supreme Court OSM building.\n          python3 ermita/scripts/generate_supreme_court_facade_texture.py
+          python3 ermita/scripts/generate_all_7eleven_plane_textures.py
+          # Build a photographic facade Plane Texture for the existing Supreme Court OSM building.
+          python3 ermita/scripts/generate_supreme_court_facade_texture.py
           # Fingerprints invalidate only outputs whose generator, source data, or contract changed.
           # Stable hashes intentionally exclude timestamps and CI-run metadata.
           FACADE_FINGERPRINT="$( { printf 'contract=1\n'; sha256sum ermita/scripts/generate_facade_details.py ermita/maps/generated/ermita-building-details.geojson; } | sha256sum | awk '{print $1}')"
@@ -297,7 +306,10 @@ jobs:
           cp -a complete_data/OSM/Markets/. site/complete_data/OSM/Markets/
           cp complete_data/OSM/Buildings/Markets/facidals/robenson.glb site/complete_data/OSM/Buildings/Markets/facidals/robenson.glb
           cp complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb site/complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb
-          cp complete_data/OSM/Buildings/Markets/facidals/all-7eleven-plane-textures.glb site/complete_data/OSM/Buildings/Markets/facidals/all-7eleven-plane-textures.glb\n          cp complete_data/OSM/Buildings/supreme-court-main-facade.glb site/complete_data/OSM/Buildings/supreme-court-main-facade.glb\n          cp complete_data/OSM/Buildings/supreme-court-main-facade-report.json site/complete_data/OSM/Buildings/supreme-court-main-facade-report.json\n          cp complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg site/complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg
+          cp complete_data/OSM/Buildings/Markets/facidals/all-7eleven-plane-textures.glb site/complete_data/OSM/Buildings/Markets/facidals/all-7eleven-plane-textures.glb
+          cp complete_data/OSM/Buildings/supreme-court-main-facade.glb site/complete_data/OSM/Buildings/supreme-court-main-facade.glb
+          cp complete_data/OSM/Buildings/supreme-court-main-facade-report.json site/complete_data/OSM/Buildings/supreme-court-main-facade-report.json
+          cp complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg site/complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg
           cp ermita/3d/exports/adam-city-complete.glb site/ermita/3d/exports/adam-city-complete.glb
           cp ermita/3d/terrain/ermita-copernicus-dem-cropped.tif site/ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           test -s site/ermita/3d/exports/adam-city-complete.glb
@@ -317,7 +329,8 @@ jobs:
           test -s site/ermita/3d/commercial/commercial-facades-origin.json
           test -s site/ermita/3d/commercial/commercial-facades-report.json
           test -s site/complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb
-          test -s site/complete_data/OSM/Buildings/Markets/facidals/all-7eleven-plane-textures.glb\n          test -s site/complete_data/OSM/Buildings/supreme-court-main-facade.glb
+          test -s site/complete_data/OSM/Buildings/Markets/facidals/all-7eleven-plane-textures.glb
+          test -s site/complete_data/OSM/Buildings/supreme-court-main-facade.glb
           # Validate all generated artifacts before publishing or persisting them.
           test -s ermita/3d/generated/facade-model-origin.json
           test -s ermita/3d/generated/ermita-buildings-facade-details.glb
@@ -335,7 +348,9 @@ jobs:
           test -s complete_data/OSM/Markets/all-7eleven-plane-textures-report.json
           test -s complete_data/OSM/Markets/commercial-facades-origin.json
           test -s complete_data/OSM/Markets/commercial-facades-report.json
-          test -s complete_data/OSM/Markets/commercial-generation.sha256\n          test -s complete_data/OSM/Buildings/supreme-court-main-facade.glb\n          test -s complete_data/OSM/Buildings/supreme-court-main-facade-report.json
+          test -s complete_data/OSM/Markets/commercial-generation.sha256
+          test -s complete_data/OSM/Buildings/supreme-court-main-facade.glb
+          test -s complete_data/OSM/Buildings/supreme-court-main-facade-report.json
           # Save every newly imported/generated asset to main. Existing committed outputs are reused.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -346,7 +361,8 @@ jobs:
           # Persist the generated alignment file in main as well as publishing it, so the page never depends on a temporary CI-only asset.
           git add ermita/3d/generated/facade-model-origin.json ermita/3d/generated/ermita-buildings-facade-details.glb ermita/3d/generated/facade-signage-index.csv ermita/3d/generated/facade-details-report.json ermita/3d/generated/facade-generation.sha256
           git add ermita/3d/landmarks/landmark-facade-details.glb ermita/3d/landmarks/landmark-facade-origin.json ermita/3d/landmarks/landmark-facade-report.json ermita/3d/landmarks/landmark-generation.sha256
-          git add complete_data/OSM/Markets/ complete_data/OSM/Buildings/Markets/facidals/\n          git add complete_data/OSM/Buildings/supreme-court-main-facade.glb complete_data/OSM/Buildings/supreme-court-main-facade-report.json complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg
+          git add complete_data/OSM/Markets/ complete_data/OSM/Buildings/Markets/facidals/
+          git add complete_data/OSM/Buildings/supreme-court-main-facade.glb complete_data/OSM/Buildings/supreme-court-main-facade-report.json complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg
           if ! git diff --cached --quiet; then
             git commit -m "Store generated building and ground fallback data"
             git push origin HEAD:main
