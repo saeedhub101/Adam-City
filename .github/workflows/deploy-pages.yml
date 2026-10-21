@@ -44,6 +44,7 @@ jobs:
           /complete_data/OSM/Buildings/supreme-court-main-facade-report.json
           /complete_data/OSM/Buildings/reference_images/
           /ermita/scripts/generate_supreme_court_facade_texture.py
+          /ermita/scripts/generate_roxas_boulevard_buildings.py
           /ermita/maps/sources/openfreemap/
           /ermita/maps/generated/ermita-building-details.geojson
           /ermita/maps/generated/ermita-building-footprints.geojson
@@ -75,7 +76,9 @@ jobs:
         run: |
           set -euo pipefail
           test -s ermita-malate-3d.html
-          python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh pillow cairosvg
+          python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh mapbox-earcut pillow cairosvg
+          # Build a standalone PBR GLB for buildings whose footprints lie along mapped Roxas Boulevard segments.
+          python3 ermita/scripts/generate_roxas_boulevard_buildings.py
           # Build the isolated Pedro Gil image-decal test from the mapped OSM footprint and official transparent logo.
           python3 ermita/scripts/generate_pedro_gil_decal.py
           # Build a separate flat Plane Texture overlay for every mapped 7-Eleven store.
@@ -292,7 +295,7 @@ jobs:
           cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/building-fallback.geojson
           cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/ground-fallback.geojson
           # Publish the repository copies, whether reused or newly generated.
-          mkdir -p site/ermita/maps/generated site/ermita/3d/generated site/ermita/3d/exports site/ermita/3d/terrain site/ermita/3d/landmarks site/ermita/3d/commercial site/complete_data/OSM/Markets site/complete_data/OSM/Buildings/Markets/facidals site/complete_data/OSM/Buildings/reference_images
+          mkdir -p site/ermita/maps/generated site/ermita/3d/generated site/ermita/3d/exports site/ermita/3d/terrain site/ermita/3d/landmarks site/ermita/3d/commercial site/complete_data/OSM/Markets site/complete_data/OSM/Buildings/Markets/facidals site/complete_data/OSM/Buildings/reference_images site/complete_data/OSM/data/buildings/roxas-boulevard
           cp ermita/maps/generated/ermita-building-details.geojson site/ermita/maps/generated/ermita-building-details.geojson
           cp ermita/3d/generated/ermita-buildings-facade-details.glb site/ermita/3d/generated/ermita-buildings-facade-details.glb
           cp ermita/3d/generated/facade-model-origin.json site/ermita/3d/generated/facade-model-origin.json
@@ -310,6 +313,9 @@ jobs:
           cp complete_data/OSM/Buildings/supreme-court-main-facade.glb site/complete_data/OSM/Buildings/supreme-court-main-facade.glb
           cp complete_data/OSM/Buildings/supreme-court-main-facade-report.json site/complete_data/OSM/Buildings/supreme-court-main-facade-report.json
           cp complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg site/complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg
+          cp "complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb" "site/complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb"
+          cp complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json
+          cp complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json
           cp ermita/3d/exports/adam-city-complete.glb site/ermita/3d/exports/adam-city-complete.glb
           cp ermita/3d/terrain/ermita-copernicus-dem-cropped.tif site/ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           test -s site/ermita/3d/exports/adam-city-complete.glb
@@ -331,6 +337,9 @@ jobs:
           test -s site/complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb
           test -s site/complete_data/OSM/Buildings/Markets/facidals/all-7eleven-plane-textures.glb
           test -s site/complete_data/OSM/Buildings/supreme-court-main-facade.glb
+          test -s "site/complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb"
+          test -s site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json
+          test -s site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json
           # Validate all generated artifacts before publishing or persisting them.
           test -s ermita/3d/generated/facade-model-origin.json
           test -s ermita/3d/generated/ermita-buildings-facade-details.glb
@@ -363,6 +372,7 @@ jobs:
           git add ermita/3d/landmarks/landmark-facade-details.glb ermita/3d/landmarks/landmark-facade-origin.json ermita/3d/landmarks/landmark-facade-report.json ermita/3d/landmarks/landmark-generation.sha256
           git add complete_data/OSM/Markets/ complete_data/OSM/Buildings/Markets/facidals/
           git add complete_data/OSM/Buildings/supreme-court-main-facade.glb complete_data/OSM/Buildings/supreme-court-main-facade-report.json complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg
+          git add complete_data/OSM/data/buildings/roxas-boulevard/
           if ! git diff --cached --quiet; then
             git commit -m "Store generated building and ground fallback data"
             git push origin HEAD:main
