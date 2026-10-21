@@ -17,7 +17,7 @@ from shapely.ops import transform as geom_transform
 
 ROOT = Path(__file__).resolve().parents[2]
 MAP_FILE = ROOT / "ermita/maps/generated/ermita-building-details.geojson"
-STORES_FILE = ROOT / "complete_data/odm/markets/ermita-branded-stores.geojson"
+STORES_FILE = ROOT / "complete_data/OSM/Markets/ermita-branded-stores.geojson"
 OUT_DIR = ROOT / "complete_data/odm/markets"
 ASSET_DIR = ROOT / "complete_data/odm/markets/assets"
 PHOTO_DIR = ROOT / "complete_data/odm/markets/reference_photos/robinsons-manila"
