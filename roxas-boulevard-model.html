@@ -48,7 +48,7 @@ scene.add(new THREE.HemisphereLight(0xe5f1ff,0x55515a,2.0));
 const key=new THREE.DirectionalLight(0xfff0dc,3.0);key.position.set(-400,800,500);scene.add(key);
 const fill=new THREE.DirectionalLight(0xa9cfff,1.5);fill.position.set(600,300,-500);scene.add(fill);
 const ground=new THREE.GridHelper(2000,80,0x526170,0x303b46);ground.material.transparent=true;ground.material.opacity=.24;scene.add(ground);
-let model=null, originalMaterials=[], wire=false, center=new THREE.Vector3(), radius=200;
+let model=null, signage=null, originalMaterials=[], wire=false, center=new THREE.Vector3(), radius=200;
 function setStatus(t,err=false){status.textContent=t;status.classList.toggle('error',err)}
 function fit(top=false){
  if(!model)return;
@@ -64,11 +64,18 @@ function fit(top=false){
 }
 setStatus('Loading the Roxas Boulevard GLB…');
 const modelUrl=new URL('complete_data/OSM/data/buildings/roxas-boulevard/roxas%20bulivard%20buildings.glb',document.baseURI).href;
-new GLTFLoader().load(modelUrl,gltf=>{
+const loader=new GLTFLoader();
+loader.load(modelUrl,gltf=>{
  model=gltf.scene;scene.add(model);
  model.traverse(o=>{if(o.isMesh){o.frustumCulled=true;if(o.material){const mats=Array.isArray(o.material)?o.material:[o.material];for(const m of mats){originalMaterials.push({m,wire:m.wireframe});if('envMapIntensity'in m)m.envMapIntensity=1.15;m.needsUpdate=true;}}}});
- fit();setStatus('Model loaded successfully. Rotate or zoom to inspect the buildings.');
-},xhr=>{if(xhr.total)setStatus('Loading model… '+Math.round(xhr.loaded/xhr.total*100)+'%');else setStatus('Downloading model… '+Math.round(xhr.loaded/1024/1024)+' MB')},err=>{console.error(err);setStatus('Could not load the GLB. Check network access and reload. Details: '+(err?.message||'unknown error'),true)});
+ fit();setStatus('Buildings loaded. Loading source-tagged building and shop signs…');
+ const signsUrl=new URL('complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb',document.baseURI).href;
+ loader.load(signsUrl,sg=>{
+   signage=sg.scene;scene.add(signage);
+   signage.traverse(o=>{if(o.isMesh){o.frustumCulled=true;if(o.material){const mats=Array.isArray(o.material)?o.material:[o.material];for(const m of mats){originalMaterials.push({m,wire:m.wireframe});m.needsUpdate=true;}}}});
+   setStatus('Buildings and signage overlay loaded. Rotate or zoom to inspect. Sign wording comes from mapped source tags; exact photo matching is not yet verified.');
+ },undefined,e=>{console.error(e);setStatus('Buildings loaded, but the signage overlay failed to load: '+(e?.message||'unknown error'),true)});
+},xhr=>{if(xhr.total)setStatus('Loading building model… '+Math.round(xhr.loaded/xhr.total*100)+'%');else setStatus('Downloading building model… '+Math.round(xhr.loaded/1024/1024)+' MB')},err=>{console.error(err);setStatus('Could not load the GLB. Check network access and reload. Details: '+(err?.message||'unknown error'),true)});
 document.querySelector('#fit').onclick=()=>fit(false);
 document.querySelector('#top').onclick=()=>fit(true);
 document.querySelector('#reset').onclick=()=>fit(false);
