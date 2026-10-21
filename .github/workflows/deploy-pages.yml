@@ -48,6 +48,7 @@ jobs:
           /ermita/3d/landmarks/
           /ermita/3d/commercial/
           /ermita/scripts/generate_commercial_facades.py
+          /ermita/scripts/generate_pedro_gil_decal.py
           /ermita/buildings/commercial_assets/
           /ermita/buildings/reference_photos/robinsons-manila/
           /ermita/3d/exports/adam-city-complete.glb
@@ -67,6 +68,8 @@ jobs:
           set -euo pipefail
           test -s ermita-malate-3d.html
           python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh pillow cairosvg
+          # Build the isolated Pedro Gil image-decal test from the mapped OSM footprint and official transparent logo.
+          python3 ermita/scripts/generate_pedro_gil_decal.py
           # Fingerprints invalidate only outputs whose generator, source data, or contract changed.
           # Stable hashes intentionally exclude timestamps and CI-run metadata.
           FACADE_FINGERPRINT="$( { printf 'contract=1\n'; sha256sum ermita/scripts/generate_facade_details.py ermita/maps/generated/ermita-building-details.geojson; } | sha256sum | awk '{print $1}')"
@@ -290,6 +293,7 @@ jobs:
           cp complete_data/OSM/Markets/commercial-facades-report.json site/ermita/3d/commercial/commercial-facades-report.json
           cp -a complete_data/OSM/Markets/. site/complete_data/OSM/Markets/
           cp complete_data/OSM/Buildings/Markets/facidals/robenson.glb site/complete_data/OSM/Buildings/Markets/facidals/robenson.glb
+          cp complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb site/complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb
           cp ermita/3d/exports/adam-city-complete.glb site/ermita/3d/exports/adam-city-complete.glb
           cp ermita/3d/terrain/ermita-copernicus-dem-cropped.tif site/ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           test -s site/ermita/3d/exports/adam-city-complete.glb
@@ -308,6 +312,7 @@ jobs:
           test -s site/ermita/3d/commercial/commercial-facades.glb
           test -s site/ermita/3d/commercial/commercial-facades-origin.json
           test -s site/ermita/3d/commercial/commercial-facades-report.json
+          test -s site/complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb
           # Validate all generated artifacts before publishing or persisting them.
           test -s ermita/3d/generated/facade-model-origin.json
           test -s ermita/3d/generated/ermita-buildings-facade-details.glb
@@ -319,6 +324,8 @@ jobs:
           test -s ermita/3d/landmarks/landmark-facade-report.json
           test -s ermita/3d/landmarks/landmark-generation.sha256
           test -s complete_data/OSM/Buildings/Markets/facidals/robenson.glb
+          test -s complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb
+          test -s complete_data/OSM/Markets/pedro-gil-7eleven-decal-report.json
           test -s complete_data/OSM/Markets/commercial-facades-origin.json
           test -s complete_data/OSM/Markets/commercial-facades-report.json
           test -s complete_data/OSM/Markets/commercial-generation.sha256
