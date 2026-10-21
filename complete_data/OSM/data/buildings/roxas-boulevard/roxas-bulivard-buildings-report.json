@@ -1,6 +1,6 @@
 {
   "output": "complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb",
-  "buildings_exported": 13082,
+  "buildings_exported": 13080,
   "unique_osm_building_ids": 20,
   "road_segments_used": 26,
   "road_feature_ids": [
@@ -33,19 +33,28 @@
   ],
   "selection_buffer_m": 70.0,
   "material_counts": {
-    "sandstone": 2182,
-    "muted terracotta": 2181,
-    "glass blue grey": 2179,
-    "limestone warm": 2179,
-    "painted ivory": 2180,
-    "concrete grey": 2181
+    "sandstone": 2176,
+    "muted terracotta": 2178,
+    "glass blue grey": 2177,
+    "limestone warm": 2176,
+    "painted ivory": 2178,
+    "concrete grey": 2178,
+    "Eton Baypark light facade": 1,
+    "1322 Golden Empire blue-grey glass": 8,
+    "Victoria Building pale concrete": 1,
+    "Grand Riviera pale concrete and blue glazing": 3,
+    "Hotel warm painted facade": 2,
+    "Pearl of the Orient blue glass": 2
   },
+  "facade_detail_parts": 198,
+  "facade_window_boxes": 36657,
+  "facade_detail_method": "Procedural edge-aligned glazing boxes on selected building footprints; source-tagged building colours/materials take priority, named landmark palettes are applied where identified.",
   "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
   "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
   "height_method": "OSM height, then building:levels \u00d7 3.2 m, then 9.6 m fallback.",
   "limitations": [
-    "This is a PBR-ready geometry/material test asset, not photogrammetry or a surveyed facade reconstruction.",
-    "Where OSM does not provide facade colour/material, conservative varied architectural neutral materials are placeholders and should be replaced with photo-verified values.",
+    "Existing OSM footprint extrusions are retained and augmented with edge-aligned glazing geometry and PBR glass materials; this is a procedural facade-detail pass, not a claim of per-building photogrammetric reconstruction.",
+    "Exact building-specific paint colours, ornamental elements, signage and facade proportions still require photo verification for each identified building; OSM alone does not encode those details.",
     "Vertical ground elevations are not baked into this GLB; anchor altitude is 0 m and existing terrain/building layers remain unchanged."
   ],
   "source": "OpenStreetMap contributors, ODbL 1.0",
