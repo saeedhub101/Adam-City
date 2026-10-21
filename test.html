@@ -154,6 +154,14 @@ try {
    loader.setMeshoptDecoder(MeshoptDecoder);
    loader.load(modelUrl,gltf=>{
     model=gltf.scene;
+    // Diagnostic mode: force every mesh in the GLB to vivid green, independent of building layers.
+    let windowsMeshCount=0;
+    model.traverse(object=>{
+     if(!object.isMesh)return;
+     windowsMeshCount++;
+     object.material=new THREE.MeshStandardMaterial({color:0x00ff00,emissive:0x00a000,emissiveIntensity:1.0,roughness:0.72,metalness:0,side:THREE.DoubleSide});
+     object.material.needsUpdate=true;
+    });
     model.position.set(anchor.x,anchor.y,anchor.z);
     model.scale.set(meterScale,-meterScale,meterScale);
     // GLB is already Z-up in local EPSG:3857 metres; keep Z vertical for MapLibre.
@@ -161,7 +169,9 @@ try {
     window.adamWindowsLayerReady=true;
     window.adamSetWindowsVisible=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
     model.visible=!!document.getElementById('osm-windows')?.checked;
-    const s=document.getElementById('status');if(s)s.textContent=model.visible?'تم تحميل نموذج windows وهو مفعّل؛ تُرسم التفاصيل فوق طبقات المباني.':'تم تحميل نموذج windows؛ المفتاح 12 متوقف حالياً.';
+    const s=document.getElementById('status');if(s)s.textContent='تم تحميل نموذج windows؛ عدد المجسمات: '+windowsMeshCount+'؛ اللون التشخيصي أخضر. المفتاح 12: '+(model.visible?'مفعّل':'متوقف')+'.';
+    // Ensure this diagnostic layer is above the map's building/extrusion layers.
+    if(mapInstance.getLayer('windows-facade-details')) mapInstance.moveLayer('windows-facade-details');
     mapInstance.triggerRepaint();
    },progress=>{
     const s=document.getElementById('status');
@@ -181,6 +191,8 @@ try {
   }
  };
  map.addLayer(customLayer);
+ // Add it at the top of the current style so it is independent of buildings underneath.
+ if(map.getLayer('windows-facade-details')) map.moveLayer('windows-facade-details');
 } catch(err) {
  const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر إعداد طبقة windows: '+(err?.message||err);}
 }
