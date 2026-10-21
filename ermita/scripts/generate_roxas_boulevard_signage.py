@@ -29,7 +29,7 @@ REPORT = OUT / "roxas-boulevard-signage-report.json"
 TO_METERS = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True).transform
 FROM_METERS = Transformer.from_crs("EPSG:3857", "EPSG:4326", always_xy=True).transform
 BUFFER_M = 70.0
-ATLAS_TILE_W, ATLAS_TILE_H, ATLAS_COLS = 256, 96, 8
+ATLAS_TILE_W, ATLAS_TILE_H, ATLAS_COLS = 512, 160, 6
 
 def tags_of(f):
     p=f.get("properties") or {}
@@ -148,8 +148,8 @@ def main():
     atlas=Image.new("RGB",(ATLAS_TILE_W*ATLAS_COLS,ATLAS_TILE_H*rows),(238,235,225))
     draw=ImageDraw.Draw(atlas)
     try:
-        font_bold=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",19)
-        font_small=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",12)
+        font_bold=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",34)
+        font_small=ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",20)
     except OSError:
         font_bold=ImageFont.load_default(); font_small=ImageFont.load_default()
     vertices=[]; faces=[]; uvs=[]; records=[]
@@ -171,8 +171,8 @@ def main():
         # Keep plaques near the front/lower facade; storefront panels sit lower than tower name signs.
         is_shop=bool(s["brand"] or any(k in s["name"].lower() for k in ("shop","store","restaurant","cafe","drug","market","bank")))
         z=min(max(2.4, s["height"]*0.18), max(2.5,s["height"]-0.8)) if is_shop else min(max(3.2,s["height"]*0.72),max(3.3,s["height"]-0.8))
-        width=min(8.0,max(1.5,len(s["name"])*0.23+0.7),length*0.76)
-        height=min(1.15,max(0.42,width*0.18))
+        width=min(18.0,max(2.8,len(s["name"])*0.45+1.2),length*0.92)
+        height=min(3.2,max(1.0,width*0.28))
         # OSM way winding is not a reliable facade-facing signal: make each panel outward on this edge.
         # Keep the plaque clearly outside the building's facade/detail meshes; 0.11 m was
         # buried behind the generated wall shells, so Three.js loaded the GLB but hid the signs.
@@ -206,17 +206,17 @@ def main():
         else: bg,fg=(232,226,210),(40,45,49)
         draw.rounded_rectangle((x0+1,y0+1,x0+ATLAS_TILE_W-2,y0+ATLAS_TILE_H-2),radius=8,fill=bg,outline=(45,48,49),width=2)
         # Brand/name on first line, address/number on second when known.
-        maxw=ATLAS_TILE_W-18
+        maxw=ATLAS_TILE_W-36
         label=name
         while draw.textbbox((0,0),label,font=font_bold)[2]>maxw and len(label)>5:
             label=label[:-1]
         if label!=name: label=label.rstrip()+"…"
         bb=draw.textbbox((0,0),label,font=font_bold)
-        draw.text((x0+(ATLAS_TILE_W-(bb[2]-bb[0]))/2,y0+13),label,font=font_bold,fill=fg)
+        draw.text((x0+(ATLAS_TILE_W-(bb[2]-bb[0]))/2,y0+24),label,font=font_bold,fill=fg)
         detail=s["number"] or ("ROXAS BOULEVARD" if not is_shop else "")
         if detail:
             bb=draw.textbbox((0,0),detail,font=font_small)
-            draw.text((x0+(ATLAS_TILE_W-(bb[2]-bb[0]))/2,y0+59),detail,font=font_small,fill=fg)
+            draw.text((x0+(ATLAS_TILE_W-(bb[2]-bb[0]))/2,y0+100),detail,font=font_small,fill=fg)
         records.append({k:s[k] for k in ("building_id","name","number","brand","source_id","source","sign_index")} | {"sign_width_m":round(width,2),"sign_height_m":round(height,2),"placement":"longest exterior footprint edge; estimated facade height","exact_photo_match":False})
     if not vertices: raise RuntimeError("No valid sign panels generated")
     mat=trimesh.visual.material.PBRMaterial(name="OSM_name_and_storefront_signage_atlas",
