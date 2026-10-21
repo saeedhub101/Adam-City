@@ -28,15 +28,16 @@ def main():
     if not target:
         raise RuntimeError("OSM target way/156307566 (Supreme Court Main Building) was not found")
     ASSET_DIR.mkdir(parents=True,exist_ok=True)
-    if not PHOTO.exists() or PHOTO.stat().st_size < 10000:
-        r=requests.get(PHOTO_URL,headers=HEADERS,timeout=60); r.raise_for_status()
-        source=Image.open(io.BytesIO(r.content)).convert("RGB")
-        # Crop the central portico: columns, entrance, decorative frieze and pale stone.
-        # The narrow crop intentionally avoids most foreground cars and the right-side tree.
-        w,h=source.size
-        crop=source.crop((int(w*.16),int(h*.30),int(w*.70),int(h*.82)))
-        crop.thumbnail((1800,1800),Image.Resampling.LANCZOS)
-        crop.save(PHOTO,quality=94,optimize=True)
+    # Rebuild the crop from the original photo each run so the GLB always gets the
+    # full-width facade image, not the earlier central-portico-only crop.
+    r=requests.get(PHOTO_URL,headers=HEADERS,timeout=60); r.raise_for_status()
+    source=Image.open(io.BytesIO(r.content)).convert("RGB")
+    # Wide crop across the building's complete front elevation; trim only a little
+    # foreground and sky so the image can span the full mapped wall, not just the portico.
+    w,h=source.size
+    crop=source.crop((int(w*.035),int(h*.20),int(w*.965),int(h*.82)))
+    crop.thumbnail((2400,1600),Image.Resampling.LANCZOS)
+    crop.save(PHOTO,quality=94,optimize=True)
     image=Image.open(PHOTO).convert("RGB")
     # The mapped footprint's Padre Faura-facing southern edge. Coordinates are from the
     # existing OSM polygon; only the photo panel is added, not a replacement building.
@@ -47,7 +48,8 @@ def main():
     ux,uy=dx/edge_len,dy/edge_len
     # For this polygon, southeast is the exterior side of the south edge.
     nx,ny=uy,-ux
-    width=min(15.0,edge_len-2.0)
+    # Span nearly the entire mapped front wall instead of a small centered sign-sized panel.
+    width=max(1.0,edge_len-1.0)
     height=width/(image.width/image.height)
     cx,cy=(p1[0]+p2[0])/2+nx*0.22,(p1[1]+p2[1])/2+ny*0.22
     left=(cx-ux*width/2,cy-uy*width/2)
@@ -77,9 +79,9 @@ def main():
       "method":"single photographic Plane Texture overlay on the existing OSM extrusion; no replacement geometry",
       "glb":str(OUT.relative_to(ROOT)),"texture":str(PHOTO.relative_to(ROOT)),
       "source_photo":PHOTO_PAGE,"photographer":"Aerous","license":LICENSE,
-      "photo_crop":"central portico, columns, entrance, frieze; cropped from the 4272x2848 source",
+      "photo_crop":"wide crop across the complete front elevation; cropped from the 4272x2848 source",
       "panel_width_m":round(width,2),"panel_height_m":round(height,2),
-      "limitations":"A first real-world visual test. It is a single-view photographic decal, so the photo will not wrap around corners; inspect alignment in the map before adjusting placement."
+      "limitations":"A full-width single-view photographic decal over the mapped front wall. It does not wrap around corners; inspect alignment and photo perspective in the map."
     }
     REPORT.write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     print(json.dumps(report,indent=2,ensure_ascii=False))
