@@ -58,11 +58,16 @@ def pbr_for(tags, index):
     material = normalized(tags.get("building:material") or tags.get("facade:material") or tags.get("material"))
     colour = normalized(tags.get("building:colour") or tags.get("building:color") or tags.get("colour") or tags.get("color"))
     btype = normalized(tags.get("building"))
+    osm_id = str(tags.get("osm_feature_id") or "").lower()
     identity = normalized(" ".join(str(tags.get(k) or "") for k in
         ("name", "official_name", "brand", "building:architecture", "tourism", "amenity")))
     # Photo-informed architectural palettes for identified buildings in the corridor.
     # These affect the facade finish; window geometry is added separately below.
     known = None
+    if osm_id in ("way/575422161", "way/575422163", "way/575422164"):
+        known = ("Pearl of the Orient blue glass", [0.34, 0.48, 0.58, 1], 0.16, 0.28)
+    elif osm_id == "way/90308376" or osm_id.startswith("way/82238680") or osm_id.startswith("way/82238681") or osm_id.startswith("way/82238682"):
+        known = ("1322 Golden Empire blue-grey glass", [0.42, 0.52, 0.57, 1], 0.16, 0.30)
     if "1322 golden empire" in identity or "golden empire tower" in identity:
         known = ("Golden Empire blue-grey curtain wall", [0.42, 0.52, 0.57, 1], 0.16, 0.30)
     elif "grand riviera suites" in identity:
