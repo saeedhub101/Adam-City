@@ -105,8 +105,26 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
  });
 })();
 </script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}
+</script>
+<script>
+window.addEventListener("error",function(ev){
+ const target=ev.target;
+ if(target && target.tagName==="SCRIPT"){
+  const box=document.getElementById("error"),status=document.getElementById("status");
+  if(box){box.style.display="block";box.textContent="فشل تحميل مكتبة JavaScript: "+(target.src||ev.message||"module script");}
+  if(status)status.textContent="توقف تحميل نموذج windows بسبب خطأ JavaScript.";
+ }
+});
+window.addEventListener("unhandledrejection",function(ev){
+ const box=document.getElementById("error"),status=document.getElementById("status");
+ if(box){box.style.display="block";box.textContent="خطأ JavaScript غير معالج: "+(ev.reason?.message||String(ev.reason));}
+ if(status)status.textContent="توقف تحميل نموذج windows بسبب خطأ JavaScript.";
+});
+</script>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+import * as THREE from 'three';
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.0/meshopt_decoder.module.js';
 const waitMap=()=>new Promise(resolve=>{const check=()=>{if(window.adamCityMap?.isStyleLoaded())resolve(window.adamCityMap);else setTimeout(check,100)};check()});
