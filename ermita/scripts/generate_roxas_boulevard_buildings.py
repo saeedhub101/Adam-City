@@ -697,9 +697,14 @@ def facade_red_planet_canopy_mesh(poly, height, tags):
     if str(tags.get("osm_feature_id") or "") != "way/89770558" or height < 12:
         return None
     vertices, faces = [], []
-    minx = poly.bounds[0]
+    edges = list(zip(list(poly.exterior.coords)[:-1], list(poly.exterior.coords)[1:]))
+    eligible = [(idx, (a[0]+b[0])/2, math.hypot(b[0]-a[0], b[1]-a[1]))
+                for idx, (a,b) in enumerate(edges) if math.hypot(b[0]-a[0], b[1]-a[1]) >= 4]
+    if not eligible:
+        return None
+    west_edge_index = min(eligible, key=lambda item: (item[1], -item[2]))[0]
     zc, thickness, offset = min(3.25, height*0.28), 0.62, 0.19
-    for a, b in zip(list(poly.exterior.coords)[:-1], list(poly.exterior.coords)[1:]):
+    for edge_index, (a, b) in enumerate(edges):
         dx, dy = b[0]-a[0], b[1]-a[1]
         length = math.hypot(dx, dy)
         if length < 4:
@@ -709,9 +714,8 @@ def facade_red_planet_canopy_mesh(poly, height, tags):
             nx, ny = ty, -tx
         else:
             nx, ny = -ty, tx
-        midpoint_x = (a[0]+b[0])/2
         # The reference image shows the bright red sign/canopy facing the street.
-        if midpoint_x > minx + 1.5:
+        if edge_index != west_edge_index:
             continue
         nx, ny = -1.0, 0.0
         base = len(vertices)
@@ -749,7 +753,14 @@ def facade_base_mesh(poly, height, tags, part_index):
         return None
     vertices, faces = [], []
     minx = poly.bounds[0]
-    for a, b in zip(list(poly.exterior.coords)[:-1], list(poly.exterior.coords)[1:]):
+    edges = list(zip(list(poly.exterior.coords)[:-1], list(poly.exterior.coords)[1:]))
+    west_edge_index = None
+    if fid in {"way/87754850", "way/89770558"}:
+        eligible = [(idx, (a[0]+b[0])/2, math.hypot(b[0]-a[0], b[1]-a[1]))
+                    for idx, (a,b) in enumerate(edges) if math.hypot(b[0]-a[0], b[1]-a[1]) >= 3]
+        if eligible:
+            west_edge_index = min(eligible, key=lambda item: (item[1], -item[2]))[0]
+    for edge_index, (a, b) in enumerate(edges):
         dx, dy = b[0]-a[0], b[1]-a[1]
         length = math.hypot(dx, dy)
         if length < 3:
@@ -762,8 +773,8 @@ def facade_base_mesh(poly, height, tags, part_index):
         midpoint_x = (a[0] + b[0]) / 2
         # The building faces Roxas Boulevard/Manila Bay to the west (negative X normal).
         if fid in {"way/87754850", "way/89770558"}:
-            # These two photo references show their principal entrance on the west street edge.
-            if midpoint_x > minx + 1.5:
+            # These two photo references show their principal entrance on the westernmost street edge.
+            if edge_index != west_edge_index:
                 continue
             nx, ny = -1.0, 0.0
         elif nx > -0.5 or midpoint_x > minx + 1.5:
