@@ -80,7 +80,9 @@ loader.load(modelUrl,gltf=>{
  fit();setStatus('Buildings loaded. Loading source-tagged building and shop signs…');
  const signsUrl=new URL('complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb',document.baseURI).href;
  loader.load(signsUrl,sg=>{
-   signage=sg.scene;signage.visible=document.querySelector('#signage-toggle').checked;scene.add(signage);
+   // Attach signage to the exact building model group so both GLBs share one Three.js
+   // transform/origin instead of placing the overlay as an unrelated scene sibling.
+   signage=sg.scene;signage.visible=document.querySelector('#signage-toggle').checked;model.add(signage);
    signage.traverse(o=>{if(o.isMesh){o.frustumCulled=true;if(o.material){const mats=Array.isArray(o.material)?o.material:[o.material];for(const m of mats){originalMaterials.push({m,wire:m.wireframe});m.needsUpdate=true;}}}});
    setStatus('Buildings and signage overlay loaded. Rotate or zoom to inspect. Sign wording comes from mapped source tags; exact photo matching is not yet verified.');
  },undefined,e=>{console.error(e);setStatus('Buildings loaded, but the signage overlay failed to load: '+(e?.message||'unknown error'),true)});
