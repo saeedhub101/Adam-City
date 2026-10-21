@@ -131,7 +131,9 @@ def pbr_for(tags, index):
         # Keep every polygon part of the same OSM building visually consistent.
         # Do not assign colours by loop index: that made one real building change
         # colour between adjacent parts.
-        style_key = osm_id or identity or str(index)
+        # Keep every fragment from the same OpenFreeMap source feature visually consistent,
+        # even when that feature has no matching OSM way ID.
+        style_key = osm_id or str(tags.get("basemap_source_feature_id") or "") or identity or str(index)
         style_seed = sum(ord(c) for c in style_key) + len(btype)
         chosen = palette[style_seed % len(palette)]
         # Office/hotel buildings tend to have more glazing; only use this as a
@@ -169,7 +171,7 @@ def facade_window_mesh(poly, height, tags, part_index):
     floor_h = height / floors
     window_h = min(1.45, max(0.75, floor_h * 0.52))
     # Use a deterministic but restrained glazing/frame variation by OSM identity.
-    seed = sum(ord(c) for c in str(tags.get("osm_feature_id") or tags.get("name") or part_index))
+    seed = sum(ord(c) for c in str(tags.get("osm_feature_id") or tags.get("basemap_source_feature_id") or tags.get("name") or part_index))
     glass_colors = [
         [0.10, 0.22, 0.29, 1.0], [0.16, 0.31, 0.39, 1.0],
         [0.25, 0.35, 0.38, 1.0], [0.12, 0.25, 0.34, 1.0]
