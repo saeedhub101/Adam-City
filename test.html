@@ -209,9 +209,23 @@ try {
     document.getElementById('status').textContent='تعذر تحميل نموذج windows ثلاثي الأبعاد.';
    });
   },
-  render(gl,matrix){
+  render(gl,args){
    if(!renderer||!model||!model.visible)return;
-   const mapProjection=new THREE.Matrix4().fromArray(matrix);
+   // MapLibre GL JS 5.x passes a CustomRenderMethodInput object, not a raw matrix.
+   // Its Mercator view/projection matrix is defaultProjectionData.mainMatrix.
+   const mainMatrix=args?.defaultProjectionData?.mainMatrix;
+   if(!mainMatrix){
+    const s=document.getElementById('status');
+    if(s)s.textContent='GLB loaded, but MapLibre did not provide defaultProjectionData.mainMatrix.';
+    return;
+   }
+   const matrixValues=Object.values(mainMatrix);
+   if(matrixValues.length!==16 || matrixValues.some(value=>!Number.isFinite(Number(value)))){
+    const s=document.getElementById('status');
+    if(s)s.textContent='GLB loaded, but MapLibre projection matrix is invalid (expected 16 finite values).';
+    return;
+   }
+   const mapProjection=new THREE.Matrix4().fromArray(matrixValues.map(Number));
    const modelTransform=new THREE.Matrix4()
     .makeTranslation(anchor.x,anchor.y,anchor.z)
     .scale(new THREE.Vector3(meterScale,-meterScale,meterScale));
