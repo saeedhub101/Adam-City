@@ -215,12 +215,16 @@ def main():
                         label = label[:28] + '…'
                     # Fit the label horizontally rather than producing unreadable clipped fragments.
                     font_size = 13
-                    while font_size > 7 and sign_draw.textbbox((0,0), label, font=sign_font)[2] > sign_tile_w-12:
+                    font_use = sign_font
+                    while font_size > 7:
+                        try:
+                            font_use = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', font_size)
+                        except OSError:
+                            font_use = sign_font
+                            break
+                        if sign_draw.textbbox((0,0), label, font=font_use)[2] <= sign_tile_w-12:
+                            break
                         font_size -= 1
-                        try: font_use = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', font_size)
-                        except OSError: font_use = sign_small_font
-                    try: font_use = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', font_size)
-                    except OSError: font_use = sign_font
                     bb = sign_draw.textbbox((0,0), label, font=font_use)
                     sign_draw.text((px+(sign_tile_w-(bb[2]-bb[0]))/2, py+8), label, font=font_use, fill=(248, 245, 235, 255))
                     sublabel = str(tags.get('brand') or tags.get('shop') or tags.get('amenity') or '')
