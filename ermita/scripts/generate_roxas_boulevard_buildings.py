@@ -58,8 +58,12 @@ def height_of(tags):
     h = positive_number(tags.get("height"), 2, 500)
     levels = positive_number(tags.get("building:levels") or tags.get("levels"), 1, 150)
     # Reject obviously incompatible height/level pairs instead of creating a tower only 38 m tall.
-    if h is not None and levels is not None and levels >= 8 and h < levels * 2.0:
-        return levels * 3.2
+    if h is not None and levels is not None:
+        if levels >= 8 and h < levels * 2.0:
+            return levels * 3.2
+        # Reject implausibly tall values for low-rise buildings (e.g. a 4-floor hotel tagged 54 m).
+        if levels <= 8 and h > levels * 6.0:
+            return levels * 3.2
     if h is not None: return h
     return levels * 3.2 if levels is not None else 9.6
 
@@ -154,7 +158,7 @@ def facade_window_mesh(poly, height, tags, part_index):
         "way/575422161": 42, "way/822386813": 40, "way/822386814": 40, "way/822386816": 42,
         "way/575422162": 57,
         "way/90308376": 55, "way/822386807": 55, "way/822386809": 54, "way/822386811": 56,
-        "way/575422164": 29, "way/89760235": 29,
+        "way/575422164": 29, "way/89760235": 8,
     }
     levels = positive_number(tags.get("building:levels") or tags.get("levels"), 1, 150)
     floors = landmark_floors.get(fid, int(round(levels)) if levels else max(2, int(round(height / 3.2))))
