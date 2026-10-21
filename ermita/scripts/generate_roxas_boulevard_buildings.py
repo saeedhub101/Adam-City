@@ -532,13 +532,20 @@ def facade_accent_mesh(poly, height, tags, part_index):
 
 
 def facade_podium_mesh(poly, height, tags):
-    """Overlay the Pearl of the Orient's photographed pink lower podium, behind glazing."""
+    """Overlay the photographed pink podiums of Pearl of the Orient and Grand Riviera."""
     fid = str(tags.get("osm_feature_id") or "")
     pearl_ids = {"way/575422161", "way/822386813", "way/822386814", "way/822386816"}
-    if fid not in pearl_ids or height < 30:
+    if fid in pearl_ids and height >= 30:
+        floors = 42 if fid in {"way/575422161", "way/822386816"} else 40
+        podium_top = height * (12.0 / floors)
+        material_name, color = "Pearl_of_the_Orient_pink_podium_wall", [176, 107, 120, 255]
+    elif fid == "way/575422162" and height >= 150:
+        # Grand Riviera reference shows a rose/red podium framing below blue-grey tower glazing.
+        floors = 57
+        podium_top = height * (8.0 / floors)
+        material_name, color = "Grand_Riviera_rose_podium_wall", [172, 83, 99, 255]
+    else:
         return None
-    floors = 42 if fid in {"way/575422161", "way/822386816"} else 40
-    podium_top = height * (12.0 / floors)
     vertices, faces = [], []
     for a, b in zip(list(poly.exterior.coords)[:-1], list(poly.exterior.coords)[1:]):
         dx, dy = b[0]-a[0], b[1]-a[1]
@@ -561,8 +568,8 @@ def facade_podium_mesh(poly, height, tags):
         return None
     mesh = trimesh.Trimesh(vertices=np.asarray(vertices), faces=np.asarray(faces), process=False)
     mesh.visual = trimesh.visual.TextureVisuals(material=trimesh.visual.material.PBRMaterial(
-        name="Pearl_of_the_Orient_pink_podium_wall",
-        baseColorFactor=[176, 107, 120, 255], metallicFactor=0.01, roughnessFactor=0.72,
+        name=material_name,
+        baseColorFactor=color, metallicFactor=0.01, roughnessFactor=0.72,
         alphaMode="OPAQUE"
     ))
     return mesh
@@ -609,9 +616,22 @@ def facade_upper_band_mesh(poly, height, tags):
 
 
 def facade_vertical_fin_mesh(poly, height, tags):
-    """Photo-informed vertical fins for Eton Baypark and the National Library."""
+    """Photo-informed vertical mullions/fins for the identified landmark towers."""
     fid = str(tags.get("osm_feature_id") or "")
-    if fid == "way/575422164" and height >= 70:
+    golden_empire_ids = {"way/90308376", "way/822386807", "way/822386809", "way/822386811"}
+    if fid in golden_empire_ids and height >= 100:
+        # The inspected 1322 Golden Empire image shows strong repeated gold vertical divisions.
+        fractions = (0.12, 0.32, 0.52, 0.72, 0.92)
+        half_width, offset = 0.12, 0.14
+        color = [185, 159, 104, 255]
+        name, roughness = "Golden_Empire_gold_vertical_mullions", 0.38
+    elif fid == "way/575422162" and height >= 150:
+        # Grand Riviera's photo shows rose-red framing contrasting with pale floor slabs and blue glazing.
+        fractions = (0.08, 0.92)
+        half_width, offset = 0.34, 0.17
+        color = [172, 77, 91, 255]
+        name, roughness = "Grand_Riviera_rose_vertical_frames", 0.62
+    elif fid == "way/575422164" and height >= 70:
         fractions = (0.18, 0.42, 0.66, 0.90)
         half_width, offset = 0.23, 0.105
         color = [157, 76, 67, 255]
@@ -1087,7 +1107,7 @@ def main():
         "facade_special_mass_overrides": facade_special_mass_overrides,
         "facade_accent_parts": facade_accent_parts,
         "facade_base_parts": facade_base_parts,
-        "facade_detail_method": "Procedural edge-aligned glazing for tall buildings; photo-informed spandrel/podium geometry for Pearl of the Orient, 1322 Golden Empire Tower, Grand Riviera Suites, Eton Baypark, Sunny Bay Suites, Bayview Park Hotel, and Red Planet Manila Bay; National Library uses pale concrete bands and vertical fins; Luneta Hotel uses arched dark glazing and wrought-iron balcony rails; National Planetarium uses a separate 16 m hemispherical dome above its low hall. Other buildings retain geometry-derived glazing and conservative PBR materials pending individual photographic verification.",
+        "facade_detail_method": "Procedural edge-aligned glazing for tall buildings; photo-informed pink podiums and pale spandrels for Pearl of the Orient and Grand Riviera; gold vertical mullions and floor bands for 1322 Golden Empire Tower; Eton Baypark has red/grey vertical fins; Sunny Bay Suites, Bayview Park Hotel, and Red Planet Manila Bay have photo-informed podium/canopy details; National Library uses pale concrete bands and vertical fins; Luneta Hotel uses arched dark glazing and wrought-iron balcony rails; National Planetarium uses a separate 16 m hemispherical dome above its low hall. Generic opaque facades use a tiled painted-CMU albedo; all remaining unnamed facades still require individual photo validation.",
         "visual_reference_checks": [
             {"building": "Pearl of the Orient Tower", "url": "https://www.tectonium.com/pearl-of-the-orient-tower/", "observed": "blue-grey upper tower, repetitive pale horizontal bands, distinct pink horizontal podium"},
             {"building": "1322 Golden Empire Tower", "url": "https://gfparchitects.com/project/1322-golden-empire-tower/", "observed": "warm gold reflective glazing and strong repeated horizontal floor divisions"},
