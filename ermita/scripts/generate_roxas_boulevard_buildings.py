@@ -14,9 +14,11 @@ import trimesh
 from pyproj import Transformer
 from shapely.geometry import shape, Polygon, MultiPolygon, GeometryCollection
 from shapely.ops import transform as geom_transform
+from shapely.strtree import STRtree
 
 ROOT = Path(__file__).resolve().parents[2]
 BUILDINGS = ROOT / "complete_data/OSM/data/buildings/ermita-building-footprints.geojson"
+DETAILS = ROOT / "complete_data/OSM/data/buildings/ermita-building-details.geojson"
 ROADS = ROOT / "complete_data/OSM/data/roads/ermita-road-network.geojson"
 OUT_DIR = ROOT / "complete_data/OSM/data/buildings/roxas-boulevard"
 OUT_GLB = OUT_DIR / "roxas bulivard buildings.glb"
@@ -285,11 +287,39 @@ def facade_accent_mesh(poly, height, tags, part_index):
 
 
 def main():
-    for p in (BUILDINGS, ROADS):
+    for p in (BUILDINGS, DETAILS, ROADS):
         if not p.is_file() or p.stat().st_size < 20:
             raise SystemExit(f"Required source file missing or empty: {p}")
     building_data = json.loads(BUILDINGS.read_text(encoding="utf-8"))
+    detail_data = json.loads(DETAILS.read_text(encoding="utf-8"))
     road_data = json.loads(ROADS.read_text(encoding="utf-8"))
+    # Build a spatial index over the richer OSM building-detail dataset. The footprint
+    # export contains many geometry pieces without IDs; spatially rejoin them to real OSM
+    # identities/tags before applying materials, heights, and landmark facade rules.
+    detail_records = []
+    for feature in detail_data.get("features", []):
+        if not feature.get("geometry"):
+            continue
+        try:
+            geom = geom_transform(TO_METERS, shape(feature["geometry"]))
+            tags = tags_of(feature)
+            if geom.geom_type not in ("Polygon", "MultiPolygon") or geom.is_empty:
+                continue
+            if not (tags.get("building") or tags.get("name") or tags.get("osm_feature_id")):
+                continue
+            detail_records.append({"poly": geom, "tags": tags,
+                                   "id": str(tags.get("osm_feature_id") or feature.get("id") or "")})
+        except Exception:
+            continue
+    detail_geoms = [x["poly"] for x in detail_records]
+    detail_tree = STRtree(detail_geoms) if detail_geoms else None
+    detail_geom_index = {id(g): i for i, g in enumerate(detail_geoms)}
+    detail_wkb_index = {}
+    for i, g in enumerate(detail_geoms):
+        detail_wkb_index.setdefault(g.wkb, i)
+    detail_match_count = 0
+    detail_named_match_count = 0
+    detail_matched_ids = set()
     boulevard_parts = []
     matched_road_ids = []
     for feature in road_data.get("features", []):
@@ -336,7 +366,43 @@ def main():
                     duplicate_footprints_removed += 1
                     continue
                 seen_footprints.add(footprint_key)
-                selected.append({"id": fid, "tags": tags, "poly": poly, "height": height_of(tags)})
+                # Match ID-less footprint fragments against the detailed OSM polygons.
+                # Require meaningful overlap with both shapes to avoid assigning a nearby
+                # building's identity to a merely adjacent footprint.
+                if not fid and detail_tree is not None:
+                    best_record, best_score = None, 0.0
+                    for hit in detail_tree.query(poly):
+                        if isinstance(hit, (int, np.integer)):
+                            record = detail_records[int(hit)]
+                        else:
+                            idx = detail_geom_index.get(id(hit), detail_wkb_index.get(hit.wkb))
+                            if idx is None:
+                                continue
+                            record = detail_records[idx]
+                        candidate = record["poly"]
+                        try:
+                            inter_area = poly.intersection(candidate).area
+                        except Exception:
+                            continue
+                        if inter_area <= 0:
+                            continue
+                        poly_overlap = inter_area / max(poly.area, 1e-9)
+                        detail_overlap = inter_area / max(candidate.area, 1e-9)
+                        if poly_overlap < 0.35 or detail_overlap < 0.05:
+                            continue
+                        score = poly_overlap + detail_overlap
+                        if score > best_score:
+                            best_record, best_score = record, score
+                    if best_record is not None:
+                        tags = {**tags, **best_record["tags"]}
+                        fid = best_record["id"]
+                        detail_match_count += 1
+                        if tags.get("name") or tags.get("official_name"):
+                            detail_named_match_count += 1
+                        if fid:
+                            detail_matched_ids.add(fid)
+                selected.append({"id": fid, "tags": tags, "poly": poly, "height": height_of(tags),
+                                 "detail_matched": bool(fid and not str(tags_of(feature).get("osm_feature_id") or feature.get("id") or ""))})
         except Exception:
             skipped += 1
     if not selected:
@@ -418,13 +484,17 @@ def main():
         "road_feature_ids": matched_road_ids, "selection_buffer_m": BUFFER_M,
         "material_counts": material_stats,
         "building_inventory": building_inventory,
+        "detail_polygon_count": len(detail_records),
+        "detail_matched_footprint_parts": detail_match_count,
+        "detail_matched_named_parts": detail_named_match_count,
+        "detail_matched_unique_osm_ids": len(detail_matched_ids),
         "facade_detail_parts": facade_detail_parts,
         "facade_window_boxes": facade_window_boxes,
         "facade_accent_parts": facade_accent_parts,
         "facade_detail_method": "Procedural edge-aligned glazing boxes generated across the full tagged floor count (up to 60 floors); named landmark palettes override contradictory generic source material tags. This remains a geometry-derived approximation pending per-building photographic validation.",
         "pbr": "glTF 2.0 metallic-roughness PBR materials; baseColorFactor, metallicFactor, roughnessFactor",
         "selection_method": "Full building footprint intersects a 70 m buffer around road features whose OSM name/official/alternate English name explicitly contains Roxas Boulevard.",
-        "height_method": "OSM height, then building:levels × 3.2 m, then 9.6 m fallback.",
+        "height_method": "Verified landmark overrides first; otherwise validate OSM height against floor count, then building:levels × 3.2 m, then 9.6 m fallback.",
         "limitations": ["This pass corrects known tower height-tag conflicts and generates facade glazing through the full tagged floor count; it does not yet constitute exact photogrammetric reconstruction.",
                        "Per-building facade proportions, balconies, crown shapes, ornament, signs, and exact colour/texture still require individual reference-photo matching and validation.",
                        "Vertical ground elevations are not baked into this GLB; anchor altitude is 0 m and existing terrain/building layers remain unchanged."],
