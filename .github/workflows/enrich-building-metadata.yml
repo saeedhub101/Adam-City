@@ -12,19 +12,19 @@ on:
       - 'complete_data/OSM/scripts/merge_building_source_evidence.py'
       - 'complete_data/OSM/scripts/build_building_visual_research_queue.py'
       - 'complete_data/OSM/scripts/research_building_image_candidates.py'
-      - 'complete_data/OSM/data/buildings/parts/parts-inventory-index.json'
-      - 'complete_data/OSM/data/buildings/parts/part1/part1-inventory.json'
-      - 'complete_data/OSM/data/buildings/parts/part2/part2-inventory.json'
-      - 'complete_data/OSM/data/buildings/parts/part3/part3-inventory.json'
-      - 'complete_data/OSM/data/buildings/parts/part4/part4-inventory.json'
-      - 'complete_data/OSM/data/buildings/ermita-building-details.geojson'
-      - 'complete_data/OSM/data/buildings/ermita-building-footprints.geojson'
-      - 'complete_data/OSM/data/buildings/ermita-building-roof-details.geojson'
-      - 'complete_data/OSM/data/buildings/osm-building-details.csv'
+      - 'complete_data/OSM/data/buildings/Ermita/ermita-building-parts-index.json'
+      - 'complete_data/OSM/data/buildings/Ermita/part1/part1-inventory.json'
+      - 'complete_data/OSM/data/buildings/Ermita/part2/part2-inventory.json'
+      - 'complete_data/OSM/data/buildings/Ermita/part3/part3-inventory.json'
+      - 'complete_data/OSM/data/buildings/Ermita/part4/part4-inventory.json'
+      - 'complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson'
+      - 'complete_data/OSM/data/buildings/Ermita/ermita-building-footprints.geojson'
+      - 'complete_data/OSM/data/buildings/Ermita/ermita-building-roof-details.geojson'
+      - 'complete_data/OSM/data/buildings/Ermita/osm-building-details.csv'
       - 'complete_data/open free tile/building-fallback.geojson'
       - 'complete_data/open free tile/layers/housenumber.geojsonl'
-      - 'complete_data/OSM/data/buildings/parts/building-image-links.json'
-      - 'complete_data/OSM/data/buildings/parts/building-image-candidates.json'
+      - 'complete_data/OSM/data/buildings/Ermita/building-image-links.json'
+      - 'complete_data/OSM/data/buildings/Ermita/building-image-candidates.json'
       - 'complete_data/OSM/data/buildings/windows/facade-signage-index.csv'
       - 'complete_data/OSM/data/buildings/windows/facade-details-report.json'
       - 'complete_data/OSM/Markets/commercial-facades-report.json'
@@ -48,28 +48,28 @@ jobs:
         with:
           ref: main
           sparse-checkout: |
-            /complete_data/OSM/data/buildings/parts/parts-inventory-index.json
-            /complete_data/OSM/data/buildings/parts/part1/part1-inventory.json
-            /complete_data/OSM/data/buildings/parts/part2/part2-inventory.json
-            /complete_data/OSM/data/buildings/parts/part3/part3-inventory.json
-            /complete_data/OSM/data/buildings/parts/part4/part4-inventory.json
-            /complete_data/OSM/data/buildings/parts/building-enrichment-index.json
-            /complete_data/OSM/data/buildings/parts/building-enrichment-report.json
-            /complete_data/OSM/data/buildings/parts/building-source-merge-report.json
-            /complete_data/OSM/data/buildings/parts/building-source-link-audit.csv
-            /complete_data/OSM/data/buildings/parts/building-visual-research-queue.csv
-            /complete_data/OSM/data/buildings/parts/building-visual-research-queue.geojson
-            /complete_data/OSM/data/buildings/parts/BUILDING-VISUAL-RESEARCH.md
-            /complete_data/OSM/data/buildings/parts/building-image-candidates.json
-            /complete_data/OSM/data/buildings/parts/building-image-candidates-progress.jsonl
-            /complete_data/OSM/data/buildings/parts/building-image-candidates.csv
-            /complete_data/OSM/data/buildings/parts/BUILDING-IMAGE-CANDIDATES.md
-            /complete_data/OSM/data/buildings/parts/building-image-links.json
-            /complete_data/OSM/data/buildings/parts/building-image-candidates.json
-            /complete_data/OSM/data/buildings/ermita-building-details.geojson
-            /complete_data/OSM/data/buildings/ermita-building-footprints.geojson
-            /complete_data/OSM/data/buildings/ermita-building-roof-details.geojson
-            /complete_data/OSM/data/buildings/osm-building-details.csv
+            /complete_data/OSM/data/buildings/Ermita/ermita-building-parts-index.json
+            /complete_data/OSM/data/buildings/Ermita/part1/part1-inventory.json
+            /complete_data/OSM/data/buildings/Ermita/part2/part2-inventory.json
+            /complete_data/OSM/data/buildings/Ermita/part3/part3-inventory.json
+            /complete_data/OSM/data/buildings/Ermita/part4/part4-inventory.json
+            /complete_data/OSM/data/buildings/Ermita/building-enrichment-index.json
+            /complete_data/OSM/data/buildings/Ermita/building-enrichment-report.json
+            /complete_data/OSM/data/buildings/Ermita/building-source-merge-report.json
+            /complete_data/OSM/data/buildings/Ermita/building-source-link-audit.csv
+            /complete_data/OSM/data/buildings/Ermita/building-visual-research-queue.csv
+            /complete_data/OSM/data/buildings/Ermita/building-visual-research-queue.geojson
+            /complete_data/OSM/data/buildings/Ermita/BUILDING-VISUAL-RESEARCH.md
+            /complete_data/OSM/data/buildings/Ermita/building-image-candidates.json
+            /complete_data/OSM/data/buildings/Ermita/building-image-candidates-progress.jsonl
+            /complete_data/OSM/data/buildings/Ermita/building-image-candidates.csv
+            /complete_data/OSM/data/buildings/Ermita/BUILDING-IMAGE-CANDIDATES.md
+            /complete_data/OSM/data/buildings/Ermita/building-image-links.json
+            /complete_data/OSM/data/buildings/Ermita/building-image-candidates.json
+            /complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson
+            /complete_data/OSM/data/buildings/Ermita/ermita-building-footprints.geojson
+            /complete_data/OSM/data/buildings/Ermita/ermita-building-roof-details.geojson
+            /complete_data/OSM/data/buildings/Ermita/osm-building-details.csv
             /complete_data/OSM/data/buildings/windows/facade-signage-index.csv
             /complete_data/OSM/data/buildings/windows/facade-details-report.json
             /complete_data/OSM/Markets/commercial-facades-report.json
@@ -102,7 +102,7 @@ jobs:
           python3 - <<'PY'
           import json
           from pathlib import Path
-          root = Path("complete_data/OSM/data/buildings/parts")
+          root = Path("complete_data/OSM/data/buildings/Ermita")
           index = json.loads((root / "building-enrichment-index.json").read_text(encoding="utf-8"))
           report = json.loads((root / "building-source-merge-report.json").read_text(encoding="utf-8"))
           audit = root / "building-source-link-audit.csv"
@@ -124,16 +124,16 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add complete_data/OSM/data/buildings/parts/building-enrichment-index.json
-          git add complete_data/OSM/data/buildings/parts/building-enrichment-report.json
-          git add complete_data/OSM/data/buildings/parts/building-source-merge-report.json
-          git add complete_data/OSM/data/buildings/parts/building-source-link-audit.csv
-          git add complete_data/OSM/data/buildings/parts/building-visual-research-queue.csv
-          git add complete_data/OSM/data/buildings/parts/building-visual-research-queue.geojson
-          git add complete_data/OSM/data/buildings/parts/BUILDING-VISUAL-RESEARCH.md
-          git add complete_data/OSM/data/buildings/parts/building-image-candidates.json
-          git add complete_data/OSM/data/buildings/parts/building-image-candidates.csv
-          git add complete_data/OSM/data/buildings/parts/BUILDING-IMAGE-CANDIDATES.md
+          git add complete_data/OSM/data/buildings/Ermita/building-enrichment-index.json
+          git add complete_data/OSM/data/buildings/Ermita/building-enrichment-report.json
+          git add complete_data/OSM/data/buildings/Ermita/building-source-merge-report.json
+          git add complete_data/OSM/data/buildings/Ermita/building-source-link-audit.csv
+          git add complete_data/OSM/data/buildings/Ermita/building-visual-research-queue.csv
+          git add complete_data/OSM/data/buildings/Ermita/building-visual-research-queue.geojson
+          git add complete_data/OSM/data/buildings/Ermita/BUILDING-VISUAL-RESEARCH.md
+          git add complete_data/OSM/data/buildings/Ermita/building-image-candidates.json
+          git add complete_data/OSM/data/buildings/Ermita/building-image-candidates.csv
+          git add complete_data/OSM/data/buildings/Ermita/BUILDING-IMAGE-CANDIDATES.md
           if git diff --cached --quiet; then
             echo "Unified building metadata is already up to date."
           else

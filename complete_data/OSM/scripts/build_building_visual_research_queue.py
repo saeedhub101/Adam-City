@@ -7,7 +7,7 @@ from urllib.parse import quote
 from pyproj import Transformer
 
 ROOT = Path(__file__).resolve().parents[3]
-PARTS = ROOT / "complete_data/OSM/data/buildings/parts"
+PARTS = ROOT / "complete_data/OSM/data/buildings/Ermita"
 INDEX = PARTS / "building-enrichment-index.json"
 CSV_OUT = PARTS / "building-visual-research-queue.csv"
 GEOJSON_OUT = PARTS / "building-visual-research-queue.geojson"

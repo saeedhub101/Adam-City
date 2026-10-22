@@ -18,7 +18,7 @@ from shapely.ops import transform as geom_transform
 from shapely.strtree import STRtree
 
 ROOT = Path(__file__).resolve().parents[3]
-PARTS = ROOT / "complete_data/OSM/data/buildings/parts"
+PARTS = ROOT / "complete_data/OSM/data/buildings/Ermita"
 BUILDINGS = ROOT / "complete_data/OSM/data/buildings"
 OPENFREE = ROOT / "complete_data/open free tile"
 INDEX = PARTS / "building-enrichment-index.json"
@@ -373,7 +373,7 @@ def attach_images_and_facades(records, metadata):
                 "images": link.get("image_evidence", []),
                 "target_link": link.get("adam_city_target"),
                 "applied_to_model": bool(link.get("applied_to_model", False)),
-                "source_manifest": "complete_data/OSM/data/buildings/parts/building-image-links.json",
+                "source_manifest": "complete_data/OSM/data/buildings/Ermita/building-image-links.json",
             })
             counts["exact_image_identity_links"] += 1
     # Nearby Commons search results are leads, not verified depictions.
@@ -474,8 +474,8 @@ def attach_images_and_facades(records, metadata):
         "commercial_facade_report": "complete_data/OSM/Markets/commercial-facades-report.json",
         "supreme_court_overlay_report": "complete_data/OSM/Buildings/supreme-court-main-facade-report.json",
         "robinsons_reference_catalogue": "complete_data/OSM/Markets/reference_photos/robinsons-manila/reference-index.json",
-        "named_image_links": "complete_data/OSM/data/buildings/parts/building-image-links.json",
-        "commons_candidate_source": "complete_data/OSM/data/buildings/parts/building-image-candidates.json",
+        "named_image_links": "complete_data/OSM/data/buildings/Ermita/building-image-links.json",
+        "commons_candidate_source": "complete_data/OSM/data/buildings/Ermita/building-image-candidates.json",
     }
 
 
@@ -609,11 +609,11 @@ def main():
         "schema_version": "1.0.0",
         "status": "generated",
         "generated_from": [
-            "complete_data/OSM/data/buildings/parts/building-enrichment-index.json",
+            "complete_data/OSM/data/buildings/Ermita/building-enrichment-index.json",
             "complete_data/open free tile/building-fallback.geojson",
             "complete_data/open free tile/layers/housenumber.geojsonl",
-            "complete_data/OSM/data/buildings/parts/building-image-links.json",
-            "complete_data/OSM/data/buildings/parts/building-image-candidates.json (optional if workflow output exists)",
+            "complete_data/OSM/data/buildings/Ermita/building-image-links.json",
+            "complete_data/OSM/data/buildings/Ermita/building-image-candidates.json (optional if workflow output exists)",
             "complete_data/OSM/data/buildings/windows/facade-signage-index.csv",
             "complete_data/OSM/Markets/commercial-facades-report.json",
             "complete_data/OSM/Buildings/supreme-court-main-facade-report.json",

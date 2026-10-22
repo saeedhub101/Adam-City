@@ -18,7 +18,7 @@ import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
-PARTS = ROOT / "complete_data/OSM/data/buildings/parts"
+PARTS = ROOT / "complete_data/OSM/data/buildings/Ermita"
 QUEUE = PARTS / "building-visual-research-queue.csv"
 OUT_JSON = PARTS / "building-image-candidates.json"
 OUT_CSV = PARTS / "building-image-candidates.csv"
