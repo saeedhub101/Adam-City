@@ -96,3 +96,17 @@ Attribution: OpenFreeMap © OpenMapTiles; data from OpenStreetMap contributors (
 ### Refreshed CSV registry validation
 
 The two `*-enriched.csv.gz` files were downloaded back from the committed `main` branch and decompressed for validation: part 1 has **861 rows and 34 columns** (registry IDs `OFM-ERMITA-00001`–`OFM-ERMITA-00861`); part 2 has **860 rows and 34 columns** (`OFM-ERMITA-00862`–`OFM-ERMITA-01721`). Together they contain 1,721 rows. The CSV stores counts of address/POI candidates; the full candidate arrays and geometry are in the corresponding GeoJSON properties.
+
+
+### Photo-based visual evidence (initial sample)
+
+A first visual-evidence catalog is stored in `building-visual-evidence.csv`. It links named footprints to official/developer and Wikimedia Commons sources, records which images have been viewed, and separates visual observations from confirmed material specifications. Initial image review has recorded only cautious visible traits for Bayview Park Hotel, Eton Baypark Manila, Casino Español de Manila, and PGH Nurses Home. These observations are provisional and do not establish exact construction materials. Several records still need image-to-footprint confirmation; photos must not be copied across adjacent buildings or across duplicate geometry components.
+
+Useful verified image sources discovered:
+- Bayview Park Hotel official facade gallery: https://bayviewparkhotel.com/gallery/
+- Eton Baypark Manila developer page: https://eton.com.ph/project/eton-baypark-manila/
+- Casino Español de Manila exterior photos: https://commons.wikimedia.org/wiki/Category:Casino_Español_de_Manila
+- PGH Nurses Home photo (CC BY-SA 4.0): https://commons.wikimedia.org/wiki/File:PGH_Nurses_Home.jpg
+- PGH Nurses Home restoration article: https://lifestyle.inquirer.net/390451/heritage-nurses-home-in-pgh-compound-restored/
+
+Important count caveat: **1,721 is the number of extracted polygon components, not yet a proven count of unique physical buildings.** For example, two extracted components currently match the same OSM way for Pearl of the Orient and carry different OpenFreeMap render heights. Those components must be geometrically reconciled before the registry is described as 1,721 unique buildings.
