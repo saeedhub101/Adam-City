@@ -156,7 +156,7 @@ def main():
         "six_part_report_has_no_omitted_source_features": not six_report.get("omitted_source_features"),
         "all_original_inventory_properties_preserved_flag": six_report.get("all_source_tags_preserved_in_inventory") is True,
         "all_material_properties_preserved_flag": six_report.get("material_properties_preserved_in_inventory") is True,
-        "duplicate_enrichment_identity_keys_found": bool(duplicates),
+        "no_duplicate_enrichment_identity_keys": not bool(duplicates),
     }
 
     report = {
