@@ -61,7 +61,7 @@ def merge_geo(sources):
         rel=p.relative_to(ROOT).as_posix()
         try:
             with p.open("rb") as f:
-                for feature in ijson.items(f,"features.item"):
+                for feature in ijson.items(f,"features.item", use_float=True):
                     if not isinstance(feature,dict): continue
                     props=feature.get("properties")
                     if not isinstance(props,dict): props={}; feature["properties"]=props
