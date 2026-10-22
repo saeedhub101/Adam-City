@@ -88,6 +88,16 @@
       "path": "complete_data/OSM/data/buildings/Ermita/building-image-links.json",
       "records": 2,
       "policy": "Exact OSM ID only; image links remain candidate/review references, not automatic textures."
+    },
+    {
+      "path": "ermita/maps/generated/ermita-building-details.csv",
+      "rows": 1533,
+      "policy": "Exact accepted OSM ID only; fill blank fields from the existing detailed OSM tags."
+    },
+    {
+      "path": "ermita/maps/qa/consolidated-building-register.csv",
+      "rows": 1570,
+      "policy": "Exact accepted OSM ID only; retain source-presence, conflicts and missing-source notes."
     }
   ],
   "pilot_register_exact_id_matches": 28,
@@ -95,5 +105,9 @@
   "existing_building_evidence_exact_id_matches": 28,
   "named_photo_links_exact_id_matches": 1,
   "provisional_barangay_records_carried_forward": 28,
-  "note": "Barangay assignments copied from the 30-row pilot register retain their provisional status; they are not presented as confirmed boundaries. Internal photo links remain unverified."
+  "note": "Barangay assignments copied from the 30-row pilot register retain their provisional status; they are not presented as confirmed boundaries. Internal photo links remain unverified.",
+  "legacy_osm_details_exact_id_matches": 692,
+  "additional_blank_fields_filled_from_legacy_osm_details": 79,
+  "consolidated_register_exact_id_matches": 692,
+  "records_with_source_conflict_notes": 443
 }
