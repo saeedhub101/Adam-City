@@ -181,7 +181,7 @@ def main():
             "unique_osm_ids_in_csv": len(set(csv_ids)),
             "parts_inventory_index_entries": len(parts_index),
             "parts_report": {
-                "source_feature_count": parts_report.get("source_polygon_feature_count_exported"),
+                "exported_source_polygon_feature_count": parts_report.get("source_polygon_feature_count_exported"),
                 "polygon_components": parts_report.get("polygon_components_exported"),
                 "part_count": parts_report.get("part_count"),
                 "all_exported_polygon_features_assigned_once": parts_report.get("all_exported_polygon_features_assigned_once"),
