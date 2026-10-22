@@ -12,6 +12,7 @@ on:
       - 'complete_data/OSM/data/buildings/parts/part3/part3-inventory.json'
       - 'complete_data/OSM/data/buildings/parts/part4/part4-inventory.json'
       - 'complete_data/OSM/data/buildings/ermita-building-details.geojson'
+      - 'complete_data/OSM/data/buildings/ermita-building-footprints.geojson'
       - 'complete_data/OSM/data/buildings/ermita-building-roof-details.geojson'
       - 'complete_data/OSM/data/buildings/osm-building-details.csv'
 
@@ -39,6 +40,7 @@ jobs:
             /complete_data/OSM/data/buildings/parts/building-enrichment-index.json
             /complete_data/OSM/data/buildings/parts/building-enrichment-report.json
             /complete_data/OSM/data/buildings/ermita-building-details.geojson
+            /complete_data/OSM/data/buildings/ermita-building-footprints.geojson
             complete_data/OSM/data/buildings/ermita-building-roof-details.geojson
             complete_data/OSM/data/buildings/osm-building-details.csv
             complete_data/OSM/scripts/generate_building_enrichment_index.py
