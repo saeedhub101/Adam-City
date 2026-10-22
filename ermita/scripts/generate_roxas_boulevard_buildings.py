@@ -833,6 +833,9 @@ def main():
             continue
         try:
             geom = geom_transform(TO_METERS, shape(feature["geometry"]))
+            # Repair invalid rings before spatial matching so metadata/height joins do not fail.
+            if not geom.is_valid:
+                geom = geom.buffer(0)
             tags = tags_of(feature)
             if geom.geom_type not in ("Polygon", "MultiPolygon") or geom.is_empty:
                 continue
@@ -880,6 +883,10 @@ def main():
             continue
         try:
             g = geom_transform(TO_METERS, shape(feature["geometry"]))
+            # Repair invalid footprint rings rather than silently losing their geometry.
+            # polygon_parts below exports every repaired polygon component using the same facade pipeline.
+            if not g.is_valid:
+                g = g.buffer(0)
             if g.geom_type not in ("Polygon", "MultiPolygon") or g.is_empty:
                 continue
             # Include footprints within the 70 m corridor, but keep full footprint geometry.
