@@ -1,11 +1,13 @@
-name: Enrich building metadata index
+name: Enrich building metadata and visual evidence
 
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
+      - '.github/workflows/enrich-building-metadata.yml'
       - 'complete_data/OSM/scripts/generate_building_enrichment_index.py'
+      - 'complete_data/OSM/scripts/merge_building_source_evidence.py'
       - 'complete_data/OSM/data/buildings/parts/parts-inventory-index.json'
       - 'complete_data/OSM/data/buildings/parts/part1/part1-inventory.json'
       - 'complete_data/OSM/data/buildings/parts/part2/part2-inventory.json'
@@ -15,6 +17,15 @@ on:
       - 'complete_data/OSM/data/buildings/ermita-building-footprints.geojson'
       - 'complete_data/OSM/data/buildings/ermita-building-roof-details.geojson'
       - 'complete_data/OSM/data/buildings/osm-building-details.csv'
+      - 'complete_data/open free tile/building-fallback.geojson'
+      - 'complete_data/open free tile/layers/housenumber.geojsonl'
+      - 'complete_data/OSM/data/buildings/parts/building-image-links.json'
+      - 'complete_data/OSM/data/buildings/parts/building-image-candidates.json'
+      - 'complete_data/OSM/data/buildings/windows/facade-signage-index.csv'
+      - 'complete_data/OSM/data/buildings/windows/facade-details-report.json'
+      - 'complete_data/OSM/Markets/commercial-facades-report.json'
+      - 'complete_data/OSM/Markets/reference_photos/robinsons-manila/reference-index.json'
+      - 'complete_data/OSM/Buildings/supreme-court-main-facade-report.json'
 
 permissions:
   contents: write
@@ -26,8 +37,9 @@ concurrency:
 jobs:
   enrich:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - name: Check out only the source data and inventories
+      - name: Check out building data, OpenFreeMap and visual evidence
         uses: actions/checkout@v4
         with:
           ref: main
@@ -39,23 +51,56 @@ jobs:
             /complete_data/OSM/data/buildings/parts/part4/part4-inventory.json
             /complete_data/OSM/data/buildings/parts/building-enrichment-index.json
             /complete_data/OSM/data/buildings/parts/building-enrichment-report.json
+            /complete_data/OSM/data/buildings/parts/building-image-links.json
+            /complete_data/OSM/data/buildings/parts/building-image-candidates.json
             /complete_data/OSM/data/buildings/ermita-building-details.geojson
-            complete_data/OSM/data/buildings/ermita-building-footprints.geojson
-            complete_data/OSM/data/buildings/ermita-building-roof-details.geojson
-            complete_data/OSM/data/buildings/osm-building-details.csv
-            complete_data/OSM/scripts/generate_building_enrichment_index.py
+            /complete_data/OSM/data/buildings/ermita-building-footprints.geojson
+            /complete_data/OSM/data/buildings/ermita-building-roof-details.geojson
+            /complete_data/OSM/data/buildings/osm-building-details.csv
+            /complete_data/OSM/data/buildings/windows/facade-signage-index.csv
+            /complete_data/OSM/data/buildings/windows/facade-details-report.json
+            /complete_data/OSM/Markets/commercial-facades-report.json
+            /complete_data/OSM/Markets/reference_photos/robinsons-manila/reference-index.json
+            /complete_data/OSM/Buildings/supreme-court-main-facade-report.json
+            /complete_data/open free tile/building-fallback.geojson
+            /complete_data/open free tile/layers/housenumber.geojsonl
+            /complete_data/OSM/scripts/generate_building_enrichment_index.py
+            /complete_data/OSM/scripts/merge_building_source_evidence.py
           sparse-checkout-cone-mode: false
 
-      - name: Generate exact and conservative spatial links
+      - name: Install spatial dependencies
+        run: python3 -m pip install --disable-pip-version-check shapely pyproj
+
+      - name: Generate the base OSM identity and geometry evidence index
+        run: python3 complete_data/OSM/scripts/generate_building_enrichment_index.py
+
+      - name: Merge OpenFreeMap properties, house numbers, photos and facade assets
+        run: python3 complete_data/OSM/scripts/merge_building_source_evidence.py
+
+      - name: Validate merged database and preserve results
         shell: bash
         run: |
           set -euo pipefail
-          python3 -m pip install --disable-pip-version-check shapely pyproj
-          python3 complete_data/OSM/scripts/generate_building_enrichment_index.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path("complete_data/OSM/data/buildings/parts")
+          index = json.loads((root / "building-enrichment-index.json").read_text(encoding="utf-8"))
+          report = json.loads((root / "building-source-merge-report.json").read_text(encoding="utf-8"))
+          audit = root / "building-source-link-audit.csv"
+          assert index.get("buildings"), "Enrichment index contains no buildings"
+          assert len(index["buildings"]) == report["building_records"], "Index/report building counts differ"
+          assert audit.is_file() and audit.stat().st_size > 0, "Source-link audit was not generated"
+          assert index.get("additional_sources"), "Additional source manifest missing"
+          print(json.dumps({
+              "building_records": len(index["buildings"]),
+              "fallback_features": report["fallback_feature_count"],
+              "counts": report["counts"],
+              "audit_bytes": audit.stat().st_size
+          }, ensure_ascii=False, indent=2))
+          PY
 
-      - name: Persist updated index and review report
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit unified building metadata and audit
         shell: bash
         run: |
           set -euo pipefail
@@ -63,10 +108,12 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add complete_data/OSM/data/buildings/parts/building-enrichment-index.json
           git add complete_data/OSM/data/buildings/parts/building-enrichment-report.json
+          git add complete_data/OSM/data/buildings/parts/building-source-merge-report.json
+          git add complete_data/OSM/data/buildings/parts/building-source-link-audit.csv
           if git diff --cached --quiet; then
-            echo "Building enrichment index and report are already up to date."
+            echo "Unified building metadata is already up to date."
           else
-            git commit -m "Update spatial building metadata links"
+            git commit -m "Merge OpenFreeMap and visual evidence into building index"
             git pull --rebase origin main
             git push origin HEAD:main
           fi
