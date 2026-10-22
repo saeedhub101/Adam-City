@@ -1,6 +1,6 @@
 {
   "type": "FeatureCollection",
-  "name": "Adam-City building-data pilot batch 001",
+  "name": "Adam-City building-data pilot batch 001 — spatially ordered",
   "source": "https://www.openstreetmap.org/copyright",
   "license": "OpenStreetMap contributors, ODbL 1.0",
   "metadata": {
@@ -10,137 +10,26 @@
     "source_file": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
     "batch_id": "ERM-BATCH-001",
     "feature_count": 30,
-    "status": "pilot; field research and source verification still in progress"
+    "status": "pilot; field research and source verification still in progress",
+    "ordering": "Geographic nearest-neighbour order; sequence starts at the northernmost record and proceeds to the nearest remaining building. Groups split when nearest step exceeds 350 m.",
+    "barangay_status": "not yet assigned; existing repository administrative export contains boundary lines without barangay names/polygons suitable for point-in-polygon assignment."
   },
   "features": [
     {
       "type": "Feature",
       "properties": {
         "type": "way",
-        "id": 15868300,
+        "id": 30106360,
         "tags": {
-          "building": "retail",
-          "building:levels": "5",
-          "height": "26.2",
-          "layer": "1",
-          "note": "name and other tags in shop/landuse polygon",
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "building": "yes",
+          "building:levels": "2",
           "roof:shape": "flat"
         },
-        "osm_feature_id": "way/15868300",
+        "osm_feature_id": "way/30106360",
         "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-001",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9822926,
-              14.5892856
-            ],
-            [
-              120.9822331,
-              14.5899834
-            ],
-            [
-              120.9822058,
-              14.5901696
-            ],
-            [
-              120.9822323,
-              14.590244
-            ],
-            [
-              120.9822649,
-              14.5902731
-            ],
-            [
-              120.9823664,
-              14.5903204
-            ],
-            [
-              120.9831605,
-              14.5903264
-            ],
-            [
-              120.983642,
-              14.5903301
-            ],
-            [
-              120.9837681,
-              14.5902888
-            ],
-            [
-              120.9838786,
-              14.5901953
-            ],
-            [
-              120.9840271,
-              14.5898249
-            ],
-            [
-              120.9841582,
-              14.5894897
-            ],
-            [
-              120.9841784,
-              14.5894362
-            ],
-            [
-              120.9839728,
-              14.5893429
-            ],
-            [
-              120.9839778,
-              14.5892503
-            ],
-            [
-              120.9835254,
-              14.5892514
-            ],
-            [
-              120.9835258,
-              14.5892749
-            ],
-            [
-              120.9822926,
-              14.5892856
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 16554323,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "building": "dormitory",
-          "building:levels": "3",
-          "name": "PGH Nurses Home"
-        },
-        "osm_feature_id": "way/16554323",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-002",
+          "record_id": "ERM-BATCH-001-027",
           "country": "Philippines",
           "region_province": "Metro Manila",
           "city": "Manila",
@@ -156,7 +45,11 @@
             "district confirmation",
             "Barangay via official boundary spatial join",
             "street/address verification"
-          ]
+          ],
+          "spatial_order": 1,
+          "spatial_group": "PROX-01",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
         }
       },
       "geometry": {
@@ -164,548 +57,65 @@
         "coordinates": [
           [
             [
-              120.9855468,
-              14.5792121
+              120.9800697,
+              14.5960787
             ],
             [
-              120.985823,
-              14.5793612
+              120.980097,
+              14.5962751
             ],
             [
-              120.9860088,
-              14.5794579
+              120.9800843,
+              14.5962982
             ],
             [
-              120.9862214,
-              14.5790837
+              120.9799692,
+              14.5963132
             ],
             [
-              120.9857666,
-              14.5788418
+              120.9799389,
+              14.5960957
             ],
             [
-              120.9856803,
-              14.5789937
-            ],
-            [
-              120.9858523,
-              14.5790853
-            ],
-            [
-              120.9858268,
-              14.5791302
-            ],
-            [
-              120.9856475,
-              14.5790347
-            ],
-            [
-              120.9855468,
-              14.5792121
+              120.9800697,
+              14.5960787
             ]
           ]
         ]
-      }
+      },
+      "spatial_order": 1,
+      "spatial_group": "PROX-01"
     },
     {
       "type": "Feature",
       "properties": {
         "type": "way",
-        "id": 16554326,
+        "id": 30106358,
         "tags": {
           "addr:city": "Manila",
           "addr:province": "Metro Manila",
-          "building": "hospital",
-          "building:levels": "2",
-          "name": "PGH Out-Patient Department"
-        },
-        "osm_feature_id": "way/16554326",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-003",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9849199,
-              14.5790916
-            ],
-            [
-              120.9853366,
-              14.5793112
-            ],
-            [
-              120.9852965,
-              14.5793825
-            ],
-            [
-              120.9856303,
-              14.5795584
-            ],
-            [
-              120.9857261,
-              14.5793882
-            ],
-            [
-              120.9854752,
-              14.579256
-            ],
-            [
-              120.985741,
-              14.5787835
-            ],
-            [
-              120.9856315,
-              14.5787258
-            ],
-            [
-              120.9852414,
-              14.5785202
-            ],
-            [
-              120.9849199,
-              14.5790916
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 16554344,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "building": "hospital",
-          "building:architecture": "neoclassical",
-          "building:levels": "2",
-          "start_date": "1910-09"
-        },
-        "osm_feature_id": "way/16554344",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-004",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9851838,
-              14.5783718
-            ],
-            [
-              120.9855703,
-              14.5785755
-            ],
-            [
-              120.9858176,
-              14.5781358
-            ],
-            [
-              120.9860724,
-              14.57827
-            ],
-            [
-              120.9862406,
-              14.577971
-            ],
-            [
-              120.9864131,
-              14.5776643
-            ],
-            [
-              120.9862758,
-              14.5775919
-            ],
-            [
-              120.9862611,
-              14.577618
-            ],
-            [
-              120.9862523,
-              14.5776337
-            ],
-            [
-              120.9861422,
-              14.5775757
-            ],
-            [
-              120.9864066,
-              14.5771057
-            ],
-            [
-              120.9859946,
-              14.5768886
-            ],
-            [
-              120.9856775,
-              14.5774524
-            ],
-            [
-              120.9857917,
-              14.5775126
-            ],
-            [
-              120.985656,
-              14.5777539
-            ],
-            [
-              120.9857944,
-              14.5778269
-            ],
-            [
-              120.9857427,
-              14.5779188
-            ],
-            [
-              120.9855082,
-              14.5777952
-            ],
-            [
-              120.9851838,
-              14.5783718
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 16554350,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "building": "hospital",
-          "building:levels": "3"
-        },
-        "osm_feature_id": "way/16554350",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-005",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9850867,
-              14.5774914
-            ],
-            [
-              120.9852173,
-              14.5772479
-            ],
-            [
-              120.9848868,
-              14.577082
-            ],
-            [
-              120.9847563,
-              14.5773254
-            ],
-            [
-              120.9850867,
-              14.5774914
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 16554352,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "building": "yes"
-        },
-        "osm_feature_id": "way/16554352",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-006",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "height and floor count",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9860373,
-              14.5788447
-            ],
-            [
-              120.986279,
-              14.578975
-            ],
-            [
-              120.9863436,
-              14.5788627
-            ],
-            [
-              120.9861019,
-              14.5787325
-            ],
-            [
-              120.9860373,
-              14.5788447
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 16554354,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "building": "public",
-          "building:levels": "5",
-          "name": "Centennial Building"
-        },
-        "osm_feature_id": "way/16554354",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-007",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.985393,
-              14.5796683
-            ],
-            [
-              120.9855401,
-              14.5797497
-            ],
-            [
-              120.9858274,
-              14.579898
-            ],
-            [
-              120.9858394,
-              14.579906
-            ],
-            [
-              120.9857535,
-              14.5800571
-            ],
-            [
-              120.9857422,
-              14.5800512
-            ],
-            [
-              120.985456,
-              14.5799022
-            ],
-            [
-              120.9853071,
-              14.5798193
-            ],
-            [
-              120.985393,
-              14.5796683
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 16554370,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "building": "office",
-          "building:levels": "3"
-        },
-        "osm_feature_id": "way/16554370",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-008",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9837841,
-              14.5795086
-            ],
-            [
-              120.9838115,
-              14.5795229
-            ],
-            [
-              120.9837956,
-              14.5795513
-            ],
-            [
-              120.9839274,
-              14.5796202
-            ],
-            [
-              120.98406,
-              14.5793827
-            ],
-            [
-              120.9843633,
-              14.5795413
-            ],
-            [
-              120.9844074,
-              14.5794624
-            ],
-            [
-              120.9844644,
-              14.5793602
-            ],
-            [
-              120.9840325,
-              14.5791344
-            ],
-            [
-              120.984011,
-              14.5791729
-            ],
-            [
-              120.9839804,
-              14.579157
-            ],
-            [
-              120.983878,
-              14.5793404
-            ],
-            [
-              120.9837841,
-              14.5795086
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 27086604,
-        "tags": {
+          "addr:street": "Lawton Road",
           "building": "yes",
-          "building:levels": "2"
+          "building:levels": "2",
+          "check_date:opening_hours": "2024-03-10",
+          "email": "ltomsdo@gmail.com",
+          "government": "transportation",
+          "name": "LTO Manila South District Office",
+          "office": "government",
+          "official_name": "Land Transportation Office Manila South District Office",
+          "opening_hours": "Mo-Fr 08:00-17:00",
+          "operator": "Land Transportation Office",
+          "operator:en": "Land Transportation Office",
+          "operator:short": "LTO",
+          "operator:tl": "Tanggapan sa Transportasyon Panlupa",
+          "operator:wikidata": "Q6484001",
+          "phone": "+63 2 85284668",
+          "roof:shape": "flat",
+          "website": "https://lto.gov.ph/"
         },
-        "osm_feature_id": "way/27086604",
+        "osm_feature_id": "way/30106358",
         "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-009",
+          "record_id": "ERM-BATCH-001-026",
           "country": "Philippines",
           "region_province": "Metro Manila",
           "city": "Manila",
@@ -719,9 +129,12 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
+            "Barangay via official boundary spatial join"
+          ],
+          "spatial_order": 2,
+          "spatial_group": "PROX-01",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
         }
       },
       "geometry": {
@@ -729,99 +142,34 @@
         "coordinates": [
           [
             [
-              120.9771482,
-              14.5788279
+              120.9800667,
+              14.5956568
             ],
             [
-              120.9773215,
-              14.5789165
+              120.980121,
+              14.5960177
             ],
             [
-              120.9771083,
-              14.5793067
+              120.9799805,
+              14.5960374
             ],
             [
-              120.9767093,
-              14.5791025
+              120.9799599,
+              14.5959016
             ],
             [
-              120.9768175,
-              14.5789045
+              120.9799262,
+              14.5956766
             ],
             [
-              120.9770432,
-              14.57902
-            ],
-            [
-              120.9771482,
-              14.5788279
+              120.9800667,
+              14.5956568
             ]
           ]
         ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 27650470,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "building": "university",
-          "building:levels": "3",
-          "name": "National Institutes of Health",
-          "wikidata": "Q48792120",
-          "wikipedia": "en:National Institutes of Health (Philippines)"
-        },
-        "osm_feature_id": "way/27650470",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-010",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
       },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9873122,
-              14.5760911
-            ],
-            [
-              120.9873829,
-              14.5759436
-            ],
-            [
-              120.9867994,
-              14.5756815
-            ],
-            [
-              120.9867287,
-              14.575829
-            ],
-            [
-              120.9873122,
-              14.5760911
-            ]
-          ]
-        ]
-      }
+      "spatial_order": 2,
+      "spatial_group": "PROX-01"
     },
     {
       "type": "Feature",
@@ -875,7 +223,11 @@
             "roof material",
             "Barangay via official boundary spatial join",
             "street/address verification"
-          ]
+          ],
+          "spatial_order": 3,
+          "spatial_group": "PROX-01",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
         }
       },
       "geometry": {
@@ -1004,7 +356,79 @@
             ]
           ]
         ]
-      }
+      },
+      "spatial_order": 3,
+      "spatial_group": "PROX-01"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 30106330,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:housenumber": "1598",
+          "addr:place": "Liwasang Bonifacio",
+          "addr:province": "Metro Manila",
+          "building": "commercial",
+          "building:levels": "3",
+          "name": "Postbank Center",
+          "roof:shape": "hipped"
+        },
+        "osm_feature_id": "way/30106330",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-025",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 4,
+          "spatial_group": "PROX-01",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9778595,
+              14.5952981
+            ],
+            [
+              120.9780669,
+              14.5949376
+            ],
+            [
+              120.9782557,
+              14.5950393
+            ],
+            [
+              120.9780483,
+              14.5953998
+            ],
+            [
+              120.9778595,
+              14.5952981
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 4,
+      "spatial_group": "PROX-01"
     },
     {
       "type": "Feature",
@@ -1042,7 +466,11 @@
             "district confirmation",
             "Barangay via official boundary spatial join",
             "street/address verification"
-          ]
+          ],
+          "spatial_order": 5,
+          "spatial_group": "PROX-02",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
         }
       },
       "geometry": {
@@ -1095,739 +523,9 @@
             ]
           ]
         ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 28239313,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "building": "public",
-          "building:levels": "4"
-        },
-        "osm_feature_id": "way/28239313",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-013",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
       },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9827973,
-              14.5798942
-            ],
-            [
-              120.9829061,
-              14.579699
-            ],
-            [
-              120.9833338,
-              14.5799225
-            ],
-            [
-              120.9832249,
-              14.5801176
-            ],
-            [
-              120.9827973,
-              14.5798942
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 28393458,
-        "tags": {
-          "building": "public",
-          "building:levels": "4",
-          "name": "Old GSIS Building",
-          "roof:shape": "flat"
-        },
-        "osm_feature_id": "way/28393458",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-014",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9821827,
-              14.5912207
-            ],
-            [
-              120.9821854,
-              14.5910074
-            ],
-            [
-              120.9821874,
-              14.5908453
-            ],
-            [
-              120.9821546,
-              14.5907879
-            ],
-            [
-              120.9821607,
-              14.5907308
-            ],
-            [
-              120.9822061,
-              14.5906921
-            ],
-            [
-              120.9822732,
-              14.5906906
-            ],
-            [
-              120.9823388,
-              14.5907305
-            ],
-            [
-              120.9830441,
-              14.590739
-            ],
-            [
-              120.9830403,
-              14.5912229
-            ],
-            [
-              120.9821827,
-              14.5912207
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 28393875,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "building": "yes",
-          "building:levels": "5",
-          "name": "Sentro Oftalmologica"
-        },
-        "osm_feature_id": "way/28393875",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-015",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9847746,
-              14.5782619
-            ],
-            [
-              120.9851265,
-              14.5784461
-            ],
-            [
-              120.9851661,
-              14.578392
-            ],
-            [
-              120.9851801,
-              14.5783539
-            ],
-            [
-              120.9851849,
-              14.5782841
-            ],
-            [
-              120.9851776,
-              14.5782488
-            ],
-            [
-              120.9851455,
-              14.5781861
-            ],
-            [
-              120.9851072,
-              14.5781478
-            ],
-            [
-              120.9850436,
-              14.5781145
-            ],
-            [
-              120.9849775,
-              14.5781042
-            ],
-            [
-              120.9848786,
-              14.5781286
-            ],
-            [
-              120.9848086,
-              14.5781884
-            ],
-            [
-              120.9847746,
-              14.5782619
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 28395536,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "alt_name": "Sotejo Hall",
-          "building": "university",
-          "building:levels": "3",
-          "name": "College of Nursing",
-          "wikidata": "Q101013741"
-        },
-        "osm_feature_id": "way/28395536",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-016",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9874466,
-              14.575979
-            ],
-            [
-              120.9871727,
-              14.5765718
-            ],
-            [
-              120.9873271,
-              14.5766386
-            ],
-            [
-              120.9876011,
-              14.5760459
-            ],
-            [
-              120.9874466,
-              14.575979
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 28788391,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "addr:street": "Taft Avenue",
-          "building": "yes",
-          "building:levels": "6"
-        },
-        "osm_feature_id": "way/28788391",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-017",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9846711,
-              14.5838564
-            ],
-            [
-              120.9844051,
-              14.5843263
-            ],
-            [
-              120.9840618,
-              14.5841353
-            ],
-            [
-              120.9842849,
-              14.5837449
-            ],
-            [
-              120.9843622,
-              14.5837282
-            ],
-            [
-              120.984448,
-              14.5837449
-            ],
-            [
-              120.9846711,
-              14.5838564
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 28788554,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "building": "yes"
-        },
-        "osm_feature_id": "way/28788554",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-018",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "height and floor count",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9857424,
-              14.579608
-            ],
-            [
-              120.9858015,
-              14.5795078
-            ],
-            [
-              120.9859985,
-              14.5796166
-            ],
-            [
-              120.9859393,
-              14.5797168
-            ],
-            [
-              120.9857424,
-              14.579608
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 28790387,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "building": "university",
-          "building:levels": "4",
-          "name": "Cardinal Santos Building",
-          "roof:shape": "hipped",
-          "source": "Yahoo"
-        },
-        "osm_feature_id": "way/28790387",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-019",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9858789,
-              14.5871977
-            ],
-            [
-              120.985936,
-              14.5870628
-            ],
-            [
-              120.9861037,
-              14.5866665
-            ],
-            [
-              120.9857773,
-              14.5865195
-            ],
-            [
-              120.9855283,
-              14.5870511
-            ],
-            [
-              120.9856488,
-              14.5871015
-            ],
-            [
-              120.9857036,
-              14.5871244
-            ],
-            [
-              120.9856872,
-              14.5871603
-            ],
-            [
-              120.9858106,
-              14.5872099
-            ],
-            [
-              120.9858256,
-              14.5871754
-            ],
-            [
-              120.9858789,
-              14.5871977
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 28790400,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "building": "retail"
-        },
-        "osm_feature_id": "way/28790400",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-020",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "height and floor count",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9792685,
-              14.5839092
-            ],
-            [
-              120.9793678,
-              14.5839639
-            ],
-            [
-              120.9794813,
-              14.583771
-            ],
-            [
-              120.9793819,
-              14.5837163
-            ],
-            [
-              120.9792685,
-              14.5839092
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 28790402,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "building": "yes",
-          "name": "National Parks Development Committee Security Office",
-          "office": "government",
-          "source": "Yahoo",
-          "wheelchair": "yes"
-        },
-        "osm_feature_id": "way/28790402",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-021",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "height and floor count",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9798946,
-              14.5828326
-            ],
-            [
-              120.9800159,
-              14.5828967
-            ],
-            [
-              120.9801569,
-              14.5826467
-            ],
-            [
-              120.9800356,
-              14.5825827
-            ],
-            [
-              120.9800086,
-              14.5826304
-            ],
-            [
-              120.9798946,
-              14.5828326
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 28790414,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:district": "Ermita",
-          "addr:postcode": "1000",
-          "addr:province": "Metro Manila",
-          "addr:street": "Kalaw Road",
-          "building": "yes",
-          "building:levels": "2",
-          "club": "social",
-          "facebook": "https://www.facebook.com/casinoespanol",
-          "name": "Casino Español de Manila",
-          "roof:shape": "gabled",
-          "wikidata": "Q17048881",
-          "wikimedia_commons": "Category:Casino Español de Manila",
-          "wikipedia": "en:Casino Español de Manila"
-        },
-        "osm_feature_id": "way/28790414",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-022",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": "Ermita",
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "Barangay via official boundary spatial join"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9846039,
-              14.5843243
-            ],
-            [
-              120.9847188,
-              14.5843873
-            ],
-            [
-              120.984744,
-              14.5843443
-            ],
-            [
-              120.9849518,
-              14.5844581
-            ],
-            [
-              120.985077,
-              14.584244
-            ],
-            [
-              120.9850191,
-              14.5842123
-            ],
-            [
-              120.9850902,
-              14.5840907
-            ],
-            [
-              120.9848415,
-              14.5839545
-            ],
-            [
-              120.9847464,
-              14.5841171
-            ],
-            [
-              120.9847303,
-              14.5841083
-            ],
-            [
-              120.9846039,
-              14.5843243
-            ]
-          ]
-        ]
-      }
+      "spatial_order": 5,
+      "spatial_group": "PROX-02"
     },
     {
       "type": "Feature",
@@ -1860,7 +558,11 @@
             "district confirmation",
             "Barangay via official boundary spatial join",
             "street/address verification"
-          ]
+          ],
+          "spatial_order": 6,
+          "spatial_group": "PROX-02",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
         }
       },
       "geometry": {
@@ -1937,7 +639,1815 @@
             ]
           ]
         ]
-      }
+      },
+      "spatial_order": 6,
+      "spatial_group": "PROX-02"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 28393458,
+        "tags": {
+          "building": "public",
+          "building:levels": "4",
+          "name": "Old GSIS Building",
+          "roof:shape": "flat"
+        },
+        "osm_feature_id": "way/28393458",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-014",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 7,
+          "spatial_group": "PROX-02",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9821827,
+              14.5912207
+            ],
+            [
+              120.9821854,
+              14.5910074
+            ],
+            [
+              120.9821874,
+              14.5908453
+            ],
+            [
+              120.9821546,
+              14.5907879
+            ],
+            [
+              120.9821607,
+              14.5907308
+            ],
+            [
+              120.9822061,
+              14.5906921
+            ],
+            [
+              120.9822732,
+              14.5906906
+            ],
+            [
+              120.9823388,
+              14.5907305
+            ],
+            [
+              120.9830441,
+              14.590739
+            ],
+            [
+              120.9830403,
+              14.5912229
+            ],
+            [
+              120.9821827,
+              14.5912207
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 7,
+      "spatial_group": "PROX-02"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 15868300,
+        "tags": {
+          "building": "retail",
+          "building:levels": "5",
+          "height": "26.2",
+          "layer": "1",
+          "note": "name and other tags in shop/landuse polygon",
+          "roof:shape": "flat"
+        },
+        "osm_feature_id": "way/15868300",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-001",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 8,
+          "spatial_group": "PROX-02",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9822926,
+              14.5892856
+            ],
+            [
+              120.9822331,
+              14.5899834
+            ],
+            [
+              120.9822058,
+              14.5901696
+            ],
+            [
+              120.9822323,
+              14.590244
+            ],
+            [
+              120.9822649,
+              14.5902731
+            ],
+            [
+              120.9823664,
+              14.5903204
+            ],
+            [
+              120.9831605,
+              14.5903264
+            ],
+            [
+              120.983642,
+              14.5903301
+            ],
+            [
+              120.9837681,
+              14.5902888
+            ],
+            [
+              120.9838786,
+              14.5901953
+            ],
+            [
+              120.9840271,
+              14.5898249
+            ],
+            [
+              120.9841582,
+              14.5894897
+            ],
+            [
+              120.9841784,
+              14.5894362
+            ],
+            [
+              120.9839728,
+              14.5893429
+            ],
+            [
+              120.9839778,
+              14.5892503
+            ],
+            [
+              120.9835254,
+              14.5892514
+            ],
+            [
+              120.9835258,
+              14.5892749
+            ],
+            [
+              120.9822926,
+              14.5892856
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 8,
+      "spatial_group": "PROX-02"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 28790387,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "building": "university",
+          "building:levels": "4",
+          "name": "Cardinal Santos Building",
+          "roof:shape": "hipped",
+          "source": "Yahoo"
+        },
+        "osm_feature_id": "way/28790387",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-019",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 9,
+          "spatial_group": "PROX-03",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9858789,
+              14.5871977
+            ],
+            [
+              120.985936,
+              14.5870628
+            ],
+            [
+              120.9861037,
+              14.5866665
+            ],
+            [
+              120.9857773,
+              14.5865195
+            ],
+            [
+              120.9855283,
+              14.5870511
+            ],
+            [
+              120.9856488,
+              14.5871015
+            ],
+            [
+              120.9857036,
+              14.5871244
+            ],
+            [
+              120.9856872,
+              14.5871603
+            ],
+            [
+              120.9858106,
+              14.5872099
+            ],
+            [
+              120.9858256,
+              14.5871754
+            ],
+            [
+              120.9858789,
+              14.5871977
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 9,
+      "spatial_group": "PROX-03"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 28790414,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:district": "Ermita",
+          "addr:postcode": "1000",
+          "addr:province": "Metro Manila",
+          "addr:street": "Kalaw Road",
+          "building": "yes",
+          "building:levels": "2",
+          "club": "social",
+          "facebook": "https://www.facebook.com/casinoespanol",
+          "name": "Casino Español de Manila",
+          "roof:shape": "gabled",
+          "wikidata": "Q17048881",
+          "wikimedia_commons": "Category:Casino Español de Manila",
+          "wikipedia": "en:Casino Español de Manila"
+        },
+        "osm_feature_id": "way/28790414",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-022",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": "Ermita",
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "Barangay via official boundary spatial join"
+          ],
+          "spatial_order": 10,
+          "spatial_group": "PROX-03",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9846039,
+              14.5843243
+            ],
+            [
+              120.9847188,
+              14.5843873
+            ],
+            [
+              120.984744,
+              14.5843443
+            ],
+            [
+              120.9849518,
+              14.5844581
+            ],
+            [
+              120.985077,
+              14.584244
+            ],
+            [
+              120.9850191,
+              14.5842123
+            ],
+            [
+              120.9850902,
+              14.5840907
+            ],
+            [
+              120.9848415,
+              14.5839545
+            ],
+            [
+              120.9847464,
+              14.5841171
+            ],
+            [
+              120.9847303,
+              14.5841083
+            ],
+            [
+              120.9846039,
+              14.5843243
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 10,
+      "spatial_group": "PROX-03"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 28788391,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "addr:street": "Taft Avenue",
+          "building": "yes",
+          "building:levels": "6"
+        },
+        "osm_feature_id": "way/28788391",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-017",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join"
+          ],
+          "spatial_order": 11,
+          "spatial_group": "PROX-03",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9846711,
+              14.5838564
+            ],
+            [
+              120.9844051,
+              14.5843263
+            ],
+            [
+              120.9840618,
+              14.5841353
+            ],
+            [
+              120.9842849,
+              14.5837449
+            ],
+            [
+              120.9843622,
+              14.5837282
+            ],
+            [
+              120.984448,
+              14.5837449
+            ],
+            [
+              120.9846711,
+              14.5838564
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 11,
+      "spatial_group": "PROX-03"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 37022206,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "building": "yes",
+          "building:levels": "2",
+          "roof:colour": "blue",
+          "roof:shape": "hipped"
+        },
+        "osm_feature_id": "way/37022206",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-030",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 12,
+          "spatial_group": "PROX-03",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9862588,
+              14.5835556
+            ],
+            [
+              120.9860753,
+              14.5834895
+            ],
+            [
+              120.9861311,
+              14.5833443
+            ],
+            [
+              120.986311,
+              14.5834091
+            ],
+            [
+              120.9863313,
+              14.5833561
+            ],
+            [
+              120.9864813,
+              14.5834101
+            ],
+            [
+              120.9864659,
+              14.5834501
+            ],
+            [
+              120.9866625,
+              14.5835209
+            ],
+            [
+              120.9866123,
+              14.5836517
+            ],
+            [
+              120.9866076,
+              14.5836638
+            ],
+            [
+              120.9864195,
+              14.5835961
+            ],
+            [
+              120.9863965,
+              14.583656
+            ],
+            [
+              120.9862417,
+              14.5836002
+            ],
+            [
+              120.9862588,
+              14.5835556
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 12,
+      "spatial_group": "PROX-03"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 35677282,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "building": "yes"
+        },
+        "osm_feature_id": "way/35677282",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-029",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "height and floor count",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 13,
+          "spatial_group": "PROX-04",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9834979,
+              14.5813487
+            ],
+            [
+              120.9838356,
+              14.5815264
+            ],
+            [
+              120.9837505,
+              14.5816779
+            ],
+            [
+              120.9834128,
+              14.5815001
+            ],
+            [
+              120.9834979,
+              14.5813487
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 13,
+      "spatial_group": "PROX-04"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 28239313,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "building": "public",
+          "building:levels": "4"
+        },
+        "osm_feature_id": "way/28239313",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-013",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 14,
+          "spatial_group": "PROX-04",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9827973,
+              14.5798942
+            ],
+            [
+              120.9829061,
+              14.579699
+            ],
+            [
+              120.9833338,
+              14.5799225
+            ],
+            [
+              120.9832249,
+              14.5801176
+            ],
+            [
+              120.9827973,
+              14.5798942
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 14,
+      "spatial_group": "PROX-04"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 16554370,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "building": "office",
+          "building:levels": "3"
+        },
+        "osm_feature_id": "way/16554370",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-008",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 15,
+          "spatial_group": "PROX-04",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9837841,
+              14.5795086
+            ],
+            [
+              120.9838115,
+              14.5795229
+            ],
+            [
+              120.9837956,
+              14.5795513
+            ],
+            [
+              120.9839274,
+              14.5796202
+            ],
+            [
+              120.98406,
+              14.5793827
+            ],
+            [
+              120.9843633,
+              14.5795413
+            ],
+            [
+              120.9844074,
+              14.5794624
+            ],
+            [
+              120.9844644,
+              14.5793602
+            ],
+            [
+              120.9840325,
+              14.5791344
+            ],
+            [
+              120.984011,
+              14.5791729
+            ],
+            [
+              120.9839804,
+              14.579157
+            ],
+            [
+              120.983878,
+              14.5793404
+            ],
+            [
+              120.9837841,
+              14.5795086
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 15,
+      "spatial_group": "PROX-04"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 16554326,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "building": "hospital",
+          "building:levels": "2",
+          "name": "PGH Out-Patient Department"
+        },
+        "osm_feature_id": "way/16554326",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-003",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 16,
+          "spatial_group": "PROX-04",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9849199,
+              14.5790916
+            ],
+            [
+              120.9853366,
+              14.5793112
+            ],
+            [
+              120.9852965,
+              14.5793825
+            ],
+            [
+              120.9856303,
+              14.5795584
+            ],
+            [
+              120.9857261,
+              14.5793882
+            ],
+            [
+              120.9854752,
+              14.579256
+            ],
+            [
+              120.985741,
+              14.5787835
+            ],
+            [
+              120.9856315,
+              14.5787258
+            ],
+            [
+              120.9852414,
+              14.5785202
+            ],
+            [
+              120.9849199,
+              14.5790916
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 16,
+      "spatial_group": "PROX-04"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 16554323,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "building": "dormitory",
+          "building:levels": "3",
+          "name": "PGH Nurses Home"
+        },
+        "osm_feature_id": "way/16554323",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-002",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 17,
+          "spatial_group": "PROX-04",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9855468,
+              14.5792121
+            ],
+            [
+              120.985823,
+              14.5793612
+            ],
+            [
+              120.9860088,
+              14.5794579
+            ],
+            [
+              120.9862214,
+              14.5790837
+            ],
+            [
+              120.9857666,
+              14.5788418
+            ],
+            [
+              120.9856803,
+              14.5789937
+            ],
+            [
+              120.9858523,
+              14.5790853
+            ],
+            [
+              120.9858268,
+              14.5791302
+            ],
+            [
+              120.9856475,
+              14.5790347
+            ],
+            [
+              120.9855468,
+              14.5792121
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 17,
+      "spatial_group": "PROX-04"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 16554352,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "building": "yes"
+        },
+        "osm_feature_id": "way/16554352",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-006",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "height and floor count",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 18,
+          "spatial_group": "PROX-04",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9860373,
+              14.5788447
+            ],
+            [
+              120.986279,
+              14.578975
+            ],
+            [
+              120.9863436,
+              14.5788627
+            ],
+            [
+              120.9861019,
+              14.5787325
+            ],
+            [
+              120.9860373,
+              14.5788447
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 18,
+      "spatial_group": "PROX-04"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 28788554,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "building": "yes"
+        },
+        "osm_feature_id": "way/28788554",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-018",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "height and floor count",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 19,
+          "spatial_group": "PROX-04",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9857424,
+              14.579608
+            ],
+            [
+              120.9858015,
+              14.5795078
+            ],
+            [
+              120.9859985,
+              14.5796166
+            ],
+            [
+              120.9859393,
+              14.5797168
+            ],
+            [
+              120.9857424,
+              14.579608
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 19,
+      "spatial_group": "PROX-04"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 16554354,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "building": "public",
+          "building:levels": "5",
+          "name": "Centennial Building"
+        },
+        "osm_feature_id": "way/16554354",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-007",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 20,
+          "spatial_group": "PROX-04",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.985393,
+              14.5796683
+            ],
+            [
+              120.9855401,
+              14.5797497
+            ],
+            [
+              120.9858274,
+              14.579898
+            ],
+            [
+              120.9858394,
+              14.579906
+            ],
+            [
+              120.9857535,
+              14.5800571
+            ],
+            [
+              120.9857422,
+              14.5800512
+            ],
+            [
+              120.985456,
+              14.5799022
+            ],
+            [
+              120.9853071,
+              14.5798193
+            ],
+            [
+              120.985393,
+              14.5796683
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 20,
+      "spatial_group": "PROX-04"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 28393875,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "building": "yes",
+          "building:levels": "5",
+          "name": "Sentro Oftalmologica"
+        },
+        "osm_feature_id": "way/28393875",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-015",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 21,
+          "spatial_group": "PROX-04",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9847746,
+              14.5782619
+            ],
+            [
+              120.9851265,
+              14.5784461
+            ],
+            [
+              120.9851661,
+              14.578392
+            ],
+            [
+              120.9851801,
+              14.5783539
+            ],
+            [
+              120.9851849,
+              14.5782841
+            ],
+            [
+              120.9851776,
+              14.5782488
+            ],
+            [
+              120.9851455,
+              14.5781861
+            ],
+            [
+              120.9851072,
+              14.5781478
+            ],
+            [
+              120.9850436,
+              14.5781145
+            ],
+            [
+              120.9849775,
+              14.5781042
+            ],
+            [
+              120.9848786,
+              14.5781286
+            ],
+            [
+              120.9848086,
+              14.5781884
+            ],
+            [
+              120.9847746,
+              14.5782619
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 21,
+      "spatial_group": "PROX-04"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 16554350,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "building": "hospital",
+          "building:levels": "3"
+        },
+        "osm_feature_id": "way/16554350",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-005",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 22,
+          "spatial_group": "PROX-04",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9850867,
+              14.5774914
+            ],
+            [
+              120.9852173,
+              14.5772479
+            ],
+            [
+              120.9848868,
+              14.577082
+            ],
+            [
+              120.9847563,
+              14.5773254
+            ],
+            [
+              120.9850867,
+              14.5774914
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 22,
+      "spatial_group": "PROX-04"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 16554344,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "building": "hospital",
+          "building:architecture": "neoclassical",
+          "building:levels": "2",
+          "start_date": "1910-09"
+        },
+        "osm_feature_id": "way/16554344",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-004",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 23,
+          "spatial_group": "PROX-04",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9851838,
+              14.5783718
+            ],
+            [
+              120.9855703,
+              14.5785755
+            ],
+            [
+              120.9858176,
+              14.5781358
+            ],
+            [
+              120.9860724,
+              14.57827
+            ],
+            [
+              120.9862406,
+              14.577971
+            ],
+            [
+              120.9864131,
+              14.5776643
+            ],
+            [
+              120.9862758,
+              14.5775919
+            ],
+            [
+              120.9862611,
+              14.577618
+            ],
+            [
+              120.9862523,
+              14.5776337
+            ],
+            [
+              120.9861422,
+              14.5775757
+            ],
+            [
+              120.9864066,
+              14.5771057
+            ],
+            [
+              120.9859946,
+              14.5768886
+            ],
+            [
+              120.9856775,
+              14.5774524
+            ],
+            [
+              120.9857917,
+              14.5775126
+            ],
+            [
+              120.985656,
+              14.5777539
+            ],
+            [
+              120.9857944,
+              14.5778269
+            ],
+            [
+              120.9857427,
+              14.5779188
+            ],
+            [
+              120.9855082,
+              14.5777952
+            ],
+            [
+              120.9851838,
+              14.5783718
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 23,
+      "spatial_group": "PROX-04"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 28395536,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "alt_name": "Sotejo Hall",
+          "building": "university",
+          "building:levels": "3",
+          "name": "College of Nursing",
+          "wikidata": "Q101013741"
+        },
+        "osm_feature_id": "way/28395536",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-016",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 24,
+          "spatial_group": "PROX-04",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9874466,
+              14.575979
+            ],
+            [
+              120.9871727,
+              14.5765718
+            ],
+            [
+              120.9873271,
+              14.5766386
+            ],
+            [
+              120.9876011,
+              14.5760459
+            ],
+            [
+              120.9874466,
+              14.575979
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 24,
+      "spatial_group": "PROX-04"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 27650470,
+        "tags": {
+          "addr:city": "Manila",
+          "addr:province": "Metro Manila",
+          "building": "university",
+          "building:levels": "3",
+          "name": "National Institutes of Health",
+          "wikidata": "Q48792120",
+          "wikipedia": "en:National Institutes of Health (Philippines)"
+        },
+        "osm_feature_id": "way/27650470",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-010",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 25,
+          "spatial_group": "PROX-04",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9873122,
+              14.5760911
+            ],
+            [
+              120.9873829,
+              14.5759436
+            ],
+            [
+              120.9867994,
+              14.5756815
+            ],
+            [
+              120.9867287,
+              14.575829
+            ],
+            [
+              120.9873122,
+              14.5760911
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 25,
+      "spatial_group": "PROX-04"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 30268940,
+        "tags": {
+          "building": "yes",
+          "historic": "heritage",
+          "name": "Chancery",
+          "official_name": "Embassy of the United States of America Chancery"
+        },
+        "osm_feature_id": "way/30268940",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-028",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "height and floor count",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 26,
+          "spatial_group": "PROX-05",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9774415,
+              14.5764736
+            ],
+            [
+              120.9776627,
+              14.5765947
+            ],
+            [
+              120.9774872,
+              14.5768951
+            ],
+            [
+              120.9775529,
+              14.5769311
+            ],
+            [
+              120.9775049,
+              14.5770134
+            ],
+            [
+              120.9774391,
+              14.5769774
+            ],
+            [
+              120.9772545,
+              14.5772932
+            ],
+            [
+              120.9771366,
+              14.5772287
+            ],
+            [
+              120.9771775,
+              14.5771587
+            ],
+            [
+              120.9771491,
+              14.5771431
+            ],
+            [
+              120.9771774,
+              14.5770946
+            ],
+            [
+              120.9770351,
+              14.5770167
+            ],
+            [
+              120.9770837,
+              14.5769336
+            ],
+            [
+              120.977036,
+              14.5769075
+            ],
+            [
+              120.977206,
+              14.5766166
+            ],
+            [
+              120.9773211,
+              14.5766796
+            ],
+            [
+              120.9774415,
+              14.5764736
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 26,
+      "spatial_group": "PROX-05"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "way",
+        "id": 27086604,
+        "tags": {
+          "building": "yes",
+          "building:levels": "2"
+        },
+        "osm_feature_id": "way/27086604",
+        "adam_city_building_data": {
+          "record_id": "ERM-BATCH-001-009",
+          "country": "Philippines",
+          "region_province": "Metro Manila",
+          "city": "Manila",
+          "district": null,
+          "barangay": null,
+          "attribute_research_status": "pilot — research required; not final",
+          "pending_research_fields": [
+            "measured height",
+            "facade colour",
+            "facade material",
+            "roof colour",
+            "roof material",
+            "district confirmation",
+            "Barangay via official boundary spatial join",
+            "street/address verification"
+          ],
+          "spatial_order": 27,
+          "spatial_group": "PROX-05",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              120.9771482,
+              14.5788279
+            ],
+            [
+              120.9773215,
+              14.5789165
+            ],
+            [
+              120.9771083,
+              14.5793067
+            ],
+            [
+              120.9767093,
+              14.5791025
+            ],
+            [
+              120.9768175,
+              14.5789045
+            ],
+            [
+              120.9770432,
+              14.57902
+            ],
+            [
+              120.9771482,
+              14.5788279
+            ]
+          ]
+        ]
+      },
+      "spatial_order": 27,
+      "spatial_group": "PROX-05"
     },
     {
       "type": "Feature",
@@ -1973,7 +2483,11 @@
             "district confirmation",
             "Barangay via official boundary spatial join",
             "street/address verification"
-          ]
+          ],
+          "spatial_order": 28,
+          "spatial_group": "PROX-06",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
         }
       },
       "geometry": {
@@ -2114,230 +2628,27 @@
             ]
           ]
         ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 30106330,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:housenumber": "1598",
-          "addr:place": "Liwasang Bonifacio",
-          "addr:province": "Metro Manila",
-          "building": "commercial",
-          "building:levels": "3",
-          "name": "Postbank Center",
-          "roof:shape": "hipped"
-        },
-        "osm_feature_id": "way/30106330",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-025",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
       },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9778595,
-              14.5952981
-            ],
-            [
-              120.9780669,
-              14.5949376
-            ],
-            [
-              120.9782557,
-              14.5950393
-            ],
-            [
-              120.9780483,
-              14.5953998
-            ],
-            [
-              120.9778595,
-              14.5952981
-            ]
-          ]
-        ]
-      }
+      "spatial_order": 28,
+      "spatial_group": "PROX-06"
     },
     {
       "type": "Feature",
       "properties": {
         "type": "way",
-        "id": 30106358,
+        "id": 28790402,
         "tags": {
           "addr:city": "Manila",
           "addr:province": "Metro Manila",
-          "addr:street": "Lawton Road",
           "building": "yes",
-          "building:levels": "2",
-          "check_date:opening_hours": "2024-03-10",
-          "email": "ltomsdo@gmail.com",
-          "government": "transportation",
-          "name": "LTO Manila South District Office",
+          "name": "National Parks Development Committee Security Office",
           "office": "government",
-          "official_name": "Land Transportation Office Manila South District Office",
-          "opening_hours": "Mo-Fr 08:00-17:00",
-          "operator": "Land Transportation Office",
-          "operator:en": "Land Transportation Office",
-          "operator:short": "LTO",
-          "operator:tl": "Tanggapan sa Transportasyon Panlupa",
-          "operator:wikidata": "Q6484001",
-          "phone": "+63 2 85284668",
-          "roof:shape": "flat",
-          "website": "https://lto.gov.ph/"
+          "source": "Yahoo",
+          "wheelchair": "yes"
         },
-        "osm_feature_id": "way/30106358",
+        "osm_feature_id": "way/28790402",
         "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-026",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9800667,
-              14.5956568
-            ],
-            [
-              120.980121,
-              14.5960177
-            ],
-            [
-              120.9799805,
-              14.5960374
-            ],
-            [
-              120.9799599,
-              14.5959016
-            ],
-            [
-              120.9799262,
-              14.5956766
-            ],
-            [
-              120.9800667,
-              14.5956568
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 30106360,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "building": "yes",
-          "building:levels": "2",
-          "roof:shape": "flat"
-        },
-        "osm_feature_id": "way/30106360",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-027",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof colour",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9800697,
-              14.5960787
-            ],
-            [
-              120.980097,
-              14.5962751
-            ],
-            [
-              120.9800843,
-              14.5962982
-            ],
-            [
-              120.9799692,
-              14.5963132
-            ],
-            [
-              120.9799389,
-              14.5960957
-            ],
-            [
-              120.9800697,
-              14.5960787
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 30268940,
-        "tags": {
-          "building": "yes",
-          "historic": "heritage",
-          "name": "Chancery",
-          "official_name": "Embassy of the United States of America Chancery"
-        },
-        "osm_feature_id": "way/30268940",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-028",
+          "record_id": "ERM-BATCH-001-021",
           "country": "Philippines",
           "region_province": "Metro Manila",
           "city": "Manila",
@@ -2353,7 +2664,11 @@
             "district confirmation",
             "Barangay via official boundary spatial join",
             "street/address verification"
-          ]
+          ],
+          "spatial_order": 29,
+          "spatial_group": "PROX-07",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
         }
       },
       "geometry": {
@@ -2361,90 +2676,48 @@
         "coordinates": [
           [
             [
-              120.9774415,
-              14.5764736
+              120.9798946,
+              14.5828326
             ],
             [
-              120.9776627,
-              14.5765947
+              120.9800159,
+              14.5828967
             ],
             [
-              120.9774872,
-              14.5768951
+              120.9801569,
+              14.5826467
             ],
             [
-              120.9775529,
-              14.5769311
+              120.9800356,
+              14.5825827
             ],
             [
-              120.9775049,
-              14.5770134
+              120.9800086,
+              14.5826304
             ],
             [
-              120.9774391,
-              14.5769774
-            ],
-            [
-              120.9772545,
-              14.5772932
-            ],
-            [
-              120.9771366,
-              14.5772287
-            ],
-            [
-              120.9771775,
-              14.5771587
-            ],
-            [
-              120.9771491,
-              14.5771431
-            ],
-            [
-              120.9771774,
-              14.5770946
-            ],
-            [
-              120.9770351,
-              14.5770167
-            ],
-            [
-              120.9770837,
-              14.5769336
-            ],
-            [
-              120.977036,
-              14.5769075
-            ],
-            [
-              120.977206,
-              14.5766166
-            ],
-            [
-              120.9773211,
-              14.5766796
-            ],
-            [
-              120.9774415,
-              14.5764736
+              120.9798946,
+              14.5828326
             ]
           ]
         ]
-      }
+      },
+      "spatial_order": 29,
+      "spatial_group": "PROX-07"
     },
     {
       "type": "Feature",
       "properties": {
         "type": "way",
-        "id": 35677282,
+        "id": 28790400,
         "tags": {
           "addr:city": "Manila",
           "addr:province": "Metro Manila",
-          "building": "yes"
+          "building": "retail"
         },
-        "osm_feature_id": "way/35677282",
+        "osm_feature_id": "way/28790400",
         "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-029",
+          "record_id": "ERM-BATCH-001-020",
           "country": "Philippines",
           "region_province": "Metro Manila",
           "city": "Manila",
@@ -2460,7 +2733,11 @@
             "district confirmation",
             "Barangay via official boundary spatial join",
             "street/address verification"
-          ]
+          ],
+          "spatial_order": 30,
+          "spatial_group": "PROX-07",
+          "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
+          "barangay_assignment_status": "pending verified administrative polygon spatial join"
         }
       },
       "geometry": {
@@ -2468,125 +2745,30 @@
         "coordinates": [
           [
             [
-              120.9834979,
-              14.5813487
+              120.9792685,
+              14.5839092
             ],
             [
-              120.9838356,
-              14.5815264
+              120.9793678,
+              14.5839639
             ],
             [
-              120.9837505,
-              14.5816779
+              120.9794813,
+              14.583771
             ],
             [
-              120.9834128,
-              14.5815001
+              120.9793819,
+              14.5837163
             ],
             [
-              120.9834979,
-              14.5813487
+              120.9792685,
+              14.5839092
             ]
           ]
         ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "type": "way",
-        "id": 37022206,
-        "tags": {
-          "addr:city": "Manila",
-          "addr:province": "Metro Manila",
-          "building": "yes",
-          "building:levels": "2",
-          "roof:colour": "blue",
-          "roof:shape": "hipped"
-        },
-        "osm_feature_id": "way/37022206",
-        "adam_city_building_data": {
-          "record_id": "ERM-BATCH-001-030",
-          "country": "Philippines",
-          "region_province": "Metro Manila",
-          "city": "Manila",
-          "district": null,
-          "barangay": null,
-          "attribute_research_status": "pilot — research required; not final",
-          "pending_research_fields": [
-            "measured height",
-            "facade colour",
-            "facade material",
-            "roof material",
-            "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
-          ]
-        }
       },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              120.9862588,
-              14.5835556
-            ],
-            [
-              120.9860753,
-              14.5834895
-            ],
-            [
-              120.9861311,
-              14.5833443
-            ],
-            [
-              120.986311,
-              14.5834091
-            ],
-            [
-              120.9863313,
-              14.5833561
-            ],
-            [
-              120.9864813,
-              14.5834101
-            ],
-            [
-              120.9864659,
-              14.5834501
-            ],
-            [
-              120.9866625,
-              14.5835209
-            ],
-            [
-              120.9866123,
-              14.5836517
-            ],
-            [
-              120.9866076,
-              14.5836638
-            ],
-            [
-              120.9864195,
-              14.5835961
-            ],
-            [
-              120.9863965,
-              14.583656
-            ],
-            [
-              120.9862417,
-              14.5836002
-            ],
-            [
-              120.9862588,
-              14.5835556
-            ]
-          ]
-        ]
-      }
+      "spatial_order": 30,
+      "spatial_group": "PROX-07"
     }
   ]
 }
