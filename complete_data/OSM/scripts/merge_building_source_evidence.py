@@ -115,6 +115,8 @@ def load_fallback():
             bounds = raw_geom.bounds
             already_projected = bool(bounds) and (abs(bounds[0]) > 180 or abs(bounds[2]) > 180 or abs(bounds[1]) > 90 or abs(bounds[3]) > 90)
             geom = raw_geom if already_projected else geom_transform(TO_3857, raw_geom)
+            if not geom.is_valid:
+                geom = geom.buffer(0)
         except Exception:
             continue
         if geom.is_empty or geom.geom_type not in ("Polygon", "MultiPolygon") or geom.area <= 0:
@@ -306,10 +308,12 @@ def attach_housenumbers(records, source_geometries):
             continue
         geom = source_geometries.get(("footprints", int(record.get("source_feature_index", -1))))
         if geom is not None:
-            candidates.append((i, geom))
+            candidates.append({"record_index": i, "geom": geom})
+    tree = STRtree([item["geom"] for item in candidates]) if candidates else None
     for house in load_housenumbers():
         point = house["geom"] if house["geom"].geom_type == "Point" else house["geom"].representative_point()
-        matches = [(i, geom) for i, geom in candidates if geom.covers(point) or geom.distance(point) <= 2.5]
+        nearby = query_rows(tree, candidates, point.buffer(2.5))
+        matches = [(item["record_index"], item["geom"]) for item in nearby if item["geom"].covers(point) or item["geom"].distance(point) <= 2.5]
         if len(matches) != 1:
             counts["unlinked_or_ambiguous"] += 1
             continue
@@ -350,9 +354,11 @@ def attach_images_and_facades(records, metadata):
     links, candidates, signage, commercial, supreme, robinsons, facade = metadata
     by_osm = defaultdict(list)
     for record in records:
+        aliases = set()
         for value in (record.get("source_feature_id"), record.get("linked_osm_feature_id")):
-            for alias in osm_aliases(value):
-                by_osm[alias].append(record)
+            aliases.update(osm_aliases(value))
+        for alias in aliases:
+            by_osm[alias].append(record)
     counts = Counter()
     # Evidence-backed identity records only attach by exact OSM ID; pending candidates remain clearly marked.
     for link in links:
