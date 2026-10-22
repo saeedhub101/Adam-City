@@ -56,3 +56,8 @@ These are 1,721 OpenFreeMap polygon components, not a confirmed count of unique 
 Build a record-level crosswalk between the 22,977 master GeoJSON features and 24,102 source CSV rows. Match exact source IDs first, then use geometry fingerprints and conservative spatial checks. Preserve all source records; ambiguous/duplicate candidates must go into review rather than being silently merged or deleted.
 
 The Google/Microsoft footprint crosswalk already labels 1,032 pairs as probable same-building matches, but that crosswalk is between those two footprint sources only and still needs to be reconciled against the OFM master geometry.
+
+
+## Read-only crosswalk builder added
+
+A reusable script is now available at `complete_data/OSM/scripts/reconcile_ermita_master_geojson_csv.py`. It streams both large GeoJSON parts, computes geographic order, matches explicit identifiers against the 24,102-row master CSV, and writes a feature-level CSV crosswalk plus JSON report. It preserves all source records and sends multiple/unmatched identifiers to review instead of silently merging them. **The script has been committed but has not been executed; no workflow was run.**
