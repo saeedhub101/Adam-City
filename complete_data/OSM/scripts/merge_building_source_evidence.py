@@ -108,7 +108,13 @@ def load_fallback():
         if not geom_data:
             continue
         try:
-            geom = geom_transform(TO_3857, shape(geom_data))
+            raw_geom = shape(geom_data)
+            # This repository's building-fallback.geojson stores EPSG:3857 metre coordinates
+            # (bounds near x=13.4 million, y=1.6 million), despite the .geojson extension.
+            # Detect projected coordinates to avoid applying EPSG:4326 -> EPSG:3857 twice.
+            bounds = raw_geom.bounds
+            already_projected = bool(bounds) and (abs(bounds[0]) > 180 or abs(bounds[2]) > 180 or abs(bounds[1]) > 90 or abs(bounds[3]) > 90)
+            geom = raw_geom if already_projected else geom_transform(TO_3857, raw_geom)
         except Exception:
             continue
         if geom.is_empty or geom.geom_type not in ("Polygon", "MultiPolygon") or geom.area <= 0:
@@ -152,7 +158,7 @@ def make_openfreemap_fields(tags: dict) -> dict:
         "housenumber": first(tags, "housenumber", "house_number", "addr:housenumber"),
         "street": first(tags, "street", "addr:street"),
         "building_type": first(tags, "building", "class", "subclass"),
-        "levels": first(tags, "building:levels", "render_height", "height"),
+        "levels": first(tags, "building:levels", "levels"),
         "height": first(tags, "height", "render_height"),
         "min_height": first(tags, "min_height", "render_min_height"),
         "material": first(tags, "building:material", "material"),
@@ -604,6 +610,7 @@ def main():
         "building_records": len(records),
         "counts": dict(counts),
         "fallback_feature_count": len(fallback_rows),
+        "fallback_coordinate_crs": "EPSG:3857 detected from coordinate bounds (projected metres); geometries used only for matching",
         "diagnostics": diagnostics,
         "housenumber_source_records": len(load_housenumbers()),
         "image_asset_catalogue": asset_catalogue,
