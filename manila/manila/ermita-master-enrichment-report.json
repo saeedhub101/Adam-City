@@ -8,6 +8,7 @@
     "building-height-evidence.csv": 1528,
     "building-match-audit.csv": 1306,
     "consolidated-building-register.csv": 1570,
+    "building-enrichment-index.json": 1519,
     "building-source-link-audit.csv": 2651,
     "facade-photo-review.csv": 246,
     "ermita-real-facade-images.csv": 246,
@@ -19,8 +20,8 @@
   "csv": {
     "path": "manila/manila/ermita-buildings-master.csv",
     "rows": 24102,
-    "columns_before": 244,
-    "columns_after": 260
+    "columns_before": 260,
+    "columns_after": 264
   },
   "geojson_parts": [
     {
@@ -28,8 +29,8 @@
       "features": 12507,
       "status_counts": {
         "no_exact_id_evidence": 10899,
-        "exact_id_enriched": 1440,
-        "conflict_review": 168
+        "exact_id_enriched": 1437,
+        "conflict_review": 171
       },
       "filled_fields": {
         "enriched_photo_candidate_count": 545,
@@ -49,12 +50,12 @@
         "enriched_research_source_colour": 190,
         "enriched_research_source_name_or_brand": 74,
         "enriched_research_source_material": 4,
-        "enriched_name": 358,
-        "enriched_building_type": 1608,
+        "enriched_name": 360,
+        "enriched_building_type": 1607,
         "enriched_street": 283,
         "enriched_city": 424,
         "enriched_height_m": 166,
-        "enriched_levels": 808,
+        "enriched_levels": 806,
         "enriched_roof_shape": 105,
         "enriched_business_names": 35,
         "enriched_business_brands": 35,
@@ -63,6 +64,10 @@
         "enriched_business_match_status": 35,
         "enriched_model_estimated_height_m": 1541,
         "enriched_model_estimated_floor_count": 1541,
+        "enriched_source_match_method": 1478,
+        "enriched_source_match_confidence": 1478,
+        "enriched_source_match_osm_id": 1478,
+        "enriched_source_match_evidence": 1478,
         "enriched_signage_panel_generated": 371,
         "enriched_start_date": 13,
         "enriched_wikidata": 38,
@@ -87,7 +92,9 @@
         "enriched_min_height_m": 4
       },
       "conflict_fields": {
-        "street": 168
+        "street": 168,
+        "levels": 2,
+        "building_type": 1
       }
     },
     {
@@ -121,6 +128,10 @@
     "enriched_building_part": 1378,
     "enriched_height_m": 1195,
     "enriched_material": 66,
+    "enriched_source_match_method": 1519,
+    "enriched_source_match_confidence": 1519,
+    "enriched_source_match_osm_id": 1519,
+    "enriched_source_match_evidence": 1519,
     "enriched_model_estimated_height_m": 11827,
     "enriched_model_estimated_floor_count": 11827,
     "enriched_signage_panel_generated": 11827,
@@ -168,5 +179,6 @@
   "photo_candidates": 14955,
   "business_links": 442,
   "feature_id_crosswalks": 0,
+  "audited_index_matches": 1514,
   "note": "This pass imports internal exact-ID metadata, business tenant links explicitly marked inside_footprint, model-only estimates as separately labelled estimates, and photo candidates as unverified candidates. It does not infer facade material/colour from unreviewed photos and does not perform unvalidated spatial matching."
 }
