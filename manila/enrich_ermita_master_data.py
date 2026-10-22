@@ -378,6 +378,9 @@ def decorate_record(record, ident, feature_id, idx, photos, businesses, signage,
         put_field(record, field, values.get(field,""), sparse)
     put_field(record, "enrichment_sources", values.get("enrichment_sources",""), sparse)
     status = values.get("enrichment_status","no_exact_id_evidence")
+    match_info=source_match_info.get(feature_id,{}) if feature_id else {}
+    if not ident and match_info and match_info.get("method") != "exact_osm_id" and status == "exact_id_enriched":
+        status = "spatial_high_confidence_enriched"
     if sparse and not ident and status == "no_exact_id_evidence":
         record.pop("enrichment_status", None)
     else:
@@ -435,7 +438,6 @@ def decorate_record(record, ident, feature_id, idx, photos, businesses, signage,
     put_field(record, "enriched_research_source_colour", qvalues("colour"), sparse)
     put_field(record, "enriched_research_source_material", qvalues("material"), sparse)
     put_field(record, "enriched_research_review_notes", qvalues("review_notes"), sparse)
-    match_info=source_match_info.get(feature_id,{}) if feature_id else {}
     put_field(record, "enriched_source_match_method", match_info.get("method",""), sparse)
     put_field(record, "enriched_source_match_confidence", match_info.get("confidence",""), sparse)
     put_field(record, "enriched_source_match_osm_id", match_info.get("osm_id",""), sparse)
@@ -447,7 +449,7 @@ def main():
         if not p.is_file(): raise FileNotFoundError(p)
     index, source_rows, feature_id_map, photos, businesses, signage, image_candidates, research_queue, source_match_info=load_sources()
     report={"schema_version":"2.0","status":"completed","policy":"Repository-first enrichment. Join on explicit OSM IDs or exact stable source-feature IDs only. Candidate imagery and tenants remain explicitly labelled; no visual observations are inferred. Geometry, coordinates, feature IDs, source IDs, and rendering heights are not changed.",
-            "sources":dict(source_rows),"csv":{"path":str(CSV_PATH.relative_to(ROOT))},"geojson_parts":[],"filled_fields":Counter(),"conflicts":Counter(),"matched_records":Counter(),"photo_candidates":0,"business_links":0,"feature_id_crosswalks":len(feature_id_map)}
+            "sources":dict(source_rows),"csv":{"path":str(CSV_PATH.relative_to(ROOT))},"geojson_parts":[],"filled_fields":Counter(),"conflicts":Counter(),"matched_records":Counter(),"photo_candidates":0,"business_links":0,"feature_id_crosswalks":len(feature_id_map),"audited_index_matches":len(source_match_info)}
     rows=read_csv(CSV_PATH)
     original_fields=list(rows[0].keys()) if rows else []
     fields=original_fields+[f for f in OUT_FIELDS if f not in original_fields]
