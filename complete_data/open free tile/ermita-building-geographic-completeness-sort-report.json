@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "generated_for": "first-pass geographic sorting and data-completeness triage",
+  "date": "2026-10-22",
+  "scope": "OpenFreeMap component registry only. This is an interim sort and does not replace the original master GeoJSON (22,977 features) and master CSV (24,102 rows), which still need direct ID/source reconciliation.",
+  "source_records": 1721,
+  "geographic_sectors": 215,
+  "geographic_sector_method": "Grid by floor(longitude*1000), floor(latitude*1000); approximately 100 m east-west and 110 m north-south in Ermita. This is an organizational grid, not an official boundary.",
+  "linkage_counts": {
+    "candidate_requires_review": 236,
+    "unmatched": 609,
+    "accepted_high_confidence": 757,
+    "linked_needs_review": 119
+  },
+  "completeness_counts": {
+    "needs_match_review": 342,
+    "insufficient_data": 998,
+    "partially_enriched": 381
+  },
+  "photo_evidence_counts": {
+    "no_building_specific_photo_link": 1719,
+    "provisional": 2
+  },
+  "attribute_coverage": {
+    "building_name": 290,
+    "official_name": 2,
+    "brand": 6,
+    "building_type": 771,
+    "building_levels": 513,
+    "osm_height_m": 112,
+    "address_housenumber": 111,
+    "address_street": 256,
+    "address_postcode": 88,
+    "address_city": 369,
+    "facade_colour": 15,
+    "building_colour": 3,
+    "building_material": 3,
+    "roof_shape": 58,
+    "roof_material": 0,
+    "roof_colour": 8
+  },
+  "interpretation": {
+    "accepted_high_confidence": "Existing OFM registry has an accepted OSM ID and confidence >= 0.90; still not proof of official identity.",
+    "candidate_requires_review": "Potential OSM candidate only; do not copy its tags yet.",
+    "linked_needs_review": "OSM ID exists but confidence is below 0.90.",
+    "verified_complete_candidate": "Requires identity, vertical size, address, facade, roof and confirmed building-specific photo evidence. Current count is zero."
+  },
+  "known_photo_crosswalks": [
+    {
+      "osm_feature_id": "way/27650470",
+      "registry_candidate": "OFM-ERMITA-01494",
+      "match_status": "provisional",
+      "photo_evidence_url": "https://commons.wikimedia.org/wiki/File:UP_Manila_National_Institutes_of_Health_building.jpg"
+    },
+    {
+      "osm_feature_id": "way/16554323",
+      "registry_candidate": "OFM-ERMITA-01472",
+      "match_status": "provisional",
+      "photo_evidence_url": "https://commons.wikimedia.org/wiki/File:PGH_Nurses_Home.jpg"
+    }
+  ],
+  "geometry_policy": "Source component indices, coordinates, render heights and source geometry are preserved; only derived sorting/classification columns are added.",
+  "outputs": [
+    "complete_data/open free tile/ermita-building-geographic-completeness-sort.csv",
+    "complete_data/open free tile/ermita-building-geographic-completeness-sort-report.json"
+  ]
+}
