@@ -38,10 +38,13 @@ jobs:
           /test.html
           /manila/manila.html
           /manila/generate_roxas_enhanced_geojson.py
+          /manila/enrich_ermita_master_data.py
           /manila/manila/
           /ermita-malate-3d.html
           /google-photorealistic-3d-tiles.html
           /complete_data/OSM/data/
+          /complete_data/OSM/quality/building-height-evidence.csv
+          /ermita/3d/building-match-audit.csv
           /ermita/assets/textures/Painted-CMU-Block-Architextures.jpeg
           /ermita/maps/sources/openfreemap/vector-tiles/
           /ermita/maps/sources/openfreemap/building-fallback.geojson
@@ -56,6 +59,25 @@ jobs:
           /ermita/3d/landmarks/
           EOF
           git switch -C main FETCH_HEAD
+
+      - name: Enrich Ermita master CSV and GeoJSON from exact internal IDs
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'Run Ermita master enrichment')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python manila/enrich_ermita_master_data.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manila/manila/ermita-buildings-master.csv manila/manila/ermita-buildings-master.parts/part-001.geojson manila/manila/ermita-buildings-master.parts/part-002.geojson manila/manila/ermita-master-enrichment-report.json
+          if git diff --cached --quiet; then
+            echo "Master enrichment produced no new changes."
+          else
+            git commit -m "Enrich Ermita master data from exact internal IDs"
+            git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/saeedhub101/Adam-City.git"
+            git push origin HEAD:main
+          fi
 
       - name: Reuse or generate and commit Roxas Boulevard GeoJSON
         shell: bash
