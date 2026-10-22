@@ -67,8 +67,9 @@ Repository-tree inspection found that `building-fallback.geojson` already stores
 
 - `buildings-part1.geojson.gz`: 861 full polygon features, compressed GeoJSON FeatureCollection.
 - `buildings-part2.geojson.gz`: 860 full polygon features, compressed GeoJSON FeatureCollection.
-- `layers/buildings-part1.csv`: matching 861-row attribute/enrichment registry.
-- `layers/buildings-part2.csv`: matching 860-row attribute/enrichment registry.
+- `layers/buildings-part1-enriched.csv.gz`: current enriched 861-row, 34-column CSV registry (gzip-compressed).
+- `layers/buildings-part2-enriched.csv.gz`: current enriched 860-row, 34-column CSV registry (gzip-compressed).
+- The uncompressed `layers/buildings-part1.csv` and `layers/buildings-part2.csv` are earlier registry exports; use the `*-enriched.csv.gz` files when you need the latest address/POI candidate counts, candidate OSM names/IDs, match confidence, and review statuses.
 
 The GeoJSON files retain each extracted polygon's full rings and OpenFreeMap render attributes. They are gzip-compressed to keep repository downloads small; decompress with `gzip -d buildings-part1.geojson.gz` and `gzip -d buildings-part2.geojson.gz`.
 
@@ -90,3 +91,8 @@ Attribution: OpenFreeMap © OpenMapTiles; data from OpenStreetMap contributors (
 - Address fields: house number **111**, street **256**, postcode **88**, city **369**. There are **255** footprints with address-bearing point candidates inside them: **166** have one candidate and **89** have multiple candidates that require review.
 - Separate named/shop/amenity POI candidates are present for **258** footprints; these describe mapped points within a footprint and must not automatically be interpreted as the building's official name.
 - Other mapped tags: building levels **513**, OSM height tag **112**, roof shape **58**, building material **3**, building colour **3**, roof colour **8**, OpenFreeMap source colour **15**. Absence means the source data did not supply the field; it does not mean the physical feature is absent.
+
+
+### Refreshed CSV registry validation
+
+The two `*-enriched.csv.gz` files were downloaded back from the committed `main` branch and decompressed for validation: part 1 has **861 rows and 34 columns** (registry IDs `OFM-ERMITA-00001`–`OFM-ERMITA-00861`); part 2 has **860 rows and 34 columns** (`OFM-ERMITA-00862`–`OFM-ERMITA-01721`). Together they contain 1,721 rows. The CSV stores counts of address/POI candidates; the full candidate arrays and geometry are in the corresponding GeoJSON properties.
