@@ -168,3 +168,8 @@ The GeoJSON writer omits empty enrichment properties while the CSV keeps a stabl
 
 
 The sparse GeoJSON pass was corrected to count unmatched features without requiring an enrichment-status property to be present. The workflow will rerun the pass and validate the generated output before committing it.
+
+
+## Exact source-feature research joins
+
+The enrichment pass now joins `building-visual-research-queue.csv` and image candidates using exact stable `source_feature_id` keys when present. It adds Google Maps, Mapillary, Wikimedia search, and OSM candidate links, plus candidate name/type/material/colour and review notes. Candidate OSM IDs remain review-only and are never promoted to confirmed building IDs. This gives records without OSM IDs useful research links without guessing identity.
