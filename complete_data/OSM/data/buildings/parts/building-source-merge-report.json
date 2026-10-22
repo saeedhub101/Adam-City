@@ -1,0 +1,414 @@
+{
+  "schema_version": "1.0.0",
+  "status": "generated",
+  "generated_from": [
+    "complete_data/OSM/data/buildings/parts/building-enrichment-index.json",
+    "complete_data/open free tile/building-fallback.geojson",
+    "complete_data/open free tile/layers/housenumber.geojsonl",
+    "complete_data/OSM/data/buildings/parts/building-image-links.json",
+    "complete_data/OSM/data/buildings/parts/building-image-candidates.json (optional if workflow output exists)",
+    "complete_data/OSM/data/buildings/windows/facade-signage-index.csv",
+    "complete_data/OSM/Markets/commercial-facades-report.json",
+    "complete_data/OSM/Buildings/supreme-court-main-facade-report.json"
+  ],
+  "building_records": 2651,
+  "counts": {
+    "fallback_spatial_review": 2390,
+    "fallback_spatial_candidate_total": 2390,
+    "fallback_unmatched_after_review": 2390,
+    "fallback_unmatched": 261,
+    "unlinked_or_ambiguous": 745,
+    "linked": 420,
+    "exact_image_identity_links": 2,
+    "procedural_facade_links": 2998,
+    "commercial_asset_links": 60,
+    "verified_facade_overlay_links": 2,
+    "reference_photo_catalogue_links": 3
+  },
+  "fallback_feature_count": 1805,
+  "diagnostics": {
+    "fallback_property_keys": [
+      "colour",
+      "render_height",
+      "render_min_height"
+    ],
+    "fallback_sample": [
+      {
+        "id": null,
+        "name": null,
+        "properties": {
+          "render_height": 4,
+          "render_min_height": 0
+        },
+        "bounds": [
+          13464193.231355933,
+          1648074.890292339,
+          13464485.244690554,
+          1648326.2964556832
+        ],
+        "area_m2": 3147.04
+      },
+      {
+        "id": null,
+        "name": null,
+        "properties": {
+          "render_height": 5,
+          "render_min_height": 0
+        },
+        "bounds": [
+          13463220.450738149,
+          1646109.6226354134,
+          13465185.12123079,
+          1648632.0445688237
+        ],
+        "area_m2": 555599.07
+      },
+      {
+        "id": null,
+        "name": null,
+        "properties": {
+          "render_height": 8,
+          "render_min_height": 0
+        },
+        "bounds": [
+          13464481.06454057,
+          1648249.859427398,
+          13464509.131261893,
+          1648274.940327304
+        ],
+        "area_m2": 350.36
+      },
+      {
+        "id": null,
+        "name": null,
+        "properties": {
+          "render_height": 11,
+          "render_min_height": 0
+        },
+        "bounds": [
+          13464187.856877383,
+          1648131.6208992694,
+          13464444.637519278,
+          1648349.585862739
+        ],
+        "area_m2": 2388.36
+      },
+      {
+        "id": null,
+        "name": null,
+        "properties": {
+          "render_height": 15,
+          "render_min_height": 0
+        },
+        "bounds": [
+          13464786.215489427,
+          1648252.8452488154,
+          13464820.85101787,
+          1648287.4807772571
+        ],
+        "area_m2": 595.53
+      }
+    ],
+    "spatial_ratio_samples": [
+      {
+        "source_feature_id": "footprints-feature-000342",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0,
+        "centroid_distance_m": 0.041,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "footprints-feature-000343",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 38.3181,
+        "centroid_distance_m": 951.169,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/1364955472",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.2329,
+        "centroid_distance_m": 0.091,
+        "candidate_count": 3,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/308706322",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 3.661,
+        "centroid_distance_m": 523.046,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/89831422",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 0.7238,
+        "centroid_distance_m": 163.509,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/822413208",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0008,
+        "centroid_distance_m": 0.021,
+        "candidate_count": 3,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/308700123",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0041,
+        "centroid_distance_m": 1.063,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "footprints-feature-000350",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 0.0902,
+        "centroid_distance_m": 13.6,
+        "candidate_count": 2,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/823330140",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0005,
+        "centroid_distance_m": 0.011,
+        "candidate_count": 6,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "footprints-feature-000352",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0002,
+        "centroid_distance_m": 0.205,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/90132745",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0009,
+        "centroid_distance_m": 0.021,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/89760235",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0023,
+        "centroid_distance_m": 0.018,
+        "candidate_count": 2,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/308699813",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 4.5874,
+        "centroid_distance_m": 226.045,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/90125779",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0001,
+        "centroid_distance_m": 0.027,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/308706323",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 26.1744,
+        "centroid_distance_m": 515.208,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/822391111",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0023,
+        "centroid_distance_m": 0.167,
+        "candidate_count": 2,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/90305613",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0002,
+        "centroid_distance_m": 0.011,
+        "candidate_count": 5,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/90125779",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 5.1002,
+        "centroid_distance_m": 8.415,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/90308376",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0016,
+        "centroid_distance_m": 0.049,
+        "candidate_count": 2,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/822386824",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0009,
+        "centroid_distance_m": 0.052,
+        "candidate_count": 2,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "footprints-feature-000367",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 6.0166,
+        "centroid_distance_m": 52.787,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/308696216",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 84.1441,
+        "centroid_distance_m": 597.75,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/308696308",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0004,
+        "centroid_distance_m": 0.032,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "footprints-feature-000371",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 24.1584,
+        "centroid_distance_m": 79.414,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/90134167",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0019,
+        "centroid_distance_m": 0.017,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/575422162",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.5057,
+        "centroid_distance_m": 148.731,
+        "candidate_count": 2,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/575422165",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 0.9996,
+        "centroid_distance_m": 0.024,
+        "candidate_count": 3,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/89831108",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 7.3185,
+        "centroid_distance_m": 164.768,
+        "candidate_count": 1,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/823662686",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0008,
+        "centroid_distance_m": 0.11,
+        "candidate_count": 3,
+        "accepted": false
+      },
+      {
+        "source_feature_id": "way/90160688",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 4.2634,
+        "centroid_distance_m": 343.791,
+        "candidate_count": 1,
+        "accepted": false
+      }
+    ]
+  },
+  "housenumber_source_records": 1165,
+  "image_asset_catalogue": {
+    "procedural_facade_model": {
+      "path": "complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb",
+      "report": "complete_data/OSM/data/buildings/windows/facade-details-report.json",
+      "window_panels": 200626,
+      "window_frames": 200626,
+      "window_sills": 200626,
+      "balcony_parts": 1200,
+      "door_placeholders": 6390,
+      "named_signboard_placeholders": 1802,
+      "limitation": "Procedural details; sign wording/logos are not verified unless sign_text_or_logo_verified is true."
+    },
+    "commercial_facade_report": "complete_data/OSM/Markets/commercial-facades-report.json",
+    "supreme_court_overlay_report": "complete_data/OSM/Buildings/supreme-court-main-facade-report.json",
+    "robinsons_reference_catalogue": "complete_data/OSM/Markets/reference_photos/robinsons-manila/reference-index.json",
+    "named_image_links": "complete_data/OSM/data/buildings/parts/building-image-links.json",
+    "commons_candidate_source": "complete_data/OSM/data/buildings/parts/building-image-candidates.json"
+  },
+  "limitations": [
+    "This is a metadata/evidence join, not proof of 100% real-world identity or visual fidelity.",
+    "OpenFreeMap fallback records that cannot be matched safely remain unmatched or in the review queue.",
+    "Wikimedia geosearch results are image candidates, not verified building photographs; they are never automatically applied as textures.",
+    "The procedural facade GLB contains generic placeholders; sign text/logo verification is recorded separately.",
+    "Photographic overlay reports describe intended/applied overlay assets but require visual alignment review in the viewer.",
+    "No GLB, geometry, coordinates, heights, or material assignments are changed by this workflow."
+  ],
+  "audit_csv": "complete_data/OSM/data/buildings/parts/building-source-link-audit.csv",
+  "index_path": "complete_data/OSM/data/buildings/parts/building-enrichment-index.json"
+}
