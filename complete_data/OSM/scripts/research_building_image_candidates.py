@@ -209,7 +209,9 @@ def main() -> None:
 
     records = load_progress()
     completed_ids = {fid for fid, record in records.items() if not record.get("error")}
-    pending = [b for b in queue if b.get("source_feature_id", "") not in completed_ids]
+    never_attempted = [b for b in queue if b.get("source_feature_id", "") not in completed_ids and b.get("source_feature_id", "") not in records]
+    retryable_errors = [b for b in queue if b.get("source_feature_id", "") in records and b.get("source_feature_id", "") not in completed_ids]
+    pending = never_attempted + retryable_errors
     batch = pending[:BATCH_SIZE]
     if not batch:
         output = [row for rec in records.values() if not rec.get("error") for row in rec.get("rows", [])]
