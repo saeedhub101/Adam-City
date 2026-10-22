@@ -35,6 +35,8 @@ jobs:
           git sparse-checkout init --no-cone
           git sparse-checkout set --no-cone --stdin <<'EOF'
           /test.html
+          /manila/manila.html
+          /manila/manila/
           /ermita-malate-3d.html
           /google-photorealistic-3d-tiles.html
           /complete_data/OSM/data/
@@ -62,10 +64,13 @@ jobs:
           test -s google-photorealistic-3d-tiles.html
 
           mkdir -p site/complete_data/OSM/data site/ermita/maps/sources/openfreemap site/ermita/maps/generated
+          mkdir -p site/manila/manila
           mkdir -p site/ermita/3d/exports site/ermita/3d/terrain site/ermita/3d/generated site/ermita/3d/landmarks
           mkdir -p site/ermita/assets/textures
 
           cp test.html site/test.html
+          cp manila/manila.html site/manila/manila.html
+          cp -a manila/manila/. site/manila/manila/
           cp ermita-malate-3d.html site/ermita-malate-3d.html
           cp google-photorealistic-3d-tiles.html site/google-photorealistic-3d-tiles.html
           cp -a complete_data/OSM/data/. site/complete_data/OSM/data/
