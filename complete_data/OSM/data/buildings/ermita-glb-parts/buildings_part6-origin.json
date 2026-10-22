@@ -1,5 +1,6 @@
 {
-  "file": "ermita-buildings-part-06-of-06.glb",
+  "file": "buildings_part6.glb",
+  "inventory": "buildings_part6-inventory.json",
   "part": 6,
   "part_count": 6,
   "crs": "EPSG:3857",
@@ -14,5 +15,6 @@
   "source_geojson": "complete_data/OSM/data/buildings/ermita-building-footprints.geojson",
   "source_feature_count": 188,
   "polygon_components_exported": 812,
-  "mesh_count": 812
+  "mesh_count": 812,
+  "area_description": "النطاق الجنوبي الشرقي من نطاق البيانات"
 }

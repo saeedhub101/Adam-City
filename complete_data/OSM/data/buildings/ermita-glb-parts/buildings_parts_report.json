@@ -1,5 +1,5 @@
 {
-  "status": "validated",
+  "status": "validated-existing-assets; generation disabled",
   "source_geojson": "complete_data/OSM/data/buildings/ermita-building-footprints.geojson",
   "source_feature_count": 1123,
   "exported_source_feature_count": 1123,
@@ -20,7 +20,7 @@
   "parts": [
     {
       "part": 1,
-      "file": "ermita-buildings-part-01-of-06.glb",
+      "file": "buildings_part1.glb",
       "bytes": 25900472,
       "feature_count": 187,
       "polygon_components": 32227,
@@ -28,11 +28,14 @@
       "origin": {
         "longitude": 120.9703687483501,
         "latitude": 14.60876591930682
-      }
+      },
+      "inventory": "buildings_part1-inventory.json",
+      "origin_file": "buildings_part1-origin.json",
+      "area_description": "النطاق الشمالي الغربي من نطاق البيانات"
     },
     {
       "part": 2,
-      "file": "ermita-buildings-part-02-of-06.glb",
+      "file": "buildings_part2.glb",
       "bytes": 2047344,
       "feature_count": 187,
       "polygon_components": 2321,
@@ -40,11 +43,14 @@
       "origin": {
         "longitude": 120.9768192075911,
         "latitude": 14.5953447874922
-      }
+      },
+      "inventory": "buildings_part2-inventory.json",
+      "origin_file": "buildings_part2-origin.json",
+      "area_description": "النطاق الجنوبي الغربي من نطاق البيانات"
     },
     {
       "part": 3,
-      "file": "ermita-buildings-part-03-of-06.glb",
+      "file": "buildings_part3.glb",
       "bytes": 1596752,
       "feature_count": 187,
       "polygon_components": 1798,
@@ -52,11 +58,14 @@
       "origin": {
         "longitude": 120.98635702085389,
         "latitude": 14.584853434705982
-      }
+      },
+      "inventory": "buildings_part3-inventory.json",
+      "origin_file": "buildings_part3-origin.json",
+      "area_description": "النطاق الأوسط الجنوبي من نطاق البيانات"
     },
     {
       "part": 4,
-      "file": "ermita-buildings-part-04-of-06.glb",
+      "file": "buildings_part4.glb",
       "bytes": 25078316,
       "feature_count": 187,
       "polygon_components": 30850,
@@ -64,11 +73,14 @@
       "origin": {
         "longitude": 120.99278700162212,
         "latitude": 14.593575890616368
-      }
+      },
+      "inventory": "buildings_part4-inventory.json",
+      "origin_file": "buildings_part4-origin.json",
+      "area_description": "النطاق الأوسط الشمالي من نطاق البيانات"
     },
     {
       "part": 5,
-      "file": "ermita-buildings-part-05-of-06.glb",
+      "file": "buildings_part5.glb",
       "bytes": 55860376,
       "feature_count": 187,
       "polygon_components": 70246,
@@ -76,11 +88,14 @@
       "origin": {
         "longitude": 121.00950876900349,
         "latitude": 14.580671368793995
-      }
+      },
+      "inventory": "buildings_part5-inventory.json",
+      "origin_file": "buildings_part5-origin.json",
+      "area_description": "النطاق الشرقي الأوسط من نطاق البيانات"
     },
     {
       "part": 6,
-      "file": "ermita-buildings-part-06-of-06.glb",
+      "file": "buildings_part6.glb",
       "bytes": 800824,
       "feature_count": 188,
       "polygon_components": 812,
@@ -88,7 +103,11 @@
       "origin": {
         "longitude": 121.0196099228808,
         "latitude": 14.567054074364249
-      }
+      },
+      "inventory": "buildings_part6-inventory.json",
+      "origin_file": "buildings_part6-origin.json",
+      "area_description": "النطاق الجنوبي الشرقي من نطاق البيانات"
     }
-  ]
+  ],
+  "generation_policy": "Permanent committed GLB assets. No workflow regenerates them; the exporter script has been deleted. Edit these files directly to preserve manual improvements."
 }

@@ -47,7 +47,6 @@ jobs:
           /complete_data/OSM/Buildings/reference_images/
           /ermita/scripts/generate_supreme_court_facade_texture.py
           /ermita/scripts/generate_roxas_boulevard_buildings.py
-          /ermita/scripts/export_ermita_buildings_glb_parts.py
           /ermita/scripts/generate_roxas_boulevard_signage.py
           /ermita/assets/textures/Painted-CMU-Block-Architextures.jpeg
           /ermita/maps/sources/openfreemap/
@@ -123,21 +122,7 @@ jobs:
           else
             echo "Reusing committed Roxas Boulevard GLB and metadata."
           fi
-          # Preserve the six committed GLB parts so manual edits are never overwritten by normal deployments.
-          # Generate them only when one or more parts or the validation report are missing.
-          GLB_PARTS_DIR="complete_data/OSM/data/buildings/ermita-glb-parts"
-          if [[ ! -s "$GLB_PARTS_DIR/ermita-buildings-part-01-of-06.glb" ||
-                ! -s "$GLB_PARTS_DIR/ermita-buildings-part-02-of-06.glb" ||
-                ! -s "$GLB_PARTS_DIR/ermita-buildings-part-03-of-06.glb" ||
-                ! -s "$GLB_PARTS_DIR/ermita-buildings-part-04-of-06.glb" ||
-                ! -s "$GLB_PARTS_DIR/ermita-buildings-part-05-of-06.glb" ||
-                ! -s "$GLB_PARTS_DIR/ermita-buildings-part-06-of-06.glb" ||
-                ! -s "$GLB_PARTS_DIR/ermita-buildings-parts-report.json" ]]; then
-            echo "One or more committed GLB parts are missing; generating the six-part set."
-            python3 ermita/scripts/export_ermita_buildings_glb_parts.py
-          else
-            echo "Reusing the six committed GLB parts and report; skipping generation to preserve manual edits."
-          fi
+          # The six buildings_partN.glb files are permanent deployment inputs; this workflow never generates them.
           # Preserve the committed signage GLB unless its output files are missing.
           if [[ ! -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb ||
                 ! -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json ]]; then
@@ -487,7 +472,7 @@ jobs:
           git add complete_data/OSM/Markets/ complete_data/OSM/Buildings/Markets/facidals/
           git add complete_data/OSM/Buildings/supreme-court-main-facade.glb complete_data/OSM/Buildings/supreme-court-main-facade-report.json complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg
           git add complete_data/OSM/data/buildings/roxas-boulevard/
-          git add complete_data/OSM/data/buildings/ermita-glb-parts/ ermita/scripts/export_ermita_buildings_glb_parts.py
+          git add complete_data/OSM/data/buildings/ermita-glb-parts/
           if ! git diff --cached --quiet; then
             git commit -m "Store generated building and ground fallback data"
             git push origin HEAD:main

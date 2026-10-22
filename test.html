@@ -31,12 +31,12 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <label class="row"><input type="checkbox" id="osm-tags"> 3. tags — جدول الوسوم (بيانات وصفية وليست طبقة مكانية)</label>
 <label class="row"><input type="checkbox" id="osm-buildings" checked> 4. buildings — بصمات المباني وتفاصيل الأسطح</label>
 <label class="row"><input type="checkbox" id="roxas-boulevard-glb"> 4.1 Roxas Boulevard — مباني GLB (طبقة مستقلة)</label>
-<label class="row"><input type="checkbox" id="ermita-glb-part-1"> 4.2 مباني GLB — الجزء 1</label>
-<label class="row"><input type="checkbox" id="ermita-glb-part-2"> 4.3 مباني GLB — الجزء 2</label>
-<label class="row"><input type="checkbox" id="ermita-glb-part-3"> 4.4 مباني GLB — الجزء 3</label>
-<label class="row"><input type="checkbox" id="ermita-glb-part-4"> 4.5 مباني GLB — الجزء 4</label>
-<label class="row"><input type="checkbox" id="ermita-glb-part-5"> 4.6 مباني GLB — الجزء 5</label>
-<label class="row"><input type="checkbox" id="ermita-glb-part-6"> 4.7 مباني GLB — الجزء 6</label>
+<label class="row"><input type="checkbox" id="ermita-glb-part-1"> 4.2 buildings_part1 — النطاق الشمالي الغربي | 187 مبنى/ميزة، 32,227 جزءاً</label>
+<label class="row"><input type="checkbox" id="ermita-glb-part-2"> 4.3 buildings_part2 — النطاق الجنوبي الغربي | 187 مبنى/ميزة، 2,321 جزءاً</label>
+<label class="row"><input type="checkbox" id="ermita-glb-part-3"> 4.4 buildings_part3 — النطاق الأوسط الجنوبي | 187 مبنى/ميزة، 1,798 جزءاً</label>
+<label class="row"><input type="checkbox" id="ermita-glb-part-4"> 4.5 buildings_part4 — النطاق الأوسط الشمالي | 187 مبنى/ميزة، 30,850 جزءاً</label>
+<label class="row"><input type="checkbox" id="ermita-glb-part-5"> 4.6 buildings_part5 — النطاق الشرقي الأوسط | 187 مبنى/ميزة، 70,246 جزءاً</label>
+<label class="row"><input type="checkbox" id="ermita-glb-part-6"> 4.7 buildings_part6 — النطاق الجنوبي الشرقي | 188 مبنى/ميزة، 812 جزءاً</label>
 <label class="row"><input type="checkbox" id="osm-roads" checked> 5. roads — الطرق وتفاصيل هندستها</label>
 <label class="row"><input type="checkbox" id="osm-thematic"> 6. thematic — المتاجر والعلامات والتفاصيل الموضوعية</label>
 <label class="row"><input type="checkbox" id="osm-pedestrian"> 7. pedestrian — تفاصيل المشاة</label>
@@ -523,8 +523,8 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
   const id='ermita-building-glb-part-'+part;
   let layer=null, loading=false, ready=false, model=null, renderer=null, camera=null, scene=null;
   let anchor=null, projectedMeterScale=1, meterScale=1;
-  const modelUrl=new URL(base+'ermita-buildings-part-'+String(part).padStart(2,'0')+'-of-06.glb',location.href).href;
-  const originUrl=new URL(base+'ermita-buildings-part-'+String(part).padStart(2,'0')+'-of-06-origin.json',location.href).href;
+  const modelUrl=new URL(base+'buildings_part'+part+'.glb',location.href).href;
+  const originUrl=new URL(base+'buildings_part'+part+'-origin.json',location.href).href;
   async function ensureLayer(){
    if(ready||loading)return;
    loading=true;
