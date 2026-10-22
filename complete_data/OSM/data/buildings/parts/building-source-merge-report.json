@@ -13,19 +13,22 @@
   ],
   "building_records": 2651,
   "counts": {
-    "fallback_spatial_review": 2390,
-    "fallback_spatial_candidate_total": 2390,
-    "fallback_unmatched_after_review": 2390,
-    "fallback_unmatched": 261,
+    "fallback_spatial_linked": 1080,
+    "fallback_spatial_candidate_total": 2640,
+    "fallback_linked": 1080,
+    "fallback_spatial_review": 1560,
+    "fallback_unmatched_after_review": 1560,
+    "fallback_unmatched": 11,
     "unlinked_or_ambiguous": 745,
     "linked": 420,
-    "exact_image_identity_links": 2,
-    "procedural_facade_links": 2998,
-    "commercial_asset_links": 60,
-    "verified_facade_overlay_links": 2,
+    "exact_image_identity_links": 1,
+    "procedural_facade_links": 1565,
+    "commercial_asset_links": 32,
+    "verified_facade_overlay_links": 1,
     "reference_photo_catalogue_links": 3
   },
   "fallback_feature_count": 1805,
+  "fallback_coordinate_crs": "EPSG:3857 detected from coordinate bounds (projected metres); geometries used only for matching",
   "diagnostics": {
     "fallback_property_keys": [
       "colour",
@@ -61,7 +64,7 @@
           13465185.12123079,
           1648632.0445688237
         ],
-        "area_m2": 555599.07
+        "area_m2": 555571.19
       },
       {
         "id": null,
@@ -115,53 +118,62 @@
         "source_key": "footprints",
         "candidate_osm_id": null,
         "candidate_area_ratio": 1.0,
-        "centroid_distance_m": 0.041,
-        "candidate_count": 1,
-        "accepted": false
+        "centroid_distance_m": null,
+        "candidate_count": 8,
+        "accepted": true
       },
       {
         "source_feature_id": "footprints-feature-000343",
         "source_key": "footprints",
         "candidate_osm_id": null,
-        "candidate_area_ratio": 38.3181,
-        "centroid_distance_m": 951.169,
-        "candidate_count": 1,
-        "accepted": false
+        "candidate_area_ratio": 0.8302,
+        "centroid_distance_m": null,
+        "candidate_count": 33,
+        "accepted": true
+      },
+      {
+        "source_feature_id": "footprints-feature-000344",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 0.9997,
+        "centroid_distance_m": null,
+        "candidate_count": 26,
+        "accepted": true
       },
       {
         "source_feature_id": "way/1364955472",
         "source_key": "footprints",
         "candidate_osm_id": null,
         "candidate_area_ratio": 1.2329,
-        "centroid_distance_m": 0.091,
+        "centroid_distance_m": null,
         "candidate_count": 3,
-        "accepted": false
+        "accepted": true
       },
       {
         "source_feature_id": "way/308706322",
         "source_key": "footprints",
         "candidate_osm_id": null,
-        "candidate_area_ratio": 3.661,
-        "centroid_distance_m": 523.046,
-        "candidate_count": 1,
-        "accepted": false
+        "candidate_area_ratio": 1.0005,
+        "centroid_distance_m": null,
+        "candidate_count": 32,
+        "accepted": true
       },
       {
         "source_feature_id": "way/89831422",
         "source_key": "footprints",
         "candidate_osm_id": null,
-        "candidate_area_ratio": 0.7238,
-        "centroid_distance_m": 163.509,
-        "candidate_count": 1,
-        "accepted": false
+        "candidate_area_ratio": 1.0006,
+        "centroid_distance_m": null,
+        "candidate_count": 31,
+        "accepted": true
       },
       {
         "source_feature_id": "way/822413208",
         "source_key": "footprints",
         "candidate_osm_id": null,
         "candidate_area_ratio": 1.0008,
-        "centroid_distance_m": 0.021,
-        "candidate_count": 3,
+        "centroid_distance_m": null,
+        "candidate_count": 4,
         "accepted": false
       },
       {
@@ -169,161 +181,197 @@
         "source_key": "footprints",
         "candidate_osm_id": null,
         "candidate_area_ratio": 1.0041,
-        "centroid_distance_m": 1.063,
-        "candidate_count": 1,
-        "accepted": false
+        "centroid_distance_m": null,
+        "candidate_count": 4,
+        "accepted": true
       },
       {
         "source_feature_id": "footprints-feature-000350",
         "source_key": "footprints",
         "candidate_osm_id": null,
-        "candidate_area_ratio": 0.0902,
-        "centroid_distance_m": 13.6,
-        "candidate_count": 2,
-        "accepted": false
+        "candidate_area_ratio": 0.9992,
+        "centroid_distance_m": null,
+        "candidate_count": 25,
+        "accepted": true
       },
       {
         "source_feature_id": "way/823330140",
         "source_key": "footprints",
         "candidate_osm_id": null,
         "candidate_area_ratio": 1.0005,
-        "centroid_distance_m": 0.011,
-        "candidate_count": 6,
-        "accepted": false
+        "centroid_distance_m": null,
+        "candidate_count": 8,
+        "accepted": true
       },
       {
         "source_feature_id": "footprints-feature-000352",
         "source_key": "footprints",
         "candidate_osm_id": null,
         "candidate_area_ratio": 1.0002,
-        "centroid_distance_m": 0.205,
-        "candidate_count": 1,
-        "accepted": false
+        "centroid_distance_m": null,
+        "candidate_count": 7,
+        "accepted": true
+      },
+      {
+        "source_feature_id": "footprints-feature-000353",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 0.9992,
+        "centroid_distance_m": null,
+        "candidate_count": 17,
+        "accepted": true
       },
       {
         "source_feature_id": "way/90132745",
         "source_key": "footprints",
         "candidate_osm_id": null,
         "candidate_area_ratio": 1.0009,
-        "centroid_distance_m": 0.021,
+        "centroid_distance_m": null,
         "candidate_count": 1,
-        "accepted": false
+        "accepted": true
+      },
+      {
+        "source_feature_id": "footprints-feature-000356",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.001,
+        "centroid_distance_m": null,
+        "candidate_count": 14,
+        "accepted": true
       },
       {
         "source_feature_id": "way/89760235",
         "source_key": "footprints",
         "candidate_osm_id": null,
         "candidate_area_ratio": 1.0023,
-        "centroid_distance_m": 0.018,
+        "centroid_distance_m": null,
         "candidate_count": 2,
-        "accepted": false
+        "accepted": true
       },
       {
         "source_feature_id": "way/308699813",
         "source_key": "footprints",
         "candidate_osm_id": null,
-        "candidate_area_ratio": 4.5874,
-        "centroid_distance_m": 226.045,
-        "candidate_count": 1,
-        "accepted": false
+        "candidate_area_ratio": 0.9998,
+        "centroid_distance_m": null,
+        "candidate_count": 10,
+        "accepted": true
       },
       {
         "source_feature_id": "way/90125779",
         "source_key": "footprints",
         "candidate_osm_id": null,
         "candidate_area_ratio": 1.0001,
-        "centroid_distance_m": 0.027,
-        "candidate_count": 1,
-        "accepted": false
+        "centroid_distance_m": null,
+        "candidate_count": 6,
+        "accepted": true
       },
       {
         "source_feature_id": "way/308706323",
         "source_key": "footprints",
         "candidate_osm_id": null,
-        "candidate_area_ratio": 26.1744,
-        "centroid_distance_m": 515.208,
-        "candidate_count": 1,
-        "accepted": false
+        "candidate_area_ratio": 0.9994,
+        "centroid_distance_m": null,
+        "candidate_count": 14,
+        "accepted": true
       },
       {
         "source_feature_id": "way/822391111",
         "source_key": "footprints",
         "candidate_osm_id": null,
         "candidate_area_ratio": 1.0023,
-        "centroid_distance_m": 0.167,
-        "candidate_count": 2,
-        "accepted": false
+        "centroid_distance_m": null,
+        "candidate_count": 4,
+        "accepted": true
       },
       {
         "source_feature_id": "way/90305613",
         "source_key": "footprints",
         "candidate_osm_id": null,
         "candidate_area_ratio": 1.0002,
-        "centroid_distance_m": 0.011,
-        "candidate_count": 5,
-        "accepted": false
+        "centroid_distance_m": null,
+        "candidate_count": 7,
+        "accepted": true
       },
       {
         "source_feature_id": "way/90125779",
         "source_key": "footprints",
         "candidate_osm_id": null,
-        "candidate_area_ratio": 5.1002,
-        "centroid_distance_m": 8.415,
-        "candidate_count": 1,
-        "accepted": false
+        "candidate_area_ratio": 0.9954,
+        "centroid_distance_m": null,
+        "candidate_count": 4,
+        "accepted": true
+      },
+      {
+        "source_feature_id": "footprints-feature-000364",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 0.9982,
+        "centroid_distance_m": null,
+        "candidate_count": 8,
+        "accepted": true
       },
       {
         "source_feature_id": "way/90308376",
         "source_key": "footprints",
         "candidate_osm_id": null,
         "candidate_area_ratio": 1.0016,
-        "centroid_distance_m": 0.049,
-        "candidate_count": 2,
-        "accepted": false
+        "centroid_distance_m": null,
+        "candidate_count": 5,
+        "accepted": true
       },
       {
         "source_feature_id": "way/822386824",
         "source_key": "footprints",
         "candidate_osm_id": null,
         "candidate_area_ratio": 1.0009,
-        "centroid_distance_m": 0.052,
+        "centroid_distance_m": null,
         "candidate_count": 2,
-        "accepted": false
+        "accepted": true
       },
       {
         "source_feature_id": "footprints-feature-000367",
         "source_key": "footprints",
         "candidate_osm_id": null,
-        "candidate_area_ratio": 6.0166,
-        "centroid_distance_m": 52.787,
-        "candidate_count": 1,
-        "accepted": false
+        "candidate_area_ratio": 1.0004,
+        "centroid_distance_m": null,
+        "candidate_count": 4,
+        "accepted": true
       },
       {
         "source_feature_id": "way/308696216",
         "source_key": "footprints",
         "candidate_osm_id": null,
-        "candidate_area_ratio": 84.1441,
-        "centroid_distance_m": 597.75,
-        "candidate_count": 1,
-        "accepted": false
+        "candidate_area_ratio": 1.0012,
+        "centroid_distance_m": null,
+        "candidate_count": 8,
+        "accepted": true
       },
       {
         "source_feature_id": "way/308696308",
         "source_key": "footprints",
         "candidate_osm_id": null,
         "candidate_area_ratio": 1.0004,
-        "centroid_distance_m": 0.032,
-        "candidate_count": 1,
-        "accepted": false
+        "centroid_distance_m": null,
+        "candidate_count": 3,
+        "accepted": true
+      },
+      {
+        "source_feature_id": "footprints-feature-000370",
+        "source_key": "footprints",
+        "candidate_osm_id": null,
+        "candidate_area_ratio": 1.0053,
+        "centroid_distance_m": null,
+        "candidate_count": 4,
+        "accepted": true
       },
       {
         "source_feature_id": "footprints-feature-000371",
         "source_key": "footprints",
         "candidate_osm_id": null,
-        "candidate_area_ratio": 24.1584,
-        "centroid_distance_m": 79.414,
-        "candidate_count": 1,
+        "candidate_area_ratio": 0.5386,
+        "centroid_distance_m": null,
+        "candidate_count": 12,
         "accepted": false
       },
       {
@@ -331,54 +379,9 @@
         "source_key": "footprints",
         "candidate_osm_id": null,
         "candidate_area_ratio": 1.0019,
-        "centroid_distance_m": 0.017,
+        "centroid_distance_m": null,
         "candidate_count": 1,
-        "accepted": false
-      },
-      {
-        "source_feature_id": "way/575422162",
-        "source_key": "footprints",
-        "candidate_osm_id": null,
-        "candidate_area_ratio": 1.5057,
-        "centroid_distance_m": 148.731,
-        "candidate_count": 2,
-        "accepted": false
-      },
-      {
-        "source_feature_id": "way/575422165",
-        "source_key": "footprints",
-        "candidate_osm_id": null,
-        "candidate_area_ratio": 0.9996,
-        "centroid_distance_m": 0.024,
-        "candidate_count": 3,
-        "accepted": false
-      },
-      {
-        "source_feature_id": "way/89831108",
-        "source_key": "footprints",
-        "candidate_osm_id": null,
-        "candidate_area_ratio": 7.3185,
-        "centroid_distance_m": 164.768,
-        "candidate_count": 1,
-        "accepted": false
-      },
-      {
-        "source_feature_id": "way/823662686",
-        "source_key": "footprints",
-        "candidate_osm_id": null,
-        "candidate_area_ratio": 1.0008,
-        "centroid_distance_m": 0.11,
-        "candidate_count": 3,
-        "accepted": false
-      },
-      {
-        "source_feature_id": "way/90160688",
-        "source_key": "footprints",
-        "candidate_osm_id": null,
-        "candidate_area_ratio": 4.2634,
-        "centroid_distance_m": 343.791,
-        "candidate_count": 1,
-        "accepted": false
+        "accepted": true
       }
     ]
   },
