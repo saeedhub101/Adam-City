@@ -115,3 +115,20 @@ Important count caveat: **1,721 is the number of extracted polygon components, n
 ### Exact geometry deduplication audit
 
 The separate audit at `building-deduplication-audit.json` found **1,629 exact unique full-ring geometries** among the 1,721 extracted polygon components (92 exact duplicate components removed by an 8-decimal-coordinate ring comparison). This is still not a verified count of physical buildings. There are 876 high-confidence spatial matches distributed over 722 unique OSM feature IDs; 136 OSM IDs are assigned to multiple components, which may reflect repeated zoom/style geometry, building parts, or matching errors. Two exact-duplicate geometry groups have conflicting render heights. Therefore the original split source components are retained, and no height is silently selected or any component collapsed in the canonical extraction. A final unique-building count requires inspecting those groups and distinguishing building parts from zoom/LOD duplicates.
+
+## First-30 building completeness audit
+
+The file `building-first-30-completeness-audit.csv` audits the first 30 registry records in `buildings-part1-enriched.csv.gz` in their current registry order. It is a data-quality audit, not a claim that these are the 30 most important buildings.
+
+Audit snapshot (30 records):
+
+- Registry coordinates and render-height field present: 30/30.
+- Named identity present (building name, official name, or brand): 1/30.
+- High-confidence OSM link (confidence >= 0.90): 5/30.
+- Street and city both present: 0/30.
+- Explicit storeys or OSM height present: 3/30.
+- Facade material/colour fields present: 0/30.
+- Roof shape/material/colour fields present: 2/30.
+- Building-specific photo evidence catalogued for these records: 0/30.
+
+Conclusion: **none of the first 30 records is complete for realistic building reconstruction**. All 30 have registry location/render-height metadata, but most lack confirmed identity, street address, storeys/height sourced from building tags, facade details and photo evidence. The render-height value is a source-rendering attribute and must not be presented as a verified real-world building height. Records matched only to a generic building polygon also remain unidentified. Do not invent missing addresses, materials, floors, or roof details.
