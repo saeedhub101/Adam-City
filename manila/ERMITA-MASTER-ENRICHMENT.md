@@ -183,3 +183,6 @@ The pass now also consumes `complete_data/OSM/data/buildings/Ermita/building-enr
 ## Strict polygon-overlap pass for remaining GeoJSON features
 
 For GeoJSON features without an OSM ID or accepted exact source-feature link, the script now compares the actual feature polygon with OSM building polygons from `complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson`. It accepts a link only when overlap covers at least 75% of the smaller polygon, IoU is at least 0.50, candidate/source area ratio is between 0.5 and 2.0, and the best candidate is clearly separated from alternatives. Centroid/proximity-only matches are not applied. The linked OSM ID, confidence and overlap evidence are stored in separate enrichment fields; original IDs, coordinates and geometry are untouched.
+
+
+The strict spatial join filters impossible source/candidate area ratios before calculating polygon intersections, preserving the same acceptance thresholds while reducing unnecessary geometry work.
