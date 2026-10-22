@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MANILA · Complete Ermita Buildings</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.css">
+<style>
+:root{color-scheme:dark;--panel:rgba(16,26,35,.96);--line:#344654;--text:#eef4f7;--muted:#a7b8c4;--accent:#67d5c2}
+*{box-sizing:border-box}html,body,#map{height:100%;width:100%;margin:0}body{font-family:system-ui,sans-serif;background:#101a23;color:var(--text)}#map{position:absolute;inset:0}
+.panel{position:absolute;z-index:5;top:10px;right:10px;width:min(330px,calc(100vw - 20px));max-height:76dvh;overflow:auto;overscroll-behavior:contain;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:0 8px 26px #0005;backdrop-filter:blur(12px)}
+h1{font-size:17px;margin:0 0 5px}.sub{font-size:11px;line-height:1.55;color:var(--muted);margin-bottom:10px}.group{border-top:1px solid var(--line);padding-top:9px;margin-top:9px}.group-title{font-size:12px;color:var(--accent);font-weight:700;margin-bottom:6px}.row{display:flex;align-items:flex-start;gap:8px;margin:9px 0;font-size:12px;line-height:1.5}input{accent-color:var(--accent);width:17px;height:17px;flex:0 0 auto;margin-top:1px}
+button{width:100%;border:1px solid #4b7478;border-radius:8px;background:#18343a;color:#efffff;padding:10px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;text-align:center}button:hover{background:#21464a}button[aria-pressed=true]{background:#236052;border-color:#67d5c2}
+.status{font-size:10px;line-height:1.6;color:var(--muted);overflow-wrap:anywhere;margin-top:9px;border-top:1px solid var(--line);padding-top:8px}#error{display:none;color:#ffdadd;background:#542c31;padding:8px;border-radius:7px;font-size:11px;margin-top:8px;direction:ltr;overflow-wrap:anywhere}.attribution{position:absolute;bottom:8px;left:8px;z-index:2;background:#101a23df;padding:5px 8px;border-radius:6px;font-size:10px;direction:ltr}
+#buildingInfo{display:none;font-size:11px;line-height:1.55;margin-top:8px;padding:8px;background:#172631;border-radius:8px;overflow-wrap:anywhere}#buildingInfo b{color:#a7eee0}
+@media(max-width:520px){.panel{top:6px;right:6px;width:min(290px,calc(100vw - 12px));max-height:62dvh;padding:9px}h1{font-size:15px}.row{font-size:11px;margin:7px 0}button{padding:8px;font-size:12px}}
+</style>
+</head>
+<body>
+<div id="map" aria-label="خريطة ثلاثية الأبعاد لإرميتا في مانيلا"></div>
+<section class="panel">
+<h1>MANILA · ERMITA</h1>
+<div class="sub">صفحة مستقلة لمقارنة أرضية OpenFreeMap ومبانيه الأصلية مع سجل المباني المجمّع من GeoJSON وCSV.</div>
+<div class="group">
+<div class="group-title">مصدر الخريطة الأصلي</div>
+<label class="row"><input type="checkbox" id="baseGround" checked> أرضية الخريطة الأصلية (الشوارع والمياه والحدائق والتسميات)</label>
+<label class="row"><input type="checkbox" id="baseBuildings" checked> مباني الخريطة الأصلية ثلاثية الأبعاد</label>
+</div>
+<div class="group">
+<div class="group-title">بيانات المباني المجمّعة</div>
+<button id="completeBuildings" type="button" aria-pressed="false">إظهار المباني كاملة</button>
+<div class="sub" style="margin:7px 0 0">عند التفعيل، تُعرض هندسة المباني من جزأي GeoJSON، ويُحمّل CSV لربط بيانات السجلات عند اختيار أي مبنى.</div>
+<div id="buildingInfo"></div>
+</div>
+<div class="status" id="status">جارٍ تحميل نمط الخريطة الأصلية…</div>
+<div id="error"></div>
+</section>
+<div class="attribution">OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors</div>
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script>
+(async function(){
+ const status=document.getElementById('status'), errorBox=document.getElementById('error');
+ const completeButton=document.getElementById('completeBuildings'), info=document.getElementById('buildingInfo');
+ const url=p=>new URL(p,location.href).href;
+ let style;
+ try{
+  const response=await fetch('https://tiles.openfreemap.org/styles/liberty');
+  if(!response.ok)throw new Error('Style HTTP '+response.status);
+  style=await response.json();
+ }catch(err){showError('تعذر تحميل نمط OpenFreeMap: '+err.message);status.textContent='تعذر تحميل الخريطة الأساسية.';return;}
+ const originalLayers=style.layers.map(layer=>({...layer}));
+ const baseBuildingIds=originalLayers.filter(layer=>layer.type==='fill-extrusion'&&(/building/i.test(layer.id+' '+(layer['source-layer']||'')))).map(layer=>layer.id);
+ const map=new maplibregl.Map({container:'map',style,center:[120.9820,14.5850],zoom:14.4,pitch:52,bearing:-16,antialias:true});
+ window.manilaCityMap=map;
+ map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');
+ map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
+ const visibility=(id,on)=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none');};
+ const setGroup=(ids,on)=>ids.forEach(id=>visibility(id,on));
+ let completeLoaded=false, completeVisible=false, csvRows=[], csvIndex=new Map(), csvReady=false;
+ const buildingLayerIds=[];
+ function showError(message){errorBox.style.display='block';errorBox.textContent=message;}
+ function firstValue(obj,keys){for(const key of keys){const value=obj&&obj[key];if(value!==undefined&&value!==null&&String(value).trim()!=='')return String(value).trim();}return '';}
+ function normalizedKey(value){return String(value||'').trim().toLowerCase().replace(/^(node|way|relation)\s*\/?\s*/,'').replace(/^https?:.*[=\/]/,'').replace(/\.0$/,'');}
+ const keyNames=['osm_id','osmId','@id','full_id','element_id','elementId','building_id','buildingId','feature_id','featureId','fid','id','ID','objectid','OBJECTID'];
+ function featureKey(feature){const p=feature.properties||{};let value=firstValue(p,keyNames);if(!value&&feature.id!==undefined)value=String(feature.id);return normalizedKey(value);}
+ function rowKey(row){return normalizedKey(firstValue(row,keyNames));}
+ function csvMatch(feature){const key=featureKey(feature);return key?csvIndex.get(key):null;}
+ function pretty(value){if(value===undefined||value===null||value==='')return '—';if(typeof value==='object')return JSON.stringify(value);return String(value);}
+ async function loadCsv(){
+  if(csvReady)return;
+  status.textContent='جارٍ تحميل سجل CSV المجمّع وربط معرّفات المباني…';
+  const response=await fetch(url('manila/ermita-buildings-master.csv'));
+  if(!response.ok)throw new Error('CSV HTTP '+response.status);
+  const csvText=await response.text();
+  const parsed=Papa.parse(csvText,{header:true,skipEmptyLines:true,dynamicTyping:false});
+  if(parsed.errors&&parsed.errors.length>0)console.warn('CSV parse warnings',parsed.errors.slice(0,3));
+  csvRows=parsed.data||[];
+  for(const row of csvRows){const key=rowKey(row);if(key&&!csvIndex.has(key))csvIndex.set(key,row);}
+  csvReady=true;
+  return csvRows.length;
+ }
+ function addCompletePart(part){
+  const sourceId='manila-complete-buildings-part-'+part;
+  const layerId=sourceId+'-3d';
+  if(map.getSource(sourceId))return;
+  const path='manila/ermita-buildings-master.parts/part-00'+part+'.geojson';
+  map.addSource(sourceId,{type:'geojson',data:url(path),maxzoom:16});
+  map.addLayer({id:layerId,type:'fill-extrusion',source:sourceId,filter:['==',['geometry-type'],'Polygon'],layout:{visibility:completeVisible?'visible':'none'},paint:{
+   'fill-extrusion-color':['case',['has','render_color'],['get','render_color'],['has','building:colour'],['get','building:colour'],['has','colour'],['get','colour'],'#c9bca7'],
+   'fill-extrusion-height':['max',3,['case',['>', ['to-number',['coalesce',['get','height'],['get','building:height'],['get','render_height'],0]],0],['to-number',['coalesce',['get','height'],['get','building:height'],['get','render_height'],0]],['>', ['to-number',['coalesce',['get','building:levels'],['get','levels'],0]],0],['*',['to-number',['coalesce',['get','building:levels'],['get','levels'],0]],3.15],5]],
+   'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','min_height'],['get','render_min_height'],0]]],
+   'fill-extrusion-opacity':0.94,'fill-extrusion-vertical-gradient':true
+  }});
+  buildingLayerIds.push(layerId);
+  map.on('click',layerId,ev=>{
+   const feature=ev.features&&ev.features[0];if(!feature)return;
+   const props=feature.properties||{}, row=csvMatch(feature);
+   const name=firstValue(props,['name','building','address','addr:street','ref'])||'مبنى دون اسم';
+   const fields=[];
+   if(row){
+    const priority=['name','building','building:use','amenity','shop','office','addr:full','address','addr:street','addr:housenumber','height','building:levels','levels','_source_file'];
+    for(const key of priority){if(row[key])fields.push('<b>'+escapeHtml(key)+'</b>: '+escapeHtml(pretty(row[key])));}
+   }else{
+    for(const key of ['building','name','height','building:levels','levels','amenity','shop','addr:street','addr:housenumber','_source_file'])if(props[key]!==undefined&&props[key]!==null&&props[key]!=='')fields.push('<b>'+escapeHtml(key)+'</b>: '+escapeHtml(pretty(props[key])));
+   }
+   info.style.display='block';
+   info.innerHTML='<b>'+escapeHtml(name)+'</b><div>معرّف الربط: '+escapeHtml(featureKey(feature)||'غير متوفر')+'</div><div>مطابقة CSV: '+(row?'نعم':'لم يُعثر على سجل مطابق')+'</div>'+fields.slice(0,9).map(v=>'<div>'+v+'</div>').join('');
+   new maplibregl.Popup({closeButton:true,maxWidth:'320px'}).setLngLat(ev.lngLat).setHTML(info.innerHTML).addTo(map);
+  });
+  map.on('mouseenter',layerId,()=>map.getCanvas().style.cursor='pointer');
+  map.on('mouseleave',layerId,()=>map.getCanvas().style.cursor='');
+ }
+ function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+ map.on('error',ev=>{
+  if(ev.error){const msg='خطأ في الخريطة: '+ev.error.message;status.textContent=msg;console.error('Manila map error',ev);}
+ });
+ map.on('load',()=>{
+  document.getElementById('baseGround').addEventListener('change',ev=>originalLayers.filter(layer=>!baseBuildingIds.includes(layer.id)).forEach(layer=>visibility(layer.id,ev.target.checked)));
+  document.getElementById('baseBuildings').addEventListener('change',ev=>setGroup(baseBuildingIds,ev.target.checked));
+  status.textContent='الخريطة جاهزة. اختر الطبقات التي تريد مقارنتها.';
+ });
+ completeButton.addEventListener('click',async()=>{
+  completeVisible=!completeVisible;
+  completeButton.setAttribute('aria-pressed',String(completeVisible));
+  completeButton.textContent=completeVisible?'إخفاء المباني كاملة':'إظهار المباني كاملة';
+  if(!completeVisible){setGroup(buildingLayerIds,false);status.textContent='تم إخفاء طبقة المباني المجمّعة.';return;}
+  try{
+   if(!completeLoaded){
+    status.textContent='جارٍ تجهيز جزأي GeoJSON للمباني…';
+    addCompletePart(1);addCompletePart(2);
+    completeLoaded=true;
+   }else setGroup(buildingLayerIds,true);
+   const rowCount=await loadCsv();
+   setGroup(buildingLayerIds,true);
+   status.textContent='تم تفعيل المباني المجمّعة. CSV: '+rowCount.toLocaleString('en-US')+' سجل؛ GeoJSON: جزآن يحتويان 22,977 معلمًا. انقر مبنى لعرض بياناته ومطابقة CSV.';
+  }catch(err){
+   completeVisible=false;completeButton.setAttribute('aria-pressed','false');completeButton.textContent='إظهار المباني كاملة';
+   setGroup(buildingLayerIds,false);showError('تعذر تحميل بيانات المباني: '+(err.message||err));status.textContent='فشل تحميل البيانات؛ يمكنك إعادة المحاولة بعد التحقق من الملفات.';
+  }
+ });
+})();
+</script>
+</body>
+</html>
