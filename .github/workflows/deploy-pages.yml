@@ -45,6 +45,11 @@ jobs:
           /complete_data/OSM/data/
           /complete_data/OSM/quality/building-height-evidence.csv
           /ermita/3d/building-match-audit.csv
+          /ermita/3d/facade-photo-review.csv
+          /ermita/maps/generated/ermita-building-details.csv
+          /ermita/maps/qa/consolidated-building-register.csv
+          /ermita/stores/brand-building-match-audit.csv
+          /kartaview/ermita-real-facade-images.csv
           /ermita/assets/textures/Painted-CMU-Block-Architextures.jpeg
           /ermita/maps/sources/openfreemap/vector-tiles/
           /ermita/maps/sources/openfreemap/building-fallback.geojson
@@ -60,7 +65,7 @@ jobs:
           EOF
           git switch -C main FETCH_HEAD
 
-      - name: Enrich Ermita master CSV and GeoJSON from exact internal IDs
+      - name: Enrich Ermita master CSV and GeoJSON from repository metadata and evidence
         if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'Run Ermita master enrichment')
         shell: bash
         env:
