@@ -276,7 +276,7 @@ jobs:
           npx --yes @gltf-transform/cli optimize site/complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb /tmp/ermita-windows-optimized.glb --compress meshopt
           mv /tmp/ermita-windows-optimized.glb site/complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb
           test -s site/complete_data/OSM/data/nature/ermita-water-and-natural-features.geojson
-          test -s site/complete_data/OSM/data/buildings/ermita-building-footprints.geojson
+          test -s site/complete_data/OSM/data/buildings/Ermita/ermita-building-footprints.geojson
           test -s site/complete_data/OSM/data/roads/ermita-road-network.geojson
           test -s site/test.html
           test -s site/complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb
