@@ -104,6 +104,38 @@ Once internal sources and images have been reviewed, use authoritative sources w
 - Confirm that the report is committed and that the action log shows the enrichment step succeeded.
 - Keep visual reconstruction completeness separate from metadata completeness.
 
+
+## First exact-ID pass — observed output
+
+The first run generated and committed `ermita-master-enrichment-report.json` (report blob SHA `752ff91ba4f0cdf4d36d0c7e760c02eb4c437273`). The report says `status: completed`, and the enrichment output commit is `952fb182a0b648861be01aba13ab43479522a144`.
+
+Observed results:
+- Master CSV: 24,102 rows retained; columns increased from 193 to 209 (16 enrichment/status columns).
+- GeoJSON part 001: 12,507 features retained; 1,608 marked `exact_osm_id_enriched`; 10,899 have a blank status in the report.
+- GeoJSON part 002: 10,470 features retained; all 10,470 have a blank status in the report.
+- CSV status counts: 12,562 marked `exact_osm_id_enriched`; 11,540 have a blank status in the report.
+- No source-value conflicts were reported in this run.
+- Source rows read: 1,909 from `osm-building-details.csv`, 1,528 from `building-height-evidence.csv`, and 1,306 from `building-match-audit.csv`.
+
+Field values added according to the report:
+- `enriched_building_type`: 12,149
+- `enriched_levels`: 6,054
+- `enriched_name`: 3,306
+- `enriched_city`: 3,696
+- `enriched_street`: 1,995
+- `enriched_house_number`: 915
+- `enriched_height_m`: 1,195
+- `enriched_roof_shape`: 831
+- `enriched_postcode`: 552
+- `enriched_official_name`: 63
+- `enriched_material`: 66
+- `enriched_facade_colour`: 44
+- `enriched_roof_colour`: 56
+
+**Interpret carefully:** this is a successful script execution, not proof that every target feature was matched or that visual reconstruction is complete. Blank status values are a diagnostic gap: inspect whether these records lack a usable OSM ID or whether the ID fields differ between the master CSV/GeoJSON and source tables. Part 002 needs particular attention because every feature status was blank. The current script only assigns `no_exact_id_evidence` when it has an ID but finds no usable source values; rows/features with no valid ID currently retain a blank status. Correct status coverage and verify the part-002 ID schema before calling the exact-ID pass fully quality-assured.
+
+The associated Pages/deployment run was still in progress when this note was written; its final deployment outcome is separate from the enrichment script/report result.
+
 ## Safety invariants
 
 - Metadata enrichment only: do not alter geometry, coordinates, source IDs, feature IDs, or rendering heights.
