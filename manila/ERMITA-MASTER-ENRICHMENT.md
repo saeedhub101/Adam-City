@@ -154,3 +154,8 @@ See [the first-30 building audit](manila/ermita-buildings-master.parts/part-001-
 - Added the conservative exact-OSM-ID enrichment script and wired it into the existing Pages workflow.
 - Documented above the exact script inputs, generated fields/report, trigger conditions, safety constraints, and follow-up stages.
 - Do not mark the enrichment data pass complete until a successful action run and report review are recorded.
+
+
+## Expanded repository-first pass
+
+The enrichment script and the existing workflow were expanded to read additional per-building source tables and to preserve candidate evidence in separate fields. The workflow sparse checkout now includes the needed internal files. The expanded pass is triggered by the commit message containing `Run Ermita master enrichment`; inspect the resulting report and run log before accepting the output. This pass deliberately avoids applying unverified image-candidate values as facade materials/colours and avoids using ambiguous nearest-building matches.
