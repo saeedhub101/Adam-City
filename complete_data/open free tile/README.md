@@ -57,3 +57,28 @@ The committed `tile-index.json` contains **141 valid tiles** across zooms 10–1
 - In these 350 records, all 350 carry OpenMapTiles `render_height`; 39 carry `colour`; none currently have building name, house number, or street in the building layer. Address and name enrichment must be joined from the `housenumber`, `poi`, `transportation_name` layers and other authoritative sources rather than guessed.
 - **Important limitation:** these two CSVs are metadata indexes, not replacement geometry files. The source polygon geometry remains in the downloaded PBF tiles under `ermita/maps/sources/openfreemap/vector-tiles/{z}/{x}/{y}.pbf`; no building geometry was changed in the active map. MultiPolygon components outside the stated Ermita extent were excluded from the registry geometry-intersection count; this is a spatial filter, not a claim that the source OSM object itself ends at that boundary.
 - Attribution: OpenFreeMap © OpenMapTiles; data from OpenStreetMap. Schema: https://openmaptiles.org/docs/schema/ .
+
+
+## Per-building geometry extraction — 2026-10-22 (split files)
+
+Repository-tree inspection found that `building-fallback.geojson` already stores OpenFreeMap building geometry, but it is grouped into 1,805 style features rather than one record per building. Those grouped features contain **280,509 polygon components** across the broader imported tile footprint. The individual components were separated and spatially selected against the saved Ermita area polygon (`area-boundary.geojson`); **1,721 building polygon components** have centroids inside the Ermita boundary.
+
+### New outputs
+
+- `buildings-part1.geojson.gz`: 861 full polygon features, compressed GeoJSON FeatureCollection.
+- `buildings-part2.geojson.gz`: 860 full polygon features, compressed GeoJSON FeatureCollection.
+- `layers/buildings-part1.csv`: matching 861-row attribute/enrichment registry.
+- `layers/buildings-part2.csv`: matching 860-row attribute/enrichment registry.
+
+The GeoJSON files retain each extracted polygon's full rings and OpenFreeMap render attributes. They are gzip-compressed to keep repository downloads small; decompress with `gzip -d buildings-part1.geojson.gz` and `gzip -d buildings-part2.geojson.gz`.
+
+### Fields and enrichment audit
+
+- Every extracted feature receives a generated registry key such as `OFM-ERMITA-00001`. **This is not an OSM ID**: the grouped fallback geometry does not preserve per-building OSM identifiers.
+- All 1,721 records retain the OpenFreeMap render height/min-height values where present; colour is retained only where the source provides it.
+- Compared with the 1,528 OSM building polygons in `complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson`, 692 extracted polygons had their centroid inside an OSM building polygon, 65 had a nearest unambiguous OSM building centroid within 3 m, and 119 within 8 m. Those 876 links are stored as spatial matches, not exact-ID joins. A further 236 nearby candidates are marked low-confidence/review and are **not automatically used to populate the main building-name/material fields**.
+- Address-bearing OSM features from `complete_data/OSM/data/addresses/ermita-addresses-street-names-postcodes.geojson` were spatially checked against the extracted footprints. 773 buildings have one or more address candidates inside the footprint; 242 have multiple candidates and are explicitly flagged for review. These are candidates, not proof that every shop/unit address is the building's sole postal address.
+- The source fallback covers a larger extent than Ermita. Selection used the saved Nominatim Ermita boundary and each polygon component's area centroid. Components outside that boundary were not exported to these two parts.
+- No active map, existing building geometry, GLB, or workflow was changed or run by this extraction.
+
+Attribution: OpenFreeMap © OpenMapTiles; data from OpenStreetMap contributors (ODbL where applicable). Area boundary provenance is recorded in `area-boundary.geojson`.
