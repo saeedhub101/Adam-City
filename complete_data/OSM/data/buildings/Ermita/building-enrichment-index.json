@@ -42970,23 +42970,7 @@
         "sign_text_or_logo_verified": false,
         "note": "Panel is a generic placeholder; name/use comes from OSM tags when present.",
         "identity_match": "exact OSM feature ID"
-      },
-      "image_evidence": [
-        {
-          "evidence_type": "facade-photo-overlay-report",
-          "building_name": "Supreme Court Main Building",
-          "source_photo": "https://commons.wikimedia.org/wiki/File:Supreme_Court_in_Manila.JPG",
-          "photographer": "Aerous",
-          "license": "CC BY-SA 3.0",
-          "texture": "complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg",
-          "glb": "complete_data/OSM/Buildings/supreme-court-main-facade.glb",
-          "panel_width_m": 39.85,
-          "panel_height_m": 17.72,
-          "limitations": "A full-width single-view photographic decal over the mapped front wall. It does not wrap around corners; inspect alignment and photo perspective in the map.",
-          "applied_to_model": true,
-          "source_manifest": "complete_data/OSM/Buildings/supreme-court-main-facade-report.json"
-        }
-      ]
+      }
     },
     {
       "part": 1,
