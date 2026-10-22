@@ -136,3 +136,8 @@ Conclusion: **none of the first 30 records is complete for realistic building re
 ## Bahay Silungan (PGH Nurses' Home) evidence update
 
 A building-specific evidence note was added at [`bahay-silungan-pgh-nurses-home-evidence.md`](./bahay-silungan-pgh-nurses-home-evidence.md). It records the supplied current name, PGH/Taft Avenue location context, 18-bedroom split (6 ground-floor, 12 second-floor), terraces/verandas on both floors, and provisional photo observations. It explicitly preserves the discrepancy between OSM `building:levels=3` and the supplied two-floor bedroom description. The source article URL returned HTTP 403 in this session, so its details are labelled as user-supplied evidence rather than independently fetched facts. Exact materials, house number, and real-world height remain unverified.
+
+
+## National Institutes of Health (NIH) Building evidence update
+
+A building-specific evidence note is available at [`national-institutes-of-health-building-evidence.md`](./national-institutes-of-health-building-evidence.md). It records the official address (623 Pedro Gil Street), the official NIH description of the current three-storey beige building inaugurated in 1997, and the historic distinction between the current building and the earlier Bureau of Government Laboratories/Bureau of Science at the site. The current first-30 OSM audit identifies `way/27650470` as “National Institutes of Health” with `building:levels=3`. This evidence must be joined to an OpenFreeMap footprint only after confirming the spatial match; do not alter its geometry or infer an exact height/material specification from these sources.
