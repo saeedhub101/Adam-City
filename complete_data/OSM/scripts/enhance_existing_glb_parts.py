@@ -143,7 +143,7 @@ def main():
         # Reopen exported output to validate that it is a readable GLB and contains
         # at least as many scene geometries as the original source scene.
         check = trimesh.load(out_path, force="scene", process=False)
-        if not isinstance(check, trimesh.Scene) or out_path.stat().st_size <= original_path.stat().st_size:
+        if not isinstance(check, trimesh.Scene) or len(check.geometry) < len(scene.geometry):
             raise RuntimeError(f"Enhanced GLB validation failed: {out_path}")
         report = {
             "original_glb": str(original_path.relative_to(ROOT)),
