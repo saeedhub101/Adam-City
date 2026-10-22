@@ -111,9 +111,21 @@ jobs:
           PY
           # Build a standalone PBR GLB for buildings whose footprints lie along mapped Roxas Boulevard segments.
           python3 ermita/scripts/generate_roxas_boulevard_buildings.py
-          # Export the complete Ermita footprint dataset into six independently positioned GLBs.
-          # This fails the workflow if any source feature or polygon component is omitted.
-          python3 ermita/scripts/export_ermita_buildings_glb_parts.py
+          # Preserve the six committed GLB parts so manual edits are never overwritten by normal deployments.
+          # Generate them only when one or more parts or the validation report are missing.
+          GLB_PARTS_DIR="complete_data/OSM/data/buildings/ermita-glb-parts"
+          if [[ ! -s "$GLB_PARTS_DIR/ermita-buildings-part-01-of-06.glb" ||
+                ! -s "$GLB_PARTS_DIR/ermita-buildings-part-02-of-06.glb" ||
+                ! -s "$GLB_PARTS_DIR/ermita-buildings-part-03-of-06.glb" ||
+                ! -s "$GLB_PARTS_DIR/ermita-buildings-part-04-of-06.glb" ||
+                ! -s "$GLB_PARTS_DIR/ermita-buildings-part-05-of-06.glb" ||
+                ! -s "$GLB_PARTS_DIR/ermita-buildings-part-06-of-06.glb" ||
+                ! -s "$GLB_PARTS_DIR/ermita-buildings-parts-report.json" ]]; then
+            echo "One or more committed GLB parts are missing; generating the six-part set."
+            python3 ermita/scripts/export_ermita_buildings_glb_parts.py
+          else
+            echo "Reusing the six committed GLB parts and report; skipping generation to preserve manual edits."
+          fi
           # Generate source-tagged building/store signs and address plaques in a separately verifiable overlay.
           python3 ermita/scripts/generate_roxas_boulevard_signage.py
           test -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb
