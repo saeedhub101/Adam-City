@@ -150,3 +150,8 @@ The file [`building-evidence-links.csv`](./building-evidence-links.csv) cross-re
 - Bahay Silungan / PGH Nurses' Home: OSM `way/16554323`, candidate OFM key `OFM-ERMITA-01472`; photo observations record a light cream facade, red pitched roof, dark multi-pane windows, arches and verandas.
 
 These OpenFreeMap keys are **candidate joins** until the actual polygons are visually/spatially confirmed. Do not alter geometry or merge Bahay Silungan into the PGH-wide footprint. The photo evidence catalog contains source links and licensing/attribution notes; use the Commons photographs under their stated CC BY-SA 4.0 terms if image pixels are reused.
+
+
+## Building linkage coverage audit
+
+The current coverage report is documented in [`building-linkage-coverage-audit.md`](./building-linkage-coverage-audit.md). It confirms that linkage is partial: the 1,721 extracted polygon components are not a unique-building census; 876 currently have an assigned OSM feature ID via spatial matching, 236 additional low-confidence candidates require review, and 609 have no OSM candidate assigned. Only NIH and Bahay Silungan have building-specific photo evidence recorded in the dedicated evidence crosswalk, and their OpenFreeMap joins are still provisional pending footprint confirmation. The source scope is labelled Ermita; verify the boundary before claiming complete Malate coverage.
