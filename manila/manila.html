@@ -30,7 +30,7 @@ h1{font-size:17px;margin:0 0 5px}.sub{font-size:11px;line-height:1.55;color:var(
 <div class="group-title">طبقات المباني للمقارنة</div>
 <label class="row"><input type="checkbox" id="rawBuildings"> ✓ عرض مباني GeoJSON كما هي من الملفات</label>
 <label class="row"><input type="checkbox" id="enhancedBuildings"> ✓ عرض المباني بعد التحسين</label>
-<div class="sub" style="margin:7px 0 0">طبقة التحسين تختار المباني ضمن 70 مترًا من Roxas Boulevard، وتطبق تصحيحات الارتفاعات وألوان/مواد الواجهات المعروفة. تبقى هندسة المصدر كما هي ولا يُولّد GLB.</div>
+<div class="sub" style="margin:7px 0 0">تحسين مباشر داخل المتصفح: ألوان ومواد الواجهات، تصحيحات الارتفاعات، وزجاج/نوافذ ثلاثية الأبعاد فوق المباني المحددة حول Roxas Boulevard. لا يتم توليد GLB أو تعديل ملفات المصدر.</div>
 <div id="buildingInfo"></div>
 </div>
 <div class="status" id="status">جارٍ تحميل نمط الخريطة الأصلية…</div>
@@ -40,6 +40,7 @@ h1{font-size:17px;margin:0 0 5px}.sub{font-size:11px;line-height:1.55;color:var(
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7.2.0/turf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
 (async function(){
  const status=document.getElementById('status'),errorBox=document.getElementById('error'),info=document.getElementById('buildingInfo');
@@ -55,7 +56,7 @@ h1{font-size:17px;margin:0 0 5px}.sub{font-size:11px;line-height:1.55;color:var(
  window.manilaCityMap=map;map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
  map.on('error',function(e){var msg=e&&e.error&&e.error.message?e.error.message:'خطأ غير محدد';console.error('Manila map error',e);if(!map.loaded()){error('خطأ أثناء تحميل نمط الخريطة: '+msg);status.textContent='تعذر تحميل نمط الخريطة؛ تحقق من الاتصال أو أعد تحميل الصفحة.';}});
  const vis=(id,on)=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none');},group=(ids,on)=>ids.forEach(id=>vis(id,on));
- let rawLoaded=false,enhLoaded=false,rawBusy=false,enhBusy=false,csvReady=false,csvIndex=new Map();const rawIds=[],enhIds=[];
+ let rawLoaded=false,enhLoaded=false,rawBusy=false,enhBusy=false,csvReady=false,csvIndex=new Map(),roxasWindowLayer=null;const rawIds=[],enhIds=[];
  const first=(o,ks)=>{for(const k of ks)if(o&&o[k]!=null&&String(o[k]).trim())return String(o[k]).trim();return '';};
  const key=o=>String(first(o,['osm_feature_id','osm_id','osmId','@id','full_id','element_id','building_id','feature_id','fid','id','ID','objectid'])||'').toLowerCase().replace(/^(node|way|relation)\s*\/?\s*/,'').replace(/\.0$/,'');
  const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -66,7 +67,72 @@ h1{font-size:17px;margin:0 0 5px}.sub{font-size:11px;line-height:1.55;color:var(
  function positive(v,min,max){const m=String(v??'').replace(',','.').match(/-?\d+(?:\.\d+)?/);if(!m)return null;const n=+m[0];return n>=min&&n<=max?n:null;}
  function height(p){const id=String(p.osm_feature_id||p['@id']||p.full_id||'').toLowerCase(),name=String(p.name||p.official_name||'').toLowerCase(),ov={'way/575422161':168,'way/822386816':168,'way/575422162':230,'way/90308376':203,'way/87754850':46,'way/314226123':34,'way/314226156':16};if(ov[id])return ov[id];if(name.includes('grand riviera suites'))return 230;if(name.includes('1322 golden empire'))return 203;if(name.includes('bayview park hotel'))return 46;if(name.includes('national library'))return 34;if(name.includes('planetarium'))return 16;let h=positive(p.height??p['building:height']??p.render_height,2,500),lv=positive(p['building:levels']??p.levels,1,150);if(h!==null&&lv!==null){if(lv>=8&&h<lv*2)return lv*3.2;if(lv<=8&&h>lv*6)return lv*3.2;}return h??(lv!==null?lv*3.2:9.6);}
  function color(p,i){const id=String(p.osm_feature_id||p['@id']||p.full_id||'').toLowerCase(),n=String(p.name||p.official_name||p.brand||'').toLowerCase();if(['way/575422161','way/822386813','way/822386814','way/822386816'].includes(id))return '#476e8f';if(['way/90308376','way/822386807','way/822386809','way/822386811'].includes(id)||n.includes('golden empire'))return '#856b40';if(id==='way/575422162'||n.includes('grand riviera'))return '#9aaeb7';if(id==='way/575422164'||n.includes('eton baypark'))return '#b0aaa3';if(id==='way/136842220'||n.includes('luneta hotel'))return '#c7b77f';if(id==='way/87754850'||n.includes('bayview park'))return '#c2522b';if(id==='way/314226123'||n.includes('national library'))return '#c9cbc5';if(id==='way/314226156'||n.includes('planetarium'))return '#d4d4cd';if(id==='way/89770558'||n.includes('red planet'))return '#383e43';const mat=String(p['building:material']||p['facade:material']||p.material||'').toLowerCase(),c=String(p['building:colour']||p['building:color']||p.colour||p.color||'').toLowerCase();if(mat.includes('glass')||mat.includes('glazing')||c.includes('blue'))return '#5d7b87';if(mat.includes('stone')||mat.includes('marble')||c.includes('white')||c.includes('ivory'))return '#c6bea8';if(mat.includes('concrete')||mat.includes('plaster')||c.includes('grey')||c.includes('gray'))return '#9c9a91';if(mat.includes('brick')||mat.includes('terracotta')||c.includes('red')||c.includes('brown'))return '#965d48';const pal=['#b8ad97','#c9c5b4','#92958e','#b09a7d','#8f5a48','#5d7b87'];let seed=0;for(const ch of (id||n||String(i)))seed+=ch.charCodeAt(0);return pal[seed%pal.length];}
- async function loadEnhanced(){if(enhLoaded){group(enhIds,true);return;}if(enhBusy)return;enhBusy=true;clearError();status.textContent='جارٍ تحديد مباني Roxas Boulevard وتطبيق تحسينات الارتفاعات والمواد…';try{if(!window.turf)throw Error('مكتبة GeoJSON غير متاحة');const [br,rr]=await Promise.all([fetch(url('../complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.geojson')),fetch(url('../complete_data/OSM/data/roads/ermita-road-network.geojson'))]);if(!br.ok)throw Error('Buildings GeoJSON HTTP '+br.status);if(!rr.ok)throw Error('Road GeoJSON HTTP '+rr.status);let [bd,rd]=await Promise.all([br.json(),rr.json()]);if((!Array.isArray(bd.features)||bd.features.length===0)&&Array.isArray(bd.metadata?.parts)&&bd.metadata.parts.length){const chunks=await Promise.all(bd.metadata.parts.map(async p=>{const res=await fetch(url('../'+p));if(!res.ok)throw Error('Building part HTTP '+res.status+': '+p);return res.json();}));bd={...bd,features:chunks.flatMap(c=>Array.isArray(c.features)?c.features:[])};}if(!Array.isArray(bd.features)||bd.features.length===0)throw Error('ملف الفهرس لا يحتوي مباني ولم يمكن تحميل ملفات الأجزاء');const roads=(rd.features||[]).filter(f=>{const p=f.properties||{},n=[p.name,p.official_name,p.alt_name,p['name:en']].join(' ').toLowerCase().replace(/[^a-z]/g,'');return (n.includes('roxasboulevard')||n.includes('roxasblvd'))&&f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type);});if(!roads.length)throw Error('لم يُعثر على طريق مسمى Roxas Boulevard؛ أُوقف الاختيار لتجنب استهداف مبانٍ خاطئة');const buffers=roads.map(f=>turf.buffer(f,70,{units:'meters'})).filter(Boolean),corridor=turf.union(turf.featureCollection(buffers));if(!corridor)throw Error('تعذر إنشاء نطاق الطريق');const selected=[],seen=new Set();for(const f of bd.features||[]){if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type)||!turf.booleanIntersects(f,corridor))continue;const k=JSON.stringify(f.geometry.coordinates);if(seen.has(k))continue;seen.add(k);const p={...(f.properties||{})};p.height=height(p);p.render_color=color(p,selected.length);p._enhanced_by='Roxas Boulevard browser adaptation';selected.push({...f,properties:p});}if(!selected.length)throw Error('لم تُحدد مبانٍ ضمن نطاق 70 مترًا من Roxas Boulevard');map.addSource('manila-roxas-enhanced',{type:'geojson',data:{type:'FeatureCollection',features:selected},maxzoom:16});const lid='manila-roxas-enhanced-3d';map.addLayer({id:lid,type:'fill-extrusion',source:'manila-roxas-enhanced',filter:['==',['geometry-type'],'Polygon'],layout:{visibility:'visible'},paint:{'fill-extrusion-color':['coalesce',['get','render_color'],'#b8ad97'],'fill-extrusion-height':['max',3,['to-number',['get','height'],9.6]],'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','min_height'],['get','render_min_height'],0]]],'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}});enhIds.push(lid);clickInfo(lid);enhLoaded=true;status.textContent='تم تطبيق تحسينات الألوان والارتفاعات على '+selected.length.toLocaleString('en-US')+' مبنى ضمن نطاق Roxas Boulevard. لا يوجد GLB مولّد.';}catch(e){error('تعذر تفعيل تحسين المباني: '+e.message);status.textContent='فشل التحسين؛ ألغِ التحديد ثم أعد المحاولة.';throw e;}finally{enhBusy=false;}}
+ function addProceduralWindows(features){
+   if(!window.THREE)throw Error('تعذر تحميل Three.js لإنشاء النوافذ مباشرة');
+   if(map.getLayer('manila-roxas-window-mesh')){map.removeLayer('manila-roxas-window-mesh');}
+   const THREE=window.THREE;
+   const layer={
+    id:'manila-roxas-window-mesh',type:'custom',renderingMode:'3d',
+    onAdd:function(m,gl){
+     this.camera=new THREE.Camera();this.scene=new THREE.Scene();
+     this.glassMaterials=[
+      new THREE.MeshBasicMaterial({color:0x456c83,side:THREE.DoubleSide,transparent:true,opacity:0.88,depthWrite:true}),
+      new THREE.MeshBasicMaterial({color:0x806b43,side:THREE.DoubleSide,transparent:true,opacity:0.9,depthWrite:true}),
+      new THREE.MeshBasicMaterial({color:0x263f53,side:THREE.DoubleSide,transparent:true,opacity:0.9,depthWrite:true})
+     ];
+     const positions=[[],[],[]];
+     const addQuad=(arr,a,b,c,d)=>{arr.push(...a,...b,...c,...a,...c,...d);};
+     const getParts=f=>f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.type==='MultiPolygon'?f.geometry.coordinates:[];
+     let count=0;
+     for(const f of features){
+      const p=f.properties||{},h=Math.max(3,Number(p.height)||9.6),lat=Number((f.geometry.coordinates||[])[0]?.[0]?.[1]||14.585);
+      const scale=maplibregl.MercatorCoordinate.fromLngLat([120.982,lat]).meterInMercatorCoordinateUnits();
+      const floors=Math.max(1,Math.min(60,Math.floor(h/3.2))),fh=h/floors;
+      const n=String(p.name||p.official_name||'').toLowerCase(),id=String(p.osm_feature_id||p['@id']||'').toLowerCase();
+      const mat=(id.includes('90308376')||id.includes('822386807')||n.includes('golden empire'))?1:(id.includes('575422161')||id.includes('822386813')||n.includes('pearl of the orient'))?0:2;
+      for(const poly of getParts(f)){
+       const ring=poly&&poly[0];if(!ring||ring.length<4)continue;
+       const pts=ring.map(c=>{const mc=maplibregl.MercatorCoordinate.fromLngLat([c[0],c[1]]);return [mc.x,mc.y];});
+       let cx=0,cy=0;for(const q of pts){cx+=q[0];cy+=q[1];}cx/=pts.length;cy/=pts.length;
+       for(let e=0;e<pts.length-1;e++){
+        const a=pts[e],b=pts[e+1],dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy)/scale;
+        if(len<3||len>250)continue;
+        const ux=dx/Math.hypot(dx,dy),uy=dy/Math.hypot(dx,dy);
+        const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;
+        let nx=-uy,ny=ux;if(nx*(mx-cx)+ny*(my-cy)<0){nx=-nx;ny=-ny;}
+        const usable=Math.max(0,len-1.0),cols=Math.min(45,Math.floor(usable/3.1));
+        if(cols<1)continue;
+        const step=usable/cols,ww=Math.min(1.35,step*0.55)*scale,winH=Math.min(1.45,fh*0.53)*scale,offset=scale*0.045;
+        for(let fl=0;fl<floors;fl++){
+         const z0=(fl*fh+Math.max(0.55,fh*0.2))*scale,z1=Math.min((fl*fh+fh*0.78)*scale,z0+winH);
+         if(z1<=z0)continue;
+         for(let col=0;col<cols;col++){
+          const along=(col+0.5)*step-len/2;
+          const wx=mx+ux*along,wy=my+uy*along;
+          const l=ww/2;
+          const q1=[wx-ux*l+nx*offset,wy-uy*l+ny*offset,z0],q2=[wx+ux*l+nx*offset,wy+uy*l+ny*offset,z0],q3=[wx+ux*l+nx*offset,wy+uy*l+ny*offset,z1],q4=[wx-ux*l+nx*offset,wy-uy*l+ny*offset,z1];
+          addQuad(positions[mat],q1,q2,q3,q4);count++;
+         }
+        }
+       }
+      }
+     }
+     this.meshes=[];
+     positions.forEach((arr,i)=>{if(!arr.length)return;const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(arr,3));g.computeVertexNormals();const mesh=new THREE.Mesh(g,this.glassMaterials[i]);mesh.frustumCulled=false;this.scene.add(mesh);this.meshes.push(mesh);});
+     this.renderer=new THREE.WebGLRenderer({canvas:m.getCanvas(),context:gl,antialias:true});this.renderer.autoClear=false;this.windowCount=count;
+    },
+    render:function(gl,args){
+     const matrix=args.defaultProjectionData&&args.defaultProjectionData.mainMatrix;
+     if(!matrix)return;
+     this.camera.projectionMatrix.fromArray(matrix);
+     this.renderer.resetState();this.renderer.render(this.scene,this.camera);
+     map.triggerRepaint();
+    },
+    onRemove:function(){if(this.renderer)this.renderer.dispose();if(this.meshes)this.meshes.forEach(m=>{m.geometry.dispose();});}
+   };
+   map.addLayer(layer);roxasWindowLayer=layer;return layer;
+ }
+ async function loadEnhanced(){if(enhLoaded){group(enhIds,true);return;}if(enhBusy)return;enhBusy=true;clearError();status.textContent='جارٍ تحديد مباني Roxas Boulevard وتطبيق تحسينات الارتفاعات والمواد…';try{if(!window.turf)throw Error('مكتبة GeoJSON غير متاحة');const [br,rr]=await Promise.all([fetch(url('../complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.geojson')),fetch(url('../complete_data/OSM/data/roads/ermita-road-network.geojson'))]);if(!br.ok)throw Error('Buildings GeoJSON HTTP '+br.status);if(!rr.ok)throw Error('Road GeoJSON HTTP '+rr.status);let [bd,rd]=await Promise.all([br.json(),rr.json()]);if((!Array.isArray(bd.features)||bd.features.length===0)&&Array.isArray(bd.metadata?.parts)&&bd.metadata.parts.length){const chunks=await Promise.all(bd.metadata.parts.map(async p=>{const res=await fetch(url('../'+p));if(!res.ok)throw Error('Building part HTTP '+res.status+': '+p);return res.json();}));bd={...bd,features:chunks.flatMap(c=>Array.isArray(c.features)?c.features:[])};}if(!Array.isArray(bd.features)||bd.features.length===0)throw Error('ملف الفهرس لا يحتوي مباني ولم يمكن تحميل ملفات الأجزاء');const roads=(rd.features||[]).filter(f=>{const p=f.properties||{},n=[p.name,p.official_name,p.alt_name,p['name:en']].join(' ').toLowerCase().replace(/[^a-z]/g,'');return (n.includes('roxasboulevard')||n.includes('roxasblvd'))&&f.geometry&&['LineString','MultiLineString'].includes(f.geometry.type);});if(!roads.length)throw Error('لم يُعثر على طريق مسمى Roxas Boulevard؛ أُوقف الاختيار لتجنب استهداف مبانٍ خاطئة');const buffers=roads.map(f=>turf.buffer(f,70,{units:'meters'})).filter(Boolean),corridor=turf.union(turf.featureCollection(buffers));if(!corridor)throw Error('تعذر إنشاء نطاق الطريق');const selected=[],seen=new Set();for(const f of bd.features||[]){if(!f.geometry||!['Polygon','MultiPolygon'].includes(f.geometry.type)||!turf.booleanIntersects(f,corridor))continue;const k=JSON.stringify(f.geometry.coordinates);if(seen.has(k))continue;seen.add(k);const p={...(f.properties||{})};p.height=height(p);p.render_color=color(p,selected.length);p._enhanced_by='Roxas Boulevard browser adaptation';selected.push({...f,properties:p});}if(!selected.length)throw Error('لم تُحدد مبانٍ ضمن نطاق 70 مترًا من Roxas Boulevard');map.addSource('manila-roxas-enhanced',{type:'geojson',data:{type:'FeatureCollection',features:selected},maxzoom:16});const lid='manila-roxas-enhanced-3d';map.addLayer({id:lid,type:'fill-extrusion',source:'manila-roxas-enhanced',filter:['==',['geometry-type'],'Polygon'],layout:{visibility:'visible'},paint:{'fill-extrusion-color':['coalesce',['get','render_color'],'#b8ad97'],'fill-extrusion-height':['max',3,['to-number',['get','height'],9.6]],'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','min_height'],['get','render_min_height'],0]]],'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}});enhIds.push(lid);clickInfo(lid);addProceduralWindows(selected);enhLoaded=true;status.textContent='تم تطبيق الألوان والارتفاعات والزجاج/النوافذ مباشرة على '+selected.length.toLocaleString('en-US')+' مبنى ضمن نطاق Roxas Boulevard. لا يوجد GLB مولّد.';}catch(e){error('تعذر تفعيل تحسين المباني: '+e.message);status.textContent='فشل التحسين؛ ألغِ التحديد ثم أعد المحاولة.';throw e;}finally{enhBusy=false;}}
  map.on('load',function(){original=(map.getStyle().layers||[]).map(x=>({...x}));baseIds=original.filter(x=>x.type==='fill-extrusion'&&/building/i.test(x.id+' '+(x['source-layer']||''))).map(x=>x.id);ground.addEventListener('change',e=>original.filter(x=>!baseIds.includes(x.id)).forEach(x=>vis(x.id,e.target.checked)));base.addEventListener('change',e=>group(baseIds,e.target.checked));raw.addEventListener('change',e=>e.target.checked?loadRaw().catch(()=>raw.checked=false):group(rawIds,false));enh.addEventListener('change',e=>e.target.checked?loadEnhanced().catch(()=>{enh.checked=false;group(enhIds,false);}):group(enhIds,false));status.textContent='الخريطة جاهزة. فعّل علامات ✓ لمقارنة الطبقات.';});
 })();
 </script>
