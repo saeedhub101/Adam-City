@@ -163,7 +163,15 @@ def main():
                         window_meshes += 1
                         window_boxes += len(glazing.faces) // 12
 
-                    finish = facade.pbr_for(tags, feature_index)\n                    texture = facade.facade_texture_mesh(poly, height, tags, *finish)\n                    if texture is not None:\n                        texture.apply_translation([-ox, -oy, 0.0])\n                        node = f"{node_key}_material_texture_{feature_index}_{poly_index}"\n                        scene.add_geometry(texture, node_name=node, geom_name=node)\n                        base_meshes += 1\n\n                    accents = facade.facade_accent_mesh(poly, height, tags, feature_index)
+                    finish = facade.pbr_for(tags, feature_index)
+                    texture = facade.facade_texture_mesh(poly, height, tags, *finish)
+                    if texture is not None:
+                        texture.apply_translation([-ox, -oy, 0.0])
+                        node = f"{node_key}_material_texture_{feature_index}_{poly_index}"
+                        scene.add_geometry(texture, node_name=node, geom_name=node)
+                        base_meshes += 1
+
+                    accents = facade.facade_accent_mesh(poly, height, tags, feature_index)
                     if accents is not None:
                         accents.apply_translation([-ox, -oy, 0.0])
                         node = f"{node_key}_facade_accents_{feature_index}_{poly_index}"
