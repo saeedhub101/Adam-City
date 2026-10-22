@@ -17,19 +17,15 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <div id="map" aria-label="خريطة ثلاثية الأبعاد لإرميتا ومالاتي"></div>
 <section class="panel">
 <h1>ADAM CITY · TEST</h1>
-<div class="sub">مفاتيح للمصادر الأصلية وطبقات OSM، مع مفتاح مستقل ليافطات المتاجر.</div>
+<div class="sub">مفاتيح للمصادر الأصلية وطبقات OSM المستقلة.</div>
 <div class="group"><div class="group-title">المصدر الأصلي للخريطة</div>
 <label class="row"><input type="checkbox" id="baseGround" checked> إظهار أرضية الخريطة الأصلية (الشوارع، المياه، الحدائق والتسميات)</label>
 <label class="row"><input type="checkbox" id="baseBuildings" checked> إظهار مباني المصدر الأصلية ثلاثية الأبعاد</label>
-<label class="row"><input type="checkbox" id="commercial-signage" checked> إظهار يافطات Robinsons و7-Eleven وMcDonald’s</label>
-<label class="row"><input type="checkbox" id="pedro-gil-decal"> Plane Texture — يافطات جميع فروع 7-Eleven</label>
-<label class="row"><input type="checkbox" id="supreme-court-facade"> Supreme Court — صورة واجهة حقيقية (Plane Texture)</label>
 </div>
 <div class="group"><div class="group-title">مجلدات OSM — طبقات مستقلة</div>
 <label class="row"><input type="checkbox" id="osm-raw"> 1. raw — بيانات OSM الخام (ليست طبقة خريطة مباشرة)</label>
 <label class="row"><input type="checkbox" id="osm-features"> 2. features — جميع المعالم الجغرافية</label>
 <label class="row"><input type="checkbox" id="osm-tags"> 3. tags — جدول الوسوم (بيانات وصفية وليست طبقة مكانية)</label>
-<label class="row"><input type="checkbox" id="osm-buildings" checked> 4. buildings — بصمات المباني وتفاصيل الأسطح</label>
 <label class="row"><input type="checkbox" id="roxas-boulevard-glb"> 4.1 Roxas Boulevard — مباني GLB (طبقة مستقلة)</label>
 <label class="row"><input type="checkbox" id="osm-roads" checked> 5. roads — الطرق وتفاصيل هندستها</label>
 <label class="row"><input type="checkbox" id="enhanced-glb-part-1"> 5.1 GLB محسن — الجزء 1 (مواد وواجهات ونوافذ)</label>
@@ -90,8 +86,6 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
  map.on('load',()=>{
   try{
    addSourceLayer('features','osm-features-src','complete_data/OSM/data/features/ermita-features.geojson','map','#8ab5c5');
-   addSourceLayer('buildings','osm-building-details-src','complete_data/OSM/data/buildings/Ermita/ermita-building-footprints.geojson','buildings','#c8bca9');
-   addSourceLayer('buildings','osm-building-roofs-src','complete_data/OSM/data/buildings/Ermita/ermita-building-roof-details.geojson','buildings','#d6a477');
    addSourceLayer('roads','osm-roads-src','complete_data/OSM/data/roads/ermita-road-network.geojson','map','#f0c979');
    addSourceLayer('roads','osm-road-engineering-src','complete_data/OSM/data/roads/ermita-road-engineering-details.geojson','map','#e28c63');
    addSourceLayer('thematic','osm-branded-stores-src','complete_data/OSM/data/thematic/ermita-branded-stores.geojson','map','#e9a5d1');
@@ -103,9 +97,9 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
    addSourceLayer('nature','osm-water-src','complete_data/OSM/data/nature/ermita-water-and-natural-features.geojson','map','#67c9e8');
    addSourceLayer('nature','osm-vegetation-src','complete_data/OSM/data/nature/ermita-trees-parks-vegetation.geojson','map','#71c982');
    // Bind all eleven OSM directory toggles; raw and tags are inventory/data tables rather than direct map layers.
-   ['raw','features','tags','buildings','roads','thematic','pedestrian','addresses','administrative','places','nature'].forEach(bind);
+   ['raw','features','tags','roads','thematic','pedestrian','addresses','administrative','places','nature'].forEach(bind);
    // Show the two core spatial OSM layers immediately so the test page visibly verifies the local datasets.
-   setGroup(groups.buildings,true);setGroup(groups.roads,true);
+   setGroup(groups.roads,true);
    // The custom 3D facade layer must render AFTER OSM extrusions added above; otherwise solid buildings cover the windows.
    if(map.getLayer('windows-facade-details')) map.moveLayer('windows-facade-details');
    document.getElementById('baseGround').addEventListener('change',ev=>originalLayers.filter(l=>!baseBuildingIds.includes(l.id)).forEach(l=>visibility(l.id,ev.target.checked)));
@@ -187,8 +181,6 @@ try {
      if(s)s.textContent='تم تحميل نموذج windows ثلاثي الأبعاد | meshes='+windowsMeshCount;
      // Ensure this diagnostic layer is above the map's building/extrusion layers.
     if(mapInstance.getLayer('windows-facade-details')) mapInstance.moveLayer('windows-facade-details');
-    // Commercial signs must stay above the facade/window meshes when both GLBs are enabled.
-    if(mapInstance.getLayer('commercial-signage-3d')) mapInstance.moveLayer('commercial-signage-3d');
     mapInstance.triggerRepaint();
    },progress=>{
     const s=document.getElementById('status');
@@ -233,267 +225,7 @@ try {
  const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر إعداد طبقة windows: '+(err?.message||err);}
 }
 
- // Robinsons / 7-Eleven / McDonald's signs: share the same THREE instance and projection path as windows.
- const signageToggle=document.getElementById('commercial-signage');
- window.adamCommercialEnabled=!!signageToggle?.checked;
- signageToggle?.addEventListener('change',ev=>{
-  window.adamCommercialEnabled=ev.target.checked;
-  if(window.adamCommercialLayerReady && window.adamSetCommercialVisible) window.adamSetCommercialVisible(ev.target.checked);
-  else if(ev.target.checked){const s=document.getElementById('status');if(s)s.textContent='جارٍ تحميل نموذج يافطات المتاجر ثلاثي الأبعاد…';}
- });
- try {
-  const map=await waitMap();
-  const modelUrl=new URL('complete_data/OSM/Buildings/Markets/facidals/robenson.glb',location.href).href;
-  const originUrl=new URL('complete_data/OSM/Markets/commercial-facades-origin.json',location.href).href;
-  const response=await fetch(originUrl);
-  if(!response.ok)throw new Error('Origin JSON HTTP '+response.status);
-  const origin=await response.json();
-  const lat=Number(origin.latitude);
-  const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:Number(origin.longitude),lat},Number(origin.anchor_altitude_m||0));
-  const meterScale=anchor.meterInMercatorCoordinateUnits();
-  const projectedMeterScale=meterScale*Math.cos(lat*Math.PI/180);
-  let commercialRenderer,commercialCamera,commercialScene,commercialModel;
-  const commercialLayer={
-   id:'commercial-signage-3d',type:'custom',renderingMode:'3d',
-   onAdd(mapInstance,gl){
-    commercialRenderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});
-    commercialRenderer.autoClear=false;
-    commercialCamera=new THREE.Camera();commercialScene=new THREE.Scene();
-    commercialScene.add(new THREE.AmbientLight(0xffffff,2.0));
-    const light=new THREE.DirectionalLight(0xffffff,2.2);light.position.set(0,-70,100).normalize();commercialScene.add(light);
-    const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
-    loader.load(modelUrl,gltf=>{
-     commercialModel=gltf.scene;
-     commercialModel.position.set(0,0,0);commercialModel.scale.set(1,1,1);
-     let meshes=0;commercialModel.traverse(o=>{if(o.isMesh)meshes++;});
-     commercialScene.add(commercialModel);
-     window.adamCommercialLayerReady=true;
-     window.adamSetCommercialVisible=visible=>{if(commercialModel)commercialModel.visible=visible;mapInstance.triggerRepaint();};
-     commercialModel.visible=!!document.getElementById('commercial-signage')?.checked;
-     const s=document.getElementById('status');
-     if(s)s.textContent='يافطات المتاجر محمّلة | meshes='+meshes+' | Robinsons + 7-Eleven + McDonald’s | '+(commercialModel.visible?'مفعّلة':'مخفية');
-     if(mapInstance.getLayer('commercial-signage-3d'))mapInstance.moveLayer('commercial-signage-3d');
-     mapInstance.triggerRepaint();
-    },progress=>{
-     const s=document.getElementById('status');
-     if(s)s.textContent=progress.total?'جارٍ تحميل يافطات المتاجر: '+Math.round(progress.loaded/progress.total*100)+'%':'جارٍ تنزيل نموذج يافطات المتاجر…';
-    },err=>{
-     const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر تحميل يافطات المتاجر: '+(err?.message||err);}
-     const s=document.getElementById('status');if(s)s.textContent='فشل تحميل نموذج يافطات المتاجر.';
-    });
-   },
-   render(gl,args){
-    if(!commercialRenderer||!commercialModel||!commercialModel.visible)return;
-    const mainMatrix=args?.defaultProjectionData?.mainMatrix;
-    if(!mainMatrix)return;
-    const values=Object.values(mainMatrix);
-    if(values.length!==16||values.some(v=>!Number.isFinite(Number(v))))return;
-    const projection=new THREE.Matrix4().fromArray(values.map(Number));
-    const transform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
-     .scale(new THREE.Vector3(projectedMeterScale,-projectedMeterScale,meterScale));
-    commercialCamera.projectionMatrix.copy(projection).multiply(transform);
-    commercialCamera.projectionMatrixInverse.copy(commercialCamera.projectionMatrix).invert();
-    commercialRenderer.resetState();commercialRenderer.render(commercialScene,commercialCamera);commercialRenderer.resetState();
-   }
-  };
-  map.addLayer(commercialLayer);
-  if(map.getLayer('commercial-signage-3d'))map.moveLayer('commercial-signage-3d');
- } catch(err) {
-  const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر إعداد يافطات المتاجر: '+(err?.message||err);}
- }
 
- // Isolated image decal test on the OSM-matched 7-Eleven building along Pedro Gil Street.
- // This layer shares the exact commercial origin and the documented MapLibre/Three.js transform.
- const decalToggle=document.getElementById('pedro-gil-decal');
- window.adamAll7ElevenPlaneTexturesEnabled=!!decalToggle?.checked;
- decalToggle?.addEventListener('change',ev=>{
-  window.adamPedroGilDecalEnabled=ev.target.checked;
-  if(window.adamAll7ElevenPlaneTexturesLayerReady && window.adamSetAll7ElevenPlaneTexturesVisible) window.adamSetPedroGilDecalVisible(ev.target.checked);
-  else if(ev.target.checked){const s=document.getElementById('status');if(s)s.textContent='جارٍ تحميل Plane Texture لجميع فروع 7-Eleven…';}
- });
- try {
-  const map=await waitMap();
-  const modelUrl=new URL('complete_data/OSM/Buildings/Markets/facidals/all-7eleven-plane-textures.glb',location.href).href;
-  const originUrl=new URL('complete_data/OSM/Markets/commercial-facades-origin.json',location.href).href;
-  const response=await fetch(originUrl);
-  if(!response.ok)throw new Error('Origin JSON HTTP '+response.status);
-  const origin=await response.json();
-  const lat=Number(origin.latitude);
-  const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:Number(origin.longitude),lat},Number(origin.anchor_altitude_m||0));
-  const meterScale=anchor.meterInMercatorCoordinateUnits();
-  const projectedMeterScale=meterScale*Math.cos(lat*Math.PI/180);
-  let decalRenderer,decalCamera,decalScene,decalModel;
-  const decalLayer={
-   id:'all-7eleven-plane-textures-3d',type:'custom',renderingMode:'3d',
-   onAdd(mapInstance,gl){
-    decalRenderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});
-    decalRenderer.autoClear=false;
-    decalCamera=new THREE.Camera();decalScene=new THREE.Scene();
-    decalScene.add(new THREE.AmbientLight(0xffffff,2.0));
-    const light=new THREE.DirectionalLight(0xffffff,1.6);light.position.set(0,-70,100).normalize();decalScene.add(light);
-    const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
-    loader.load(modelUrl,gltf=>{
-     decalModel=gltf.scene;decalModel.position.set(0,0,0);decalModel.scale.set(1,1,1);
-     let meshes=0;decalModel.traverse(o=>{if(o.isMesh)meshes++;});
-     decalScene.add(decalModel);
-     window.adamPedroGilDecalLayerReady=true;
-     window.adamSetPedroGilDecalVisible=visible=>{if(decalModel)decalModel.visible=visible;mapInstance.triggerRepaint();};
-     decalModel.visible=!!document.getElementById('pedro-gil-decal')?.checked;
-     const s=document.getElementById('status');
-     if(s)s.textContent='Plane Texture لجميع فروع 7-Eleven محمّل | meshes='+meshes+' | '+(decalModel.visible?'مفعّل':'مخفي');
-     if(mapInstance.getLayer('all-7-eleven-plane-textures-3d'))mapInstance.moveLayer('all-7-eleven-plane-textures-3d');
-     mapInstance.triggerRepaint();
-    },progress=>{
-     const s=document.getElementById('status');
-     if(s)s.textContent=progress.total?'جارٍ تحميل Decal: '+Math.round(progress.loaded/progress.total*100)+'%':'جارٍ تنزيل نموذج Decal…';
-    },err=>{
-     const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر تحميل Plane Texture لجميع فروع 7-Eleven: '+(err?.message||err);}
-     const s=document.getElementById('status');if(s)s.textContent='فشل تحميل Plane Texture لجميع فروع 7-Eleven.';
-    });
-   },
-   render(gl,args){
-    if(!decalRenderer||!decalModel||!decalModel.visible)return;
-    const mainMatrix=args?.defaultProjectionData?.mainMatrix;
-    if(!mainMatrix)return;
-    const values=Object.values(mainMatrix);
-    if(values.length!==16||values.some(v=>!Number.isFinite(Number(v))))return;
-    const projection=new THREE.Matrix4().fromArray(values.map(Number));
-    const transform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
-     .scale(new THREE.Vector3(projectedMeterScale,-projectedMeterScale,meterScale));
-    decalCamera.projectionMatrix.copy(projection).multiply(transform);
-    decalCamera.projectionMatrixInverse.copy(decalCamera.projectionMatrix).invert();
-    decalRenderer.resetState();decalRenderer.render(decalScene,decalCamera);decalRenderer.resetState();
-   }
-  };
-  map.addLayer(decalLayer);
-  if(map.getLayer('all-7-eleven-plane-textures-3d'))map.moveLayer('all-7-eleven-plane-textures-3d');
- } catch(err) {
-  const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر إعداد Decal Pedro Gil: '+(err?.message||err);}
- }
-
-
-  // Supreme Court photographic facade plane. Follow the documented shared THREE/MapLibre transform.
-  const courtToggle=document.getElementById('supreme-court-facade');
-  window.adamCourtFacadeEnabled=!!courtToggle?.checked;
-  courtToggle?.addEventListener('change',ev=>{
-   window.adamCourtFacadeEnabled=ev.target.checked;
-   if(window.adamCourtFacadeLayerReady && window.adamSetCourtFacadeVisible) window.adamSetCourtFacadeVisible(ev.target.checked);
-   else if(ev.target.checked){const s=document.getElementById('status');if(s)s.textContent='جارٍ تحميل خامة واجهة المحكمة العليا…';}
-  });
-  try {
-   const map=await waitMap();
-   const modelUrl=new URL('complete_data/OSM/Buildings/supreme-court-main-facade.glb',location.href).href;
-   const originUrl=new URL('complete_data/OSM/Markets/commercial-facades-origin.json',location.href).href;
-   const response=await fetch(originUrl);if(!response.ok)throw new Error('Origin JSON HTTP '+response.status);
-   const origin=await response.json(),lat=Number(origin.latitude);
-   const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:Number(origin.longitude),lat},Number(origin.anchor_altitude_m||0));
-   const meterScale=anchor.meterInMercatorCoordinateUnits(),projectedMeterScale=meterScale*Math.cos(lat*Math.PI/180);
-   let courtRenderer,courtCamera,courtScene,courtModel;
-   const courtLayer={
-    id:'supreme-court-photo-facade-3d',type:'custom',renderingMode:'3d',
-    onAdd(mapInstance,gl){
-     courtRenderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});courtRenderer.autoClear=false;
-     courtCamera=new THREE.Camera();courtScene=new THREE.Scene();
-     courtScene.add(new THREE.AmbientLight(0xffffff,2.0));
-     const light=new THREE.DirectionalLight(0xffffff,1.6);light.position.set(0,-70,100).normalize();courtScene.add(light);
-     const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
-     loader.load(modelUrl,gltf=>{
-      courtModel=gltf.scene;courtModel.position.set(0,0,0);courtModel.scale.set(1,1,1);
-      let meshes=0;courtModel.traverse(o=>{if(o.isMesh)meshes++;});courtScene.add(courtModel);
-      window.adamCourtFacadeLayerReady=true;
-      window.adamSetCourtFacadeVisible=visible=>{if(courtModel)courtModel.visible=visible;mapInstance.triggerRepaint();};
-      courtModel.visible=!!document.getElementById('supreme-court-facade')?.checked;
-      const s=document.getElementById('status');if(s)s.textContent='خامة واجهة المحكمة العليا محمّلة | meshes='+meshes+' | '+(courtModel.visible?'مفعّلة':'مخفية');
-      if(mapInstance.getLayer('supreme-court-photo-facade-3d'))mapInstance.moveLayer('supreme-court-photo-facade-3d');
-      mapInstance.triggerRepaint();
-     },progress=>{
-      const s=document.getElementById('status');if(s)s.textContent=progress.total?'جارٍ تحميل خامة المحكمة: '+Math.round(progress.loaded/progress.total*100)+'%':'جارٍ تنزيل خامة واجهة المحكمة العليا…';
-     },err=>{
-      const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر تحميل خامة واجهة المحكمة العليا: '+(err?.message||err);}
-      const s=document.getElementById('status');if(s)s.textContent='فشل تحميل خامة واجهة المحكمة العليا.';
-     });
-    },
-    render(gl,args){
-     if(!courtRenderer||!courtModel||!courtModel.visible)return;
-     const mainMatrix=args?.defaultProjectionData?.mainMatrix;if(!mainMatrix)return;
-     const values=Object.values(mainMatrix);if(values.length!==16||values.some(v=>!Number.isFinite(Number(v))))return;
-     const projection=new THREE.Matrix4().fromArray(values.map(Number));
-     const transform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z).scale(new THREE.Vector3(projectedMeterScale,-projectedMeterScale,meterScale));
-     courtCamera.projectionMatrix.copy(projection).multiply(transform);courtCamera.projectionMatrixInverse.copy(courtCamera.projectionMatrix).invert();
-     courtRenderer.resetState();courtRenderer.render(courtScene,courtCamera);courtRenderer.resetState();
-    }
-   };
-   map.addLayer(courtLayer);
-   if(map.getLayer('supreme-court-photo-facade-3d'))map.moveLayer('supreme-court-photo-facade-3d');
-  } catch(err) {
-   const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر إعداد خامة واجهة المحكمة العليا: '+(err?.message||err);}
-  }
-
-</script>
-
-
-
-
-
-
-<script type="module">
-/* Independent Roxas Boulevard GLB layer, aligned using its own exported origin. */
-import * as THREE from 'three';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
-import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.0/meshopt_decoder.module.js';
-(async()=>{
- const toggle=document.getElementById('roxas-boulevard-glb');
- const status=document.getElementById('status');
- const errorBox=document.getElementById('error');
- const showError=err=>{if(errorBox){errorBox.style.display='block';errorBox.textContent='تعذر تحميل مباني Roxas Boulevard GLB: '+(err?.message||err);}if(status)status.textContent='فشل تحميل طبقة مباني Roxas Boulevard.';};
- const waitMap=()=>new Promise((resolve,reject)=>{let tries=0;const check=()=>{if(window.adamCityMap?.isStyleLoaded())return resolve(window.adamCityMap);if(++tries>600)return reject(new Error('انتهت مهلة انتظار الخريطة'));setTimeout(check,100);};check();});
- try{
-  const map=await waitMap();
-  const base='complete_data/OSM/data/buildings/roxas-boulevard/';
-  const modelUrl=new URL(base+'roxas%20bulivard%20buildings.glb',location.href).href;
-  const originUrl=new URL(base+'roxas-bulivard-buildings-origin.json',location.href).href;
-  const response=await fetch(originUrl);if(!response.ok)throw new Error('Origin JSON HTTP '+response.status);
-  const origin=await response.json(),lat=Number(origin.latitude),lng=Number(origin.longitude);
-  if(!Number.isFinite(lat)||!Number.isFinite(lng))throw new Error('Origin JSON لا يحتوي إحداثيات صحيحة');
-  const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng,lat},Number(origin.anchor_altitude_m||0));
-  const meterScale=anchor.meterInMercatorCoordinateUnits();
-  const projectedMeterScale=meterScale*Math.cos(lat*Math.PI/180);
-  let renderer,camera,scene,model;
-  const layer={
-   id:'roxas-boulevard-buildings-glb-3d',type:'custom',renderingMode:'3d',
-   onAdd(mapInstance,gl){
-    renderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;
-    camera=new THREE.Camera();scene=new THREE.Scene();
-    scene.add(new THREE.AmbientLight(0xffffff,2.0));
-    const light=new THREE.DirectionalLight(0xffffff,2.2);light.position.set(0,-70,100).normalize();scene.add(light);
-    const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
-    loader.load(modelUrl,gltf=>{
-     model=gltf.scene;model.position.set(0,0,0);model.scale.set(1,1,1);
-     let meshes=0;model.traverse(o=>{if(o.isMesh)meshes++;});
-     scene.add(model);model.visible=!!toggle.checked;
-     window.adamRoxasBuildingsLayerReady=true;
-     window.adamSetRoxasBuildingsVisible=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
-     if(status)status.textContent='مباني Roxas Boulevard GLB محمّلة | meshes='+meshes+' | '+(model.visible?'مفعّلة':'مخفية');
-     mapInstance.triggerRepaint();
-    },progress=>{if(status)status.textContent=progress.total?'جارٍ تحميل مباني Roxas Boulevard: '+Math.round(progress.loaded/progress.total*100)+'%':'جارٍ تنزيل ملف مباني Roxas Boulevard GLB…';},showError);
-   },
-   render(gl,args){
-    if(!renderer||!model||!model.visible)return;
-    const mainMatrix=args?.defaultProjectionData?.mainMatrix;if(!mainMatrix)return;
-    const values=Object.values(mainMatrix);if(values.length!==16||values.some(v=>!Number.isFinite(Number(v))))return;
-    const projection=new THREE.Matrix4().fromArray(values.map(Number));
-    const transform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z).scale(new THREE.Vector3(projectedMeterScale,-projectedMeterScale,meterScale));
-    camera.projectionMatrix.copy(projection).multiply(transform);camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
-    renderer.resetState();renderer.render(scene,camera);renderer.resetState();
-   }
-  };
-  map.addLayer(layer);
-  if(map.getLayer(layer.id))map.moveLayer(layer.id);
-  toggle.addEventListener('change',ev=>{
-   if(window.adamRoxasBuildingsLayerReady&&window.adamSetRoxasBuildingsVisible)window.adamSetRoxasBuildingsVisible(ev.target.checked);
-   else if(ev.target.checked&&status)status.textContent='جارٍ تحميل مباني Roxas Boulevard GLB…';
-  });
- }catch(err){showError(err);}
 })();
 </script>
 

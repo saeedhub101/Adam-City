@@ -38,7 +38,6 @@ jobs:
           /test.html
           /complete_data/OSM/data/
           /complete_data/OSM/scripts/generate_building_enrichment_index.py
-          /ermita/scripts/generate_supreme_court_facade_texture.py
           /ermita/scripts/generate_roxas_boulevard_buildings.py
           /ermita/scripts/generate_roxas_boulevard_signage.py
           /ermita/assets/textures/Painted-CMU-Block-Architextures.jpeg
@@ -51,12 +50,6 @@ jobs:
           /ermita/3d/generated/facade-signage-index.csv
           /ermita/3d/generated/facade-generation.sha256
           /ermita/3d/landmarks/
-          /ermita/3d/commercial/
-          /ermita/scripts/generate_commercial_facades.py
-          /ermita/scripts/generate_pedro_gil_decal.py
-          /ermita/scripts/generate_all_7eleven_plane_textures.py
-          /ermita/buildings/commercial_assets/
-          /ermita/buildings/reference_photos/robinsons-manila/
           /ermita/3d/exports/adam-city-complete.glb
           /ermita/3d/exports/adam-city-complete-report.json
           /ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
@@ -276,7 +269,6 @@ jobs:
           npx --yes @gltf-transform/cli optimize site/complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb /tmp/ermita-windows-optimized.glb --compress meshopt
           mv /tmp/ermita-windows-optimized.glb site/complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb
           test -s site/complete_data/OSM/data/nature/ermita-water-and-natural-features.geojson
-          test -s site/complete_data/OSM/data/buildings/Ermita/ermita-building-footprints.geojson
           test -s site/complete_data/OSM/data/roads/ermita-road-network.geojson
           test -s site/test.html
           test -s site/complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb

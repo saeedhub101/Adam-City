@@ -1,6 +1,6 @@
 # Button 4 — four spatial GLB parts
 
-Generated from both GeoJSON sources drawn by button 4 in test.html. Each partN/partN.glb has an origin sidecar and complete feature inventory. Inventories preserve original properties/tags, resolved color, height, base height, polygon component count, area, centroid, and PBR material fields.
+The four-part GLB assets have origin sidecars and complete feature inventories. The preview-only “4. buildings — building footprints and roof details” toggle was removed; its duplicated OSM footprint/roof export files are no longer shipped. Original OSM source snapshots remain under `ermita/maps/generated/`. Inventories preserve original properties/tags, resolved color, height, base height, polygon component count, area, centroid, and PBR material fields.
 
 The GLB parts are preserved as committed assets; this metadata enrichment workflow does not regenerate or modify them. See `parts-report.json` for source hashes and export counts.
 
@@ -38,4 +38,4 @@ For the full building-data map, index audit, source paths, counts, process, know
 
 ## Current folder layout
 
-This directory is now `complete_data/OSM/data/buildings/Ermita/`. It contains the former `parts/` contents and the former `parts/ermita/` contents flattened into one folder. The four enhanced comparison models are `Parts1.glb`–`Parts4.glb`; their origin sidecars remain in `part1/`–`part4/`. The four old original-part GLB toggles/loaders were removed from `test.html`.
+This directory is now `complete_data/OSM/data/buildings/Ermita/`. It contains the former `parts/` contents and the former `parts/ermita/` contents flattened into one folder. The four enhanced comparison models are `Parts1.glb`–`Parts4.glb`; their origin sidecars remain in `part1/`–`part4/`. The four old original-part GLB toggles/loaders and the preview-only OSM footprint/roof toggle were removed from `test.html`.

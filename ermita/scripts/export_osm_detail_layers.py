@@ -149,10 +149,6 @@ def main():
                   "Ermita road engineering details — separate OSM layer", roads, "road-engineering")
     write_index(ROADS / "ermita-road-engineering-details.csv", roads, ROAD_KEYS)
 
-    write_geojson(BUILDINGS / "ermita-building-roof-details.geojson",
-                  "Ermita building and roof details — separate OSM layer", buildings, "building-roof-details")
-    write_index(BUILDINGS / "ermita-building-roof-details.csv", buildings, BUILDING_KEYS)
-
     report = {
         "source_file": "ermita/maps/generated/ermita-features.geojson",
         "source_feature_count": len(all_features),
@@ -168,12 +164,6 @@ def main():
                 "files": ["data/roads/ermita-road-engineering-details.geojson",
                           "data/roads/ermita-road-engineering-details.csv"],
                 "tag_key_presence_counts": dict(sorted(Counter(k for f in roads for k in tags(f)).items())),
-            },
-            "building_roof_details": {
-                "feature_count": len(buildings),
-                "files": ["data/buildings/ermita-building-roof-details.geojson",
-                          "data/buildings/ermita-building-roof-details.csv"],
-                "tag_key_presence_counts": dict(sorted(Counter(k for f in buildings for k in tags(f)).items())),
             },
         },
         "policy": "Separate layers; no cross-category merging; original feature geometries and complete OSM tags preserved; missing tags are not fabricated.",

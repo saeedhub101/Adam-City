@@ -7,7 +7,7 @@ This folder is the organized OSM data inventory for Adam-City. Source snapshots 
 - `data/raw/` — raw OSM export and synchronization state.
 - `data/features/` — committed OSM feature collection used as the source snapshot for local exports.
 - `data/tags/` — full tag inventory for discovering available attributes.
-- `data/buildings/` — building footprints, building details, and the separate `ermita-building-roof-details` layer (CSV + GeoJSON).
+- `data/buildings/` — retained building-detail sources, four-part GLB assets and enrichment indexes. The preview-only footprint/roof extrusion toggle and its duplicated GeoJSON/CSV outputs were removed; the original footprint source remains under `ermita/maps/generated/`.
 - `data/roads/` — road network and the separate `ermita-road-engineering-details` layer (CSV + GeoJSON).
 - `data/pedestrian/` — the separate `ermita-pedestrian-street-details` layer (CSV + GeoJSON).
 - `data/thematic/` — thematic exports for accessibility, businesses, environment, heritage, public services, transport, utilities, signs, street furniture, and related themes.
@@ -23,7 +23,7 @@ This folder is the organized OSM data inventory for Adam-City. Source snapshots 
 
 1. **Pedestrian street details:** crossings and crossing signals, footways, sidewalk/accessibility attributes, entrances, doors, barriers, bollards, gates, handrails, steps, benches, waste baskets, street lighting, and other mapped pedestrian-scale features.
 2. **Road engineering:** road and transport geometries with mapped highway/railway/route/public-transport attributes, including surface, smoothness, width, lanes, one-way direction, turn lanes, speed limits, cycleways, sidewalks, bridges, tunnels, access, lighting, and related tags.
-3. **Building and roof details:** building footprints and building parts with mapped heights, floor counts, minimum levels, roof shape/height/material/colour/orientation, building material/colour, names, addresses, and other original tags.
+3. **Building and roof details (source snapshot):** the original OSM feature snapshot retains building and roof tags. The removed preview-only layer is no longer deployed as a separate toggle; source records remain available in `ermita/maps/generated/ermita-features.geojson`.
 
 The exact availability of each attribute varies by feature. An absent tag means it is not recorded on that OSM feature; it is not inferred or fabricated.
 

@@ -36,8 +36,6 @@ jobs:
           test -s complete_data/OSM/data/pedestrian/ermita-pedestrian-street-details.csv
           test -s complete_data/OSM/data/roads/ermita-road-engineering-details.geojson
           test -s complete_data/OSM/data/roads/ermita-road-engineering-details.csv
-          test -s complete_data/OSM/data/buildings/ermita-building-roof-details.geojson
-          test -s complete_data/OSM/data/buildings/ermita-building-roof-details.csv
           test -s complete_data/OSM/quality/osm-detail-layer-export-report.json
       - name: Commit organized detail datasets to main
         shell: bash

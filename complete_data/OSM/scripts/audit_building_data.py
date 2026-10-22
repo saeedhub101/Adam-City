@@ -36,9 +36,7 @@ def rel(path: Path) -> str:
 
 def main():
     required = [
-        ERM / "ermita-building-footprints.geojson",
         ERM / "ermita-building-details.geojson",
-        ERM / "ermita-building-roof-details.geojson",
         ERM / "osm-building-details.csv",
         ERM / "ermita-building-parts-index.json",
         ERM / "parts-report.json",
@@ -60,9 +58,9 @@ def main():
     if missing:
         raise FileNotFoundError("Required current building assets are missing or empty: " + ", ".join(missing))
 
-    footprint_data = read_json(ERM / "ermita-building-footprints.geojson")
+    footprint_data = read_json(ROOT / "ermita/maps/generated/ermita-building-footprints.geojson")
     detail_data = read_json(ERM / "ermita-building-details.geojson")
-    roof_data = read_json(ERM / "ermita-building-roof-details.geojson")
+    roof_data = {"features": []}
     parts_index = read_json(ERM / "ermita-building-parts-index.json")
     parts_report = read_json(ERM / "parts-report.json")
     enrichment = read_json(ERM / "building-enrichment-index.json")
@@ -123,7 +121,7 @@ def main():
         },
         "source_hashes": {rel(path): sha256(path) for path in required if path.suffix in (".json", ".csv")},
         "notes": [
-            "The audit reads current canonical paths and does not require legacy parts/ or ermita-glb-parts/ directories.",
+            "The audit reads the canonical four-part GLBs and metadata. Removed preview-only OSM footprint/roof layers are not required.",
             "The four PartsN.glb assets are distinct from the procedural windows facade overlay.",
             "This structural audit does not claim that building facade appearance has been visually verified.",
         ],

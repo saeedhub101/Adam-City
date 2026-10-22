@@ -25,6 +25,10 @@ PARTS_INDEX = PARTS / "ermita-building-parts-index.json"
 DETAILS_GEOJSON = BUILDINGS / "Ermita" / "ermita-building-details.geojson"
 ROOF_GEOJSON = BUILDINGS / "Ermita" / "ermita-building-roof-details.geojson"
 FOOTPRINTS_GEOJSON = BUILDINGS / "Ermita" / "ermita-building-footprints.geojson"
+if not ROOF_GEOJSON.is_file():
+    ROOF_GEOJSON = DETAILS_GEOJSON
+if not FOOTPRINTS_GEOJSON.is_file():
+    FOOTPRINTS_GEOJSON = ROOT / "ermita/maps/generated/ermita-building-footprints.geojson"
 DETAILS_CSV = BUILDINGS / "Ermita" / "osm-building-details.csv"
 OUTPUT = PARTS / "building-enrichment-index.json"
 REPORT = PARTS / "building-enrichment-report.json"

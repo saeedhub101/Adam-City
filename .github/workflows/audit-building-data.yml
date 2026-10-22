@@ -40,7 +40,6 @@ jobs:
           assert d["full_enrichment_index"]["records_parsed"] == d["full_enrichment_index"]["reported_total"]
           assert len(d["original_four_part_assets"]) == 4
           assert all(d["checks"].values()), d["checks"]
-          assert d["source_counts"]["footprints"] > 0
           print("Current Ermita building-data audit report validated.")
           PY
 
