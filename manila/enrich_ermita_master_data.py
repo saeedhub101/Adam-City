@@ -180,20 +180,23 @@ def match_polygon_to_osm(geometry, candidates, tree):
     ranked_by_id={}
     try: indexes=tree.query(source)
     except Exception: return "", {}
+    source_area=float(source.area)
     for item in indexes:
         try:
             cand=candidates[int(item)]
+            ratio=cand["area"]/source_area
+            # Reject impossible scale pairs before costly polygon intersections.
+            if not 0.5 <= ratio <= 2.0: continue
             inter=float(source.intersection(cand["geom"]).area)
         except Exception:
             continue
         if inter <= 0: continue
-        smaller=min(float(source.area),cand["area"])
+        smaller=min(source_area,cand["area"])
         overlap=inter/smaller if smaller else 0.0
-        union=float(source.area)+cand["area"]-inter
+        union=source_area+cand["area"]-inter
         iou=inter/union if union else 0.0
-        ratio=cand["area"]/float(source.area)
         # Strict polygon overlap gate: no centroid/proximity-only assignments.
-        if overlap < 0.75 or iou < 0.50 or not 0.5 <= ratio <= 2.0: continue
+        if overlap < 0.75 or iou < 0.50: continue
         penalty=abs(__import__("math").log(max(ratio,1e-9)))
         rec={"candidate":cand,"intersection_area_m2":inter,"overlap":overlap,"iou":iou,"ratio":ratio,"penalty":penalty}
         prev=ranked_by_id.get(cand["id"])
