@@ -18,8 +18,8 @@
     "partially_enriched": 381
   },
   "photo_evidence_counts": {
-    "no_building_specific_photo_link": 1719,
-    "provisional": 2
+    "no_building_specific_photo_link": 1716,
+    "provisional": 5
   },
   "attribute_coverage": {
     "building_name": 290,
@@ -57,11 +57,59 @@
       "registry_candidate": "OFM-ERMITA-01472",
       "match_status": "provisional",
       "photo_evidence_url": "https://commons.wikimedia.org/wiki/File:PGH_Nurses_Home.jpg"
+    },
+    {
+      "osm_feature_id": "way/27650569",
+      "registry_candidate": "OFM-ERMITA-00124",
+      "match_status": "provisional",
+      "photo_evidence_url": "https://commons.wikimedia.org/wiki/File:Manila_Central_Post_Office_Facade.jpg"
+    },
+    {
+      "osm_feature_id": "way/314226156",
+      "registry_candidate": "OFM-ERMITA-00031",
+      "match_status": "provisional",
+      "photo_evidence_url": "https://www.nationalmuseum.gov.ph/our-museums/national-planetarium/"
+    },
+    {
+      "osm_feature_id": "way/87754850",
+      "registry_candidate": "OFM-ERMITA-00233",
+      "match_status": "provisional",
+      "photo_evidence_url": "https://bayviewparkhotel.com/gallery/"
     }
   ],
   "geometry_policy": "Source component indices, coordinates, render heights and source geometry are preserved; only derived sorting/classification columns are added.",
   "outputs": [
     "complete_data/open free tile/ermita-building-geographic-completeness-sort.csv",
     "complete_data/open free tile/ermita-building-geographic-completeness-sort-report.json"
+  ],
+  "research_updates": [
+    {
+      "registry_id": "OFM-ERMITA-00124",
+      "name": "Manila Central Post Office",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Manila_Central_Post_Office",
+        "https://philhistoricsites.nhcp.gov.ph/registry_database/manila-central-post-office-building-and-liwasang-bonifacio/",
+        "https://commons.wikimedia.org/wiki/File:Manila_Central_Post_Office_Facade.jpg"
+      ],
+      "notes": "Neoclassical; Juan M. Arellano, Tomás Mapúa and Ralph Doane; 16 Ionic columns and semi-circular wings. Pre-fire photos are historical evidence only."
+    },
+    {
+      "registry_id": "OFM-ERMITA-00031",
+      "name": "National Planetarium",
+      "sources": [
+        "https://www.nationalmuseum.gov.ph/our-museums/national-planetarium/",
+        "https://en.wikipedia.org/wiki/National_Planetarium_(Manila)"
+      ],
+      "notes": "Opened 1975; official source identifies a 16 m dome. Multiple OFM components share the named OSM feature; keep identity/component reconciliation pending."
+    },
+    {
+      "registry_id": "OFM-ERMITA-00233",
+      "name": "Bayview Park Hotel",
+      "sources": [
+        "https://bayviewparkhotel.com/gallery/",
+        "https://commons.wikimedia.org/wiki/Category:Bayview_Park_Hotel_Manila"
+      ],
+      "notes": "Official gallery offers facade day/night views and confirms address at Roxas Boulevard/United Nations Avenue. Photo reuse license not assumed."
+    }
   ]
 }
