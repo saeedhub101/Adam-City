@@ -55,6 +55,7 @@ def main():
     detail_sources = [DETAILS_GEOJSON, ROOF_GEOJSON]
     by_osm_id = {}
     polygon_candidates = []
+    seen_polygon_geometries = set()
 
     for source_path in detail_sources:
         source = read_json(source_path)
@@ -75,6 +76,10 @@ def main():
                 continue
             if geom.is_empty or geom.geom_type not in ("Polygon", "MultiPolygon") or geom.area <= 0:
                 continue
+            polygon_key = (oid, geom.wkb)
+            if polygon_key in seen_polygon_geometries:
+                continue
+            seen_polygon_geometries.add(polygon_key)
             polygon_candidates.append({
                 "osm_id": oid,
                 "tags": tags,
