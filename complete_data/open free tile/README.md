@@ -110,3 +110,8 @@ Useful verified image sources discovered:
 - PGH Nurses Home restoration article: https://lifestyle.inquirer.net/390451/heritage-nurses-home-in-pgh-compound-restored/
 
 Important count caveat: **1,721 is the number of extracted polygon components, not yet a proven count of unique physical buildings.** For example, two extracted components currently match the same OSM way for Pearl of the Orient and carry different OpenFreeMap render heights. Those components must be geometrically reconciled before the registry is described as 1,721 unique buildings.
+
+
+### Exact geometry deduplication audit
+
+The separate audit at `building-deduplication-audit.json` found **1,629 exact unique full-ring geometries** among the 1,721 extracted polygon components (92 exact duplicate components removed by an 8-decimal-coordinate ring comparison). This is still not a verified count of physical buildings. There are 876 high-confidence spatial matches distributed over 722 unique OSM feature IDs; 136 OSM IDs are assigned to multiple components, which may reflect repeated zoom/style geometry, building parts, or matching errors. Two exact-duplicate geometry groups have conflicting render heights. Therefore the original split source components are retained, and no height is silently selected or any component collapsed in the canonical extraction. A final unique-building count requires inspecting those groups and distinguishing building parts from zoom/LOD duplicates.
