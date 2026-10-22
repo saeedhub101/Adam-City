@@ -5,6 +5,7 @@ on:
   push:
     branches: [main]
     paths:
+      - '.github/workflows/build-building-visual-research-queue.yml'
       - 'complete_data/OSM/scripts/build_building_visual_research_queue.py'
       - 'complete_data/OSM/data/buildings/parts/building-enrichment-index.json'
       - 'complete_data/OSM/data/buildings/parts/part1/part1-inventory.json'
