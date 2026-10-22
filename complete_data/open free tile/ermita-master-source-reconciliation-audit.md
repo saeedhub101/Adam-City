@@ -35,6 +35,8 @@ The file `complete_data/open free tile/ermita-building-geographic-completeness-s
 - 605 rows cross-referenced against the building-match audit.
 - 28 exact-ID matches to the 30-row pilot register; **296 previously blank pilot fields** were copied with provenance. Barangay values retain their provisional assignment status.
 - 28 exact-ID joins to field-level evidence records.
+- The legacy detailed OSM CSV filled 79 additional blank fields across the 692 exact-ID-linked rows.
+- The consolidated building register matched 692 exact IDs; 443 records carry source-conflict notes. Conflicts are flagged, not automatically resolved.
 - 184 existing facade-photo-review entries were linked to 95 OFM component rows. Those rows are flagged **unverified photo candidate**; no image was declared verified or assigned as a texture.
 - One named-building image-link record joined by exact OSM ID.
 
