@@ -57,15 +57,12 @@
     "roof_material": 0,
     "roof_colour": 8
   },
-  "completeness_counts_after_internal_pass": {
-    "needs_match_review": 355,
-    "insufficient_data": 1207,
-    "partially_enriched": 159
-  },
+  "completeness_counts_after_internal_pass": {},
   "photo_policy": "Existing facade-photo review entries are indexed in the row but do not count as verified imagery unless the source file marks the facade verified; no automatic image-to-texture assignment.",
   "limitations": [
     "The primary 22,977-feature GeoJSON master and 24,102-row master CSV have not yet been fully reconciled against this 1,721-row OpenFreeMap component registry.",
     "The 1,721 records are polygon components, not confirmed distinct physical buildings.",
     "OSM/OFM exact-ID linkage is not equivalent to photo-confirmed architectural identity."
-  ]
+  ],
+  "note_on_counts": "Counts were recalculated using the original triage rule: candidate/linked-needs-review remains review; otherwise >=5 populated tracked attributes, or >=3 with accepted high-confidence link, is partially enriched. This is a triage class, not a verified-realistic-building claim."
 }
