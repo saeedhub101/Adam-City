@@ -24,6 +24,7 @@ PARTS = BUILDINGS / "parts"
 PARTS_INDEX = PARTS / "parts-inventory-index.json"
 DETAILS_GEOJSON = BUILDINGS / "ermita-building-details.geojson"
 ROOF_GEOJSON = BUILDINGS / "ermita-building-roof-details.geojson"
+FOOTPRINTS_GEOJSON = BUILDINGS / "ermita-building-footprints.geojson"
 DETAILS_CSV = BUILDINGS / "osm-building-details.csv"
 OUTPUT = PARTS / "building-enrichment-index.json"
 REPORT = PARTS / "building-enrichment-report.json"
@@ -54,6 +55,16 @@ def feature_id(props):
 def main():
     source_index = read_json(PARTS_INDEX)
     detail_sources = [DETAILS_GEOJSON, ROOF_GEOJSON]
+    footprints_source = read_json(FOOTPRINTS_GEOJSON)
+    footprint_geometries = {}
+    for source_index, feature in enumerate(footprints_source.get("features", [])):
+        geom_data = feature.get("geometry")
+        if not geom_data:
+            continue
+        try:
+            footprint_geometries[source_index] = geom_transform(WEB_MERCATOR, shape(geom_data))
+        except Exception:
+            continue
     by_osm_id = {}
     polygon_candidates = []
     seen_polygon_geometries = set()
@@ -118,7 +129,7 @@ def main():
             inventory_by_key[key] = feature
 
     records = []
-    match_counts = {"exact_osm_id": 0, "spatial_high_confidence": 0, "spatial_review": 0, "unmatched": 0}
+    match_counts = {"exact_osm_id": 0, "spatial_high_confidence": 0, "spatial_geometry_high_confidence": 0, "spatial_review": 0, "unmatched": 0}
     for item in source_index:
         key = f'{item.get("part")}:{item.get("source_key")}:{item.get("source_feature_index")}'
         inventory = inventory_by_key.get(key)
@@ -171,6 +182,65 @@ def main():
                     "area_log_error": round(best_penalty, 4),
                     "accepted": match_method == "spatial_high_confidence",
                 }
+
+        # Second pass: compare the actual source footprint polygon with OSM
+        # building polygons. This can resolve centroid misses while refusing
+        # large compounds or overlapping alternatives that remain ambiguous.
+        if not matched_id and item.get("source_key") == "footprints":
+            source_geom = footprint_geometries.get(int(item.get("source_feature_index", -1)))
+            if source_geom is not None and not source_geom.is_empty and source_geom.area > 0 and polygon_tree is not None:
+                candidate_indices = polygon_tree.query(source_geom)
+                geom_ranked = []
+                for candidate_index in candidate_indices:
+                    candidate = polygon_candidates[int(candidate_index)]
+                    if not candidate["osm_id"]:
+                        continue
+                    try:
+                        intersection_area = float(source_geom.intersection(candidate["geom"]).area)
+                    except Exception:
+                        continue
+                    if intersection_area <= 0:
+                        continue
+                    smaller_area = min(float(source_geom.area), float(candidate["area"]))
+                    overlap_smaller = intersection_area / smaller_area if smaller_area else 0.0
+                    union_area = float(source_geom.area) + float(candidate["area"]) - intersection_area
+                    iou = intersection_area / union_area if union_area else 0.0
+                    ratio = float(candidate["area"]) / float(source_geom.area)
+                    if overlap_smaller >= 0.75 and 0.2 <= ratio <= 5.0:
+                        geom_ranked.append({
+                            "candidate": candidate,
+                            "intersection_area_m2": intersection_area,
+                            "overlap_smaller": overlap_smaller,
+                            "intersection_over_union": iou,
+                            "area_ratio": ratio,
+                        })
+                geom_ranked.sort(key=lambda item: (item["overlap_smaller"], item["intersection_over_union"]), reverse=True)
+                if geom_ranked:
+                    best = geom_ranked[0]
+                    second = geom_ranked[1] if len(geom_ranked) > 1 else None
+                    clear_best = second is None or (
+                        best["overlap_smaller"] - second["overlap_smaller"] >= 0.15
+                        or best["intersection_over_union"] - second["intersection_over_union"] >= 0.15
+                    )
+                    spatial_evidence = {
+                        "candidate_osm_id": best["candidate"]["osm_id"],
+                        "candidate_name": best["candidate"]["name"],
+                        "candidate_source": best["candidate"]["source"],
+                        "candidate_count_passing_overlap_threshold": len(geom_ranked),
+                        "intersection_area_m2": round(best["intersection_area_m2"], 3),
+                        "overlap_fraction_of_smaller_polygon": round(best["overlap_smaller"], 4),
+                        "intersection_over_union": round(best["intersection_over_union"], 4),
+                        "candidate_to_source_area_ratio": round(best["area_ratio"], 4),
+                        "accepted": bool(clear_best),
+                        "method": "source-footprint polygon overlap",
+                    }
+                    if clear_best:
+                        matched_id = best["candidate"]["osm_id"]
+                        match_method = "spatial_geometry_high_confidence"
+                        confidence = min(0.98, 0.85 + 0.13 * best["intersection_over_union"])
+                    else:
+                        match_method = "spatial_review"
+                        confidence = 0.5
 
         linked = by_osm_id.get(matched_id) if matched_id else None
         tags = dict(source_tags)
@@ -269,12 +339,13 @@ def main():
         "named": sum(bool(r["name"]) for r in records),
         "addressed": sum(any(r["address"].values()) for r in records),
         "with_source_material_tag": sum(any(r["building"][k] for k in ("material", "roof_material", "colour", "roof_colour")) for r in records),
-        "linked_total": match_counts["exact_osm_id"] + match_counts["spatial_high_confidence"],
+        "linked_total": match_counts["exact_osm_id"] + match_counts["spatial_high_confidence"] + match_counts["spatial_geometry_high_confidence"],
     }
     data = {
         "schema_version": "2.0.0",
         "generated_from": {
             "parts_inventory_index": str(PARTS_INDEX.relative_to(ROOT)),
+            "footprints_geojson": str(FOOTPRINTS_GEOJSON.relative_to(ROOT)),
             "details_geojson": str(DETAILS_GEOJSON.relative_to(ROOT)),
             "roof_details_geojson": str(ROOF_GEOJSON.relative_to(ROOT)),
             "details_csv": str(DETAILS_CSV.relative_to(ROOT)),
@@ -304,6 +375,7 @@ def main():
         "limitations": [
             "Names, addresses, and material tags are present only when supported by source data.",
             "A spatial match is a candidate identity, not proof that all attributes or facade appearance are correct.",
+            "Geometry-overlap matches require strong overlap with one clearly preferred OSM polygon; competing matches remain in the review queue.",
             "This index contains no verified facade photographs or photo-derived materials.",
             "Ambiguous matches remain in the review queue and do not receive candidate semantic tags.",
         ],
