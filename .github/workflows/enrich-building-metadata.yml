@@ -1,0 +1,63 @@
+name: Enrich building metadata index
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'complete_data/OSM/scripts/generate_building_enrichment_index.py'
+      - 'complete_data/OSM/data/buildings/parts/parts-inventory-index.json'
+      - 'complete_data/OSM/data/buildings/parts/part1/part1-inventory.json'
+      - 'complete_data/OSM/data/buildings/parts/part2/part2-inventory.json'
+      - 'complete_data/OSM/data/buildings/parts/part3/part3-inventory.json'
+      - 'complete_data/OSM/data/buildings/parts/part4/part4-inventory.json'
+      - 'complete_data/OSM/data/buildings/ermita-building-details.geojson'
+      - 'complete_data/OSM/data/buildings/ermita-building-roof-details.geojson'
+      - 'complete_data/OSM/data/buildings/osm-building-details.csv'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: building-metadata-enrichment
+  cancel-in-progress: true
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out only the source data and inventories
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          sparse-checkout: |
+            complete_data/OSM/data/buildings/parts/
+            complete_data/OSM/data/buildings/ermita-building-details.geojson
+            complete_data/OSM/data/buildings/ermita-building-roof-details.geojson
+            complete_data/OSM/data/buildings/osm-building-details.csv
+            complete_data/OSM/scripts/generate_building_enrichment_index.py
+          sparse-checkout-cone-mode: false
+
+      - name: Generate exact and conservative spatial links
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check shapely pyproj
+          python3 complete_data/OSM/scripts/generate_building_enrichment_index.py
+
+      - name: Persist updated index and review report
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add complete_data/OSM/data/buildings/parts/building-enrichment-index.json
+          git add complete_data/OSM/data/buildings/parts/building-enrichment-report.json
+          if git diff --cached --quiet; then
+            echo "Building enrichment index and report are already up to date."
+          else
+            git commit -m "Update spatial building metadata links"
+            git push origin HEAD:main
+          fi
