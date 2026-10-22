@@ -82,11 +82,17 @@ jobs:
           set -euo pipefail
           test -s ermita-malate-3d.html
           python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh mapbox-earcut pillow cairosvg scipy
-          # Regenerate landmark facade geometry from the checked-in source and current script.
-          # The committed GLB/report can be stale after source-code edits, so build it here.
-          python3 ermita/scripts/generate_landmark_facades.py
-          # Regenerate facade and roof detail overlays for the full Ermita building set.
-          python3 ermita/scripts/generate_facade_details.py
+          # Keep committed generated GLBs intact during routine deploys; create them only if absent.
+          if [[ ! -s ermita/3d/landmarks/landmark-facade-details.glb || ! -s ermita/3d/landmarks/landmark-facade-report.json || ! -s ermita/3d/landmarks/landmark-facade-origin.json ]]; then
+            python3 ermita/scripts/generate_landmark_facades.py
+          else
+            echo "Reusing committed landmark facade GLB and metadata."
+          fi
+          if [[ ! -s ermita/3d/generated/ermita-buildings-facade-details.glb || ! -s ermita/3d/generated/facade-details-report.json || ! -s ermita/3d/generated/facade-model-origin.json || ! -s ermita/3d/generated/facade-signage-index.csv ]]; then
+            python3 ermita/scripts/generate_facade_details.py
+          else
+            echo "Reusing committed facade-detail GLB and metadata."
+          fi
           python3 - <<'PY'
           import json
           from pathlib import Path
@@ -109,8 +115,14 @@ jobs:
           assert museum and abs(float(museum.get('approx_height_m', 0)) - 24.3) < 0.01, 'National Museum model did not use the source-backed 24.3 m height'
           print('Validated regenerated landmark facade:', glb.stat().st_size, 'bytes; National Museum reference height:', museum['approx_height_m'], 'm')
           PY
-          # Build a standalone PBR GLB for buildings whose footprints lie along mapped Roxas Boulevard segments.
-          python3 ermita/scripts/generate_roxas_boulevard_buildings.py
+          # Preserve the committed Roxas Boulevard model; generate only if its asset set is incomplete.
+          if [[ ! -s "complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb" ||
+                ! -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json ||
+                ! -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json ]]; then
+            python3 ermita/scripts/generate_roxas_boulevard_buildings.py
+          else
+            echo "Reusing committed Roxas Boulevard GLB and metadata."
+          fi
           # Preserve the six committed GLB parts so manual edits are never overwritten by normal deployments.
           # Generate them only when one or more parts or the validation report are missing.
           GLB_PARTS_DIR="complete_data/OSM/data/buildings/ermita-glb-parts"
@@ -126,8 +138,13 @@ jobs:
           else
             echo "Reusing the six committed GLB parts and report; skipping generation to preserve manual edits."
           fi
-          # Generate source-tagged building/store signs and address plaques in a separately verifiable overlay.
-          python3 ermita/scripts/generate_roxas_boulevard_signage.py
+          # Preserve the committed signage GLB unless its output files are missing.
+          if [[ ! -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb ||
+                ! -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json ]]; then
+            python3 ermita/scripts/generate_roxas_boulevard_signage.py
+          else
+            echo "Reusing committed Roxas Boulevard signage GLB and report."
+          fi
           test -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb
           test -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json
           python3 - <<'PY'
@@ -159,12 +176,22 @@ jobs:
               'red_planet_canopy_parts': report.get('facade_red_planet_canopy_parts')
           }))
           PY
-          # Build the isolated Pedro Gil image-decal test from the mapped OSM footprint and official transparent logo.
-          python3 ermita/scripts/generate_pedro_gil_decal.py
-          # Build a separate flat Plane Texture overlay for every mapped 7-Eleven store.
-          python3 ermita/scripts/generate_all_7eleven_plane_textures.py
-          # Build a photographic facade Plane Texture for the existing Supreme Court OSM building.
-          python3 ermita/scripts/generate_supreme_court_facade_texture.py
+          # Keep committed decal/signage/facade GLBs unchanged; create only missing outputs.
+          if [[ ! -s complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb || ! -s complete_data/OSM/Markets/pedro-gil-7eleven-decal-report.json ]]; then
+            python3 ermita/scripts/generate_pedro_gil_decal.py
+          else
+            echo "Reusing committed Pedro Gil decal GLB and report."
+          fi
+          if [[ ! -s complete_data/OSM/Buildings/Markets/facidals/all-7eleven-plane-textures.glb || ! -s complete_data/OSM/Markets/all-7eleven-plane-textures-report.json ]]; then
+            python3 ermita/scripts/generate_all_7eleven_plane_textures.py
+          else
+            echo "Reusing committed 7-Eleven plane-texture GLB and report."
+          fi
+          if [[ ! -s complete_data/OSM/Buildings/supreme-court-main-facade.glb || ! -s complete_data/OSM/Buildings/supreme-court-main-facade-report.json ]]; then
+            python3 ermita/scripts/generate_supreme_court_facade_texture.py
+          else
+            echo "Reusing committed Supreme Court facade GLB and report."
+          fi
           # Fingerprints invalidate only outputs whose generator, source data, or contract changed.
           # Stable hashes intentionally exclude timestamps and CI-run metadata.
           FACADE_FINGERPRINT="$( { printf 'contract=1\n'; sha256sum ermita/scripts/generate_facade_details.py ermita/maps/generated/ermita-building-details.geojson; } | sha256sum | awk '{print $1}')"
