@@ -3,6 +3,7 @@
   "status": "generated",
   "created_from": {
     "parts_inventory_index": "complete_data/OSM/data/buildings/parts/parts-inventory-index.json",
+    "footprints_geojson": "complete_data/OSM/data/buildings/ermita-building-footprints.geojson",
     "details_geojson": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
     "roof_details_geojson": "complete_data/OSM/data/buildings/ermita-building-roof-details.geojson",
     "details_csv": "complete_data/OSM/data/buildings/osm-building-details.csv",
@@ -19,12 +20,13 @@
     "total": 2651,
     "exact_osm_id": 75,
     "spatial_high_confidence": 1429,
-    "spatial_review": 100,
-    "unmatched": 1047,
-    "named": 329,
-    "addressed": 427,
-    "with_source_material_tag": 208,
-    "linked_total": 1504
+    "spatial_geometry_high_confidence": 15,
+    "spatial_review": 111,
+    "unmatched": 1021,
+    "named": 333,
+    "addressed": 428,
+    "with_source_material_tag": 210,
+    "linked_total": 1519
   },
   "review_queue": [
     {
@@ -48,19 +50,55 @@
     {
       "part": 1,
       "source_key": "footprints",
+      "source_feature_index": 356,
+      "source_feature_id": "footprints-feature-000356",
+      "spatial_match_evidence": {
+        "candidate_osm_id": "way/90311602",
+        "candidate_name": "Luneta Theater",
+        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_count_passing_overlap_threshold": 2,
+        "intersection_area_m2": 1751.678,
+        "overlap_fraction_of_smaller_polygon": 0.994,
+        "intersection_over_union": 0.2182,
+        "candidate_to_source_area_ratio": 0.2198,
+        "accepted": false,
+        "method": "source-footprint polygon overlap"
+      }
+    },
+    {
+      "part": 1,
+      "source_key": "footprints",
+      "source_feature_index": 370,
+      "source_feature_id": "footprints-feature-000370",
+      "spatial_match_evidence": {
+        "candidate_osm_id": "way/308695378",
+        "candidate_name": null,
+        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_count_passing_overlap_threshold": 2,
+        "intersection_area_m2": 539.712,
+        "overlap_fraction_of_smaller_polygon": 0.9921,
+        "intersection_over_union": 0.4018,
+        "candidate_to_source_area_ratio": 0.4063,
+        "accepted": false,
+        "method": "source-footprint polygon overlap"
+      }
+    },
+    {
+      "part": 1,
+      "source_key": "footprints",
       "source_feature_index": 371,
       "source_feature_id": "footprints-feature-000371",
       "spatial_match_evidence": {
-        "candidate_osm_id": "way/130532101",
+        "candidate_osm_id": "way/823662685",
         "candidate_name": null,
         "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
-        "candidate_count_containing_centroid": 1,
-        "centroid_to_candidate_centroid_m": 79.431,
-        "source_area_m2": 2401.083,
-        "candidate_area_m2": 57977.633,
-        "candidate_to_source_area_ratio": 24.1465,
-        "area_log_error": 3.1841,
-        "accepted": false
+        "candidate_count_passing_overlap_threshold": 7,
+        "intersection_area_m2": 1030.149,
+        "overlap_fraction_of_smaller_polygon": 0.9955,
+        "intersection_over_union": 0.4282,
+        "candidate_to_source_area_ratio": 0.431,
+        "accepted": false,
+        "method": "source-footprint polygon overlap"
       }
     },
     {
@@ -102,19 +140,73 @@
     {
       "part": 1,
       "source_key": "footprints",
-      "source_feature_index": 648,
-      "source_feature_id": "footprints-feature-000648",
+      "source_feature_index": 604,
+      "source_feature_id": "footprints-feature-000604",
       "spatial_match_evidence": {
-        "candidate_osm_id": "way/130532101",
+        "candidate_osm_id": "way/308696213",
         "candidate_name": null,
         "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
-        "candidate_count_containing_centroid": 1,
-        "centroid_to_candidate_centroid_m": 82.798,
-        "source_area_m2": 6264.153,
-        "candidate_area_m2": 57977.633,
-        "candidate_to_source_area_ratio": 9.2555,
-        "area_log_error": 2.2252,
-        "accepted": false
+        "candidate_count_passing_overlap_threshold": 2,
+        "intersection_area_m2": 624.038,
+        "overlap_fraction_of_smaller_polygon": 0.9992,
+        "intersection_over_union": 0.2215,
+        "candidate_to_source_area_ratio": 0.2217,
+        "accepted": false,
+        "method": "source-footprint polygon overlap"
+      }
+    },
+    {
+      "part": 1,
+      "source_key": "footprints",
+      "source_feature_index": 643,
+      "source_feature_id": "footprints-feature-000643",
+      "spatial_match_evidence": {
+        "candidate_osm_id": "way/824389322",
+        "candidate_name": null,
+        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_count_passing_overlap_threshold": 3,
+        "intersection_area_m2": 510.539,
+        "overlap_fraction_of_smaller_polygon": 0.9912,
+        "intersection_over_union": 0.2477,
+        "candidate_to_source_area_ratio": 0.2504,
+        "accepted": false,
+        "method": "source-footprint polygon overlap"
+      }
+    },
+    {
+      "part": 1,
+      "source_key": "footprints",
+      "source_feature_index": 688,
+      "source_feature_id": "footprints-feature-000688",
+      "spatial_match_evidence": {
+        "candidate_osm_id": "way/533298901",
+        "candidate_name": null,
+        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_count_passing_overlap_threshold": 4,
+        "intersection_area_m2": 1287.53,
+        "overlap_fraction_of_smaller_polygon": 0.9968,
+        "intersection_over_union": 0.2833,
+        "candidate_to_source_area_ratio": 0.2845,
+        "accepted": false,
+        "method": "source-footprint polygon overlap"
+      }
+    },
+    {
+      "part": 1,
+      "source_key": "footprints",
+      "source_feature_index": 696,
+      "source_feature_id": "footprints-feature-000696",
+      "spatial_match_evidence": {
+        "candidate_osm_id": "way/1061988734",
+        "candidate_name": null,
+        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_count_passing_overlap_threshold": 2,
+        "intersection_area_m2": 759.298,
+        "overlap_fraction_of_smaller_polygon": 0.9922,
+        "intersection_over_union": 0.2048,
+        "candidate_to_source_area_ratio": 0.2068,
+        "accepted": false,
+        "method": "source-footprint polygon overlap"
       }
     },
     {
@@ -1505,6 +1597,114 @@
     },
     {
       "part": 3,
+      "source_key": "footprints",
+      "source_feature_index": 207,
+      "source_feature_id": "footprints-feature-000207",
+      "spatial_match_evidence": {
+        "candidate_osm_id": "way/765350819",
+        "candidate_name": null,
+        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_count_passing_overlap_threshold": 3,
+        "intersection_area_m2": 4406.45,
+        "overlap_fraction_of_smaller_polygon": 0.9942,
+        "intersection_over_union": 0.8427,
+        "candidate_to_source_area_ratio": 0.8518,
+        "accepted": false,
+        "method": "source-footprint polygon overlap"
+      }
+    },
+    {
+      "part": 3,
+      "source_key": "footprints",
+      "source_feature_index": 545,
+      "source_feature_id": "footprints-feature-000545",
+      "spatial_match_evidence": {
+        "candidate_osm_id": "way/603658638",
+        "candidate_name": "Eugenia Tower",
+        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_count_passing_overlap_threshold": 3,
+        "intersection_area_m2": 759.904,
+        "overlap_fraction_of_smaller_polygon": 1.0,
+        "intersection_over_union": 0.2305,
+        "candidate_to_source_area_ratio": 0.2305,
+        "accepted": false,
+        "method": "source-footprint polygon overlap"
+      }
+    },
+    {
+      "part": 3,
+      "source_key": "footprints",
+      "source_feature_index": 567,
+      "source_feature_id": "footprints-feature-000567",
+      "spatial_match_evidence": {
+        "candidate_osm_id": "way/603658631",
+        "candidate_name": "Lily Tower",
+        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_count_passing_overlap_threshold": 2,
+        "intersection_area_m2": 728.183,
+        "overlap_fraction_of_smaller_polygon": 0.9917,
+        "intersection_over_union": 0.3173,
+        "candidate_to_source_area_ratio": 0.3208,
+        "accepted": false,
+        "method": "source-footprint polygon overlap"
+      }
+    },
+    {
+      "part": 3,
+      "source_key": "footprints",
+      "source_feature_index": 570,
+      "source_feature_id": "footprints-feature-000570",
+      "spatial_match_evidence": {
+        "candidate_osm_id": "way/642781529",
+        "candidate_name": "Space Romualdez",
+        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_count_passing_overlap_threshold": 2,
+        "intersection_area_m2": 752.709,
+        "overlap_fraction_of_smaller_polygon": 0.9906,
+        "intersection_over_union": 0.3378,
+        "candidate_to_source_area_ratio": 0.3421,
+        "accepted": false,
+        "method": "source-footprint polygon overlap"
+      }
+    },
+    {
+      "part": 3,
+      "source_key": "footprints",
+      "source_feature_index": 571,
+      "source_feature_id": "footprints-feature-000571",
+      "spatial_match_evidence": {
+        "candidate_osm_id": "way/654709131",
+        "candidate_name": "Gotesco Twin Tower A",
+        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_count_passing_overlap_threshold": 2,
+        "intersection_area_m2": 828.498,
+        "overlap_fraction_of_smaller_polygon": 0.9985,
+        "intersection_over_union": 0.4521,
+        "candidate_to_source_area_ratio": 0.4531,
+        "accepted": false,
+        "method": "source-footprint polygon overlap"
+      }
+    },
+    {
+      "part": 3,
+      "source_key": "footprints",
+      "source_feature_index": 572,
+      "source_feature_id": "footprints-feature-000572",
+      "spatial_match_evidence": {
+        "candidate_osm_id": "way/1061988720",
+        "candidate_name": null,
+        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_count_passing_overlap_threshold": 2,
+        "intersection_area_m2": 350.986,
+        "overlap_fraction_of_smaller_polygon": 1.0,
+        "intersection_over_union": 0.2347,
+        "candidate_to_source_area_ratio": 0.2347,
+        "accepted": false,
+        "method": "source-footprint polygon overlap"
+      }
+    },
+    {
+      "part": 3,
       "source_key": "roof_details",
       "source_feature_index": 15,
       "source_feature_id": "27650569",
@@ -1831,6 +2031,7 @@
   "limitations": [
     "Names, addresses, and material tags are present only when supported by source data.",
     "A spatial match is a candidate identity, not proof that all attributes or facade appearance are correct.",
+    "Geometry-overlap matches require strong overlap with one clearly preferred OSM polygon; competing matches remain in the review queue.",
     "This index contains no verified facade photographs or photo-derived materials.",
     "Ambiguous matches remain in the review queue and do not receive candidate semantic tags."
   ],
