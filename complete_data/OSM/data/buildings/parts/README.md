@@ -23,3 +23,14 @@ The enrichment is metadata-only: it does not change GLBs, footprints, geometry, 
 - Malate Church has an identity-supported photo source, but its closest unmatched footprint is only a candidate (38.2 m from the reference coordinate), not an accepted building match.
 - The Commons geotagged-image discovery workflow writes candidate records with `source_feature_id`; proximity-only results remain unverified and must not be applied automatically.
 - No image has been applied to a GLB by this process. Geometry, positions, heights, IDs, and existing materials remain unchanged.
+
+
+## Four-part GLB enhancement — documented derivative assets
+
+The original `part1/part1.glb` through `part4/part4.glb`, inventories, and origin sidecars remain the authoritative original part assets. Enhanced copies are stored separately in `enhanced/`; see [enhanced outputs README](enhanced/README.md).
+
+The enhancement script is `complete_data/OSM/scripts/enhance_existing_glb_parts.py`. It retains each original scene and adds procedural glazing/facade-detail meshes in the same local coordinate frame, writing independent reports. It does not replace the all-buildings enrichment index.
+
+For the full building-data map, index audit, source paths, counts, process, known limitations, deploy wiring, and validation checklist, see [Building data audit and enhancement log](BUILDING-DATA-AUDIT-AND-ENHANCEMENT-LOG.md).
+
+**Preservation rule:** do not overwrite original GLBs, inventories, origins, source GeoJSON, or enrichment indexes when regenerating the enhanced derivatives. Verify visual alignment in `test.html` after publishing; successful file generation alone does not prove visual correctness.
