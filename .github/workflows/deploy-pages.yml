@@ -36,7 +36,6 @@ jobs:
           git sparse-checkout set --no-cone --stdin <<'EOF'
           /test.html
           /ermita-malate-3d.html
-          /roxas-boulevard-model.html
           /google-photorealistic-3d-tiles.html
           /complete_data/OSM/data/
           /ermita/assets/textures/Painted-CMU-Block-Architextures.jpeg
@@ -59,7 +58,6 @@ jobs:
         run: |
           set -euo pipefail
           test -s test.html
-          test -s roxas-boulevard-model.html
           test -s ermita-malate-3d.html
           test -s google-photorealistic-3d-tiles.html
 
@@ -68,7 +66,6 @@ jobs:
           mkdir -p site/ermita/assets/textures
 
           cp test.html site/test.html
-          cp roxas-boulevard-model.html site/roxas-boulevard-model.html
           cp ermita-malate-3d.html site/ermita-malate-3d.html
           cp google-photorealistic-3d-tiles.html site/google-photorealistic-3d-tiles.html
           cp -a complete_data/OSM/data/. site/complete_data/OSM/data/
@@ -96,8 +93,6 @@ jobs:
           test -s site/ermita/3d/exports/adam-city-complete.glb
           test -s site/ermita/3d/generated/ermita-buildings-facade-details.glb
           test -s site/ermita/3d/landmarks/landmark-facade-details.glb
-          test -s "site/complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb"
-          test -s site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb
 
           printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=test.html"><title>Adam-City</title><a href="test.html">Open Adam-City preview</a></html>' > site/index.html
           echo "Validated committed assets; no GLB generation or repository writes were performed."
