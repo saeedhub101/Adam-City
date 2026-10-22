@@ -155,7 +155,7 @@ def main():
 
     for part_path in GEO_PARTS:
         with part_path.open("rb") as stream:
-            for feature_index, feature in enumerate(ijson.items(stream, "features.item"), start=1):
+            for feature_index, feature in enumerate(ijson.items(stream, "features.item", use_float=True), start=1):
                 if not isinstance(feature, dict):
                     continue
                 total += 1
