@@ -159,3 +159,6 @@ See [the first-30 building audit](manila/ermita-buildings-master.parts/part-001-
 ## Expanded repository-first pass
 
 The enrichment script and the existing workflow were expanded to read additional per-building source tables and to preserve candidate evidence in separate fields. The workflow sparse checkout now includes the needed internal files. The expanded pass is triggered by the commit message containing `Run Ermita master enrichment`; inspect the resulting report and run log before accepting the output. This pass deliberately avoids applying unverified image-candidate values as facade materials/colours and avoids using ambiguous nearest-building matches.
+
+
+Expanded internal-source ingestion was queued for execution through the existing workflow after the workflow's sparse-checkout inputs were updated. The final run report and deployment result must be checked before treating the new pass as complete.
