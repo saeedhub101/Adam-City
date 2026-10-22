@@ -36,6 +36,10 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <label class="row"><input type="checkbox" id="ermita-glb-part-3"> 4.4 GLB part3 — النطاق المكاني 3</label>
 <label class="row"><input type="checkbox" id="ermita-glb-part-4"> 4.5 GLB part4 — النطاق المكاني 4</label>
 <label class="row"><input type="checkbox" id="osm-roads" checked> 5. roads — الطرق وتفاصيل هندستها</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-1"> 5.1 GLB محسن — الجزء 1 (مواد وواجهات ونوافذ)</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-2"> 5.2 GLB محسن — الجزء 2 (مواد وواجهات ونوافذ)</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-3"> 5.3 GLB محسن — الجزء 3 (مواد وواجهات ونوافذ)</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-4"> 5.4 GLB محسن — الجزء 4 (مواد وواجهات ونوافذ)</label>
 <label class="row"><input type="checkbox" id="osm-thematic"> 6. thematic — المتاجر والعلامات والتفاصيل الموضوعية</label>
 <label class="row"><input type="checkbox" id="osm-pedestrian"> 7. pedestrian — تفاصيل المشاة</label>
 <label class="row"><input type="checkbox" id="osm-addresses"> 8. addresses — العناوين وأسماء الشوارع والرموز البريدية</label>
@@ -593,4 +597,92 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
  }
 })();
 </script>
+
+<script type="module">
+/* Four independent comparison layers for the enhanced GLBs.
+   Reuse each original part's origin sidecar: the enhanced files preserve the
+   original part coordinate frame and add detail geometry without moving it. */
+import * as THREE from 'three';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.0/meshopt_decoder.module.js';
+
+(async function(){
+ const status=document.getElementById('status'), errorBox=document.getElementById('error');
+ const waitMap=()=>new Promise((resolve,reject)=>{
+  let tries=0;const check=()=>{if(window.adamCityMap?.isStyleLoaded())return resolve(window.adamCityMap);
+   if(++tries>600)return reject(new Error('انتهت مهلة انتظار الخريطة'));setTimeout(check,100);};check();
+ });
+ try{
+  const map=await waitMap();
+  for(let part=1;part<=4;part++) setupEnhancedPart(map,part);
+ }catch(err){
+  if(errorBox){errorBox.style.display='block';errorBox.textContent='تعذر تجهيز طبقات GLB المحسنة: '+(err?.message||err);}
+ }
+ function setupEnhancedPart(map,part){
+  const toggle=document.getElementById('enhanced-glb-part-'+part);
+  const id='ermita-enhanced-building-glb-part-'+part;
+  const base='complete_data/OSM/data/buildings/parts/';
+  const modelUrl=new URL(base+'enhanced/part'+part+'-detailed.glb',location.href).href;
+  const originUrl=new URL(base+'part'+part+'/part'+part+'-origin.json',location.href).href;
+  let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,projectedMeterScale=1,meterScale=1;
+  const showError=err=>{
+   loading=false;if(errorBox){errorBox.style.display='block';errorBox.textContent='تعذر تحميل GLB المحسن الجزء '+part+': '+(err?.message||err);}
+   if(status)status.textContent='فشل تحميل GLB المحسن الجزء '+part+'.';
+  };
+  async function ensureLayer(){
+   if(ready||loading)return;loading=true;
+   try{
+    const response=await fetch(originUrl);if(!response.ok)throw new Error('Origin JSON HTTP '+response.status);
+    const origin=await response.json();
+    const lon=Number(origin.origin_wgs84.longitude),lat=Number(origin.origin_wgs84.latitude);
+    if(!Number.isFinite(lon)||!Number.isFinite(lat))throw new Error('إحداثيات أصل الجزء غير صحيحة');
+    anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:lon,lat},0);
+    meterScale=anchor.meterInMercatorCoordinateUnits();projectedMeterScale=meterScale*Math.cos(lat*Math.PI/180);
+    const layer={
+     id,type:'custom',renderingMode:'3d',
+     onAdd(mapInstance,gl){
+      renderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;
+      camera=new THREE.Camera();scene=new THREE.Scene();
+      scene.add(new THREE.AmbientLight(0xffffff,2.0));
+      const light=new THREE.DirectionalLight(0xffffff,2.0);light.position.set(0,-70,100).normalize();scene.add(light);
+      const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
+      loader.load(modelUrl,gltf=>{
+       model=gltf.scene;model.position.set(0,0,0);model.scale.set(1,1,1);scene.add(model);
+       let meshCount=0;model.traverse(o=>{if(o.isMesh)meshCount++;});
+       model.visible=!!toggle.checked;ready=true;loading=false;
+       window['adamEnhancedPart'+part+'Ready']=true;
+       window['adamSetEnhancedPart'+part+'Visible']=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
+       if(status)status.textContent='تم تحميل GLB المحسن الجزء '+part+' | meshes='+meshCount+' | '+(model.visible?'ظاهر':'مخفي');
+       mapInstance.triggerRepaint();
+      },progress=>{
+       if(status)status.textContent=progress.total?'تحميل GLB المحسن الجزء '+part+': '+Math.round(progress.loaded/progress.total*100)+'%':
+        'جارٍ تنزيل GLB المحسن الجزء '+part+' ('+Math.round(progress.loaded/1048576)+' MiB)…';
+      },showError);
+     },
+     render(gl,args){
+      if(!renderer||!model||!model.visible)return;
+      const mainMatrix=args?.defaultProjectionData?.mainMatrix;if(!mainMatrix)return;
+      const values=Object.values(mainMatrix);if(values.length!==16||values.some(v=>!Number.isFinite(Number(v))))return;
+      const projection=new THREE.Matrix4().fromArray(values.map(Number));
+      const transform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
+       .scale(new THREE.Vector3(projectedMeterScale,-projectedMeterScale,meterScale));
+      camera.projectionMatrix.copy(projection).multiply(transform);
+      camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+      renderer.resetState();renderer.render(scene,camera);renderer.resetState();
+     }
+    };
+    map.addLayer(layer);if(map.getLayer(id))map.moveLayer(id);
+   }catch(err){showError(err);}
+  }
+  toggle.addEventListener('change',async()=>{
+   if(toggle.checked){
+    if(!ready)await ensureLayer();
+    else if(model){model.visible=true;map.triggerRepaint();}
+   }else if(model){model.visible=false;map.triggerRepaint();}
+   if(!toggle.checked&&status)status.textContent='تم إخفاء GLB المحسن الجزء '+part+'.';
+  });
+ }
+})();
+</script>
+
 </body></html>
