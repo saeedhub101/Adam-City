@@ -1,23 +1,44 @@
-# National Institutes of Health (NIH) Building — evidence record
+# National Institutes of Health (NIH) Building — evidence and visual record
 
 ## Identity and location
-- Common name: National Institutes of Health (NIH) Building, University of the Philippines Manila
-- Address: 623 Pedro Gil Street, Ermita, Manila 1000, Philippines
-- Published coordinates: 14.57593° N, 120.98708° E (from the Wikipedia agency page; use only as a locator cross-check, not as replacement geometry)
-- Matching feature in the current first-30 audit: OSM `way/27650470`, tagged `building=university`, `name=National Institutes of Health`, `building:levels=3`.
-- Current building description from the official NIH page: three storeys, beige exterior, grand foyer/lobby with an NIH mural; inaugurated 18 April 1997.
-- Important historical distinction: the site previously housed the Bureau of Government Laboratories / Bureau of Science, with laboratory buildings developed from 1902 and opened in 1905. Those dates describe the predecessor institution/site history, not the construction date of the current NIH building.
+- Common name: National Institutes of Health (NIH) Building, University of the Philippines Manila.
+- Address: 623 Pedro Gil Street, Ermita, Manila 1000, Philippines.
+- Published agency coordinates: 14.57593° N, 120.98708° E. These are a locator cross-check only; do not replace the mapped footprint or coordinates with this point.
+- Matching OSM candidate in the first-30 audit: `way/27650470`, tagged `building=university`, `name=National Institutes of Health`, `building:levels=3`.
+- Candidate OpenFreeMap visual registry key: `OFM-ERMITA-01494`; keep the linkage provisional until the polygon is checked against the photographed building.
 
-## Sources
-1. Official NIH — “The NIH Building”: https://nih.upm.edu.ph/about/nih-building
-   - Supports the current building's location, three-storey description, beige exterior, inauguration date, foyer/lobby and site history.
-2. Wikipedia — National Institutes of Health (Philippines): https://en.wikipedia.org/wiki/National_Institutes_of_Health_(Philippines)
-   - Lists 623 Pedro Gil Street and coordinates 14.57593° N, 120.98708° E, and summarizes the agency's establishment.
-3. National Historical Commission of the Philippines — UP Manila Complex Historical Landmark: https://philhistoricsites.nhcp.gov.ph/registry_database/university-of-the-philippines-manila-complex-historical-landmark/
-   - Includes the National Institute of Health among protected structures in the UP Manila Complex Historical Landmark.
+## Appearance from the actual building photograph
+Building-specific photograph: https://commons.wikimedia.org/wiki/File:UP_Manila_National_Institutes_of_Health_building.jpg
+- Photo date: 16 December 2022.
+- Photographer/uploader: Joven Jacolbia.
+- License: CC BY-SA 4.0.
+- Direct image file: https://upload.wikimedia.org/wikipedia/commons/2/25/UP_Manila_National_Institutes_of_Health_building.jpg
 
-## Data quality and rendering guidance
-- Officially supported storey count: three; this agrees with the existing OSM `building:levels=3` tag. It is a storey count, not a verified height in metres.
-- “Beige” is an official broad exterior description. Do not infer exact RGB colour, facade material, window pattern, roof material, or measured height without additional building-specific visual or technical evidence.
-- Keep the OpenFreeMap building footprint, coordinates, orientation and geometry unchanged. Attach this information only after confirming the OSM feature and OpenFreeMap component are the same physical building.
-- The NIH building is included in the NHCP listing for the UP Manila Complex; preserve that heritage context, but do not assume the current building itself dates to the 1902–1905 predecessor laboratories.
+Visual observations from this image:
+- Main exterior walls: **pale beige / ivory (cream-beige)**.
+- Window frames and mullions: dark charcoal/black.
+- Roof edge/eaves: muted red-brown.
+- Light cream vertical pilasters/columns and repeated window bays.
+- External air-conditioning units are visible on the facade.
+
+The official NIH page independently describes the building's exterior as beige. These colour labels are photo-level visual descriptions, not calibrated RGB paint values or proof of the facade's construction material. Do not describe the wall as a confirmed specific type of plaster, stone or concrete based on the photo alone.
+
+## Building facts and sources
+1. Official NIH — https://nih.upm.edu.ph/about/nih-building
+   - Current NIH Building is three storeys, has a beige exterior, and was inaugurated on 18 April 1997; the foyer/lobby includes the NIH mural.
+2. Wikipedia — https://en.wikipedia.org/wiki/National_Institutes_of_Health_(Philippines)
+   - Lists 623 Pedro Gil Street and coordinates 14.57593° N, 120.98708° E.
+3. Wikimedia Commons photo — https://commons.wikimedia.org/wiki/File:UP_Manila_National_Institutes_of_Health_building.jpg
+   - Photo attribution and CC BY-SA 4.0 terms apply if the image itself is reused.
+4. NHCP — https://philhistoricsites.nhcp.gov.ph/registry_database/university-of-the-philippines-manila-complex-historical-landmark/
+   - Lists the NIH among structures associated with the UP Manila Complex Historical Landmark.
+
+## Historical distinction
+The site previously housed the Bureau of Government Laboratories / Bureau of Science, whose laboratories were developed from 1902 and opened in 1905. These dates refer to the predecessor facilities/site history, not the current NIH building inaugurated in 1997.
+
+## Record linkage and geometry rules
+1. Link the identity/address and building-specific image to OSM candidate `way/27650470`.
+2. Link the OSM candidate to OpenFreeMap registry key `OFM-ERMITA-01494` only after checking the footprint on the map against the photo and coordinates.
+3. The official three-storey description agrees with the OSM `building:levels=3` tag. Storey count is not a measured height in metres.
+4. Keep the OpenFreeMap footprint, coordinates, orientation and geometry unchanged. Attach the name, address, image URL, observed colour/visual traits, and citations as attributes.
+5. Do not infer exact RGB, roof material, facade material or measured height from the image alone.
