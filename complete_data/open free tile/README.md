@@ -155,3 +155,15 @@ These OpenFreeMap keys are **candidate joins** until the actual polygons are vis
 ## Building linkage coverage audit
 
 The current coverage report is documented in [`building-linkage-coverage-audit.md`](./building-linkage-coverage-audit.md). It confirms that linkage is partial: the 1,721 extracted polygon components are not a unique-building census; 876 currently have an assigned OSM feature ID via spatial matching, 236 additional low-confidence candidates require review, and 609 have no OSM candidate assigned. Only NIH and Bahay Silungan have building-specific photo evidence recorded in the dedicated evidence crosswalk, and their OpenFreeMap joins are still provisional pending footprint confirmation. The source scope is labelled Ermita; verify the boundary before claiming complete Malate coverage.
+
+
+## Ermita building geographic/completeness sort — 2026-10-22
+
+A first-pass sort of the 1,721-row OpenFreeMap component registry is available:
+
+- `ermita-building-geographic-completeness-sort.csv` — rows sorted by approximately 100 m geographic grid, then latitude/longitude; preserves original registry IDs, source indices, coordinates and render heights while adding linkage status, completeness class and missing-field list.
+- `ermita-building-geographic-completeness-sort-report.json` — coverage counts and method notes.
+
+First-pass counts: 757 components have an accepted OSM link with confidence >= 0.90; 119 linked records need review; 236 have only a candidate requiring review; 609 are unmatched. Completeness triage: 381 partially enriched, 342 need match review, and 998 have insufficient data. Two building-photo crosswalks (NIH and Bahay Silungan) are still provisional, so **zero components currently pass the strict verified-complete gate**.
+
+**Scope warning:** this is an interim OpenFreeMap-registry sort, not a replacement for reconciliation of the original master GeoJSON (22,977 features) and master CSV (24,102 rows). Those master files still need direct identifier/source reconciliation. Geometry and source coordinates were not modified.
