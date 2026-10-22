@@ -40,6 +40,7 @@ jobs:
           /google-photorealistic-3d-tiles.html
           /test.html
           /complete_data/OSM/data/
+          /complete_data/OSM/scripts/generate_building_enrichment_index.py
           /complete_data/OSM/Markets/
           /complete_data/OSM/Buildings/Markets/facidals/
           /complete_data/OSM/Buildings/supreme-court-main-facade.glb
@@ -81,6 +82,9 @@ jobs:
           set -euo pipefail
           test -s ermita-malate-3d.html
           python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh mapbox-earcut pillow cairosvg scipy
+          # Refresh the metadata-only building index using exact IDs and conservative spatial matching.
+          # This does not generate or modify any GLB or geometry file.
+          python3 complete_data/OSM/scripts/generate_building_enrichment_index.py
           # Keep committed generated GLBs intact during routine deploys; create them only if absent.
           if [[ ! -s ermita/3d/landmarks/landmark-facade-details.glb || ! -s ermita/3d/landmarks/landmark-facade-report.json || ! -s ermita/3d/landmarks/landmark-facade-origin.json ]]; then
             python3 ermita/scripts/generate_landmark_facades.py
@@ -473,6 +477,7 @@ jobs:
           git add complete_data/OSM/Buildings/supreme-court-main-facade.glb complete_data/OSM/Buildings/supreme-court-main-facade-report.json complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg
           git add complete_data/OSM/data/buildings/roxas-boulevard/
           git add complete_data/OSM/data/buildings/ermita-glb-parts/
+          git add complete_data/OSM/data/buildings/parts/building-enrichment-index.json complete_data/OSM/data/buildings/parts/building-enrichment-report.json
           if ! git diff --cached --quiet; then
             git commit -m "Store generated building and ground fallback data"
             git push origin HEAD:main
