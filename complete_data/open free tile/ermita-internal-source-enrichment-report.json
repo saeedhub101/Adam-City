@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "date": "2026-10-22",
   "operation": "internal-repository-only exact-ID enrichment pass",
   "source_registry_rows": 1721,
@@ -8,35 +8,34 @@
     {
       "path": "complete_data/OSM/data/buildings/Ermita/osm-building-details.csv",
       "rows": 1909,
-      "policy": "Use exact OSM feature ID only; take tags from exact record."
+      "policy": "Exact OSM feature ID only; merge supported tags."
     },
     {
       "path": "complete_data/OSM/quality/building-height-evidence.csv",
       "rows": 1528,
-      "policy": "Use exact source_id = accepted OSM feature ID only."
+      "policy": "Exact source_id = accepted OSM feature ID only."
     },
     {
       "path": "ermita/3d/building-match-audit.csv",
       "rows": 1306,
-      "policy": "Use exact OSM feature ID only; audit fields are supplemental."
+      "policy": "Exact OSM feature ID only; supplemental building fields."
     },
     {
       "path": "ermita/3d/facade-photo-review.csv",
       "rows": 246,
-      "policy": "Use exact building_osm_id only; photo IDs are references, not verified facade texture."
+      "policy": "Exact building_osm_id only; photo references are not presumed verified."
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/building-source-link-audit.csv",
       "rows": 2651,
-      "policy": "Consult existing linkage audit; no spatial-only candidate copied."
+      "policy": "Consulted existing linkage audit; no spatial-only candidate copied."
     }
   ],
-  "matching_policy": "Only records already linked by accepted containment or exact source-ID methods were enriched. Candidate-only and proximity-review records were not assigned tags. No coordinates, geometry, source IDs or render heights were changed.",
+  "matching_policy": "Only rows already linked by accepted centroid-containment or exact-ID methods were enriched. Candidate-only/proximity-review rows were not assigned tags. Coordinates, geometry, source IDs and render heights were not changed.",
   "exact_osm_tag_join_rows": 692,
   "exact_height_evidence_join_rows": 692,
   "exact_building_match_audit_rows": 605,
   "linked_facade_photo_review_entries": 184,
-  "candidate_photo_entries_not_confirmed": 34,
   "rows_skipped_for_identity_review": 420,
   "fields_filled_from_internal_sources": 10,
   "attribute_coverage_after_internal_pass": {
@@ -57,12 +56,15 @@
     "roof_material": 0,
     "roof_colour": 8
   },
-  "completeness_counts_after_internal_pass": {},
-  "photo_policy": "Existing facade-photo review entries are indexed in the row but do not count as verified imagery unless the source file marks the facade verified; no automatic image-to-texture assignment.",
+  "completeness_counts_after_internal_pass": {
+    "needs_match_review": 355,
+    "insufficient_data": 998,
+    "partially_enriched": 368
+  },
+  "photo_policy": "Photo-review IDs are indexed only. They do not count as verified facade imagery or authorize texture assignment.",
   "limitations": [
-    "The primary 22,977-feature GeoJSON master and 24,102-row master CSV have not yet been fully reconciled against this 1,721-row OpenFreeMap component registry.",
+    "This is the OpenFreeMap component registry, not yet the direct reconciliation of the 22,977-feature master GeoJSON and 24,102-row master CSV.",
     "The 1,721 records are polygon components, not confirmed distinct physical buildings.",
-    "OSM/OFM exact-ID linkage is not equivalent to photo-confirmed architectural identity."
-  ],
-  "note_on_counts": "Counts were recalculated using the original triage rule: candidate/linked-needs-review remains review; otherwise >=5 populated tracked attributes, or >=3 with accepted high-confidence link, is partially enriched. This is a triage class, not a verified-realistic-building claim."
+    "Exact OSM tag linkage is not the same as photo-confirmed architectural identity."
+  ]
 }
