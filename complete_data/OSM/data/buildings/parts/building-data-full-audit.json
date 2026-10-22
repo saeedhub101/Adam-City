@@ -1,0 +1,677 @@
+{
+  "schema_version": "1.0.0",
+  "status": "audit_completed",
+  "read_only": true,
+  "purpose": "Full parsed audit of building sources, every enrichment-index record, all original four-part inventories, enhanced derivatives, and the separate six-part permanent GLB set.",
+  "policy": "This audit reads source files and writes only this report. It does not modify source GeoJSON, CSV, GLBs, inventories, origin sidecars, or enrichment indexes.",
+  "source_files": {
+    "complete_data/OSM/data/buildings/ermita-building-footprints.geojson": {
+      "bytes": 17882142,
+      "sha256": "733a286e8db3944e5f986e5eadb94eff10ac112544a3c58056b287d23f1cdce4"
+    },
+    "complete_data/OSM/data/buildings/ermita-building-details.geojson": {
+      "bytes": 631719,
+      "sha256": "9c5a7cfab0602fd38b351d25a5a63be9646f2048207d2a9bec5cfaf986f8f2e1"
+    },
+    "complete_data/OSM/data/buildings/ermita-building-roof-details.geojson": {
+      "bytes": 581127,
+      "sha256": "357f28d64adc6355f3ff1e119ce5284717b8e6ad896d168308feb897d090bfa5"
+    },
+    "complete_data/OSM/data/buildings/osm-building-details.csv": {
+      "bytes": 430871,
+      "sha256": "6dde27e2045c3622b1c0a417f19a5139079142b9d68b9122e6cf6eae382ad621"
+    },
+    "complete_data/OSM/data/buildings/parts/parts-inventory-index.json": {
+      "bytes": 697185,
+      "sha256": "e3f4506440a0e3fd1ba8c9fd6716b733a74c5302ecf19fd61d3315dc2f7c5600"
+    },
+    "complete_data/OSM/data/buildings/parts/building-enrichment-index.json": {
+      "bytes": 6244019,
+      "sha256": "0d3aa90c45c2ca1d99875ac4d2bb4e906830ee95fcca8a0124193b467d82a02b"
+    },
+    "complete_data/OSM/data/buildings/parts/building-enrichment-report.json": {
+      "bytes": 73862,
+      "sha256": "e5c7e0edfa5da967135bd6f9e5a4724dc8d0ed1717fd0a731b956f68d30575d4"
+    }
+  },
+  "source_counts": {
+    "footprint_geojson_features": 1123,
+    "building_details_geojson_features": 1533,
+    "roof_details_geojson_features": 1533,
+    "building_details_csv_rows": 1909,
+    "building_details_csv_rows_with_osm_id": 1909,
+    "unique_osm_ids_in_csv": 1909,
+    "parts_inventory_index_entries": 2651,
+    "parts_report": {
+      "exported_source_polygon_feature_count": 2651,
+      "polygon_components": 139782,
+      "part_count": 4,
+      "all_exported_polygon_features_assigned_once": true
+    }
+  },
+  "full_enrichment_index": {
+    "path": "complete_data/OSM/data/buildings/parts/building-enrichment-index.json",
+    "schema_version": "2.0.0",
+    "records_parsed": 2651,
+    "reported_counts": {
+      "total": 2651,
+      "exact_osm_id": 75,
+      "spatial_high_confidence": 1429,
+      "spatial_geometry_high_confidence": 15,
+      "spatial_review": 111,
+      "unmatched": 1021,
+      "named": 333,
+      "addressed": 428,
+      "with_source_material_tag": 210,
+      "linked_total": 1519
+    },
+    "report_counts": {
+      "total": 2651,
+      "exact_osm_id": 75,
+      "spatial_high_confidence": 1429,
+      "spatial_geometry_high_confidence": 15,
+      "spatial_review": 111,
+      "unmatched": 1021,
+      "named": 333,
+      "addressed": 428,
+      "with_source_material_tag": 210,
+      "linked_total": 1519
+    },
+    "records_by_part": {
+      "1": 1300,
+      "2": 347,
+      "3": 928,
+      "4": 76
+    },
+    "records_by_source_key": {
+      "footprints": 1123,
+      "roof_details": 1528
+    },
+    "records_by_match_method": {
+      "exact_osm_id": 75,
+      "spatial_geometry_high_confidence": 15,
+      "spatial_high_confidence": 1429,
+      "spatial_review": 111,
+      "unmatched": 1021
+    },
+    "field_coverage": {
+      "name": 333,
+      "official_name": 7,
+      "brand": 12,
+      "address": 428,
+      "height": 1241,
+      "levels": 829,
+      "material_or_colour": 210,
+      "source_evidence": 2651,
+      "original_inventory_properties": 2651
+    },
+    "duplicate_identity_keys": [],
+    "review_queue_count": 111,
+    "matching_policy": "Exact OSM ID first, then centroid containment and source-footprint polygon overlap with area/ambiguity checks. Ambiguous matches are listed for review and do not receive semantic tags. Nearby POIs are never attached by proximity alone.",
+    "geometry_policy": "Metadata-only join. No GLB, GeoJSON geometry, feature IDs, centroids, coordinates, heights, or colors are changed."
+  },
+  "original_four_part_assets": [
+    {
+      "part": 1,
+      "original_glb": "complete_data/OSM/data/buildings/parts/part1/part1.glb",
+      "original_glb_bytes": 2509324,
+      "origin_sidecar": "complete_data/OSM/data/buildings/parts/part1/part1-origin.json",
+      "inventory": "complete_data/OSM/data/buildings/parts/part1/part1-inventory.json",
+      "inventory_feature_count": 1300,
+      "inventory_sha256": "89978fe836984527a9374f65f74252577beb53fb0003a9f9b36bfd4efc151e02",
+      "origin_sha256": "c5233764e0f101f71f38e319e7c98a1ddb69d9f39194458292a58316454f7179",
+      "enhanced_glb": "complete_data/OSM/data/buildings/parts/enhanced/part1-detailed.glb",
+      "enhanced_glb_bytes": 27459068,
+      "enhanced_report": "complete_data/OSM/data/buildings/parts/enhanced/part1-detailed-report.json",
+      "enhanced_report_sha256": "7fdcf4fb5678542143cfb1fc9fdb02181b7fa3892ceaf5f378e9e03bdba3a26a"
+    },
+    {
+      "part": 2,
+      "original_glb": "complete_data/OSM/data/buildings/parts/part2/part2.glb",
+      "original_glb_bytes": 33378316,
+      "origin_sidecar": "complete_data/OSM/data/buildings/parts/part2/part2-origin.json",
+      "inventory": "complete_data/OSM/data/buildings/parts/part2/part2-inventory.json",
+      "inventory_feature_count": 347,
+      "inventory_sha256": "7af2589bb2ebc81ed86ff7540fbd0e6f0e572957657e788e400fa909e688c82e",
+      "origin_sha256": "b996a8fd3790158aa11315f2f1a94609e930bcecc47fa6cb41ba7f75b0aa228b",
+      "enhanced_glb": "complete_data/OSM/data/buildings/parts/enhanced/part2-detailed.glb",
+      "enhanced_glb_bytes": 94708060,
+      "enhanced_report": "complete_data/OSM/data/buildings/parts/enhanced/part2-detailed-report.json",
+      "enhanced_report_sha256": "1c8a93f376a3f98d3568dcfd4c656e140b55e9ab426bcbc3a5a59245f961b548"
+    },
+    {
+      "part": 3,
+      "original_glb": "complete_data/OSM/data/buildings/parts/part3/part3.glb",
+      "original_glb_bytes": 38921972,
+      "origin_sidecar": "complete_data/OSM/data/buildings/parts/part3/part3-origin.json",
+      "inventory": "complete_data/OSM/data/buildings/parts/part3/part3-inventory.json",
+      "inventory_feature_count": 928,
+      "inventory_sha256": "ec4a2af735cdcaa123def1f7033378433bfa5f838b7073575a28abf21632a0f9",
+      "origin_sha256": "3a28e28bd969861e4cc3cf28d2586393610b0b4302f1272547e92f80175a54fb",
+      "enhanced_glb": "complete_data/OSM/data/buildings/parts/enhanced/part3-detailed.glb",
+      "enhanced_glb_bytes": 91435696,
+      "enhanced_report": "complete_data/OSM/data/buildings/parts/enhanced/part3-detailed-report.json",
+      "enhanced_report_sha256": "0a7d486c1a2088c834da9277f6ca946ee248fba8b59f2d5032b22b902e41b784"
+    },
+    {
+      "part": 4,
+      "original_glb": "complete_data/OSM/data/buildings/parts/part4/part4.glb",
+      "original_glb_bytes": 26759688,
+      "origin_sidecar": "complete_data/OSM/data/buildings/parts/part4/part4-origin.json",
+      "inventory": "complete_data/OSM/data/buildings/parts/part4/part4-inventory.json",
+      "inventory_feature_count": 76,
+      "inventory_sha256": "31dc20fed6e7a37352a82dde88eb1af4e82b9c3ac8580ca14680d23b80bf578b",
+      "origin_sha256": "3030c89911dcdf875b34195cf3d76d498073514b0d097c5210f3a8c7245ab8f9",
+      "enhanced_glb": "complete_data/OSM/data/buildings/parts/enhanced/part4-detailed.glb",
+      "enhanced_glb_bytes": 60445904,
+      "enhanced_report": "complete_data/OSM/data/buildings/parts/enhanced/part4-detailed-report.json",
+      "enhanced_report_sha256": "8645b7544ca93110fd85b366c2df728a2f98df2a5af71ec7e1dbbb6ec56bd8ef"
+    }
+  ],
+  "separate_six_part_assets": {
+    "index": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_parts_index.json",
+    "report": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_parts_report.json",
+    "index_source_features": 1123,
+    "index_polygon_components": 138254,
+    "report_source_features": 1123,
+    "report_exported_features": 1123,
+    "report_polygon_components": 138254,
+    "omitted_source_features": [],
+    "parts": [
+      {
+        "part": 1,
+        "file": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part1.glb",
+        "glb_bytes": 25900472,
+        "inventory": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part1-inventory.json",
+        "inventory_exists": true,
+        "origin": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part1-origin.json",
+        "origin_exists": true,
+        "feature_count": 187,
+        "polygon_components": 32227
+      },
+      {
+        "part": 2,
+        "file": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part2.glb",
+        "glb_bytes": 2047344,
+        "inventory": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part2-inventory.json",
+        "inventory_exists": true,
+        "origin": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part2-origin.json",
+        "origin_exists": true,
+        "feature_count": 187,
+        "polygon_components": 2321
+      },
+      {
+        "part": 3,
+        "file": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part3.glb",
+        "glb_bytes": 1596752,
+        "inventory": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part3-inventory.json",
+        "inventory_exists": true,
+        "origin": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part3-origin.json",
+        "origin_exists": true,
+        "feature_count": 187,
+        "polygon_components": 1798
+      },
+      {
+        "part": 4,
+        "file": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part4.glb",
+        "glb_bytes": 25078316,
+        "inventory": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part4-inventory.json",
+        "inventory_exists": true,
+        "origin": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part4-origin.json",
+        "origin_exists": true,
+        "feature_count": 187,
+        "polygon_components": 30850
+      },
+      {
+        "part": 5,
+        "file": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part5.glb",
+        "glb_bytes": 55860376,
+        "inventory": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part5-inventory.json",
+        "inventory_exists": true,
+        "origin": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part5-origin.json",
+        "origin_exists": true,
+        "feature_count": 187,
+        "polygon_components": 70246
+      },
+      {
+        "part": 6,
+        "file": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part6.glb",
+        "glb_bytes": 800824,
+        "inventory": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part6-inventory.json",
+        "inventory_exists": true,
+        "origin": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part6-origin.json",
+        "origin_exists": true,
+        "feature_count": 188,
+        "polygon_components": 812
+      }
+    ]
+  },
+  "enhanced_parts_report": {
+    "source": "complete_data/OSM/data/buildings/ermita-building-footprints.geojson",
+    "output_directory": "complete_data/OSM/data/buildings/parts/enhanced",
+    "parts": [
+      {
+        "original_glb": "complete_data/OSM/data/buildings/parts/part1/part1.glb",
+        "output_glb": "complete_data/OSM/data/buildings/parts/enhanced/part1-detailed.glb",
+        "original_bytes": 2509324,
+        "output_bytes": 27459068,
+        "source_feature_count": 1123,
+        "footprint_parts_selected_by_part_bounds": 6019,
+        "facade_window_meshes": 577,
+        "facade_window_boxes_estimate": 0,
+        "facade_window_representation": "thin quad planes (2 triangles each) to preserve visible glazing detail while avoiding excessive GLB size",
+        "facade_accent_meshes": 14,
+        "facade_base_meshes": 3049,
+        "photo_specific_detail_meshes": 21,
+        "skipped_source_features": 0,
+        "origin_projected_m": {
+          "x": 13468029.142847193,
+          "y": 1639726.9375723219
+        },
+        "coordinate_policy": "Preserve original GLB scene and use the existing part origin; add only new facade/detail meshes in the same local coordinate frame.",
+        "limitations": [
+          "The original building meshes and their materials are retained; added details are procedural overlays from the Roxas Boulevard facade generator.",
+          "Photo-specific details are generated only for source footprints with matching identities/tags. This is not a photogrammetric reconstruction of every facade."
+        ]
+      },
+      {
+        "original_glb": "complete_data/OSM/data/buildings/parts/part2/part2.glb",
+        "output_glb": "complete_data/OSM/data/buildings/parts/enhanced/part2-detailed.glb",
+        "original_bytes": 33378316,
+        "output_bytes": 94708060,
+        "source_feature_count": 1123,
+        "footprint_parts_selected_by_part_bounds": 40325,
+        "facade_window_meshes": 869,
+        "facade_window_boxes_estimate": 0,
+        "facade_window_representation": "thin quad planes (2 triangles each) to preserve visible glazing detail while avoiding excessive GLB size",
+        "facade_accent_meshes": 0,
+        "facade_base_meshes": 12338,
+        "photo_specific_detail_meshes": 0,
+        "skipped_source_features": 0,
+        "origin_projected_m": {
+          "x": 13470417.885549493,
+          "y": 1638781.9311113786
+        },
+        "coordinate_policy": "Preserve original GLB scene and use the existing part origin; add only new facade/detail meshes in the same local coordinate frame.",
+        "limitations": [
+          "The original building meshes and their materials are retained; added details are procedural overlays from the Roxas Boulevard facade generator.",
+          "Photo-specific details are generated only for source footprints with matching identities/tags. This is not a photogrammetric reconstruction of every facade."
+        ]
+      },
+      {
+        "original_glb": "complete_data/OSM/data/buildings/parts/part3/part3.glb",
+        "output_glb": "complete_data/OSM/data/buildings/parts/enhanced/part3-detailed.glb",
+        "original_bytes": 38921972,
+        "output_bytes": 91435696,
+        "source_feature_count": 1123,
+        "footprint_parts_selected_by_part_bounds": 38334,
+        "facade_window_meshes": 1928,
+        "facade_window_boxes_estimate": 0,
+        "facade_window_representation": "thin quad planes (2 triangles each) to preserve visible glazing detail while avoiding excessive GLB size",
+        "facade_accent_meshes": 0,
+        "facade_base_meshes": 11210,
+        "photo_specific_detail_meshes": 0,
+        "skipped_source_features": 0,
+        "origin_projected_m": {
+          "x": 13467506.638628356,
+          "y": 1644061.124578535
+        },
+        "coordinate_policy": "Preserve original GLB scene and use the existing part origin; add only new facade/detail meshes in the same local coordinate frame.",
+        "limitations": [
+          "The original building meshes and their materials are retained; added details are procedural overlays from the Roxas Boulevard facade generator.",
+          "Photo-specific details are generated only for source footprints with matching identities/tags. This is not a photogrammetric reconstruction of every facade."
+        ]
+      },
+      {
+        "original_glb": "complete_data/OSM/data/buildings/parts/part4/part4.glb",
+        "output_glb": "complete_data/OSM/data/buildings/parts/enhanced/part4-detailed.glb",
+        "original_bytes": 26759688,
+        "output_bytes": 60445904,
+        "source_feature_count": 1123,
+        "footprint_parts_selected_by_part_bounds": 40802,
+        "facade_window_meshes": 160,
+        "facade_window_boxes_estimate": 0,
+        "facade_window_representation": "thin quad planes (2 triangles each) to preserve visible glazing detail while avoiding excessive GLB size",
+        "facade_accent_meshes": 0,
+        "facade_base_meshes": 24282,
+        "photo_specific_detail_meshes": 0,
+        "skipped_source_features": 0,
+        "origin_projected_m": {
+          "x": 13470866.419399105,
+          "y": 1643608.5953451272
+        },
+        "coordinate_policy": "Preserve original GLB scene and use the existing part origin; add only new facade/detail meshes in the same local coordinate frame.",
+        "limitations": [
+          "The original building meshes and their materials are retained; added details are procedural overlays from the Roxas Boulevard facade generator.",
+          "Photo-specific details are generated only for source footprints with matching identities/tags. This is not a photogrammetric reconstruction of every facade."
+        ]
+      }
+    ]
+  },
+  "checks": {
+    "enrichment_index_records_match_report_total": true,
+    "parts_index_count_matches_parts_report": true,
+    "all_four_original_and_enhanced_parts_present": true,
+    "all_six_permanent_parts_listed": true,
+    "all_source_features_accounted_for_in_six_part_report": true,
+    "six_part_report_has_no_omitted_source_features": true,
+    "all_original_inventory_properties_preserved_flag": true,
+    "all_material_properties_preserved_flag": true,
+    "no_duplicate_enrichment_identity_keys": true
+  },
+  "repository_building_data_file_inventory": {
+    "file_count": 76,
+    "files": [
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "bytes": 631719
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-building-footprints.geojson",
+        "bytes": 17882142
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-building-roof-details.csv",
+        "bytes": 343883
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-building-roof-details.geojson",
+        "bytes": 581127
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/README.md",
+        "bytes": 1790
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part1-inventory.json",
+        "bytes": 359365
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part1-origin.json",
+        "bytes": 604
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part1.glb",
+        "bytes": 25900472
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part2-inventory.json",
+        "bytes": 401731
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part2-origin.json",
+        "bytes": 600
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part2.glb",
+        "bytes": 2047344
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part3-inventory.json",
+        "bytes": 385212
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part3-origin.json",
+        "bytes": 604
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part3.glb",
+        "bytes": 1596752
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part4-inventory.json",
+        "bytes": 374382
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part4-origin.json",
+        "bytes": 605
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part4.glb",
+        "bytes": 25078316
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part5-inventory.json",
+        "bytes": 362857
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part5-origin.json",
+        "bytes": 603
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part5.glb",
+        "bytes": 55860376
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part6-inventory.json",
+        "bytes": 363854
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part6-origin.json",
+        "bytes": 600
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_part6.glb",
+        "bytes": 800824
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_parts_index.json",
+        "bytes": 4265
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/ermita-glb-parts/buildings_parts_report.json",
+        "bytes": 4215
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/osm-building-details.csv",
+        "bytes": 430871
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/BUILDING-DATA-AUDIT-AND-ENHANCEMENT-LOG.md",
+        "bytes": 14351
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/BUILDING-IMAGE-CANDIDATES.md",
+        "bytes": 863
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/BUILDING-IMAGE-REVIEW.md",
+        "bytes": 3338
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/BUILDING-VISUAL-RESEARCH.md",
+        "bytes": 1060
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/README.md",
+        "bytes": 3897
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/building-enrichment-index.json",
+        "bytes": 6244019
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/building-enrichment-report.json",
+        "bytes": 73862
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/building-image-candidates-progress.jsonl",
+        "bytes": 751634
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/building-image-candidates.csv",
+        "bytes": 539531
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/building-image-candidates.json",
+        "bytes": 789402
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/building-image-links.json",
+        "bytes": 4346
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/building-source-link-audit.csv",
+        "bytes": 237250
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/building-source-merge-report.json",
+        "bytes": 13320
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/building-visual-research-queue.csv",
+        "bytes": 404116
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/building-visual-research-queue.geojson",
+        "bytes": 1286011
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/enhanced/README.md",
+        "bytes": 2598
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/enhanced/enhancement-report.json",
+        "bytes": 5483
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/enhanced/part1-detailed-report.json",
+        "bytes": 1229
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/enhanced/part1-detailed.glb",
+        "bytes": 27459068
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/enhanced/part2-detailed-report.json",
+        "bytes": 1230
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/enhanced/part2-detailed.glb",
+        "bytes": 94708060
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/enhanced/part3-detailed-report.json",
+        "bytes": 1230
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/enhanced/part3-detailed.glb",
+        "bytes": 91435696
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/enhanced/part4-detailed-report.json",
+        "bytes": 1230
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/enhanced/part4-detailed.glb",
+        "bytes": 60445904
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/part1/part1-inventory.json",
+        "bytes": 1704819
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/part1/part1-origin.json",
+        "bytes": 815
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/part1/part1.glb",
+        "bytes": 2509324
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/part2/part2-inventory.json",
+        "bytes": 544267
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/part2/part2-origin.json",
+        "bytes": 817
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/part2/part2.glb",
+        "bytes": 33378316
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/part3/part3-inventory.json",
+        "bytes": 1323163
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/part3/part3-origin.json",
+        "bytes": 815
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/part3/part3.glb",
+        "bytes": 38921972
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/part4/part4-inventory.json",
+        "bytes": 117944
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/part4/part4-origin.json",
+        "bytes": 814
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/part4/part4.glb",
+        "bytes": 26759688
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/parts-inventory-index.json",
+        "bytes": 697185
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/parts/parts-report.json",
+        "bytes": 4335
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/roxas-boulevard/SIGNAGE_README.md",
+        "bytes": 795
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb",
+        "bytes": 27382596
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json",
+        "bytes": 87774
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb",
+        "bytes": 1535668
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json",
+        "bytes": 16879
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json",
+        "bytes": 225416
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb",
+        "bytes": 88929272
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/windows/facade-details-report.json",
+        "bytes": 1188
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/windows/facade-generation.sha256",
+        "bytes": 65
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/windows/facade-model-origin.json",
+        "bytes": 347
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/windows/facade-signage-index.csv",
+        "bytes": 220934
+      }
+    ]
+  },
+  "review_notes": [
+    "A successful parse and consistent count do not establish visual accuracy of generated facade details.",
+    "The enrichment index has unmatched and spatial-review records; preserve them and do not invent building identity or facade attributes.",
+    "The four-part source GLBs and the separate six-part permanent GLB set are distinct assets and must not be substituted for one another.",
+    "The report records file paths and sizes for all files under the buildings data folder; source hashes are recorded for key text data and inventories."
+  ]
+}
