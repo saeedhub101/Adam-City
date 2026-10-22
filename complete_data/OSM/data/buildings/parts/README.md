@@ -7,10 +7,10 @@ The GLB parts are preserved as committed assets; this metadata enrichment workfl
 
 ## Metadata enrichment index
 
-- `building-enrichment-index.json` joins each exported part feature to available OSM names, addresses, building tags, and material/roof tags. It first uses exact OSM feature IDs, then attempts conservative spatial matching for unmatched polygons using centroid containment, area similarity, and ambiguity checks.
+- `building-enrichment-index.json` joins each exported part feature to available OSM names, addresses, building tags, and material/roof tags. It first uses exact OSM feature IDs, then attempts conservative spatial matching for unmatched polygons using centroid containment and source-footprint polygon overlap, with area similarity and ambiguity checks.
 - `building-enrichment-report.json` records coverage counts and limitations.
 - Rebuild both metadata files from the repository root with:
 
   `python3 complete_data/OSM/scripts/generate_building_enrichment_index.py`
 
-The enrichment is metadata-only: it does not change GLBs, footprints, geometry, coordinates, IDs, heights, or existing colors. Exact-ID matches are preferred. Spatial candidates that fail ambiguity or area checks go into the review queue and do not receive candidate semantic tags. Nearby POIs are never attached to a building by proximity alone. Facade photographs and verified photographic material estimates are not yet included. Source attributes are incomplete for many buildings, so missing values remain missing until supported by additional evidence.
+The enrichment is metadata-only: it does not change GLBs, footprints, geometry, coordinates, IDs, heights, or existing colors. Exact-ID matches are preferred. Spatial matches are accepted only when containment/overlap and area checks identify a clear candidate. Ambiguous candidates go into the review queue and do not receive candidate semantic tags. Nearby POIs are never attached to a building by proximity alone. Facade photographs and verified photographic material estimates are not yet included. Source attributes are incomplete for many buildings, so missing values remain missing until supported by additional evidence.
