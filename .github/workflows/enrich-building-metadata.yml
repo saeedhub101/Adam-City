@@ -29,7 +29,6 @@ on:
       - 'complete_data/OSM/data/buildings/windows/facade-details-report.json'
       - 'complete_data/OSM/Markets/commercial-facades-report.json'
       - 'complete_data/OSM/Markets/reference_photos/robinsons-manila/reference-index.json'
-      - 'complete_data/OSM/Buildings/supreme-court-main-facade-report.json'
 
 permissions:
   contents: write
@@ -74,7 +73,6 @@ jobs:
             /complete_data/OSM/data/buildings/windows/facade-details-report.json
             /complete_data/OSM/Markets/commercial-facades-report.json
             /complete_data/OSM/Markets/reference_photos/robinsons-manila/reference-index.json
-            /complete_data/OSM/Buildings/supreme-court-main-facade-report.json
             /complete_data/open free tile/building-fallback.geojson
             /complete_data/open free tile/layers/housenumber.geojsonl
             /complete_data/OSM/scripts/generate_building_enrichment_index.py
