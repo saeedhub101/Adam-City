@@ -54,7 +54,7 @@ def flat_window_mesh(poly, height, tags, part_index):
         "way/87754850": 14, "way/314226123": 6,
     }
     levels = facade.positive_number(tags.get("building:levels") or tags.get("levels"), 1, 150)
-    floors = landmark_floors.get(fid, int(round(levels)) if levels else max(2, int(round(height / 3.2)))
+    floors = landmark_floors.get(fid, int(round(levels)) if levels else max(2, int(round(height / 3.2))))
     floors = max(2, min(floors, 60))
     floor_h = height / floors
     window_h = min(1.45, max(0.75, floor_h * 0.52))
