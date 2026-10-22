@@ -165,3 +165,6 @@ Expanded internal-source ingestion was queued for execution through the existing
 
 
 The GeoJSON writer omits empty enrichment properties while the CSV keeps a stable set of enrichment columns. This prevents sparse metadata from inflating the large first GeoJSON part past GitHub's per-file size limit. The next run will validate output sizes before its commit is accepted.
+
+
+The sparse GeoJSON pass was corrected to count unmatched features without requiring an enrichment-status property to be present. The workflow will rerun the pass and validate the generated output before committing it.
