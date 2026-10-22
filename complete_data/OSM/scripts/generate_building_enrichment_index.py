@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Join Button 4 building-part inventories to OSM building records.
+"""Join Button 4 building-part inventories to OSM building records (metadata-only; no GLB regeneration).
 
 Exact OSM IDs are preferred. For unmatched polygon footprints, spatial matching
 is attempted against OSM building polygons. Geometry is never changed. A spatial
