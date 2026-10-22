@@ -21,7 +21,7 @@ from shapely.strtree import STRtree
 ROOT = Path(__file__).resolve().parents[3]
 BUILDINGS = ROOT / "complete_data/OSM/data/buildings"
 PARTS = BUILDINGS / "Ermita"
-PARTS_INDEX = PARTS / "parts-inventory-index.json"
+PARTS_INDEX = PARTS / "ermita-building-parts-index.json"
 DETAILS_GEOJSON = BUILDINGS / "Ermita" / "ermita-building-details.geojson"
 ROOF_GEOJSON = BUILDINGS / "Ermita" / "ermita-building-roof-details.geojson"
 FOOTPRINTS_GEOJSON = BUILDINGS / "Ermita" / "ermita-building-footprints.geojson"
