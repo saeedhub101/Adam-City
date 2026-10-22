@@ -82,3 +82,11 @@ The GeoJSON files retain each extracted polygon's full rings and OpenFreeMap ren
 - No active map, existing building geometry, GLB, or workflow was changed or run by this extraction.
 
 Attribution: OpenFreeMap © OpenMapTiles; data from OpenStreetMap contributors (ODbL where applicable). Area boundary provenance is recorded in `area-boundary.geojson`.
+
+
+### Current extracted field coverage (1,721 records)
+
+- Building-name field populated from higher-confidence spatial OSM building matches: **290**; additional low-confidence name candidates kept separately for review: **320**.
+- Address fields: house number **111**, street **256**, postcode **88**, city **369**. There are **255** footprints with address-bearing point candidates inside them: **166** have one candidate and **89** have multiple candidates that require review.
+- Separate named/shop/amenity POI candidates are present for **258** footprints; these describe mapped points within a footprint and must not automatically be interpreted as the building's official name.
+- Other mapped tags: building levels **513**, OSM height tag **112**, roof shape **58**, building material **3**, building colour **3**, roof colour **8**, OpenFreeMap source colour **15**. Absence means the source data did not supply the field; it does not mean the physical feature is absent.
