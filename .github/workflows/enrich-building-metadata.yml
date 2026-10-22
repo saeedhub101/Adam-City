@@ -31,7 +31,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: building-metadata-enrichment
+  group: building-metadata-enrichment-v2
   cancel-in-progress: true
 
 jobs:
