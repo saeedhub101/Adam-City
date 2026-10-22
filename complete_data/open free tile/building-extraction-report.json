@@ -28,6 +28,7 @@
   "address_enrichment": {
     "address_bearing_point_features_examined": 941,
     "buildings_with_address_point_candidates": 255,
+    "buildings_with_single_address_point": 166,
     "buildings_with_multiple_address_candidates": 89,
     "poi_candidates": "Named/shop/amenity points inside a footprint are stored separately and are not treated as building names by default."
   },
@@ -44,5 +45,25 @@
     "part1_csv_rows": 861,
     "part2_csv_rows": 860,
     "verified_from_committed_files": true
+  },
+  "extracted_attribute_counts": {
+    "total_building_records": 1721,
+    "building_name_from_higher_confidence_osm_match": 290,
+    "low_confidence_candidate_building_name": 320,
+    "house_number": 111,
+    "street": 256,
+    "postcode": 88,
+    "city": 369,
+    "building_levels": 513,
+    "osm_height_tag": 112,
+    "roof_shape": 58,
+    "building_material": 3,
+    "building_colour": 3,
+    "roof_colour": 8,
+    "openfreemap_source_colour": 15,
+    "footprints_with_address_point_candidates": 255,
+    "footprints_with_single_address_point": 166,
+    "footprints_with_multiple_address_points_review": 89,
+    "footprints_with_named_shop_or_amenity_point_candidates": 258
   }
 }
