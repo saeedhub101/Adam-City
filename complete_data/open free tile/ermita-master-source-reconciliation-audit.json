@@ -130,5 +130,8 @@
     "The 8,176 Google/Microsoft footprint crosswalk rows compare those two sources with each other. They are useful geometry evidence but are not yet directly reconciled against the OFM master geometry.",
     "Existing photo records are candidate references only unless visual identity and facade orientation are confirmed."
   ],
-  "next_internal_step": "Build and validate a record-level crosswalk between the 22,977 master GeoJSON features and the 24,102 source CSV rows using exact source IDs first, then geometry fingerprints and conservative spatial checks. Preserve every original source record and keep ambiguous matches in a review queue."
+  "next_internal_step": "Build and validate a record-level crosswalk between the 22,977 master GeoJSON features and the 24,102 source CSV rows using exact source IDs first, then geometry fingerprints and conservative spatial checks. Preserve every original source record and keep ambiguous matches in a review queue.",
+  "next_internal_step_script": "complete_data/OSM/scripts/reconcile_ermita_master_geojson_csv.py",
+  "script_status": "committed_not_executed",
+  "workflow_executed": false
 }
