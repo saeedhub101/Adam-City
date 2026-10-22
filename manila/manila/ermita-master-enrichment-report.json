@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "status": "completed",
+  "policy": "Exact OSM ID only; add enriched_* fields without overwriting source columns. Conflicting source values remain unfilled and are recorded. Geometry, coordinates, feature IDs, render heights, source IDs, images and textures are not changed.",
+  "sources": {
+    "osm-building-details.csv": 1909,
+    "building-height-evidence.csv": 1528,
+    "building-match-audit.csv": 1306
+  },
+  "csv": {
+    "path": "manila/manila/ermita-buildings-master.csv",
+    "rows": 24102,
+    "columns_before": 193,
+    "columns_after": 209
+  },
+  "geojson_parts": [
+    {
+      "path": "manila/manila/ermita-buildings-master.parts/part-001.geojson",
+      "features": 12507,
+      "status_counts": {
+        "": 10899,
+        "exact_osm_id_enriched": 1608
+      },
+      "conflict_fields": {}
+    },
+    {
+      "path": "manila/manila/ermita-buildings-master.parts/part-002.geojson",
+      "features": 10470,
+      "status_counts": {
+        "": 10470
+      },
+      "conflict_fields": {}
+    }
+  ],
+  "filled_fields": {
+    "enriched_building_type": 12149,
+    "enriched_height_m": 1195,
+    "enriched_material": 66,
+    "enriched_name": 3306,
+    "enriched_levels": 6054,
+    "enriched_house_number": 915,
+    "enriched_city": 3696,
+    "enriched_street": 1995,
+    "enriched_roof_shape": 831,
+    "enriched_postcode": 552,
+    "enriched_official_name": 63,
+    "enriched_roof_colour": 56,
+    "enriched_facade_colour": 44
+  },
+  "conflicts": {},
+  "matched_records": {
+    "": 11540,
+    "exact_osm_id_enriched": 12562
+  },
+  "note": "Exact-ID pass only. No external search, spatial-only matching, photo verification, or inferred architectural measurements were applied."
+}
