@@ -196,3 +196,6 @@ The master CSV has 24,102 source rows and 193 columns, but it is a union of 18 s
 
 
 The internal exact-ID enrichment was expanded after the first pass: the legacy `ermita/maps/generated/ermita-building-details.csv` matched 692 accepted OFM-linked rows and filled 79 further blank fields; the `ermita/maps/qa/consolidated-building-register.csv` also matched 692 rows, preserving source-presence and missing-source notes and flagging **443 records with source-conflict notes** for review. These conflict notes are not resolved by choosing a source automatically.
+
+
+A read-only feature-level crosswalk builder is committed at [`reconcile_ermita_master_geojson_csv.py`](../OSM/scripts/reconcile_ermita_master_geojson_csv.py). It is designed to stream the full master GeoJSON parts and join explicit identifiers against the master CSV, while preserving ambiguous matches for review. It has not been run; no workflow was triggered.
