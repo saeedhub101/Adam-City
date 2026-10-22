@@ -6,10 +6,11 @@ on:
     paths-ignore:
       - 'ermita/maps/sources/openfreemap/building-fallback.geojson'
       - 'ermita/maps/sources/openfreemap/ground-fallback.geojson'
+      - 'complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-enhanced.geojson'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -56,13 +57,27 @@ jobs:
           EOF
           git switch -C main FETCH_HEAD
 
-      - name: Precompute Roxas Boulevard enhancement GeoJSON
+      - name: Reuse or generate and commit Roxas Boulevard GeoJSON
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          python -m pip install --disable-pip-version-check shapely pyproj
-          python manila/generate_roxas_enhanced_geojson.py
-          test -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-enhanced.geojson
+          OUTPUT="complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-enhanced.geojson"
+          if [[ ! -s "$OUTPUT" ]]; then
+            python -m pip install --disable-pip-version-check shapely pyproj
+            python manila/generate_roxas_enhanced_geojson.py
+            test -s "$OUTPUT"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add "$OUTPUT"
+            git commit -m "Add precomputed Roxas Boulevard enhancement GeoJSON"
+            git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/saeedhub101/Adam-City.git"
+            git push origin HEAD:main
+          else
+            echo "Reusing committed Roxas Boulevard GeoJSON."
+          fi
+          test -s "$OUTPUT"
 
       - name: Assemble site from committed assets and precomputed GeoJSON
         shell: bash
@@ -109,7 +124,7 @@ jobs:
           test -s site/ermita/3d/landmarks/landmark-facade-details.glb
 
           printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=test.html"><title>Adam-City</title><a href="test.html">Open Adam-City preview</a></html>' > site/index.html
-          echo "Validated committed assets; generated only the static Roxas Boulevard GeoJSON. No GLB generation or repository writes were performed."
+          echo "Validated committed assets and reused the persisted Roxas Boulevard GeoJSON. No GLB generation was performed."
           du -sh site
           find site -type f -name '*.pbf' | wc -l
 
