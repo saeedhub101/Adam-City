@@ -28,14 +28,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
-          sparse-checkout: |
-            /complete_data/OSM/data/buildings/parts/building-enrichment-index.json
-            /complete_data/OSM/data/buildings/parts/part1/part1-inventory.json
-            /complete_data/OSM/data/buildings/parts/part2/part2-inventory.json
-            /complete_data/OSM/data/buildings/parts/part3/part3-inventory.json
-            /complete_data/OSM/data/buildings/parts/part4/part4-inventory.json
-            /complete_data/OSM/scripts/build_building_visual_research_queue.py
-          sparse-checkout-cone-mode: false
 
       - name: Install script dependency
         run: python3 -m pip install --disable-pip-version-check pyproj
