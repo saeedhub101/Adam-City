@@ -193,6 +193,55 @@ def choose_spatial_candidate(source_point, source_area, candidates):
     return (best[2] if evidence["accepted"] else None), evidence, ("accepted" if evidence["accepted"] else "ambiguous-or-area-mismatch")
 
 
+
+def choose_overlap_candidate(source_geom, candidates):
+    ranked = []
+    source_area = float(source_geom.area)
+    if source_area <= 0:
+        return None, None
+    for candidate in candidates:
+        geom = candidate["geom"]
+        if not geom.intersects(source_geom):
+            continue
+        intersection = float(geom.intersection(source_geom).area)
+        if intersection <= 0:
+            continue
+        overlap_smaller = intersection / min(source_area, float(geom.area))
+        union = source_area + float(geom.area) - intersection
+        iou = intersection / union if union > 0 else 0.0
+        ratio = float(geom.area) / source_area
+        area_penalty = abs(math.log(max(ratio, 1e-9)))
+        ranked.append({
+            "candidate": candidate, "intersection_area_m2": intersection,
+            "overlap_smaller": overlap_smaller, "iou": iou,
+            "area_ratio": ratio, "area_penalty": area_penalty,
+        })
+    ranked.sort(key=lambda x: (-x["iou"], -x["overlap_smaller"], x["area_penalty"]))
+    if not ranked:
+        return None, None
+    best = ranked[0]
+    second = ranked[1] if len(ranked) > 1 else None
+    clear_best = second is None or (best["iou"] - second["iou"] >= 0.10) or (second["area_penalty"] - best["area_penalty"] >= 0.35)
+    accepted = (
+        best["overlap_smaller"] >= 0.75
+        and best["iou"] >= 0.50
+        and 0.5 <= best["area_ratio"] <= 2.0
+        and clear_best
+        and bool(best["candidate"]["id"])
+    )
+    evidence = {
+        "candidate_osm_id": best["candidate"]["id"],
+        "candidate_name": best["candidate"]["name"],
+        "intersection_area_m2": round(best["intersection_area_m2"], 3),
+        "overlap_fraction_of_smaller_polygon": round(best["overlap_smaller"], 4),
+        "intersection_over_union": round(best["iou"], 4),
+        "candidate_area_ratio": round(best["area_ratio"], 4),
+        "candidate_count": len(ranked),
+        "accepted": bool(accepted),
+        "method": "OpenFreeMap fallback polygon overlap/IoU",
+    }
+    return (best["candidate"] if accepted else None), evidence
+
 def load_source_geometries():
     # Build target geometry lookup for safe address-number matching.
     sources = {}
@@ -439,15 +488,25 @@ def main():
         if selected is None and record.get("source_key") in ("footprints", "roof_details"):
             geom = source_geometries.get((record.get("source_key"), int(record.get("source_feature_index", -1))))
             if geom is not None:
-                point = geom.centroid
-                candidates = query_rows(fallback_tree, fallback_rows, point)
-                selected, evidence, status = choose_spatial_candidate(point, float(geom.area), candidates)
-                if selected:
-                    method = "spatial-high-confidence"
-                    counts["fallback_spatial_linked"] += 1
-                elif evidence:
-                    method = "spatial-review"
-                    counts["fallback_spatial_review"] += 1
+                if record.get("source_key") == "footprints":
+                    candidates = query_rows(fallback_tree, fallback_rows, geom)
+                    selected, evidence = choose_overlap_candidate(geom, candidates)
+                    if selected:
+                        method = "spatial-geometry-high-confidence"
+                        counts["fallback_spatial_linked"] += 1
+                    elif evidence:
+                        method = "spatial-review"
+                        counts["fallback_spatial_review"] += 1
+                else:
+                    point = geom.centroid
+                    candidates = query_rows(fallback_tree, fallback_rows, point)
+                    selected, evidence, status = choose_spatial_candidate(point, float(geom.area), candidates)
+                    if selected:
+                        method = "spatial-high-confidence"
+                        counts["fallback_spatial_linked"] += 1
+                    elif evidence:
+                        method = "spatial-review"
+                        counts["fallback_spatial_review"] += 1
         if evidence:
             counts["fallback_spatial_candidate_total"] += 1
             if len(diagnostics["spatial_ratio_samples"]) < 30:
