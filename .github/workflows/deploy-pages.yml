@@ -5,9 +5,6 @@ on:
     paths-ignore:
       - 'ermita/maps/sources/openfreemap/building-fallback.geojson'
       - 'ermita/maps/sources/openfreemap/ground-fallback.geojson'
-      - 'complete_data/OSM/Buildings/supreme-court-main-facade.glb'
-      - 'complete_data/OSM/Buildings/supreme-court-main-facade-report.json'
-      - 'complete_data/OSM/Buildings/reference_images/**'
   workflow_dispatch:
 
 permissions:
@@ -41,11 +38,6 @@ jobs:
           /test.html
           /complete_data/OSM/data/
           /complete_data/OSM/scripts/generate_building_enrichment_index.py
-          /complete_data/OSM/Markets/
-          /complete_data/OSM/Buildings/Markets/facidals/
-          /complete_data/OSM/Buildings/supreme-court-main-facade.glb
-          /complete_data/OSM/Buildings/supreme-court-main-facade-report.json
-          /complete_data/OSM/Buildings/reference_images/
           /ermita/scripts/generate_supreme_court_facade_texture.py
           /ermita/scripts/generate_roxas_boulevard_buildings.py
           /ermita/scripts/generate_roxas_boulevard_signage.py
@@ -82,9 +74,6 @@ jobs:
           set -euo pipefail
           test -s ermita-malate-3d.html
           python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh mapbox-earcut pillow cairosvg scipy
-          # Refresh the metadata-only building index using exact IDs and conservative spatial matching.
-          # This does not generate or modify any GLB or geometry file.
-          python3 complete_data/OSM/scripts/generate_building_enrichment_index.py
           # Keep committed generated GLBs intact during routine deploys; create them only if absent.
           if [[ ! -s ermita/3d/landmarks/landmark-facade-details.glb || ! -s ermita/3d/landmarks/landmark-facade-report.json || ! -s ermita/3d/landmarks/landmark-facade-origin.json ]]; then
             python3 ermita/scripts/generate_landmark_facades.py
@@ -165,22 +154,6 @@ jobs:
               'red_planet_canopy_parts': report.get('facade_red_planet_canopy_parts')
           }))
           PY
-          # Keep committed decal/signage/facade GLBs unchanged; create only missing outputs.
-          if [[ ! -s complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb || ! -s complete_data/OSM/Markets/pedro-gil-7eleven-decal-report.json ]]; then
-            python3 ermita/scripts/generate_pedro_gil_decal.py
-          else
-            echo "Reusing committed Pedro Gil decal GLB and report."
-          fi
-          if [[ ! -s complete_data/OSM/Buildings/Markets/facidals/all-7eleven-plane-textures.glb || ! -s complete_data/OSM/Markets/all-7eleven-plane-textures-report.json ]]; then
-            python3 ermita/scripts/generate_all_7eleven_plane_textures.py
-          else
-            echo "Reusing committed 7-Eleven plane-texture GLB and report."
-          fi
-          if [[ ! -s complete_data/OSM/Buildings/supreme-court-main-facade.glb || ! -s complete_data/OSM/Buildings/supreme-court-main-facade-report.json ]]; then
-            python3 ermita/scripts/generate_supreme_court_facade_texture.py
-          else
-            echo "Reusing committed Supreme Court facade GLB and report."
-          fi
           # Fingerprints invalidate only outputs whose generator, source data, or contract changed.
           # Stable hashes intentionally exclude timestamps and CI-run metadata.
           FACADE_FINGERPRINT="$( { printf 'contract=1\n'; sha256sum ermita/scripts/generate_facade_details.py ermita/maps/generated/ermita-building-details.geojson; } | sha256sum | awk '{print $1}')"
@@ -393,8 +366,7 @@ jobs:
           # Refresh the published fallback files after any rebuild above.
           cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/building-fallback.geojson
           cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/ground-fallback.geojson
-          # Publish the repository copies, whether reused or newly generated.
-          mkdir -p site/ermita/maps/generated site/ermita/3d/generated site/ermita/3d/exports site/ermita/3d/terrain site/ermita/3d/landmarks site/ermita/3d/commercial site/complete_data/OSM/Markets site/complete_data/OSM/Buildings/Markets/facidals site/complete_data/OSM/Buildings/reference_images site/complete_data/OSM/data/buildings/roxas-boulevard site/complete_data/OSM/data/buildings/parts/enhanced site/complete_data/OSM/data/buildings/parts/part1 site/complete_data/OSM/data/buildings/parts/part2 site/complete_data/OSM/data/buildings/parts/part3 site/complete_data/OSM/data/buildings/parts/part4
+          mkdir -p site/ermita/maps/generated site/ermita/3d/generated site/ermita/3d/exports site/ermita/3d/terrain site/ermita/3d/landmarks site/ermita/3d/commercial site/complete_data/OSM/Markets site/complete_data/OSM/data/buildings/roxas-boulevard site/complete_data/OSM/data/buildings/parts/enhanced site/complete_data/OSM/data/buildings/parts/part1 site/complete_data/OSM/data/buildings/parts/part2 site/complete_data/OSM/data/buildings/parts/part3 site/complete_data/OSM/data/buildings/parts/part4
           cp ermita/maps/generated/ermita-building-details.geojson site/ermita/maps/generated/ermita-building-details.geojson
           cp ermita/3d/generated/ermita-buildings-facade-details.glb site/ermita/3d/generated/ermita-buildings-facade-details.glb
           cp ermita/3d/generated/facade-model-origin.json site/ermita/3d/generated/facade-model-origin.json
@@ -402,16 +374,6 @@ jobs:
           cp ermita/3d/landmarks/landmark-facade-details.glb site/ermita/3d/landmarks/landmark-facade-details.glb
           cp ermita/3d/landmarks/landmark-facade-origin.json site/ermita/3d/landmarks/landmark-facade-origin.json
           cp ermita/3d/landmarks/landmark-facade-report.json site/ermita/3d/landmarks/landmark-facade-report.json
-          cp complete_data/OSM/Buildings/Markets/facidals/robenson.glb site/ermita/3d/commercial/commercial-facades.glb
-          cp complete_data/OSM/Markets/commercial-facades-origin.json site/ermita/3d/commercial/commercial-facades-origin.json
-          cp complete_data/OSM/Markets/commercial-facades-report.json site/ermita/3d/commercial/commercial-facades-report.json
-          cp -a complete_data/OSM/Markets/. site/complete_data/OSM/Markets/
-          cp complete_data/OSM/Buildings/Markets/facidals/robenson.glb site/complete_data/OSM/Buildings/Markets/facidals/robenson.glb
-          cp complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb site/complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb
-          cp complete_data/OSM/Buildings/Markets/facidals/all-7eleven-plane-textures.glb site/complete_data/OSM/Buildings/Markets/facidals/all-7eleven-plane-textures.glb
-          cp complete_data/OSM/Buildings/supreme-court-main-facade.glb site/complete_data/OSM/Buildings/supreme-court-main-facade.glb
-          cp complete_data/OSM/Buildings/supreme-court-main-facade-report.json site/complete_data/OSM/Buildings/supreme-court-main-facade-report.json
-          cp complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg site/complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg
           cp "complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb" "site/complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb"
           cp complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json
           cp complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json
@@ -439,12 +401,6 @@ jobs:
           test -s site/ermita/3d/landmarks/landmark-facade-details.glb
           test -s site/ermita/3d/landmarks/landmark-facade-origin.json
           test -s site/ermita/3d/landmarks/landmark-facade-report.json
-          test -s site/ermita/3d/commercial/commercial-facades.glb
-          test -s site/ermita/3d/commercial/commercial-facades-origin.json
-          test -s site/ermita/3d/commercial/commercial-facades-report.json
-          test -s site/complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb
-          test -s site/complete_data/OSM/Buildings/Markets/facidals/all-7eleven-plane-textures.glb
-          test -s site/complete_data/OSM/Buildings/supreme-court-main-facade.glb
           test -s "site/complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb"
           test -s site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json
           test -s site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json
@@ -460,16 +416,6 @@ jobs:
           test -s ermita/3d/landmarks/landmark-facade-origin.json
           test -s ermita/3d/landmarks/landmark-facade-report.json
           test -s ermita/3d/landmarks/landmark-generation.sha256
-          test -s complete_data/OSM/Buildings/Markets/facidals/robenson.glb
-          test -s complete_data/OSM/Buildings/Markets/facidals/pedro-gil-7eleven-decal.glb
-          test -s complete_data/OSM/Markets/pedro-gil-7eleven-decal-report.json
-          test -s complete_data/OSM/Buildings/Markets/facidals/all-7eleven-plane-textures.glb
-          test -s complete_data/OSM/Markets/all-7eleven-plane-textures-report.json
-          test -s complete_data/OSM/Markets/commercial-facades-origin.json
-          test -s complete_data/OSM/Markets/commercial-facades-report.json
-          test -s complete_data/OSM/Markets/commercial-generation.sha256
-          test -s complete_data/OSM/Buildings/supreme-court-main-facade.glb
-          test -s complete_data/OSM/Buildings/supreme-court-main-facade-report.json
           # Save every newly imported/generated asset to main. Existing committed outputs are reused.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -480,11 +426,8 @@ jobs:
           # Persist the generated alignment file in main as well as publishing it, so the page never depends on a temporary CI-only asset.
           git add ermita/3d/generated/facade-model-origin.json ermita/3d/generated/ermita-buildings-facade-details.glb ermita/3d/generated/facade-signage-index.csv ermita/3d/generated/facade-details-report.json ermita/3d/generated/facade-generation.sha256
           git add ermita/3d/landmarks/landmark-facade-details.glb ermita/3d/landmarks/landmark-facade-origin.json ermita/3d/landmarks/landmark-facade-report.json ermita/3d/landmarks/landmark-generation.sha256
-          git add complete_data/OSM/Markets/ complete_data/OSM/Buildings/Markets/facidals/
-          git add complete_data/OSM/Buildings/supreme-court-main-facade.glb complete_data/OSM/Buildings/supreme-court-main-facade-report.json complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg
           git add complete_data/OSM/data/buildings/roxas-boulevard/
           git add complete_data/OSM/data/buildings/ermita-glb-parts/
-          git add complete_data/OSM/data/buildings/parts/building-enrichment-index.json complete_data/OSM/data/buildings/parts/building-enrichment-report.json
           if ! git diff --cached --quiet; then
             git commit -m "Store generated building and ground fallback data"
             # Other workflows checkpoint progress to main while this build is running.
