@@ -92,9 +92,6 @@ jobs:
       - name: Build visual review queue for unresolved buildings
         run: python3 complete_data/OSM/scripts/build_building_visual_research_queue.py
 
-      - name: Discover Wikimedia Commons photo candidates (maximum 300 per run; push checkpoints every 10)
-        run: python3 complete_data/OSM/scripts/research_building_image_candidates.py
-
       - name: Merge OpenFreeMap properties, house numbers, photos and facade assets
         run: python3 complete_data/OSM/scripts/merge_building_source_evidence.py
 
