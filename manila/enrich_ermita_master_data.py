@@ -567,6 +567,13 @@ def main():
             props=feature.setdefault("properties",{})
             fid=first_feature_id(props,feature)
             ident=osm_id(props)
+            if not ident:
+                typ=s(props.get("osm_type") or props.get("type"))
+                oid=s(props.get("osm_id") or props.get("id"))
+                if typ in {"node","way","relation"} and re.fullmatch(r"\d+",oid):
+                    ident=f"{typ}/{oid}"
+                elif re.fullmatch(r"(?:node|way|relation)/\d+",fid):
+                    ident=fid
             if not ident and fid in feature_id_map: ident=feature_id_map[fid]
             match_info=source_match_info.get(fid,{}) if fid else {}
             if not ident and match_info.get("osm_id"): ident=match_info["osm_id"]
