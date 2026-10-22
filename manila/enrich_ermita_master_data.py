@@ -373,7 +373,7 @@ def main():
             ident=osm_id(props)
             if not ident and fid in feature_id_map: ident=feature_id_map[fid]
             conflicts, matched, photo_count, business_count=decorate_record(props,ident,fid,index,photos,businesses,signage,image_candidates,sparse=True)
-            part_counts[props["enrichment_status"]]+=1
+            part_counts[props.get("enrichment_status","no_exact_id_evidence")]+=1
             report["photo_candidates"]+=photo_count
             report["business_links"]+=business_count
             for field in OUT_FIELDS:
