@@ -10,8 +10,10 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import math
 from pathlib import Path
 
+import numpy as np
 import trimesh
 from pyproj import Transformer
 from shapely.geometry import shape
