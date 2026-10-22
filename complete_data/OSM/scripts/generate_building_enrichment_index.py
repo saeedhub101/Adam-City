@@ -53,16 +53,16 @@ def feature_id(props):
 
 
 def main():
-    source_index = read_json(PARTS_INDEX)
+    parts_index_entries = read_json(PARTS_INDEX)
     detail_sources = [DETAILS_GEOJSON, ROOF_GEOJSON]
     footprints_source = read_json(FOOTPRINTS_GEOJSON)
     footprint_geometries = {}
-    for source_index, feature in enumerate(footprints_source.get("features", [])):
+    for footprint_index, feature in enumerate(footprints_source.get("features", [])):
         geom_data = feature.get("geometry")
         if not geom_data:
             continue
         try:
-            footprint_geometries[source_index] = geom_transform(WEB_MERCATOR, shape(geom_data))
+            footprint_geometries[footprint_index] = geom_transform(WEB_MERCATOR, shape(geom_data))
         except Exception:
             continue
     by_osm_id = {}
@@ -130,7 +130,7 @@ def main():
 
     records = []
     match_counts = {"exact_osm_id": 0, "spatial_high_confidence": 0, "spatial_geometry_high_confidence": 0, "spatial_review": 0, "unmatched": 0}
-    for item in source_index:
+    for item in parts_index_entries:
         key = f'{item.get("part")}:{item.get("source_key")}:{item.get("source_feature_index")}'
         inventory = inventory_by_key.get(key)
         if inventory is None:
