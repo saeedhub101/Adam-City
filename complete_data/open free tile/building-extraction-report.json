@@ -26,9 +26,10 @@
     "low_confidence_candidate_under_20m_review_only": 236
   },
   "address_enrichment": {
-    "address_bearing_features_examined": 1432,
-    "buildings_with_address_candidates": 773,
-    "buildings_with_multiple_address_candidates": 242
+    "address_bearing_point_features_examined": 941,
+    "buildings_with_address_point_candidates": 255,
+    "buildings_with_multiple_address_candidates": 89,
+    "poi_candidates": "Named/shop/amenity points inside a footprint are stored separately and are not treated as building names by default."
   },
   "limitations": [
     "The source fallback groups many building polygon components into style-based MultiPolygon features and does not preserve a per-building OSM ID.",
