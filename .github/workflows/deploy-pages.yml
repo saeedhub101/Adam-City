@@ -55,7 +55,15 @@ jobs:
           EOF
           git switch -C main FETCH_HEAD
 
-      - name: Assemble site from committed assets (no generation)
+      - name: Precompute Roxas Boulevard enhancement GeoJSON
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check shapely pyproj
+          python manila/generate_roxas_enhanced_geojson.py
+          test -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-enhanced.geojson
+
+      - name: Assemble site from committed assets and precomputed GeoJSON
         shell: bash
         run: |
           set -euo pipefail
@@ -100,7 +108,7 @@ jobs:
           test -s site/ermita/3d/landmarks/landmark-facade-details.glb
 
           printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=test.html"><title>Adam-City</title><a href="test.html">Open Adam-City preview</a></html>' > site/index.html
-          echo "Validated committed assets; no GLB generation or repository writes were performed."
+          echo "Validated committed assets; generated only the static Roxas Boulevard GeoJSON. No GLB generation or repository writes were performed."
           du -sh site
           find site -type f -name '*.pbf' | wc -l
 
