@@ -1,0 +1,129 @@
+{
+  "status": "validated",
+  "page": "test.html",
+  "button": "4. buildings — footprints and roof details",
+  "height_and_color_contract": "Mirrors test.html button 4 height/base/color precedence and source-specific fallback colors.",
+  "source_geojson_files": [
+    {
+      "source": "complete_data/OSM/data/buildings/ermita-building-footprints.geojson",
+      "geojson_features_total": 1123,
+      "polygon_features_exported": 1123,
+      "polygon_components_exported": 138254,
+      "sha256": "733a286e8db3944e5f986e5eadb94eff10ac112544a3c58056b287d23f1cdce4"
+    },
+    {
+      "source": "complete_data/OSM/data/buildings/ermita-building-roof-details.geojson",
+      "geojson_features_total": 1533,
+      "polygon_features_exported": 1528,
+      "polygon_components_exported": 1528,
+      "sha256": "357f28d64adc6355f3ff1e119ce5284717b8e6ad896d168308feb897d090bfa5"
+    }
+  ],
+  "source_polygon_feature_count_exported": 2651,
+  "polygon_components_exported": 139782,
+  "invalid_geometries_repaired": 27,
+  "part_count": 4,
+  "source_feature_assignments": 2651,
+  "unique_source_assignments": 2651,
+  "all_exported_polygon_features_assigned_once": true,
+  "limitations": [
+    "GLB matches the polygon geometry and extrusion contract for both button-4 GeoJSON sources; MapLibre vertical-gradient lighting is not a GLB geometry property.",
+    "Button 4 has no metallic/roughness settings; GLB records neutral PBR values and preserves all source material/color tags.",
+    "Non-polygon features are not extruded because button 4 filters to polygon geometry.",
+    "Invalid geometry is repaired with buffer(0); original properties remain in the inventory."
+  ],
+  "parts": [
+    {
+      "part": 1,
+      "folder": "complete_data/OSM/data/buildings/parts/part1",
+      "glb": "complete_data/OSM/data/buildings/parts/part1/part1.glb",
+      "bytes": 2509324,
+      "feature_count": 1300,
+      "polygon_components": 2927,
+      "mesh_count": 2927,
+      "origin_wgs84": {
+        "longitude": 120.9853642598677,
+        "latitude": 14.570290920092736
+      },
+      "bounds_epsg3857_m": {
+        "min_x": 13466458.578964105,
+        "max_x": 13468962.962355575,
+        "min_y": 1636369.5560371035,
+        "max_y": 1641255.9455155663
+      },
+      "source_counts": {
+        "footprints": 204,
+        "roof_details": 1096
+      }
+    },
+    {
+      "part": 2,
+      "folder": "complete_data/OSM/data/buildings/parts/part2",
+      "glb": "complete_data/OSM/data/buildings/parts/part2/part2.glb",
+      "bytes": 33378316,
+      "feature_count": 347,
+      "polygon_components": 46325,
+      "mesh_count": 46325,
+      "origin_wgs84": {
+        "longitude": 121.00682270066076,
+        "latitude": 14.562074642361084
+      },
+      "bounds_epsg3857_m": {
+        "min_x": 13468984.345732179,
+        "max_x": 13472519.841935804,
+        "min_y": 1636330.2939847526,
+        "max_y": 1641236.6743575842
+      },
+      "source_counts": {
+        "footprints": 347,
+        "roof_details": 0
+      }
+    },
+    {
+      "part": 3,
+      "folder": "complete_data/OSM/data/buildings/parts/part3",
+      "glb": "complete_data/OSM/data/buildings/parts/part3/part3.glb",
+      "bytes": 38921972,
+      "feature_count": 928,
+      "polygon_components": 53562,
+      "mesh_count": 53562,
+      "origin_wgs84": {
+        "longitude": 120.98067052460974,
+        "latitude": 14.60797021218829
+      },
+      "bounds_epsg3857_m": {
+        "min_x": 13465421.585005198,
+        "max_x": 13468931.093314162,
+        "min_y": 1641261.6808706296,
+        "max_y": 1646107.1661814095
+      },
+      "source_counts": {
+        "footprints": 496,
+        "roof_details": 432
+      }
+    },
+    {
+      "part": 4,
+      "folder": "complete_data/OSM/data/buildings/parts/part4",
+      "glb": "complete_data/OSM/data/buildings/parts/part4/part4.glb",
+      "bytes": 26759688,
+      "feature_count": 76,
+      "polygon_components": 36968,
+      "mesh_count": 36968,
+      "origin_wgs84": {
+        "longitude": 121.01085194878627,
+        "latitude": 14.604036447026617
+      },
+      "bounds_epsg3857_m": {
+        "min_x": 13469169.51814489,
+        "max_x": 13472510.982730024,
+        "min_y": 1641283.8817085996,
+        "max_y": 1646184.065991646
+      },
+      "source_counts": {
+        "footprints": 76,
+        "roof_details": 0
+      }
+    }
+  ]
+}

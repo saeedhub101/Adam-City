@@ -1,0 +1,28 @@
+{
+  "file": "part3.glb",
+  "part": 3,
+  "part_count": 4,
+  "crs": "EPSG:3857",
+  "origin_projected_m": {
+    "x": 13467506.638628356,
+    "y": 1644061.124578535
+  },
+  "origin_wgs84": {
+    "longitude": 120.98067052460974,
+    "latitude": 14.60797021218829
+  },
+  "source_geojson_files": [
+    "complete_data/OSM/data/buildings/ermita-building-footprints.geojson",
+    "complete_data/OSM/data/buildings/ermita-building-roof-details.geojson"
+  ],
+  "source_feature_count": 928,
+  "polygon_components_exported": 53562,
+  "mesh_count": 53562,
+  "spatial_partition": "coordinate-based geographic quadrant; spatial bisection fallback if a quadrant is empty",
+  "bounds_epsg3857_m": {
+    "min_x": 13465421.585005198,
+    "max_x": 13468931.093314162,
+    "min_y": 1641261.6808706296,
+    "max_y": 1646107.1661814095
+  }
+}
