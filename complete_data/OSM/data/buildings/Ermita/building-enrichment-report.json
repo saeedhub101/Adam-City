@@ -3,9 +3,9 @@
   "status": "generated",
   "created_from": {
     "parts_inventory_index": "complete_data/OSM/data/buildings/Ermita/ermita-building-parts-index.json",
-    "footprints_geojson": "complete_data/OSM/data/buildings/Ermita/ermita-building-footprints.geojson",
+    "footprints_geojson": "ermita/maps/generated/ermita-building-footprints.geojson",
     "details_geojson": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
-    "roof_details_geojson": "complete_data/OSM/data/buildings/Ermita/ermita-building-roof-details.geojson",
+    "roof_details_geojson": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
     "details_csv": "complete_data/OSM/data/buildings/Ermita/osm-building-details.csv",
     "parts_inventory": [
       "complete_data/OSM/data/buildings/Ermita/part1/part1-inventory.json",
