@@ -206,6 +206,7 @@ def match_polygon_to_osm(geometry, candidates, tree):
     if not clearly_best: return "", {}
     return best["candidate"]["id"], {
         "method":"strict_polygon_overlap_iou",
+        "osm_id":best["candidate"]["id"],
         "candidate_osm_id":best["candidate"]["id"],
         "candidate_name":best["candidate"]["name"],
         "intersection_area_m2":round(best["intersection_area_m2"],3),
