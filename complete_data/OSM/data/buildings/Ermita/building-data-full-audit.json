@@ -7,7 +7,7 @@
   "source_counts": {
     "footprints": 1123,
     "building_details": 1533,
-    "roof_details": 1533,
+    "roof_details": 0,
     "parts_index_entries": 2651,
     "parts_report_part_count": 4
   },
@@ -102,8 +102,8 @@
     "complete_data/OSM/data/buildings/Ermita/osm-building-details.csv": "6dde27e2045c3622b1c0a417f19a5139079142b9d68b9122e6cf6eae382ad621",
     "complete_data/OSM/data/buildings/Ermita/ermita-building-parts-index.json": "e3f4506440a0e3fd1ba8c9fd6716b733a74c5302ecf19fd61d3315dc2f7c5600",
     "complete_data/OSM/data/buildings/Ermita/parts-report.json": "8321e974f139a0a9164be4f4b410331161ee8779619a91947819b4582a5c7dad",
-    "complete_data/OSM/data/buildings/Ermita/building-enrichment-index.json": "0d3aa90c45c2ca1d99875ac4d2bb4e906830ee95fcca8a0124193b467d82a02b",
-    "complete_data/OSM/data/buildings/Ermita/building-enrichment-report.json": "e5c7e0edfa5da967135bd6f9e5a4724dc8d0ed1717fd0a731b956f68d30575d4",
+    "complete_data/OSM/data/buildings/Ermita/building-enrichment-index.json": "31f71b153f192ec63070b5f55bc6338e78088b5e4351cc8bcbddce26bfe7176f",
+    "complete_data/OSM/data/buildings/Ermita/building-enrichment-report.json": "5e830b6e86b433241efe58a903f49a3a85af377b19836414b9f9575eda1d7195",
     "complete_data/OSM/data/buildings/Ermita/part1/part1-inventory.json": "89978fe836984527a9374f65f74252577beb53fb0003a9f9b36bfd4efc151e02",
     "complete_data/OSM/data/buildings/Ermita/part1/part1-origin.json": "c5233764e0f101f71f38e319e7c98a1ddb69d9f39194458292a58316454f7179",
     "complete_data/OSM/data/buildings/Ermita/part2/part2-inventory.json": "7af2589bb2ebc81ed86ff7540fbd0e6f0e572957657e788e400fa909e688c82e",
@@ -116,7 +116,7 @@
     "complete_data/OSM/data/buildings/windows/facade-signage-index.csv": "b37e4279e8dde52baa25bb1cb8d3fc6402c360105a0bf0053334efe5c2c0551e"
   },
   "notes": [
-    "The audit reads current canonical paths and does not require legacy parts/ or ermita-glb-parts/ directories.",
+    "The audit reads the canonical four-part GLBs and metadata. Removed preview-only OSM footprint/roof layers are not required.",
     "The four PartsN.glb assets are distinct from the procedural windows facade overlay.",
     "This structural audit does not claim that building facade appearance has been visually verified."
   ]
