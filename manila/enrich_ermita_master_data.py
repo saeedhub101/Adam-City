@@ -10,6 +10,10 @@ from __future__ import annotations
 import csv, json, re
 from collections import Counter, defaultdict
 from pathlib import Path
+from shapely.geometry import shape
+from shapely.ops import transform as geom_transform
+from shapely.strtree import STRtree
+from pyproj import Transformer
 
 ROOT = Path(__file__).resolve().parents[1]
 MASTER = ROOT / "manila/manila"
@@ -17,6 +21,8 @@ CSV_PATH = MASTER / "ermita-buildings-master.csv"
 PARTS = [MASTER / "ermita-buildings-master.parts/part-001.geojson",
          MASTER / "ermita-buildings-master.parts/part-002.geojson"]
 REPORT = MASTER / "ermita-master-enrichment-report.json"
+OSM_DETAILS_GEOJSON = ROOT / "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson"
+TO_3857 = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True).transform
 
 SOURCE_PATHS = {
     "osm_details": ROOT / "complete_data/OSM/data/buildings/Ermita/osm-building-details.csv",
@@ -130,6 +136,85 @@ def read_csv(path):
     if not path.is_file(): return []
     with path.open(encoding="utf-8-sig", newline="") as f:
         return list(csv.DictReader(f))
+
+def read_json(path, default=None):
+    if not path.is_file(): return default
+    with path.open(encoding="utf-8") as f: return json.load(f)
+
+def metric_geometry(geometry):
+    bounds=geometry.bounds
+    if not bounds: return geometry
+    if abs(bounds[0]) > 180 or abs(bounds[2]) > 180 or abs(bounds[1]) > 90 or abs(bounds[3]) > 90:
+        return geometry
+    return geom_transform(TO_3857, geometry)
+
+def load_spatial_osm_candidates():
+    doc=read_json(OSM_DETAILS_GEOJSON,{})
+    candidates=[]
+    for feature in doc.get("features",[]):
+        props=feature.get("properties") or {}
+        ident=osm_id(props)
+        geom_data=feature.get("geometry")
+        if not ident or not geom_data: continue
+        try:
+            geom=metric_geometry(shape(geom_data))
+            if not geom.is_valid: geom=geom.buffer(0)
+        except Exception:
+            continue
+        if geom.is_empty or geom.geom_type not in ("Polygon","MultiPolygon") or geom.area <= 0: continue
+        tags=props.get("tags") if isinstance(props.get("tags"),dict) else parse_tags(props)
+        if not tags:
+            tags={k:v for k,v in props.items() if isinstance(v,(str,int,float,bool)) and k not in {"id","type","osm_feature_id"}}
+        candidates.append({"id":ident,"geom":geom,"area":float(geom.area),"tags":tags,"name":norm_value(tags.get("name"))})
+    tree=STRtree([x["geom"] for x in candidates]) if candidates else None
+    return candidates,tree
+
+def match_polygon_to_osm(geometry, candidates, tree):
+    if geometry is None or tree is None: return "", {}
+    try:
+        source=metric_geometry(shape(geometry))
+        if not source.is_valid: source=source.buffer(0)
+    except Exception:
+        return "", {}
+    if source.is_empty or source.geom_type not in ("Polygon","MultiPolygon") or source.area <= 0: return "", {}
+    ranked_by_id={}
+    try: indexes=tree.query(source)
+    except Exception: return "", {}
+    for item in indexes:
+        try:
+            cand=candidates[int(item)]
+            inter=float(source.intersection(cand["geom"]).area)
+        except Exception:
+            continue
+        if inter <= 0: continue
+        smaller=min(float(source.area),cand["area"])
+        overlap=inter/smaller if smaller else 0.0
+        union=float(source.area)+cand["area"]-inter
+        iou=inter/union if union else 0.0
+        ratio=cand["area"]/float(source.area)
+        # Strict polygon overlap gate: no centroid/proximity-only assignments.
+        if overlap < 0.75 or iou < 0.50 or not 0.5 <= ratio <= 2.0: continue
+        penalty=abs(__import__("math").log(max(ratio,1e-9)))
+        rec={"candidate":cand,"intersection_area_m2":inter,"overlap":overlap,"iou":iou,"ratio":ratio,"penalty":penalty}
+        prev=ranked_by_id.get(cand["id"])
+        if prev is None or (rec["iou"],rec["overlap"]) > (prev["iou"],prev["overlap"]): ranked_by_id[cand["id"]]=rec
+    ranked=sorted(ranked_by_id.values(),key=lambda x:(-x["iou"],-x["overlap"],x["penalty"]))
+    if not ranked: return "", {}
+    best=ranked[0]
+    second=ranked[1] if len(ranked)>1 else None
+    clearly_best=second is None or (best["iou"]-second["iou"] >= 0.10) or (second["penalty"]-best["penalty"] >= 0.35)
+    if not clearly_best: return "", {}
+    return best["candidate"]["id"], {
+        "method":"strict_polygon_overlap_iou",
+        "candidate_osm_id":best["candidate"]["id"],
+        "candidate_name":best["candidate"]["name"],
+        "intersection_area_m2":round(best["intersection_area_m2"],3),
+        "overlap_fraction_of_smaller_polygon":round(best["overlap"],4),
+        "intersection_over_union":round(best["iou"],4),
+        "candidate_to_source_area_ratio":round(best["ratio"],4),
+        "candidate_count_passing_threshold":len(ranked),
+        "confidence":"0.95"
+    }
 
 def add_candidate(index, ident, source, fields):
     if not ident: return
@@ -371,15 +456,15 @@ def put_field(record, key, value, sparse=False):
     else:
         record[key] = value
 
-def decorate_record(record, ident, feature_id, idx, photos, businesses, signage, image_candidates, research_queue, source_match_info, sparse=False):
+def decorate_record(record, ident, feature_id, idx, photos, businesses, signage, image_candidates, research_queue, source_match_info, sparse=False, spatial_info=None):
     values, conflicts=resolve(idx, ident, feature_id) if ident or feature_id else ({}, {})
     for field in [f"enriched_{k}" for k in TARGETS]:
         # Keep the CSV schema explicit; in GeoJSON omit empty properties to control file size.
         put_field(record, field, values.get(field,""), sparse)
     put_field(record, "enrichment_sources", values.get("enrichment_sources",""), sparse)
     status = values.get("enrichment_status","no_exact_id_evidence")
-    match_info=source_match_info.get(feature_id,{}) if feature_id else {}
-    if not ident and match_info and match_info.get("method") != "exact_osm_id" and status == "exact_id_enriched":
+    match_info=(source_match_info.get(feature_id,{}) if feature_id else {}) or (spatial_info or {})
+    if match_info and match_info.get("method") not in {"exact_osm_id"} and status == "exact_id_enriched":
         status = "spatial_high_confidence_enriched"
     if sparse and not ident and status == "no_exact_id_evidence":
         record.pop("enrichment_status", None)
@@ -448,6 +533,7 @@ def main():
     for p in [CSV_PATH, *PARTS]:
         if not p.is_file(): raise FileNotFoundError(p)
     index, source_rows, feature_id_map, photos, businesses, signage, image_candidates, research_queue, source_match_info=load_sources()
+    spatial_candidates, spatial_tree=load_spatial_osm_candidates()
     report={"schema_version":"2.0","status":"completed","policy":"Repository-first enrichment. Join on explicit OSM IDs or exact stable source-feature IDs only. Candidate imagery and tenants remain explicitly labelled; no visual observations are inferred. Geometry, coordinates, feature IDs, source IDs, and rendering heights are not changed.",
             "sources":dict(source_rows),"csv":{"path":str(CSV_PATH.relative_to(ROOT))},"geojson_parts":[],"filled_fields":Counter(),"conflicts":Counter(),"matched_records":Counter(),"photo_candidates":0,"business_links":0,"feature_id_crosswalks":len(feature_id_map),"audited_index_matches":len(source_match_info)}
     rows=read_csv(CSV_PATH)
@@ -455,7 +541,10 @@ def main():
     fields=original_fields+[f for f in OUT_FIELDS if f not in original_fields]
     for row in rows:
         ident=osm_id(row)
-        conflicts, matched, photo_count, business_count=decorate_record(row,ident,normalize_feature_key(row.get("source_feature_id")),index,photos,businesses,signage,image_candidates,research_queue,source_match_info)
+        fid=normalize_feature_key(row.get("source_feature_id"))
+        match_info=source_match_info.get(fid,{}) if fid else {}
+        lookup_ident=ident or match_info.get("osm_id","")
+        conflicts, matched, photo_count, business_count=decorate_record(row,lookup_ident,fid,index,photos,businesses,signage,image_candidates,research_queue,source_match_info,spatial_info=match_info)
         report["matched_records"][row["enrichment_status"]]+=1
         if matched: report["matched_records"]["records_with_metadata"]+=1
         report["photo_candidates"]+=photo_count
@@ -469,13 +558,19 @@ def main():
     for part in PARTS:
         with part.open(encoding="utf-8") as f: doc=json.load(f)
         features=doc.get("features") or []
-        part_counts=Counter(); part_conflicts=Counter(); part_filled=Counter()
+        part_counts=Counter(); part_conflicts=Counter(); part_filled=Counter(); spatial_match_count=0
         for feature in features:
             props=feature.setdefault("properties",{})
             fid=first_feature_id(props,feature)
             ident=osm_id(props)
             if not ident and fid in feature_id_map: ident=feature_id_map[fid]
-            conflicts, matched, photo_count, business_count=decorate_record(props,ident,fid,index,photos,businesses,signage,image_candidates,research_queue,source_match_info,sparse=True)
+            match_info=source_match_info.get(fid,{}) if fid else {}
+            if not ident and match_info.get("osm_id"): ident=match_info["osm_id"]
+            spatial_info={}
+            if not ident and not match_info:
+                ident,spatial_info=match_polygon_to_osm(feature.get("geometry"),spatial_candidates,spatial_tree)
+                if ident: spatial_match_count+=1
+            conflicts, matched, photo_count, business_count=decorate_record(props,ident,fid,index,photos,businesses,signage,image_candidates,research_queue,source_match_info,sparse=True,spatial_info=spatial_info)
             part_counts[props.get("enrichment_status","no_exact_id_evidence")]+=1
             report["photo_candidates"]+=photo_count
             report["business_links"]+=business_count
@@ -484,7 +579,7 @@ def main():
             for k in conflicts: part_conflicts[k]+=1
         with part.open("w",encoding="utf-8") as f:
             json.dump(doc,f,ensure_ascii=False,separators=(",",":")); f.write("\n")
-        report["geojson_parts"].append({"path":str(part.relative_to(ROOT)),"features":len(features),"status_counts":dict(part_counts),"filled_fields":dict(part_filled),"conflict_fields":dict(part_conflicts)})
+        report["geojson_parts"].append({"path":str(part.relative_to(ROOT)),"features":len(features),"status_counts":dict(part_counts),"filled_fields":dict(part_filled),"conflict_fields":dict(part_conflicts),"strict_spatial_matches":spatial_match_count})
     report["filled_fields"]=dict(report["filled_fields"]); report["conflicts"]=dict(report["conflicts"]); report["matched_records"]=dict(report["matched_records"])
     report["note"]="This pass imports internal exact-ID metadata, business tenant links explicitly marked inside_footprint, model-only estimates as separately labelled estimates, and photo candidates as unverified candidates. It does not infer facade material/colour from unreviewed photos and does not perform unvalidated spatial matching."
     REPORT.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
