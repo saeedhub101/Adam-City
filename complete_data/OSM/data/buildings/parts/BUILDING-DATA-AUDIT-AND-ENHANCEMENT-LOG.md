@@ -23,7 +23,7 @@
 | `complete_data/OSM/data/buildings/ermita-building-roof-details.geojson` | طبقة تفاصيل الأسطح؛ مذكورة ضمن مصادر فهرس الإثراء. |
 | `complete_data/OSM/data/buildings/osm-building-details.csv` | بيانات وصفية إضافية للمباني؛ مذكورة ضمن مصادر فهرس الإثراء. |
 | `complete_data/OSM/data/buildings/parts/parts-inventory-index.json` | فهرس جرد الأجزاء الأربعة وخصائص عناصرها. |
-| `complete_data/OSM/data/buildings/parts/parts-report.json` | تقرير التصدير والتغطية، ويذكر 1,123 feature مصدرية و138,254 مكوّنًا مضلعيًا. |
+| `complete_data/OSM/data/buildings/parts/parts-report.json` | تقرير التصدير والتغطية، ويسجل 2,651 تعيينًا لمكونات/سجلات المصدر و139,782 مكوّنًا مضلعيًا في مجموعة الأجزاء الأربعة الحالية؛ أما مجموعة GLB الدائمة المنفصلة ذات الستة أجزاء فتسجل 1,123 feature و138,254 مكوّنًا مضلعيًا. |
 | `complete_data/OSM/data/buildings/parts/building-enrichment-index.json` | فهرس الإثراء/الربط الدلالي على مستوى عناصر الأجزاء. حجمه في شجرة GitHub نحو 6.24 MB؛ لم يُعدّل في هذا العمل. |
 | `complete_data/OSM/data/buildings/parts/building-enrichment-report.json` | تقرير تغطية الإثراء ومناطق عدم اليقين. |
 | `complete_data/OSM/data/buildings/parts/partN/partN-inventory.json` | جرد الجزء الأصلي: الخصائص والارتفاع واللون والموقع/المركز والمكونات بحسب مخطط الجرد. |
@@ -102,7 +102,17 @@ python3 complete_data/OSM/scripts/enhance_existing_glb_parts.py
 - التقرير يحتوي `facade_window_boxes_estimate: 0` لأن النوافذ ممثلة بصفائح رباعية لا بصناديق نافذة مجسمة.
 - يجب التحقق من النشر الحي ونجاح تحميل كل ملف على المتصفح بشكل منفصل؛ وجود الملف في Git لا يكفي لإثبات أنه عُرض بنجاح.
 
-## 6. ربط النواتج بصفحة المقارنة والنشر
+## 6. التدقيق الآلي الكامل لكل سجل
+
+أُضيف سكريبت قراءة فقط `complete_data/OSM/scripts/audit_building_data.py` وسير عمل `.github/workflows/audit-building-data.yml`. يحلّل السكريبت كل سجل داخل `building-enrichment-index.json` بدل الاكتفاء بعينة، ويقارن العدد مع التقرير، ويحصي التغطية حسب طريقة المطابقة والجزء ووجود الاسم والعنوان والارتفاع والمادة، ويفحص مفاتيح الهوية المكررة، ويقرأ جرد كل جزء من الأجزاء الأربعة والستة، ويسجل قائمة الملفات وأحجامها تحت مجلد بيانات المباني. يكتب تقريرًا جديدًا فقط في `parts/building-data-full-audit.json` ولا يغيّر أي مصدر أو فهرس أو GLB. يتم تشغيله تلقائيًا عند تعديل السكريبت/سير العمل أو يدويًا من GitHub Actions.
+
+تشغيل محلي من جذر المستودع:
+
+```bash
+python3 complete_data/OSM/scripts/audit_building_data.py
+```
+
+## 7. ربط النواتج بصفحة المقارنة والنشر
 
 - صفحة المقارنة: `test.html`.
 - مفاتيح الأزرار: `enhanced-glb-part-1` إلى `enhanced-glb-part-4`.
@@ -111,7 +121,7 @@ python3 complete_data/OSM/scripts/enhance_existing_glb_parts.py
 - سكريبت النشر: `.github/workflows/deploy-pages.yml`؛ أُضيفت له خطوات نسخ الملفات الأربعة المحسّنة وملفات الأصل إلى مجلد النشر.
 - سكريبت البناء: `.github/workflows/enhance-existing-glb-parts.yml`؛ يشغّل سكريبت التحسين ويتحقق من وجود الملفات والتقارير ثم يحفظ الناتج في `main`.
 
-## 7. تسلسل التغييرات
+## 8. تسلسل التغييرات
 
 1. أُضيف `complete_data/OSM/scripts/enhance_existing_glb_parts.py` لتوليد النسخ المحسّنة مع حفظ الأصول.
 2. أُنشئ `parts/enhanced/` وفيه أربعة GLB وتقارير لكل جزء وتقرير إجمالي.
@@ -119,7 +129,7 @@ python3 complete_data/OSM/scripts/enhance_existing_glb_parts.py
 4. أُحدّث `.github/workflows/deploy-pages.yml` لنسخ GLB المحسّنة وملفات الأصول إلى موقع النشر.
 5. هذا المستند هو سجل التدقيق الحالي. أي تغيير لاحق في السكريبت أو الملفات أو طريقة الإحداثيات يجب أن يُضاف كتاريخ جديد بدل مسح السجل السابق.
 
-## 8. قائمة تحقق قبل اعتماد النتيجة بصريًا
+## 9. قائمة تحقق قبل اعتماد النتيجة بصريًا
 
 - [ ] تأكيد نجاح آخر تشغيل لنشر GitHub Pages.
 - [ ] فتح `test.html` بعد اكتمال النشر وتفعيل كل زر على حدة.
