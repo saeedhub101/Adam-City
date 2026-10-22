@@ -152,8 +152,13 @@ def main():
             min_level = positive_number(tags.get("building:min_level"), 0, 150)
             if not base and min_level:
                 base = min_level * 3.2
+            source_height = height
+            # Some OSM features encode a raised building base (min_height/min_level)
+            # while the height tag is lower than that base. Preserve the source tag,
+            # but treat the usable height as the vertical extent above the base rather
+            # than failing the entire city export.
             if base >= height:
-                raise RuntimeError(f"Invalid base/height for {item['id']}: base={base}, height={height}")
+                height = base + max(3.2, source_height)
             label, rgba, metallic, roughness = pbr_for(tags, item["index"])
             material = trimesh.visual.material.PBRMaterial(
                 name=str(label).replace(" ", "_")[:64],
@@ -187,9 +192,11 @@ def main():
                 "source_feature_index": item["index"],
                 "polygon_components_exported": len(item["parts"]),
                 "height_m": height,
+                "source_height_interpreted_m": source_height,
                 "base_height_m": base,
                 "building_levels": tags.get("building:levels") or tags.get("levels"),
                 "height_tag": tags.get("height"),
+                "height_adjustment_reason": ("source height was not above the raised base; effective top was adjusted to base plus at least 3.2 m" if height != source_height else None),
                 "material": {
                     "name": label,
                     "base_color_rgba_0_to_1": list(rgba),
