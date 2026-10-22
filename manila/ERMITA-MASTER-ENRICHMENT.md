@@ -162,3 +162,6 @@ The enrichment script and the existing workflow were expanded to read additional
 
 
 Expanded internal-source ingestion was queued for execution through the existing workflow after the workflow's sparse-checkout inputs were updated. The final run report and deployment result must be checked before treating the new pass as complete.
+
+
+The GeoJSON writer omits empty enrichment properties while the CSV keeps a stable set of enrichment columns. This prevents sparse metadata from inflating the large first GeoJSON part past GitHub's per-file size limit. The next run will validate output sizes before its commit is accepted.
