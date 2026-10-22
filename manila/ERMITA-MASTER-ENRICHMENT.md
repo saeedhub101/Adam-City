@@ -178,3 +178,8 @@ The enrichment pass now joins `building-visual-research-queue.csv` and image can
 ## Audited building enrichment index
 
 The pass now also consumes `complete_data/OSM/data/buildings/Ermita/building-enrichment-index.json`. It uses only `exact_osm_id`, `spatial_high_confidence`, and `spatial_geometry_high_confidence` records; entries marked `spatial_review` or `unmatched` do not contribute semantic building tags. The linked OSM ID, match method, confidence and spatial evidence are written to separate enrichment fields, without changing the original feature/source IDs or geometry.
+
+
+## Strict polygon-overlap pass for remaining GeoJSON features
+
+For GeoJSON features without an OSM ID or accepted exact source-feature link, the script now compares the actual feature polygon with OSM building polygons from `complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson`. It accepts a link only when overlap covers at least 75% of the smaller polygon, IoU is at least 0.50, candidate/source area ratio is between 0.5 and 2.0, and the best candidate is clearly separated from alternatives. Centroid/proximity-only matches are not applied. The linked OSM ID, confidence and overlap evidence are stored in separate enrichment fields; original IDs, coordinates and geometry are untouched.
