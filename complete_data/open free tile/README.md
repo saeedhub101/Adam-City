@@ -193,3 +193,6 @@ Detailed report: [ermita-internal-source-enrichment-report.json](ermita-internal
 Before external research, the repository's existing master CSV and source collections were inspected and exact-ID joins were applied where safe. See [Ermita master-source reconciliation audit](ermita-master-source-reconciliation-audit.md) and its [machine-readable JSON](ermita-master-source-reconciliation-audit.json).
 
 The master CSV has 24,102 source rows and 193 columns, but it is a union of 18 source paths represented in the rows—not a 24,102-building register. The master GeoJSON has 22,977 features from seven source GeoJSON files; the build process removes byte-identical source files but keeps features from different sources even when they may represent the same physical building. The record-level GeoJSON-to-CSV crosswalk remains the next internal task.
+
+
+The internal exact-ID enrichment was expanded after the first pass: the legacy `ermita/maps/generated/ermita-building-details.csv` matched 692 accepted OFM-linked rows and filled 79 further blank fields; the `ermita/maps/qa/consolidated-building-register.csv` also matched 692 rows, preserving source-presence and missing-source notes and flagging **443 records with source-conflict notes** for review. These conflict notes are not resolved by choosing a source automatically.
