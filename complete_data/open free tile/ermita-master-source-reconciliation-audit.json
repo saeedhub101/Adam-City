@@ -109,7 +109,15 @@
     "facade_photo_review_entries_joined_by_exact_osm_id": 184,
     "ofm_component_rows_with_unverified_photo_candidates": 95,
     "named_building_photo_links_joined_by_exact_osm_id": 1,
-    "geometry_coordinates_and_render_heights_changed": false
+    "geometry_coordinates_and_render_heights_changed": false,
+    "legacy_osm_details_exact_id_matches": 692,
+    "additional_blank_fields_filled_from_legacy_osm_details": 79,
+    "consolidated_register_exact_id_matches": 692,
+    "records_with_source_conflict_notes": 443,
+    "pilot_register_exact_id_matches": 28,
+    "blank_fields_filled_from_pilot_register": 296,
+    "provisional_barangay_values_retained": true,
+    "note": "Additional attributes and conflict/missing-source notes were added to the OFM sort only for accepted exact/containment OSM IDs. Source conflicts remain unresolved and are flagged for review."
   },
   "current_ofm_sort_triage": {
     "partially_enriched": 368,
