@@ -12,7 +12,8 @@
     "feature_count": 30,
     "status": "pilot; field research and source verification still in progress",
     "ordering": "Geographic nearest-neighbour order; sequence starts at the northernmost record and proceeds to the nearest remaining building. Groups split when nearest step exceeds 350 m.",
-    "barangay_status": "not yet assigned; existing repository administrative export contains boundary lines without barangay names/polygons suitable for point-in-polygon assignment."
+    "barangay_status": "provisional centroid-in-polygon assignments from ArcGIS candidate polygons; source authority, currency, and license still require verification; one building remains unmatched.",
+    "barangay_assignment_method": "Centroid of each source building polygon tested against candidate City of Manila Barangay polygons; no geometry changed."
   },
   "features": [
     {
@@ -34,7 +35,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 666",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -43,13 +44,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 1,
           "spatial_group": "PROX-01",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -120,7 +123,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 666",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -129,12 +132,14 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join"
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 2,
           "spatial_group": "PROX-01",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -215,19 +220,21 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": "Ermita",
-          "barangay": null,
+          "barangay": "Barangay 666",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
             "roof colour",
             "roof material",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 3,
           "spatial_group": "PROX-01",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -382,7 +389,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 666",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -391,13 +398,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 4,
           "spatial_group": "PROX-01",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -455,7 +464,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 666",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -464,13 +473,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 5,
           "spatial_group": "PROX-02",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -547,7 +558,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 659-A",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -556,13 +567,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 6,
           "spatial_group": "PROX-02",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -661,7 +674,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 659-A",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -670,13 +683,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 7,
           "spatial_group": "PROX-02",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -753,7 +768,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 659",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "facade colour",
@@ -761,13 +776,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 8,
           "spatial_group": "PROX-02",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -873,7 +890,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 661",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -882,13 +899,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 9,
           "spatial_group": "PROX-03",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -973,7 +992,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": "Ermita",
-          "barangay": null,
+          "barangay": "Barangay 660-A",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -981,12 +1000,14 @@
             "facade material",
             "roof colour",
             "roof material",
-            "Barangay via official boundary spatial join"
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 10,
           "spatial_group": "PROX-03",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -1062,7 +1083,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 660-A",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -1071,12 +1092,14 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join"
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 11,
           "spatial_group": "PROX-03",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -1137,7 +1160,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 660-A",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -1145,13 +1168,15 @@
             "facade material",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 12,
           "spatial_group": "PROX-03",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -1237,7 +1262,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 670",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "height and floor count",
@@ -1246,13 +1271,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 13,
           "spatial_group": "PROX-04",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -1303,7 +1330,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 670",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -1312,13 +1339,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 14,
           "spatial_group": "PROX-04",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -1369,7 +1398,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 670",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -1378,13 +1407,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 15,
           "spatial_group": "PROX-04",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -1468,7 +1499,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 669",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -1477,13 +1508,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 16,
           "spatial_group": "PROX-04",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -1555,7 +1588,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 669",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -1564,13 +1597,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 17,
           "spatial_group": "PROX-04",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -1640,7 +1675,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 669",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "height and floor count",
@@ -1649,13 +1684,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 18,
           "spatial_group": "PROX-04",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -1705,7 +1742,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 669",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "height and floor count",
@@ -1714,13 +1751,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 19,
           "spatial_group": "PROX-04",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -1772,7 +1811,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 670",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -1781,13 +1820,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 20,
           "spatial_group": "PROX-04",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -1855,7 +1896,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 669",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -1864,13 +1905,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 21,
           "spatial_group": "PROX-04",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -1953,7 +1996,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 669",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -1962,13 +2005,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 22,
           "spatial_group": "PROX-04",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -2021,7 +2066,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 669",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -2030,13 +2075,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 23,
           "spatial_group": "PROX-04",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -2146,7 +2193,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 669",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -2155,13 +2202,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 24,
           "spatial_group": "PROX-04",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -2215,7 +2264,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 669",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -2224,13 +2273,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 25,
           "spatial_group": "PROX-04",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -2281,7 +2332,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 666",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "height and floor count",
@@ -2290,13 +2341,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 26,
           "spatial_group": "PROX-05",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -2393,7 +2446,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 666",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "measured height",
@@ -2402,13 +2455,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 27,
           "spatial_group": "PROX-05",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -2481,13 +2536,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Barangay assignment review against authoritative/current boundary"
           ],
           "spatial_order": 28,
           "spatial_group": "PROX-06",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "no_polygon_match_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -2653,7 +2710,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 666",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "height and floor count",
@@ -2662,13 +2719,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 29,
           "spatial_group": "PROX-07",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
@@ -2722,7 +2781,7 @@
           "region_province": "Metro Manila",
           "city": "Manila",
           "district": null,
-          "barangay": null,
+          "barangay": "Barangay 666",
           "attribute_research_status": "pilot — research required; not final",
           "pending_research_fields": [
             "height and floor count",
@@ -2731,13 +2790,15 @@
             "roof colour",
             "roof material",
             "district confirmation",
-            "Barangay via official boundary spatial join",
-            "street/address verification"
+            "street/address verification",
+            "Verify provisional Barangay match against authoritative/current boundary and source license"
           ],
           "spatial_order": 30,
           "spatial_group": "PROX-07",
           "spatial_group_method": "provisional nearest-neighbour geographic ordering; NOT a confirmed Barangay",
-          "barangay_assignment_status": "pending verified administrative polygon spatial join"
+          "barangay_assignment_status": "provisional_centroid_match_arcgis_boundary_source_review_required",
+          "barangay_assignment_method": "building polygon centroid point-in-polygon; ArcGIS FeatureServer layer 3; query date 2026-10-22",
+          "barangay_boundary_source": "https://services7.arcgis.com/poQdgvLD6DHnbpsT/ArcGIS/rest/services/Philippine_Administrative_Boundaries/FeatureServer/3"
         }
       },
       "geometry": {
