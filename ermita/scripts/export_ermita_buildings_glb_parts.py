@@ -96,7 +96,10 @@ def main():
         for item in chunk:
             tags = item["tags"]
             height = float(height_of(tags))
-            base = positive_number(tags.get("min_height") or tags.get("building:min_level"), 0, 500) or 0.0
+            base = positive_number(tags.get("min_height"), 0, 500) or 0.0
+            min_level = positive_number(tags.get("building:min_level"), 0, 150)
+            if not base and min_level:
+                base = min_level * 3.2
             if base >= height:
                 raise RuntimeError(f"Invalid base/height for {item['id']}: base={base}, height={height}")
             label, rgba, metallic, roughness = pbr_for(tags, item["index"])
