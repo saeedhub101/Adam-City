@@ -8,10 +8,10 @@
     "roof_details_geojson": "complete_data/OSM/data/buildings/Ermita/ermita-building-roof-details.geojson",
     "details_csv": "complete_data/OSM/data/buildings/Ermita/osm-building-details.csv",
     "parts_inventory": [
-      "complete_data/OSM/data/buildings/parts/part1/part1-inventory.json",
-      "complete_data/OSM/data/buildings/parts/part2/part2-inventory.json",
-      "complete_data/OSM/data/buildings/parts/part3/part3-inventory.json",
-      "complete_data/OSM/data/buildings/parts/part4/part4-inventory.json"
+      "complete_data/OSM/data/buildings/Ermita/part1/part1-inventory.json",
+      "complete_data/OSM/data/buildings/Ermita/part2/part2-inventory.json",
+      "complete_data/OSM/data/buildings/Ermita/part3/part3-inventory.json",
+      "complete_data/OSM/data/buildings/Ermita/part4/part4-inventory.json"
     ]
   },
   "geometry_policy": "Metadata-only join. No GLB, GeoJSON geometry, feature IDs, centroids, coordinates, heights, or colors are changed.",
