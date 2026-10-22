@@ -67,5 +67,6 @@ jobs:
             echo "Building enrichment index and report are already up to date."
           else
             git commit -m "Update spatial building metadata links"
+            git pull --rebase origin main
             git push origin HEAD:main
           fi
