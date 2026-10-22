@@ -186,3 +186,6 @@ For GeoJSON features without an OSM ID or accepted exact source-feature link, th
 
 
 The strict spatial join filters impossible source/candidate area ratios before calculating polygon intersections, preserving the same acceptance thresholds while reducing unnecessary geometry work.
+
+
+The spatial fallback first resolves any OSM ID already present in the GeoJSON feature ID/type properties. Only features with no explicit OSM ID and no accepted source-key match proceed to polygon overlap testing.
