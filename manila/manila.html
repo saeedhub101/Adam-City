@@ -84,7 +84,9 @@ h1{font-size:17px;margin:0 0 5px}.sub{font-size:11px;line-height:1.55;color:var(
      const addQuad=(arr,a,b,c,d)=>{arr.push(...a,...b,...c,...a,...c,...d);};
      const getParts=f=>f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.type==='MultiPolygon'?f.geometry.coordinates:[];
      let count=0;
+     const MAX_WINDOW_QUADS=30000;
      for(const f of features){
+      if(count>=MAX_WINDOW_QUADS)break;
       const p=f.properties||{},h=Math.max(3,Number(p.height)||9.6),lat=Number((f.geometry.coordinates||[])[0]?.[0]?.[1]||14.585);
       const scale=maplibregl.MercatorCoordinate.fromLngLat([120.982,lat]).meterInMercatorCoordinateUnits();
       const floors=Math.max(1,Math.min(60,Math.floor(h/3.2))),fh=h/floors;
@@ -103,10 +105,10 @@ h1{font-size:17px;margin:0 0 5px}.sub{font-size:11px;line-height:1.55;color:var(
         const usable=Math.max(0,len-1.0),cols=Math.min(45,Math.floor(usable/3.1));
         if(cols<1)continue;
         const step=usable/cols,ww=Math.min(1.35,step*0.55)*scale,winH=Math.min(1.45,fh*0.53)*scale,offset=scale*0.045;
-        for(let fl=0;fl<floors;fl++){
+        for(let fl=0;fl<floors&&count<MAX_WINDOW_QUADS;fl++){
          const z0=(fl*fh+Math.max(0.55,fh*0.2))*scale,z1=Math.min((fl*fh+fh*0.78)*scale,z0+winH);
          if(z1<=z0)continue;
-         for(let col=0;col<cols;col++){
+         for(let col=0;col<cols&&count<MAX_WINDOW_QUADS;col++){
           const along=(col+0.5)*step-len/2;
           const wx=mx+ux*along,wy=my+uy*along;
           const l=ww/2;
