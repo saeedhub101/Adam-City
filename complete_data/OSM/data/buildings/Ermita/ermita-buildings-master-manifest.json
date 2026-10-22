@@ -1,0 +1,136 @@
+{
+  "scope": "building-related data only; trees, roads, water and terrain excluded",
+  "csv": {
+    "source_files": 19,
+    "rows": 24102,
+    "columns": 193,
+    "bytes": 14441680
+  },
+  "geojson": {
+    "source_files": 7,
+    "features": 22977,
+    "mode": "chunked-index",
+    "parts": [
+      {
+        "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001.geojson",
+        "features": 12507,
+        "bytes": 89128551
+      },
+      {
+        "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-002.geojson",
+        "features": 10470,
+        "bytes": 9004800
+      }
+    ],
+    "bytes_across_parts": 98133351
+  },
+  "csv_sources": [
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/building-image-candidates.csv",
+      "sha256": "9ce24206093dcc311b5f4e7aab3cb2d1f903f90394ab6cb18a8890e5a7bb618d"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/building-source-link-audit.csv",
+      "sha256": "b3df2e98bbbb89468234fed3c11a590af684fa2b70a2466b887ae9ce5200a3b4"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/building-visual-research-queue.csv",
+      "sha256": "fa53c3171660a8c391fb286b5d7b5763c7fb0d74a58cb95dd9d1f3b94c0f8297"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/osm-building-details.csv",
+      "sha256": "6dde27e2045c3622b1c0a417f19a5139079142b9d68b9122e6cf6eae382ad621"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/windows/facade-signage-index.csv",
+      "sha256": "b37e4279e8dde52baa25bb1cb8d3fc6402c360105a0bf0053334efe5c2c0551e"
+    },
+    {
+      "path": "complete_data/OSM/quality/building-height-evidence.csv",
+      "sha256": "d3f9ffa8526d914e4eee0d44ade3821bdcb42746efd92af495f0cf2bbf8458fd"
+    },
+    {
+      "path": "ermita/3d/building-3d-schema.csv",
+      "sha256": "0d6d0a38e092d03f35782bb02c4c555a48b433bc75a80d315d3599d21088f621"
+    },
+    {
+      "path": "ermita/3d/building-match-audit.csv",
+      "sha256": "7670e4d4e167cd791f268ef3611706550547b9b77094ab46e575ab3ca2147e53"
+    },
+    {
+      "path": "ermita/3d/facade-photo-review.csv",
+      "sha256": "6945182fa587f05864eed1f5fcd6120752f8cf760b95e130e119540c3e2fe415"
+    },
+    {
+      "path": "ermita/3d/generated/building-height-methods.csv",
+      "sha256": "cb09b54ad91bb8e60c6f2b4b6c489ccf3b3974bbcad590974988ed57fdfc8c65"
+    },
+    {
+      "path": "ermita/buildings/buildings.csv",
+      "sha256": "e8041bc84107d4a7cde1d2f8f1f245a736be2de02083d1acf64b77906bdad239"
+    },
+    {
+      "path": "ermita/maps/generated/ermita-building-details.csv",
+      "sha256": "c836a6f702c5d591a92214814f585a86c76c621c1375a30d41d58917abec05b4"
+    },
+    {
+      "path": "ermita/maps/qa/consolidated-building-register.csv",
+      "sha256": "8607f7be936b7d36daeb42e1b51179fc15c182de9ba4f3f2c32ae76c2f3cd037"
+    },
+    {
+      "path": "ermita/maps/qa/non-osm-building-footprint-crosswalk.csv",
+      "sha256": "7d592434850e0e7a50c82e48bc71732d2c1939dd6bfdcf3de9c520d8377d3a4a"
+    },
+    {
+      "path": "ermita/stores/brand-building-match-audit.csv",
+      "sha256": "7fd4cb23270eb24332d040a6fca01b9feabccf416191e7f5002b3d58e020d1f4"
+    },
+    {
+      "path": "kartaview/ermita-real-facade-images.csv",
+      "sha256": "2b8a71107619b02f49e609fa5aa0d2a8aec3586b5ba940f08e14025fba2c45f2"
+    },
+    {
+      "path": "kartaview/facade-crops/manifest.csv",
+      "sha256": "4786a91f2e30e9613fa049e29fe03b0d10ae4aa8e7b5285f9ccb83a54b518d16"
+    },
+    {
+      "path": "kartaview/facade-crops/review-priority.csv",
+      "sha256": "b08059623102afaa9e3de7d7c0eac02e85ecc11d0d6f267a1b669a7f5c73106b"
+    },
+    {
+      "path": "kartaview/facade-texture-review-candidates.csv",
+      "sha256": "ac92a35ccedbac774aa2d68529e3510aca62ed064356fe254f85e6a2eba00bc9"
+    }
+  ],
+  "geojson_sources": [
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/building-visual-research-queue.geojson",
+      "sha256": "b5bf00495a9deb938c205a0565b67a145d53f5b3b843c07cc93ffd08b2306731"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
+      "sha256": "9c5a7cfab0602fd38b351d25a5a63be9646f2048207d2a9bec5cfaf986f8f2e1"
+    },
+    {
+      "path": "complete_data/open free tile/building-fallback.geojson",
+      "sha256": "33df91ecebf91cfc094058a494480628f9f9ff75cb2764b44e78a827f50d79e5"
+    },
+    {
+      "path": "ermita/maps/generated/ermita-building-footprints.geojson",
+      "sha256": "733a286e8db3944e5f986e5eadb94eff10ac112544a3c58056b287d23f1cdce4"
+    },
+    {
+      "path": "ermita/maps/qa/non-osm-building-canonical-register.geojson",
+      "sha256": "0bf1ee2d335a1d8a7d7a79e29f47bea114baf1bbb39961263572525a8c20c463"
+    },
+    {
+      "path": "ermita/maps/sources/google-open-buildings/google-open-buildings-v3-ermita.geojson",
+      "sha256": "dcf75ed4b1be5267e034df5de02f59c94caf1132477cbcea666cec63ef4c6bbe"
+    },
+    {
+      "path": "ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson",
+      "sha256": "7a23f4e8682e293be53b267a721120257878b02781f585883b9b53a37931ba4b"
+    }
+  ],
+  "deduplication": "Exact byte-identical source files are counted once. Features from different source files are retained even when they may describe the same real building."
+}
