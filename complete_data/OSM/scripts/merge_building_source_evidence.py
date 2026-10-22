@@ -239,7 +239,6 @@ def choose_overlap_candidate(source_geom, candidates):
         and best["iou"] >= 0.50
         and 0.5 <= best["area_ratio"] <= 2.0
         and clear_best
-        and bool(best["candidate"]["id"])
     )
     evidence = {
         "candidate_osm_id": best["candidate"]["id"],
