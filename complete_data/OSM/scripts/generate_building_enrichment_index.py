@@ -352,7 +352,7 @@ def main():
             "parts_inventory": [f"complete_data/OSM/data/buildings/parts/part{i}/part{i}-inventory.json" for i in range(1, 5)],
         },
         "geometry_policy": "Metadata-only join. No GLB, GeoJSON geometry, feature IDs, centroids, coordinates, heights, or colors are changed.",
-        "matching_policy": "Exact OSM ID first, then polygon-centroid containment with area and ambiguity checks. Ambiguous matches are listed for review and do not receive semantic tags. Nearby POIs are never attached by proximity alone.",
+        "matching_policy": "Exact OSM ID first, then centroid containment and source-footprint polygon overlap with area/ambiguity checks. Ambiguous matches are listed for review and do not receive semantic tags. Nearby POIs are never attached by proximity alone.",
         "counts": counts,
         "buildings": records,
     }
