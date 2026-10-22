@@ -1,0 +1,102 @@
+{
+  "source": "complete_data/OSM/data/buildings/ermita-building-footprints.geojson",
+  "output_directory": "complete_data/OSM/data/buildings/parts/enhanced",
+  "parts": [
+    {
+      "original_glb": "complete_data/OSM/data/buildings/parts/part1/part1.glb",
+      "output_glb": "complete_data/OSM/data/buildings/parts/enhanced/part1-detailed.glb",
+      "original_bytes": 2509324,
+      "output_bytes": 5943048,
+      "source_feature_count": 1123,
+      "footprint_parts_selected_by_part_bounds": 5508,
+      "facade_window_meshes": 0,
+      "facade_window_boxes_estimate": 0,
+      "facade_window_representation": "thin quad planes (2 triangles each) to preserve visible glazing detail while avoiding excessive GLB size",
+      "facade_accent_meshes": 2,
+      "facade_base_meshes": 2561,
+      "photo_specific_detail_meshes": 3,
+      "skipped_source_features": 162,
+      "origin_projected_m": {
+        "x": 13468029.142847193,
+        "y": 1639726.9375723219
+      },
+      "coordinate_policy": "Preserve original GLB scene and use the existing part origin; add only new facade/detail meshes in the same local coordinate frame.",
+      "limitations": [
+        "The original building meshes and their materials are retained; added details are procedural overlays from the Roxas Boulevard facade generator.",
+        "Photo-specific details are generated only for source footprints with matching identities/tags. This is not a photogrammetric reconstruction of every facade."
+      ]
+    },
+    {
+      "original_glb": "complete_data/OSM/data/buildings/parts/part2/part2.glb",
+      "output_glb": "complete_data/OSM/data/buildings/parts/enhanced/part2-detailed.glb",
+      "original_bytes": 33378316,
+      "output_bytes": 48169836,
+      "source_feature_count": 1123,
+      "footprint_parts_selected_by_part_bounds": 39669,
+      "facade_window_meshes": 0,
+      "facade_window_boxes_estimate": 0,
+      "facade_window_representation": "thin quad planes (2 triangles each) to preserve visible glazing detail while avoiding excessive GLB size",
+      "facade_accent_meshes": 0,
+      "facade_base_meshes": 11588,
+      "photo_specific_detail_meshes": 0,
+      "skipped_source_features": 297,
+      "origin_projected_m": {
+        "x": 13470417.885549493,
+        "y": 1638781.9311113786
+      },
+      "coordinate_policy": "Preserve original GLB scene and use the existing part origin; add only new facade/detail meshes in the same local coordinate frame.",
+      "limitations": [
+        "The original building meshes and their materials are retained; added details are procedural overlays from the Roxas Boulevard facade generator.",
+        "Photo-specific details are generated only for source footprints with matching identities/tags. This is not a photogrammetric reconstruction of every facade."
+      ]
+    },
+    {
+      "original_glb": "complete_data/OSM/data/buildings/parts/part3/part3.glb",
+      "output_glb": "complete_data/OSM/data/buildings/parts/enhanced/part3-detailed.glb",
+      "original_bytes": 38921972,
+      "output_bytes": 51256212,
+      "source_feature_count": 1123,
+      "footprint_parts_selected_by_part_bounds": 35839,
+      "facade_window_meshes": 0,
+      "facade_window_boxes_estimate": 0,
+      "facade_window_representation": "thin quad planes (2 triangles each) to preserve visible glazing detail while avoiding excessive GLB size",
+      "facade_accent_meshes": 0,
+      "facade_base_meshes": 8926,
+      "photo_specific_detail_meshes": 0,
+      "skipped_source_features": 319,
+      "origin_projected_m": {
+        "x": 13467506.638628356,
+        "y": 1644061.124578535
+      },
+      "coordinate_policy": "Preserve original GLB scene and use the existing part origin; add only new facade/detail meshes in the same local coordinate frame.",
+      "limitations": [
+        "The original building meshes and their materials are retained; added details are procedural overlays from the Roxas Boulevard facade generator.",
+        "Photo-specific details are generated only for source footprints with matching identities/tags. This is not a photogrammetric reconstruction of every facade."
+      ]
+    },
+    {
+      "original_glb": "complete_data/OSM/data/buildings/parts/part4/part4.glb",
+      "output_glb": "complete_data/OSM/data/buildings/parts/enhanced/part4-detailed.glb",
+      "original_bytes": 26759688,
+      "output_bytes": 54206084,
+      "source_feature_count": 1123,
+      "footprint_parts_selected_by_part_bounds": 40645,
+      "facade_window_meshes": 0,
+      "facade_window_boxes_estimate": 0,
+      "facade_window_representation": "thin quad planes (2 triangles each) to preserve visible glazing detail while avoiding excessive GLB size",
+      "facade_accent_meshes": 0,
+      "facade_base_meshes": 24088,
+      "photo_specific_detail_meshes": 0,
+      "skipped_source_features": 63,
+      "origin_projected_m": {
+        "x": 13470866.419399105,
+        "y": 1643608.5953451272
+      },
+      "coordinate_policy": "Preserve original GLB scene and use the existing part origin; add only new facade/detail meshes in the same local coordinate frame.",
+      "limitations": [
+        "The original building meshes and their materials are retained; added details are procedural overlays from the Roxas Boulevard facade generator.",
+        "Photo-specific details are generated only for source footprints with matching identities/tags. This is not a photogrammetric reconstruction of every facade."
+      ]
+    }
+  ]
+}
