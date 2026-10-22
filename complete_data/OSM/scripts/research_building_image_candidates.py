@@ -59,8 +59,8 @@ def main() -> None:
                 "formatversion": "2",
                 "generator": "geosearch",
                 "ggscoord": f'{building["latitude"]}|{building["longitude"]}',
-                "ggsradius": "100",
-                "ggslimit": "10",
+                "ggsradius": "75",
+                "ggslimit": "5",
                 "ggsnamespace": "6",
                 "prop": "coordinates|imageinfo",
                 "colimit": "1",
@@ -76,7 +76,7 @@ def main() -> None:
                 meta = info.get("extmetadata") or {}
                 def meta_value(key: str) -> str:
                     value = meta.get(key) or {}
-                    return str(value.get("value", ""))[:1500] if isinstance(value, dict) else ""
+                    return str(value.get("value", ""))[:500] if isinstance(value, dict) else ""
                 output.append({
                     "source_feature_id": building.get("source_feature_id", ""),
                     "part": building.get("part", ""),
