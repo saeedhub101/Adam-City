@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "status": "generated",
+  "created_from": {
+    "parts_inventory_index": "complete_data/OSM/data/buildings/parts/parts-inventory-index.json",
+    "details_geojson": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+    "details_csv": "complete_data/OSM/data/buildings/osm-building-details.csv",
+    "parts_inventory": [
+      "part2/part2-inventory.json",
+      "part4/part4-inventory.json"
+    ]
+  },
+  "geometry_policy": "Metadata-only join. No GLB, GeoJSON geometry, feature IDs, centroids, coordinates, heights, or colors are changed.",
+  "matching_policy": "Exact OSM feature ID only. No proximity-based guesses.",
+  "counts": {
+    "total": 2651,
+    "exact_osm_id": 75,
+    "basemap_id_only": 0,
+    "no_external_identity_match": 2576,
+    "named": 25,
+    "addressed": 21,
+    "with_source_material_tag": 9
+  },
+  "limitations": [
+    "Names, addresses, and material tags are only present where source data provides them.",
+    "An exact OSM ID match does not guarantee that a field such as address or facade material is populated.",
+    "This index does not contain facade photographs or inferred photographic materials.",
+    "Buildings without exact OSM IDs are intentionally left unguessed; further spatial matching must be reviewed and confidence-labelled.",
+    "Part 1 and Part 3 inventory properties could not be retrieved through the GitHub file endpoint during this run; their original source properties remain accessible through their existing inventory files and the shared index."
+  ],
+  "index_path": "complete_data/OSM/data/buildings/parts/building-enrichment-index.json"
+}
