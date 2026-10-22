@@ -1,0 +1,134 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-10-22",
+  "purpose": "Audit the repository's existing Ermita building data before any new external research.",
+  "master_csv": {
+    "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.csv",
+    "rows": 24102,
+    "columns": 193,
+    "unique_source_files_in_merged_rows": 18,
+    "rows_with_osm_feature_id": 7786,
+    "unique_osm_feature_ids_in_osm_feature_id_column": 1909,
+    "rows_with_any_known_source_identity_key": 24097,
+    "rows_with_photo_url": 1541,
+    "rows_with_photo_page": 1049,
+    "rows_with_explicit_height_tag": 118,
+    "rows_with_building_levels_tag": 743,
+    "rows_with_roof_shape_tag": 97,
+    "rows_with_wikipedia_field": 21,
+    "rows_with_wikidata_field": 33
+  },
+  "master_geojson": {
+    "path_prefix": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/",
+    "part_001_features": 12507,
+    "part_002_features": 10470,
+    "total_features": 22977,
+    "source_geojson_files_before_chunking": 7,
+    "note": "The master-generation script deduplicates byte-identical source files, but deliberately retains features from different sources even if they may describe the same physical building. Full per-feature GeoJSON-to-CSV crosswalk remains pending."
+  },
+  "source_csv_summary": [
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/building-image-candidates.csv",
+      "rows": 1049,
+      "key": "source_feature_id",
+      "unique_key_values": 330,
+      "interpretation": "Multiple candidate images can point to one source feature; not 1,049 unique buildings."
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/building-source-link-audit.csv",
+      "rows": 2651,
+      "key": "source_feature_id",
+      "unique_key_values": 2646,
+      "linked_osm_rows": 1519,
+      "unique_linked_osm_ids": 1442
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/building-visual-research-queue.csv",
+      "rows": 1132,
+      "unique_source_feature_ids": 1132
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/osm-building-details.csv",
+      "rows": 1909,
+      "unique_osm_ids": 1909,
+      "named_rows": 650
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/windows/facade-signage-index.csv",
+      "rows": 1468,
+      "unique_osm_ids": 1468
+    },
+    {
+      "path": "complete_data/OSM/quality/building-height-evidence.csv",
+      "rows": 1528,
+      "unique_source_ids": 1528,
+      "height_tagged_rows": 118,
+      "levels_tagged_rows": 743,
+      "roof_shape_tagged_rows": 97
+    },
+    {
+      "path": "ermita/3d/building-match-audit.csv",
+      "rows": 1306,
+      "unique_osm_ids": 1306
+    },
+    {
+      "path": "ermita/3d/facade-photo-review.csv",
+      "rows": 246,
+      "unique_photo_ids": 246
+    },
+    {
+      "path": "kartaview/facade-crops/manifest.csv",
+      "rows": 988,
+      "unique_photo_ids": 247,
+      "interpretation": "Four crop variants per source photo in the aggregate; not 988 unique photos/buildings."
+    },
+    {
+      "path": "ermita/maps/qa/consolidated-building-register.csv",
+      "rows": 1570,
+      "unique_osm_ids": 1570
+    },
+    {
+      "path": "ermita/maps/qa/non-osm-building-footprint-crosswalk.csv",
+      "rows": 8176,
+      "google_ids": 7443,
+      "microsoft_ids": 1765,
+      "probable_google_microsoft_matches": 1032,
+      "google_only_or_conflict": 6411,
+      "microsoft_only_or_conflict": 733
+    }
+  ],
+  "internal_enrichment_performed": {
+    "target": "complete_data/open free tile/ermita-building-geographic-completeness-sort.csv",
+    "openfreemap_component_rows": 1721,
+    "exact_osm_tag_source_rows_joined": 692,
+    "exact_height_evidence_rows_joined": 692,
+    "exact_building_match_audit_rows_joined": 605,
+    "pilot_building_register_rows_matched_by_exact_osm_id": 28,
+    "blank_fields_filled_from_30_row_pilot_register": 296,
+    "field_level_evidence_rows_matched_by_exact_osm_id": 28,
+    "facade_photo_review_entries_joined_by_exact_osm_id": 184,
+    "ofm_component_rows_with_unverified_photo_candidates": 95,
+    "named_building_photo_links_joined_by_exact_osm_id": 1,
+    "geometry_coordinates_and_render_heights_changed": false
+  },
+  "current_ofm_sort_triage": {
+    "partially_enriched": 368,
+    "needs_match_review": 355,
+    "insufficient_data": 998,
+    "strictly_verified_complete": 0,
+    "photo_status_counts": {
+      "no_building_specific_photo_link": 1621,
+      "exact_osm_id_photo_candidate_unverified": 95,
+      "provisional_named_building_evidence": 5
+    }
+  },
+  "important_caveats": [
+    "24,102 CSV rows and 22,977 GeoJSON features are source records/features, not unique physical buildings.",
+    "The 1,721 OpenFreeMap entries are polygon components, not confirmed unique physical buildings.",
+    "The 30-row building-data/buildings.csv file is a pilot register, not a full-area master; 28 exact accepted OSM IDs matched the current OFM sort.",
+    "Barangay values copied from the pilot register retain provisional spatial-join status; they are not treated as confirmed.",
+    "The 8,176 Google/Microsoft footprint crosswalk rows compare those two sources with each other. They are useful geometry evidence but are not yet directly reconciled against the OFM master geometry.",
+    "Existing photo records are candidate references only unless visual identity and facade orientation are confirmed."
+  ],
+  "next_internal_step": "Build and validate a record-level crosswalk between the 22,977 master GeoJSON features and the 24,102 source CSV rows using exact source IDs first, then geometry fingerprints and conservative spatial checks. Preserve every original source record and keep ambiguous matches in a review queue."
+}
