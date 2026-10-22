@@ -34,7 +34,7 @@ jobs:
           python3 - <<'PY'
           import json
           from pathlib import Path
-          p = Path("complete_data/OSM/data/buildings/parts/building-data-full-audit.json")
+          p = Path("complete_data/OSM/data/buildings/Ermita/building-data-full-audit.json")
           d = json.loads(p.read_text(encoding="utf-8"))
           assert d["full_enrichment_index"]["records_parsed"] == d["full_enrichment_index"]["reported_counts"]["total"]
           assert len(d["original_four_part_assets"]) == 4
@@ -47,7 +47,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add complete_data/OSM/data/buildings/parts/building-data-full-audit.json
+          git add complete_data/OSM/data/buildings/Ermita/building-data-full-audit.json
           if git diff --cached --quiet; then
             echo "Audit report is unchanged."
           else

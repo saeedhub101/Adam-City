@@ -7,11 +7,11 @@ on:
     paths:
       - '.github/workflows/build-building-visual-research-queue.yml'
       - 'complete_data/OSM/scripts/build_building_visual_research_queue.py'
-      - 'complete_data/OSM/data/buildings/parts/building-enrichment-index.json'
-      - 'complete_data/OSM/data/buildings/parts/part1/part1-inventory.json'
-      - 'complete_data/OSM/data/buildings/parts/part2/part2-inventory.json'
-      - 'complete_data/OSM/data/buildings/parts/part3/part3-inventory.json'
-      - 'complete_data/OSM/data/buildings/parts/part4/part4-inventory.json'
+      - 'complete_data/OSM/data/buildings/Ermita/building-enrichment-index.json'
+      - 'complete_data/OSM/data/buildings/Ermita/part1/part1-inventory.json'
+      - 'complete_data/OSM/data/buildings/Ermita/part2/part2-inventory.json'
+      - 'complete_data/OSM/data/buildings/Ermita/part3/part3-inventory.json'
+      - 'complete_data/OSM/data/buildings/Ermita/part4/part4-inventory.json'
 
 permissions:
   contents: write
@@ -41,9 +41,9 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add complete_data/OSM/data/buildings/parts/building-visual-research-queue.csv
-          git add complete_data/OSM/data/buildings/parts/building-visual-research-queue.geojson
-          git add complete_data/OSM/data/buildings/parts/BUILDING-VISUAL-RESEARCH.md
+          git add complete_data/OSM/data/buildings/Ermita/building-visual-research-queue.csv
+          git add complete_data/OSM/data/buildings/Ermita/building-visual-research-queue.geojson
+          git add complete_data/OSM/data/buildings/Ermita/BUILDING-VISUAL-RESEARCH.md
           if git diff --cached --quiet; then
             echo "Visual research queue is already up to date."
           else

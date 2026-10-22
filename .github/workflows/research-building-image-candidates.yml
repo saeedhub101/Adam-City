@@ -9,7 +9,7 @@ on:
     paths:
       - '.github/workflows/research-building-image-candidates.yml'
       - 'complete_data/OSM/scripts/research_building_image_candidates.py'
-      - 'complete_data/OSM/data/buildings/parts/building-visual-research-queue.csv'
+      - 'complete_data/OSM/data/buildings/Ermita/building-visual-research-queue.csv'
 
 permissions:
   contents: write
@@ -37,9 +37,9 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add complete_data/OSM/data/buildings/parts/building-image-candidates.json
-          git add complete_data/OSM/data/buildings/parts/building-image-candidates.csv
-          git add complete_data/OSM/data/buildings/parts/BUILDING-IMAGE-CANDIDATES.md
+          git add complete_data/OSM/data/buildings/Ermita/building-image-candidates.json
+          git add complete_data/OSM/data/buildings/Ermita/building-image-candidates.csv
+          git add complete_data/OSM/data/buildings/Ermita/BUILDING-IMAGE-CANDIDATES.md
           if git diff --cached --quiet; then
             echo "Image candidate evidence is already up to date."
           else
