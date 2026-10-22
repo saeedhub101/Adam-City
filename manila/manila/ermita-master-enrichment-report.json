@@ -13,13 +13,14 @@
     "ermita-real-facade-images.csv": 246,
     "brand-building-match-audit.csv": 34,
     "facade-signage-index.csv": 1468,
-    "building-image-candidates.csv": 1049
+    "building-image-candidates.csv": 1049,
+    "building-visual-research-queue.csv": 1132
   },
   "csv": {
     "path": "manila/manila/ermita-buildings-master.csv",
     "rows": 24102,
-    "columns_before": 209,
-    "columns_after": 244
+    "columns_before": 244,
+    "columns_after": 260
   },
   "geojson_parts": [
     {
@@ -31,10 +32,23 @@
         "conflict_review": 168
       },
       "filled_fields": {
-        "enriched_photo_candidate_count": 278,
-        "enriched_photo_candidate_urls": 278,
-        "enriched_photo_candidate_ids": 278,
-        "enriched_photo_candidate_evidence": 278,
+        "enriched_photo_candidate_count": 545,
+        "enriched_photo_candidate_urls": 545,
+        "enriched_photo_candidate_ids": 545,
+        "enriched_photo_candidate_evidence": 545,
+        "enriched_research_queue_status": 1257,
+        "enriched_research_google_maps_url": 1257,
+        "enriched_research_mapillary_url": 1257,
+        "enriched_research_wikimedia_url": 1257,
+        "enriched_research_coordinates": 1257,
+        "enriched_research_area_m2": 1257,
+        "enriched_research_source_building_type": 1139,
+        "enriched_research_osm_candidate_url": 226,
+        "enriched_research_candidate_osm_id": 226,
+        "enriched_research_candidate_name": 71,
+        "enriched_research_source_colour": 190,
+        "enriched_research_source_name_or_brand": 74,
+        "enriched_research_source_material": 4,
         "enriched_name": 358,
         "enriched_building_type": 1608,
         "enriched_street": 283,
@@ -87,10 +101,22 @@
     }
   ],
   "filled_fields": {
-    "enriched_photo_candidate_count": 3002,
-    "enriched_photo_candidate_urls": 3002,
-    "enriched_photo_candidate_ids": 3002,
-    "enriched_photo_candidate_evidence": 3002,
+    "enriched_photo_candidate_count": 4392,
+    "enriched_photo_candidate_urls": 4392,
+    "enriched_photo_candidate_ids": 4392,
+    "enriched_photo_candidate_evidence": 4392,
+    "enriched_research_queue_status": 3313,
+    "enriched_research_google_maps_url": 3313,
+    "enriched_research_mapillary_url": 3313,
+    "enriched_research_wikimedia_url": 3313,
+    "enriched_research_osm_candidate_url": 438,
+    "enriched_research_candidate_osm_id": 438,
+    "enriched_research_coordinates": 3313,
+    "enriched_research_area_m2": 3313,
+    "enriched_research_source_name_or_brand": 139,
+    "enriched_research_source_building_type": 3101,
+    "enriched_research_candidate_name": 144,
+    "enriched_research_source_colour": 694,
     "enriched_building_type": 12149,
     "enriched_building_part": 1378,
     "enriched_height_m": 1195,
@@ -127,7 +153,8 @@
     "enriched_access": 16,
     "enriched_suburb": 65,
     "enriched_facade_colour": 44,
-    "enriched_roof_height_m": 7
+    "enriched_roof_height_m": 7,
+    "enriched_research_source_material": 2
   },
   "conflicts": {
     "street": 1503
@@ -138,7 +165,7 @@
     "records_with_metadata": 12562,
     "conflict_review": 1503
   },
-  "photo_candidates": 8859,
+  "photo_candidates": 14955,
   "business_links": 442,
   "feature_id_crosswalks": 0,
   "note": "This pass imports internal exact-ID metadata, business tenant links explicitly marked inside_footprint, model-only estimates as separately labelled estimates, and photo candidates as unverified candidates. It does not infer facade material/colour from unreviewed photos and does not perform unvalidated spatial matching."
