@@ -16,6 +16,7 @@ from pathlib import Path
 from pyproj import Transformer
 from shapely.geometry import Point, shape
 from shapely.ops import transform as geom_transform
+from shapely.strtree import STRtree
 
 ROOT = Path(__file__).resolve().parents[3]
 BUILDINGS = ROOT / "complete_data/OSM/data/buildings"
@@ -105,6 +106,8 @@ def main():
             entry["tags"].update({k: v for k, v in tags.items() if v not in (None, "")})
             entry["source_files"].append(str(DETAILS_CSV.relative_to(ROOT)))
 
+    polygon_tree = STRtree([candidate["geom"] for candidate in polygon_candidates]) if polygon_candidates else None
+
     inventory_by_key = {}
     for part in range(1, 5):
         path = PARTS / f"part{part}" / f"part{part}-inventory.json"
@@ -133,7 +136,8 @@ def main():
         if not matched_id and isinstance(centroid_data, dict) and "x" in centroid_data and "y" in centroid_data:
             point = Point(float(centroid_data["x"]), float(centroid_data["y"]))
             source_area = float(inventory.get("area_m2") or 0)
-            containing = [candidate for candidate in polygon_candidates if candidate["geom"].covers(point)]
+            candidate_indices = polygon_tree.query(point) if polygon_tree is not None else []
+            containing = [polygon_candidates[int(i)] for i in candidate_indices if polygon_candidates[int(i)]["geom"].covers(point)]
             # If the centroid falls in multiple nested polygons, rank by area
             # similarity, then distance to centroid; never spatially attach a POI.
             ranked = []
