@@ -1,0 +1,94 @@
+{
+  "status": "validated",
+  "source_geojson": "complete_data/OSM/data/buildings/ermita-building-footprints.geojson",
+  "source_feature_count": 1123,
+  "exported_source_feature_count": 1123,
+  "unique_source_feature_indices": 1123,
+  "part_count": 6,
+  "polygon_components_exported": 138254,
+  "mesh_count": 138254,
+  "invalid_geometries_repaired": 27,
+  "detail_source_geojson": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+  "features_enriched_from_detail_layer": 155,
+  "detail_feature_count": 1528,
+  "all_source_tags_preserved_in_inventory": true,
+  "material_properties_preserved_in_inventory": true,
+  "facade_texture_limitation": "GeoJSON tags and inferred PBR finish are included; photographic facade/window/door textures are not present in the footprint source and are not fabricated by this exporter.",
+  "omitted_source_features": [],
+  "clipping_or_corridor_filter": false,
+  "height_source": "OSM height/building:levels tags with existing project landmark corrections and documented fallback",
+  "parts": [
+    {
+      "part": 1,
+      "file": "ermita-buildings-part-01-of-06.glb",
+      "bytes": 25900472,
+      "feature_count": 187,
+      "polygon_components": 32227,
+      "mesh_count": 32227,
+      "origin": {
+        "longitude": 120.9703687483501,
+        "latitude": 14.60876591930682
+      }
+    },
+    {
+      "part": 2,
+      "file": "ermita-buildings-part-02-of-06.glb",
+      "bytes": 2047344,
+      "feature_count": 187,
+      "polygon_components": 2321,
+      "mesh_count": 2321,
+      "origin": {
+        "longitude": 120.9768192075911,
+        "latitude": 14.5953447874922
+      }
+    },
+    {
+      "part": 3,
+      "file": "ermita-buildings-part-03-of-06.glb",
+      "bytes": 1596752,
+      "feature_count": 187,
+      "polygon_components": 1798,
+      "mesh_count": 1798,
+      "origin": {
+        "longitude": 120.98635702085389,
+        "latitude": 14.584853434705982
+      }
+    },
+    {
+      "part": 4,
+      "file": "ermita-buildings-part-04-of-06.glb",
+      "bytes": 25078316,
+      "feature_count": 187,
+      "polygon_components": 30850,
+      "mesh_count": 30850,
+      "origin": {
+        "longitude": 120.99278700162212,
+        "latitude": 14.593575890616368
+      }
+    },
+    {
+      "part": 5,
+      "file": "ermita-buildings-part-05-of-06.glb",
+      "bytes": 55860376,
+      "feature_count": 187,
+      "polygon_components": 70246,
+      "mesh_count": 70246,
+      "origin": {
+        "longitude": 121.00950876900349,
+        "latitude": 14.580671368793995
+      }
+    },
+    {
+      "part": 6,
+      "file": "ermita-buildings-part-06-of-06.glb",
+      "bytes": 800824,
+      "feature_count": 188,
+      "polygon_components": 812,
+      "mesh_count": 812,
+      "origin": {
+        "longitude": 121.0196099228808,
+        "latitude": 14.567054074364249
+      }
+    }
+  ]
+}

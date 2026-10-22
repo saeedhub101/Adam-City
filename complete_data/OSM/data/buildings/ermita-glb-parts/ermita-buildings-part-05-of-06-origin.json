@@ -1,0 +1,18 @@
+{
+  "file": "ermita-buildings-part-05-of-06.glb",
+  "part": 5,
+  "part_count": 6,
+  "crs": "EPSG:3857",
+  "origin_projected_m": {
+    "x": 13470716.89730964,
+    "y": 1640920.9094944887
+  },
+  "origin_wgs84": {
+    "longitude": 121.00950876900349,
+    "latitude": 14.580671368793995
+  },
+  "source_geojson": "complete_data/OSM/data/buildings/ermita-building-footprints.geojson",
+  "source_feature_count": 187,
+  "polygon_components_exported": 70246,
+  "mesh_count": 70246
+}
