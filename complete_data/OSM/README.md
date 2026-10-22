@@ -17,6 +17,7 @@ This folder is the organized OSM data inventory for Adam-City. Source snapshots 
 - `manifest.json` — inventory of files, paths, sizes, blob SHAs, and descriptions.
 - `data/buildings/parts/BUILDING-DATA-AUDIT-AND-ENHANCEMENT-LOG.md` — سجل توثيق مصادر المباني وفهارسها وسكريبت تحسين أجزاء GLB الأربعة.
 - `data/buildings/parts/building-data-full-audit.json` — تقرير تدقيق آلي يقرأ فهرس الإثراء كاملًا، ويحصي الملفات والجرد والأصول الأصلية والمشتقة.
+- `scripts/audit_building_data.py` و`.github/workflows/audit-building-data.yml` — سكريبت التدقيق للقراءة فقط وسير العمل الذي يشغّله ويحدّث التقرير.
 
 ## Newly organized detail layers
 
