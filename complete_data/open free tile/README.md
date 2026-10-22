@@ -132,3 +132,7 @@ Audit snapshot (30 records):
 - Building-specific photo evidence catalogued for these records: 0/30.
 
 Conclusion: **none of the first 30 records is complete for realistic building reconstruction**. All 30 have registry location/render-height metadata, but most lack confirmed identity, street address, storeys/height sourced from building tags, facade details and photo evidence. The render-height value is a source-rendering attribute and must not be presented as a verified real-world building height. Records matched only to a generic building polygon also remain unidentified. Do not invent missing addresses, materials, floors, or roof details.
+
+## Bahay Silungan (PGH Nurses' Home) evidence update
+
+A building-specific evidence note was added at [`bahay-silungan-pgh-nurses-home-evidence.md`](./bahay-silungan-pgh-nurses-home-evidence.md). It records the supplied current name, PGH/Taft Avenue location context, 18-bedroom split (6 ground-floor, 12 second-floor), terraces/verandas on both floors, and provisional photo observations. It explicitly preserves the discrepancy between OSM `building:levels=3` and the supplied two-floor bedroom description. The source article URL returned HTTP 403 in this session, so its details are labelled as user-supplied evidence rather than independently fetched facts. Exact materials, house number, and real-world height remain unverified.
