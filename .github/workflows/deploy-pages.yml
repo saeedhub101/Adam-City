@@ -47,6 +47,7 @@ jobs:
           /complete_data/OSM/Buildings/reference_images/
           /ermita/scripts/generate_supreme_court_facade_texture.py
           /ermita/scripts/generate_roxas_boulevard_buildings.py
+          /ermita/scripts/export_ermita_buildings_glb_parts.py
           /ermita/scripts/generate_roxas_boulevard_signage.py
           /ermita/assets/textures/Painted-CMU-Block-Architextures.jpeg
           /ermita/maps/sources/openfreemap/
@@ -110,6 +111,9 @@ jobs:
           PY
           # Build a standalone PBR GLB for buildings whose footprints lie along mapped Roxas Boulevard segments.
           python3 ermita/scripts/generate_roxas_boulevard_buildings.py
+          # Export the complete Ermita footprint dataset into six independently positioned GLBs.
+          # This fails the workflow if any source feature or polygon component is omitted.
+          python3 ermita/scripts/export_ermita_buildings_glb_parts.py
           # Generate source-tagged building/store signs and address plaques in a separately verifiable overlay.
           python3 ermita/scripts/generate_roxas_boulevard_signage.py
           test -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb
@@ -444,6 +448,7 @@ jobs:
           git add complete_data/OSM/Markets/ complete_data/OSM/Buildings/Markets/facidals/
           git add complete_data/OSM/Buildings/supreme-court-main-facade.glb complete_data/OSM/Buildings/supreme-court-main-facade-report.json complete_data/OSM/Buildings/reference_images/supreme-court-in-manila-facade-crop.jpg
           git add complete_data/OSM/data/buildings/roxas-boulevard/
+          git add complete_data/OSM/data/buildings/ermita-glb-parts/ ermita/scripts/export_ermita_buildings_glb_parts.py
           if ! git diff --cached --quiet; then
             git commit -m "Store generated building and ground fallback data"
             git push origin HEAD:main
