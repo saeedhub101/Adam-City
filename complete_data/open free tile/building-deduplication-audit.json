@@ -1,0 +1,26 @@
+{
+  "audit_date": "2026-10-22",
+  "source": "complete_data/open free tile/building-fallback.geojson",
+  "extracted_boundary": "Ermita",
+  "extracted_polygon_components": 1721,
+  "exact_unique_full_ring_geometries": 1629,
+  "exact_duplicate_components": 92,
+  "method": "Compared every polygon ring after rounding coordinates to 8 decimal places; all exterior and interior rings must match. This is exact geometry deduplication, not a physical-building census.",
+  "osm_spatial_match_audit": {
+    "components_with_high_confidence_osm_feature_id": 876,
+    "unique_osm_feature_ids": 722,
+    "osm_ids_assigned_to_multiple_components": 136,
+    "components_in_duplicate_osm_id_groups": 290,
+    "caveat": "Spatial joins are not exact source-ID joins. Multiple components may be repeated zoom/style geometry, building parts, or imperfect spatial matches; do not automatically collapse them solely by OSM ID."
+  },
+  "render_height_audit": {
+    "duplicate_geometry_groups_with_conflicting_render_heights": 2,
+    "handling": "Preserve each source component and its height until the source LOD/zoom semantics are resolved; do not silently choose one height."
+  },
+  "next_required_checks": [
+    "Inspect exact duplicate component groups and source zoom/style origin.",
+    "Review distinct geometries mapped to the same OSM ID.",
+    "Separate physical buildings from building parts and LOD duplicates.",
+    "Only then publish a final unique-building count."
+  ]
+}
