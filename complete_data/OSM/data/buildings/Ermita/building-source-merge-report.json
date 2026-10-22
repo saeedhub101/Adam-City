@@ -2,11 +2,11 @@
   "schema_version": "1.0.0",
   "status": "generated",
   "generated_from": [
-    "complete_data/OSM/data/buildings/parts/building-enrichment-index.json",
+    "complete_data/OSM/data/buildings/Ermita/building-enrichment-index.json",
     "complete_data/open free tile/building-fallback.geojson",
     "complete_data/open free tile/layers/housenumber.geojsonl",
-    "complete_data/OSM/data/buildings/parts/building-image-links.json",
-    "complete_data/OSM/data/buildings/parts/building-image-candidates.json (optional if workflow output exists)",
+    "complete_data/OSM/data/buildings/Ermita/building-image-links.json",
+    "complete_data/OSM/data/buildings/Ermita/building-image-candidates.json (optional if workflow output exists)",
     "complete_data/OSM/data/buildings/windows/facade-signage-index.csv",
     "complete_data/OSM/Markets/commercial-facades-report.json",
     "complete_data/OSM/Buildings/supreme-court-main-facade-report.json"
@@ -22,6 +22,7 @@
     "unlinked_or_ambiguous": 745,
     "linked": 420,
     "exact_image_identity_links": 1,
+    "image_candidate_links": 572,
     "procedural_facade_links": 1565,
     "commercial_asset_links": 32,
     "verified_facade_overlay_links": 1,
@@ -401,8 +402,8 @@
     "commercial_facade_report": "complete_data/OSM/Markets/commercial-facades-report.json",
     "supreme_court_overlay_report": "complete_data/OSM/Buildings/supreme-court-main-facade-report.json",
     "robinsons_reference_catalogue": "complete_data/OSM/Markets/reference_photos/robinsons-manila/reference-index.json",
-    "named_image_links": "complete_data/OSM/data/buildings/parts/building-image-links.json",
-    "commons_candidate_source": "complete_data/OSM/data/buildings/parts/building-image-candidates.json"
+    "named_image_links": "complete_data/OSM/data/buildings/Ermita/building-image-links.json",
+    "commons_candidate_source": "complete_data/OSM/data/buildings/Ermita/building-image-candidates.json"
   },
   "limitations": [
     "This is a metadata/evidence join, not proof of 100% real-world identity or visual fidelity.",
@@ -412,6 +413,6 @@
     "Photographic overlay reports describe intended/applied overlay assets but require visual alignment review in the viewer.",
     "No GLB, geometry, coordinates, heights, or material assignments are changed by this workflow."
   ],
-  "audit_csv": "complete_data/OSM/data/buildings/parts/building-source-link-audit.csv",
-  "index_path": "complete_data/OSM/data/buildings/parts/building-enrichment-index.json"
+  "audit_csv": "complete_data/OSM/data/buildings/Ermita/building-source-link-audit.csv",
+  "index_path": "complete_data/OSM/data/buildings/Ermita/building-enrichment-index.json"
 }

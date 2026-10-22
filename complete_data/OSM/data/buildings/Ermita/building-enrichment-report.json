@@ -2,11 +2,11 @@
   "schema_version": "2.0.0",
   "status": "generated",
   "created_from": {
-    "parts_inventory_index": "complete_data/OSM/data/buildings/parts/parts-inventory-index.json",
-    "footprints_geojson": "complete_data/OSM/data/buildings/ermita-building-footprints.geojson",
-    "details_geojson": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
-    "roof_details_geojson": "complete_data/OSM/data/buildings/ermita-building-roof-details.geojson",
-    "details_csv": "complete_data/OSM/data/buildings/osm-building-details.csv",
+    "parts_inventory_index": "complete_data/OSM/data/buildings/Ermita/ermita-building-parts-index.json",
+    "footprints_geojson": "complete_data/OSM/data/buildings/Ermita/ermita-building-footprints.geojson",
+    "details_geojson": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
+    "roof_details_geojson": "complete_data/OSM/data/buildings/Ermita/ermita-building-roof-details.geojson",
+    "details_csv": "complete_data/OSM/data/buildings/Ermita/osm-building-details.csv",
     "parts_inventory": [
       "complete_data/OSM/data/buildings/parts/part1/part1-inventory.json",
       "complete_data/OSM/data/buildings/parts/part2/part2-inventory.json",
@@ -37,7 +37,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822413208",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 13.657,
         "source_area_m2": 13766.652,
@@ -55,7 +55,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/90311602",
         "candidate_name": "Luneta Theater",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_passing_overlap_threshold": 2,
         "intersection_area_m2": 1751.678,
         "overlap_fraction_of_smaller_polygon": 0.994,
@@ -73,7 +73,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/308695378",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_passing_overlap_threshold": 2,
         "intersection_area_m2": 539.712,
         "overlap_fraction_of_smaller_polygon": 0.9921,
@@ -91,7 +91,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/823662685",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_passing_overlap_threshold": 7,
         "intersection_area_m2": 1030.149,
         "overlap_fraction_of_smaller_polygon": 0.9955,
@@ -109,7 +109,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/533528310",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 1,
         "centroid_to_candidate_centroid_m": 39.239,
         "source_area_m2": 166.221,
@@ -127,7 +127,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/1061988730",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 16.06,
         "source_area_m2": 82.108,
@@ -145,7 +145,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/308696213",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_passing_overlap_threshold": 2,
         "intersection_area_m2": 624.038,
         "overlap_fraction_of_smaller_polygon": 0.9992,
@@ -163,7 +163,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/824389322",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_passing_overlap_threshold": 3,
         "intersection_area_m2": 510.539,
         "overlap_fraction_of_smaller_polygon": 0.9912,
@@ -181,7 +181,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/533298901",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_passing_overlap_threshold": 4,
         "intersection_area_m2": 1287.53,
         "overlap_fraction_of_smaller_polygon": 0.9968,
@@ -199,7 +199,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/1061988734",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_passing_overlap_threshold": 2,
         "intersection_area_m2": 759.298,
         "overlap_fraction_of_smaller_polygon": 0.9922,
@@ -217,7 +217,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/54029855",
         "candidate_name": "Pearl of the Orient",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 2520.404,
@@ -235,7 +235,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/86401784",
         "candidate_name": "Mayfair Tower",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 6,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1130.045,
@@ -253,7 +253,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/87754879",
         "candidate_name": "Nuestra Señora De Guia Parish Church",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 757.369,
@@ -271,7 +271,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/89760235",
         "candidate_name": "Eton Baypark Manila",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 876.737,
@@ -289,7 +289,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/89770558",
         "candidate_name": "Red Planet Manila Bay",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 319.017,
@@ -307,7 +307,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/89771798",
         "candidate_name": "Miramar Hotel",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 699.003,
@@ -325,7 +325,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/89777068",
         "candidate_name": "Don Alfonso Sycip Condominium",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 902.204,
@@ -343,7 +343,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/89780419",
         "candidate_name": "Astoria Building",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 370.319,
@@ -361,7 +361,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/89780661",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 740.237,
@@ -379,7 +379,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/89830977",
         "candidate_name": "Manila Executive Regency",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1755.237,
@@ -397,7 +397,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/89832670",
         "candidate_name": "Ferguson Park Tower",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 450.209,
@@ -415,7 +415,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/90123959",
         "candidate_name": "Manila Residences Bocobo",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1068.806,
@@ -433,7 +433,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/90125253",
         "candidate_name": "Hotel Soriente",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1068.569,
@@ -451,7 +451,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/90128895",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1003.262,
@@ -469,7 +469,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/90128945",
         "candidate_name": "GLC Building",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 641.225,
@@ -487,7 +487,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/90162272",
         "candidate_name": "Pacific Place Apartelle Suites",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 436.018,
@@ -505,7 +505,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/90305613",
         "candidate_name": "Sunview Palace",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 5,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1304.525,
@@ -523,7 +523,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/91216391",
         "candidate_name": "Philippine Bible Society",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 551.646,
@@ -541,7 +541,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/156307598",
         "candidate_name": "GCK Building",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 871.643,
@@ -559,7 +559,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/267171200",
         "candidate_name": "Sunny Bay Suites",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1056.25,
@@ -577,7 +577,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/267171251",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 333.273,
@@ -595,7 +595,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/277974469",
         "candidate_name": "Joshua Center",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 674.27,
@@ -613,7 +613,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/277981586",
         "candidate_name": "Vista GL Taft",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1062.641,
@@ -631,7 +631,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/308696213",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 624.566,
@@ -649,7 +649,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/308699804",
         "candidate_name": "Magcoop House",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 374.439,
@@ -667,7 +667,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/308700215",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 396.755,
@@ -685,7 +685,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/308702723",
         "candidate_name": "Cherry Mobile",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 864.981,
@@ -703,7 +703,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/377696638",
         "candidate_name": "Plaza Towers",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 895.949,
@@ -721,7 +721,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/575422163",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 5,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1077.028,
@@ -739,7 +739,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/575422164",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 710.949,
@@ -757,7 +757,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/575422165",
         "candidate_name": "Maritime Plaza",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1137.697,
@@ -775,7 +775,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/748554171",
         "candidate_name": "Bocobo Center",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 657.049,
@@ -793,7 +793,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/818622454",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 5,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1059.81,
@@ -811,7 +811,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/818622455",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 5,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 769.863,
@@ -829,7 +829,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/818622457",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 541.502,
@@ -847,7 +847,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/818631729",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1268.928,
@@ -865,7 +865,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/818631730",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1004.114,
@@ -883,7 +883,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/818631744",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 413.339,
@@ -901,7 +901,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/818631748",
         "candidate_name": "YWCA",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 855.925,
@@ -919,7 +919,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/818631749",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 920.098,
@@ -937,7 +937,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822386813",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1956.22,
@@ -955,7 +955,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822386816",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 26.471,
         "source_area_m2": 14.601,
@@ -973,7 +973,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822386818",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 721.166,
@@ -991,7 +991,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822386819",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 738.232,
@@ -1009,7 +1009,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822386822",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 531.01,
@@ -1027,7 +1027,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822386825",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 763.234,
@@ -1045,7 +1045,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822386826",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 306.447,
@@ -1063,7 +1063,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822391111",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 743.23,
@@ -1081,7 +1081,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822391114",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 306.379,
@@ -1099,7 +1099,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822391119",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 381.128,
@@ -1117,7 +1117,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822413208",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1245.8,
@@ -1135,7 +1135,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822413216",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 6,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1115.503,
@@ -1153,7 +1153,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822413217",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 5,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 455.613,
@@ -1171,7 +1171,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822413218",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 5,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 379.247,
@@ -1189,7 +1189,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822413219",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 6,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 291.451,
@@ -1207,7 +1207,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/822413223",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1022.803,
@@ -1225,7 +1225,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/823295209",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 409.767,
@@ -1243,7 +1243,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/823330135",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 565.571,
@@ -1261,7 +1261,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/823330136",
         "candidate_name": "Aurora Plaza",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 491.381,
@@ -1279,7 +1279,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/823330138",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 353.196,
@@ -1297,7 +1297,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/823330140",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 689.352,
@@ -1315,7 +1315,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/823351017",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 459.596,
@@ -1333,7 +1333,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/823351018",
         "candidate_name": "Go Hotels Ermita-Manila",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 525.34,
@@ -1351,7 +1351,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/823662685",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1034.849,
@@ -1369,7 +1369,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/823662686",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1009.743,
@@ -1387,7 +1387,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/824007362",
         "candidate_name": "Mabini Mansion",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1282.534,
@@ -1405,7 +1405,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/824007365",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 326.55,
@@ -1423,7 +1423,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/824018814",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 324.927,
@@ -1441,7 +1441,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/824018816",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 400.672,
@@ -1459,7 +1459,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/824018818",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 698.641,
@@ -1477,7 +1477,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/824018831",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 572.914,
@@ -1495,7 +1495,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/824389318",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 501.076,
@@ -1513,7 +1513,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/824389319",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 731.285,
@@ -1531,7 +1531,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/824389321",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 809.677,
@@ -1549,7 +1549,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/1061988730",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 816.27,
@@ -1567,7 +1567,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/1061988731",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 1274.265,
@@ -1585,7 +1585,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/1061988734",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 765.261,
@@ -1603,7 +1603,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/765350819",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_passing_overlap_threshold": 3,
         "intersection_area_m2": 4406.45,
         "overlap_fraction_of_smaller_polygon": 0.9942,
@@ -1621,7 +1621,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/603658638",
         "candidate_name": "Eugenia Tower",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_passing_overlap_threshold": 3,
         "intersection_area_m2": 759.904,
         "overlap_fraction_of_smaller_polygon": 1.0,
@@ -1639,7 +1639,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/603658631",
         "candidate_name": "Lily Tower",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_passing_overlap_threshold": 2,
         "intersection_area_m2": 728.183,
         "overlap_fraction_of_smaller_polygon": 0.9917,
@@ -1657,7 +1657,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/642781529",
         "candidate_name": "Space Romualdez",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_passing_overlap_threshold": 2,
         "intersection_area_m2": 752.709,
         "overlap_fraction_of_smaller_polygon": 0.9906,
@@ -1675,7 +1675,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/654709131",
         "candidate_name": "Gotesco Twin Tower A",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_passing_overlap_threshold": 2,
         "intersection_area_m2": 828.498,
         "overlap_fraction_of_smaller_polygon": 0.9985,
@@ -1693,7 +1693,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/1061988720",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_passing_overlap_threshold": 2,
         "intersection_area_m2": 350.986,
         "overlap_fraction_of_smaller_polygon": 1.0,
@@ -1711,7 +1711,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/27650569",
         "candidate_name": "Manila Central Post Office",
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 6357.142,
@@ -1729,7 +1729,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/164748068",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 378.435,
@@ -1747,7 +1747,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/179404120",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 480.204,
@@ -1765,7 +1765,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/1244826102",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 1,
         "centroid_to_candidate_centroid_m": 11.403,
         "source_area_m2": 2386.535,
@@ -1783,7 +1783,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/761909115",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 900.768,
@@ -1801,7 +1801,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/762430575",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 685.294,
@@ -1819,7 +1819,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/762571140",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 77.496,
@@ -1837,7 +1837,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/762571142",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 68.758,
@@ -1855,7 +1855,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/762571143",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 105.744,
@@ -1873,7 +1873,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/762571145",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 90.026,
@@ -1891,7 +1891,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/765350819",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 4432.194,
@@ -1909,7 +1909,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/829582355",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 3,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 4808.247,
@@ -1927,7 +1927,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/164748068",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 378.435,
@@ -1945,7 +1945,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/1457029928",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 129.618,
@@ -1963,7 +1963,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/1457029933",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 162.287,
@@ -1981,7 +1981,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/1462420842",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 430.27,
@@ -1999,7 +1999,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/1462527703",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 569.446,
@@ -2017,7 +2017,7 @@
       "spatial_match_evidence": {
         "candidate_osm_id": "way/1463644673",
         "candidate_name": null,
-        "candidate_source": "complete_data/OSM/data/buildings/ermita-building-details.geojson",
+        "candidate_source": "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson",
         "candidate_count_containing_centroid": 2,
         "centroid_to_candidate_centroid_m": 0.0,
         "source_area_m2": 690.289,
@@ -2035,5 +2035,5 @@
     "This index contains no verified facade photographs or photo-derived materials.",
     "Ambiguous matches remain in the review queue and do not receive candidate semantic tags."
   ],
-  "index_path": "complete_data/OSM/data/buildings/parts/building-enrichment-index.json"
+  "index_path": "complete_data/OSM/data/buildings/Ermita/building-enrichment-index.json"
 }
