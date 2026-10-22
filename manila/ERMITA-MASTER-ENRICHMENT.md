@@ -173,3 +173,8 @@ The sparse GeoJSON pass was corrected to count unmatched features without requir
 ## Exact source-feature research joins
 
 The enrichment pass now joins `building-visual-research-queue.csv` and image candidates using exact stable `source_feature_id` keys when present. It adds Google Maps, Mapillary, Wikimedia search, and OSM candidate links, plus candidate name/type/material/colour and review notes. Candidate OSM IDs remain review-only and are never promoted to confirmed building IDs. This gives records without OSM IDs useful research links without guessing identity.
+
+
+## Audited building enrichment index
+
+The pass now also consumes `complete_data/OSM/data/buildings/Ermita/building-enrichment-index.json`. It uses only `exact_osm_id`, `spatial_high_confidence`, and `spatial_geometry_high_confidence` records; entries marked `spatial_review` or `unmatched` do not contribute semantic building tags. The linked OSM ID, match method, confidence and spatial evidence are written to separate enrichment fields, without changing the original feature/source IDs or geometry.
