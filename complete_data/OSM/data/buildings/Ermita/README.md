@@ -34,3 +34,8 @@ The enhancement script is `complete_data/OSM/scripts/enhance_existing_glb_parts.
 For the full building-data map, index audit, source paths, counts, process, known limitations, deploy wiring, and validation checklist, see [Building data audit and enhancement log](BUILDING-DATA-AUDIT-AND-ENHANCEMENT-LOG.md).
 
 **Preservation rule:** do not overwrite original GLBs, inventories, origins, source GeoJSON, or enrichment indexes when regenerating the enhanced derivatives. Verify visual alignment in `test.html` after publishing; successful file generation alone does not prove visual correctness.
+
+
+## Current folder layout
+
+This directory is now `complete_data/OSM/data/buildings/Ermita/`. It contains the former `parts/` contents and the former `parts/ermita/` contents flattened into one folder. The four enhanced comparison models are `Parts1.glb`–`Parts4.glb`; their origin sidecars remain in `part1/`–`part4/`. The four old original-part GLB toggles/loaders were removed from `test.html`.

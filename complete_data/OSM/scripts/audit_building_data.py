@@ -14,7 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 BUILDINGS = ROOT / "complete_data/OSM/data/buildings"
-PARTS = BUILDINGS / "parts"
+PARTS = BUILDINGS / "Ermita"
 OUT = PARTS / "building-data-full-audit.json"
 
 
@@ -37,10 +37,10 @@ def rel(path: Path) -> str:
 
 def main():
     required = [
-        BUILDINGS / "ermita-building-footprints.geojson",
-        BUILDINGS / "ermita-building-details.geojson",
-        BUILDINGS / "ermita-building-roof-details.geojson",
-        BUILDINGS / "osm-building-details.csv",
+        BUILDINGS / "Ermita" / "ermita-building-footprints.geojson",
+        BUILDINGS / "Ermita" / "ermita-building-details.geojson",
+        BUILDINGS / "Ermita" / "ermita-building-roof-details.geojson",
+        BUILDINGS / "Ermita" / "osm-building-details.csv",
         PARTS / "parts-inventory-index.json",
         PARTS / "parts-report.json",
         PARTS / "building-enrichment-index.json",
@@ -53,10 +53,10 @@ def main():
     if missing:
         raise FileNotFoundError("Required building data is missing: " + ", ".join(missing))
 
-    footprints_path = BUILDINGS / "ermita-building-footprints.geojson"
-    details_path = BUILDINGS / "ermita-building-details.geojson"
-    roofs_path = BUILDINGS / "ermita-building-roof-details.geojson"
-    csv_path = BUILDINGS / "osm-building-details.csv"
+    footprints_path = BUILDINGS / "Ermita" / "ermita-building-footprints.geojson"
+    details_path = BUILDINGS / "Ermita" / "ermita-building-details.geojson"
+    roofs_path = BUILDINGS / "Ermita" / "ermita-building-roof-details.geojson"
+    csv_path = BUILDINGS / "Ermita" / "osm-building-details.csv"
     footprints = read_json(footprints_path)
     details = read_json(details_path)
     roofs = read_json(roofs_path)

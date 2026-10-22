@@ -1,10 +1,10 @@
 {
-  "source": "complete_data/OSM/data/buildings/ermita-building-footprints.geojson",
-  "output_directory": "complete_data/OSM/data/buildings/parts/ermita",
+  "source": "complete_data/OSM/data/buildings/Ermita/ermita-building-footprints.geojson",
+  "output_directory": "complete_data/OSM/data/buildings/Ermita/ermita",
   "parts": [
     {
-      "original_glb": "complete_data/OSM/data/buildings/parts/part1/part1.glb",
-      "output_glb": "complete_data/OSM/data/buildings/parts/ermita/Parts1.glb",
+      "original_glb": "complete_data/OSM/data/buildings/Ermita/part1/part1.glb",
+      "output_glb": "complete_data/OSM/data/buildings/Ermita/Parts1.glb",
       "original_bytes": 2509324,
       "output_bytes": 27459068,
       "source_feature_count": 1123,
@@ -27,8 +27,8 @@
       ]
     },
     {
-      "original_glb": "complete_data/OSM/data/buildings/parts/part2/part2.glb",
-      "output_glb": "complete_data/OSM/data/buildings/parts/ermita/Parts2.glb",
+      "original_glb": "complete_data/OSM/data/buildings/Ermita/part2/part2.glb",
+      "output_glb": "complete_data/OSM/data/buildings/Ermita/Parts2.glb",
       "original_bytes": 33378316,
       "output_bytes": 94708060,
       "source_feature_count": 1123,
@@ -51,8 +51,8 @@
       ]
     },
     {
-      "original_glb": "complete_data/OSM/data/buildings/parts/part3/part3.glb",
-      "output_glb": "complete_data/OSM/data/buildings/parts/ermita/Parts3.glb",
+      "original_glb": "complete_data/OSM/data/buildings/Ermita/part3/part3.glb",
+      "output_glb": "complete_data/OSM/data/buildings/Ermita/Parts3.glb",
       "original_bytes": 38921972,
       "output_bytes": 91435696,
       "source_feature_count": 1123,
@@ -75,8 +75,8 @@
       ]
     },
     {
-      "original_glb": "complete_data/OSM/data/buildings/parts/part4/part4.glb",
-      "output_glb": "complete_data/OSM/data/buildings/parts/ermita/Parts4.glb",
+      "original_glb": "complete_data/OSM/data/buildings/Ermita/part4/part4.glb",
+      "output_glb": "complete_data/OSM/data/buildings/Ermita/Parts4.glb",
       "original_bytes": 26759688,
       "output_bytes": 60445904,
       "source_feature_count": 1123,

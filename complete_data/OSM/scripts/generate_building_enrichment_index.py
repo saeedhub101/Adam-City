@@ -20,12 +20,12 @@ from shapely.strtree import STRtree
 
 ROOT = Path(__file__).resolve().parents[3]
 BUILDINGS = ROOT / "complete_data/OSM/data/buildings"
-PARTS = BUILDINGS / "parts"
+PARTS = BUILDINGS / "Ermita"
 PARTS_INDEX = PARTS / "parts-inventory-index.json"
-DETAILS_GEOJSON = BUILDINGS / "ermita-building-details.geojson"
-ROOF_GEOJSON = BUILDINGS / "ermita-building-roof-details.geojson"
-FOOTPRINTS_GEOJSON = BUILDINGS / "ermita-building-footprints.geojson"
-DETAILS_CSV = BUILDINGS / "osm-building-details.csv"
+DETAILS_GEOJSON = BUILDINGS / "Ermita" / "ermita-building-details.geojson"
+ROOF_GEOJSON = BUILDINGS / "Ermita" / "ermita-building-roof-details.geojson"
+FOOTPRINTS_GEOJSON = BUILDINGS / "Ermita" / "ermita-building-footprints.geojson"
+DETAILS_CSV = BUILDINGS / "Ermita" / "osm-building-details.csv"
 OUTPUT = PARTS / "building-enrichment-index.json"
 REPORT = PARTS / "building-enrichment-report.json"
 WEB_MERCATOR = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True).transform

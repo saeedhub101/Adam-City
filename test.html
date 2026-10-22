@@ -31,10 +31,6 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <label class="row"><input type="checkbox" id="osm-tags"> 3. tags — جدول الوسوم (بيانات وصفية وليست طبقة مكانية)</label>
 <label class="row"><input type="checkbox" id="osm-buildings" checked> 4. buildings — بصمات المباني وتفاصيل الأسطح</label>
 <label class="row"><input type="checkbox" id="roxas-boulevard-glb"> 4.1 Roxas Boulevard — مباني GLB (طبقة مستقلة)</label>
-<label class="row"><input type="checkbox" id="ermita-glb-part-1"> 4.2 GLB part1 — النطاق المكاني 1</label>
-<label class="row"><input type="checkbox" id="ermita-glb-part-2"> 4.3 GLB part2 — النطاق المكاني 2</label>
-<label class="row"><input type="checkbox" id="ermita-glb-part-3"> 4.4 GLB part3 — النطاق المكاني 3</label>
-<label class="row"><input type="checkbox" id="ermita-glb-part-4"> 4.5 GLB part4 — النطاق المكاني 4</label>
 <label class="row"><input type="checkbox" id="osm-roads" checked> 5. roads — الطرق وتفاصيل هندستها</label>
 <label class="row"><input type="checkbox" id="enhanced-glb-part-1"> 5.1 GLB محسن — الجزء 1 (مواد وواجهات ونوافذ)</label>
 <label class="row"><input type="checkbox" id="enhanced-glb-part-2"> 5.2 GLB محسن — الجزء 2 (مواد وواجهات ونوافذ)</label>
@@ -94,8 +90,8 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
  map.on('load',()=>{
   try{
    addSourceLayer('features','osm-features-src','complete_data/OSM/data/features/ermita-features.geojson','map','#8ab5c5');
-   addSourceLayer('buildings','osm-building-details-src','complete_data/OSM/data/buildings/ermita-building-footprints.geojson','buildings','#c8bca9');
-   addSourceLayer('buildings','osm-building-roofs-src','complete_data/OSM/data/buildings/ermita-building-roof-details.geojson','buildings','#d6a477');
+   addSourceLayer('buildings','osm-building-details-src','complete_data/OSM/data/buildings/Ermita/ermita-building-footprints.geojson','buildings','#c8bca9');
+   addSourceLayer('buildings','osm-building-roofs-src','complete_data/OSM/data/buildings/Ermita/ermita-building-roof-details.geojson','buildings','#d6a477');
    addSourceLayer('roads','osm-roads-src','complete_data/OSM/data/roads/ermita-road-network.geojson','map','#f0c979');
    addSourceLayer('roads','osm-road-engineering-src','complete_data/OSM/data/roads/ermita-road-engineering-details.geojson','map','#e28c63');
    addSourceLayer('thematic','osm-branded-stores-src','complete_data/OSM/data/thematic/ermita-branded-stores.geojson','map','#e9a5d1');
@@ -502,101 +498,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
 </script>
 
 
-<script type="module">
-import * as THREE from 'three';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
-import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.0/meshopt_decoder.module.js';
 
-(async function(){
- const status=document.getElementById('status'), errorBox=document.getElementById('error');
- const waitMap=()=>new Promise(resolve=>{
-  const check=()=>{if(window.adamCityMap?.isStyleLoaded())resolve(window.adamCityMap);else setTimeout(check,100)};
-  check();
- });
- try {
-  const map=await waitMap();
-  for(let part=1;part<=4;part++) setupPart(map,part);
- } catch(err) {
-  if(errorBox){errorBox.style.display='block';errorBox.textContent='تعذر تجهيز مفاتيح ملفات GLB الأربعة: '+(err?.message||err);}
- }
- function setupPart(map,part){
-  const base='complete_data/OSM/data/buildings/parts/part'+part+'/';
-  const checkbox=document.getElementById('ermita-glb-part-'+part);
-  const id='ermita-building-glb-part-'+part;
-  let layer=null, loading=false, ready=false, model=null, renderer=null, camera=null, scene=null;
-  let anchor=null, projectedMeterScale=1, meterScale=1;
-  const modelUrl=new URL(base+'part'+part+'.glb',location.href).href;
-  const originUrl=new URL(base+'part'+part+'-origin.json',location.href).href;
-  async function ensureLayer(){
-   if(ready||loading)return;
-   loading=true;
-   try{
-    const response=await fetch(originUrl);
-    if(!response.ok)throw new Error('Origin JSON HTTP '+response.status);
-    const origin=await response.json();
-    const lon=Number(origin.origin_wgs84.longitude),lat=Number(origin.origin_wgs84.latitude);
-    anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:lon,lat},0);
-    meterScale=anchor.meterInMercatorCoordinateUnits();
-    projectedMeterScale=meterScale*Math.cos(lat*Math.PI/180);
-    layer={
-     id,type:'custom',renderingMode:'3d',
-     onAdd(mapInstance,gl){
-      renderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});
-      renderer.autoClear=false;
-      camera=new THREE.Camera();scene=new THREE.Scene();
-      scene.add(new THREE.AmbientLight(0xffffff,2.0));
-      const light=new THREE.DirectionalLight(0xffffff,2.0);light.position.set(0,-70,100).normalize();scene.add(light);
-      const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
-      loader.load(modelUrl,gltf=>{
-       model=gltf.scene;model.position.set(0,0,0);model.scale.set(1,1,1);
-       scene.add(model);
-       ready=true;loading=false;
-       model.visible=checkbox.checked;
-       let meshCount=0;model.traverse(o=>{if(o.isMesh)meshCount++;});
-       if(status)status.textContent='تم تحميل ملف GLB الجزء '+part+' | meshes='+meshCount+' | '+(model.visible?'ظاهر':'مخفي');
-       mapInstance.triggerRepaint();
-      },progress=>{
-       if(status)status.textContent=progress.total?
-        'تحميل GLB الجزء '+part+': '+Math.round(progress.loaded/progress.total*100)+'%':
-        'جارٍ تنزيل GLB الجزء '+part+' ('+Math.round(progress.loaded/1048576)+' MiB)…';
-      },err=>{
-       loading=false;
-       if(errorBox){errorBox.style.display='block';errorBox.textContent='تعذر تحميل GLB الجزء '+part+': '+(err?.message||err);}
-       if(status)status.textContent='فشل تحميل ملف GLB الجزء '+part+'.';
-      });
-     },
-     render(gl,args){
-      if(!renderer||!model||!model.visible)return;
-      const mainMatrix=args?.defaultProjectionData?.mainMatrix;
-      if(!mainMatrix)return;
-      const values=Object.values(mainMatrix);
-      if(values.length!==16||values.some(v=>!Number.isFinite(Number(v))))return;
-      const projection=new THREE.Matrix4().fromArray(values.map(Number));
-      const transform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
-       .scale(new THREE.Vector3(projectedMeterScale,-projectedMeterScale,meterScale));
-      camera.projectionMatrix.copy(projection).multiply(transform);
-      camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
-      renderer.resetState();renderer.render(scene,camera);renderer.resetState();
-     }
-    };
-    map.addLayer(layer);
-    map.moveLayer(id);
-   }catch(err){
-    loading=false;
-    if(errorBox){errorBox.style.display='block';errorBox.textContent='تعذر إعداد GLB الجزء '+part+': '+(err?.message||err);}
-    if(status)status.textContent='تعذر إعداد ملف GLB الجزء '+part+'.';
-   }
-  }
-  checkbox.addEventListener('change',async()=>{
-   if(checkbox.checked){
-    if(!ready && !layer) await ensureLayer();
-    else if(model){model.visible=true;map.triggerRepaint();}
-   }else if(model){model.visible=false;map.triggerRepaint();}
-   if(!checkbox.checked&&status)status.textContent='تم إخفاء مباني GLB الجزء '+part+'.';
-  });
- }
-})();
-</script>
 
 <script type="module">
 /* Four independent comparison layers for the enhanced GLBs.
@@ -621,8 +523,8 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
  function setupEnhancedPart(map,part){
   const toggle=document.getElementById('enhanced-glb-part-'+part);
   const id='ermita-enhanced-building-glb-part-'+part;
-  const base='complete_data/OSM/data/buildings/parts/';
-  const modelUrl=new URL(base+'ermita/Parts'+part+'.glb',location.href).href;
+  const base='complete_data/OSM/data/buildings/Ermita/';
+  const modelUrl=new URL(base+'Parts'+part+'.glb',location.href).href;
   const originUrl=new URL(base+'part'+part+'/part'+part+'-origin.json',location.href).href;
   let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,projectedMeterScale=1,meterScale=1;
   const showError=err=>{

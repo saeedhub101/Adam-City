@@ -7,8 +7,8 @@
 
 ## 1. قواعد الحفاظ على البيانات
 
-1. ملفات GLB الأصلية في `complete_data/OSM/data/buildings/parts/part1..part4/` لا تُستبدل بملفات التحسين.
-2. ملفات `partN-detailed.glb` هي نسخ مشتقة مستقلة في `parts/ermita/`. لا تحذف أو تعيد تسمية الملفات الأصلية أو ملفات الجرد أو ملفات الإحداثيات.
+1. ملفات GLB الأصلية في `complete_data/OSM/data/buildings/Ermita/part1..part4/` لا تُستبدل بملفات التحسين.
+2. ملفات `partN-detailed.glb` هي نسخ مشتقة مستقلة في `Ermita/`. لا تحذف أو تعيد تسمية الملفات الأصلية أو ملفات الجرد أو ملفات الإحداثيات.
 3. فهارس جميع المباني وتقارير المطابقة ملفات مصدرية مستقلة؛ لا تُعاد كتابتها بواسطة سكريبت تحسين GLB.
 4. يظل `building-enrichment-index.json` و`building-enrichment-report.json` فهرس البيانات الدلالية/المطابقة؛ أما `enhancement-report.json` وتقارير `partN-detailed-report.json` فهي تقارير نواتج التحسين، وليست بديلًا عن فهرس المباني.
 5. لا يُعدّ التوليد الإجرائي دليلًا على مطابقة واجهات المباني للواقع. يجب فحص بصري داخل الصفحة ومقارنة صور موثوقة قبل وصف مبنى بأنه مطابق فوتوغرامتريًا.
@@ -22,13 +22,13 @@
 | `complete_data/OSM/data/buildings/ermita-building-details.geojson` | طبقة تفاصيل دلالية للمباني؛ مذكورة ضمن مصادر فهرس الإثراء. |
 | `complete_data/OSM/data/buildings/ermita-building-roof-details.geojson` | طبقة تفاصيل الأسطح؛ مذكورة ضمن مصادر فهرس الإثراء. |
 | `complete_data/OSM/data/buildings/osm-building-details.csv` | بيانات وصفية إضافية للمباني؛ مذكورة ضمن مصادر فهرس الإثراء. |
-| `complete_data/OSM/data/buildings/parts/parts-inventory-index.json` | فهرس جرد الأجزاء الأربعة وخصائص عناصرها. |
-| `complete_data/OSM/data/buildings/parts/parts-report.json` | تقرير التصدير والتغطية، ويسجل 2,651 تعيينًا لمكونات/سجلات المصدر و139,782 مكوّنًا مضلعيًا في مجموعة الأجزاء الأربعة الحالية؛ أما مجموعة GLB الدائمة المنفصلة ذات الستة أجزاء فتسجل 1,123 feature و138,254 مكوّنًا مضلعيًا. |
-| `complete_data/OSM/data/buildings/parts/building-enrichment-index.json` | فهرس الإثراء/الربط الدلالي على مستوى عناصر الأجزاء. حجمه في شجرة GitHub نحو 6.24 MB؛ لم يُعدّل في هذا العمل. |
-| `complete_data/OSM/data/buildings/parts/building-enrichment-report.json` | تقرير تغطية الإثراء ومناطق عدم اليقين. |
-| `complete_data/OSM/data/buildings/parts/partN/partN-inventory.json` | جرد الجزء الأصلي: الخصائص والارتفاع واللون والموقع/المركز والمكونات بحسب مخطط الجرد. |
-| `complete_data/OSM/data/buildings/parts/partN/partN-origin.json` | أصل الإحداثيات المحلي لكل GLB أصلي؛ يُستخدم للمحافظة على موضع النواتج. |
-| `complete_data/OSM/data/buildings/ermita-glb-parts/buildings_parts_index.json` | فهرس منفصل لستة ملفات GLB دائمة؛ ليس نفس تقسيم الأجزاء الأربعة في `parts/`. |
+| `complete_data/OSM/data/buildings/Ermita/parts-inventory-index.json` | فهرس جرد الأجزاء الأربعة وخصائص عناصرها. |
+| `complete_data/OSM/data/buildings/Ermita/parts-report.json` | تقرير التصدير والتغطية، ويسجل 2,651 تعيينًا لمكونات/سجلات المصدر و139,782 مكوّنًا مضلعيًا في مجموعة الأجزاء الأربعة الحالية؛ أما مجموعة GLB الدائمة المنفصلة ذات الستة أجزاء فتسجل 1,123 feature و138,254 مكوّنًا مضلعيًا. |
+| `complete_data/OSM/data/buildings/Ermita/building-enrichment-index.json` | فهرس الإثراء/الربط الدلالي على مستوى عناصر الأجزاء. حجمه في شجرة GitHub نحو 6.24 MB؛ لم يُعدّل في هذا العمل. |
+| `complete_data/OSM/data/buildings/Ermita/building-enrichment-report.json` | تقرير تغطية الإثراء ومناطق عدم اليقين. |
+| `complete_data/OSM/data/buildings/Ermita/partN/partN-inventory.json` | جرد الجزء الأصلي: الخصائص والارتفاع واللون والموقع/المركز والمكونات بحسب مخطط الجرد. |
+| `complete_data/OSM/data/buildings/Ermita/partN/partN-origin.json` | أصل الإحداثيات المحلي لكل GLB أصلي؛ يُستخدم للمحافظة على موضع النواتج. |
+| `complete_data/OSM/data/buildings/ermita-glb-parts/buildings_parts_index.json` | فهرس منفصل لستة ملفات GLB دائمة؛ ليس نفس تقسيم الأجزاء الأربعة في `Ermita/`. |
 | `complete_data/OSM/data/buildings/ermita-glb-parts/buildings_parts_report.json` | تقرير مجموعة الستة: 1,123 feature، و138,254 مكوّنًا، مع تأكيد حفظ وسوم المصدر في الجرد. |
 
 ### أرقام تغطية الإثراء الحالية
@@ -71,7 +71,7 @@
 السكريبت: `complete_data/OSM/scripts/enhance_existing_glb_parts.py`
 
 يعتمد على:
-- ملفات GLB الأصلية الأربعة من `complete_data/OSM/data/buildings/parts/partN/partN.glb`.
+- ملفات GLB الأصلية الأربعة من `complete_data/OSM/data/buildings/Ermita/partN/partN.glb`.
 - ملف `partN-origin.json` لكل جزء.
 - بصمات `ermita-building-footprints.geojson`.
 - مولّد تفاصيل الواجهات `ermita/scripts/generate_roxas_boulevard_buildings.py`، باستيراد دواله بدل نسخ منطق المواد يدويًا.
@@ -136,15 +136,15 @@ python3 complete_data/OSM/scripts/audit_building_data.py
 
 - صفحة المقارنة: `test.html`.
 - مفاتيح الأزرار: `enhanced-glb-part-1` إلى `enhanced-glb-part-4`.
-- ملفات النماذج: `complete_data/OSM/data/buildings/parts/ermita/Parts1.glb` إلى `Parts4.glb`.
-- ملفات الأصول الإحداثية: `complete_data/OSM/data/buildings/parts/part1/part1-origin.json` إلى `part4/part4-origin.json`.
+- ملفات النماذج: `complete_data/OSM/data/buildings/Ermita/Parts1.glb` إلى `Parts4.glb`.
+- ملفات الأصول الإحداثية: `complete_data/OSM/data/buildings/Ermita/part1/part1-origin.json` إلى `part4/part4-origin.json`.
 - سكريبت النشر: `.github/workflows/deploy-pages.yml`؛ أُضيفت له خطوات نسخ الملفات الأربعة المحسّنة وملفات الأصل إلى مجلد النشر.
 - سكريبت البناء: `.github/workflows/enhance-existing-glb-parts.yml`؛ يشغّل سكريبت التحسين ويتحقق من وجود الملفات والتقارير ثم يحفظ الناتج في `main`.
 
 ## 8. تسلسل التغييرات
 
 1. أُضيف `complete_data/OSM/scripts/enhance_existing_glb_parts.py` لتوليد النسخ المحسّنة مع حفظ الأصول.
-2. أُنشئ `parts/ermita/` وفيه أربعة GLB وتقارير لكل جزء وتقرير إجمالي.
+2. أُنشئ `Ermita/` وفيه أربعة GLB وتقارير لكل جزء وتقرير إجمالي.
 3. أُضيفت أربعة مفاتيح مقارنة في `test.html`.
 4. أُحدّث `.github/workflows/deploy-pages.yml` لنسخ GLB المحسّنة وملفات الأصول إلى موقع النشر.
 5. هذا المستند هو سجل التدقيق الحالي. أي تغيير لاحق في السكريبت أو الملفات أو طريقة الإحداثيات يجب أن يُضاف كتاريخ جديد بدل مسح السجل السابق.
@@ -158,3 +158,8 @@ python3 complete_data/OSM/scripts/audit_building_data.py
 - [ ] التحقق من أن الطبقات المضافة لا تحجب الشكل الأصلي أو تخلق أسطحًا متداخلة مزعجة.
 - [ ] تسجيل الملاحظات واللقطات المرجعية قبل أي تعديل لاحق.
 - [ ] إبقاء الفهارس الأصلية والتقارير القديمة محفوظة وعدم استبدالها بتقارير مختصرة.
+
+
+## Folder relocation (2026-10-22)
+
+All files formerly in `complete_data/OSM/data/buildings/parts/` and its `ermita/` child were preserved and consolidated into `complete_data/OSM/data/buildings/Ermita/`. The nested `ermita/README.md` was preserved as `README-GLB-ASSETS.md` to avoid overwriting the parent README. The four obsolete original-part GLB toggles/loaders were removed from `test.html`; the four retained enhanced GLBs load from `Ermita/Parts1.glb`–`Parts4.glb` using the existing `Ermita/partN/partN-origin.json` sidecars. Asset bytes and coordinates were not regenerated or transformed during relocation.
