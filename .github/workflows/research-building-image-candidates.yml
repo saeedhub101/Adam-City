@@ -2,6 +2,8 @@ name: Research building image candidates
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *'
   push:
     branches: [main]
     paths:
@@ -14,12 +16,12 @@ permissions:
 
 concurrency:
   group: building-image-candidate-research
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   discover:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 55
     steps:
       - name: Check out main
         uses: actions/checkout@v4
