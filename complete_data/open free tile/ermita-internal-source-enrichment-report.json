@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.1",
+  "date": "2026-10-22",
+  "operation": "internal-repository-only exact-ID enrichment pass",
+  "source_registry_rows": 1721,
+  "source_registry": "complete_data/open free tile/ermita-building-geographic-completeness-sort.csv",
+  "internal_sources": [
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/osm-building-details.csv",
+      "rows": 1909,
+      "policy": "Use exact OSM feature ID only; take tags from exact record."
+    },
+    {
+      "path": "complete_data/OSM/quality/building-height-evidence.csv",
+      "rows": 1528,
+      "policy": "Use exact source_id = accepted OSM feature ID only."
+    },
+    {
+      "path": "ermita/3d/building-match-audit.csv",
+      "rows": 1306,
+      "policy": "Use exact OSM feature ID only; audit fields are supplemental."
+    },
+    {
+      "path": "ermita/3d/facade-photo-review.csv",
+      "rows": 246,
+      "policy": "Use exact building_osm_id only; photo IDs are references, not verified facade texture."
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/building-source-link-audit.csv",
+      "rows": 2651,
+      "policy": "Consult existing linkage audit; no spatial-only candidate copied."
+    }
+  ],
+  "matching_policy": "Only records already linked by accepted containment or exact source-ID methods were enriched. Candidate-only and proximity-review records were not assigned tags. No coordinates, geometry, source IDs or render heights were changed.",
+  "exact_osm_tag_join_rows": 692,
+  "exact_height_evidence_join_rows": 692,
+  "exact_building_match_audit_rows": 605,
+  "linked_facade_photo_review_entries": 184,
+  "candidate_photo_entries_not_confirmed": 34,
+  "rows_skipped_for_identity_review": 420,
+  "fields_filled_from_internal_sources": 10,
+  "attribute_coverage_after_internal_pass": {
+    "building_name": 290,
+    "official_name": 2,
+    "brand": 6,
+    "building_type": 771,
+    "building_levels": 513,
+    "osm_height_m": 112,
+    "address_housenumber": 111,
+    "address_street": 256,
+    "address_postcode": 88,
+    "address_city": 369,
+    "facade_colour": 16,
+    "building_colour": 3,
+    "building_material": 3,
+    "roof_shape": 58,
+    "roof_material": 0,
+    "roof_colour": 8
+  },
+  "completeness_counts_after_internal_pass": {
+    "needs_match_review": 355,
+    "insufficient_data": 1207,
+    "partially_enriched": 159
+  },
+  "photo_policy": "Existing facade-photo review entries are indexed in the row but do not count as verified imagery unless the source file marks the facade verified; no automatic image-to-texture assignment.",
+  "limitations": [
+    "The primary 22,977-feature GeoJSON master and 24,102-row master CSV have not yet been fully reconciled against this 1,721-row OpenFreeMap component registry.",
+    "The 1,721 records are polygon components, not confirmed distinct physical buildings.",
+    "OSM/OFM exact-ID linkage is not equivalent to photo-confirmed architectural identity."
+  ]
+}
