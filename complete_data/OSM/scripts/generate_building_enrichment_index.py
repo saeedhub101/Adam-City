@@ -111,7 +111,7 @@ def main():
         if not path.is_file():
             raise FileNotFoundError(f"Required inventory is missing: {path}")
         for feature in read_json(path).get("features", []):
-            key = f'{feature.get("part")}:{feature.get("source_key")}:{feature.get("source_feature_index")}'
+            key = f'{part}:{feature.get("source_key")}:{feature.get("source_feature_index")}'
             inventory_by_key[key] = feature
 
     records = []
