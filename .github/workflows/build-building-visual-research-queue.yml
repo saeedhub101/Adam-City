@@ -36,6 +36,9 @@ jobs:
             /complete_data/OSM/scripts/build_building_visual_research_queue.py
           sparse-checkout-cone-mode: false
 
+      - name: Install script dependency
+        run: python3 -m pip install --disable-pip-version-check pyproj
+
       - name: Build coordinate-based visual research queue
         run: python3 complete_data/OSM/scripts/build_building_visual_research_queue.py
 
