@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "purpose": "Evidence-backed links between named buildings, source images, and Adam-City building-part records. Links are not applied as textures by this manifest.",
+  "geometry_policy": "Do not alter OpenFreeMap building geometry, coordinates, heights, or IDs. A source-image association is not permission to project the image onto a mesh.",
+  "records": [
+    {
+      "building_name": "Luneta Theater",
+      "identity": {
+        "osm_type": "way",
+        "osm_id": 90311602,
+        "osm_url": "https://www.openstreetmap.org/way/90311602",
+        "commons_category": "https://commons.wikimedia.org/wiki/Category:Luneta_Theater",
+        "identity_evidence": "Wikimedia Commons category identifies Luneta Theater, Ermita, Manila and lists OpenStreetMap way ID 90311602."
+      },
+      "image_evidence": [
+        {
+          "file_page": "https://commons.wikimedia.org/wiki/File:Top_fac%C3%A7ade_of_Luneta_Theater_in_Ermita,_Manila_-_1.jpg",
+          "title": "Top façade of Luneta Theater in Ermita, Manila - 1.jpg",
+          "photographer": "Judgefloro",
+          "license_note": "Commons file page states public domain / released by copyright holder; re-check page before redistribution.",
+          "identity_status": "building-named-on-source-page",
+          "texture_suitability": "not-yet-inspected-at-full-resolution"
+        }
+      ],
+      "adam_city_target": {
+        "part": 1,
+        "source_key": "roof_details",
+        "source_feature_index": 148,
+        "source_feature_id": "90311602",
+        "link_basis": "exact OSM feature ID in parts-inventory-index.json",
+        "link_status": "exact-id-linked-to-roof-detail-feature",
+        "base_building_footprint_link": "not-confirmed",
+        "warning": "This exact record is from roof_details, not proof that the primary building-footprint mesh is the same feature. Do not apply a facade decal to this roof-detail feature without mesh inspection."
+      },
+      "next_action": "Inspect the high-resolution image and inspect part1.glb to determine whether a separate base footprint with matching geometry exists; only then prepare a correctly aligned facade decal.",
+      "applied_to_model": false
+    },
+    {
+      "building_name": "Malate Church (Our Lady of Remedies Parish)",
+      "identity": {
+        "osm_type": "way",
+        "osm_id": 34751818,
+        "osm_url": "https://www.openstreetmap.org/way/34751818",
+        "wikidata": "https://www.wikidata.org/wiki/Q6741382",
+        "commons_category": "https://commons.wikimedia.org/wiki/Category:Malate_Church",
+        "identity_evidence": "Mapcarta/OSM listing identifies the church as way 34751818; Commons/Wikidata identify the same named church."
+      },
+      "image_evidence": [
+        {
+          "file_page": "https://commons.wikimedia.org/wiki/File:Malate_Church_2024.jpg",
+          "title": "Malate Church 2024.jpg",
+          "photographer": "Tagaaplaya",
+          "capture_date": "2024-02-10",
+          "camera_coordinates": {
+            "latitude": 14.569163,
+            "longitude": 120.984247
+          },
+          "license_note": "Commons file page lists CC BY-SA 4.0 for the photo and a separate public-domain freedom-of-panorama note for the depicted architecture; retain attribution and verify terms on the file page.",
+          "identity_status": "explicit-facade-description-and-camera-location",
+          "texture_suitability": "not-yet-inspected-at-full-resolution"
+        }
+      ],
+      "adam_city_target": {
+        "part": 1,
+        "source_feature_id": null,
+        "candidate_source_feature_id": "footprints-feature-000677",
+        "candidate_centroid": {
+          "latitude": 14.5690756,
+          "longitude": 120.9844999
+        },
+        "centroid_distance_to_church_reference_m": 38.2,
+        "link_status": "pending-footprint-identity-verification",
+        "warning": "The nearest unmatched footprint is 38.2 m from the church reference coordinate. Proximity alone does not establish that it is the church. No model feature is accepted as the church yet."
+      },
+      "next_action": "Compare the source image/camera coordinates with the actual footprint geometry and satellite/street imagery; accept a target feature only when the church outline and location agree.",
+      "applied_to_model": false
+    }
+  ]
+}
