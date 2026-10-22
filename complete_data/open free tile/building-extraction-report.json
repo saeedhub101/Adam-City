@@ -1,0 +1,47 @@
+{
+  "extraction_date": "2026-10-22",
+  "source": "OpenFreeMap / OpenMapTiles",
+  "source_geometry_file": "complete_data/open free tile/building-fallback.geojson",
+  "source_boundary_file": "complete_data/open free tile/area-boundary.geojson",
+  "source_grouped_style_features": 1805,
+  "source_polygon_components": 280509,
+  "extracted_ermita_polygon_components": 1721,
+  "output_parts": [
+    {
+      "geojson_gzip": "complete_data/open free tile/buildings-part1.geojson.gz",
+      "csv": "complete_data/open free tile/layers/buildings-part1.csv",
+      "features": 861
+    },
+    {
+      "geojson_gzip": "complete_data/open free tile/buildings-part2.geojson.gz",
+      "csv": "complete_data/open free tile/layers/buildings-part2.csv",
+      "features": 860
+    }
+  ],
+  "osm_building_polygon_candidates": 1528,
+  "spatial_match_counts": {
+    "centroid_inside_osm_building_polygon": 692,
+    "nearest_unambiguous_centroid_under_3m": 65,
+    "nearest_unambiguous_centroid_under_8m": 119,
+    "low_confidence_candidate_under_20m_review_only": 236
+  },
+  "address_enrichment": {
+    "address_bearing_features_examined": 1432,
+    "buildings_with_address_candidates": 773,
+    "buildings_with_multiple_address_candidates": 242
+  },
+  "limitations": [
+    "The source fallback groups many building polygon components into style-based MultiPolygon features and does not preserve a per-building OSM ID.",
+    "Generated OFM-ERMITA registry IDs are local registry IDs, not OSM IDs.",
+    "Spatial OSM joins are not exact-ID joins; low-confidence candidates are review-only.",
+    "Address candidates inside a footprint may describe a shop or unit and need verification before being treated as the sole postal address.",
+    "Geometry was selected by polygon area-centroid inclusion in the saved Ermita boundary; components outside that boundary were excluded."
+  ],
+  "validation": {
+    "part1_geojson_features": 861,
+    "part2_geojson_features": 860,
+    "part1_csv_rows": 861,
+    "part2_csv_rows": 860,
+    "verified_from_committed_files": true
+  }
+}
