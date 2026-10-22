@@ -394,7 +394,7 @@ jobs:
           cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/building-fallback.geojson
           cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/ground-fallback.geojson
           # Publish the repository copies, whether reused or newly generated.
-          mkdir -p site/ermita/maps/generated site/ermita/3d/generated site/ermita/3d/exports site/ermita/3d/terrain site/ermita/3d/landmarks site/ermita/3d/commercial site/complete_data/OSM/Markets site/complete_data/OSM/Buildings/Markets/facidals site/complete_data/OSM/Buildings/reference_images site/complete_data/OSM/data/buildings/roxas-boulevard
+          mkdir -p site/ermita/maps/generated site/ermita/3d/generated site/ermita/3d/exports site/ermita/3d/terrain site/ermita/3d/landmarks site/ermita/3d/commercial site/complete_data/OSM/Markets site/complete_data/OSM/Buildings/Markets/facidals site/complete_data/OSM/Buildings/reference_images site/complete_data/OSM/data/buildings/roxas-boulevard site/complete_data/OSM/data/buildings/parts/enhanced site/complete_data/OSM/data/buildings/parts/part1 site/complete_data/OSM/data/buildings/parts/part2 site/complete_data/OSM/data/buildings/parts/part3 site/complete_data/OSM/data/buildings/parts/part4
           cp ermita/maps/generated/ermita-building-details.geojson site/ermita/maps/generated/ermita-building-details.geojson
           cp ermita/3d/generated/ermita-buildings-facade-details.glb site/ermita/3d/generated/ermita-buildings-facade-details.glb
           cp ermita/3d/generated/facade-model-origin.json site/ermita/3d/generated/facade-model-origin.json
@@ -417,6 +417,13 @@ jobs:
           cp complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json
           cp complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb
           cp complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json
+          # Publish enhanced GLB comparison files and their matching original coordinate sidecars.
+          for part in 1 2 3 4; do
+            cp "complete_data/OSM/data/buildings/parts/enhanced/part${part}-detailed.glb" "site/complete_data/OSM/data/buildings/parts/enhanced/part${part}-detailed.glb"
+            cp "complete_data/OSM/data/buildings/parts/part${part}/part${part}-origin.json" "site/complete_data/OSM/data/buildings/parts/part${part}/part${part}-origin.json"
+            test -s "site/complete_data/OSM/data/buildings/parts/enhanced/part${part}-detailed.glb"
+            test -s "site/complete_data/OSM/data/buildings/parts/part${part}/part${part}-origin.json"
+          done
           cp ermita/3d/exports/adam-city-complete.glb site/ermita/3d/exports/adam-city-complete.glb
           cp ermita/3d/terrain/ermita-copernicus-dem-cropped.tif site/ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           test -s site/ermita/3d/exports/adam-city-complete.glb
