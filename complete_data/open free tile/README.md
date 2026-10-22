@@ -167,3 +167,22 @@ A first-pass sort of the 1,721-row OpenFreeMap component registry is available:
 First-pass counts: 757 components have an accepted OSM link with confidence >= 0.90; 119 linked records need review; 236 have only a candidate requiring review; 609 are unmatched. Completeness triage: 381 partially enriched, 342 need match review, and 998 have insufficient data. Five named-building evidence crosswalks (NIH, Bahay Silungan, Bayview Park Hotel, Manila Central Post Office, and National Planetarium) are currently provisional, so **zero components currently pass the strict verified-complete gate**. Official/Wikipedia/Commons sources were recorded where available; photo reuse rights are not assumed for official website images.
 
 **Scope warning:** this is an interim OpenFreeMap-registry sort, not a replacement for reconciliation of the original master GeoJSON (22,977 features) and master CSV (24,102 rows). Those master files still need direct identifier/source reconciliation. Geometry and source coordinates were not modified.
+
+
+## Internal repository enrichment pass — 2026-10-22
+
+Before external research, the geographic sort was checked against repository sources using exact accepted OSM feature IDs:
+
+- `complete_data/OSM/data/buildings/Ermita/osm-building-details.csv` (1,909 source rows)
+- `complete_data/OSM/quality/building-height-evidence.csv` (1,528 rows)
+- `ermita/3d/building-match-audit.csv` (1,306 rows)
+- `ermita/3d/facade-photo-review.csv` (246 photo-review entries)
+- `complete_data/OSM/data/buildings/Ermita/building-source-link-audit.csv` (2,651 rows)
+
+Only already accepted exact/containment identity matches were used to fill blank fields; candidate-only or proximity-review rows did not receive copied OSM tags. The sort now records source provenance and linked photo-review IDs. There are **95 OFM component rows with exact-OSM-ID photo candidates** (184 photo-review entries across these linked records); they remain unverified and must not be used as textures until facade direction/identity is confirmed. Five named-building image/source crosswalks remain provisional.
+
+Current triage of the 1,721 OFM component records: **368 partially enriched**, **355 needing match review**, **998 with insufficient data**. These are triage classes, not a count of unique real buildings or a claim that any record is photo-verified. The internal pass filled only 10 previously blank attributes, showing that most usable OSM attributes were already present in the OFM registry; the larger remaining gap is identity resolution and building-specific visual evidence.
+
+Detailed report: [ermita-internal-source-enrichment-report.json](ermita-internal-source-enrichment-report.json).
+
+**Next internal step before outside research:** reconcile the original 22,977-feature master GeoJSON and 24,102-row master CSV with the repository's existing consolidated building register, part inventories, address datasets, visual research queue, and image catalogues. Do not treat the OFM component sort as a replacement for this master reconciliation.
