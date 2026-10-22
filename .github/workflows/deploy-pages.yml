@@ -36,6 +36,7 @@ jobs:
           git sparse-checkout set --no-cone --stdin <<'EOF'
           /test.html
           /manila/manila.html
+          /manila/generate_roxas_enhanced_geojson.py
           /manila/manila/
           /ermita-malate-3d.html
           /google-photorealistic-3d-tiles.html
