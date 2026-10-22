@@ -30,6 +30,7 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <label class="row"><input type="checkbox" id="osm-features"> 2. features — جميع المعالم الجغرافية</label>
 <label class="row"><input type="checkbox" id="osm-tags"> 3. tags — جدول الوسوم (بيانات وصفية وليست طبقة مكانية)</label>
 <label class="row"><input type="checkbox" id="osm-buildings" checked> 4. buildings — بصمات المباني وتفاصيل الأسطح</label>
+<label class="row"><input type="checkbox" id="roxas-boulevard-glb"> 4.1 Roxas Boulevard — مباني GLB (طبقة مستقلة)</label>
 <label class="row"><input type="checkbox" id="osm-roads" checked> 5. roads — الطرق وتفاصيل هندستها</label>
 <label class="row"><input type="checkbox" id="osm-thematic"> 6. thematic — المتاجر والعلامات والتفاصيل الموضوعية</label>
 <label class="row"><input type="checkbox" id="osm-pedestrian"> 7. pedestrian — تفاصيل المشاة</label>
@@ -429,5 +430,67 @@ try {
 
 
 
+
+
+<script type="module">
+/* Independent Roxas Boulevard GLB layer, aligned using its own exported origin. */
+import * as THREE from 'three';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.0/meshopt_decoder.module.js';
+(async()=>{
+ const toggle=document.getElementById('roxas-boulevard-glb');
+ const status=document.getElementById('status');
+ const errorBox=document.getElementById('error');
+ const showError=err=>{if(errorBox){errorBox.style.display='block';errorBox.textContent='تعذر تحميل مباني Roxas Boulevard GLB: '+(err?.message||err);}if(status)status.textContent='فشل تحميل طبقة مباني Roxas Boulevard.';};
+ const waitMap=()=>new Promise((resolve,reject)=>{let tries=0;const check=()=>{if(window.adamCityMap?.isStyleLoaded())return resolve(window.adamCityMap);if(++tries>600)return reject(new Error('انتهت مهلة انتظار الخريطة'));setTimeout(check,100);};check();});
+ try{
+  const map=await waitMap();
+  const base='complete_data/OSM/data/buildings/roxas-boulevard/';
+  const modelUrl=new URL(base+'roxas%20bulivard%20buildings.glb',location.href).href;
+  const originUrl=new URL(base+'roxas-bulivard-buildings-origin.json',location.href).href;
+  const response=await fetch(originUrl);if(!response.ok)throw new Error('Origin JSON HTTP '+response.status);
+  const origin=await response.json(),lat=Number(origin.latitude),lng=Number(origin.longitude);
+  if(!Number.isFinite(lat)||!Number.isFinite(lng))throw new Error('Origin JSON لا يحتوي إحداثيات صحيحة');
+  const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng,lat},Number(origin.anchor_altitude_m||0));
+  const meterScale=anchor.meterInMercatorCoordinateUnits();
+  const projectedMeterScale=meterScale*Math.cos(lat*Math.PI/180);
+  let renderer,camera,scene,model;
+  const layer={
+   id:'roxas-boulevard-buildings-glb-3d',type:'custom',renderingMode:'3d',
+   onAdd(mapInstance,gl){
+    renderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;
+    camera=new THREE.Camera();scene=new THREE.Scene();
+    scene.add(new THREE.AmbientLight(0xffffff,2.0));
+    const light=new THREE.DirectionalLight(0xffffff,2.2);light.position.set(0,-70,100).normalize();scene.add(light);
+    const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
+    loader.load(modelUrl,gltf=>{
+     model=gltf.scene;model.position.set(0,0,0);model.scale.set(1,1,1);
+     let meshes=0;model.traverse(o=>{if(o.isMesh)meshes++;});
+     scene.add(model);model.visible=!!toggle.checked;
+     window.adamRoxasBuildingsLayerReady=true;
+     window.adamSetRoxasBuildingsVisible=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
+     if(status)status.textContent='مباني Roxas Boulevard GLB محمّلة | meshes='+meshes+' | '+(model.visible?'مفعّلة':'مخفية');
+     mapInstance.triggerRepaint();
+    },progress=>{if(status)status.textContent=progress.total?'جارٍ تحميل مباني Roxas Boulevard: '+Math.round(progress.loaded/progress.total*100)+'%':'جارٍ تنزيل ملف مباني Roxas Boulevard GLB…';},showError);
+   },
+   render(gl,args){
+    if(!renderer||!model||!model.visible)return;
+    const mainMatrix=args?.defaultProjectionData?.mainMatrix;if(!mainMatrix)return;
+    const values=Object.values(mainMatrix);if(values.length!==16||values.some(v=>!Number.isFinite(Number(v))))return;
+    const projection=new THREE.Matrix4().fromArray(values.map(Number));
+    const transform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z).scale(new THREE.Vector3(projectedMeterScale,-projectedMeterScale,meterScale));
+    camera.projectionMatrix.copy(projection).multiply(transform);camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+    renderer.resetState();renderer.render(scene,camera);renderer.resetState();
+   }
+  };
+  map.addLayer(layer);
+  if(map.getLayer(layer.id))map.moveLayer(layer.id);
+  toggle.addEventListener('change',ev=>{
+   if(window.adamRoxasBuildingsLayerReady&&window.adamSetRoxasBuildingsVisible)window.adamSetRoxasBuildingsVisible(ev.target.checked);
+   else if(ev.target.checked&&status)status.textContent='جارٍ تحميل مباني Roxas Boulevard GLB…';
+  });
+ }catch(err){showError(err);}
+})();
+</script>
 
 </body></html>
