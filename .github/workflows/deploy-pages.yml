@@ -1,4 +1,5 @@
-name: Deploy ADAM CITY Ermita 3D city
+name: Adam-City — validate and deploy existing assets
+
 on:
   push:
     branches: [main]
@@ -8,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -19,11 +20,12 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Fetch only the 3D page and its local vector tiles
+      - name: Fetch committed pages and assets only
         shell: bash
         run: |
           set -euo pipefail
@@ -32,411 +34,84 @@ jobs:
           git -c protocol.version=2 fetch --depth=1 --filter=blob:none origin main
           git sparse-checkout init --no-cone
           git sparse-checkout set --no-cone --stdin <<'EOF'
+          /test.html
           /ermita-malate-3d.html
           /roxas-boulevard-model.html
           /google-photorealistic-3d-tiles.html
-          /test.html
           /complete_data/OSM/data/
-          /complete_data/OSM/scripts/generate_building_enrichment_index.py
-          /ermita/scripts/generate_roxas_boulevard_buildings.py
-          /ermita/scripts/generate_roxas_boulevard_signage.py
           /ermita/assets/textures/Painted-CMU-Block-Architextures.jpeg
-          /ermita/maps/sources/openfreemap/
+          /ermita/maps/sources/openfreemap/vector-tiles/
+          /ermita/maps/sources/openfreemap/building-fallback.geojson
+          /ermita/maps/sources/openfreemap/ground-fallback.geojson
           /ermita/maps/generated/ermita-building-details.geojson
-          /ermita/maps/generated/ermita-building-footprints.geojson
+          /ermita/3d/exports/adam-city-complete.glb
+          /ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
           /ermita/3d/generated/ermita-buildings-facade-details.glb
           /ermita/3d/generated/facade-details-report.json
           /ermita/3d/generated/facade-model-origin.json
           /ermita/3d/generated/facade-signage-index.csv
-          /ermita/3d/generated/facade-generation.sha256
           /ermita/3d/landmarks/
-          /ermita/3d/exports/adam-city-complete.glb
-          /ermita/3d/exports/adam-city-complete-report.json
-          /ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
-          /ermita/scripts/import_openfreemap_ermita.py
-          /ermita/scripts/generate_facade_details.py
-          /ermita/scripts/generate_landmark_facades.py
           EOF
           git switch -C main FETCH_HEAD
 
-      - name: Prepare the minimal static site
+      - name: Assemble site from committed assets (no generation)
         shell: bash
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+          test -s test.html
+          test -s roxas-boulevard-model.html
           test -s ermita-malate-3d.html
-          python3 -m pip install --disable-pip-version-check requests mapbox-vector-tile shapely pyproj trimesh mapbox-earcut pillow cairosvg scipy
-          # Keep committed generated GLBs intact during routine deploys; create them only if absent.
-          if [[ ! -s ermita/3d/landmarks/landmark-facade-details.glb || ! -s ermita/3d/landmarks/landmark-facade-report.json || ! -s ermita/3d/landmarks/landmark-facade-origin.json ]]; then
-            python3 ermita/scripts/generate_landmark_facades.py
-          else
-            echo "Reusing committed landmark facade GLB and metadata."
-          fi
-          if [[ ! -s ermita/3d/generated/ermita-buildings-facade-details.glb || ! -s ermita/3d/generated/facade-details-report.json || ! -s ermita/3d/generated/facade-model-origin.json || ! -s ermita/3d/generated/facade-signage-index.csv ]]; then
-            python3 ermita/scripts/generate_facade_details.py
-          else
-            echo "Reusing committed facade-detail GLB and metadata."
-          fi
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          report = json.loads(Path('ermita/3d/generated/facade-details-report.json').read_text())
-          glb = Path('ermita/3d/generated/ermita-buildings-facade-details.glb')
-          assert glb.is_file() and glb.stat().st_size > 1000000, 'Facade-detail GLB is missing or unexpectedly small'
-          assert report.get('building_polygon_parts', 0) >= 1000, 'Full Ermita building set was not processed'
-          assert report.get('facade_skin_segments', 0) >= 1000, 'Facade skins were not generated across the building set'
-          assert report.get('roof_surfaces', 0) >= 1000, 'Roof surfaces were not generated across the building set'
-          print('Validated city-wide facade/roof overlay:', report['building_polygon_parts'], 'building parts;', report['facade_skin_segments'], 'facade segments;', report['roof_surfaces'], 'roof surfaces')
-          PY
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          report = json.loads(Path('ermita/3d/landmarks/landmark-facade-report.json').read_text())
-          glb = Path('ermita/3d/landmarks/landmark-facade-details.glb')
-          assert glb.is_file() and glb.stat().st_size > 1000, 'Landmark facade GLB was not generated'
-          targets = report.get('targets', [])
-          museum = next((item for item in targets if item.get('target_id') == 'relation/61326'), None)
-          assert museum and abs(float(museum.get('approx_height_m', 0)) - 24.3) < 0.01, 'National Museum model did not use the source-backed 24.3 m height'
-          print('Validated regenerated landmark facade:', glb.stat().st_size, 'bytes; National Museum reference height:', museum['approx_height_m'], 'm')
-          PY
-          # Preserve the committed Roxas Boulevard model; generate only if its asset set is incomplete.
-          if [[ ! -s "complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb" ||
-                ! -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json ||
-                ! -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json ]]; then
-            python3 ermita/scripts/generate_roxas_boulevard_buildings.py
-          else
-            echo "Reusing committed Roxas Boulevard GLB and metadata."
-          fi
-          # The six buildings_partN.glb files are permanent deployment inputs; this workflow never generates them.
-          # Preserve the committed signage GLB unless its output files are missing.
-          if [[ ! -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb ||
-                ! -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json ]]; then
-            python3 ermita/scripts/generate_roxas_boulevard_signage.py
-          else
-            echo "Reusing committed Roxas Boulevard signage GLB and report."
-          fi
-          test -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb
-          test -s complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          p=Path('complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json')
-          r=json.loads(p.read_text())
-          assert r.get('sign_panels_generated',0)>0, 'No signage panels generated'
-          print('Validated Roxas signage:', r.get('sign_panels_generated'), 'panels on', r.get('buildings_with_at_least_one_sign'), 'building footprints; unlabelled:', r.get('unlabelled_building_parts'))
-          PY
-          # Fail deployment rather than silently publishing the old flat-material GLB.
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          report = json.loads(Path('complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json').read_text())
-          glb = Path('complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb')
-          assert glb.is_file() and glb.stat().st_size > 1000, 'Roxas GLB is missing or unexpectedly small'
-          assert report.get('facade_detail_parts', 0) > 0, 'Roxas facade detail geometry was not generated'
-          assert report.get('facade_window_boxes', 0) > 0, 'Roxas window glazing was not generated'
-          assert report.get('facade_textured_shell_parts', 0) > 0, 'Inspected painted-CMU texture shells were not generated'
-          assert report.get('facade_planetarium_dome_parts', 0) >= 1, 'National Planetarium dome geometry was not generated'
-          print('Validated Roxas facade GLB:', json.dumps({
-              'bytes': glb.stat().st_size,
-              'footprint_parts': report.get('buildings_exported'),
-              'facade_detail_parts': report.get('facade_detail_parts'),
-              'window_boxes': report.get('facade_window_boxes'),
-              'textured_shell_parts': report.get('facade_textured_shell_parts'),
-              'planetarium_dome_parts': report.get('facade_planetarium_dome_parts'),
-              'red_planet_canopy_parts': report.get('facade_red_planet_canopy_parts')
-          }))
-          PY
-          # Fingerprints invalidate only outputs whose generator, source data, or contract changed.
-          # Stable hashes intentionally exclude timestamps and CI-run metadata.
-          FACADE_FINGERPRINT="$( { printf 'contract=1\n'; sha256sum ermita/scripts/generate_facade_details.py ermita/maps/generated/ermita-building-details.geojson; } | sha256sum | awk '{print $1}')"
-          LANDMARK_FINGERPRINT="$( { printf 'contract=2\n'; sha256sum ermita/scripts/generate_landmark_facades.py ermita/maps/generated/ermita-building-details.geojson; } | sha256sum | awk '{print $1}')"
-          FACADE_STALE=0
-          LANDMARK_STALE=0
-          if [[ ! -s ermita/3d/generated/facade-generation.sha256 ]] || [[ "$(cat ermita/3d/generated/facade-generation.sha256 2>/dev/null || true)" != "$FACADE_FINGERPRINT" ]]; then FACADE_STALE=1; fi
-          if [[ ! -s ermita/3d/landmarks/landmark-generation.sha256 ]] || [[ "$(cat ermita/3d/landmarks/landmark-generation.sha256 2>/dev/null || true)" != "$LANDMARK_FINGERPRINT" ]]; then LANDMARK_STALE=1; fi
-          # Reuse committed assets only when complete AND the generation fingerprint still matches.
-          if [[ ! -s ermita/3d/generated/ermita-buildings-facade-details.glb || ! -s ermita/3d/generated/facade-details-report.json || ! -s ermita/3d/generated/facade-signage-index.csv || ! -s ermita/3d/generated/facade-model-origin.json || "$FACADE_STALE" -eq 1 ]]; then
-            echo "Facade assets missing or stale; regenerating only the facade asset family."
-            python3 ermita/scripts/generate_facade_details.py
-            printf '%s\n' "$FACADE_FINGERPRINT" > ermita/3d/generated/facade-generation.sha256
-          else
-            echo "Reusing committed facade assets; generator and source fingerprints match."
-          fi
-          if [[ ! -s ermita/3d/landmarks/landmark-facade-details.glb || ! -s ermita/3d/landmarks/landmark-facade-origin.json || ! -s ermita/3d/landmarks/landmark-facade-report.json || "$LANDMARK_STALE" -eq 1 ]]; then
-            echo "Landmark assets missing or stale; regenerating the landmark asset family."
-            python3 ermita/scripts/generate_landmark_facades.py
-            printf '%s\n' "$LANDMARK_FINGERPRINT" > ermita/3d/landmarks/landmark-generation.sha256
-          else
-            echo "Reusing committed landmark assets; generator and source fingerprints match; no Overpass request needed."
-          fi
-          # Reuse the committed commercial signage overlay from complete_data; do not regenerate it during deployment.
-          # Generate the facade origin only if it is missing. It is stored in main after generation.
-          if [[ ! -s ermita/3d/generated/facade-model-origin.json ]]; then
-          # Calculate the origin only from the exact building IDs in the GLB's own index.
-          # Do not use every footprint in the larger OSM dataset: that shifts the GLB away from its targets.
-          python3 - <<'PY'
-          import csv, json, math, re
-          from pathlib import Path
-          from pyproj import Transformer
-          from shapely.geometry import shape
-          from shapely.ops import transform as geom_transform
+          test -s google-photorealistic-3d-tiles.html
 
-          source = Path('ermita/maps/generated/ermita-building-details.geojson')
-          index = Path('ermita/3d/generated/facade-signage-index.csv')
-          data = json.loads(source.read_text(encoding='utf-8'))
-          with index.open(newline='', encoding='utf-8') as f:
-              target_ids = {row.get('osm_feature_id', '').strip() for row in csv.DictReader(f)}
-          target_ids.discard('')
-          if not target_ids:
-              raise SystemExit('Facade index has no OSM feature IDs; refusing to calculate a guessed origin')
+          mkdir -p site/complete_data/OSM/data site/ermita/maps/sources/openfreemap site/ermita/maps/generated
+          mkdir -p site/ermita/3d/exports site/ermita/3d/terrain site/ermita/3d/generated site/ermita/3d/landmarks
+          mkdir -p site/ermita/assets/textures
 
-          project = Transformer.from_crs('EPSG:4326', 'EPSG:3857', always_xy=True).transform
-          unproject = Transformer.from_crs('EPSG:3857', 'EPSG:4326', always_xy=True).transform
-          minx=miny=float('inf'); maxx=maxy=float('-inf'); maxz=0.0; parts=0
-          matched_ids=set()
-          for feature in data.get('features', []):
-              props=feature.get('properties') or {}
-              fid=str(props.get('osm_feature_id', '')).strip()
-              if fid not in target_ids:
-                  continue
-              try:
-                  geom=geom_transform(project, shape(feature['geometry']))
-                  polys=[geom] if geom.geom_type=='Polygon' else list(geom.geoms) if geom.geom_type=='MultiPolygon' else []
-                  tags=props.get('tags') if isinstance(props.get('tags'),dict) else props
-                  raw=tags.get('height'); height=None
-                  if raw:
-                      m=re.search(r'\d+(?:\.\d+)?',str(raw).replace(',','.'))
-                      if m and 1.5 <= float(m.group()) <= 500: height=float(m.group())
-                  if height is None:
-                      raw=tags.get('building:levels') or tags.get('levels')
-                      if raw:
-                          m=re.search(r'\d+(?:\.\d+)?',str(raw))
-                          if m and 1 <= float(m.group()) <= 150: height=float(m.group())*3.2
-                  if height is None: height=9.6
-                  for poly in polys:
-                      if poly.is_empty or not poly.is_valid or poly.area < 12:
-                          continue
-                      a,b,c,d=poly.bounds
-                      minx,miny,maxx,maxy=min(minx,a),min(miny,b),max(maxx,c),max(maxy,d)
-                      maxz=max(maxz,height); parts+=1; matched_ids.add(fid)
-              except Exception as exc:
-                  print('Skipping invalid indexed footprint:', fid, str(exc))
-          if not parts:
-              raise SystemExit('No valid footprints matched the facade GLB index; refusing to publish a guessed origin')
-          missing=target_ids-matched_ids
-          if missing:
-              print(f'Warning: {len(missing)} indexed OSM IDs were not found in the current footprint file')
-          cx,cy=(minx+maxx)/2,(miny+maxy)/2
-          lon,lat=unproject(cx,cy)
-          out=Path('ermita/3d/generated/facade-model-origin.json')
-          out.parent.mkdir(parents=True,exist_ok=True)
-          origin={
-              'longitude':lon,'latitude':lat,'anchor_altitude_m':maxz/2,
-              'buildings_used':parts,
-              'indexed_osm_ids_matched':len(matched_ids),
-              'indexed_osm_ids_missing':len(missing),
-              'origin_method':'Recomputed from the original OSM building-detail geometries whose IDs occur in the facade GLB index; uses the GLB generator height rules',
-              'coordinate_system':'EPSG:3857 local meters, recentered at (longitude, latitude, anchor_altitude_m)'
-          }
-          out.write_text(json.dumps(origin,indent=2)+'\n',encoding='utf-8')
-          print('Facade GLB target origin:', json.dumps(origin,indent=2))
-          PY
-          else
-            echo "Reusing committed facade-model-origin.json."
-          fi
-          python3 ermita/scripts/import_openfreemap_ermita.py
-          NEW_TILES="$(python3 -c "import json; print(json.load(open('ermita/maps/sources/openfreemap/import-report.json')).get('new_tiles_downloaded', 0))")"
-          echo "New source tiles downloaded: $NEW_TILES"
-          test -s ermita/maps/sources/openfreemap/vector-tiles/14/13697/7520.pbf
-          test -s ermita/maps/sources/openfreemap/vector-tiles/14/13697/7521.pbf
-          test -s ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
-          test -s ermita/maps/sources/openfreemap/vector-tiles/14/13698/7521.pbf
-          # Reuse saved outputs on normal runs. Rebuild derived fallbacks only if missing or new source tiles arrived.
-          REBUILD_FALLBACKS=0
-          if [[ ! -s ermita/maps/sources/openfreemap/building-fallback.geojson || ! -s ermita/maps/sources/openfreemap/ground-fallback.geojson || "$NEW_TILES" -gt 0 ]]; then
-            REBUILD_FALLBACKS=1
-          fi
-          if [[ "$NEW_TILES" -eq 0 ]]; then
-            # The importer refreshes timestamps in its reports; keep committed reports stable when no data changed.
-            git checkout -- ermita/maps/sources/openfreemap/area-boundary.geojson ermita/maps/sources/openfreemap/source-metadata.json ermita/maps/sources/openfreemap/tile-index.json ermita/maps/sources/openfreemap/import-report.json ermita/maps/sources/openfreemap/README.md 2>/dev/null || true
-          fi
-          # Prepare output folder before copying the page and source data.
-          mkdir -p site/ermita/maps/sources/openfreemap site/complete_data/OSM/data
           cp test.html site/test.html
-          cp -a complete_data/OSM/data/. site/complete_data/OSM/data/
-          # Compress the large procedural facade GLB with Meshopt for much faster browser loading.
-          npx --yes @gltf-transform/cli optimize site/complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb /tmp/ermita-windows-optimized.glb --compress meshopt
-          mv /tmp/ermita-windows-optimized.glb site/complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb
-          test -s site/complete_data/OSM/data/nature/ermita-water-and-natural-features.geojson
-          test -s site/complete_data/OSM/data/roads/ermita-road-network.geojson
-          test -s site/test.html
-          test -s site/complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb
-          cp ermita-malate-3d.html site/ermita-malate-3d.html
           cp roxas-boulevard-model.html site/roxas-boulevard-model.html
-          test -s site/roxas-boulevard-model.html
+          cp ermita-malate-3d.html site/ermita-malate-3d.html
           cp google-photorealistic-3d-tiles.html site/google-photorealistic-3d-tiles.html
+          cp -a complete_data/OSM/data/. site/complete_data/OSM/data/
           cp -a ermita/maps/sources/openfreemap/vector-tiles site/ermita/maps/sources/openfreemap/
-          # The preview uses the committed GeoJSON fallbacks for building extrusion and ground/roads.
-          cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/building-fallback.geojson
-          cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/ground-fallback.geojson
-          # Existing generated outputs are reused unless the source set gained new tiles or an output is missing.
-          if [[ "$REBUILD_FALLBACKS" -eq 1 ]]; then
-            python3 -m pip install --disable-pip-version-check mapbox-vector-tile
-            python3 - <<'PY'
-          import json, math
-          from pathlib import Path
-          import mapbox_vector_tile
+          cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/
+          cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/
+          cp ermita/maps/generated/ermita-building-details.geojson site/ermita/maps/generated/
+          cp ermita/3d/exports/adam-city-complete.glb site/ermita/3d/exports/
+          cp ermita/3d/terrain/ermita-copernicus-dem-cropped.tif site/ermita/3d/terrain/
+          cp ermita/3d/generated/ermita-buildings-facade-details.glb site/ermita/3d/generated/
+          cp ermita/3d/generated/facade-details-report.json site/ermita/3d/generated/
+          cp ermita/3d/generated/facade-model-origin.json site/ermita/3d/generated/
+          cp ermita/3d/generated/facade-signage-index.csv site/ermita/3d/generated/
+          cp -a ermita/3d/landmarks/. site/ermita/3d/landmarks/
+          cp ermita/assets/textures/Painted-CMU-Block-Architextures.jpeg site/ermita/assets/textures/
 
-          repo_dir = Path('ermita/maps/sources/openfreemap')
-          building_out = repo_dir / 'building-fallback.geojson'
-          ground_out = repo_dir / 'ground-fallback.geojson'
-          need_buildings = True
-          need_ground = True
-          building_features, ground_features = [], []
-          seen_buildings, seen_ground = set(), set()
-          ground_layers = {'landcover', 'landuse', 'water', 'waterway', 'transportation'}
-
-          def lonlat(x, y, z, extent):
-              n = 2 ** z
-              gx, gy = x / extent, y / extent
-              lon = gx / n * 360.0 - 180.0
-              lat = math.degrees(math.atan(math.sinh(math.pi * (1 - 2 * gy / n))))
-              return [lon, lat]
-
-          def convert(coords, tx, ty, extent):
-              if isinstance(coords, (list, tuple)) and len(coords) >= 2 and isinstance(coords[0], (int, float)) and isinstance(coords[1], (int, float)):
-                  return lonlat(tx * extent + coords[0], ty * extent + coords[1], 14, extent) + list(coords[2:])
-              if isinstance(coords, (list, tuple)):
-                  return [convert(item, tx, ty, extent) for item in coords]
-              return coords
-
-          root = Path('ermita/maps/sources/openfreemap/vector-tiles/14')
-          for path in sorted(root.glob('*/*.pbf')):
-              x, y = int(path.parent.name), int(path.stem)
-              decoded = mapbox_vector_tile.decode(path.read_bytes(), default_options={'y_coord_down': True})
-              for layer_name, layer in decoded.items():
-                  if (layer_name != 'building' and layer_name not in ground_layers) or (layer_name == 'building' and not need_buildings) or (layer_name != 'building' and not need_ground):
-                      continue
-                  extent = int(layer.get('extent', 4096))
-                  for feature in layer.get('features', []):
-                      geometry = feature.get('geometry')
-                      if not geometry or geometry.get('type') not in ('Polygon', 'MultiPolygon', 'LineString', 'MultiLineString'):
-                          continue
-                      if layer_name == 'building' and geometry.get('type') not in ('Polygon', 'MultiPolygon'):
-                          continue
-                      out_geometry = {'type': geometry['type'], 'coordinates': convert(geometry.get('coordinates'), x, y, extent)}
-                      props = dict(feature.get('properties') or {})
-                      if layer_name == 'building':
-                          signature = json.dumps([out_geometry, props], sort_keys=True, separators=(',', ':'))
-                          if signature not in seen_buildings:
-                              seen_buildings.add(signature)
-                              building_features.append({'type':'Feature', 'geometry':out_geometry, 'properties':props})
-                      else:
-                          props['source_layer'] = layer_name
-                          signature = json.dumps([out_geometry, props], sort_keys=True, separators=(',', ':'))
-                          if signature not in seen_ground:
-                              seen_ground.add(signature)
-                              ground_features.append({'type':'Feature', 'geometry':out_geometry, 'properties':props})
-
-          if need_buildings:
-              if not building_features:
-                  raise SystemExit('No building polygons found; refusing to publish an empty fallback.')
-              building_out.write_text(json.dumps({'type':'FeatureCollection','features':building_features}, separators=(',', ':')), encoding='utf-8')
-              print(f'Generated missing building fallback: {len(building_features)} polygons, {building_out.stat().st_size} bytes')
-          else:
-              print(f'Reusing existing building fallback: {building_out.stat().st_size} bytes')
-          if need_ground:
-              if not ground_features:
-                  raise SystemExit('No ground/road features found; refusing to publish an empty fallback.')
-              ground_out.write_text(json.dumps({'type':'FeatureCollection','features':ground_features}, separators=(',', ':')), encoding='utf-8')
-              print(f'Generated missing ground fallback: {len(ground_features)} features, {ground_out.stat().st_size} bytes')
-          else:
-              print(f'Reusing existing ground fallback: {ground_out.stat().st_size} bytes')
-          PY
-          fi
-          # Refresh the published fallback files after any rebuild above.
-          cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/building-fallback.geojson
-          cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/ground-fallback.geojson
-          mkdir -p site/ermita/maps/generated site/ermita/3d/generated site/ermita/3d/exports site/ermita/3d/terrain site/ermita/3d/landmarks site/ermita/3d/commercial site/complete_data/OSM/Markets site/complete_data/OSM/data/buildings/roxas-boulevard
-          cp ermita/maps/generated/ermita-building-details.geojson site/ermita/maps/generated/ermita-building-details.geojson
-          cp ermita/3d/generated/ermita-buildings-facade-details.glb site/ermita/3d/generated/ermita-buildings-facade-details.glb
-          cp ermita/3d/generated/facade-model-origin.json site/ermita/3d/generated/facade-model-origin.json
-          cp ermita/3d/generated/facade-signage-index.csv site/ermita/3d/generated/facade-signage-index.csv
-          cp ermita/3d/landmarks/landmark-facade-details.glb site/ermita/3d/landmarks/landmark-facade-details.glb
-          cp ermita/3d/landmarks/landmark-facade-origin.json site/ermita/3d/landmarks/landmark-facade-origin.json
-          cp ermita/3d/landmarks/landmark-facade-report.json site/ermita/3d/landmarks/landmark-facade-report.json
-          cp "complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb" "site/complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb"
-          cp complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json
-          cp complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json
-          cp complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb
-          cp complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json
-          cp ermita/3d/exports/adam-city-complete.glb site/ermita/3d/exports/adam-city-complete.glb
-          cp ermita/3d/terrain/ermita-copernicus-dem-cropped.tif site/ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
-          test -s site/ermita/3d/exports/adam-city-complete.glb
-          test -s site/ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
-          test -s site/ermita-malate-3d.html
-          test -s site/ermita/maps/sources/openfreemap/vector-tiles/14/13698/7520.pbf
+          # Validate existing assets only. This workflow intentionally does not create or modify GLBs.
+          test -s site/complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb
+          test -s site/complete_data/OSM/data/buildings/Ermita/Parts1.glb
+          test -s site/complete_data/OSM/data/buildings/Ermita/Parts2.glb
+          test -s site/complete_data/OSM/data/buildings/Ermita/Parts3.glb
+          test -s site/complete_data/OSM/data/buildings/Ermita/Parts4.glb
           test -s site/ermita/maps/sources/openfreemap/building-fallback.geojson
           test -s site/ermita/maps/sources/openfreemap/ground-fallback.geojson
-          test -s site/ermita/maps/generated/ermita-building-details.geojson
+          test -s site/ermita/3d/exports/adam-city-complete.glb
           test -s site/ermita/3d/generated/ermita-buildings-facade-details.glb
-          test -s site/ermita/3d/generated/facade-model-origin.json
-          test -s site/ermita/3d/generated/facade-signage-index.csv
           test -s site/ermita/3d/landmarks/landmark-facade-details.glb
-          test -s site/ermita/3d/landmarks/landmark-facade-origin.json
-          test -s site/ermita/3d/landmarks/landmark-facade-report.json
           test -s "site/complete_data/OSM/data/buildings/roxas-boulevard/roxas bulivard buildings.glb"
-          test -s site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-origin.json
-          test -s site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-bulivard-buildings-report.json
           test -s site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage.glb
-          test -s site/complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-signage-report.json
-          # Validate all generated artifacts before publishing or persisting them.
-          test -s ermita/3d/generated/facade-model-origin.json
-          test -s ermita/3d/generated/ermita-buildings-facade-details.glb
-          test -s ermita/3d/generated/facade-signage-index.csv
-          test -s ermita/3d/generated/facade-details-report.json
-          test -s ermita/3d/generated/facade-generation.sha256
-          test -s ermita/3d/landmarks/landmark-facade-details.glb
-          test -s ermita/3d/landmarks/landmark-facade-origin.json
-          test -s ermita/3d/landmarks/landmark-facade-report.json
-          test -s ermita/3d/landmarks/landmark-generation.sha256
-          # Save every newly imported/generated asset to main. Existing committed outputs are reused.
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/saeedhub101/Adam-City.git"
-          if [[ "$NEW_TILES" -gt 0 || "$REBUILD_FALLBACKS" -eq 1 ]]; then
-            git add ermita/maps/sources/openfreemap/
-          fi
-          # Persist the generated alignment file in main as well as publishing it, so the page never depends on a temporary CI-only asset.
-          git add ermita/3d/generated/facade-model-origin.json ermita/3d/generated/ermita-buildings-facade-details.glb ermita/3d/generated/facade-signage-index.csv ermita/3d/generated/facade-details-report.json ermita/3d/generated/facade-generation.sha256
-          git add ermita/3d/landmarks/landmark-facade-details.glb ermita/3d/landmarks/landmark-facade-origin.json ermita/3d/landmarks/landmark-facade-report.json ermita/3d/landmarks/landmark-generation.sha256
-          git add complete_data/OSM/data/buildings/roxas-boulevard/
-          git add complete_data/OSM/data/buildings/ermita-glb-parts/
-          if ! git diff --cached --quiet; then
-            git commit -m "Store generated building and ground fallback data"
-            # Other workflows checkpoint progress to main while this build is running.
-            # Rebase this generated commit onto latest main to avoid a non-fast-forward rejection.
-            git fetch origin main
-            git rebase origin/main
-            git push origin HEAD:main
-          else
-            echo "Fallback files already exist and are unchanged; no re-import or repository commit needed."
-          fi
-          # Keep the repository's root index.html deleted; publish a tiny redirect only in the artifact.
-          printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=roxas-boulevard-model.html"><title>Roxas Boulevard 3D Model</title><a href="roxas-boulevard-model.html">Open Roxas Boulevard 3D model</a></html>' > site/index.html
-          echo "Published files:"
+
+          printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=test.html"><title>Adam-City</title><a href="test.html">Open Adam-City preview</a></html>' > site/index.html
+          echo "Validated committed assets; no GLB generation or repository writes were performed."
           du -sh site
           find site -type f -name '*.pbf' | wc -l
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload map artifact
+      - name: Upload static site
         uses: actions/upload-pages-artifact@v4
         with:
           path: site
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy existing assets
         id: deployment
         uses: actions/deploy-pages@v4
