@@ -14,3 +14,12 @@ The GLB parts are preserved as committed assets; this metadata enrichment workfl
   `python3 complete_data/OSM/scripts/generate_building_enrichment_index.py`
 
 The enrichment is metadata-only: it does not change GLBs, footprints, geometry, coordinates, IDs, heights, or existing colors. Exact-ID matches are preferred. Spatial matches are accepted only when containment/overlap and area checks identify a clear candidate. Ambiguous candidates go into the review queue and do not receive candidate semantic tags. Nearby POIs are never attached to a building by proximity alone. Facade photographs and verified photographic material estimates are not yet included. Source attributes are incomplete for many buildings, so missing values remain missing until supported by additional evidence.
+
+## Image-to-building linkage (in progress)
+
+- `building-image-links.json` is the evidence register for named buildings, their source photo pages, OSM identities, and candidate Adam-City part records.
+- A link is not automatically a texture assignment. Each photo must be inspected at high resolution and the target mesh/facade must be confirmed before any decal/material is applied.
+- The current register has an exact OSM-ID link from Luneta Theater to a **roof-details feature** in part 1; the primary building-footprint link is not yet confirmed.
+- Malate Church has an identity-supported photo source, but its closest unmatched footprint is only a candidate (38.2 m from the reference coordinate), not an accepted building match.
+- The Commons geotagged-image discovery workflow writes candidate records with `source_feature_id`; proximity-only results remain unverified and must not be applied automatically.
+- No image has been applied to a GLB by this process. Geometry, positions, heights, IDs, and existing materials remain unchanged.
