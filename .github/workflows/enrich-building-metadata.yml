@@ -8,6 +8,8 @@ on:
       - '.github/workflows/enrich-building-metadata.yml'
       - 'complete_data/OSM/scripts/generate_building_enrichment_index.py'
       - 'complete_data/OSM/scripts/merge_building_source_evidence.py'
+      - 'complete_data/OSM/scripts/build_building_visual_research_queue.py'
+      - 'complete_data/OSM/scripts/research_building_image_candidates.py'
       - 'complete_data/OSM/data/buildings/parts/parts-inventory-index.json'
       - 'complete_data/OSM/data/buildings/parts/part1/part1-inventory.json'
       - 'complete_data/OSM/data/buildings/parts/part2/part2-inventory.json'
@@ -37,7 +39,7 @@ concurrency:
 jobs:
   enrich:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - name: Check out building data, OpenFreeMap and visual evidence
         uses: actions/checkout@v4
@@ -53,6 +55,12 @@ jobs:
             /complete_data/OSM/data/buildings/parts/building-enrichment-report.json
             /complete_data/OSM/data/buildings/parts/building-source-merge-report.json
             /complete_data/OSM/data/buildings/parts/building-source-link-audit.csv
+            /complete_data/OSM/data/buildings/parts/building-visual-research-queue.csv
+            /complete_data/OSM/data/buildings/parts/building-visual-research-queue.geojson
+            /complete_data/OSM/data/buildings/parts/BUILDING-VISUAL-RESEARCH.md
+            /complete_data/OSM/data/buildings/parts/building-image-candidates.json
+            /complete_data/OSM/data/buildings/parts/building-image-candidates.csv
+            /complete_data/OSM/data/buildings/parts/BUILDING-IMAGE-CANDIDATES.md
             /complete_data/OSM/data/buildings/parts/building-image-links.json
             /complete_data/OSM/data/buildings/parts/building-image-candidates.json
             /complete_data/OSM/data/buildings/ermita-building-details.geojson
@@ -68,6 +76,8 @@ jobs:
             /complete_data/open free tile/layers/housenumber.geojsonl
             /complete_data/OSM/scripts/generate_building_enrichment_index.py
             /complete_data/OSM/scripts/merge_building_source_evidence.py
+            /complete_data/OSM/scripts/build_building_visual_research_queue.py
+            /complete_data/OSM/scripts/research_building_image_candidates.py
           sparse-checkout-cone-mode: false
 
       - name: Install spatial dependencies
@@ -75,6 +85,12 @@ jobs:
 
       - name: Generate the base OSM identity and geometry evidence index
         run: python3 complete_data/OSM/scripts/generate_building_enrichment_index.py
+
+      - name: Build visual review queue for unresolved buildings
+        run: python3 complete_data/OSM/scripts/build_building_visual_research_queue.py
+
+      - name: Discover Wikimedia Commons photo candidates
+        run: python3 complete_data/OSM/scripts/research_building_image_candidates.py
 
       - name: Merge OpenFreeMap properties, house numbers, photos and facade assets
         run: python3 complete_data/OSM/scripts/merge_building_source_evidence.py
@@ -112,6 +128,12 @@ jobs:
           git add complete_data/OSM/data/buildings/parts/building-enrichment-report.json
           git add complete_data/OSM/data/buildings/parts/building-source-merge-report.json
           git add complete_data/OSM/data/buildings/parts/building-source-link-audit.csv
+          git add complete_data/OSM/data/buildings/parts/building-visual-research-queue.csv
+          git add complete_data/OSM/data/buildings/parts/building-visual-research-queue.geojson
+          git add complete_data/OSM/data/buildings/parts/BUILDING-VISUAL-RESEARCH.md
+          git add complete_data/OSM/data/buildings/parts/building-image-candidates.json
+          git add complete_data/OSM/data/buildings/parts/building-image-candidates.csv
+          git add complete_data/OSM/data/buildings/parts/BUILDING-IMAGE-CANDIDATES.md
           if git diff --cached --quiet; then
             echo "Unified building metadata is already up to date."
           else
