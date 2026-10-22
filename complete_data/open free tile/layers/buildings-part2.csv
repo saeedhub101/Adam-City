@@ -1,176 +1,861 @@
-osm_or_tile_feature_id,source,feature_layer,geometry_type,longitude_centroid,latitude_centroid,west,south,east,north,render_height_m,render_min_height_m,colour,building_name,house_number,street,source_zoom,source_tile_x,source_tile_y,geometry_coordinate_count,geometry_note
-26111080,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9766741,14.5930061,120.9729481,14.5833550,120.9817886,14.5973667,22,0,,,,,14,13697,7520,107,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-276505692,OpenFreeMap/OpenMapTiles,building,Polygon,120.9790918,14.5955282,120.9785271,14.5951708,120.9796590,14.5958560,22,0,white,,,,14,13697,7520,26,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8244084400,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9746270,14.5918593,120.9732485,14.5899482,120.9795302,14.5958560,22,14,,,,,14,13697,7520,34,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8294903382,OpenFreeMap/OpenMapTiles,building,Polygon,120.9747183,14.5919588,120.9746647,14.5918639,120.9748095,14.5920092,22,18,,,,,14,13697,7520,7,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11225410172,OpenFreeMap/OpenMapTiles,building,Polygon,120.9749528,14.5935830,120.9749007,14.5935459,120.9750134,14.5936186,22,19,,,,,14,13697,7520,7,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11232511382,OpenFreeMap/OpenMapTiles,building,Polygon,120.9768094,14.5947970,120.9767729,14.5947658,120.9768587,14.5948437,22,17,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11273900102,OpenFreeMap/OpenMapTiles,building,Polygon,120.9753199,14.5945382,120.9749812,14.5944232,120.9757698,14.5946413,22,16,,,,,14,13697,7520,7,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-200113750,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9748666,14.5918205,120.9727764,14.5866569,120.9781730,14.5936705,23,0,,,,,14,13697,7520,47,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11215659540,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9732774,14.5931648,120.9732270,14.5930527,120.9733665,14.5932604,23,18,,,,,14,13697,7520,10,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11225410162,OpenFreeMap/OpenMapTiles,building,Polygon,120.9752043,14.5935739,120.9751636,14.5935407,120.9752655,14.5935978,23,19,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1125480200,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9756849,14.5874673,120.9747183,14.5863973,120.9760326,14.5917341,24,0,,,,,14,13697,7520,60,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11179596852,OpenFreeMap/OpenMapTiles,building,Polygon,120.9733257,14.5917580,120.9732807,14.5917133,120.9733933,14.5918172,24,14,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8244084380,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9736832,14.5914040,120.9732968,14.5912409,120.9738386,14.5918016,25,14,,,,,14,13697,7520,29,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11202416772,OpenFreeMap/OpenMapTiles,building,Polygon,120.9733386,14.5917684,120.9733182,14.5917497,120.9733665,14.5917912,25,26,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11202416782,OpenFreeMap/OpenMapTiles,building,Polygon,120.9733311,14.5917621,120.9733075,14.5917393,120.9733665,14.5917912,25,24,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-143300180,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9760930,14.5914591,120.9729481,14.5863973,120.9781140,14.5973044,26,0,,,,,14,13697,7520,125,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8295823730,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9763267,14.5929676,120.9731787,14.5900625,120.9795141,14.5958301,26,21,,,,,14,13697,7520,38,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11204800562,OpenFreeMap/OpenMapTiles,building,Polygon,120.9750849,14.5890666,120.9750402,14.5890086,120.9751260,14.5890968,26,14,,,,,14,13697,7520,6,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11232916002,OpenFreeMap/OpenMapTiles,building,Polygon,120.9759353,14.5866962,120.9758985,14.5866620,120.9759682,14.5867243,26,20,,,,,14,13697,7520,7,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11273981722,OpenFreeMap/OpenMapTiles,building,Polygon,120.9732152,14.5932469,120.9731948,14.5932240,120.9732431,14.5932707,26,22,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-12923885242,OpenFreeMap/OpenMapTiles,building,Polygon,120.9772096,14.5966949,120.9771752,14.5966399,120.9772611,14.5967385,26,18,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-270866910,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9785020,14.5873266,120.9783608,14.5870410,120.9786505,14.5877523,27,0,,,,,14,13697,7520,6,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11202416762,OpenFreeMap/OpenMapTiles,building,Polygon,120.9733375,14.5917673,120.9733236,14.5917549,120.9733558,14.5917808,27,26,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-835913100,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9766512,14.5895880,120.9748256,14.5878820,120.9781140,14.5933330,28,0,,,,,14,13697,7520,53,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8074099762,OpenFreeMap/OpenMapTiles,building,Polygon,120.9730800,14.5964966,120.9727764,14.5961831,120.9735113,14.5967074,28,0,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11182180460,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9753701,14.5887939,120.9750563,14.5883026,120.9759200,14.5890761,28,26,,,,,14,13697,7520,14,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-86027390,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9779302,14.5895511,120.9757429,14.5866569,120.9788650,14.5921131,29,0,,,,,14,13697,7520,46,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-6203467052,OpenFreeMap/OpenMapTiles,building,Polygon,120.9783350,14.5914994,120.9782803,14.5914330,120.9783876,14.5915420,29,0,beige,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11225320842,OpenFreeMap/OpenMapTiles,building,Polygon,120.9759489,14.5882444,120.9758985,14.5881832,120.9760273,14.5883077,29,26,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-113422303,OpenFreeMap/OpenMapTiles,building,Polygon,120.9790421,14.5955092,120.9787899,14.5952798,120.9794068,14.5957366,30,14,,,,,14,13697,7520,10,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-149508890,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9735962,14.5936043,120.9721112,14.5912461,120.9765637,14.5973044,30,0,,,,,14,13697,7520,93,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11203147022,OpenFreeMap/OpenMapTiles,building,Polygon,120.9741221,14.5932403,120.9739244,14.5930890,120.9743911,14.5935147,30,26,,,,,14,13697,7520,7,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-909526732,OpenFreeMap/OpenMapTiles,building,Polygon,120.9768614,14.5910350,120.9767193,14.5909398,120.9769928,14.5911994,31,0,,,,,14,13697,7520,6,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11225415782,OpenFreeMap/OpenMapTiles,building,Polygon,120.9750445,14.5930859,120.9748363,14.5929281,120.9752226,14.5933227,31,28,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-613260,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9801206,14.5873774,120.9728944,14.5863557,120.9816492,14.5902597,32,0,,,,,14,13697,7520,50,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8290527050,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9732619,14.5901429,120.9731895,14.5900728,120.9733236,14.5902234,32,26,,,,,14,13697,7520,12,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11202416792,OpenFreeMap/OpenMapTiles,building,Polygon,120.9736711,14.5914007,120.9736079,14.5913395,120.9737474,14.5914745,32,25,,,,,14,13697,7520,9,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-301063710,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9744109,14.5941202,120.9716392,14.5927205,120.9755391,14.5974394,33,0,,,,,14,13697,7520,19,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11182189362,OpenFreeMap/OpenMapTiles,building,Polygon,120.9736663,14.5914111,120.9736025,14.5913344,120.9737474,14.5914797,33,32,,,,,14,13697,7520,9,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-5488668840,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9737978,14.5964738,120.9736401,14.5963855,120.9740317,14.5965309,34,0,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11182159350,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9725189,14.5916510,120.9720844,14.5912201,120.9729642,14.5920871,34,30,,,,,14,13697,7520,20,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11314266262,OpenFreeMap/OpenMapTiles,building,Polygon,120.9786916,14.5898803,120.9785753,14.5897925,120.9788650,14.5901092,34,29,,,,,14,13697,7520,12,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-835913120,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9750015,14.5931127,120.9748256,14.5929125,120.9752387,14.5933330,35,0,,,,,14,13697,7520,18,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-148859630,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9727067,14.5916827,120.9720844,14.5912201,120.9736240,14.5920871,36,0,,,,,14,13697,7520,38,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1613064540,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9758180,14.5972192,120.9756625,14.5970033,120.9759736,14.5973667,37,0,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11314266210,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9786863,14.5899547,120.9785914,14.5898288,120.9788007,14.5900676,37,34,,,,,14,13697,7520,28,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-168261420,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9770250,14.5912441,120.9737098,14.5897769,120.9789187,14.5935511,38,0,,,,,14,13697,7520,28,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11203147012,OpenFreeMap/OpenMapTiles,building,Polygon,120.9741797,14.5932884,120.9740961,14.5931825,120.9742731,14.5933590,38,30,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11314266230,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9787384,14.5898823,120.9786075,14.5897925,120.9788650,14.5899534,38,34,,,,,14,13697,7520,10,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1813826722,OpenFreeMap/OpenMapTiles,building,Polygon,120.9738690,14.5966710,120.9736454,14.5965101,120.9740263,14.5967437,40,0,,,,,14,13697,7520,12,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-5823885742,OpenFreeMap/OpenMapTiles,building,Polygon,120.9815508,14.5898652,120.9815043,14.5898133,120.9816116,14.5899171,42,0,#cccc33,,,,14,13697,7520,9,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1613064620,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9717872,14.5968517,120.9712797,14.5964322,120.9721112,14.5971227,43,0,,,,,14,13697,7520,10,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8244084422,OpenFreeMap/OpenMapTiles,building,Polygon,120.9736669,14.5914070,120.9736079,14.5913447,120.9737420,14.5914745,43,33,,,,,14,13697,7520,9,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1613064520,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9730258,14.5966067,120.9715211,14.5964478,120.9766603,14.5967385,44,0,,,,,14,13697,7520,31,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8244084442,OpenFreeMap/OpenMapTiles,building,Polygon,120.9735584,14.5917935,120.9735274,14.5917600,120.9735972,14.5918275,48,36,,,,,14,13697,7520,9,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8244084432,OpenFreeMap/OpenMapTiles,building,Polygon,120.9736733,14.5914122,120.9736615,14.5913967,120.9736830,14.5914226,49,43,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-5823885732,OpenFreeMap/OpenMapTiles,building,Polygon,120.9815556,14.5898675,120.9815258,14.5898340,120.9815902,14.5898963,50,0,#cccc33,,,,14,13697,7520,9,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-11179594622,OpenFreeMap/OpenMapTiles,building,Polygon,120.9735650,14.5917870,120.9735489,14.5917756,120.9735757,14.5918016,52,48,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-3317771442,OpenFreeMap/OpenMapTiles,building,Polygon,120.9734938,14.5917257,120.9731627,14.5910904,120.9740585,14.5919210,53,0,,,,,14,13697,7520,29,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1813826710,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9761468,14.5966162,120.9740210,14.5964374,120.9772986,14.5967749,61,0,,,,,14,13697,7520,14,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1835495700,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9737188,14.5834710,120.9734255,14.5832512,120.9739566,14.5839209,65,0,,,,,14,13697,7520,6,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8263243272,OpenFreeMap/OpenMapTiles,building,Polygon,120.9738193,14.5964717,120.9736723,14.5963855,120.9740317,14.5965257,103,0,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8263243282,OpenFreeMap/OpenMapTiles,building,Polygon,120.9738482,14.5964676,120.9737957,14.5964167,120.9739244,14.5964997,112,0,,,,,14,13697,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-4856039280,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9731213,14.5964395,120.9728247,14.5962038,120.9734577,14.5966659,115,21,,,,,14,13697,7520,10,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8263243202,OpenFreeMap/OpenMapTiles,building,Polygon,120.9753818,14.5967434,120.9751850,14.5966451,120.9755391,14.5968683,151,0,,,,,14,13697,7520,16,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8263243212,OpenFreeMap/OpenMapTiles,building,Polygon,120.9750505,14.5968228,120.9748739,14.5967022,120.9753406,14.5969306,173,0,,,,,14,13697,7520,13,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-235935490,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9873099,14.5781775,120.9814078,14.5731741,120.9936172,14.5837755,4,0,,,,,14,13698,7521,246,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-29187290,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9897234,14.5780685,120.9811020,14.5729405,120.9934831,14.5839157,5,0,,,,,14,13698,7521,6472,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-7627590470,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9872453,14.5787667,120.9871799,14.5786670,120.9873140,14.5788331,6,0,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-25759640,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9861482,14.5777487,120.9811020,14.5728989,120.9935313,14.5839157,8,0,,,,,14,13698,7521,832,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8380822540,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9923834,14.5779495,120.9923083,14.5779142,120.9924585,14.5779869,10,0,,,,,14,13698,7521,10,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-165543230,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9872409,14.5776976,120.9811020,14.5729768,120.9937674,14.5839157,11,0,,,,,14,13698,7521,725,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1246945920,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9900640,14.5754765,120.9897494,14.5752456,120.9904039,14.5758167,12,0,,,,,14,13698,7521,17,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-60950020,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9868758,14.5772816,120.9811020,14.5730702,120.9931129,14.5836094,15,0,,,,,14,13698,7521,464,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-142886403,OpenFreeMap/OpenMapTiles,building,Polygon,120.9846044,14.5825502,120.9842509,14.5820571,120.9849966,14.5829968,15,3,,,,,14,13698,7521,30,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-2881265180,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9813622,14.5776866,120.9812254,14.5775092,120.9815043,14.5778623,15,7,,,,,14,13698,7521,12,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-901239592,OpenFreeMap/OpenMapTiles,building,Polygon,120.9818670,14.5796825,120.9816974,14.5794924,120.9821212,14.5798662,18,0,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-165543540,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9849632,14.5773838,120.9811020,14.5730910,120.9928823,14.5835263,19,0,,,,,14,13698,7521,297,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8186471742,OpenFreeMap/OpenMapTiles,building,Polygon,120.9868323,14.5824538,120.9867883,14.5823998,120.9869009,14.5825036,19,10,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-2779815860,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9844659,14.5784649,120.9825987,14.5775456,120.9869921,14.5795651,21,0,,,,,14,13698,7521,12,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-29187530,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9860842,14.5780213,120.9811020,14.5735635,120.9929895,14.5839157,22,0,,,,,14,13698,7521,181,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8186317532,OpenFreeMap/OpenMapTiles,building,Polygon,120.9865587,14.5822793,120.9864932,14.5822025,120.9866595,14.5823479,22,10,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-748667022,OpenFreeMap/OpenMapTiles,building,Polygon,120.9841241,14.5825083,120.9837252,14.5821661,120.9843904,14.5828151,25,0,,,,,14,13698,7521,11,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1305321012,OpenFreeMap/OpenMapTiles,building,Polygon,120.9841198,14.5759107,120.9826791,14.5746278,120.9852433,14.5785424,25,-4,,,,,14,13698,7521,47,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-343648300,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9851176,14.5778751,120.9811020,14.5731429,120.9926516,14.5829241,26,0,,,,,14,13698,7521,125,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-2779779870,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9867271,14.5800583,120.9866434,14.5799908,120.9867829,14.5801414,26,21,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-898309770,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9826319,14.5770518,120.9821695,14.5749549,120.9831458,14.5790460,28,0,,,,,14,13698,7521,10,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-235935410,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9853423,14.5777520,120.9811020,14.5727172,120.9930378,14.5827632,30,0,,,,,14,13698,7521,126,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-901257792,OpenFreeMap/OpenMapTiles,building,Polygon,120.9811438,14.5797842,120.9811020,14.5796274,120.9812361,14.5798714,32,0,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-80374140,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9854624,14.5771672,120.9816009,14.5733818,120.9885156,14.5827320,33,0,,,,,14,13698,7521,112,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8223911112,OpenFreeMap/OpenMapTiles,building,Polygon,120.9812057,14.5790538,120.9811020,14.5789629,120.9813219,14.5791342,33,32,,,,,14,13698,7521,6,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-2900914960,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9852165,14.5768606,120.9811288,14.5752716,120.9873945,14.5797416,36,0,,,,,14,13698,7521,15,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-224804520,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9853430,14.5777173,120.9811020,14.5730651,120.9871638,14.5831629,37,0,,,,,14,13698,7521,63,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8243893190,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9877002,14.5794000,120.9875554,14.5792432,120.9879148,14.5795547,38,0,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1563075980,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9873462,14.5791463,120.9871638,14.5789785,120.9875286,14.5793107,39,0,,,,,14,13698,7521,6,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-3086746080,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9889340,14.5742789,120.9886926,14.5738698,120.9892988,14.5745966,41,0,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1656727620,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9860465,14.5779818,120.9825504,14.5731533,120.9900123,14.5833914,43,0,,,,,14,13698,7521,33,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-877413660,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9834745,14.5779388,120.9811020,14.5730391,120.9863430,14.5826542,44,0,,,,,14,13698,7521,37,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-3086963082,OpenFreeMap/OpenMapTiles,building,Polygon,120.9814239,14.5755270,120.9812146,14.5753806,120.9815794,14.5756246,45,0,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-2671712000,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9843957,14.5771024,120.9811020,14.5748355,120.9875286,14.5793107,48,0,,,,,14,13698,7521,17,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-508347820,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9835643,14.5734929,120.9833336,14.5733143,120.9837413,14.5736102,50,0,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-2226128500,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9811208,14.5748679,120.9811020,14.5748355,120.9811395,14.5749341,52,0,,,,,14,13698,7521,4,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-5332988970,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9827760,14.5769196,120.9825289,14.5767408,120.9830332,14.5770887,54,0,,,,,14,13698,7521,62,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8236626860,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9908503,14.5771402,120.9811020,14.5748355,120.9930915,14.5777844,55,0,,,,,14,13698,7521,24,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8243893120,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9900884,14.5754523,120.9897494,14.5752456,120.9904039,14.5758167,61,12,,,,,14,13698,7521,16,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-2779614690,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9848319,14.5775595,120.9821802,14.5730131,120.9909886,14.5824102,65,0,,,,,14,13698,7521,23,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8186317292,OpenFreeMap/OpenMapTiles,building,Polygon,120.9823626,14.5821070,120.9821534,14.5819066,120.9825718,14.5824102,66,0,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-508347930,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9865619,14.5799493,120.9863430,14.5797468,120.9867400,14.5800843,68,0,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8186317380,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9846614,14.5823680,120.9839720,14.5817352,120.9859514,14.5828151,72,0,,,,,14,13698,7521,17,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8186317472,OpenFreeMap/OpenMapTiles,building,Polygon,120.9859031,14.5818287,120.9858388,14.5817352,120.9859514,14.5819014,77,0,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-5335283100,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9858216,14.5775533,120.9816813,14.5733558,120.9896153,14.5818650,79,0,,,,,14,13698,7521,10,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8232952052,OpenFreeMap/OpenMapTiles,building,Polygon,120.9826532,14.5759607,120.9823787,14.5756973,120.9828186,14.5761386,86,0,,,,,14,13698,7521,19,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-3086953692,OpenFreeMap/OpenMapTiles,building,Polygon,120.9823959,14.5762663,120.9822553,14.5761178,120.9826040,14.5764086,100,0,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1621027940,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9819453,14.5796752,120.9817135,14.5795132,120.9820998,14.5798403,103,0,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8236626792,OpenFreeMap/OpenMapTiles,building,Polygon,120.9822071,14.5749185,120.9819120,14.5747316,120.9823787,14.5751054,109,0,,,,,14,13698,7521,7,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8236626802,OpenFreeMap/OpenMapTiles,building,Polygon,120.9822510,14.5744928,120.9820515,14.5743163,120.9824646,14.5747576,115,0,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-5332988990,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9836310,14.5751506,120.9831887,14.5743942,120.9841490,14.5758842,125,0,,,,,14,13698,7521,27,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-5754221602,OpenFreeMap/OpenMapTiles,building,Polygon,120.9825904,14.5732694,120.9824109,14.5729301,120.9829098,14.5736154,129,0,,,,,14,13698,7521,11,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-2628344310,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9883714,14.5749491,120.9880489,14.5747264,120.9887624,14.5753027,133,0,,,,,14,13698,7521,9,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-5332988950,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9835091,14.5782453,120.9831244,14.5779349,120.9838861,14.5785060,137,0,,,,,14,13698,7521,18,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8144791060,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9824013,14.5787293,120.9821963,14.5785528,120.9826201,14.5789940,140,0,,,,,14,13698,7521,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-5332988980,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9861917,14.5753207,120.9821427,14.5749964,120.9868634,14.5767824,143,0,,,,,14,13698,7521,52,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8175125780,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9853174,14.5768521,120.9826255,14.5734752,120.9877592,14.5795547,151,0,,,,,14,13698,7521,21,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8403740542,OpenFreeMap/OpenMapTiles,building,Polygon,120.9890098,14.5743382,120.9886926,14.5738698,120.9892613,14.5745811,161,0,,,,,14,13698,7521,23,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8208364312,OpenFreeMap/OpenMapTiles,building,Polygon,120.9850163,14.5740275,120.9848249,14.5738906,120.9851950,14.5742176,178,0,,,,,14,13698,7521,32,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8175125770,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9850116,14.5740346,120.9849161,14.5739580,120.9851092,14.5741398,185,0,,,,,14,13698,7521,16,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-954905530,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9868925,14.5913206,120.9811878,14.5834796,120.9915626,14.5970241,4,0,,,,,14,13698,7520,452,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-618830,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9881330,14.5921595,120.9811020,14.5832512,120.9935045,14.5972888,5,0,,,,,14,13698,7520,4025,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-14624071832,OpenFreeMap/OpenMapTiles,building,Polygon,120.9882892,14.5926114,120.9882420,14.5925284,120.9883225,14.5926685,5,0,blue,,,,14,13698,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1882043022,OpenFreeMap/OpenMapTiles,building,Polygon,120.9811849,14.5863383,120.9811020,14.5861948,120.9812844,14.5864388,7,0,,,,,14,13698,7520,11,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-23886790,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9878594,14.5906092,120.9811020,14.5832512,120.9931290,14.5977041,8,0,,,,,14,13698,7520,1237,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-287886590,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9839011,14.5964021,120.9838647,14.5963180,120.9839451,14.5964582,8,3,,,,,14,13698,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1758228572,OpenFreeMap/OpenMapTiles,building,Polygon,120.9883520,14.5926106,120.9883118,14.5925232,120.9883976,14.5926633,8,0,white,,,,14,13698,7520,6,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1758228580,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9880754,14.5926087,120.9879738,14.5925024,120.9881830,14.5926789,8,0,blue,,,,14,13698,7520,17,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1758228722,OpenFreeMap/OpenMapTiles,building,Polygon,120.9882066,14.5926156,120.9881777,14.5925336,120.9882474,14.5926685,8,0,grey,,,,14,13698,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1792395810,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9849724,14.5957859,120.9848946,14.5957159,120.9850502,14.5958664,10,0,,,,,14,13698,7520,12,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-62036370,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9860585,14.5924945,120.9813434,14.5832512,120.9932739,14.5972369,11,0,,,,,14,13698,7520,612,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-7625878140,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9859885,14.5897175,120.9859246,14.5896316,120.9860909,14.5898392,11,0,green,,,,14,13698,7520,11,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-23991390,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9860163,14.5912321,120.9811503,14.5832512,120.9920937,14.5972992,15,0,,,,,14,13698,7520,411,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-553433800,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9855437,14.5907477,120.9852809,14.5904778,120.9859031,14.5910436,17,0,,,,,14,13698,7520,7,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-44625010,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9859521,14.5914153,120.9811020,14.5832512,120.9933543,14.5973044,19,0,,,,,14,13698,7520,146,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-4526203,OpenFreeMap/OpenMapTiles,building,Polygon,120.9815902,14.5896619,120.9811932,14.5883804,120.9820354,14.5902026,20,0,#cccc33,,,,14,13698,7520,55,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-5823885752,OpenFreeMap/OpenMapTiles,building,Polygon,120.9815484,14.5898658,120.9814829,14.5897925,120.9816277,14.5899327,21,0,#cccc33,,,,14,13698,7520,9,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-10619887352,OpenFreeMap/OpenMapTiles,building,Polygon,120.9846512,14.5852164,120.9844494,14.5846789,120.9850180,14.5854109,21,0,,,,,14,13698,7520,13,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-46542950,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9857391,14.5913501,120.9814990,14.5832512,120.9914124,14.5973719,22,0,,,,,14,13698,7520,96,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1785921582,OpenFreeMap/OpenMapTiles,building,Polygon,120.9873396,14.5930988,120.9871960,14.5929644,120.9874374,14.5932292,22,0,yellow,,,,14,13698,7520,9,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-304109890,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9885305,14.5918820,120.9851629,14.5846581,120.9911495,14.5971486,26,0,,,,,14,13698,7520,36,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-158683002,OpenFreeMap/OpenMapTiles,building,Polygon,120.9830908,14.5897960,120.9822071,14.5892526,120.9841758,14.5903324,27,0,,,,,14,13698,7520,15,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-8359444720,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9833980,14.5916681,120.9832424,14.5910384,120.9835535,14.5919314,29,0,,,,,14,13698,7520,7,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-329815770,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9858409,14.5908435,120.9823787,14.5860962,120.9876841,14.5963492,30,0,,,,,14,13698,7520,56,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-613260,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9813528,14.5869599,120.9811020,14.5863557,120.9816492,14.5874356,32,0,,,,,14,13698,7520,32,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-301063710,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9837765,14.5888384,120.9835267,14.5885985,120.9839773,14.5892526,33,0,,,,,14,13698,7520,9,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-593427090,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9844802,14.5921264,120.9830546,14.5905141,120.9851843,14.5954874,36,0,,,,,14,13698,7520,16,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-7625878172,OpenFreeMap/OpenMapTiles,building,Polygon,120.9839247,14.5906408,120.9838057,14.5904726,120.9841007,14.5907529,40,0,,,,,14,13698,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1792223540,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9863775,14.5971286,120.9862840,14.5970189,120.9864450,14.5972680,41,0,,,,,14,13698,7520,7,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-5823885742,OpenFreeMap/OpenMapTiles,building,Polygon,120.9815508,14.5898652,120.9815043,14.5898133,120.9816116,14.5899171,42,0,#cccc33,,,,14,13698,7520,9,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-894169880,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9910493,14.5912967,120.9897387,14.5832512,120.9919596,14.5964842,43,0,,,,,14,13698,7520,13,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-3753556990,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9867244,14.5847261,120.9865040,14.5842532,120.9870458,14.5850475,44,0,,,,,14,13698,7520,11,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-2348596220,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9836977,14.5912229,120.9836179,14.5907633,120.9837842,14.5916458,47,0,,,,,14,13698,7520,15,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-5823885732,OpenFreeMap/OpenMapTiles,building,Polygon,120.9815556,14.5898675,120.9815258,14.5898340,120.9815902,14.5898963,50,0,#cccc33,,,,14,13698,7520,9,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-10612428970,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9857646,14.5948030,120.9854472,14.5944647,120.9860480,14.5949423,50,0,,,,,14,13698,7520,6,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-62034990,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9837118,14.5911890,120.9836179,14.5907633,120.9837842,14.5916458,54,0,,,,,14,13698,7520,10,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1758228740,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9872088,14.5888606,120.9867024,14.5846218,120.9877700,14.5930838,55,0,,,,,14,13698,7520,10,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1764329540,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9833947,14.5907581,120.9833282,14.5905193,120.9834945,14.5909190,58,0,,,,,14,13698,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-5670793670,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9848794,14.5933099,120.9835160,14.5918587,120.9866649,14.5950306,65,0,,,,,14,13698,7520,13,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-10619887152,OpenFreeMap/OpenMapTiles,building,Polygon,120.9836033,14.5919499,120.9835160,14.5918587,120.9837574,14.5921079,72,0,,,,,14,13698,7520,7,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-7625878182,OpenFreeMap/OpenMapTiles,building,Polygon,120.9842134,14.5906083,120.9841222,14.5904674,120.9843689,14.5907010,79,0,,,,,14,13698,7520,7,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-3543141450,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9833754,14.5914742,120.9832853,14.5910592,120.9835321,14.5919002,82,0,,,,,14,13698,7520,35,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1871413802,OpenFreeMap/OpenMapTiles,building,Polygon,120.9829452,14.5955373,120.9827060,14.5952798,120.9833121,14.5958041,83,0,,,,,14,13698,7520,5,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-6036586330,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9833658,14.5914818,120.9833068,14.5912461,120.9834409,14.5917081,89,0,,,,,14,13698,7520,22,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-5426867990,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9858618,14.5879667,120.9851629,14.5874304,120.9865791,14.5884998,90,0,,,,,14,13698,7520,10,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-1792513620,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9850937,14.5910888,120.9847069,14.5907841,120.9854203,14.5913759,93,0,,,,,14,13698,7520,10,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-5688346570,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9839528,14.5918691,120.9837091,14.5916666,120.9841436,14.5920300,104,0,,,,,14,13698,7520,7,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-10619887200,OpenFreeMap/OpenMapTiles,building,MultiPolygon,120.9851191,14.5910122,120.9837091,14.5905141,120.9858495,14.5918950,108,0,,,,,14,13698,7520,20,Full polygon geometry retained in source PBF tiles; this index is metadata only.
-4826984342,OpenFreeMap/OpenMapTiles,building,Polygon,120.9847332,14.5849536,120.9844655,14.5846945,120.9850073,14.5853590,165,0,,,,,14,13698,7520,11,Full polygon geometry retained in source PBF tiles; this index is metadata only.
+registry_id,source_aggregate_feature_index,source_polygon_component_index,longitude,latitude,render_height_m,render_min_height_m,facade_colour,osm_feature_id,osm_match_method,osm_match_confidence,building_name,brand,building_type,building_levels,osm_height_m,building_material,building_colour,roof_shape,roof_material,roof_colour,address_housenumber,address_street,address_postcode,address_city,address_neighbourhood,address_candidates
+OFM-ERMITA-00862,603,198,120.98534105247532,14.587901261869805,15,0,,way/1462527711,nearest_osm_building_centroid_under_8m,0.75,,,commercial,,,,,,,,,,,,,0
+OFM-ERMITA-00863,603,199,120.98491435588907,14.587390126073727,15,0,,way/95490556,centroid_inside_osm_building_polygon,0.98,College of Industrial Technology Building,,college,4,,,,,,,,,,Manila,,2
+OFM-ERMITA-00864,603,200,120.98453802290429,14.587954638891409,15,0,,way/95490554,centroid_inside_osm_building_polygon,0.98,College of Architecture and Fine Arts Building,,college,4,,,,,,,,,,Manila,,2
+OFM-ERMITA-00865,603,201,120.98610136490615,14.58791758939988,15,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00866,603,202,120.98657062305703,14.587692341086358,15,0,,way/542684068,centroid_inside_osm_building_polygon,0.98,,,yes,4,,,,skillion,,,,,,,,0
+OFM-ERMITA-00867,603,217,120.98504298203656,14.591492259745696,15,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00868,610,4,120.98555278546601,14.59074601218302,17,0,,way/1061988726,centroid_inside_osm_building_polygon,0.98,,,residential,4,16.5,,,,,,,,,,,0
+OFM-ERMITA-00869,612,112,120.98411134829942,14.590747978692612,19,0,,way/217725313,centroid_inside_osm_building_polygon,0.98,,,yes,5,,,,,,,,,,,,2
+OFM-ERMITA-00870,612,113,120.98548545528828,14.590270339494422,19,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00871,612,114,120.98511244339647,14.58973744259547,19,0,,way/179404068,centroid_inside_osm_building_polygon,0.98,,,apartments,5,,,,,,,,,,Manila,,1
+OFM-ERMITA-00872,612,115,120.98461946489246,14.58919057104825,19,0,,way/179404253,nearest_osm_building_centroid_under_8m,0.75,,,apartments,5,,,,,,,,,,Manila,,1
+OFM-ERMITA-00873,612,116,120.98215700622855,14.589097116392965,19,0,,,unmatched,0,,,,,,,,,,,,,,,,3
+OFM-ERMITA-00874,612,117,120.98116884826882,14.585426804412492,19,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00875,612,188,120.9843880211645,14.58336372601146,19,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00876,618,0,120.98163216183252,14.589335411708289,20,0,#cccc33,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-00877,620,0,120.98473949758271,14.585058070818864,21,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00878,621,68,120.9833518379055,14.587292265022757,22,0,,way/164560136,nearest_osm_building_centroid_under_8m,0.75,,,yes,6,,,,hipped,,,,,,Manila,,1
+OFM-ERMITA-00879,621,69,120.98436988715767,14.584005780219915,22,0,,way/28788391,centroid_inside_osm_building_polygon,0.98,,,yes,6,,,,,,,,Taft Avenue,,Manila,,4
+OFM-ERMITA-00880,621,85,120.98225095845761,14.583399871395171,22,0,,way/795990980,centroid_inside_osm_building_polygon,0.98,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00881,627,20,120.98611120277904,14.589416580882764,26,0,,way/179404076,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,Manila,,1
+OFM-ERMITA-00882,629,0,120.983139101395,14.589786818992149,27,0,,way/15868300,centroid_inside_osm_building_polygon,0.98,,,retail,5,26.2,,,flat,,,,,,,,350
+OFM-ERMITA-00883,631,1,120.9834133135383,14.59148643340032,29,0,,way/1061988723,centroid_inside_osm_building_polygon,0.98,,,residential,8,28.4,,,,,,,,,,,1
+OFM-ERMITA-00884,632,10,120.98249525285961,14.588828036481093,30,0,,way/1463644673,centroid_inside_osm_building_polygon,0.98,,,,8,,,,,,,,,,,,1
+OFM-ERMITA-00885,632,11,120.98260659565052,14.5891398540022,30,0,,way/89536436,centroid_inside_osm_building_polygon,0.98,YMCA,,hotel,8,,,,flat,,,,,,Manila,,1
+OFM-ERMITA-00886,632,12,120.9872055247427,14.586208783552992,30,0,,way/1241836090,centroid_inside_osm_building_polygon,0.98,Dr. Carlos Tiu Building,,yes,8,,,,,,,,San Marcelino Street,1000,Manila,,2
+OFM-ERMITA-00887,633,2,120.98135800012007,14.586954535009278,32,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-00888,634,8,120.9837170983513,14.588925752325215,33,0,,way/817516193,centroid_inside_osm_building_polygon,0.98,SM Manila Parking Lot,,parking,9,,,,,,,,,,,,0
+OFM-ERMITA-00889,636,1,120.98503687527929,14.590715098045596,36,0,,way/603658634,centroid_inside_osm_building_polygon,0.98,Manila Real Residences,,residential,10,35.6,,,flat,,,,,,,,0
+OFM-ERMITA-00890,638,0,120.98399523149634,14.59061781911694,40,0,,way/762587817,centroid_inside_osm_building_polygon,0.98,Zen Tower Phase 2,,residential,11,39.2,,,flat,,,,Natividad Lopez Street,,,,3
+OFM-ERMITA-00891,641,0,120.98670410064622,14.584691184585944,44,0,,way/575422170,centroid_inside_osm_building_polygon,0.98,,,,12,,,,,,red,,,,,,2
+OFM-ERMITA-00892,641,1,120.98685184445837,14.584651645721493,44,0,,way/575422171,centroid_inside_osm_building_polygon,0.98,,,,12,,,,,,red,,,,,,2
+OFM-ERMITA-00893,642,2,120.98353043930467,14.591416950668163,47,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-00894,642,3,120.98379606232282,14.591003494741296,47,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-00895,645,2,120.98383271816193,14.590901864571352,54,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00896,645,3,120.98344567927805,14.591506497840955,54,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-00897,646,0,120.98667408475258,14.584727864809873,55,0,,way/575422169,nearest_osm_building_centroid_under_8m,0.75,,,,15,,,,,,red,,,,,,2
+OFM-ERMITA-00898,648,2,120.98352078811567,14.590732367148847,58,0,,way/834717118,nearest_osm_building_centroid_under_3m,0.9,Boy Scouts of the Philippines,,office,3,10.7,,,flat,,,,Natividad Lopez Street,1000,Manila,,0
+OFM-ERMITA-00899,650,2,120.98376805439686,14.592068963395649,65,0,,way/1061988722,centroid_inside_osm_building_polygon,0.98,Dahlia Tower,,residential,18,64.3,,,,,,,,,,,1
+OFM-ERMITA-00900,653,0,120.98365315142398,14.591985683546051,72,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-00901,655,0,120.9841064199975,14.590561172555766,79,0,,way/762587818,nearest_osm_building_centroid_under_8m,0.75,Zen Tower,,residential,22,78.6,,,flat,,,,Natividad Lopez Street,,Manila,,0
+OFM-ERMITA-00902,656,1,120.98332058594569,14.591730368805623,82,0,,way/603658638,centroid_inside_osm_building_polygon,0.98,Eugenia Tower,,,23,81.9,,,,,,,,,,,1
+OFM-ERMITA-00903,656,2,120.98358667171877,14.591240356398448,82,0,,way/603658631,nearest_osm_building_centroid_under_8m,0.75,Lily Tower,,,23,81.9,,,,,,,,,,,1
+OFM-ERMITA-00904,658,0,120.98307819888461,14.591576080781657,89,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00905,658,1,120.98344389262508,14.591348453943544,89,0,,way/1061988723,centroid_inside_osm_building_polygon,0.98,,,residential,8,28.4,,,,,,,,,,,1
+OFM-ERMITA-00906,659,1,120.98531794204264,14.587594126294,90,0,,way/542686799,centroid_inside_osm_building_polygon,0.98,Space San Marcelino,,residential,28,90,,,,,,,,,,,0
+OFM-ERMITA-00907,659,2,120.98638693894844,14.58834894415037,90,0,,way/642781529,centroid_inside_osm_building_polygon,0.98,Space Romualdez,,residential,28,90,,,,,,,,,,,1
+OFM-ERMITA-00908,660,0,120.98525311330008,14.590982906897379,93,0,,way/179251362,centroid_inside_osm_building_polygon,0.98,Gotesco Twin Tower B,,residential,26,92.9,,,,,,1129,Natividad Lopez Street,1000,Ermita,,1
+OFM-ERMITA-00909,660,1,120.9848539650258,14.59119133600793,93,0,,way/654709131,centroid_inside_osm_building_polygon,0.98,Gotesco Twin Tower A,,residential,26,92.9,,,,,,1129,Natividad Lopez Street,1000,Ermita,,1
+OFM-ERMITA-00910,661,0,120.9840342835446,14.591860196599459,104,0,,way/1061988721,centroid_inside_osm_building_polygon,0.98,Acacia Tower,,yes,29,103.2,,,,,,,,,,,1
+OFM-ERMITA-00911,662,0,120.98368495491798,14.591763230511058,108,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-00912,662,1,120.98542082860735,14.590763508586859,108,0,,way/1061988725,centroid_inside_osm_building_polygon,0.98,,,,30,107.2,,,,,,,,,,,0
+OFM-ERMITA-00913,662,2,120.98560887624626,14.590670426352485,108,0,,way/1061988724,centroid_inside_osm_building_polygon,0.98,,,,30,107.2,,,,,,,,,,,0
+OFM-ERMITA-00914,667,0,120.98477828385349,14.58503298621266,165,0,,way/482698434,centroid_inside_osm_building_polygon,0.98,,,,47,165,,,,,,,,,,,0
+OFM-ERMITA-00915,669,0,120.99063014854379,14.578787875013287,1,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00916,669,1,120.99063278740316,14.578787861173115,1,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00917,669,2,120.99063014854379,14.578787875013287,1,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00918,669,5,120.99059414564437,14.578965559748205,1,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00919,669,7,120.99021528940352,14.578720729998,1,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00920,669,8,120.99021528940352,14.578720729998,1,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00921,669,9,120.99021528940352,14.578720729998,1,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00922,669,16,120.99009605632618,14.57876247829861,1,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00923,669,17,120.99009605632618,14.57876247829861,1,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00924,669,18,120.99009605632618,14.57876247829861,1,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00925,669,19,120.99009605632618,14.57876247829861,1,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00926,669,20,120.99009605632618,14.57876247829861,1,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00927,670,1,120.9905989147368,14.578940173557827,1,0,#a52a2a,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00928,674,0,120.99059414564437,14.578965559748205,3,3,#ffcc99,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00929,674,1,120.99015897374575,14.579026479322547,3,3,#ffcc99,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00930,675,0,120.98391133121726,14.58282566861826,4,0,,way/818631741,centroid_inside_osm_building_polygon,0.98,,,yes,1,,,,,,,,,,,,0
+OFM-ERMITA-00931,675,1,120.98158127172796,14.582596333863139,4,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00932,675,2,120.98299395621531,14.582642195663919,4,0,,way/818631735,nearest_osm_building_centroid_under_8m,0.75,,,yes,1,,,,,,,,,,,,1
+OFM-ERMITA-00933,675,3,120.98328860315426,14.581849560890292,4,0,,way/818631731,centroid_inside_osm_building_polygon,0.98,,,,1,,,,,,,,,,,,1
+OFM-ERMITA-00934,675,4,120.9808629725821,14.57985462285868,4,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00935,675,5,120.98435683677249,14.578663210916309,4,0,,way/308702707,centroid_inside_osm_building_polygon,0.98,Museum of a History of Ideas,,yes,1,,,,,,,,Padre Faura Street,,Manila,,2
+OFM-ERMITA-00936,675,6,120.98578208666926,14.582288708946733,4,0,,way/818631748,centroid_inside_osm_building_polygon,0.98,YWCA,,yes,2,,,,,,,,,,,,0
+OFM-ERMITA-00937,675,14,120.99179890145406,14.578736148558654,4,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00938,675,15,120.98816899174966,14.577527991746424,4,0,,way/308704891,nearest_osm_building_centroid_under_3m,0.9,,,retail,1,,,,,,,,Escoda Street,,Manila,,0
+OFM-ERMITA-00939,675,16,120.98763252711987,14.577308959440744,4,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00940,675,17,120.98831118635046,14.57678656222309,4,0,,,unmatched,0,,,,,,,,,,,,,,,,2
+OFM-ERMITA-00941,675,18,120.98797530266678,14.576639597610054,4,0,,way/288126519,centroid_inside_osm_building_polygon,0.98,Pedro Gil,,train_station,2,,,,,,,,,,,,0
+OFM-ERMITA-00942,675,19,120.9883608131865,14.576706286368834,4,0,,way/308704940,centroid_inside_osm_building_polygon,0.98,,,yes,1,,,,,,,,,,Manila,,1
+OFM-ERMITA-00943,675,20,120.98917492032808,14.577105894085056,4,0,,way/277974561,nearest_osm_building_centroid_under_8m,0.75,,,yes,1,,,,,,,,,,,,0
+OFM-ERMITA-00944,675,21,120.98831375305458,14.577316780439364,4,0,,way/308704926,nearest_osm_building_centroid_under_3m,0.9,,,yes,1,,,,,,,,,,,,1
+OFM-ERMITA-00945,675,29,120.98888973355372,14.5786760921221,4,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00946,675,30,120.98158998469651,14.577364202836394,4,0,,way/308695408,centroid_inside_osm_building_polygon,0.98,,,yes,1,,,,,,,,,,,,3
+OFM-ERMITA-00947,675,31,120.98277601614056,14.576149727009208,4,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00948,675,32,120.98144822684526,14.57586845483658,4,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00949,675,33,120.98165856582558,14.57595599210159,4,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00950,675,34,120.98184756104662,14.574567073114121,4,0,,way/267171252,centroid_inside_osm_building_polygon,0.98,,,yes,1,,,,,,,,,,,,1
+OFM-ERMITA-00951,675,35,120.98273856994365,14.574790745925437,4,0,,way/823662682,centroid_inside_osm_building_polygon,0.98,,,yes,1,,,,,,,,,,,,1
+OFM-ERMITA-00952,675,73,120.99253236035351,14.578216175458335,4,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00953,675,74,120.99093977879485,14.577823448671074,4,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00954,678,0,120.98207467774535,14.583144372674946,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00955,678,1,120.98109842801026,14.582562716774397,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-00956,678,2,120.98127175156966,14.582381684688754,5,0,,way/314235477,centroid_inside_osm_building_polygon,0.98,,,retail,,,,,,,,,,,,,1
+OFM-ERMITA-00957,678,3,120.97718173206783,14.582178926258003,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00958,678,4,120.98225113155675,14.58329653893247,5,0,,way/795990980,centroid_inside_osm_building_polygon,0.98,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00959,678,5,120.98218144850688,14.583552562748785,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00960,678,6,120.98351795620808,14.583554741726628,5,0,,way/542698666,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-00961,678,7,120.98372089296006,14.58231213363875,5,0,,way/542697437,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,2
+OFM-ERMITA-00962,678,8,120.98345126042997,14.582307569047817,5,0,,way/542696881,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-00963,678,9,120.98315233744378,14.582280227266994,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-00964,678,10,120.98356200623402,14.582491468773712,5,0,,way/1456969166,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-00965,678,11,120.98365339645541,14.582527677332314,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-00966,678,12,120.98367439600692,14.582775395505918,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-00967,678,13,120.98323974239325,14.582441274781555,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00968,678,14,120.98319719771594,14.582324140701235,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00969,678,15,120.98323402705871,14.582143291785497,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-00970,678,16,120.98342247677515,14.582006839482268,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,3
+OFM-ERMITA-00971,678,17,120.98359185324087,14.581510489748274,5,0,,way/35677282,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,Manila,,1
+OFM-ERMITA-00972,678,18,120.98263221086215,14.58212577594994,5,0,,way/818631733,centroid_inside_osm_building_polygon,0.98,,,parking,,,,,,,,,,,,,1
+OFM-ERMITA-00973,678,19,120.98109630830052,14.581509750504784,5,0,,way/90164301,centroid_inside_osm_building_polygon,0.98,The Corporate Inn Hotel Manila,,yes,5,,,,,,,,Kalaw Avenue,,Manila,,1
+OFM-ERMITA-00974,678,20,120.9813733194584,14.581264297779562,5,0,,way/308701699,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-00975,678,21,120.98134657573152,14.581186395732006,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00976,678,22,120.98061687213414,14.581102168470881,5,0,,way/308701698,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-00977,678,23,120.98139063804226,14.581120157089902,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00978,678,24,120.98046228305243,14.580937231189322,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00979,678,25,120.9810716225415,14.581035984842385,5,0,,way/308701693,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-00980,678,26,120.98155601931686,14.580961672132732,5,0,,way/308701697,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-00981,678,27,120.98150557173578,14.580971901631811,5,0,,way/308701697,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,2
+OFM-ERMITA-00982,678,28,120.98153474767125,14.58025096325699,5,0,,way/90301330,centroid_inside_osm_building_polygon,0.98,Power Play Badminton Center,,yes,,,,,,,,,,,Manila,,1
+OFM-ERMITA-00983,678,29,120.98156758995574,14.580082209426141,5,0,,way/308702681,centroid_inside_osm_building_polygon,0.98,Plaza Ambrosio,,commercial,,,,,,,,,,,,,0
+OFM-ERMITA-00984,678,30,120.98191614341121,14.580344716398233,5,0,,way/308702711,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-00985,678,31,120.98217505374026,14.580103775401184,5,0,,way/90159937,centroid_inside_osm_building_polygon,0.98,Catholic Women's League Philippines National HQ,,yes,,,,,,,,,,,Manila,,1
+OFM-ERMITA-00986,678,32,120.98245797192585,14.579939048552465,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00987,678,33,120.982252937881,14.579692069299146,5,0,,way/90123664,centroid_inside_osm_building_polygon,0.98,Zandueta Building,,yes,,,,,,,,1157,Maria Orosa Street,,Manila,,3
+OFM-ERMITA-00988,678,34,120.98200467095553,14.580009489347834,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00989,678,35,120.98170533893881,14.579873060131035,5,0,,way/308702687,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-00990,678,36,120.98265754539742,14.580234146216103,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00991,678,37,120.98104890720282,14.57919200091686,5,0,,way/90301409,centroid_inside_osm_building_polygon,0.98,Richmond Pension,,residential,,,,,,,,,,,Manila,,1
+OFM-ERMITA-00992,678,38,120.98235188547895,14.579380442722167,5,0,,way/90123867,nearest_osm_building_centroid_under_8m,0.75,C.B. Vitug Building,,yes,,,,,,,,,Engracia Cruz Reyes Street,,Manila,,0
+OFM-ERMITA-00993,678,39,120.98202634729014,14.578903323357661,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00994,678,40,120.98121221633427,14.57861056999864,5,0,,way/90308891,centroid_inside_osm_building_polygon,0.98,Lion's International,,yes,,,,,,,,,,,Manila,,1
+OFM-ERMITA-00995,678,41,120.98202898430328,14.578344084936132,5,0,,way/308696217,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-00996,678,42,120.98234846671237,14.579034118979008,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00997,678,43,120.98256411169494,14.579158212934313,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-00998,678,44,120.98264055590258,14.579264868156525,5,0,,,unmatched,0,,,,,,,,,,,,,,,,2
+OFM-ERMITA-00999,678,45,120.98226261946398,14.579391551697974,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,2
+OFM-ERMITA-01000,678,46,120.98258677982152,14.579519490416477,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01001,678,47,120.98251512746486,14.579337679220552,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01002,678,48,120.98366153034631,14.579267026772404,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01003,678,49,120.98363987708389,14.578921179483832,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01004,678,50,120.9839998807074,14.57954782000161,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01005,678,51,120.98426205319564,14.579890277076698,5,0,,way/156307572,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,Manila,,1
+OFM-ERMITA-01006,678,52,120.98399064718724,14.580175766827278,5,0,,way/542683685,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01007,678,53,120.98379086211867,14.579878763023377,5,0,,way/542683631,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01008,678,54,120.98411372542606,14.57979217870235,5,0,,way/309525713,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01009,678,55,120.98361311209128,14.579681393490723,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01010,678,56,120.98350980176366,14.579786278637615,5,0,,way/542683545,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01011,678,57,120.98369180851417,14.580182831397659,5,0,,way/156307570,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,Manila,,1
+OFM-ERMITA-01012,678,58,120.98374201257731,14.581128547688271,5,0,,way/367918759,centroid_inside_osm_building_polygon,0.98,,,office,,,,,,,,,,,,,0
+OFM-ERMITA-01013,678,59,120.98391204069898,14.580355043604595,5,0,,way/542683707,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01014,678,60,120.985061517285,14.580509238897202,5,0,,way/309529768,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01015,678,61,120.98543882532434,14.580046218966134,5,0,,way/156307575,centroid_inside_osm_building_polygon,0.98,Old Supreme Court Main Building,,public,3,,,,,,,,,,Manila,,1
+OFM-ERMITA-01016,678,62,120.98450843862763,14.579985812913355,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01017,678,63,120.9850216067094,14.579873975491337,5,0,,way/156307574,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,Manila,,1
+OFM-ERMITA-01018,678,64,120.98477738491569,14.580262956483997,5,0,,way/90442698,centroid_inside_osm_building_polygon,0.98,Gat Andres Bonifacio Building,,university,,,,,,,,,,,Manila,,1
+OFM-ERMITA-01019,678,65,120.98585797119995,14.578419092427534,5,0,,way/308702702,centroid_inside_osm_building_polygon,0.98,,,hospital,,,,,,,,,,,,,1
+OFM-ERMITA-01020,678,66,120.98589503052695,14.578481301590516,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01021,678,67,120.98602749037552,14.57883427216148,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01022,678,68,120.98686110039532,14.579852386068389,5,0,,way/277977984,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01023,678,69,120.98583286259247,14.579607267122926,5,0,,way/28788554,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,Manila,,2
+OFM-ERMITA-01024,678,70,120.9866313513212,14.580564624975157,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01025,678,71,120.9863704169672,14.580327025993245,5,0,,way/353766354,centroid_inside_osm_building_polygon,0.98,,,yes,4,,,,,,,,,,,,1
+OFM-ERMITA-01026,678,72,120.98669776911169,14.580436262141616,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01027,678,73,120.98734280673729,14.580750815745729,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01028,678,74,120.98681169223934,14.581642354187972,5,0,,way/308702709,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01029,678,75,120.98692815392141,14.58177727751035,5,0,,way/542696116,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01030,678,76,120.98626612131635,14.581863895537307,5,0,,way/308702666,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01031,678,77,120.98700088377282,14.581789981835412,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01032,678,78,120.985210242961,14.583015801018254,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01033,678,79,120.9850249964882,14.58347370595849,5,0,,way/499301291,centroid_inside_osm_building_polygon,0.98,,,school,,,,,,,,,,,,,1
+OFM-ERMITA-01034,678,80,120.98507880384055,14.583273106930802,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01035,678,81,120.98470822375623,14.58318035049615,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01036,678,82,120.9851208491662,14.583657549125913,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01037,678,83,120.98505764412029,14.5835530698262,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01038,678,84,120.98531984536748,14.583348379544084,5,0,,way/499301288,centroid_inside_osm_building_polygon,0.98,,,roof,,,,,,,,,,,,,1
+OFM-ERMITA-01039,678,85,120.98545889936393,14.583422027931185,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01040,678,86,120.98578519851637,14.583307644553527,5,0,,way/499301283,centroid_inside_osm_building_polygon,0.98,,,school,,,,,,,,,,,,,1
+OFM-ERMITA-01041,678,87,120.9846298130673,14.583773031149919,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01042,678,88,120.98586749086597,14.583309518186123,5,0,,way/499301284,centroid_inside_osm_building_polygon,0.98,,,school,,,,,,,,,,,,,1
+OFM-ERMITA-01043,678,89,120.98543858171664,14.58372822945279,5,0,,way/1456969163,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01044,678,90,120.98659623252324,14.583767894127778,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01045,678,91,120.98621212550384,14.583797297108683,5,0,,way/1244826101,nearest_osm_building_centroid_under_8m,0.75,,,retail,,,,,,,,,,,,,1
+OFM-ERMITA-01046,678,92,120.98635173812806,14.582735181394236,5,0,,way/91233253,centroid_inside_osm_building_polygon,0.98,Manila Teachers,,yes,,,,,,,,,,,Manila,,1
+OFM-ERMITA-01047,678,94,120.98661755689818,14.582916761572813,5,0,,way/1429720414,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01048,678,95,120.98681840390421,14.583209687778087,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01049,678,96,120.98676882400282,14.583729865884488,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01050,678,97,120.98701351475167,14.583383599183293,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01051,678,98,120.9866368646847,14.583530784531499,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,2
+OFM-ERMITA-01052,678,101,120.98738138435748,14.582358734317037,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01053,678,102,120.9873484469268,14.581819778483792,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01054,678,103,120.98691015683731,14.581541911244443,5,0,,way/308702713,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01055,678,104,120.98734763070446,14.581054279438277,5,0,,way/308704887,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01056,678,105,120.98688664914039,14.580877633429353,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01057,678,106,120.98753268489409,14.580944310277566,5,0,,way/308704936,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01058,678,107,120.9875009037835,14.581258935243374,5,0,,way/308702682,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01059,678,108,120.98767216283598,14.581386633954702,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01060,678,109,120.98738714479404,14.581445708063702,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01061,678,110,120.98792719644004,14.581099747880922,5,0,,way/1355325649,centroid_inside_osm_building_polygon,0.98,Parkview Apartment,,apartments,,,,,,,,,,,,,0
+OFM-ERMITA-01062,678,111,120.98753173413199,14.581622432337186,5,0,,way/308702726,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01063,678,257,120.9892063381402,14.579929051607222,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01064,678,258,120.98977244583936,14.579749603793168,5,0,,way/1461856790,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01065,678,259,120.98891662042006,14.579544621107614,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01066,678,260,120.99012719021104,14.579477124576194,5,0,,way/309181780,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01067,678,261,120.98990117910942,14.579660122704139,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01068,678,321,120.99168273045755,14.578862174585165,5,0,,way/302521460,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01069,678,326,120.99165417105466,14.578254596266147,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01070,678,327,120.99123170700125,14.578187650201157,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01071,678,328,120.99152753500546,14.578341400861683,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01072,678,329,120.99185177489936,14.578522308069575,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01073,678,330,120.99171904340604,14.57850337506282,5,0,,way/437536932,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01074,678,331,120.99144524824787,14.578362670154558,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01075,678,333,120.99065911209958,14.578617576564984,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01076,678,335,120.9918217468393,14.578802634246456,5,0,,way/302521469,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01077,678,337,120.99157602937869,14.578657515040376,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01078,678,338,120.99155948080306,14.578703186116062,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01079,678,339,120.98820994195813,14.578303717196789,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01080,678,341,120.99109210618244,14.578554197436048,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01081,678,343,120.99179545760721,14.578823684635111,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01082,678,344,120.99084400058891,14.57863885983769,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01083,678,345,120.99109493784954,14.578419592329126,5,0,,way/302521453,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01084,678,346,120.99096104658773,14.578262708725111,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01085,678,347,120.9909302549979,14.578562821091515,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01086,678,348,120.99065497083251,14.578407544432459,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01087,678,349,120.99078403285291,14.578337896214387,5,0,,way/302521450,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01088,678,350,120.9909015767486,14.578216062089224,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01089,678,351,120.99053312344228,14.578275306248456,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01090,678,352,120.9907525243906,14.578557423637161,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01091,678,353,120.99053559649582,14.578518338472161,5,0,,way/642776997,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01092,678,354,120.99079036920892,14.578634031439352,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01093,678,355,120.99106491311815,14.57875835071743,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01094,678,356,120.99004497434478,14.578666641777339,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01095,678,357,120.99040259314779,14.578730198409758,5,0,,way/437536912,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01096,678,358,120.99108542634804,14.57883003276692,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01097,678,359,120.99046952714234,14.578466588143772,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01098,678,360,120.99070664214972,14.57874910753919,5,0,,way/437536905,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01099,678,361,120.99054507479671,14.578848061267212,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01100,678,364,120.99058013698286,14.579281190809134,5,0,,way/642776986,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01101,678,365,120.99043881093955,14.579135470121582,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01102,678,366,120.99061123566712,14.579200098725053,5,0,,way/642776986,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01103,678,367,120.99038939741256,14.579036546646295,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01104,678,368,120.9902196131126,14.579365838343143,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01105,678,369,120.99070654246141,14.579302353044133,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01106,678,370,120.99027384314397,14.579440296886814,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01107,678,371,120.99039605685843,14.579547954386527,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01108,678,372,120.9899285175541,14.578908168733452,5,0,,way/309181786,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01109,678,373,120.98968458938077,14.578975217036557,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01110,678,374,120.99011606322364,14.578847915750115,5,0,,way/642776995,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01111,678,375,120.98987258842043,14.578714315300614,5,0,,way/309181773,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01112,678,376,120.99049992059201,14.578948864462319,5,0,,way/309181790,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01113,678,377,120.9905096535074,14.578623016148223,5,0,,way/437536913,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01114,678,378,120.99022056205781,14.578404030340707,5,0,,way/437536901,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01115,678,379,120.9903127096317,14.578533552736573,5,0,,way/277974133,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01116,678,380,120.9901222518929,14.578438586270746,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01117,678,381,120.99082515902059,14.578469187332182,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01118,678,382,120.99001625849635,14.578303811313887,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01119,678,383,120.99010792469684,14.578174616890855,5,0,,way/277974134,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,2
+OFM-ERMITA-01120,678,384,120.9899220434012,14.578349724328552,5,0,,way/642777009,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01121,678,385,120.9896030541707,14.578786194224188,5,0,,way/1457584513,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01122,678,386,120.9893198644654,14.578661873145558,5,0,,way/277974346,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01123,678,387,120.98862535971892,14.57844517814812,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01124,678,388,120.98820693422381,14.578327887082818,5,0,,way/308704899,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01125,678,389,120.9881995350651,14.57846072419141,5,0,,way/308704894,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01126,678,390,120.98825254336884,14.578735820609582,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01127,678,391,120.9889426764512,14.579011395264246,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01128,678,392,120.98920432921113,14.578901260465154,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01129,678,393,120.98937574287446,14.578820456849146,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01130,678,394,120.98884304078747,14.578605287204853,5,0,,way/277974348,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01131,678,395,120.98920609291874,14.578805203928072,5,0,,way/277974356,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01132,678,396,120.98926114393457,14.579204599249566,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01133,678,397,120.9884158153113,14.578997494311961,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01134,678,398,120.98843344479357,14.579410204716329,5,0,,way/308704905,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01135,678,399,120.98876300810609,14.579510099543723,5,0,,way/244384537,centroid_inside_osm_building_polygon,0.98,Meralco,,commercial,,,,,,,,,San Marcelino Street,,,,1
+OFM-ERMITA-01136,678,400,120.98865733911316,14.579140709112682,5,0,,way/308704916,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01137,678,401,120.98873183702892,14.57927950558856,5,0,,way/308704893,nearest_osm_building_centroid_under_3m,0.9,Toilena Hostel,,yes,,,,,,,,,San Marcelino Street,,,,0
+OFM-ERMITA-01138,678,402,120.98904006286456,14.579366067818299,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01139,678,403,120.98929947848505,14.579632641867759,5,0,,way/309181775,centroid_inside_osm_building_polygon,0.98,RCM Building,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01140,678,404,120.98808872269106,14.579075247785603,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01141,678,405,120.98911366790385,14.579137451945595,5,0,,way/308704919,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01142,678,406,120.9892457809379,14.579063850473638,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01143,678,407,120.98962501620048,14.579083746854565,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01144,678,408,120.98914798496148,14.579298928670427,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01145,678,409,120.98948638185827,14.579499415935246,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01146,678,410,120.98942515405298,14.579391273143935,5,0,,way/309181776,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01147,678,411,120.98971170084364,14.57960612390205,5,0,,way/437537857,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01148,678,413,120.98957831939238,14.579873924596852,5,0,,way/309181777,centroid_inside_osm_building_polygon,0.98,Apacible Townhomes,,yes,,,,,,,,1026,G. Apacible Street,,,,1
+OFM-ERMITA-01149,678,414,120.98928582305307,14.579832831653663,5,0,,way/437537866,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01150,678,415,120.98958683446271,14.579859586670597,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01151,678,416,120.98914886228536,14.579545184704177,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01152,678,417,120.98931959935167,14.579738497272942,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01153,678,418,120.98947176419249,14.579784519219588,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01154,678,420,120.98858831076494,14.579868737955163,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01155,678,421,120.98893652817686,14.580003460415925,5,0,,way/308702698,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01156,678,422,120.98897299244561,14.580123703723745,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01157,678,423,120.98897921296923,14.580055550031274,5,0,,way/308702698,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01158,678,435,120.98897508187675,14.580166724503828,5,0,,way/308702663,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01159,678,438,120.9883658671537,14.580142268178612,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01160,678,439,120.98832447466702,14.580262044270833,5,0,,way/437537859,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01161,678,440,120.98856315035799,14.580105702648943,5,0,,way/308702722,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01162,678,441,120.98798974721684,14.579963061749709,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01163,678,442,120.9884667540627,14.579784889005095,5,0,,way/308702725,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,953,G. Apacible Street,,,,1
+OFM-ERMITA-01164,678,443,120.98852761446656,14.579916077176527,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01165,678,444,120.98820568387586,14.579956272758084,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01166,678,446,120.98856815927985,14.579949305583929,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01167,678,447,120.98875623730045,14.57998682215747,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01168,678,448,120.98890713897298,14.579846103492741,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01169,678,449,120.98840096891958,14.579824313646215,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01170,678,450,120.98838564841402,14.57969329631571,5,0,,way/308702725,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,953,G. Apacible Street,,,,1
+OFM-ERMITA-01171,678,451,120.98772486451894,14.579876713830632,5,0,,way/308702671,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01172,678,452,120.98747472711091,14.580027894204346,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01173,678,453,120.9878718506261,14.580197305332948,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01174,678,454,120.98828233551814,14.579916498418765,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01175,678,455,120.98831679196486,14.580421062225799,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01176,678,456,120.9880731137852,14.580661550491563,5,0,,way/308702717,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01177,678,457,120.98790256193902,14.580516571766857,5,0,,way/308704892,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01178,678,458,120.98810831860963,14.58070203423862,5,0,,way/308702717,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01179,678,459,120.98788480385583,14.580852655504781,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01180,678,461,120.98759809063431,14.580790241727883,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01181,678,462,120.98767640517359,14.58022699417973,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01182,678,463,120.98733721403379,14.580267936814382,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01183,678,464,120.98745636115365,14.580400058131927,5,0,,way/308702695,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01184,678,465,120.98717049649368,14.580597866878088,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01185,678,466,120.98692994563555,14.580094772592034,5,0,,way/277977987,nearest_osm_building_centroid_under_3m,0.9,,,,7,,,,,,,,,,,,1
+OFM-ERMITA-01186,678,467,120.98742827621165,14.579827537560332,5,0,,way/277982143,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01187,678,468,120.98754630669619,14.579697386767728,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01188,678,469,120.98683920694602,14.579535893090968,5,0,,way/308704943,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01189,678,470,120.98704428667334,14.579719326229926,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01190,678,471,120.98743048344389,14.579454776029074,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01191,678,472,120.98730633091297,14.579505774675722,5,0,,way/308704932,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01192,678,473,120.98698138923227,14.579208610473817,5,0,,way/277981585,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01193,678,474,120.98717957953495,14.579112767215427,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01194,678,475,120.98797191721606,14.578894530360307,5,0,,way/277981563,centroid_inside_osm_building_polygon,0.98,Salvation Army,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01195,678,476,120.98753009018124,14.578984331667643,5,0,,way/308704895,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01196,678,477,120.98782612957217,14.579019017776316,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01197,678,478,120.9879607834941,14.578774711926235,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01198,678,479,120.98813688460976,14.57860084537923,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01199,678,480,120.98807683945856,14.578705689232045,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01200,678,481,120.98833040127661,14.578827209106885,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01201,678,482,120.9878039742723,14.578754278441044,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01202,678,483,120.9874832363016,14.578593949048987,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01203,678,484,120.98838533575857,14.57864008155228,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01204,678,485,120.98779251049329,14.578225525243592,5,0,,way/277974471,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01205,678,486,120.98786712609417,14.578435955171761,5,0,,way/277974477,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01206,678,487,120.98753037200812,14.57832200226529,5,0,,way/824389317,centroid_inside_osm_building_polygon,0.98,,,yes,5,,,,,,,,,,,,0
+OFM-ERMITA-01207,678,488,120.98783922542091,14.57872485819475,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01208,678,489,120.98738623816513,14.578626003525667,5,0,,way/277974483,centroid_inside_osm_building_polygon,0.98,Jamora Building,,yes,3,,,,,,,1410,Taft Avenue,1000,Manila,,1
+OFM-ERMITA-01209,678,490,120.98751361278158,14.577632998753717,5,0,,way/277976217,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01210,678,491,120.9875698646799,14.578135358217217,5,0,,way/268207673,centroid_inside_osm_building_polygon,0.98,,,commercial,3,,,,,,,,Taft Avenue,1000,Manila,,1
+OFM-ERMITA-01211,678,492,120.98743518137792,14.577877138813799,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01212,678,493,120.98790898753332,14.578098445426118,5,0,,way/1355327896,centroid_inside_osm_building_polygon,0.98,"St. Martin Polyclinic, Inc.",,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01213,678,494,120.98869501776109,14.578260174685745,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01214,678,495,120.98805492055071,14.577904534520219,5,0,,way/308704906,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01215,678,496,120.98819863537405,14.57800751968255,5,0,,way/1355327768,nearest_osm_building_centroid_under_8m,0.75,LEYSAM COMMERCIAL,,industrial,,,,,,,,1457,Leon Guinto Street,,,,0
+OFM-ERMITA-01216,678,497,120.98827909634068,14.577870797250522,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01217,678,498,120.98781185249443,14.577678743833504,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01218,678,499,120.98742558604339,14.577163497263495,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01219,678,500,120.98740829052318,14.577321678318937,5,0,,way/277976211,centroid_inside_osm_building_polygon,0.98,,,commercial,,,,,,,,,,,,,0
+OFM-ERMITA-01220,678,501,120.98699264459373,14.577240230119854,5,0,,way/277976206,centroid_inside_osm_building_polygon,0.98,UPM-PGH Faculty Medical Arts Building,,yes,,,,,,,,,Taft Avenue,,Manila,,4
+OFM-ERMITA-01221,678,502,120.98721910355667,14.577617393872629,5,0,,way/277976217,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01222,678,508,120.98910031716375,14.576531720065683,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01223,678,509,120.98878541099097,14.576439070931855,5,0,,way/308705535,centroid_inside_osm_building_polygon,0.98,,,yes,3,,,,,,,,Pedro Gil Street,,"Malate, Manila",,1
+OFM-ERMITA-01224,678,515,120.98953573753833,14.576972239587125,5,0,,way/277974607,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01225,678,516,120.98952452207965,14.577119176429662,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01226,678,517,120.98934040205297,14.577326513915748,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01227,678,518,120.98920044106335,14.577191080294293,5,0,,way/437538286,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01228,678,519,120.99074649709011,14.577470940773447,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01229,678,520,120.98965621946708,14.577562982998325,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01230,678,521,120.98908621359571,14.577423760195181,5,0,,way/437538306,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01231,678,522,120.98962681492972,14.577504182236373,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01232,678,523,120.9892824256114,14.577297864467909,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01233,678,524,120.98933291986117,14.577046062513977,5,0,,way/437538310,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01234,678,525,120.98897410696816,14.576865811415283,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01235,678,526,120.98846174193892,14.576993654883381,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01236,678,527,120.9883827992445,14.576929579955118,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01237,678,528,120.98830534955377,14.57704259932785,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01238,678,529,120.98841644098836,14.577218294046354,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01239,678,530,120.98675895121895,14.576860259661874,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01240,678,531,120.98888244663102,14.577645118098369,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01241,678,532,120.98893883070339,14.577843013455922,5,0,,way/437538326,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01242,678,533,120.98913082416925,14.57779991632725,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01243,678,534,120.98805811558294,14.577912636978569,5,0,,way/308704939,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01244,678,535,120.98874276304159,14.57803539231329,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01245,678,536,120.98901581157585,14.578284071306305,5,0,,way/277974357,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01246,678,537,120.98879489522966,14.577969867554735,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01247,678,538,120.98919319204202,14.57788507776475,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01248,678,539,120.98920652380349,14.57775177540332,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01249,678,540,120.98910595289645,14.577587347712024,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01250,678,541,120.98938930336129,14.577784293364465,5,0,,way/437538308,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01251,678,542,120.98927963681128,14.577663640276835,5,0,,way/437538304,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01252,678,543,120.98962526979881,14.577562280932792,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01253,678,544,120.98964437837638,14.577675731394175,5,0,,way/437538329,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01254,678,545,120.9897631660924,14.57777133459469,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01255,678,546,120.988097867477,14.577678248093271,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01256,678,547,120.98966951257907,14.577945742785262,5,0,,way/437538319,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01257,678,548,120.99048345547224,14.578010934289315,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01258,678,549,120.99021776394056,14.577792763274612,5,0,,way/277974352,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01259,678,550,120.99031262581755,14.577686309162496,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01260,678,551,120.99032071437053,14.577606279166693,5,0,,way/437536936,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01261,678,552,120.98990836383061,14.577579686029534,5,0,,way/244384538,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01262,678,553,120.9897547740136,14.577724718793242,5,0,,way/437538329,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01263,678,554,120.9895297660129,14.577799918368978,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01264,678,555,120.98880356032285,14.577465350351172,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01265,678,556,120.99001457338967,14.577509981893664,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01266,678,557,120.99004117464732,14.577662088498032,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01267,678,558,120.99076222024428,14.577535636310648,5,0,,way/437538317,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01268,678,559,120.99011543717991,14.577436168709513,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01269,678,560,120.98985954772405,14.57733269443254,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01270,678,561,120.98963928469257,14.577249409593518,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01271,678,562,120.9893982868519,14.577113868579335,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01272,678,563,120.9897076178824,14.577011825387993,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01273,678,564,120.99042010752953,14.577112001678037,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01274,678,565,120.9897957435774,14.577149513682299,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01275,678,566,120.99058724847751,14.57733709135972,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01276,678,567,120.99017913491018,14.577196330437463,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01277,678,568,120.98982027563848,14.57737002243352,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01278,678,569,120.98941512823217,14.577405503579127,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01279,678,570,120.98976569187101,14.577489869231202,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01280,678,571,120.99001583976074,14.577502985553796,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01281,678,572,120.99053073561637,14.577475815387285,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01282,678,573,120.99043567928328,14.577502269469727,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01283,678,574,120.99068609412741,14.577396335021623,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01284,678,575,120.99107945153625,14.577305517119727,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01285,678,576,120.99060040124459,14.577219522750115,5,0,,way/437536915,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01286,678,577,120.98999005602607,14.577249771686141,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01287,678,578,120.9902459914637,14.577347269782596,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01288,678,579,120.9909751205865,14.57726868668119,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01289,678,580,120.99052846953921,14.57726642742306,5,0,,way/437536966,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01290,678,581,120.99106822055647,14.577383438781693,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01291,678,582,120.99075785603027,14.577398983708246,5,0,,way/437536977,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01292,678,583,120.99023516285861,14.577594391193434,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01293,678,584,120.99073225382844,14.577662572887087,5,0,,way/437536948,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01294,678,585,120.99019732655516,14.577683543489426,5,0,,way/437536894,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01295,678,586,120.99074272021072,14.577782102875911,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01296,678,587,120.99028925121127,14.57788703698692,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01297,678,588,120.99063163387589,14.577849074339284,5,0,,way/277974126,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01298,678,589,120.99091863561868,14.578020385839748,5,0,,way/277974130,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01299,678,590,120.98964331582863,14.577777904864242,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01300,678,591,120.99066670039174,14.57802211124788,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01301,678,592,120.99025697101418,14.578075897144478,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01302,678,593,120.98967774621104,14.578096005427843,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01303,678,594,120.99063964301051,14.578098402532632,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01304,678,595,120.99029045634781,14.578253762332027,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01305,678,596,120.99139028783412,14.578006459346605,5,0,,way/302521446,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01306,678,597,120.99091888517718,14.578049388986129,5,0,,way/277974128,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01307,678,598,120.99151343928342,14.578216155474937,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01308,678,599,120.99084469730329,14.577880934444085,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01309,678,600,120.99131695780953,14.577842794807616,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01310,678,601,120.99122771347373,14.57772740504975,5,0,,way/302521464,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01311,678,602,120.99118164007373,14.577556266530733,5,0,,way/302521448,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01312,678,603,120.99174604437913,14.577728596662356,5,0,,way/302521459,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01313,678,604,120.9910001070284,14.577597212831586,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01314,678,605,120.99092236348325,14.57767018819129,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01315,678,606,120.99147218448189,14.577731909716036,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01316,678,607,120.99136829577046,14.577828376545837,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01317,678,608,120.99081088624156,14.577707395203145,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01318,678,609,120.9909721443352,14.577518670293424,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01319,678,610,120.99177854400654,14.57766489666819,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01320,678,611,120.99180317495788,14.577758913696437,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01321,678,612,120.99212813713255,14.57802712077816,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01322,678,613,120.99092597719202,14.577884755279898,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01323,678,614,120.99126725172518,14.578049797299197,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01324,678,615,120.99182992229011,14.578118041417254,5,0,,way/437536919,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01325,678,616,120.99188964695172,14.578156049340928,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01326,678,617,120.99137744284661,14.577944064799901,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01327,678,618,120.99208908277602,14.577918122564883,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01328,678,619,120.9917817261403,14.577778178294741,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01329,678,637,120.99033023857719,14.577182936106347,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01330,678,695,120.98966079112267,14.576965772071805,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01331,678,1022,120.98490606592355,14.575343501190096,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01332,678,1023,120.98567053798183,14.57531228897156,5,0,,,unmatched,0,,,,,,,,,,,,,,,,2
+OFM-ERMITA-01333,678,1024,120.98540189849008,14.575327428791052,5,0,,way/90315910,centroid_inside_osm_building_polygon,0.98,Juan Salcedo Hall,,university,,,,,,,,,,,Manila,,3
+OFM-ERMITA-01334,678,1025,120.98525513973216,14.575465911832241,5,0,,way/90315910,centroid_inside_osm_building_polygon,0.98,Juan Salcedo Hall,,university,,,,,,,,,,,Manila,,3
+OFM-ERMITA-01335,678,1031,120.98653592380639,14.575944849453192,5,0,,way/90315945,centroid_inside_osm_building_polygon,0.98,Paz Mendoza Hall,,university,,,,,,,,,,,Manila,,2
+OFM-ERMITA-01336,678,1032,120.98628881814633,14.57570322059386,5,0,,way/90315917,centroid_inside_osm_building_polygon,0.98,Lara Hall,,university,,,,,,,,,,,Manila,,3
+OFM-ERMITA-01337,678,1033,120.98619772250699,14.575712063171064,5,0,,,unmatched,0,,,,,,,,,,,,,,,,2
+OFM-ERMITA-01338,678,1034,120.98620793229647,14.576101803635256,5,0,,way/91007113,centroid_inside_osm_building_polygon,0.98,CPH Annex 1,,yes,,,,,,,,,,,Manila,,3
+OFM-ERMITA-01339,678,1035,120.98685241887705,14.57614159438916,5,0,,way/922806737,centroid_inside_osm_building_polygon,0.98,New National Institutes of Health Building,,university,,,,,,,,,,,,,1
+OFM-ERMITA-01340,678,1036,120.98627977660308,14.578021898295551,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01341,678,1037,120.98583737085178,14.57674164237964,5,0,,way/90315920,centroid_inside_osm_building_polygon,0.98,Department of Emergency Medical Services,,yes,,,,,,,,,,,Manila,,2
+OFM-ERMITA-01342,678,1038,120.9841155443493,14.57799552603526,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01343,678,1039,120.9845133657509,14.577390752224213,5,0,,way/308702720,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01344,678,1040,120.98517838484872,14.576285526935848,5,0,,way/1116126852,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01345,678,1041,120.98494267216638,14.576733277564506,5,0,,way/308702689,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01346,678,1042,120.98505775610703,14.576291997113517,5,0,,way/1116126853,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01347,678,1043,120.98474380688667,14.57621613176493,5,0,,way/308702704,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01348,678,1044,120.98493712911853,14.576163632660823,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01349,678,1045,120.98527825866938,14.57605677738985,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01350,678,1046,120.98391757006628,14.575650272183074,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01351,678,1047,120.98512416786627,14.575697441681083,5,0,,way/1116126857,centroid_inside_osm_building_polygon,0.98,Sports and Wellness Center,,roof,,,,,,,,,,,,,2
+OFM-ERMITA-01352,678,1048,120.98463160430715,14.575980672164425,5,0,,way/1116126856,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01353,678,1049,120.98497227845631,14.576122694759594,5,0,,way/1116126855,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01354,678,1050,120.9824753359853,14.577096525621666,5,0,,way/1150924024,centroid_inside_osm_building_polygon,0.98,Barangay 669 Hall Zone 72,,public,,,,,,,,,,,,,0
+OFM-ERMITA-01355,678,1051,120.98205142389007,14.578151556416652,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01356,678,1052,120.98175765304542,14.578206032544616,5,0,,way/308696211,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01357,678,1053,120.98143221908916,14.577697947285245,5,0,,way/823330140,centroid_inside_osm_building_polygon,0.98,,,,4,,,,,,,,,,,,1
+OFM-ERMITA-01358,678,1054,120.97718464338861,14.577251145412593,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01359,678,1055,120.98175009851238,14.576873141432056,5,0,,way/308695384,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01360,678,1056,120.98073690850092,14.576664460946906,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01361,678,1057,120.98126147845107,14.576588597253995,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01362,678,1058,120.98191511890803,14.576486053590452,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01363,678,1059,120.98150033459729,14.57622695512065,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01364,678,1060,120.98215934245182,14.575837503334329,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01365,678,1061,120.98062032693934,14.575848669217706,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01366,678,1062,120.9835991441765,14.576284803266114,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01367,678,1063,120.98130596047801,14.576058963388013,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01368,678,1064,120.98083431557177,14.57625362990074,5,0,,way/308694324,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01369,678,1065,120.9818152031207,14.576158585706205,5,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01370,678,1066,120.98128360373317,14.574827882966082,5,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01371,678,1067,120.98141201224342,14.574243462291438,5,0,,way/267205334,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01372,678,1068,120.9818369785964,14.574421439970266,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01373,678,1069,120.98194010590255,14.574268859040803,5,0,,way/308673835,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01374,678,1070,120.98209350737437,14.574659414672688,5,0,,way/823295207,centroid_inside_osm_building_polygon,0.98,La Nobleza Terrazas,,residential,10,32.5,,,,,,,,,,,0
+OFM-ERMITA-01375,678,1071,120.98311876824226,14.5749850042403,5,0,,way/308587999,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01376,678,1072,120.98349243281925,14.574728035307356,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01377,678,1073,120.98323436689729,14.574659870359971,5,0,,way/308587993,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01378,678,1074,120.98303723795657,14.574326414027894,5,0,,way/308588003,centroid_inside_osm_building_polygon,0.98,Gedisco Centre,,yes,,,,,,,,,,,,,4
+OFM-ERMITA-01379,678,9825,120.99018576496255,14.577378989592995,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01380,680,0,120.98757919112876,14.578433272538087,6,0,#ffcc99,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01381,681,0,120.98714081197848,14.578737250921849,6,0,,way/277981587,centroid_inside_osm_building_polygon,0.98,Mirasol Building,,yes,6,,,,,,,,,,,,0
+OFM-ERMITA-01382,682,0,120.98394923848818,14.582963370071822,8,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01383,682,1,120.98360463599789,14.582844468091812,8,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01384,682,2,120.98409702827777,14.5815155967909,8,0,,way/818768624,centroid_inside_osm_building_polygon,0.98,WHO Regional Office Auditorium,,yes,2,,,,,,,,,,,,0
+OFM-ERMITA-01385,682,3,120.9839913108298,14.581188209278116,8,0,,way/1217739517,centroid_inside_osm_building_polygon,0.98,,,yes,2,,,,,,,,,,,,0
+OFM-ERMITA-01386,682,4,120.98126357225468,14.581360847242332,8,0,,way/90164305,centroid_inside_osm_building_polygon,0.98,Fortune Mansion Seafoods Restaurant,,yes,2,,,,,,,,Maria Orosa Street,,Manila,,1
+OFM-ERMITA-01387,682,5,120.9810920016478,14.580797189128328,8,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,2
+OFM-ERMITA-01388,682,6,120.98167644608283,14.580476281681399,8,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01389,682,7,120.98161601511015,14.580438273257547,8,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01390,682,8,120.9879123145754,14.579897157035361,8,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01391,682,9,120.98160012559947,14.578683676680175,8,0,,way/90162270,nearest_osm_building_centroid_under_8m,0.75,Rotary Club of Manila,,yes,2,,,,,,,543,,,Manila,,0
+OFM-ERMITA-01392,682,10,120.98664264501588,14.57933907679368,8,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01393,682,11,120.98168903433893,14.578764589296803,8,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01394,682,12,120.98196132017303,14.578512920584272,8,0,,way/89828741,centroid_inside_osm_building_polygon,0.98,Aurora Plaza,,yes,2,,,,,,,537,Jorge Bocobo Street,,Manila,,1
+OFM-ERMITA-01395,682,13,120.98312611716173,14.579429942936295,8,0,,way/90148234,centroid_inside_osm_building_polygon,0.98,Centennial Building,,public,2,,,,,,,,,,Manila,,1
+OFM-ERMITA-01396,682,14,120.98487277623606,14.578684186108855,8,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01397,682,15,120.9858810082471,14.57776588847581,8,0,,way/16554344,centroid_inside_osm_building_polygon,0.98,,,hospital,2,,,,,,,,,,Manila,,6
+OFM-ERMITA-01398,682,16,120.98536946148329,14.579007168111282,8,0,,way/16554326,centroid_inside_osm_building_polygon,0.98,PGH Out-Patient Department,,hospital,2,,,,,,,,,,Manila,,3
+OFM-ERMITA-01399,682,17,120.98663414688684,14.579559791465515,8,0,,way/308704913,centroid_inside_osm_building_polygon,0.98,KFC,KFC,yes,2,,,,,,,,Taft Avenue,1000,Manila,,1
+OFM-ERMITA-01400,682,18,120.98568635859195,14.582274683596243,8,0,,way/818631749,centroid_inside_osm_building_polygon,0.98,,,,1,,,,,,,,,,,,0
+OFM-ERMITA-01401,682,19,120.98518797848148,14.58370613925169,8,0,,way/499301282,nearest_osm_building_centroid_under_8m,0.75,,,school,2,,,,hipped,,,,,,,,1
+OFM-ERMITA-01402,682,20,120.98641219925008,14.583510064625278,8,0,,way/37022206,centroid_inside_osm_building_polygon,0.98,,,yes,2,,,,hipped,,blue,,,,Manila,,2
+OFM-ERMITA-01403,682,21,120.9879139429566,14.583762355279669,8,0,,way/277969166,centroid_inside_osm_building_polygon,0.98,,,commercial,2,,,,flat,,,,,,,,2
+OFM-ERMITA-01404,682,23,120.9870098131042,14.58247024742709,8,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01405,682,41,120.99223408274081,14.578433221470409,8,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01406,682,42,120.98830720172282,14.580600278938933,8,0,,way/416495999,centroid_inside_osm_building_polygon,0.98,Paco Fire Sub-station,,yes,2,,,,,,,,San Marcelino Street,1000,Manila,,1
+OFM-ERMITA-01407,682,43,120.98663282835817,14.578926706055624,8,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01408,682,44,120.98738737707131,14.578382958333737,8,0,,way/824389318,centroid_inside_osm_building_polygon,0.98,,,,6,,,,,,,,,,,,2
+OFM-ERMITA-01409,682,45,120.98802192439084,14.577732483775263,8,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01410,682,46,120.98806776225274,14.57657647300539,8,0,,way/288126519,centroid_inside_osm_building_polygon,0.98,Pedro Gil,,train_station,2,,,,,,,,,,,,0
+OFM-ERMITA-01411,682,47,120.98823969591739,14.576591956907869,8,0,,way/308704908,centroid_inside_osm_building_polygon,0.98,Mang Inasal,Mang Inasal,yes,2,,,,,,,,Taft Avenue,,Manila,,1
+OFM-ERMITA-01412,682,48,120.98880890086123,14.576553635696197,8,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01413,682,49,120.98871017010948,14.576861885187824,8,0,,way/308705538,centroid_inside_osm_building_polygon,0.98,,,yes,2,,,,,,,,Leon Guinto Street,,Manila,,1
+OFM-ERMITA-01414,682,50,120.988318363565,14.577127881492725,8,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01415,682,51,120.98829433037157,14.578066631773648,8,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01416,682,52,120.99234426025494,14.578100339124825,8,0,,way/277973710,centroid_inside_osm_building_polygon,0.98,Bellevue Theater,,yes,2,,,,,,,,Pedro Gil Street,,Manila,,2
+OFM-ERMITA-01417,682,53,120.9926527377906,14.578122199904001,8,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01418,682,83,120.98554500168416,14.576260543944162,8,0,,way/308704917,centroid_inside_osm_building_polygon,0.98,,,yes,2,,,,,,,,,,,,1
+OFM-ERMITA-01419,682,84,120.98478580569905,14.577780686376887,8,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01420,682,85,120.9852429541477,14.576865076141441,8,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01421,682,86,120.98507015612482,14.575901372584777,8,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01422,682,87,120.98315711159464,14.577775355626995,8,0,,way/823295201,centroid_inside_osm_building_polygon,0.98,Ladies Dormitory,,dormitory,2,,,,,,,,,,,,0
+OFM-ERMITA-01423,682,88,120.98279452486712,14.576925813324724,8,0,,way/90611391,centroid_inside_osm_building_polygon,0.98,Midland Plaza Manila Hotel,,yes,2,,,,,,,,,,Manila,,1
+OFM-ERMITA-01424,682,89,120.98191108597486,14.576781469588493,8,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01425,682,90,120.98222899041782,14.576997493668761,8,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01426,682,91,120.98209086517446,14.577124902824968,8,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01427,682,92,120.98227131369192,14.578129418090345,8,0,,way/748554171,centroid_inside_osm_building_polygon,0.98,Bocobo Center,,yes,2,,,,,,,,Jorge Bocobo Street,,,,4
+OFM-ERMITA-01428,682,93,120.98209808178602,14.578006196489557,8,0,,way/823330136,centroid_inside_osm_building_polygon,0.98,Aurora Plaza,,yes,4,,,,,,,537,Padre Faura Street,,Manila,,1
+OFM-ERMITA-01429,682,94,120.98128717271163,14.578172311148924,8,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01430,682,95,120.98154709553295,14.577141832047523,8,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01431,682,96,120.98142872964232,14.576244819680525,8,0,,way/308694308,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01432,682,97,120.98197936701395,14.576503842761928,8,0,,way/308695410,centroid_inside_osm_building_polygon,0.98,Joncor II,,yes,2,,,,,,,,,,,,0
+OFM-ERMITA-01433,682,98,120.98202946994563,14.576295730352689,8,0,,way/308695392,nearest_osm_building_centroid_under_8m,0.75,Davis Building,,commercial,2,,,,,,,,,,,,0
+OFM-ERMITA-01434,682,99,120.98215957014327,14.576784068723036,8,0,,way/308695402,centroid_inside_osm_building_polygon,0.98,Kedar Building,,yes,2,,,,,,,,,,,,0
+OFM-ERMITA-01435,682,100,120.98248713640999,14.57573078282178,8,0,,way/823351018,centroid_inside_osm_building_polygon,0.98,Go Hotels Ermita-Manila,Go Hotels,yes,2,,,,,,,,,,,,0
+OFM-ERMITA-01436,682,101,120.98171233407336,14.575640454152902,8,0,,way/308695386,nearest_osm_building_centroid_under_8m,0.75,,,yes,2,,,,,,,,,,,,0
+OFM-ERMITA-01437,682,102,120.98186941319851,14.575788494427066,8,0,,way/308695401,centroid_inside_osm_building_polygon,0.98,,,yes,2,,,,,,,,,,,,0
+OFM-ERMITA-01438,682,103,120.98175138392607,14.575704383194777,8,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01439,682,104,120.98148998747693,14.575765723755774,8,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01440,682,105,120.98160628327761,14.575920663429875,8,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01441,682,106,120.98219581708497,14.575410979340399,8,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01442,682,107,120.98233279335706,14.575267127725546,8,0,,way/308695367,nearest_osm_building_centroid_under_8m,0.75,,,yes,7,,,,,,,1453,A. Mabini Street,,Manila,,0
+OFM-ERMITA-01443,682,108,120.98123368286979,14.57485625647294,8,0,,way/308695405,centroid_inside_osm_building_polygon,0.98,,,yes,2,,,,,,,,,,,,0
+OFM-ERMITA-01444,682,109,120.981678127552,14.574949625226624,8,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01445,682,110,120.98156766131339,14.574279108492911,8,0,,way/267205340,centroid_inside_osm_building_polygon,0.98,,,yes,2,,,,,,,,,,,,1
+OFM-ERMITA-01446,682,111,120.98289210907168,14.574737029087084,8,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01447,682,112,120.98186411267832,14.574782222094008,8,0,,way/267171251,centroid_inside_osm_building_polygon,0.98,,,,6,,,,,,,,,,,,1
+OFM-ERMITA-01448,682,113,120.9825890802057,14.574894123562931,8,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01449,682,114,120.98237065163337,14.57455728480605,8,0,,way/823662680,centroid_inside_osm_building_polygon,0.98,Salas,,,35,114.9,,,,,,,,,,,3
+OFM-ERMITA-01450,682,115,120.9826448762305,14.574785415884435,8,0,,way/823662682,nearest_osm_building_centroid_under_8m,0.75,,,yes,1,,,,,,,,,,,,0
+OFM-ERMITA-01451,682,116,120.98301246752607,14.574697157826275,8,0,,way/823662683,centroid_inside_osm_building_polygon,0.98,,,yes,2,,,,,,,,,,,,2
+OFM-ERMITA-01452,682,117,120.98272377694096,14.57394802962959,8,0,,way/308673853,centroid_inside_osm_building_polygon,0.98,Salud Building,,yes,2,,,,,,,,,,,,1
+OFM-ERMITA-01453,682,118,120.98340910569839,14.574085300282938,8,0,,way/308673829,centroid_inside_osm_building_polygon,0.98,Nestor Building,,yes,2,,,,,,,,,,,,3
+OFM-ERMITA-01454,682,253,120.98848124601403,14.577500842866444,8,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01455,682,254,120.99291189074634,14.578150327284778,8,0,,way/838082248,nearest_osm_building_centroid_under_8m,0.75,,,yes,2,,,,,,,,Pedro Gil Street,,Manila,,3
+OFM-ERMITA-01456,682,255,120.99284964699189,14.578141353072825,8,0,,way/838082248,nearest_osm_building_centroid_under_3m,0.9,,,yes,2,,,,,,,,Pedro Gil Street,,Manila,,1
+OFM-ERMITA-01457,689,0,120.98835465826956,14.577443592997094,10,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01458,689,1,120.98848121279762,14.577500847018495,10,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01459,690,0,120.9829113631182,14.582571579997984,11,0,,way/818631734,centroid_inside_osm_building_polygon,0.98,Golden Fortune,,yes,3,,,,,,,,Kalaw Avenue,,Manila,,2
+OFM-ERMITA-01460,690,1,120.98292607091118,14.581884684247468,11,0,,way/818631732,centroid_inside_osm_building_polygon,0.98,,,hospital,3,,,,,,,,,,,,1
+OFM-ERMITA-01461,690,2,120.98125478723627,14.57992644150293,11,0,,way/822413223,centroid_inside_osm_building_polygon,0.98,,,,4,,,,,,,,,,,,3
+OFM-ERMITA-01462,690,3,120.9820314908497,14.579500630735545,11,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01463,690,4,120.97746545493197,14.578290324723639,11,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01464,690,6,120.98288916165833,14.578484942885265,11,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01465,690,7,120.98303154188913,14.578485723981066,11,0,,way/90300223,centroid_inside_osm_building_polygon,0.98,Padilla Square,,yes,3,,,,,,,,,,Manila,,2
+OFM-ERMITA-01466,690,8,120.98340312810515,14.578950051682808,11,0,,way/91245383,centroid_inside_osm_building_polygon,0.98,Damian Hall,,university,3,,,,,,,,Padre Faura Street,1000,Manila,,2
+OFM-ERMITA-01467,690,9,120.9841185804058,14.579373951896914,11,0,,way/16554370,centroid_inside_osm_building_polygon,0.98,,,office,3,,,,,,,,,,Manila,,1
+OFM-ERMITA-01468,690,10,120.98539889367264,14.580240161831723,11,0,,way/156307575,centroid_inside_osm_building_polygon,0.98,Old Supreme Court Main Building,,public,3,,,,,,,,,,Manila,,1
+OFM-ERMITA-01469,690,11,120.98445702507745,14.579743180696836,11,0,,way/156307566,centroid_inside_osm_building_polygon,0.98,Supreme Court Main Building,,yes,3,,,,,,,,,,Manila,,1
+OFM-ERMITA-01470,690,12,120.9848819407398,14.57986002291343,11,0,,way/223486861,nearest_osm_building_centroid_under_8m,0.75,Rizal Hall,,university,3,,,,,,,,,,Manila,,0
+OFM-ERMITA-01471,690,13,120.98481371768342,14.57928618270482,11,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01472,690,14,120.9858702827205,14.57915040839289,11,0,,way/16554323,centroid_inside_osm_building_polygon,0.98,PGH Nurses Home,,dormitory,3,,,,,,,,,,Manila,,3
+OFM-ERMITA-01473,690,15,120.98599199064563,14.581310196947578,11,0,,way/87741301,centroid_inside_osm_building_polygon,0.98,Cathedral of Praise,,church,3,,,,,,,,Taft Avenue,1000,Manila,,1
+OFM-ERMITA-01474,690,16,120.98563163150881,14.583010699928217,11,0,,way/499301285,centroid_inside_osm_building_polygon,0.98,,,school,3,,,,hipped,,,,,,,,1
+OFM-ERMITA-01475,690,17,120.9851702069532,14.58287067263539,11,0,,way/499301286,centroid_inside_osm_building_polygon,0.98,,,school,3,,,,,,,,,,,,1
+OFM-ERMITA-01476,690,18,120.98624444265955,14.583379361728943,11,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01477,690,19,120.98727880742268,14.583625431055614,11,0,,way/575422168,nearest_osm_building_centroid_under_8m,0.75,UN Square,,commercial,3,,,,,,,UN Square,,,,,8
+OFM-ERMITA-01478,690,26,120.9919448542608,14.57853626026612,11,0,,way/302521452,nearest_osm_building_centroid_under_8m,0.75,,,yes,3,,,,,,,,General Luna Street,,Manila,,1
+OFM-ERMITA-01479,690,27,120.99179033362005,14.57799042112053,11,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01480,690,28,120.98909725354038,14.578444823855579,11,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01481,690,29,120.98786022870954,14.578219364550044,11,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01482,690,30,120.98860627964602,14.578240936854455,11,0,,way/437538267,centroid_inside_osm_building_polygon,0.98,,,yes,3,,,,,,,,,,Manila,,2
+OFM-ERMITA-01483,690,31,120.98810917968473,14.579578821240192,11,0,,way/824389320,centroid_inside_osm_building_polygon,0.98,,,yes,3,,,,,,,,,,,,0
+OFM-ERMITA-01484,690,32,120.9879921435959,14.579711659167378,11,0,,way/308702664,centroid_inside_osm_building_polygon,0.98,,,yes,3,,,,,,,,,,,,0
+OFM-ERMITA-01485,690,33,120.98702608487817,14.578911435909435,11,0,,way/277981564,centroid_inside_osm_building_polygon,0.98,,,yes,3,,,,,,,,,,,,1
+OFM-ERMITA-01486,690,34,120.9875241330717,14.57819066531255,11,0,,,unmatched,0,,,,,,,,,,,,,,,,2
+OFM-ERMITA-01487,690,35,120.98734728264432,14.578546152217724,11,0,,way/277974483,centroid_inside_osm_building_polygon,0.98,Jamora Building,,yes,3,,,,,,,1410,Taft Avenue,1000,Manila,,2
+OFM-ERMITA-01488,690,36,120.98655640103502,14.578690446895427,11,0,,,unmatched,0,,,,,,,,,,,,,,,,3
+OFM-ERMITA-01489,690,37,120.98775797312142,14.577906490189328,11,0,,way/277974479,centroid_inside_osm_building_polygon,0.98,,,yes,3,,,,,,,,,,,,1
+OFM-ERMITA-01490,690,38,120.98785622303197,14.57760459548403,11,0,,way/308704937,nearest_osm_building_centroid_under_3m,0.9,,,yes,3,,,,,,,,Taft Avenue,,,,4
+OFM-ERMITA-01491,690,39,120.98752204562011,14.578060235614481,11,0,,way/268207673,centroid_inside_osm_building_polygon,0.98,,,commercial,3,,,,,,,,Taft Avenue,1000,Manila,,2
+OFM-ERMITA-01492,690,40,120.9881246352016,14.57716582485503,11,0,,way/840746271,centroid_inside_osm_building_polygon,0.98,Cathedral of the Holy Child,,cathedral,3,,,,,,,,Taft Avenue,,Manila,,2
+OFM-ERMITA-01493,690,41,120.98735914748612,14.576302382795436,11,0,,way/28395536,centroid_inside_osm_building_polygon,0.98,College of Nursing,,university,3,,,,,,,,,,Manila,,2
+OFM-ERMITA-01494,690,42,120.98701496974213,14.57588100520318,11,0,,way/27650470,centroid_inside_osm_building_polygon,0.98,National Institutes of Health,,university,3,,,,,,,,,,Manila,,2
+OFM-ERMITA-01495,690,43,120.98822572896042,14.576939722616236,11,0,,way/308704925,centroid_inside_osm_building_polygon,0.98,,,yes,3,,,,,,,,Taft Avenue,,Manila,,2
+OFM-ERMITA-01496,690,44,120.98890748517827,14.576651892327725,11,0,,way/308705533,nearest_osm_building_centroid_under_3m,0.9,,,yes,3,,,,,,,1573,Leon Guinto Street,,Manila,,0
+OFM-ERMITA-01497,690,45,120.98866196987213,14.576494787044838,11,0,,way/308705535,nearest_osm_building_centroid_under_8m,0.75,,,yes,3,,,,,,,,Pedro Gil Street,,"Malate, Manila",,1
+OFM-ERMITA-01498,690,47,120.98882922982571,14.577300412556532,11,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,2
+OFM-ERMITA-01499,690,48,120.98870540622649,14.577611683639454,11,0,,way/437538334,nearest_osm_building_centroid_under_3m,0.9,,,yes,,,,,,,,,,,,,2
+OFM-ERMITA-01500,690,49,120.99140686847508,14.577834503942393,11,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01501,690,68,120.98584181030165,14.575475670312617,11,0,,way/90315913,centroid_inside_osm_building_polygon,0.98,Calderon Hall,,university,3,,,,,,,,,,Manila,,3
+OFM-ERMITA-01502,690,69,120.98629583600258,14.576364390967454,11,0,,way/91007112,centroid_inside_osm_building_polygon,0.98,CPH Annex 2,,university,3,,,,,,,,,,Manila,,3
+OFM-ERMITA-01503,690,70,120.98497438458526,14.57728721455586,11,0,,way/16554350,centroid_inside_osm_building_polygon,0.98,,,hospital,3,,,,,,,,,,Manila,,2
+OFM-ERMITA-01504,690,71,120.9825247580306,14.578216599407915,11,0,,,unmatched,0,,,,,,,,,,,,,,,,2
+OFM-ERMITA-01505,690,72,120.98262051317161,14.577983614256683,11,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01506,690,73,120.98162135572882,14.577814734876585,11,0,,way/89827344,centroid_inside_osm_building_polygon,0.98,Merchant Center Building,,yes,3,,,,,,,,,,Manila,,4
+OFM-ERMITA-01507,690,75,120.98250859424562,14.57738481221648,11,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01508,690,76,120.98165767292262,14.577252984886202,11,0,,way/823330149,centroid_inside_osm_building_polygon,0.98,,,yes,3,,,,,,,,,,,,0
+OFM-ERMITA-01509,690,77,120.98164505493489,14.577031718269163,11,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01510,690,78,120.98156467964037,14.576673024346983,11,0,,way/308694320,centroid_inside_osm_building_polygon,0.98,Casa Tesoro,,yes,3,,,,,,,,,,,,0
+OFM-ERMITA-01511,690,79,120.9818299652197,14.576515504741497,11,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01512,690,80,120.98249563740814,14.575489467115597,11,0,,way/267171291,centroid_inside_osm_building_polygon,0.98,Residential Building,,commercial,3,,,,,,,,,,,,0
+OFM-ERMITA-01513,690,81,120.98186211112305,14.575861338704026,11,0,,way/823351016,centroid_inside_osm_building_polygon,0.98,,,yes,3,,,,,,,,,,,,0
+OFM-ERMITA-01514,690,82,120.98138384405574,14.57633711520396,11,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01515,690,83,120.98113172408836,14.575601918800468,11,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01516,690,84,120.98133073248258,14.57571592393259,11,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01517,690,85,120.98151602050334,14.57546320742275,11,0,,way/823351013,centroid_inside_osm_building_polygon,0.98,Aussie Towers,,yes,3,,,,,,,,,,,,0
+OFM-ERMITA-01518,690,86,120.98133247412062,14.574771585729641,11,0,,way/308695405,centroid_inside_osm_building_polygon,0.98,,,yes,2,,,,,,,,,,,,0
+OFM-ERMITA-01519,690,87,120.98175498890114,14.574944620625168,11,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01520,690,88,120.98126239081815,14.574484578052006,11,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01521,690,92,120.98273525256958,14.574166397723667,11,0,,way/308588000,centroid_inside_osm_building_polygon,0.98,Henson Building,,yes,4,,,,,,,,,,,,1
+OFM-ERMITA-01522,690,93,120.98243379929343,14.574266194162488,11,0,,way/308587998,centroid_inside_osm_building_polygon,0.98,Henzon Apartments,,apartments,3,,,,,,,,,,,,0
+OFM-ERMITA-01523,690,94,120.98219872879164,14.574061424176756,11,0,,way/308587994,centroid_inside_osm_building_polygon,0.98,Global CIS,,yes,5,,,,,,,,,,,,0
+OFM-ERMITA-01524,690,95,120.98181313510727,14.57394676052711,11,0,,way/308673851,centroid_inside_osm_building_polygon,0.98,,,yes,3,,,,,,,,,,,,0
+OFM-ERMITA-01525,690,176,120.99191054516453,14.578029323595057,11,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01526,690,184,120.99250952648785,14.578352019319233,11,0,,way/437536924,nearest_osm_building_centroid_under_3m,0.9,,,yes,3,,,,,,,,General Luna Street,,Manila,,1
+OFM-ERMITA-01527,695,0,120.98347531955184,14.581984561622441,15,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01528,695,1,120.98150032273213,14.581784728720809,15,0,,way/90301215,centroid_inside_osm_building_polygon,0.98,San Luis Building,,yes,4,,,,,,,1006,Kalaw Avenue,,Manila,,3
+OFM-ERMITA-01529,695,2,120.98088146825498,14.580174768836748,15,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01530,695,3,120.9830955535724,14.579911420969708,15,0,,way/28239313,centroid_inside_osm_building_polygon,0.98,,,public,4,,,,,,,,,,Manila,,1
+OFM-ERMITA-01531,695,4,120.98131421306185,14.579942040284575,15,0,,way/822413223,centroid_inside_osm_building_polygon,0.98,,,,4,,,,,,,,,,,,3
+OFM-ERMITA-01532,695,5,120.98141734447837,14.57895097908409,15,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01533,695,6,120.98137688099925,14.578458738644844,15,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01534,695,7,120.98321045235427,14.578725755010352,15,0,,way/90442696,centroid_inside_osm_building_polygon,0.98,UP Manila Student Center,,yes,4,,,,,,,,,,Manila,,1
+OFM-ERMITA-01535,695,8,120.98685103117525,14.57907320367017,15,0,,way/90610851,centroid_inside_osm_building_polygon,0.98,Cosmopolitan Church,,church,4,14.3,,,,,,,,,Manila,,1
+OFM-ERMITA-01536,695,9,120.98667307233195,14.579739446064886,15,0,,way/277977989,centroid_inside_osm_building_polygon,0.98,West East Center,,yes,4,,,,,,,,,,,,1
+OFM-ERMITA-01537,695,10,120.9862212472407,14.580363807513605,15,0,,way/353766354,centroid_inside_osm_building_polygon,0.98,,,yes,4,,,,,,,,,,,,1
+OFM-ERMITA-01538,695,11,120.98642577159366,14.58041919236647,15,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01539,695,12,120.9858528648371,14.582097985594627,15,0,,way/91233257,centroid_inside_osm_building_polygon,0.98,YWCA Manila,,yes,4,,,,,,,,,,Manila,,1
+OFM-ERMITA-01540,695,13,120.98603842002916,14.581983182784903,15,0,,way/818631750,centroid_inside_osm_building_polygon,0.98,College of Dentistry,,college,4,,,,,,,,,,,,2
+OFM-ERMITA-01541,695,14,120.98442440644072,14.581425527170953,15,0,,way/818768619,centroid_inside_osm_building_polygon,0.98,World Health Organization,,commercial,4,,,,,,,,,,,,0
+OFM-ERMITA-01542,695,15,120.98619816269115,14.582706450144629,15,0,,way/762591698,centroid_inside_osm_building_polygon,0.98,The United Methodist Church,,yes,4,,,,flat,,,,,,,,3
+OFM-ERMITA-01543,695,16,120.98667376282631,14.582507571665646,15,0,,way/818647172,centroid_inside_osm_building_polygon,0.98,,,yes,4,,,,,,,,,,,,0
+OFM-ERMITA-01544,695,19,120.99214760860576,14.578609646532739,15,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01545,695,21,120.99220265899784,14.578493263370145,15,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01546,695,22,120.99112900562177,14.578324643701919,15,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01547,695,24,120.99241318563581,14.578365166664621,15,0,,way/437536924,centroid_inside_osm_building_polygon,0.98,,,yes,3,,,,,,,,General Luna Street,,Manila,,2
+OFM-ERMITA-01548,695,25,120.99124005099536,14.578924189173298,15,0,,way/642777014,centroid_inside_osm_building_polygon,0.98,,,yes,4,,,,,,,,,,,,0
+OFM-ERMITA-01549,695,26,120.98731592994638,14.580770308438842,15,0,,way/824389323,centroid_inside_osm_building_polygon,0.98,,,yes,4,,,,,,,,,,,,0
+OFM-ERMITA-01550,695,27,120.98719571396258,14.579328590702966,15,0,,way/156307568,centroid_inside_osm_building_polygon,0.98,,,yes,4,,,,,,,,,,Manila,,1
+OFM-ERMITA-01551,695,28,120.98743513624257,14.578078129853731,15,0,,way/268207673,centroid_inside_osm_building_polygon,0.98,,,commercial,3,,,,,,,,Taft Avenue,1000,Manila,,1
+OFM-ERMITA-01552,695,29,120.9876953687932,14.57751432033329,15,0,,way/824389315,centroid_inside_osm_building_polygon,0.98,,,,4,,,,,,,,,,,,2
+OFM-ERMITA-01553,695,30,120.9879855028818,14.577145551168583,15,0,,way/840746272,nearest_osm_building_centroid_under_8m,0.75,,,,4,,,,,,,,,,,,2
+OFM-ERMITA-01554,695,31,120.98741124393085,14.576838271818545,15,0,,way/90314486,centroid_inside_osm_building_polygon,0.98,College of Pharmacy,,yes,4,,,,,,,,,,Manila,,2
+OFM-ERMITA-01555,695,32,120.98770601951381,14.57644367090325,15,0,,way/90314490,centroid_inside_osm_building_polygon,0.98,College of Dentistry,,university,4,,,,,,,,,,Manila,,2
+OFM-ERMITA-01556,695,36,120.99178707586417,14.578364672677324,15,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01557,695,37,120.99255493525733,14.578353907621667,15,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01558,695,59,120.98691040420235,14.576597805028289,15,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01559,695,60,120.98527831060277,14.57577225945554,15,0,,way/308704900,centroid_inside_osm_building_polygon,0.98,"Henry Sy, Jr. Medical Sciences Building",,university,4,,,,,,,,,,,,2
+OFM-ERMITA-01560,695,61,120.98239142739588,14.57747669006479,15,0,,way/89827522,centroid_inside_osm_building_polygon,0.98,PAL Learning Center,,yes,4,,,,,,,540,Padre Faura Street,,Manila,,1
+OFM-ERMITA-01561,695,62,120.98253723446003,14.578354519575397,15,0,,way/89830967,centroid_inside_osm_building_polygon,0.98,Solemil Building,,yes,4,,,,,,,1250,Jorge Bocobo Street,,Manila,,2
+OFM-ERMITA-01562,695,63,120.98202314393306,14.578001305484106,15,0,,way/823330138,centroid_inside_osm_building_polygon,0.98,,,,5,,,,,,,,,,,,1
+OFM-ERMITA-01563,695,64,120.9812887034172,14.57754957232561,15,0,,way/89781221,nearest_osm_building_centroid_under_8m,0.75,,,hotel,4,,,,,,,1227,A. Mabini Street,,Manila,,1
+OFM-ERMITA-01564,695,65,120.9813940548216,14.577096458932823,15,0,,way/823330147,centroid_inside_osm_building_polygon,0.98,,,hotel,4,,,,,,,,,,,,1
+OFM-ERMITA-01565,695,66,120.9823343768285,14.576392100635571,15,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01566,695,67,120.9822426244396,14.576151511525346,15,0,,way/308695409,centroid_inside_osm_building_polygon,0.98,,,yes,4,,,,,,,,,,,,0
+OFM-ERMITA-01567,695,68,120.98147743015394,14.57602780779009,15,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,2
+OFM-ERMITA-01568,695,69,120.98182949532419,14.57584369498988,15,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01569,695,70,120.98255398135309,14.574353615345645,15,0,,way/308587991,centroid_inside_osm_building_polygon,0.98,Ermita Tourist Inn,,yes,4,,,,,,,1549,A. Mabini Street,,,,1
+OFM-ERMITA-01570,695,71,120.98291183496936,14.574184532450362,15,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01571,695,73,120.98267376682246,14.57389793903537,15,0,,way/308673842,centroid_inside_osm_building_polygon,0.98,,,yes,4,,,,,,,,,,,,1
+OFM-ERMITA-01572,695,142,120.99251656768647,14.578130963613805,15,0,,way/1457593150,centroid_inside_osm_building_polygon,0.98,Casa Susana,,yes,4,,,,,,,,Pedro Gil Street,,,,1
+OFM-ERMITA-01573,695,146,120.99168504726728,14.578198979693964,15,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01574,696,0,120.98466462056926,14.582530304543608,15,3,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01575,699,0,120.98146110130766,14.577694039729293,15,7,,way/823330140,nearest_osm_building_centroid_under_3m,0.9,,,,4,,,,,,,,,,,,2
+OFM-ERMITA-01576,704,1,120.99012816552403,14.578823421763724,16,5,#ffffff,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01577,705,0,120.98187981633947,14.579674832051456,18,0,,way/90123959,centroid_inside_osm_building_polygon,0.98,Manila Residences Bocobo,,residential,6,18,,,,,,1160,Jorge Bocobo Street,,Manila,,1
+OFM-ERMITA-01578,706,0,120.98325083323502,14.582128883206996,19,0,,way/750959850,centroid_inside_osm_building_polygon,0.98,,,hospital,5,,,,,,,,,,,,1
+OFM-ERMITA-01579,706,1,120.98283642783665,14.581986452103928,19,0,,way/750959852,centroid_inside_osm_building_polygon,0.98,,,yes,5,,,,,,,,,,,,1
+OFM-ERMITA-01580,706,2,120.98157023880582,14.581849601439936,19,0,,way/90301242,nearest_osm_building_centroid_under_8m,0.75,Gochangco Building,,yes,5,,,,,,,610,Kalaw Avenue,,Manila,,1
+OFM-ERMITA-01581,706,3,120.98110461274969,14.581585218155519,19,0,,way/90164301,centroid_inside_osm_building_polygon,0.98,The Corporate Inn Hotel Manila,,yes,5,,,,,,,,Kalaw Avenue,,Manila,,2
+OFM-ERMITA-01582,706,4,120.98283495257644,14.58013037840381,19,0,,way/309526840,centroid_inside_osm_building_polygon,0.98,,,yes,5,,,,,,,,,,,,0
+OFM-ERMITA-01583,706,5,120.98140769649883,14.578769677746566,19,0,,way/822391119,nearest_osm_building_centroid_under_8m,0.75,,,,7,,,,,,,,,,,,0
+OFM-ERMITA-01584,706,6,120.98171154795646,14.578626865240615,19,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01585,706,7,120.9821670796577,14.578113240744994,19,0,,way/823330135,centroid_inside_osm_building_polygon,0.98,,,,5,,,,,,,,,,,,3
+OFM-ERMITA-01586,706,8,120.9823861845917,14.57846639382384,19,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01587,706,9,120.98301552380795,14.578594724702583,19,0,,,unmatched,0,,,,,,,,,,,,,,,,2
+OFM-ERMITA-01588,706,10,120.98555386829076,14.579861320387279,19,0,,way/16554354,centroid_inside_osm_building_polygon,0.98,Centennial Building,,public,5,,,,,,,,,,Manila,,1
+OFM-ERMITA-01589,706,11,120.98696574797091,14.580551226089652,19,0,,way/308704922,centroid_inside_osm_building_polygon,0.98,,,yes,,,,,,,,,,,,,0
+OFM-ERMITA-01590,706,12,120.98457696276608,14.582010352645083,19,0,,way/818768620,centroid_inside_osm_building_polygon,0.98,,,,5,,,,,,,,,,,,0
+OFM-ERMITA-01591,706,13,120.98537156372346,14.58191516680245,19,0,,way/818631745,centroid_inside_osm_building_polygon,0.98,,,parking,5,,,,,,,,,,,,1
+OFM-ERMITA-01592,706,14,120.98460693137986,14.583103296923188,19,0,,way/499301290,centroid_inside_osm_building_polygon,0.98,,,school,5,,,,,,,,,,,,1
+OFM-ERMITA-01593,706,15,120.98707802290785,14.582234323870262,19,0,,way/818647173,centroid_inside_osm_building_polygon,0.98,,,college,5,,,,,,,,,,,,0
+OFM-ERMITA-01594,706,16,120.99194122949052,14.578670632849622,19,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01595,706,17,120.9877558079673,14.579387222761405,19,0,,way/824389319,centroid_inside_osm_building_polygon,0.98,,,,10,37.9,,,,,,,,,,,0
+OFM-ERMITA-01596,706,18,120.98743788540594,14.578268442410902,19,0,,way/824389317,centroid_inside_osm_building_polygon,0.98,,,yes,5,,,,,,,,,,,,1
+OFM-ERMITA-01597,706,19,120.98841382026463,14.576371871434379,19,0,,way/308705545,centroid_inside_osm_building_polygon,0.98,Agoncillo Building,,yes,5,,,,,,,,Taft Avenue,,,,4
+OFM-ERMITA-01598,706,30,120.98510375037614,14.57826826663882,19,0,,way/28393875,centroid_inside_osm_building_polygon,0.98,Sentro Oftalmologica,,yes,5,,,,,,,,,,Manila,,2
+OFM-ERMITA-01599,706,31,120.9816550659948,14.577981942924621,19,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01600,706,32,120.98173962802665,14.577708378480892,19,0,,,unmatched,0,,,,,,,,,,,,,,,,2
+OFM-ERMITA-01601,706,33,120.98121697589177,14.577091709130098,19,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01602,706,34,120.98142906031167,14.576826855570015,19,0,,way/308694322,centroid_inside_osm_building_polygon,0.98,Tesoro's Bldg.,,yes,5,,,,,,,,,,,,2
+OFM-ERMITA-01603,706,35,120.98265995539585,14.575930031390012,19,0,,way/823295205,centroid_inside_osm_building_polygon,0.98,,,,24,85.8,,,,,,,,,,,1
+OFM-ERMITA-01604,706,36,120.98201246610252,14.575514387552861,19,0,,way/267171290,centroid_inside_osm_building_polygon,0.98,,,yes,5,,,,,,,,,,,,0
+OFM-ERMITA-01605,706,37,120.98157965809519,14.57613513742938,19,0,,way/308694321,centroid_inside_osm_building_polygon,0.98,,,yes,5,,,,,,,,,,,,1
+OFM-ERMITA-01606,706,38,120.98147109114134,14.575156997371042,19,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01607,706,39,120.9818467393656,14.574660328263338,19,0,,way/267205335,nearest_osm_building_centroid_under_8m,0.75,,,yes,5,,,,,,,,,,,,0
+OFM-ERMITA-01608,706,40,120.9821407410438,14.575395841444474,19,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01609,706,41,120.98365671968087,14.575070853208228,19,0,,way/130532100,centroid_inside_osm_building_polygon,0.98,Three Adriatico Place,,yes,5,,,,,,,,,,Manila,,2
+OFM-ERMITA-01610,706,42,120.98242843056784,14.574173832378866,19,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01611,706,105,120.99284515320092,14.578164453142286,19,0,,way/838082248,nearest_osm_building_centroid_under_3m,0.9,,,yes,2,,,,,,,,Pedro Gil Street,,Manila,,1
+OFM-ERMITA-01612,711,0,120.98682974712321,14.57937641579025,21,0,,way/277981586,centroid_inside_osm_building_polygon,0.98,Vista GL Taft,,residential,6,21,,,,,,1344,Taft Avenue,,Manila,,1
+OFM-ERMITA-01613,711,1,120.98287672699675,14.577856453622916,21,0,,way/823295199,centroid_inside_osm_building_polygon,0.98,,,,42,150.1,,,,,,,,,,,2
+OFM-ERMITA-01614,713,0,120.98224535172119,14.583286252782983,22,0,,way/795990980,centroid_inside_osm_building_polygon,0.98,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01615,713,1,120.98423281013201,14.5800591799989,22,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01616,713,2,120.98668924595546,14.580021399669251,22,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01617,713,3,120.9844201174213,14.581330839081703,22,0,,way/818768621,centroid_inside_osm_building_polygon,0.98,,,,6,,,,,,,,,,,,0
+OFM-ERMITA-01618,713,4,120.98449397843879,14.583849842531345,22,0,,way/28788391,centroid_inside_osm_building_polygon,0.98,,,yes,6,,,,,,,,Taft Avenue,,Manila,,4
+OFM-ERMITA-01619,713,5,120.98589394920194,14.58260749566984,22,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01620,713,6,120.98634403248984,14.582444061791751,22,0,,way/542696211,centroid_inside_osm_building_polygon,0.98,,,yes,6,,,,,,,,,,,,0
+OFM-ERMITA-01621,713,7,120.98959039583498,14.578139565756754,22,0,,way/277974351,centroid_inside_osm_building_polygon,0.98,NFWC Building,,office,6,,,,,,,962,Escoda Street,,Manila,,3
+OFM-ERMITA-01622,713,8,120.98802501795373,14.579511041326597,22,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01623,713,9,120.98745990632284,14.578410945587796,22,0,,way/277974469,centroid_inside_osm_building_polygon,0.98,Joshua Center,,yes,2,,,,,,,,,,,,2
+OFM-ERMITA-01624,713,10,120.98745970664542,14.578866513772669,22,0,,way/277981561,centroid_inside_osm_building_polygon,0.98,AFG Building,,yes,6,,,,,,,876,G. Apacible Street,1000,Manila,,4
+OFM-ERMITA-01625,713,11,120.98703525921225,14.578657520447823,22,0,,,unmatched,0,,,,,,,,,,,,,,,,2
+OFM-ERMITA-01626,713,12,120.98875346263932,14.576733448296196,22,0,,way/308705542,centroid_inside_osm_building_polygon,0.98,Rufina Terraces,,yes,6,,,,,,,1567,Leon Guinto Street,,Manila,,1
+OFM-ERMITA-01627,713,14,120.9894380732846,14.576768469413942,22,0,,way/145657655,centroid_inside_osm_building_polygon,0.98,AP Building,,yes,6,,,,,,,1563,Agoncillo Street,,Manila,,1
+OFM-ERMITA-01628,713,22,120.98356646879672,14.578111107862991,22,0,,way/326181582,centroid_inside_osm_building_polygon,0.98,Robinsons Place Residence,,,6,,,,,,,,,,,,23
+OFM-ERMITA-01629,713,23,120.98311113352194,14.578122415010087,22,0,,way/823295200,nearest_osm_building_centroid_under_3m,0.9,A.T.C. Building,,commercial,6,,,,,,,,,,,,0
+OFM-ERMITA-01630,713,24,120.98296115292153,14.57796047017508,22,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01631,713,25,120.9815835319905,14.577476275884024,22,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01632,713,26,120.98171317890609,14.57471665995692,22,0,,way/823295208,centroid_inside_osm_building_polygon,0.98,,,yes,6,,,,,,,,,,,,2
+OFM-ERMITA-01633,713,27,120.98144234773845,14.574576496773695,22,0,,way/823662684,centroid_inside_osm_building_polygon,0.98,,,,6,,,,,,,,,,,,0
+OFM-ERMITA-01634,713,28,120.9819897488923,14.574802685134934,22,0,,way/267171251,nearest_osm_building_centroid_under_3m,0.9,,,,6,,,,,,,,,,,,1
+OFM-ERMITA-01635,713,29,120.98270114656039,14.574935133923077,22,0,,way/308587990,centroid_inside_osm_building_polygon,0.98,Silver Oaks,,yes,6,,,,,,,,A. Mabini Street,,,,1
+OFM-ERMITA-01636,718,0,120.98643408195673,14.582260855229366,22,10,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01637,722,1,120.99055926472151,14.57896555790285,24,36,#ffcc99,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01638,723,0,120.97753053111595,14.577345831121304,24,29,#ffcc99,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01639,724,0,120.98402780700903,14.582475214630419,25,0,,way/74866702,centroid_inside_osm_building_polygon,0.98,Times Plaza,,commercial,7,24.5,,,,,,,,,Manila,,8
+OFM-ERMITA-01640,725,0,120.98399193858928,14.576417111421117,25,-4,,way/130532101,centroid_inside_osm_building_polygon,0.98,,,retail,7,25,,,,,,,Pedro Gil Street,1000,Manila,,211
+OFM-ERMITA-01641,726,0,120.982117007945,14.582111462618915,26,0,,way/818631727,nearest_osm_building_centroid_under_8m,0.75,Country Bankers Center,,yes,7,,,,,,,,,,,,0
+OFM-ERMITA-01642,726,1,120.9817689659399,14.581936541555772,26,0,,way/90301251,centroid_inside_osm_building_polygon,0.98,Trinity Building,,yes,7,,,,,,,636,Kalaw Avenue,,Manila,,3
+OFM-ERMITA-01643,726,2,120.98131694875694,14.580390330542599,26,0,,way/308702662,centroid_inside_osm_building_polygon,0.98,,,yes,7,,,,,,,,,,,,1
+OFM-ERMITA-01644,726,3,120.98186135952378,14.578787928807905,26,0,,way/90162272,nearest_osm_building_centroid_under_8m,0.75,Pacific Place Apartelle Suites,,yes,2,,,,,,,539,Arquiza Street,,Manila,,1
+OFM-ERMITA-01645,726,4,120.98531224013881,14.581522929469779,26,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01646,726,5,120.98649808515313,14.582371618041126,26,0,,way/818647171,centroid_inside_osm_building_polygon,0.98,,,,7,,,,,,,,,,,,0
+OFM-ERMITA-01647,726,6,120.98667482802415,14.582180776814575,26,0,,way/818631752,centroid_inside_osm_building_polygon,0.98,,,school,7,,,,,,,,,,,,1
+OFM-ERMITA-01648,726,8,120.98859032313239,14.578450130022473,26,0,,way/277981559,centroid_inside_osm_building_polygon,0.98,,,yes,7,,,,,,,,,,,,1
+OFM-ERMITA-01649,726,14,120.98539827408023,14.57750562158697,26,0,,way/90314484,centroid_inside_osm_building_polygon,0.98,Central Block,,hospital,7,,,,,,,,,,Manila,,2
+OFM-ERMITA-01650,726,15,120.9812915288708,14.57794974113309,26,0,,way/90308565,centroid_inside_osm_building_polygon,0.98,Henann Center,,yes,7,,,,,,,1212,A. Mabini Street,1000,Manila,,1
+OFM-ERMITA-01651,726,16,120.98115488155742,14.574147901231957,26,0,,way/267171201,centroid_inside_osm_building_polygon,0.98,S & L Building,,yes,7,,,,,,,1500,Roxas Boulevard,,Manila,,1
+OFM-ERMITA-01652,726,17,120.9824130347433,14.57473259925761,26,0,,way/267205339,centroid_inside_osm_building_polygon,0.98,Quadruple Star Building,,yes,7,,,,,,,,,,,,3
+OFM-ERMITA-01653,726,18,120.9821584025111,14.575258792793619,26,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01654,727,0,120.98681103879984,14.580077923394132,26,21,,way/277977992,centroid_inside_osm_building_polygon,0.98,Manila Baptist Church,,church,,,,,,,,,Leon Guinto Street,,,,1
+OFM-ERMITA-01655,728,0,120.98240122849901,14.578779698491013,28,0,,way/89830977,centroid_inside_osm_building_polygon,0.98,Manila Executive Regency,,residential,8,28,,,,,,,,,Manila,,2
+OFM-ERMITA-01656,728,1,120.98281438493348,14.575218812862408,28,0,,way/1061988733,centroid_inside_osm_building_polygon,0.98,Asia Plaza,,construction,8,28,,,,,,,,,,,0
+OFM-ERMITA-01657,730,0,120.9824315634674,14.582237317780379,30,0,,way/818631728,centroid_inside_osm_building_polygon,0.98,,,hospital,8,,,,,,,,,,,,1
+OFM-ERMITA-01658,730,1,120.98202742073866,14.582057093311601,30,0,,way/90138829,centroid_inside_osm_building_polygon,0.98,San Luis Terraces,,yes,8,,,,,,,,T.M. Kalaw,,Manila,,1
+OFM-ERMITA-01659,730,2,120.98166605258152,14.580610937705112,30,0,,way/90301311,centroid_inside_osm_building_polygon,0.98,,,yes,8,,,,,,,,,,Manila,,2
+OFM-ERMITA-01660,730,3,120.98143049252006,14.57907731360826,30,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01661,730,4,120.98560263174706,14.58174950467069,30,0,,way/91233254,centroid_inside_osm_building_polygon,0.98,The Pearl Manila Hotel,,yes,8,,,,,,,,Taft Avenue,1000,Manila,,2
+OFM-ERMITA-01662,730,5,120.9848366562434,14.581428396023648,30,0,,way/818768622,centroid_inside_osm_building_polygon,0.98,,,,8,,,,,,,,,,,,0
+OFM-ERMITA-01663,730,6,120.98601687179462,14.5826349227168,30,0,,way/91216391,centroid_inside_osm_building_polygon,0.98,Philippine Bible Society,,yes,8,,,,,,,,,,Manila,,1
+OFM-ERMITA-01664,730,7,120.98863879841231,14.578376488914843,30,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,2
+OFM-ERMITA-01665,730,12,120.98700503511661,14.576737164694094,30,0,,way/967725831,centroid_inside_osm_building_polygon,0.98,Phi House,,apartments,8,,,,,,,,,,,,1
+OFM-ERMITA-01666,730,13,120.98297105356194,14.57459765644119,30,0,,way/308587995,nearest_osm_building_centroid_under_8m,0.75,,,yes,,,,,,,,,,,,,1
+OFM-ERMITA-01667,730,15,120.98233597687855,14.57388089558902,30,0,,way/308673837,centroid_inside_osm_building_polygon,0.98,OSM Building,,yes,8,,,,,,,,,,,,0
+OFM-ERMITA-01668,732,0,120.98087612881383,14.579710214654092,32,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01669,733,0,120.98287003543754,14.582484609987363,33,0,,,unmatched,0,,,,,,,,,,,,,,,,2
+OFM-ERMITA-01670,733,1,120.9820124126347,14.578778362607178,33,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01671,733,2,120.98683877859663,14.58119287393857,33,0,,way/818647176,centroid_inside_osm_building_polygon,0.98,,,college,9,,,,,,,,,,,,1
+OFM-ERMITA-01672,733,3,120.98614095211701,14.582650619421754,33,0,,way/762591698,centroid_inside_osm_building_polygon,0.98,The United Methodist Church,,yes,4,,,,flat,,,,,,,,0
+OFM-ERMITA-01673,733,4,120.9885503107788,14.57834833586827,33,0,,way/277981559,centroid_inside_osm_building_polygon,0.98,,,yes,7,,,,,,,,,,,,1
+OFM-ERMITA-01674,733,5,120.98770715693261,14.579562372048231,33,0,,way/308702730,centroid_inside_osm_building_polygon,0.98,,,yes,9,,,,,,,,,,,,0
+OFM-ERMITA-01675,733,10,120.98218718824583,14.574712520759347,33,0,,way/823295207,centroid_inside_osm_building_polygon,0.98,La Nobleza Terrazas,,residential,10,32.5,,,,,,,,,,,0
+OFM-ERMITA-01676,734,0,120.98143049424915,14.579077314256667,33,32,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01677,737,0,120.98066137760422,14.579634724258167,36,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01678,738,0,120.98640884633302,14.580844267989235,37,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01679,738,1,120.98329741637443,14.582390007869092,37,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01680,738,2,120.98694969435398,14.582697947149464,37,0,,way/685336375,centroid_inside_osm_building_polygon,0.98,,,college,10,,,,,,,,,,,,0
+OFM-ERMITA-01681,738,3,120.98706527262308,14.583054296417718,37,0,,,nearest_osm_building_centroid_under_20m_review,0.4,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01682,738,7,120.98121207251103,14.57379815440789,37,0,,way/103494320,centroid_inside_osm_building_polygon,0.98,L & S Building,,commercial,10,,,,,,,1515,Roxas Boulevard,,Manila,,5
+OFM-ERMITA-01683,740,0,120.98769889959462,14.579394552919373,38,0,,way/308702723,centroid_inside_osm_building_polygon,0.98,Cherry Mobile,,office,5,18.8,,,,,,,,,,,0
+OFM-ERMITA-01684,741,0,120.9873544830753,14.579145463284831,39,0,,way/824389322,centroid_inside_osm_building_polygon,0.98,,,,12,42.9,,,,,,,,,,,2
+OFM-ERMITA-01685,745,0,120.9828503610598,14.581683133860365,43,0,,way/542698878,centroid_inside_osm_building_polygon,0.98,,,hospital,12,42.9,,,,,,,,,,,3
+OFM-ERMITA-01686,745,2,120.98751883466205,14.579159868991646,43,0,,,unmatched,0,,,,,,,,,,,,,,,,1
+OFM-ERMITA-01687,746,0,120.98622690565507,14.582140875433666,44,0,,way/818631751,centroid_inside_osm_building_polygon,0.98,,,construction,12,,,,,,,,Gonzales,,Manila,,2
+OFM-ERMITA-01688,746,1,120.98552394643707,14.582458100051202,44,0,,way/87741366,centroid_inside_osm_building_polygon,0.98,,,hospital,12,,,,flat,,,,,,,,4
+OFM-ERMITA-01689,746,2,120.98134142537076,14.576961243653816,44,0,,way/823330148,centroid_inside_osm_building_polygon,0.98,,,hotel,12,,,,,,,,,,,,1
+OFM-ERMITA-01690,746,3,120.9813930535844,14.575070609445884,44,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01691,746,4,120.98275881638526,14.575619899891201,44,0,,way/267171292,centroid_inside_osm_building_polygon,0.98,Casa Blanca,,residential,12,,,,,,,,,,,,0
+OFM-ERMITA-01692,748,0,120.98740358333167,14.57915350514458,48,0,,way/156307598,centroid_inside_osm_building_polygon,0.98,GCK Building,,office,11,38.5,,,,,,885,G. Apacible Street,1000,Manila,,2
+OFM-ERMITA-01693,748,1,120.98231960641732,14.575716965906777,48,0,,way/823351018,centroid_inside_osm_building_polygon,0.98,Go Hotels Ermita-Manila,Go Hotels,yes,2,,,,,,,,,,,,0
+OFM-ERMITA-01694,748,2,120.98390040701095,14.57520916062385,48,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01695,750,0,120.98390040701095,14.57520916062385,52,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01696,752,0,120.98262185349303,14.57689709041054,54,0,,way/533298897,centroid_inside_osm_building_polygon,0.98,,,,15,53.8,,,,,,,,,,,1
+OFM-ERMITA-01697,753,0,120.98390040701095,14.57520916062385,55,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01698,758,0,120.98240929547178,14.582171587591882,65,0,,way/818631728,centroid_inside_osm_building_polygon,0.98,,,hospital,8,,,,,,,,,,,,1
+OFM-ERMITA-01699,760,0,120.98242387467592,14.582163735537128,66,0,,way/818631728,centroid_inside_osm_building_polygon,0.98,,,hospital,8,,,,,,,,,,,,1
+OFM-ERMITA-01700,761,0,120.98656351416,14.579918222444972,68,0,,way/277977986,centroid_inside_osm_building_polygon,0.98,Astral Tower,,residential,19,67.9,,,,,,,,,,,4
+OFM-ERMITA-01701,764,0,120.9841361375112,14.582567556822953,72,0,,way/818631738,centroid_inside_osm_building_polygon,0.98,,,,20,71.5,,,,,,,,,,,5
+OFM-ERMITA-01702,764,1,120.98571964477063,14.581892515911534,72,0,,way/818631746,centroid_inside_osm_building_polygon,0.98,,,,20,71.5,,,,,,,,,,,1
+OFM-ERMITA-01703,767,0,120.98576201466136,14.58180509235972,77,0,,way/818631746,centroid_inside_osm_building_polygon,0.98,,,,20,71.5,,,,,,,,,,,1
+OFM-ERMITA-01704,768,0,120.98210107516516,14.581603703990137,79,0,,way/533528310,centroid_inside_osm_building_polygon,0.98,,,yes,22,78.6,,,,,,,,,,,1
+OFM-ERMITA-01705,771,0,120.9827465607641,14.575939618838325,86,0,,way/823295205,centroid_inside_osm_building_polygon,0.98,,,,24,85.8,,,,,,,,,,,1
+OFM-ERMITA-01706,777,0,120.98237275872026,14.576256304062476,100,0,,way/308695369,centroid_inside_osm_building_polygon,0.98,Hollywood Suites,,construction,28,100,,,,,,,,,,,0
+OFM-ERMITA-01707,778,0,120.98188036005192,14.57967358540502,103,0,,way/90123959,centroid_inside_osm_building_polygon,0.98,Manila Residences Bocobo,,residential,6,18,,,,,,1160,Jorge Bocobo Street,,Manila,,1
+OFM-ERMITA-01708,781,0,120.98216610209212,14.57492230835276,109,0,,way/823662679,centroid_inside_osm_building_polygon,0.98,Soldado,,,32,108.2,,,,,,,,,,,0
+OFM-ERMITA-01709,784,0,120.98228027725497,14.574539616191192,115,0,,way/823662680,centroid_inside_osm_building_polygon,0.98,Salas,,,35,114.9,,,,,,,,,,,0
+OFM-ERMITA-01710,787,0,120.98331284832643,14.5756074831654,125,0,,way/533298899,centroid_inside_osm_building_polygon,0.98,,,,38,125,,,,,,,,,,,1
+OFM-ERMITA-01711,787,1,120.98361271721996,14.575135647155237,125,0,,way/533298900,centroid_inside_osm_building_polygon,0.98,,,,38,125,,,,,,,,,,,1
+OFM-ERMITA-01712,787,2,120.98393811042995,14.57462944989553,125,0,,way/533298901,centroid_inside_osm_building_polygon,0.98,,,,38,125,,,,,,,,,,,2
+OFM-ERMITA-01713,791,0,120.98325326186645,14.578112288948308,137,0,,way/533298896,centroid_inside_osm_building_polygon,0.98,,,,38,136.9,,,,,,,,,,,7
+OFM-ERMITA-01714,791,1,120.98367509378062,14.57832341173785,137,0,,way/533298895,centroid_inside_osm_building_polygon,0.98,,,,38,136.9,,,,,,,,,,,4
+OFM-ERMITA-01715,792,0,120.98239523518367,14.578771834787611,140,0,,way/89830977,centroid_inside_osm_building_polygon,0.98,Manila Executive Regency,,residential,8,28,,,,,,,,,Manila,,2
+OFM-ERMITA-01716,794,1,120.98231961416298,14.576583047313902,143,0,,way/533298898,centroid_inside_osm_building_polygon,0.98,Century Peak Tower,,hotel,40,142.9,,,,,,,,,,,1
+OFM-ERMITA-01717,795,0,120.98680662148291,14.57938532275892,151,0,,way/1061988734,centroid_inside_osm_building_polygon,0.98,,,,42,150.1,,,,,,,,,,,1
+OFM-ERMITA-01718,795,2,120.98269348081455,14.57785122206538,151,0,,,unmatched,0,,,,,,,,,,,,,,,,2
+OFM-ERMITA-01719,1023,14088,120.97971011093962,14.595417796476175,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01720,1547,15906,120.99233781695973,14.578348098220852,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
+OFM-ERMITA-01721,1547,15958,120.97949395663497,14.576700397159742,5,0,,,unmatched,0,,,,,,,,,,,,,,,,0
