@@ -1,28 +1,37 @@
 #!/usr/bin/env python3
-"""Build a metadata-only enrichment index for Button 4 building parts.
+"""Join Button 4 building-part inventories to OSM building records.
 
-This joins existing GLB inventories to the existing OSM building details files.
-It never changes or regenerates GLB/GeoJSON geometry and only uses exact OSM IDs.
+Exact OSM IDs are preferred. For unmatched polygon footprints, spatial matching
+is attempted against OSM building polygons. Geometry is never changed. A spatial
+match is accepted automatically only when the candidate is unambiguous and
+passes containment/area checks; uncertain candidates are recorded for review.
 """
 from __future__ import annotations
 
 import csv
 import json
+import math
 from pathlib import Path
+
+from pyproj import Transformer
+from shapely.geometry import Point, shape
+from shapely.ops import transform as geom_transform
 
 ROOT = Path(__file__).resolve().parents[3]
 BUILDINGS = ROOT / "complete_data/OSM/data/buildings"
 PARTS = BUILDINGS / "parts"
 PARTS_INDEX = PARTS / "parts-inventory-index.json"
 DETAILS_GEOJSON = BUILDINGS / "ermita-building-details.geojson"
+ROOF_GEOJSON = BUILDINGS / "ermita-building-roof-details.geojson"
 DETAILS_CSV = BUILDINGS / "osm-building-details.csv"
 OUTPUT = PARTS / "building-enrichment-index.json"
 REPORT = PARTS / "building-enrichment-report.json"
+WEB_MERCATOR = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True).transform
 
 
 def read_json(path: Path):
-    with path.open(encoding="utf-8") as f:
-        return json.load(f)
+    with path.open(encoding="utf-8") as stream:
+        return json.load(stream)
 
 
 def first(tags: dict, *keys):
@@ -33,62 +42,135 @@ def first(tags: dict, *keys):
     return None
 
 
+def feature_id(props):
+    if props.get("osm_feature_id"):
+        return str(props["osm_feature_id"])
+    if props.get("type") and props.get("id") is not None:
+        return f'{props["type"]}/{props["id"]}'
+    return None
+
+
 def main():
     source_index = read_json(PARTS_INDEX)
-    details = read_json(DETAILS_GEOJSON)
+    detail_sources = [DETAILS_GEOJSON, ROOF_GEOJSON]
     by_osm_id = {}
+    polygon_candidates = []
 
-    for feature in details.get("features", []):
-        props = feature.get("properties") or {}
-        osm_id = props.get("osm_feature_id")
-        if not osm_id and props.get("type") and props.get("id") is not None:
-            osm_id = f'{props["type"]}/{props["id"]}'
-        if osm_id:
-            row = by_osm_id.setdefault(osm_id, {})
-            row["geojson"] = {
-                "geometry_type": (feature.get("geometry") or {}).get("type"),
-                "tags": props.get("tags") or {},
-                "type": props.get("type"),
-                "id": props.get("id"),
-            }
+    for source_path in detail_sources:
+        source = read_json(source_path)
+        for feature in source.get("features", []):
+            props = feature.get("properties") or {}
+            oid = feature_id(props)
+            tags = props.get("tags") if isinstance(props.get("tags"), dict) else {}
+            entry = by_osm_id.setdefault(oid, {"tags": {}, "source_files": []}) if oid else None
+            if entry is not None:
+                entry["tags"].update({k: v for k, v in tags.items() if v not in (None, "")})
+                entry["source_files"].append(str(source_path.relative_to(ROOT)))
+            geom_data = feature.get("geometry")
+            if not geom_data:
+                continue
+            try:
+                geom = geom_transform(WEB_MERCATOR, shape(geom_data))
+            except Exception:
+                continue
+            if geom.is_empty or geom.geom_type not in ("Polygon", "MultiPolygon") or geom.area <= 0:
+                continue
+            polygon_candidates.append({
+                "osm_id": oid,
+                "tags": tags,
+                "geom": geom,
+                "area": float(geom.area),
+                "centroid": geom.centroid,
+                "source": str(source_path.relative_to(ROOT)),
+                "name": tags.get("name"),
+            })
 
-    with DETAILS_CSV.open(encoding="utf-8-sig", newline="") as f:
-        for row in csv.DictReader(f):
-            osm_id = row.get("osm_feature_id")
-            if not osm_id:
+    # CSV supplements the exact-ID tag map only; POIs are not spatially assigned
+    # to buildings because proximity alone does not prove building identity.
+    with DETAILS_CSV.open(encoding="utf-8-sig", newline="") as stream:
+        for row in csv.DictReader(stream):
+            oid = row.get("osm_feature_id")
+            if not oid:
                 continue
             try:
                 tags = json.loads(row.get("tags_json") or "{}")
             except (TypeError, json.JSONDecodeError):
                 tags = {}
-            by_osm_id.setdefault(osm_id, {})["csv"] = {
-                "name": row.get("name") or "",
-                "geometry_type": row.get("geometry_type") or "",
-                "latitude": row.get("latitude") or "",
-                "longitude": row.get("longitude") or "",
-                "tags": tags,
-                "source": row.get("source") or "",
-                "license": row.get("license") or "",
-            }
+            entry = by_osm_id.setdefault(oid, {"tags": {}, "source_files": []})
+            entry["tags"].update({k: v for k, v in tags.items() if v not in (None, "")})
+            entry["source_files"].append(str(DETAILS_CSV.relative_to(ROOT)))
 
     inventory_by_key = {}
     for part in range(1, 5):
         path = PARTS / f"part{part}" / f"part{part}-inventory.json"
-        if not path.exists():
-            continue
+        if not path.is_file():
+            raise FileNotFoundError(f"Required inventory is missing: {path}")
         for feature in read_json(path).get("features", []):
             key = f'{feature.get("part")}:{feature.get("source_key")}:{feature.get("source_feature_index")}'
             inventory_by_key[key] = feature
 
     records = []
+    match_counts = {"exact_osm_id": 0, "spatial_high_confidence": 0, "spatial_review": 0, "unmatched": 0}
     for item in source_index:
         key = f'{item.get("part")}:{item.get("source_key")}:{item.get("source_feature_index")}'
         inventory = inventory_by_key.get(key)
-        osm_id = item.get("source_feature_id")
-        match = by_osm_id.get(osm_id) if osm_id else None
-        source_tags = (match or {}).get("geojson", {}).get("tags") or (match or {}).get("csv", {}).get("tags") or (inventory or {}).get("source_tags") or {}
-        props = (inventory or {}).get("source_properties") or {}
-        tags = source_tags or props.get("tags") or {}
+        if inventory is None:
+            raise ValueError(f"Inventory entry missing for index key {key}")
+        oid = item.get("source_feature_id")
+        props = inventory.get("source_properties") or {}
+        source_tags = inventory.get("source_tags") or props.get("tags") or {}
+        matched_id = oid if oid in by_osm_id else None
+        match_method = "exact_osm_id" if matched_id else "unmatched"
+        confidence = 1.0 if matched_id else 0.0
+        spatial_evidence = None
+
+        centroid_data = inventory.get("centroid_epsg3857_m")
+        if not matched_id and isinstance(centroid_data, dict) and "x" in centroid_data and "y" in centroid_data:
+            point = Point(float(centroid_data["x"]), float(centroid_data["y"]))
+            source_area = float(inventory.get("area_m2") or 0)
+            containing = [candidate for candidate in polygon_candidates if candidate["geom"].covers(point)]
+            # If the centroid falls in multiple nested polygons, rank by area
+            # similarity, then distance to centroid; never spatially attach a POI.
+            ranked = []
+            for candidate in containing:
+                ratio = (candidate["area"] / source_area) if source_area > 0 else None
+                area_penalty = abs(math.log(max(ratio, 1e-9))) if ratio is not None else 99
+                distance = float(point.distance(candidate["centroid"]))
+                ranked.append((area_penalty, distance, candidate))
+            ranked.sort(key=lambda item: (item[0], item[1]))
+            if ranked:
+                best_penalty, distance, best = ranked[0]
+                second = ranked[1] if len(ranked) > 1 else None
+                clearly_best = second is None or (second[0] - best_penalty >= 0.35) or (second[1] - distance >= 8.0)
+                area_ok = source_area <= 0 or 0.2 <= best["area"] / source_area <= 5.0
+                if clearly_best and area_ok and best["osm_id"]:
+                    matched_id = best["osm_id"]
+                    match_method = "spatial_high_confidence"
+                    confidence = 0.9 if len(ranked) == 1 else 0.82
+                else:
+                    match_method = "spatial_review"
+                    confidence = 0.5
+                spatial_evidence = {
+                    "candidate_osm_id": best["osm_id"],
+                    "candidate_name": best["name"],
+                    "candidate_source": best["source"],
+                    "candidate_count_containing_centroid": len(ranked),
+                    "centroid_to_candidate_centroid_m": round(distance, 3),
+                    "source_area_m2": round(source_area, 3) if source_area else None,
+                    "candidate_area_m2": round(best["area"], 3),
+                    "candidate_to_source_area_ratio": round(best["area"] / source_area, 4) if source_area else None,
+                    "area_log_error": round(best_penalty, 4),
+                    "accepted": match_method == "spatial_high_confidence",
+                }
+
+        linked = by_osm_id.get(matched_id) if matched_id else None
+        tags = dict(source_tags)
+        if linked:
+            # Prefer OSM semantic tags, retaining source geometry/render tags as
+            # fallback only when the linked OSM record lacks that field.
+            tags = {**source_tags, **linked["tags"]}
+        if match_method in match_counts:
+            match_counts[match_method] += 1
 
         def pick(*keys):
             return first(tags, *keys)
@@ -98,12 +180,13 @@ def main():
             "source_key": item.get("source_key"),
             "source_path": item.get("source_path"),
             "source_feature_index": item.get("source_feature_index"),
-            "source_feature_id": osm_id,
+            "source_feature_id": oid,
+            "linked_osm_feature_id": matched_id,
+            "match_method": match_method,
+            "match_confidence": confidence,
+            "spatial_match_evidence": spatial_evidence,
             "polygon_components_exported": item.get("polygon_components_exported"),
-            "identity_match": "exact_osm_id" if match else (
-                "basemap_id_only" if props.get("basemap_source_feature_id") else "no_external_identity_match"
-            ),
-            "name": pick("name", "official_name", "short_name") or (match or {}).get("csv", {}).get("name") or None,
+            "name": pick("name", "official_name", "short_name"),
             "official_name": pick("official_name"),
             "brand": pick("brand"),
             "address": {
@@ -133,56 +216,87 @@ def main():
                 "tourism": pick("tourism"),
                 "historic": pick("historic"),
             },
-            "osm_tags": tags,
+            "osm_tags": linked["tags"] if linked else tags,
             "source_evidence": {
-                "details_geojson": bool(match and match.get("geojson")),
-                "details_csv": bool(match and match.get("csv")),
-                "source_inventory": bool(inventory),
+                "linked_osm_sources": linked["source_files"] if linked else [],
+                "source_inventory_available": True,
                 "basemap_feature_id": props.get("basemap_source_feature_id"),
             },
-            "source_inventory_properties": props or None,
+            "source_inventory_properties": props,
             "enrichment_note": (
-                "Attributes joined by exact OSM feature ID; geometry and coordinates were not modified."
-                if match else
-                "No exact OSM ID match found in current detail sources; no name/address/material was guessed."
+                "Exact OSM ID match." if match_method == "exact_osm_id" else
+                "Spatial match accepted by centroid containment and ambiguity/area checks; verify before treating the identity as authoritative."
+                if match_method == "spatial_high_confidence" else
+                "Spatial candidate recorded for manual review; semantic attributes are not attached."
+                if match_method == "spatial_review" else
+                "No supported exact or spatial match; attributes remain from the source inventory only."
             ),
         }
+        if match_method == "spatial_review":
+            # Prevent a review candidate from silently enriching semantic fields.
+            record["linked_osm_feature_id"] = None
+            record["name"] = None
+            record["official_name"] = None
+            record["brand"] = None
+            record["address"] = {k: None for k in record["address"]}
+            record["use"] = {k: None for k in record["use"]}
+            record["osm_tags"] = source_tags
+            record["building"] = {
+                "type": first(source_tags, "building"),
+                "levels": first(source_tags, "building:levels"),
+                "height": first(source_tags, "height"),
+                "min_height": first(source_tags, "min_height"),
+                "colour": first(source_tags, "building:colour", "colour"),
+                "material": first(source_tags, "building:material", "material"),
+                "roof_shape": first(source_tags, "roof:shape"),
+                "roof_material": first(source_tags, "roof:material"),
+                "roof_colour": first(source_tags, "roof:colour"),
+            }
         records.append(record)
 
     counts = {
         "total": len(records),
-        "exact_osm_id": sum(r["identity_match"] == "exact_osm_id" for r in records),
-        "basemap_id_only": sum(r["identity_match"] == "basemap_id_only" for r in records),
-        "no_external_identity_match": sum(r["identity_match"] == "no_external_identity_match" for r in records),
+        **match_counts,
         "named": sum(bool(r["name"]) for r in records),
         "addressed": sum(any(r["address"].values()) for r in records),
         "with_source_material_tag": sum(any(r["building"][k] for k in ("material", "roof_material", "colour", "roof_colour")) for r in records),
+        "linked_total": match_counts["exact_osm_id"] + match_counts["spatial_high_confidence"],
     }
     data = {
-        "schema_version": "1.0.0",
+        "schema_version": "2.0.0",
         "generated_from": {
             "parts_inventory_index": str(PARTS_INDEX.relative_to(ROOT)),
             "details_geojson": str(DETAILS_GEOJSON.relative_to(ROOT)),
+            "roof_details_geojson": str(ROOF_GEOJSON.relative_to(ROOT)),
             "details_csv": str(DETAILS_CSV.relative_to(ROOT)),
             "parts_inventory": [f"complete_data/OSM/data/buildings/parts/part{i}/part{i}-inventory.json" for i in range(1, 5)],
         },
         "geometry_policy": "Metadata-only join. No GLB, GeoJSON geometry, feature IDs, centroids, coordinates, heights, or colors are changed.",
-        "matching_policy": "Exact OSM feature ID only. No proximity-based guesses.",
+        "matching_policy": "Exact OSM ID first, then polygon-centroid containment with area and ambiguity checks. Ambiguous matches are listed for review and do not receive semantic tags. Nearby POIs are never attached by proximity alone.",
         "counts": counts,
         "buildings": records,
     }
     report = {
-        "schema_version": "1.0.0",
+        "schema_version": "2.0.0",
         "status": "generated",
         "created_from": data["generated_from"],
         "geometry_policy": data["geometry_policy"],
         "matching_policy": data["matching_policy"],
         "counts": counts,
+        "review_queue": [
+            {
+                "part": r["part"],
+                "source_key": r["source_key"],
+                "source_feature_index": r["source_feature_index"],
+                "source_feature_id": r["source_feature_id"],
+                "spatial_match_evidence": r["spatial_match_evidence"],
+            } for r in records if r["match_method"] == "spatial_review"
+        ],
         "limitations": [
-            "Names, addresses, and material tags are only present where source data provides them.",
-            "An exact OSM ID match does not guarantee that an address or facade material is populated.",
-            "This index does not contain facade photographs or inferred photographic materials.",
-            "Buildings without exact OSM IDs are intentionally left unguessed; spatial matches require a separate confidence-labelled review.",
+            "Names, addresses, and material tags are present only when supported by source data.",
+            "A spatial match is a candidate identity, not proof that all attributes or facade appearance are correct.",
+            "This index contains no verified facade photographs or photo-derived materials.",
+            "Ambiguous matches remain in the review queue and do not receive candidate semantic tags.",
         ],
         "index_path": str(OUTPUT.relative_to(ROOT)),
     }
