@@ -20,8 +20,8 @@ from shapely.geometry import shape
 from shapely.ops import transform as geom_transform
 
 ROOT = Path(__file__).resolve().parents[3]
-PARTS = ROOT / "complete_data/OSM/data/buildings/parts"
-SOURCE = ROOT / "complete_data/OSM/data/buildings/ermita-building-footprints.geojson"
+PARTS = ROOT / "complete_data/OSM/data/buildings/Ermita"
+SOURCE = ROOT / "complete_data/OSM/data/buildings/Ermita/ermita-building-footprints.geojson"
 OUT_DIR = PARTS / "enhanced"
 GENERATOR = ROOT / "ermita/scripts/generate_roxas_boulevard_buildings.py"
 TO_METERS = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True).transform

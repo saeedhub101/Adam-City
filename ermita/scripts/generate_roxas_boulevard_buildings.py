@@ -18,8 +18,8 @@ from shapely.ops import transform as geom_transform
 from shapely.strtree import STRtree
 
 ROOT = Path(__file__).resolve().parents[2]
-BUILDINGS = ROOT / "complete_data/OSM/data/buildings/ermita-building-footprints.geojson"
-DETAILS = ROOT / "complete_data/OSM/data/buildings/ermita-building-details.geojson"
+BUILDINGS = ROOT / "complete_data/OSM/data/buildings/Ermita/ermita-building-footprints.geojson"
+DETAILS = ROOT / "complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson"
 ROADS = ROOT / "complete_data/OSM/data/roads/ermita-road-network.geojson"
 OUT_DIR = ROOT / "complete_data/OSM/data/buildings/roxas-boulevard"
 OUT_GLB = OUT_DIR / "roxas bulivard buildings.glb"

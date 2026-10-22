@@ -20,7 +20,7 @@ from shapely.ops import transform as geom_transform
 from shapely.strtree import STRtree
 
 ROOT = Path(__file__).resolve().parents[2]
-BUILDINGS = ROOT / "complete_data/OSM/data/buildings/ermita-building-footprints.geojson"
+BUILDINGS = ROOT / "complete_data/OSM/data/buildings/Ermita/ermita-building-footprints.geojson"
 ROADS = ROOT / "complete_data/OSM/data/roads/ermita-road-network.geojson"
 POIS = ROOT / "complete_data/OSM/data/addresses/ermita-addresses-street-names-postcodes.geojson"
 OUT = ROOT / "complete_data/OSM/data/buildings/roxas-boulevard"

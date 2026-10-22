@@ -259,8 +259,8 @@ def load_source_geometries():
     # Build target geometry lookup for safe address-number matching.
     sources = {}
     for key, path in (
-        ("footprints", BUILDINGS / "ermita-building-footprints.geojson"),
-        ("roof_details", BUILDINGS / "ermita-building-roof-details.geojson"),
+        ("footprints", BUILDINGS / "Ermita" / "ermita-building-footprints.geojson"),
+        ("roof_details", BUILDINGS / "Ermita" / "ermita-building-roof-details.geojson"),
     ):
         for i, feature in enumerate(read_features(path)):
             geom_data = feature.get("geometry")
