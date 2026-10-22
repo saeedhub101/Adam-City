@@ -202,15 +202,21 @@ def choose_spatial_candidate(source_point, source_area, candidates):
 
 def choose_overlap_candidate(source_geom, candidates):
     ranked = []
+    source_geom = source_geom if source_geom.is_valid else source_geom.buffer(0)
     source_area = float(source_geom.area)
     if source_area <= 0:
         return None, None
     for candidate in candidates:
         geom = candidate["geom"]
-        if not geom.intersects(source_geom):
+        try:
+            geom = geom if geom.is_valid else geom.buffer(0)
+            if geom.is_empty or not geom.intersects(source_geom):
+                continue
+            intersection = float(geom.intersection(source_geom).area)
+        except Exception:
+            # A malformed polygon is not allowed to break the full import.
             continue
-        intersection = float(geom.intersection(source_geom).area)
-        if intersection <= 0:
+        if intersection <= 0 or geom.area <= 0:
             continue
         overlap_smaller = intersection / min(source_area, float(geom.area))
         union = source_area + float(geom.area) - intersection
