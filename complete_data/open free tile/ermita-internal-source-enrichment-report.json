@@ -61,10 +61,16 @@
     "insufficient_data": 998,
     "partially_enriched": 368
   },
-  "photo_policy": "Photo-review IDs are indexed only. They do not count as verified facade imagery or authorize texture assignment.",
+  "photo_policy": "184 existing facade-photo-review.csv entries link to accepted OSM IDs; rows are flagged as unverified photo candidates. This is not confirmation that the image shows the target facade, nor permission to assign a texture.",
   "limitations": [
     "This is the OpenFreeMap component registry, not yet the direct reconciliation of the 22,977-feature master GeoJSON and 24,102-row master CSV.",
     "The 1,721 records are polygon components, not confirmed distinct physical buildings.",
     "Exact OSM tag linkage is not the same as photo-confirmed architectural identity."
-  ]
+  ],
+  "photo_evidence_status_counts": {
+    "no_building_specific_photo_link": 1621,
+    "exact_osm_id_photo_candidate_unverified": 95,
+    "provisional": 5
+  },
+  "rows_with_exact_osm_photo_candidates": 95
 }
