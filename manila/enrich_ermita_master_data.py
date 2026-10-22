@@ -79,6 +79,14 @@ OUT_FIELDS = [f"enriched_{k}" for k in TARGETS] + [
     "enriched_business_match_status",
     "enriched_model_estimated_height_m", "enriched_model_estimated_floor_count",
     "enriched_signage_panel_generated", "enriched_sign_text_verified",
+    "enriched_research_queue_status", "enriched_research_google_maps_url",
+    "enriched_research_mapillary_url", "enriched_research_wikimedia_url",
+    "enriched_research_osm_candidate_url", "enriched_research_candidate_osm_id",
+    "enriched_research_candidate_name", "enriched_research_notes",
+    "enriched_research_coordinates", "enriched_research_area_m2",
+    "enriched_research_height_candidate_m", "enriched_research_source_name_or_brand",
+    "enriched_research_source_building_type", "enriched_research_source_colour",
+    "enriched_research_source_material", "enriched_research_review_notes",
 ]
 
 def s(v):
@@ -93,6 +101,15 @@ def normalize_id(v):
     v=s(v)
     if re.fullmatch(r"(?:node|way|relation)/\d+", v): return v
     if re.fullmatch(r"\d+", v): return v
+    return ""
+
+def normalize_feature_key(v):
+    v=s(v)
+    if re.fullmatch(r"(?:node|way|relation)/\d+", v) or re.fullmatch(r"\d+", v):
+        return v
+    # Stable source keys such as footprints-feature-000342 are valid exact join keys.
+    if re.fullmatch(r"[A-Za-z][A-Za-z0-9._:/-]{2,120}", v):
+        return v
     return ""
 
 def osm_id(row):
@@ -140,6 +157,7 @@ def load_sources():
     businesses=defaultdict(list)
     signage=defaultdict(list)
     image_candidates=defaultdict(list)
+    research_queue=defaultdict(list)
 
     # Direct OSM detail exports: tags are the primary source for explicit metadata.
     for source_key in ("osm_details", "detailed_tags"):
@@ -249,7 +267,7 @@ def load_sources():
 
     path=SOURCE_PATHS["image_candidates"]
     for row in read_csv(path):
-        fid=normalize_id(row.get("source_feature_id"))
+        fid=normalize_feature_key(row.get("source_feature_id"))
         if fid:
             image_candidates[fid].append({
                 "url":norm_value(row.get("image_url")),
@@ -261,7 +279,34 @@ def load_sources():
             })
         source_rows[path.name]+=1
 
-    return idx, source_rows, feature_id_map, photos, businesses, signage, image_candidates
+    # Attach per-footprint research links by exact source-feature key. Candidate
+    # OSM IDs remain explicitly marked for review and are never promoted to truth.
+    path=ROOT / "complete_data/OSM/data/buildings/Ermita/building-visual-research-queue.csv"
+    for row in read_csv(path):
+        fid=normalize_feature_key(row.get("source_feature_id"))
+        if not fid: continue
+        research_queue[fid].append({
+            "status":norm_value(row.get("status")),
+            "google_maps":norm_value(row.get("google_maps")),
+            "mapillary":norm_value(row.get("mapillary")),
+            "wikimedia":norm_value(row.get("wikimedia_commons_search")),
+            "osm_url":norm_value(row.get("openstreetmap_candidate")),
+            "candidate_osm_id":norm_value(row.get("candidate_osm_id_for_review_only")),
+            "candidate_name":norm_value(row.get("candidate_name_for_review_only")),
+            "latitude":norm_value(row.get("latitude")),
+            "longitude":norm_value(row.get("longitude")),
+            "area_m2":norm_value(row.get("area_m2")),
+            "height_m":norm_value(row.get("height_m")),
+            "source_name_or_brand":norm_value(row.get("source_name_or_brand")),
+            "building_type":norm_value(row.get("source_building_type")),
+            "colour":norm_value(row.get("source_colour")),
+            "material":norm_value(row.get("source_material")),
+            "review_notes":norm_value(row.get("review_notes")),
+            "notes":norm_value(row.get("review_decision")),
+        })
+        source_rows[path.name]+=1
+
+    return idx, source_rows, feature_id_map, photos, businesses, signage, image_candidates, research_queue
 
 def resolve(idx, ident):
     result={}
@@ -282,10 +327,9 @@ def resolve(idx, ident):
 
 def first_feature_id(props, feature):
     for key in ("source_feature_id","openfreemap_source_feature_id","feature_id","source_id","id","osm_feature_id"):
-        val=normalize_id(props.get(key))
+        val=normalize_feature_key(props.get(key))
         if val: return val
-    val=normalize_id(feature.get("id"))
-    return val
+    return normalize_feature_key(feature.get("id"))
 
 def put_field(record, key, value, sparse=False):
     value = s(value)
@@ -294,7 +338,7 @@ def put_field(record, key, value, sparse=False):
     else:
         record[key] = value
 
-def decorate_record(record, ident, feature_id, idx, photos, businesses, signage, image_candidates, sparse=False):
+def decorate_record(record, ident, feature_id, idx, photos, businesses, signage, image_candidates, research_queue, sparse=False):
     values, conflicts=resolve(idx, ident) if ident else ({}, {})
     for field in [f"enriched_{k}" for k in TARGETS]:
         # Keep the CSV schema explicit; in GeoJSON omit empty properties to control file size.
@@ -339,12 +383,31 @@ def decorate_record(record, ident, feature_id, idx, photos, businesses, signage,
         verified=[v for v in verified if v.lower() in {"true","yes","1"}]
     put_field(record, "enriched_signage_panel_generated", ";".join(panels), sparse)
     put_field(record, "enriched_sign_text_verified", ";".join(verified), sparse)
+    queue=research_queue.get(feature_id,[]) if feature_id else []
+    def qvalues(key):
+        return ";".join(sorted({x[key] for x in queue if x.get(key)}))
+    put_field(record, "enriched_research_queue_status", qvalues("status"), sparse)
+    put_field(record, "enriched_research_google_maps_url", qvalues("google_maps"), sparse)
+    put_field(record, "enriched_research_mapillary_url", qvalues("mapillary"), sparse)
+    put_field(record, "enriched_research_wikimedia_url", qvalues("wikimedia"), sparse)
+    put_field(record, "enriched_research_osm_candidate_url", qvalues("osm_url"), sparse)
+    put_field(record, "enriched_research_candidate_osm_id", qvalues("candidate_osm_id"), sparse)
+    put_field(record, "enriched_research_candidate_name", qvalues("candidate_name"), sparse)
+    put_field(record, "enriched_research_notes", qvalues("notes"), sparse)
+    put_field(record, "enriched_research_coordinates", qvalues("latitude") + (("," + qvalues("longitude")) if qvalues("longitude") else ""), sparse)
+    put_field(record, "enriched_research_area_m2", qvalues("area_m2"), sparse)
+    put_field(record, "enriched_research_height_candidate_m", qvalues("height_m"), sparse)
+    put_field(record, "enriched_research_source_name_or_brand", qvalues("source_name_or_brand"), sparse)
+    put_field(record, "enriched_research_source_building_type", qvalues("building_type"), sparse)
+    put_field(record, "enriched_research_source_colour", qvalues("colour"), sparse)
+    put_field(record, "enriched_research_source_material", qvalues("material"), sparse)
+    put_field(record, "enriched_research_review_notes", qvalues("review_notes"), sparse)
     return conflicts, bool(values.get("enrichment_sources")), len(all_photos), len(biz)
 
 def main():
     for p in [CSV_PATH, *PARTS]:
         if not p.is_file(): raise FileNotFoundError(p)
-    index, source_rows, feature_id_map, photos, businesses, signage, image_candidates=load_sources()
+    index, source_rows, feature_id_map, photos, businesses, signage, image_candidates, research_queue=load_sources()
     report={"schema_version":"2.0","status":"completed","policy":"Repository-first enrichment. Join on explicit OSM IDs or exact stable source-feature IDs only. Candidate imagery and tenants remain explicitly labelled; no visual observations are inferred. Geometry, coordinates, feature IDs, source IDs, and rendering heights are not changed.",
             "sources":dict(source_rows),"csv":{"path":str(CSV_PATH.relative_to(ROOT))},"geojson_parts":[],"filled_fields":Counter(),"conflicts":Counter(),"matched_records":Counter(),"photo_candidates":0,"business_links":0,"feature_id_crosswalks":len(feature_id_map)}
     rows=read_csv(CSV_PATH)
@@ -352,7 +415,7 @@ def main():
     fields=original_fields+[f for f in OUT_FIELDS if f not in original_fields]
     for row in rows:
         ident=osm_id(row)
-        conflicts, matched, photo_count, business_count=decorate_record(row,ident,normalize_id(row.get("source_feature_id")),index,photos,businesses,signage,image_candidates)
+        conflicts, matched, photo_count, business_count=decorate_record(row,ident,normalize_feature_key(row.get("source_feature_id")),index,photos,businesses,signage,image_candidates,research_queue)
         report["matched_records"][row["enrichment_status"]]+=1
         if matched: report["matched_records"]["records_with_metadata"]+=1
         report["photo_candidates"]+=photo_count
@@ -372,7 +435,7 @@ def main():
             fid=first_feature_id(props,feature)
             ident=osm_id(props)
             if not ident and fid in feature_id_map: ident=feature_id_map[fid]
-            conflicts, matched, photo_count, business_count=decorate_record(props,ident,fid,index,photos,businesses,signage,image_candidates,sparse=True)
+            conflicts, matched, photo_count, business_count=decorate_record(props,ident,fid,index,photos,businesses,signage,image_candidates,research_queue,sparse=True)
             part_counts[props.get("enrichment_status","no_exact_id_evidence")]+=1
             report["photo_candidates"]+=photo_count
             report["business_links"]+=business_count
