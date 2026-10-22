@@ -15,6 +15,8 @@ This folder is the organized OSM data inventory for Adam-City. Source snapshots 
 - `queries/` — OSM/Overpass query definitions.
 - `scripts/` — import, audit, and detail-layer export scripts.
 - `manifest.json` — inventory of files, paths, sizes, blob SHAs, and descriptions.
+- `data/buildings/parts/BUILDING-DATA-AUDIT-AND-ENHANCEMENT-LOG.md` — سجل توثيق مصادر المباني وفهارسها وسكريبت تحسين أجزاء GLB الأربعة.
+- `data/buildings/parts/building-data-full-audit.json` — تقرير تدقيق آلي يقرأ فهرس الإثراء كاملًا، ويحصي الملفات والجرد والأصول الأصلية والمشتقة.
 
 ## Newly organized detail layers
 
