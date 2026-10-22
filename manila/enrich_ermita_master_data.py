@@ -30,6 +30,7 @@ SOURCE_PATHS = {
     "brand_matches": ROOT / "ermita/stores/brand-building-match-audit.csv",
     "image_candidates": ROOT / "complete_data/OSM/data/buildings/Ermita/building-image-candidates.csv",
     "source_link_audit": ROOT / "complete_data/OSM/data/buildings/Ermita/building-source-link-audit.csv",
+    "enrichment_index": ROOT / "complete_data/OSM/data/buildings/Ermita/building-enrichment-index.json",
 }
 
 TARGETS = {
@@ -87,6 +88,8 @@ OUT_FIELDS = [f"enriched_{k}" for k in TARGETS] + [
     "enriched_research_height_candidate_m", "enriched_research_source_name_or_brand",
     "enriched_research_source_building_type", "enriched_research_source_colour",
     "enriched_research_source_material", "enriched_research_review_notes",
+    "enriched_source_match_method", "enriched_source_match_confidence",
+    "enriched_source_match_osm_id", "enriched_source_match_evidence",
 ]
 
 def s(v):
@@ -158,6 +161,7 @@ def load_sources():
     signage=defaultdict(list)
     image_candidates=defaultdict(list)
     research_queue=defaultdict(list)
+    source_match_info={}
 
     # Direct OSM detail exports: tags are the primary source for explicit metadata.
     for source_key in ("osm_details", "detailed_tags"):
@@ -203,6 +207,32 @@ def load_sources():
             if len(clean)==1: fields[TARGETS[target][0]]=clean[0]
         add_candidate(idx, ident, path.name, fields)
         source_rows[path.name]+=1
+
+    # Reuse the repository's previously audited enrichment index. Only exact-ID
+    # and high-confidence geometry matches may contribute semantic tags; review
+    # and unmatched entries are deliberately excluded.
+    index_path=SOURCE_PATHS["enrichment_index"]
+    if index_path.is_file():
+        with index_path.open(encoding="utf-8") as stream:
+            index_doc=json.load(stream)
+        for item in index_doc.get("buildings", []):
+            method=norm_value(item.get("match_method"))
+            if method not in {"exact_osm_id","spatial_high_confidence","spatial_geometry_high_confidence"}:
+                continue
+            fid=normalize_feature_key(item.get("source_feature_id"))
+            linked=norm_value(item.get("linked_osm_feature_id"))
+            tags=item.get("osm_tags") if isinstance(item.get("osm_tags"),dict) else {}
+            if fid:
+                source_match_info[fid]={
+                    "method":method,
+                    "confidence":str(item.get("match_confidence") or ""),
+                    "osm_id":linked,
+                    "evidence":json.dumps(item.get("spatial_match_evidence") or {"method":method,"source":"building-enrichment-index.json"},ensure_ascii=False,separators=(",",":"))
+                }
+                add_candidate(idx, "featurekey:"+fid, "building-enrichment-index.json", tags)
+                if linked:
+                    add_candidate(idx, linked, "building-enrichment-index.json", tags)
+            source_rows["building-enrichment-index.json"]+=1
 
     # Explicit source-feature to OSM crosswalks only when accepted by the source audit.
     path=SOURCE_PATHS["source_link_audit"]
@@ -306,15 +336,18 @@ def load_sources():
         })
         source_rows[path.name]+=1
 
-    return idx, source_rows, feature_id_map, photos, businesses, signage, image_candidates, research_queue
+    return idx, source_rows, feature_id_map, photos, businesses, signage, image_candidates, research_queue, source_match_info
 
-def resolve(idx, ident):
+def resolve(idx, ident, feature_id=""):
     result={}
     conflicts={}
     used=set()
     for target in TARGETS:
         by_value=defaultdict(set)
-        for value, source in idx.get(ident, {}).get(target, []): by_value[value].add(source)
+        candidates=list(idx.get(ident, {}).get(target, []))
+        if feature_id:
+            candidates.extend(idx.get("featurekey:"+feature_id, {}).get(target, []))
+        for value, source in candidates: by_value[value].add(source)
         if len(by_value)==1:
             value, sources=next(iter(by_value.items()))
             result[f"enriched_{target}"]=value
@@ -338,8 +371,8 @@ def put_field(record, key, value, sparse=False):
     else:
         record[key] = value
 
-def decorate_record(record, ident, feature_id, idx, photos, businesses, signage, image_candidates, research_queue, sparse=False):
-    values, conflicts=resolve(idx, ident) if ident else ({}, {})
+def decorate_record(record, ident, feature_id, idx, photos, businesses, signage, image_candidates, research_queue, source_match_info, sparse=False):
+    values, conflicts=resolve(idx, ident, feature_id) if ident or feature_id else ({}, {})
     for field in [f"enriched_{k}" for k in TARGETS]:
         # Keep the CSV schema explicit; in GeoJSON omit empty properties to control file size.
         put_field(record, field, values.get(field,""), sparse)
@@ -402,12 +435,17 @@ def decorate_record(record, ident, feature_id, idx, photos, businesses, signage,
     put_field(record, "enriched_research_source_colour", qvalues("colour"), sparse)
     put_field(record, "enriched_research_source_material", qvalues("material"), sparse)
     put_field(record, "enriched_research_review_notes", qvalues("review_notes"), sparse)
+    match_info=source_match_info.get(feature_id,{}) if feature_id else {}
+    put_field(record, "enriched_source_match_method", match_info.get("method",""), sparse)
+    put_field(record, "enriched_source_match_confidence", match_info.get("confidence",""), sparse)
+    put_field(record, "enriched_source_match_osm_id", match_info.get("osm_id",""), sparse)
+    put_field(record, "enriched_source_match_evidence", match_info.get("evidence",""), sparse)
     return conflicts, bool(values.get("enrichment_sources")), len(all_photos), len(biz)
 
 def main():
     for p in [CSV_PATH, *PARTS]:
         if not p.is_file(): raise FileNotFoundError(p)
-    index, source_rows, feature_id_map, photos, businesses, signage, image_candidates, research_queue=load_sources()
+    index, source_rows, feature_id_map, photos, businesses, signage, image_candidates, research_queue, source_match_info=load_sources()
     report={"schema_version":"2.0","status":"completed","policy":"Repository-first enrichment. Join on explicit OSM IDs or exact stable source-feature IDs only. Candidate imagery and tenants remain explicitly labelled; no visual observations are inferred. Geometry, coordinates, feature IDs, source IDs, and rendering heights are not changed.",
             "sources":dict(source_rows),"csv":{"path":str(CSV_PATH.relative_to(ROOT))},"geojson_parts":[],"filled_fields":Counter(),"conflicts":Counter(),"matched_records":Counter(),"photo_candidates":0,"business_links":0,"feature_id_crosswalks":len(feature_id_map)}
     rows=read_csv(CSV_PATH)
@@ -415,7 +453,7 @@ def main():
     fields=original_fields+[f for f in OUT_FIELDS if f not in original_fields]
     for row in rows:
         ident=osm_id(row)
-        conflicts, matched, photo_count, business_count=decorate_record(row,ident,normalize_feature_key(row.get("source_feature_id")),index,photos,businesses,signage,image_candidates,research_queue)
+        conflicts, matched, photo_count, business_count=decorate_record(row,ident,normalize_feature_key(row.get("source_feature_id")),index,photos,businesses,signage,image_candidates,research_queue,source_match_info)
         report["matched_records"][row["enrichment_status"]]+=1
         if matched: report["matched_records"]["records_with_metadata"]+=1
         report["photo_candidates"]+=photo_count
@@ -435,7 +473,7 @@ def main():
             fid=first_feature_id(props,feature)
             ident=osm_id(props)
             if not ident and fid in feature_id_map: ident=feature_id_map[fid]
-            conflicts, matched, photo_count, business_count=decorate_record(props,ident,fid,index,photos,businesses,signage,image_candidates,research_queue,sparse=True)
+            conflicts, matched, photo_count, business_count=decorate_record(props,ident,fid,index,photos,businesses,signage,image_candidates,research_queue,source_match_info,sparse=True)
             part_counts[props.get("enrichment_status","no_exact_id_evidence")]+=1
             report["photo_candidates"]+=photo_count
             report["business_links"]+=business_count
