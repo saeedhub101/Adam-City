@@ -480,6 +480,10 @@ jobs:
           git add complete_data/OSM/data/buildings/parts/building-enrichment-index.json complete_data/OSM/data/buildings/parts/building-enrichment-report.json
           if ! git diff --cached --quiet; then
             git commit -m "Store generated building and ground fallback data"
+            # Other workflows checkpoint progress to main while this build is running.
+            # Rebase this generated commit onto latest main to avoid a non-fast-forward rejection.
+            git fetch origin main
+            git rebase origin/main
             git push origin HEAD:main
           else
             echo "Fallback files already exist and are unchanged; no re-import or repository commit needed."
