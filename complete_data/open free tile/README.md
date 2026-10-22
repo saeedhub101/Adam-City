@@ -186,3 +186,10 @@ Current triage of the 1,721 OFM component records: **368 partially enriched**, *
 Detailed report: [ermita-internal-source-enrichment-report.json](ermita-internal-source-enrichment-report.json).
 
 **Next internal step before outside research:** reconcile the original 22,977-feature master GeoJSON and 24,102-row master CSV with the repository's existing consolidated building register, part inventories, address datasets, visual research queue, and image catalogues. Do not treat the OFM component sort as a replacement for this master reconciliation.
+
+
+## Master source reconciliation audit
+
+Before external research, the repository's existing master CSV and source collections were inspected and exact-ID joins were applied where safe. See [Ermita master-source reconciliation audit](ermita-master-source-reconciliation-audit.md) and its [machine-readable JSON](ermita-master-source-reconciliation-audit.json).
+
+The master CSV has 24,102 source rows and 193 columns, but it is a union of 18 source paths represented in the rows—not a 24,102-building register. The master GeoJSON has 22,977 features from seven source GeoJSON files; the build process removes byte-identical source files but keeps features from different sources even when they may represent the same physical building. The record-level GeoJSON-to-CSV crosswalk remains the next internal task.
