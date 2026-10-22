@@ -17,7 +17,7 @@ from pyproj import Transformer
 from shapely.geometry import shape
 from shapely.ops import transform as geom_transform
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 PARTS = ROOT / "complete_data/OSM/data/buildings/parts"
 SOURCE = ROOT / "complete_data/OSM/data/buildings/ermita-building-footprints.geojson"
 OUT_DIR = PARTS / "enhanced"
