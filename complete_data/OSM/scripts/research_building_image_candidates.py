@@ -9,6 +9,7 @@ from __future__ import annotations
 import concurrent.futures
 import csv
 import json
+import subprocess
 import threading
 import time
 import urllib.error
@@ -22,6 +23,9 @@ QUEUE = PARTS / "building-visual-research-queue.csv"
 OUT_JSON = PARTS / "building-image-candidates.json"
 OUT_CSV = PARTS / "building-image-candidates.csv"
 OUT_MD = PARTS / "BUILDING-IMAGE-CANDIDATES.md"
+PROGRESS = PARTS / "building-image-candidates-progress.jsonl"
+BATCH_SIZE = 300
+CHECKPOINT_EVERY = 10
 API = "https://commons.wikimedia.org/w/api.php"
 USER_AGENT = "AdamCityBuildingResearch/1.1 (building imagery candidate discovery; GitHub repository saeedhub101/Adam-City)"
 FIELDS = [
@@ -160,39 +164,103 @@ def save_outputs(queue_count: int, output: list[dict], no_results: int, errors: 
     OUT_MD.write_text("\n".join(report), encoding="utf-8")
 
 
+def load_progress() -> dict[str, dict]:
+    latest: dict[str, dict] = {}
+    if PROGRESS.exists():
+        with PROGRESS.open(encoding="utf-8") as handle:
+            for line in handle:
+                try:
+                    record = json.loads(line)
+                    if record.get("source_feature_id"):
+                        latest[record["source_feature_id"]] = record
+                except json.JSONDecodeError:
+                    # Ignore a truncated line; the last committed checkpoint remains valid.
+                    continue
+    return latest
+
+
+def write_progress(records: dict[str, dict]) -> None:
+    tmp = PROGRESS.with_suffix(".jsonl.tmp")
+    with tmp.open("w", encoding="utf-8") as handle:
+        for record in records.values():
+            handle.write(json.dumps(record, ensure_ascii=False) + "\\n")
+        handle.flush()
+        import os
+        os.fsync(handle.fileno())
+    tmp.replace(PROGRESS)
+
+
+def push_checkpoint() -> None:
+    # Persist the durable progress ledger to main during the run.
+    subprocess.run(["git", "add", str(PROGRESS.relative_to(ROOT))], cwd=ROOT, check=True)
+    staged = subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=ROOT)
+    if staged.returncode == 0:
+        return
+    subprocess.run(["git", "config", "user.name", "github-actions[bot]"], cwd=ROOT, check=True)
+    subprocess.run(["git", "config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"], cwd=ROOT, check=True)
+    subprocess.run(["git", "commit", "-m", "Checkpoint building image research progress"], cwd=ROOT, check=True)
+    subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=ROOT, check=True)
+    subprocess.run(["git", "push", "origin", "HEAD:main"], cwd=ROOT, check=True)
+
+
 def main() -> None:
     with QUEUE.open(encoding="utf-8-sig", newline="") as handle:
         queue = list(csv.DictReader(handle))
 
-    output: list[dict] = []
-    errors: list[dict] = []
-    no_results = 0
-    completed = 0
-    # Four workers hide network latency; a shared limiter still paces API request starts.
+    records = load_progress()
+    completed_ids = {fid for fid, record in records.items() if not record.get("error")}
+    pending = [b for b in queue if b.get("source_feature_id", "") not in completed_ids]
+    batch = pending[:BATCH_SIZE]
+    if not batch:
+        output = [row for rec in records.values() if not rec.get("error") for row in rec.get("rows", [])]
+        errors = [{"source_feature_id": fid, "error": rec["error"]} for fid, rec in records.items() if rec.get("error")]
+        no_results = sum(1 for rec in records.values() if not rec.get("error") and not rec.get("rows"))
+        save_outputs(len(queue), output, no_results, errors, complete=(len(completed_ids) >= len(queue)))
+        print(json.dumps({"message":"No pending buildings in this batch", "completed_total":len(completed_ids), "queue_total":len(queue)}), flush=True)
+        return
+
+    print(json.dumps({"batch_size":len(batch), "pending_before_batch":len(pending), "completed_before_batch":len(completed_ids)}), flush=True)
+    processed_this_batch = 0
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
-        futures = [pool.submit(research_one, building) for building in queue]
+        futures = [pool.submit(research_one, building) for building in batch]
         for future in concurrent.futures.as_completed(futures):
             feature_id, rows, error = future.result()
-            completed += 1
-            output.extend(rows)
-            if not rows and error is None:
-                no_results += 1
-            if error:
-                errors.append({"source_feature_id": feature_id, "error": error})
-            if completed % 25 == 0 or completed == len(queue):
-                save_outputs(len(queue), output, no_results, errors, complete=(completed == len(queue)))
-                print(json.dumps({
-                    "completed": completed, "total": len(queue), "image_candidates": len(output),
-                    "buildings_without_geotagged_results": no_results, "request_errors": len(errors),
-                }), flush=True)
+            records[feature_id] = {
+                "source_feature_id": feature_id,
+                "rows": rows,
+                "error": error,
+                "result": "error" if error else ("candidates" if rows else "no_geotagged_results"),
+            }
+            processed_this_batch += 1
+            write_progress(records)
+            if processed_this_batch % CHECKPOINT_EVERY == 0:
+                push_checkpoint()
+                done = sum(1 for rec in records.values() if not rec.get("error"))
+                print(json.dumps({"batch_completed":processed_this_batch, "batch_size":len(batch), "completed_total":done, "queue_total":len(queue), "checkpoint_pushed":True}), flush=True)
 
-    save_outputs(len(queue), output, no_results, errors, complete=True)
+    # Persist any remaining results before generating reports.
+    push_checkpoint()
+    output = [row for rec in records.values() if not rec.get("error") for row in rec.get("rows", [])]
+    errors = [{"source_feature_id": fid, "error": rec["error"]} for fid, rec in records.items() if rec.get("error")]
+    no_results = sum(1 for rec in records.values() if not rec.get("error") and not rec.get("rows"))
+    completed_total = sum(1 for rec in records.values() if not rec.get("error"))
+    save_outputs(len(queue), output, no_results, errors, complete=(completed_total >= len(queue)))
+    for path in (OUT_JSON, OUT_CSV, OUT_MD):
+        subprocess.run(["git", "add", str(path.relative_to(ROOT))], cwd=ROOT, check=True)
+    staged = subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=ROOT)
+    if staged.returncode != 0:
+        subprocess.run(["git", "commit", "-m", "Update building image candidate results"], cwd=ROOT, check=True)
+        subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=ROOT, check=True)
+        subprocess.run(["git", "push", "origin", "HEAD:main"], cwd=ROOT, check=True)
     print(json.dumps({
+        "batch_processed": processed_this_batch,
+        "completed_total": completed_total,
         "queue_buildings": len(queue),
         "image_candidates": len(output),
         "buildings_with_candidates": len({row["source_feature_id"] for row in output}),
         "buildings_without_geotagged_results": no_results,
-        "request_errors": len(errors),
+        "request_errors_retryable": len(errors),
+        "next_run_will_resume_from_progress_ledger": True
     }, ensure_ascii=False, indent=2), flush=True)
 
 
