@@ -6,9 +6,9 @@ Discovery aid for unresolved-building visual review. Nearby geotagged files are 
 
 - Status: **partial checkpoint**
 - Buildings queried: **1132**
-- Image candidate records: **572**
-- Buildings with at least one candidate: **183**
-- Buildings with no geotagged result: **117**
+- Image candidate records: **1049**
+- Buildings with at least one candidate: **330**
+- Buildings with no geotagged result: **270**
 - Requests with errors so far: **0**
 
 ## Mandatory verification before use
