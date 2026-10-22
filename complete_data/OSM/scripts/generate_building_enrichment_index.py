@@ -2,7 +2,7 @@
 """Join Button 4 building-part inventories to OSM building records (metadata-only; no GLB regeneration).
 
 Exact OSM IDs are preferred. For unmatched polygon footprints, spatial matching
-is attempted against OSM building polygons. Geometry is never changed. A spatial
+is attempted against OSM building polygons. Geometry is never changed. Source-footprint overlap is used as a second-pass matching signal. A spatial
 match is accepted automatically only when the candidate is unambiguous and
 passes containment/area checks; uncertain candidates are recorded for review.
 """
