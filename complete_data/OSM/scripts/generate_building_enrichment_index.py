@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Join Button 4 building-part inventories to OSM building records (metadata-only; no GLB regeneration).
+"""Join the four canonical Ermita building-part inventories to OSM building records (metadata-only; no GLB regeneration).
 
 Exact OSM IDs are preferred. For unmatched polygon footprints, spatial matching
 is attempted against OSM building polygons. Geometry is never changed. Source-footprint overlap is used as a second-pass matching signal, and generated outputs are committed through the dedicated metadata workflow. A spatial
@@ -349,7 +349,7 @@ def main():
             "details_geojson": str(DETAILS_GEOJSON.relative_to(ROOT)),
             "roof_details_geojson": str(ROOF_GEOJSON.relative_to(ROOT)),
             "details_csv": str(DETAILS_CSV.relative_to(ROOT)),
-            "parts_inventory": [f"complete_data/OSM/data/buildings/parts/part{i}/part{i}-inventory.json" for i in range(1, 5)],
+            "parts_inventory": [f"complete_data/OSM/data/buildings/Ermita/part{i}/part{i}-inventory.json" for i in range(1, 5)],
         },
         "geometry_policy": "Metadata-only join. No GLB, GeoJSON geometry, feature IDs, centroids, coordinates, heights, or colors are changed.",
         "matching_policy": "Exact OSM ID first, then centroid containment and source-footprint polygon overlap with area/ambiguity checks. Ambiguous matches are listed for review and do not receive semantic tags. Nearby POIs are never attached by proximity alone.",
