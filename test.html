@@ -622,7 +622,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
   const toggle=document.getElementById('enhanced-glb-part-'+part);
   const id='ermita-enhanced-building-glb-part-'+part;
   const base='complete_data/OSM/data/buildings/parts/';
-  const modelUrl=new URL(base+'enhanced/part'+part+'-detailed.glb',location.href).href;
+  const modelUrl=new URL(base+'ermita/Parts'+part+'.glb',location.href).href;
   const originUrl=new URL(base+'part'+part+'/part'+part+'-origin.json',location.href).href;
   let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,projectedMeterScale=1,meterScale=1;
   const showError=err=>{

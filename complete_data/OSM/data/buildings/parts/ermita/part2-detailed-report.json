@@ -1,20 +1,20 @@
 {
-  "original_glb": "complete_data/OSM/data/buildings/parts/part4/part4.glb",
-  "output_glb": "complete_data/OSM/data/buildings/parts/enhanced/part4-detailed.glb",
-  "original_bytes": 26759688,
-  "output_bytes": 60445904,
+  "original_glb": "complete_data/OSM/data/buildings/parts/part2/part2.glb",
+  "output_glb": "complete_data/OSM/data/buildings/parts/ermita/Parts2.glb",
+  "original_bytes": 33378316,
+  "output_bytes": 94708060,
   "source_feature_count": 1123,
-  "footprint_parts_selected_by_part_bounds": 40802,
-  "facade_window_meshes": 160,
+  "footprint_parts_selected_by_part_bounds": 40325,
+  "facade_window_meshes": 869,
   "facade_window_boxes_estimate": 0,
   "facade_window_representation": "thin quad planes (2 triangles each) to preserve visible glazing detail while avoiding excessive GLB size",
   "facade_accent_meshes": 0,
-  "facade_base_meshes": 24282,
+  "facade_base_meshes": 12338,
   "photo_specific_detail_meshes": 0,
   "skipped_source_features": 0,
   "origin_projected_m": {
-    "x": 13470866.419399105,
-    "y": 1643608.5953451272
+    "x": 13470417.885549493,
+    "y": 1638781.9311113786
   },
   "coordinate_policy": "Preserve original GLB scene and use the existing part origin; add only new facade/detail meshes in the same local coordinate frame.",
   "limitations": [

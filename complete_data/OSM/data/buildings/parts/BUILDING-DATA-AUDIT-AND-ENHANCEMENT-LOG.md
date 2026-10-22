@@ -8,7 +8,7 @@
 ## 1. قواعد الحفاظ على البيانات
 
 1. ملفات GLB الأصلية في `complete_data/OSM/data/buildings/parts/part1..part4/` لا تُستبدل بملفات التحسين.
-2. ملفات `partN-detailed.glb` هي نسخ مشتقة مستقلة في `parts/enhanced/`. لا تحذف أو تعيد تسمية الملفات الأصلية أو ملفات الجرد أو ملفات الإحداثيات.
+2. ملفات `partN-detailed.glb` هي نسخ مشتقة مستقلة في `parts/ermita/`. لا تحذف أو تعيد تسمية الملفات الأصلية أو ملفات الجرد أو ملفات الإحداثيات.
 3. فهارس جميع المباني وتقارير المطابقة ملفات مصدرية مستقلة؛ لا تُعاد كتابتها بواسطة سكريبت تحسين GLB.
 4. يظل `building-enrichment-index.json` و`building-enrichment-report.json` فهرس البيانات الدلالية/المطابقة؛ أما `enhancement-report.json` وتقارير `partN-detailed-report.json` فهي تقارير نواتج التحسين، وليست بديلًا عن فهرس المباني.
 5. لا يُعدّ التوليد الإجرائي دليلًا على مطابقة واجهات المباني للواقع. يجب فحص بصري داخل الصفحة ومقارنة صور موثوقة قبل وصف مبنى بأنه مطابق فوتوغرامتريًا.
@@ -85,7 +85,7 @@
 5. يحسب ارتفاع الواجهة وخصائصها من الوسوم والدوال المرجعية.
 6. يضيف هندسة نوافذ كصفائح رباعية رقيقة (مثلثان لكل نافذة) وطبقات واجهة/مواد وتفاصيل زخرفية وتفاصيل خاصة حين تتوفر هوية/وسوم مطابقة.
 7. يترجم هندسة الإضافات إلى إطار GLB المحلي باستخدام أصل الجزء الحالي؛ لا يقصد تحريك هندسة GLB الأصلية.
-8. يصدّر نسخة جديدة إلى `parts/enhanced/partN-detailed.glb`، ويكتب تقريرًا منفصلًا لكل جزء وتقريرًا إجماليًا.
+8. يصدّر نسخة جديدة إلى `parts/ermita/partN-detailed.glb`، ويكتب تقريرًا منفصلًا لكل جزء وتقريرًا إجماليًا.
 
 تشغيله من جذر المستودع:
 
@@ -136,7 +136,7 @@ python3 complete_data/OSM/scripts/audit_building_data.py
 
 - صفحة المقارنة: `test.html`.
 - مفاتيح الأزرار: `enhanced-glb-part-1` إلى `enhanced-glb-part-4`.
-- ملفات النماذج: `complete_data/OSM/data/buildings/parts/enhanced/part1-detailed.glb` إلى `part4-detailed.glb`.
+- ملفات النماذج: `complete_data/OSM/data/buildings/parts/ermita/Parts1.glb` إلى `Parts4.glb`.
 - ملفات الأصول الإحداثية: `complete_data/OSM/data/buildings/parts/part1/part1-origin.json` إلى `part4/part4-origin.json`.
 - سكريبت النشر: `.github/workflows/deploy-pages.yml`؛ أُضيفت له خطوات نسخ الملفات الأربعة المحسّنة وملفات الأصل إلى مجلد النشر.
 - سكريبت البناء: `.github/workflows/enhance-existing-glb-parts.yml`؛ يشغّل سكريبت التحسين ويتحقق من وجود الملفات والتقارير ثم يحفظ الناتج في `main`.
@@ -144,7 +144,7 @@ python3 complete_data/OSM/scripts/audit_building_data.py
 ## 8. تسلسل التغييرات
 
 1. أُضيف `complete_data/OSM/scripts/enhance_existing_glb_parts.py` لتوليد النسخ المحسّنة مع حفظ الأصول.
-2. أُنشئ `parts/enhanced/` وفيه أربعة GLB وتقارير لكل جزء وتقرير إجمالي.
+2. أُنشئ `parts/ermita/` وفيه أربعة GLB وتقارير لكل جزء وتقرير إجمالي.
 3. أُضيفت أربعة مفاتيح مقارنة في `test.html`.
 4. أُحدّث `.github/workflows/deploy-pages.yml` لنسخ GLB المحسّنة وملفات الأصول إلى موقع النشر.
 5. هذا المستند هو سجل التدقيق الحالي. أي تغيير لاحق في السكريبت أو الملفات أو طريقة الإحداثيات يجب أن يُضاف كتاريخ جديد بدل مسح السجل السابق.
