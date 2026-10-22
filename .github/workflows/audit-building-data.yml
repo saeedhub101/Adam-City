@@ -36,11 +36,12 @@ jobs:
           from pathlib import Path
           p = Path("complete_data/OSM/data/buildings/Ermita/building-data-full-audit.json")
           d = json.loads(p.read_text(encoding="utf-8"))
-          assert d["full_enrichment_index"]["records_parsed"] == d["full_enrichment_index"]["reported_counts"]["total"]
+          assert d["status"] == "audit_completed", d.get("checks")
+          assert d["full_enrichment_index"]["records_parsed"] == d["full_enrichment_index"]["reported_total"]
           assert len(d["original_four_part_assets"]) == 4
-          assert len(d["separate_six_part_assets"]["parts"]) == 6
-          assert d["repository_building_data_file_inventory"]["file_count"] > 0
-          print("Full building data audit report validated.")
+          assert all(d["checks"].values()), d["checks"]
+          assert d["source_counts"]["footprints"] > 0
+          print("Current Ermita building-data audit report validated.")
           PY
 
       - name: Commit only the generated audit report
