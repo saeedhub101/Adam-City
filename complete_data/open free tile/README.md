@@ -141,3 +141,12 @@ A building-specific evidence note was added at [`bahay-silungan-pgh-nurses-home-
 ## National Institutes of Health (NIH) Building evidence update
 
 A building-specific evidence note is available at [`national-institutes-of-health-building-evidence.md`](./national-institutes-of-health-building-evidence.md). It records the official address (623 Pedro Gil Street), the official NIH description of the current three-storey beige building inaugurated in 1997, and the historic distinction between the current building and the earlier Bureau of Government Laboratories/Bureau of Science at the site. The current first-30 OSM audit identifies `way/27650470` as “National Institutes of Health” with `building:levels=3`. This evidence must be joined to an OpenFreeMap footprint only after confirming the spatial match; do not alter its geometry or infer an exact height/material specification from these sources.
+
+
+## Building photo-to-record crosswalk: NIH and Bahay Silungan
+
+The file [`building-evidence-links.csv`](./building-evidence-links.csv) cross-references each candidate OSM feature ID with its current/common name, candidate OpenFreeMap registry key, building-specific image, observed facade colours, visible details, and parent campus. It links:
+- NIH: OSM `way/27650470`, candidate OFM key `OFM-ERMITA-01494`; photo observations record pale beige/ivory walls, dark multi-pane window frames and muted red-brown roof edge.
+- Bahay Silungan / PGH Nurses' Home: OSM `way/16554323`, candidate OFM key `OFM-ERMITA-01472`; photo observations record a light cream facade, red pitched roof, dark multi-pane windows, arches and verandas.
+
+These OpenFreeMap keys are **candidate joins** until the actual polygons are visually/spatially confirmed. Do not alter geometry or merge Bahay Silungan into the PGH-wide footprint. The photo evidence catalog contains source links and licensing/attribution notes; use the Commons photographs under their stated CC BY-SA 4.0 terms if image pixels are reused.
