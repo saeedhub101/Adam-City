@@ -422,6 +422,7 @@ def main():
     source_geometries = load_source_geometries()
     counts = Counter()
     audit = []
+    diagnostics = {"fallback_property_keys": sorted({str(k) for row in fallback_rows[:30] for k in row["props"].keys()}), "fallback_sample": [], "spatial_ratio_samples": []}
     for record in records:
         source_id = record.get("source_feature_id")
         linked_id = record.get("linked_osm_feature_id")
@@ -447,6 +448,18 @@ def main():
                 elif evidence:
                     method = "spatial-review"
                     counts["fallback_spatial_review"] += 1
+        if evidence:
+            counts["fallback_spatial_candidate_total"] += 1
+            if len(diagnostics["spatial_ratio_samples"]) < 30:
+                diagnostics["spatial_ratio_samples"].append({
+                    "source_feature_id": source_id,
+                    "source_key": record.get("source_key"),
+                    "candidate_osm_id": evidence.get("candidate_osm_id"),
+                    "candidate_area_ratio": evidence.get("candidate_area_ratio"),
+                    "centroid_distance_m": evidence.get("centroid_distance_m"),
+                    "candidate_count": evidence.get("candidate_count"),
+                    "accepted": evidence.get("accepted"),
+                })
         if selected:
             tags = selected["tags"]
             normalized = make_openfreemap_fields(tags)
@@ -485,7 +498,10 @@ def main():
                 use["openfreemap_use"] = normalized["use"]
             counts["fallback_linked"] += 1
         else:
-            counts["fallback_unmatched"] += 1
+            if method == "spatial-review":
+                counts["fallback_unmatched_after_review"] += 1
+            else:
+                counts["fallback_unmatched"] += 1
             if evidence:
                 record["openfreemap_candidate"] = evidence
         audit.append({
@@ -495,11 +511,15 @@ def main():
             "openfreemap_source_feature_id": selected["id"] if selected else "",
             "openfreemap_candidate_name": selected["name"] if selected else (evidence or {}).get("candidate_name", ""),
             "openfreemap_candidate_count": (evidence or {}).get("candidate_count", 0),
+            "openfreemap_candidate_area_ratio": (evidence or {}).get("candidate_area_ratio", ""),
+            "openfreemap_candidate_distance_m": (evidence or {}).get("centroid_distance_m", ""),
             "openfreemap_candidate_accepted": bool(selected),
         })
     counts.update(attach_housenumbers(records, source_geometries))
     image_counts, asset_catalogue = attach_images_and_facades(records, load_image_metadata())
     counts.update(image_counts)
+    for row in fallback_rows[:5]:
+        diagnostics["fallback_sample"].append({"id": row["id"], "name": row["name"], "properties": row["props"], "bounds": list(row["geom"].bounds), "area_m2": round(row["area"], 2)})
     data["schema_version"] = "2.1.0"
     data["additional_sources"] = {
         "openfreemap_building_fallback": "complete_data/open free tile/building-fallback.geojson",
@@ -525,6 +545,7 @@ def main():
         "building_records": len(records),
         "counts": dict(counts),
         "fallback_feature_count": len(fallback_rows),
+        "diagnostics": diagnostics,
         "housenumber_source_records": len(load_housenumbers()),
         "image_asset_catalogue": asset_catalogue,
         "limitations": [
@@ -544,7 +565,7 @@ def main():
         writer = csv.DictWriter(stream, fieldnames=fields)
         writer.writeheader()
         writer.writerows(audit)
-    print(json.dumps({"index": str(INDEX), "report": str(REPORT), "audit": str(AUDIT), "building_records": len(records), "fallback_features": len(fallback_rows), "counts": dict(counts)}, ensure_ascii=False, indent=2))
+    print(json.dumps({"index": str(INDEX), "report": str(REPORT), "audit": str(AUDIT), "building_records": len(records), "fallback_features": len(fallback_rows), "counts": dict(counts), "diagnostics": diagnostics}, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
