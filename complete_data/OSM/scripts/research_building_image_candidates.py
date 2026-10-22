@@ -183,7 +183,7 @@ def write_progress(records: dict[str, dict]) -> None:
     tmp = PROGRESS.with_suffix(".jsonl.tmp")
     with tmp.open("w", encoding="utf-8") as handle:
         for record in records.values():
-            handle.write(json.dumps(record, ensure_ascii=False) + "\\n")
+            handle.write(json.dumps(record, ensure_ascii=False) + "\n")
         handle.flush()
         import os
         os.fsync(handle.fileno())
