@@ -287,13 +287,24 @@ def first_feature_id(props, feature):
     val=normalize_id(feature.get("id"))
     return val
 
-def decorate_record(record, ident, feature_id, idx, photos, businesses, signage, image_candidates):
+def put_field(record, key, value, sparse=False):
+    value = s(value)
+    if sparse and not value:
+        record.pop(key, None)
+    else:
+        record[key] = value
+
+def decorate_record(record, ident, feature_id, idx, photos, businesses, signage, image_candidates, sparse=False):
     values, conflicts=resolve(idx, ident) if ident else ({}, {})
     for field in [f"enriched_{k}" for k in TARGETS]:
-        # Keep existing source data in place; only refresh this script's own fields.
-        record[field]=values.get(field,"")
-    record["enrichment_sources"]=values.get("enrichment_sources","")
-    record["enrichment_status"]=values.get("enrichment_status","no_exact_id_evidence")
+        # Keep the CSV schema explicit; in GeoJSON omit empty properties to control file size.
+        put_field(record, field, values.get(field,""), sparse)
+    put_field(record, "enrichment_sources", values.get("enrichment_sources",""), sparse)
+    status = values.get("enrichment_status","no_exact_id_evidence")
+    if sparse and not ident and status == "no_exact_id_evidence":
+        record.pop("enrichment_status", None)
+    else:
+        record["enrichment_status"] = status
     photo_rows=photos.get(ident,[]) if ident else []
     image_rows=image_candidates.get(feature_id,[]) if feature_id else []
     all_photos=[]
@@ -306,23 +317,28 @@ def decorate_record(record, ident, feature_id, idx, photos, businesses, signage,
         if key and key not in seen:
             seen.add(key)
             all_photos.append({**item,"photo_id":"","date":"","status":item.get("status","candidate"),"distance_m":"","heading_difference_deg":"","source_page":item.get("page",""),"local_image":"","visual_verified":"NO","source":"building-image-candidates.csv"})
-    record["enriched_photo_candidate_count"]=str(len(all_photos))
-    record["enriched_photo_candidate_urls"]=";".join(x["url"] for x in all_photos if x.get("url"))
-    record["enriched_photo_candidate_ids"]=";".join(x.get("photo_id") or x.get("source_feature_id","") for x in all_photos if x.get("photo_id") or x.get("source_feature_id"))
-    record["enriched_photo_candidate_evidence"]=";".join(
+    put_field(record, "enriched_photo_candidate_count", str(len(all_photos)) if all_photos else "", sparse)
+    put_field(record, "enriched_photo_candidate_urls", ";".join(x["url"] for x in all_photos if x.get("url")), sparse)
+    put_field(record, "enriched_photo_candidate_ids", ";".join(x.get("photo_id") or x.get("source_feature_id","") for x in all_photos if x.get("photo_id") or x.get("source_feature_id")), sparse)
+    put_field(record, "enriched_photo_candidate_evidence", ";".join(
         json.dumps({k:x.get(k,"") for k in ("source","photo_id","date","status","distance_m","heading_difference_deg","license","source_page","local_image","visual_verified") if x.get(k)},ensure_ascii=False,separators=(",",":"))
-        for x in all_photos)
+        for x in all_photos), sparse)
     biz=businesses.get(ident,[]) if ident else []
-    record["enriched_business_names"]=";".join(sorted({x["name"] for x in biz if x["name"]}))
-    record["enriched_business_brands"]=";".join(sorted({x["brand"] for x in biz if x["brand"]}))
-    record["enriched_business_osm_ids"]=";".join(sorted({x["store_id"] for x in biz if x["store_id"]}))
-    record["enriched_business_addresses"]=";".join(sorted({", ".join(v for v in (x["house_number"],x["street"]) if v) for x in biz if x["street"] or x["house_number"]}))
-    record["enriched_business_match_status"]=";".join(sorted({x["status"] for x in biz if x["status"]}))
+    put_field(record, "enriched_business_names", ";".join(sorted({x["name"] for x in biz if x["name"]})), sparse)
+    put_field(record, "enriched_business_brands", ";".join(sorted({x["brand"] for x in biz if x["brand"]})), sparse)
+    put_field(record, "enriched_business_osm_ids", ";".join(sorted({x["store_id"] for x in biz if x["store_id"]})), sparse)
+    put_field(record, "enriched_business_addresses", ";".join(sorted({", ".join(v for v in (x["house_number"],x["street"]) if v) for x in biz if x["street"] or x["house_number"]})), sparse)
+    put_field(record, "enriched_business_match_status", ";".join(sorted({x["status"] for x in biz if x["status"]})), sparse)
     sig=signage.get(ident,[]) if ident else []
-    record["enriched_model_estimated_height_m"]=";".join(sorted({x["height"] for x in sig if x["height"]}))
-    record["enriched_model_estimated_floor_count"]=";".join(sorted({x["levels"] for x in sig if x["levels"]}))
-    record["enriched_signage_panel_generated"]=";".join(sorted({x["panel"] for x in sig if x["panel"]}))
-    record["enriched_sign_text_verified"]=";".join(sorted({x["verified"] for x in sig if x["verified"]}))
+    put_field(record, "enriched_model_estimated_height_m", ";".join(sorted({x["height"] for x in sig if x["height"]})), sparse)
+    put_field(record, "enriched_model_estimated_floor_count", ";".join(sorted({x["levels"] for x in sig if x["levels"]})), sparse)
+    panels=sorted({x["panel"] for x in sig if x["panel"]})
+    verified=sorted({x["verified"] for x in sig if x["verified"]})
+    if sparse:
+        panels=[v for v in panels if v.lower() in {"true","yes","1"}]
+        verified=[v for v in verified if v.lower() in {"true","yes","1"}]
+    put_field(record, "enriched_signage_panel_generated", ";".join(panels), sparse)
+    put_field(record, "enriched_sign_text_verified", ";".join(verified), sparse)
     return conflicts, bool(values.get("enrichment_sources")), len(all_photos), len(biz)
 
 def main():
@@ -356,7 +372,7 @@ def main():
             fid=first_feature_id(props,feature)
             ident=osm_id(props)
             if not ident and fid in feature_id_map: ident=feature_id_map[fid]
-            conflicts, matched, photo_count, business_count=decorate_record(props,ident,fid,index,photos,businesses,signage,image_candidates)
+            conflicts, matched, photo_count, business_count=decorate_record(props,ident,fid,index,photos,businesses,signage,image_candidates,sparse=True)
             part_counts[props["enrichment_status"]]+=1
             report["photo_candidates"]+=photo_count
             report["business_links"]+=business_count
