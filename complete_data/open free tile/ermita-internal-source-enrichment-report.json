@@ -72,5 +72,28 @@
     "exact_osm_id_photo_candidate_unverified": 95,
     "provisional": 5
   },
-  "rows_with_exact_osm_photo_candidates": 95
+  "rows_with_exact_osm_photo_candidates": 95,
+  "additional_internal_sources": [
+    {
+      "path": "building-data/buildings.csv",
+      "rows": 30,
+      "policy": "Exact accepted OSM ID only; enrich from the existing 30-row building-data pilot register."
+    },
+    {
+      "path": "building-data/building-evidence.csv",
+      "rows": 68,
+      "policy": "Exact OSM ID only; record existing field-level evidence references."
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/building-image-links.json",
+      "records": 2,
+      "policy": "Exact OSM ID only; image links remain candidate/review references, not automatic textures."
+    }
+  ],
+  "pilot_register_exact_id_matches": 28,
+  "additional_blank_fields_filled_from_pilot_register": 296,
+  "existing_building_evidence_exact_id_matches": 28,
+  "named_photo_links_exact_id_matches": 1,
+  "provisional_barangay_records_carried_forward": 28,
+  "note": "Barangay assignments copied from the 30-row pilot register retain their provisional status; they are not presented as confirmed boundaries. Internal photo links remain unverified."
 }
