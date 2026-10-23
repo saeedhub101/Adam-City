@@ -28,6 +28,8 @@ PLAN_PATH = OUTPUT_ROOT / "building-render-plan.jsonl"
 KARTAVIEW_URL = "https://api.openstreetcam.org/1.0/list/nearby-photos/"
 TIMEOUT = 25
 MAX_RETRIES = 4
+KARTAVIEW_MIN_INTERVAL_SECONDS = 37.0  # public unauthenticated tier: stay below 100 requests/hour
+LAST_KARTAVIEW_REQUEST = 0.0
 session = requests.Session()
 session.headers.update({"User-Agent": "Adam-City-Manila-3D-Enrichment/1.0 (public KartaView imagery lookup)"})
 
@@ -94,8 +96,13 @@ def feature_center(path: Path, feature: dict[str, Any], extent: int) -> tuple[fl
 
 def nearby_photos(lat: float, lon: float, radius: int = 250) -> list[dict[str, Any]]:
     """Use the public anonymous KartaView 1.0 endpoint; no token or OSM API."""
+    global LAST_KARTAVIEW_REQUEST
     for attempt in range(MAX_RETRIES):
         try:
+            wait = KARTAVIEW_MIN_INTERVAL_SECONDS - (time.monotonic() - LAST_KARTAVIEW_REQUEST)
+            if wait > 0:
+                time.sleep(wait)
+            LAST_KARTAVIEW_REQUEST = time.monotonic()
             response = session.post(KARTAVIEW_URL, data={"lat": lat, "lng": lon, "radius": radius}, timeout=TIMEOUT)
             if response.status_code in (429, 500, 502, 503, 504):
                 time.sleep(min(20, 2 ** attempt))
@@ -271,8 +278,8 @@ def main() -> int:
         except (ValueError, IndexError):
             z = 0
         if z >= 14:
-            for candidate_layer in decoded.values():
-                if candidate_layer.get("features"):
+            for candidate_name, candidate_layer in decoded.items():
+                if str(candidate_name).lower() in ("building", "buildings") and candidate_layer.get("features"):
                     tile_query_center = feature_center(path, candidate_layer["features"][0], int(candidate_layer.get("extent", 4096)))
                     if tile_query_center:
                         break
