@@ -1,0 +1,45 @@
+name: One-time group Manila GeoJSON buildings by coordinates
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Manila/scripts/sort_geojson_buildings_by_coordinates.py"
+permissions:
+  contents: write
+concurrency:
+  group: one-time-manila-coordinate-grouping
+  cancel-in-progress: false
+jobs:
+  group-buildings:
+    if: hashFiles('Manila/scripts/sort_geojson_buildings_by_coordinates.py') != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Group building features by longitude and latitude
+        run: python Manila/scripts/sort_geojson_buildings_by_coordinates.py
+      - name: Remove old converter script and workflow
+        run: |
+          rm -f Manila/scripts/convert_pbf_to_geojson.py
+          rm -f .github/workflows/convert-manila-pbf-to-geojson.yml
+          rm -f Manila/scripts/sort_geojson_buildings_by_coordinates.py
+          rm -f .github/workflows/sort-manila-geojson-buildings.yml
+      - name: Commit grouped buildings and remove automation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Manila/New_Manila
+          git add -u Manila/scripts .github/workflows
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Group Manila GeoJSON buildings by geographic coordinates"
+            git push origin main
+          fi
