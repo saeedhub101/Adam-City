@@ -45,6 +45,8 @@ const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.o
 window.manilaMap=map;map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
 const defs=[
 ['building','المباني من بلاطات المتجهات','building','#c7b39b','building'],
+['building_roof_detail','أسطح المباني المحسنة داخل PBF','building_roof_detail','#a99b89','roof'],
+['building_sign_detail','مرشحات لافتات المحلات داخل PBF','building_sign_detail','#f2c94c','sign'],
 ['aerodrome_label','تسميات المطارات','aerodrome_label','#e5c875','point'],
 ['aeroway','ممرات ومرافق الطيران','aeroway','#d9b66f','line'],
 ['boundary','الحدود','boundary','#bc8be0','line'],
@@ -90,6 +92,19 @@ if(kind==='building'){
     'fill-extrusion-opacity':0.94,'fill-extrusion-vertical-gradient':true
    }
  });ids.push(extrusion);
+}else if(kind==='roof'){
+ const id=sourceId+'-roof-3d';map.addLayer({id,type:'fill-extrusion',source:sourceId,'source-layer':sourceLayer,
+   paint:{'fill-extrusion-color':['coalesce',['get','roof_color'],color],
+    'fill-extrusion-height':['max',2,['to-number',['get','roof_height'],5]],
+    'fill-extrusion-base':['max',0,['to-number',['get','roof_base'],0]],
+    'fill-extrusion-opacity':0.98,'fill-extrusion-vertical-gradient':false}
+ });ids.push(id);
+}else if(kind==='sign'){
+ const id=sourceId+'-sign';map.addLayer({id,type:'symbol',source:sourceId,'source-layer':sourceLayer,
+   layout:{'text-field':['coalesce',['get','sign_text'],'SIGN'],'text-size':['interpolate',['linear'],['zoom'],12,9,16,13],
+    'text-font':['Open Sans Bold','Arial Unicode MS Bold'],'text-offset':[0,1.0],'text-anchor':'bottom','text-allow-overlap':true},
+   paint:{'text-color':['coalesce',['get','sign_color'],color],'text-halo-color':'#ffffff','text-halo-width':1.2}
+ });ids.push(id);
 }else if(kind==='fill'){
  const id=sourceId+'-fill';map.addLayer({id,type:'fill',source:sourceId,'source-layer':sourceLayer,paint:{'fill-color':color,'fill-opacity':0.27,'fill-outline-color':color}});ids.push(id);
  const line=sourceId+'-outline';map.addLayer({id:line,type:'line',source:sourceId,'source-layer':sourceLayer,paint:{'line-color':color,'line-width':0.7,'line-opacity':0.8}});ids.push(line);
