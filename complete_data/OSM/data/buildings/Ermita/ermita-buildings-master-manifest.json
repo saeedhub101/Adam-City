@@ -138,7 +138,14 @@
       "footprints-feature-000342",
       "footprints-feature-000343",
       "footprints-feature-000344",
-      "footprints-feature-000350"
+      "footprints-feature-000350",
+      "footprints-feature-000353",
+      "footprints-feature-000356"
+    ],
+    "supplemental_files": [
+      "complete_data/OSM/data/buildings/Ermita/user-confirmed-building-details.geojson",
+      "complete_data/OSM/data/buildings/Ermita/user-confirmed-building-details.csv",
+      "complete_data/OSM/data/buildings/Ermita/USER-CONFIRMED-BUILDING-DETAILS.md"
     ],
     "search_fields": [
       "addr:suburb",
@@ -151,11 +158,6 @@
       "address_full"
     ],
     "coordinates_preserved": true,
-    "height_policy": "Storey count only when supplied; measured height in metres remains unknown unless independently sourced.",
-    "supplemental_files": [
-      "complete_data/OSM/data/buildings/Ermita/user-confirmed-building-details.geojson",
-      "complete_data/OSM/data/buildings/Ermita/user-confirmed-building-details.csv",
-      "complete_data/OSM/data/buildings/Ermita/USER-CONFIRMED-BUILDING-DETAILS.md"
-    ]
+    "height_policy": "Storey count is recorded as supplied; measured height in metres remains unknown unless sourced independently."
   }
 }
