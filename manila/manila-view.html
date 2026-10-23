@@ -18,7 +18,7 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <body>
 <div id="map" aria-label="خريطة مانيلا ثلاثية الأبعاد"></div>
 <section class="panel">
-<h1>ADAM CITY · MANILA TEST</h1>
+<h1>ADAM CITY · MANILA VIEW</h1>
 <div class="sub">مقارنة الخريطة ومباني المصدر الأصلية مع مباني GeoJSON من الجزء الأول والثاني. يمكن تشغيل كل طبقة أو إخفاؤها بصورة مستقلة.</div>
 <div class="group"><div class="group-title">المصادر الأصلية للخريطة</div>
 <label class="row"><input type="checkbox" id="baseGround" checked> إظهار أرضية الخريطة الأصلية (الشوارع والمياه والحدائق والتسميات)</label>
@@ -54,9 +54,9 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
  function addPart(part){
   const state=partStates[part];if(state.ready||state.loading)return;
   state.loading=true;status.textContent='جارٍ تحميل GeoJSON Part '+part+'…';
-  const path='manila/manila/ermita-buildings-master.parts/part-00'+part+'.geojson';
-  map.addSource(state.source,{type:'geojson',data:new URL(path,location.href).href});
-  map.addLayer({id:state.layer,type:'fill-extrusion',source:state.source,filter:['==',['geometry-type'],'Polygon'],layout:{visibility:'visible'},paint:{
+  const path='manila/ermita-buildings-master.parts/part-00'+part+'.geojson';
+  map.addSource(state.source,{type:'geojson',data:new URL(path,document.baseURI).href});
+  map.addLayer({id:state.layer,type:'fill-extrusion',source:state.source,filter:['any',['==',['geometry-type'],'Polygon'],['==',['geometry-type'],'MultiPolygon']],layout:{visibility:'visible'},paint:{
    'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','facade_colour'],'#c8bca9'],
    'fill-extrusion-height':['max',3,['case',['>', ['to-number',['coalesce',['get','height_m'],['get','height']],0],0],['to-number',['coalesce',['get','height_m'],['get','height']],0],['>', ['to-number',['coalesce',['get','building:levels'],['get','levels']],0],0],['*',['to-number',['coalesce',['get','building:levels'],['get','levels']],0],3.15],5]],
    'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','base_height_m'],['get','min_height']],0]],
