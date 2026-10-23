@@ -1,321 +1,275 @@
 {
   "status": "completed",
-  "source_tiles_directory": "Manila/vector-tiles",
-  "source_tile_count": 141,
-  "source_boundary_file": "complete_data/open free tile/layers/boundary.geojsonl",
-  "boundary_record_count": 51,
-  "building_features_extracted_from_pbf": 1846,
-  "source_csv_files_used": false,
-  "pbf_tiles_modified": false,
-  "tile_decode_errors": [],
-  "method": "Each building feature centroid was converted from tile-local coordinates to longitude/latitude, then assigned to the nearest of the 51 line features. This is nearest-line grouping, not a claim that every record forms a closed polygon.",
-  "counts_by_boundary_record": [
+  "source_directory": "Manila/vector-tiles",
+  "source_pbf_tiles_scanned": 141,
+  "source_pbf_modified": false,
+  "boundary_source": "complete_data/open free tile/layers/boundary.geojsonl",
+  "boundary_records": 51,
+  "assignment_method": "For each original building feature, convert its tile-local geometry centroid to lon/lat, then assign to the nearest of the 51 supplied boundary line geometries. This deliberately follows the existing 51-record grouping method; it does not infer administrative polygons.",
+  "building_layer_names": [
+    "building"
+  ],
+  "building_feature_occurrences_assigned": 1846,
+  "features_skipped_without_geometry": 0,
+  "new_pbf_files_written": 161,
+  "output_directories": [
+    "boundary-01",
+    "boundary-02",
+    "boundary-03",
+    "boundary-04",
+    "boundary-05",
+    "boundary-06",
+    "boundary-07",
+    "boundary-08",
+    "boundary-09",
+    "boundary-10",
+    "boundary-11",
+    "boundary-12",
+    "boundary-13",
+    "boundary-14",
+    "boundary-15",
+    "boundary-16",
+    "boundary-17",
+    "boundary-18",
+    "boundary-19",
+    "boundary-20",
+    "boundary-21",
+    "boundary-22",
+    "boundary-23",
+    "boundary-24",
+    "boundary-25",
+    "boundary-26",
+    "boundary-27",
+    "boundary-28",
+    "boundary-29",
+    "boundary-30",
+    "boundary-31",
+    "boundary-32",
+    "boundary-33",
+    "boundary-34",
+    "boundary-35",
+    "boundary-36",
+    "boundary-37",
+    "boundary-38",
+    "boundary-39",
+    "boundary-40",
+    "boundary-41",
+    "boundary-42",
+    "boundary-43",
+    "boundary-44",
+    "boundary-45",
+    "boundary-46",
+    "boundary-47",
+    "boundary-48",
+    "boundary-49",
+    "boundary-50",
+    "boundary-51"
+  ],
+  "building_feature_occurrences_by_boundary": [
     {
       "boundary_record": "01",
-      "feature_id": 40833320,
-      "admin_level": 6,
-      "building_features": 339
+      "feature_occurrences": 339
     },
     {
       "boundary_record": "02",
-      "feature_id": 156938800,
-      "admin_level": 5,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "03",
-      "feature_id": 273721330,
-      "admin_level": 3,
-      "building_features": 4
+      "feature_occurrences": 4
     },
     {
       "boundary_record": "04",
-      "feature_id": 774923550,
-      "admin_level": 4,
-      "building_features": 93
+      "feature_occurrences": 93
     },
     {
       "boundary_record": "05",
-      "feature_id": 3725978620,
-      "admin_level": 3,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "06",
-      "feature_id": 3725978770,
-      "admin_level": 6,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "07",
-      "feature_id": 9715203082,
-      "admin_level": 5,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "08",
-      "feature_id": 40833320,
-      "admin_level": 6,
-      "building_features": 199
+      "feature_occurrences": 199
     },
     {
       "boundary_record": "09",
-      "feature_id": 43046950,
-      "admin_level": 8,
-      "building_features": 1
+      "feature_occurrences": 1
     },
     {
       "boundary_record": "10",
-      "feature_id": 44439150,
-      "admin_level": 7,
-      "building_features": 60
+      "feature_occurrences": 60
     },
     {
       "boundary_record": "11",
-      "feature_id": 156938800,
-      "admin_level": 5,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "12",
-      "feature_id": 239595940,
-      "admin_level": 7,
-      "building_features": 30
+      "feature_occurrences": 30
     },
     {
       "boundary_record": "13",
-      "feature_id": 279067980,
-      "admin_level": 3,
-      "building_features": 27
+      "feature_occurrences": 27
     },
     {
       "boundary_record": "14",
-      "feature_id": 3725978620,
-      "admin_level": 3,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "15",
-      "feature_id": 3725978770,
-      "admin_level": 6,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "16",
-      "feature_id": 9715203082,
-      "admin_level": 5,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "17",
-      "feature_id": 40866640,
-      "admin_level": 10,
-      "building_features": 301
+      "feature_occurrences": 301
     },
     {
       "boundary_record": "18",
-      "feature_id": 42017690,
-      "admin_level": 9,
-      "building_features": 15
+      "feature_occurrences": 15
     },
     {
       "boundary_record": "19",
-      "feature_id": 43046950,
-      "admin_level": 8,
-      "building_features": 36
+      "feature_occurrences": 36
     },
     {
       "boundary_record": "20",
-      "feature_id": 44439150,
-      "admin_level": 7,
-      "building_features": 53
+      "feature_occurrences": 53
     },
     {
       "boundary_record": "21",
-      "feature_id": 156938800,
-      "admin_level": 5,
-      "building_features": 109
+      "feature_occurrences": 109
     },
     {
       "boundary_record": "22",
-      "feature_id": 271314930,
-      "admin_level": 6,
-      "building_features": 24
+      "feature_occurrences": 24
     },
     {
       "boundary_record": "23",
-      "feature_id": 329783870,
-      "admin_level": 7,
-      "building_features": 43
+      "feature_occurrences": 43
     },
     {
       "boundary_record": "24",
-      "feature_id": 3725978620,
-      "admin_level": 3,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "25",
-      "feature_id": 9715203082,
-      "admin_level": 5,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "26",
-      "feature_id": 9715203092,
-      "admin_level": 6,
-      "building_features": 6
+      "feature_occurrences": 6
     },
     {
       "boundary_record": "27",
-      "feature_id": 43046870,
-      "admin_level": 10,
-      "building_features": 29
+      "feature_occurrences": 29
     },
     {
       "boundary_record": "28",
-      "feature_id": 43046950,
-      "admin_level": 8,
-      "building_features": 29
+      "feature_occurrences": 29
     },
     {
       "boundary_record": "29",
-      "feature_id": 141168640,
-      "admin_level": 7,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "30",
-      "feature_id": 329783870,
-      "admin_level": 7,
-      "building_features": 40
+      "feature_occurrences": 40
     },
     {
       "boundary_record": "31",
-      "feature_id": 40866640,
-      "admin_level": 10,
-      "building_features": 86
+      "feature_occurrences": 86
     },
     {
       "boundary_record": "32",
-      "feature_id": 43046950,
-      "admin_level": 8,
-      "building_features": 12
+      "feature_occurrences": 12
     },
     {
       "boundary_record": "33",
-      "feature_id": 44439150,
-      "admin_level": 7,
-      "building_features": 15
+      "feature_occurrences": 15
     },
     {
       "boundary_record": "34",
-      "feature_id": 156938800,
-      "admin_level": 5,
-      "building_features": 4
+      "feature_occurrences": 4
     },
     {
       "boundary_record": "35",
-      "feature_id": 350667010,
-      "admin_level": 6,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "36",
-      "feature_id": 1117955440,
-      "admin_level": 7,
-      "building_features": 13
+      "feature_occurrences": 13
     },
     {
       "boundary_record": "37",
-      "feature_id": 43046870,
-      "admin_level": 10,
-      "building_features": 31
+      "feature_occurrences": 31
     },
     {
       "boundary_record": "38",
-      "feature_id": 141168640,
-      "admin_level": 7,
-      "building_features": 25
+      "feature_occurrences": 25
     },
     {
       "boundary_record": "39",
-      "feature_id": 227510400,
-      "admin_level": 8,
-      "building_features": 108
+      "feature_occurrences": 108
     },
     {
       "boundary_record": "40",
-      "feature_id": 329783870,
-      "admin_level": 7,
-      "building_features": 4
+      "feature_occurrences": 4
     },
     {
       "boundary_record": "41",
-      "feature_id": 43046950,
-      "admin_level": 8,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "42",
-      "feature_id": 730325470,
-      "admin_level": 10,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "43",
-      "feature_id": 1117983440,
-      "admin_level": 7,
-      "building_features": 4
+      "feature_occurrences": 4
     },
     {
       "boundary_record": "44",
-      "feature_id": 44439150,
-      "admin_level": 7,
-      "building_features": 5
+      "feature_occurrences": 5
     },
     {
       "boundary_record": "45",
-      "feature_id": 50554350,
-      "admin_level": 8,
-      "building_features": 21
+      "feature_occurrences": 21
     },
     {
       "boundary_record": "46",
-      "feature_id": 351545490,
-      "admin_level": 10,
-      "building_features": 4
+      "feature_occurrences": 4
     },
     {
       "boundary_record": "47",
-      "feature_id": 40866640,
-      "admin_level": 10,
-      "building_features": 59
+      "feature_occurrences": 59
     },
     {
       "boundary_record": "48",
-      "feature_id": 43046950,
-      "admin_level": 8,
-      "building_features": 8
+      "feature_occurrences": 8
     },
     {
       "boundary_record": "49",
-      "feature_id": 50554402,
-      "admin_level": 7,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "50",
-      "feature_id": 270110120,
-      "admin_level": 5,
-      "building_features": 0
+      "feature_occurrences": 0
     },
     {
       "boundary_record": "51",
-      "feature_id": 1118043650,
-      "admin_level": 7,
-      "building_features": 9
+      "feature_occurrences": 9
     }
   ],
-  "completed_at_utc": "2026-10-23T18:06:15Z"
+  "completed_at_utc": "2026-10-23T18:17:18Z"
 }
