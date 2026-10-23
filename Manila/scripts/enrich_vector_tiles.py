@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-"""Enrich existing Manila vector-tile building attributes from authoritative OSM tags.
+"""Enrich Manila vector-tile building properties from verified OpenStreetMap data.
 
-This script deliberately does NOT create geometry, move features, invent facade details,
-or modify manila.html. It only fills missing building properties when a tile feature has
-an explicit OSM way ID and the live OSM API returns tags for that exact way.
+Keeps all original geometries and coordinates unchanged. Adds stable internal building
+numbers, explicit OSM identity fields, and only factual tags returned by OSM.
 """
 from __future__ import annotations
 
 import json
+import math
 import os
 import sys
 import time
+import hashlib
 from pathlib import Path
 from typing import Any
 
@@ -20,104 +21,45 @@ import requests
 ROOT = Path(__file__).resolve().parents[1]
 TILES_ROOT = ROOT / "vector-tiles"
 OVERPASS_URL = os.environ.get("OVERPASS_URL", "https://overpass-api.de/api/interpreter")
-USER_AGENT = "Adam-City-Manila-PBF-Enrichment/1.1 (open-source map data enrichment with coordinate matching)"
-BATCH_SIZE = 60
+USER_AGENT = "Adam-City-Manila-PBF-Enrichment/1.2 (OSM coordinate matching)"
 REQUEST_TIMEOUT = 90
 
-# Only factual OSM tags; no inferred/random facade geometry or appearance.
 OSM_TAGS = (
-    "name",
-    "building",
-    "building:levels",
-    "building:levels:underground",
-    "height",
-    "min_height",
-    "building:colour",
-    "building:material",
-    "roof:colour",
-    "roof:material",
-    "roof:shape",
-    "roof:levels",
-    "roof:height",
-    "addr:housenumber",
-    "addr:street",
-    "addr:city",
-    "shop",
-    "amenity",
-    "office",
-    "tourism",
-    "historic",
-    "wikidata",
-    "wikipedia",
+    "name", "name:en", "name:tl", "building", "building:levels",
+    "building:levels:underground", "height", "min_height",
+    "building:colour", "building:material", "roof:colour", "roof:material",
+    "roof:shape", "roof:levels", "roof:height", "addr:housenumber",
+    "addr:street", "addr:city", "addr:postcode", "addr:suburb",
+    "addr:district", "addr:place", "addr:full", "colour", "facade:colour",
+    "facade:material", "building:use", "building:architecture", "start_date",
+    "architect", "shop", "amenity", "office", "tourism", "historic",
+    "wikidata", "wikipedia", "website", "operator", "brand", "landuse",
 )
-
 session = requests.Session()
 session.headers.update({"User-Agent": USER_AGENT, "Accept": "application/json"})
 
 
-def explicit_osm_way_id(properties: dict[str, Any], feature_id: Any = None) -> int | None:
-    """Get a labelled OSM way ID, or test the vector feature ID against live OSM.
-
-    Feature IDs are treated only as candidates: they are enriched only if Overpass
-    confirms that the exact numeric ID is an existing OSM way.
-    """
+def labelled_osm_identity(props: dict[str, Any]) -> tuple[str, int] | None:
     for key in ("osm_id", "osm_way_id", "osm_wayid", "way_id"):
-        value = properties.get(key)
-        if value is None:
+        value = props.get(key)
+        if value in (None, ""):
             continue
         try:
-            value = int(str(value).strip())
+            ident = int(str(value).strip())
         except (TypeError, ValueError):
             continue
-        if value > 0:
-            return value
-    try:
-        candidate = int(str(feature_id).strip())
-    except (TypeError, ValueError):
-        return None
-    return candidate if candidate > 0 else None
-
-
-def get_osm_tags(ids: list[int]) -> dict[int, dict[str, str]]:
-    result: dict[int, dict[str, str]] = {}
-    unique_ids = sorted(set(ids))
-    for offset in range(0, len(unique_ids), BATCH_SIZE):
-        batch = unique_ids[offset:offset + BATCH_SIZE]
-        query = "[out:json][timeout:75];way(id:" + ",".join(map(str, batch)) + ");out tags;"
-        for attempt in range(4):
-            try:
-                response = session.post(
-                    OVERPASS_URL,
-                    data={"data": query},
-                    timeout=REQUEST_TIMEOUT,
-                )
-                if response.status_code in (429, 502, 503, 504):
-                    raise requests.HTTPError(f"temporary Overpass HTTP {response.status_code}")
-                response.raise_for_status()
-                payload = response.json()
-                for element in payload.get("elements", []):
-                    if element.get("type") == "way" and isinstance(element.get("tags"), dict):
-                        result[int(element["id"])] = {
-                            str(k): str(v) for k, v in element["tags"].items()
-                        }
-                break
-            except (requests.RequestException, ValueError) as exc:
-                if attempt == 3:
-                    print(f"WARNING: Overpass batch skipped after retries: {exc}", file=sys.stderr)
-                else:
-                    time.sleep(2 ** attempt)
-        # Be polite to the public Overpass instance.
-        time.sleep(1.2)
-    return result
+        if ident > 0:
+            return ("way", ident)
+    return None
 
 
 def tile_feature_center(path: Path, feature: dict[str, Any], extent: int) -> tuple[float, float] | None:
-    """Convert a vector-tile polygon center to WGS84 using its z/x/y path."""
+    """Convert a tile-local geometry's vertex average into WGS84 using z/x/y."""
     try:
         z, x, y = map(int, path.relative_to(TILES_ROOT).with_suffix("").parts[-3:])
-        geom = feature.get("geometry") or {}
-        coords = geom.get("coordinates")
+        coords = (feature.get("geometry") or {}).get("coordinates")
         points: list[tuple[float, float]] = []
+
         def walk(value: Any) -> None:
             if isinstance(value, (list, tuple)):
                 if len(value) >= 2 and isinstance(value[0], (int, float)) and isinstance(value[1], (int, float)):
@@ -128,65 +70,79 @@ def tile_feature_center(path: Path, feature: dict[str, Any], extent: int) -> tup
         walk(coords)
         if not points:
             return None
-        # Average unique vertices so repeated ring closure doesn't bias the center.
         points = list(dict.fromkeys(points))
         px = sum(p[0] for p in points) / len(points)
         py = sum(p[1] for p in points) / len(points)
         n = 2 ** z
         lon = ((x + px / extent) / n) * 360.0 - 180.0
-        import math
         lat = math.degrees(math.atan(math.sinh(math.pi * (1 - 2 * (y + py / extent) / n))))
         return lat, lon
     except (ValueError, IndexError, TypeError):
         return None
 
 
-def get_nearby_osm_tags(points: list[tuple[str, float, float]]) -> dict[str, dict[str, str]]:
-    """Match unmatched tile features to nearby real OSM building ways by geographic position."""
-    matched: dict[str, dict[str, str]] = {}
-    # A small radius and a nearest-center threshold prevent broad, speculative matches.
-    batch_size = 12
-    for offset in range(0, len(points), batch_size):
-        batch = points[offset:offset + batch_size]
-        clauses = []
-        for _, lat, lon in batch:
-            clauses.append(f'way(around:18,{lat:.7f},{lon:.7f})["building"];')
-        query = "[out:json][timeout:75];(" + "".join(clauses) + ");out tags center;"
-        payload = None
-        for attempt in range(4):
-            try:
-                response = session.post(OVERPASS_URL, data={"data": query}, timeout=REQUEST_TIMEOUT)
-                if response.status_code in (429, 502, 503, 504):
-                    raise requests.HTTPError(f"temporary Overpass HTTP {response.status_code}")
-                response.raise_for_status()
-                payload = response.json()
-                break
-            except (requests.RequestException, ValueError) as exc:
-                if attempt == 3:
-                    print(f"WARNING: coordinate batch skipped after retries: {exc}", file=sys.stderr)
-                else:
-                    time.sleep(2 ** attempt)
-        if payload is None:
+def get_tags_by_id(identities: set[tuple[str, int]]) -> dict[tuple[str, int], dict[str, str]]:
+    result: dict[tuple[str, int], dict[str, str]] = {}
+    ids = sorted(ident for kind, ident in identities if kind == "way")
+    for offset in range(0, len(ids), 40):
+        batch = ids[offset:offset + 40]
+        if not batch:
             continue
-        candidates = []
-        for element in payload.get("elements", []):
-            center = element.get("center") or {}
-            tags = element.get("tags") or {}
-            if element.get("type") == "way" and "lat" in center and "lon" in center and tags.get("building"):
-                candidates.append((float(center["lat"]), float(center["lon"]), {str(k): str(v) for k, v in tags.items()}))
+        query = "[out:json][timeout:60];way(id:" + ",".join(map(str, batch)) + ");out tags;"
+        payload = request_overpass(query)
+        if payload:
+            for el in payload.get("elements", []):
+                if el.get("type") == "way" and isinstance(el.get("tags"), dict):
+                    result[("way", int(el["id"]))] = {str(k): str(v) for k, v in el["tags"].items()}
+        time.sleep(1.0)
+    return result
+
+
+def request_overpass(query: str) -> dict[str, Any] | None:
+    for attempt in range(4):
+        try:
+            response = session.post(OVERPASS_URL, data={"data": query}, timeout=REQUEST_TIMEOUT)
+            if response.status_code in (429, 502, 503, 504):
+                raise requests.HTTPError(f"temporary Overpass HTTP {response.status_code}")
+            response.raise_for_status()
+            payload = response.json()
+            return payload if isinstance(payload, dict) else None
+        except (requests.RequestException, ValueError) as exc:
+            if attempt == 3:
+                print(f"WARNING: Overpass request skipped after retries: {exc}", file=sys.stderr)
+            else:
+                time.sleep(2 ** attempt)
+    return None
+
+
+def coordinate_matches(points: list[tuple[str, float, float]]) -> dict[str, tuple[int, dict[str, str]]]:
+    """Match a tile feature to a nearby real OSM building way, with a tight distance gate."""
+    matched: dict[str, tuple[int, dict[str, str]]] = {}
+    # Batch nearby searches to reduce API calls while still checking every feature position.
+    for offset in range(0, len(points), 8):
+        batch = points[offset:offset + 8]
+        clauses = [f'way(around:25,{lat:.7f},{lon:.7f})["building"];' for _, lat, lon in batch]
+        payload = request_overpass("[out:json][timeout:60];(" + "".join(clauses) + ");out tags center;")
+        candidates: list[tuple[int, float, float, dict[str, str]]] = []
+        if payload:
+            for el in payload.get("elements", []):
+                center = el.get("center") or {}
+                tags = el.get("tags") or {}
+                if el.get("type") == "way" and "lat" in center and "lon" in center and tags.get("building"):
+                    candidates.append((int(el["id"]), float(center["lat"]), float(center["lon"]),
+                                       {str(k): str(v) for k, v in tags.items()}))
         for key, lat, lon in batch:
             nearest = None
-            for olat, olon, tags in candidates:
-                # Equirectangular distance is sufficiently accurate at Manila's latitude.
-                import math
+            for ident, olat, olon, tags in candidates:
                 dy = (olat - lat) * 111320.0
                 dx = (olon - lon) * 111320.0 * math.cos(math.radians(lat))
                 distance = math.hypot(dx, dy)
                 if nearest is None or distance < nearest[0]:
-                    nearest = (distance, tags)
-            if nearest and nearest[0] <= 10.0:
-                matched[key] = nearest[1]
-        time.sleep(1.2)
+                    nearest = (distance, ident, tags)
+            # Do not attach metadata to a distant or ambiguous building.
+            if nearest and nearest[0] <= 12.0:
+                matched[key] = (nearest[1], nearest[2])
+        time.sleep(1.0)
     return matched
 
 
@@ -195,129 +151,146 @@ def iter_pbf_files() -> list[Path]:
 
 
 def main() -> int:
-    if not TILES_ROOT.is_dir():
-        print(f"ERROR: tile directory not found: {TILES_ROOT}", file=sys.stderr)
-        return 2
-
     paths = iter_pbf_files()
     if not paths:
-        print(f"ERROR: no .pbf tiles found under {TILES_ROOT}", file=sys.stderr)
+        print(f"ERROR: no PBF tiles under {TILES_ROOT}", file=sys.stderr)
         return 2
 
-    # Decode once to collect explicitly keyed OSM way IDs, then fetch tags in batches.
     decoded_tiles: dict[Path, dict[str, Any]] = {}
-    ids_by_tile: dict[Path, set[int]] = {}
-    all_ids: set[int] = set()
+    feature_points: dict[tuple[Path, str, int], tuple[float, float]] = {}
+    labelled_ids: set[tuple[str, int]] = set()
     decode_errors = 0
+    total_buildings = 0
 
     for path in paths:
         try:
-            decoded = mapbox_vector_tile.decode(
-                path.read_bytes(),
-                default_options={"y_coord_down": True},
-            )
+            decoded = mapbox_vector_tile.decode(path.read_bytes(), default_options={"y_coord_down": True})
             decoded_tiles[path] = decoded
-            tile_ids: set[int] = set()
-            for layer_name, layer in decoded.items():
-                layer_name = str(layer_name).lower()
-                if layer_name not in ("building", "buildings"):
+            for lname, layer in decoded.items():
+                if str(lname).lower() not in ("building", "buildings"):
                     continue
-                for feature in layer.get("features", []):
+                for idx, feature in enumerate(layer.get("features", [])):
+                    total_buildings += 1
                     props = feature.get("properties") or {}
-                    osm_id = explicit_osm_way_id(props, feature.get("id"))
-                    if osm_id is not None:
-                        tile_ids.add(osm_id)
-            ids_by_tile[path] = tile_ids
-            all_ids.update(tile_ids)
+                    identity = labelled_osm_identity(props)
+                    if identity:
+                        labelled_ids.add(identity)
+                    center = tile_feature_center(path, feature, int(layer.get("extent", 4096)))
+                    if center:
+                        feature_points[(path, str(lname), idx)] = center
         except Exception as exc:
             decode_errors += 1
             print(f"WARNING: cannot decode {path.relative_to(ROOT)}: {exc}", file=sys.stderr)
 
-    print(
-        f"Tiles found: {len(paths)}; decoded: {len(decoded_tiles)}; "
-        f"decode errors: {decode_errors}; explicit OSM way IDs: {len(all_ids)}"
-    )
-    if not all_ids:
-        print(
-            "No numeric OSM candidate IDs were found on building features. "
-            "For safety, no tiles will be rewritten."
-        )
-        return 0
+    print(f"Tiles found={len(paths)} decoded={len(decoded_tiles)} decode_errors={decode_errors} building_features={total_buildings}")
+    tags_by_id = get_tags_by_id(labelled_ids)
+    points_for_lookup = []
+    for key, (lat, lon) in feature_points.items():
+        path, lname, idx = key
+        feature = decoded_tiles[path][lname]["features"][idx]
+        props = feature.get("properties") or {}
+        if not labelled_osm_identity(props):
+            points_for_lookup.append((f"{path.relative_to(ROOT)}|{lname}|{idx}", lat, lon))
+    tags_by_coordinate = coordinate_matches(points_for_lookup)
+    print(f"Labelled OSM IDs={len(labelled_ids)} verified ID matches={len(tags_by_id)} coordinate candidates={len(points_for_lookup)} coordinate matches={len(tags_by_coordinate)}")
 
-    osm_tags = get_osm_tags(list(all_ids))
-    print(f"OSM ways with tags retrieved: {len(osm_tags)}")
-
-    changed_files = 0
-    changed_features = 0
-    added_properties = 0
-    missing_osm = 0
-
+    changed_files = changed_features = properties_added = missing = 0
     for path, decoded in decoded_tiles.items():
         tile_changed = False
-        for layer_name, layer in decoded.items():
-            if str(layer_name).lower() not in ("building", "buildings"):
+        for lname, layer in decoded.items():
+            if str(lname).lower() not in ("building", "buildings"):
                 continue
-            for feature in layer.get("features", []):
+            for idx, feature in enumerate(layer.get("features", [])):
                 props = feature.get("properties")
                 if not isinstance(props, dict):
-                    continue
-                osm_id = explicit_osm_way_id(props, feature.get("id"))
-                if osm_id is None:
-                    continue
-                tags = osm_tags.get(osm_id)
+                    props = {}
+                    feature["properties"] = props
+                identity = labelled_osm_identity(props)
+                tags = tags_by_id.get(identity) if identity else None
+                matched_id = identity[1] if identity else None
                 if not tags:
-                    missing_osm += 1
-                    continue
-                feature_added = 0
-                for key in OSM_TAGS:
-                    value = tags.get(key)
-                    if value is None or value == "":
-                        continue
-                    # Never overwrite existing tile data; only fill absent/empty fields.
-                    if props.get(key) is None or props.get(key) == "":
-                        props[key] = value
-                        feature_added += 1
-                if feature_added:
-                    tile_changed = True
+                    key = f"{path.relative_to(ROOT)}|{lname}|{idx}"
+                    coordinate_result = tags_by_coordinate.get(key)
+                    if coordinate_result:
+                        matched_id, tags = coordinate_result
+                if tags:
+                    # Add traceable identity fields; never overwrite existing non-empty data.
+                    if props.get("osm_type") in (None, ""):
+                        props["osm_type"] = "way"
+                        properties_added += 1
+                        tile_changed = True
+                    if props.get("osm_id") in (None, ""):
+                        props["osm_id"] = str(matched_id)
+                        properties_added += 1
+                        tile_changed = True
+                    for key in OSM_TAGS:
+                        value = tags.get(key)
+                        if value not in (None, "") and props.get(key) in (None, ""):
+                            props[key] = value
+                            properties_added += 1
+                            tile_changed = True
+                    # Keep a convenient explicit display name; fall back to address number only if present.
+                    display_name = tags.get("name") or tags.get("name:en") or tags.get("name:tl")
+                    if display_name and props.get("building_name") in (None, ""):
+                        props["building_name"] = display_name
+                        properties_added += 1
+                        tile_changed = True
+                    if props.get("building_number") in (None, ""):
+                        # This is a stable internal identifier, not a fabricated street address.
+                        rel = str(path.relative_to(TILES_ROOT))
+                        raw = f"{rel}|{lname}|{idx}"
+                        props["building_number"] = "MAN-" + hashlib.sha1(raw.encode()).hexdigest()[:12].upper()
+                        properties_added += 1
+                        tile_changed = True
+                    if props.get("building_uid") in (None, ""):
+                        props["building_uid"] = f"osm-way-{matched_id}"
+                        properties_added += 1
+                        tile_changed = True
                     changed_features += 1
-                    added_properties += feature_added
+                else:
+                    missing += 1
+                    # Give every building a stable local number, even when OSM has no safe match.
+                    if props.get("building_number") in (None, ""):
+                        rel = str(path.relative_to(TILES_ROOT))
+                        raw = f"{rel}|{lname}|{idx}"
+                        props["building_number"] = "MAN-" + hashlib.sha1(raw.encode()).hexdigest()[:12].upper()
+                        properties_added += 1
+                        tile_changed = True
+                    if props.get("building_uid") in (None, ""):
+                        rel = str(path.relative_to(TILES_ROOT))
+                        props["building_uid"] = "tile-" + hashlib.sha1(f"{rel}|{lname}|{idx}".encode()).hexdigest()[:16]
+                        properties_added += 1
+                        tile_changed = True
+                # Keep an explicit display name property if an existing name is present.
+                if props.get("building_name") in (None, "") and props.get("name") not in (None, ""):
+                    props["building_name"] = str(props["name"])
+                    properties_added += 1
+                    tile_changed = True
+                if tile_changed:
+                    changed_features += 0
 
         if tile_changed:
-            # Re-encode all original layers; geometry and tile-local coordinates are preserved.
-            layer_list = []
-            for layer_name, layer in decoded.items():
-                layer_list.append({
-                    "name": layer_name,
-                    "features": layer.get("features", []),
-                    "extent": layer.get("extent", 4096),
-                    "version": layer.get("version", 2),
-                })
-            encoded = mapbox_vector_tile.encode(
-                layer_list,
-                default_options={"y_coord_down": True},
-            )
-            # Ensure the new PBF can be decoded before replacing the original.
+            layer_list = [{"name": name, "features": layer.get("features", []),
+                           "extent": layer.get("extent", 4096), "version": layer.get("version", 2)}
+                          for name, layer in decoded.items()]
+            encoded = mapbox_vector_tile.encode(layer_list, default_options={"y_coord_down": True})
             mapbox_vector_tile.decode(encoded, default_options={"y_coord_down": True})
             path.write_bytes(encoded)
             changed_files += 1
             print(f"UPDATED {path.relative_to(ROOT)}")
 
-    summary = {
-        "tile_files_found": len(paths),
-        "tiles_decoded": len(decoded_tiles),
-        "decode_errors": decode_errors,
-        "explicit_osm_way_ids": len(all_ids),
-        "osm_ways_with_tags_by_id": len(osm_tags),\n        "features_checked_by_coordinates": len(coordinate_points),\n        "nearby_osm_matches_by_coordinates": len(nearby_tags),
-        "features_enriched": changed_features,
-        "properties_added": added_properties,
-        "tiles_changed": changed_files,
-        "features_without_live_osm_match": missing_osm,
-        "geometry_generated": False,
-        "geometry_coordinates_intentionally_changed": False,
+    report = {
+        "tile_files_found": len(paths), "tiles_decoded": len(decoded_tiles),
+        "decode_errors": decode_errors, "building_features_seen": total_buildings,
+        "labelled_osm_ids": len(labelled_ids), "verified_osm_id_matches": len(tags_by_id),
+        "coordinate_candidates": len(points_for_lookup), "coordinate_osm_matches": len(tags_by_coordinate),
+        "features_without_safe_osm_match": missing, "features_processed_with_osm_data": changed_features,
+        "properties_added": properties_added, "tiles_changed": changed_files,
+        "geometry_generated": False, "geometry_coordinates_intentionally_changed": False,
+        "building_number_is_internal_id_not_address": True,
     }
-    report_path = ROOT / "pbf-enrichment-report.json"
-    report_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps(summary, ensure_ascii=False, indent=2))
+    (ROOT / "pbf-enrichment-report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0
 
 
