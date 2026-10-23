@@ -89,7 +89,7 @@ const ids=[];
 if(kind==='building'){
  // Read the original OpenFreeMap vector tiles directly. This avoids relocating
  // polygons through a separate GeoJSON conversion and preserves tile coordinates.
- const tileTemplate=new URL('Manila/vector-tiles/{z}/{x}/{y}.pbf',window.location.href).href;
+ const tileTemplate=new URL('Manila/vector-tiles/',window.location.href).href+'{z}/{x}/{y}.pbf';
  map.addSource(sourceId,{type:'vector',tiles:[tileTemplate],minzoom:10,maxzoom:14,scheme:'xyz'});
  const extrusion=sourceId+'-3d';
  map.addLayer({id:extrusion,type:'fill-extrusion',source:sourceId,'source-layer':'building',
