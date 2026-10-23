@@ -20,6 +20,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
+          sparse-checkout: |
+            .github/workflows/split-part001-readable.yml
+            scripts/split_oversized_geojson.py
+            complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001.geojson
+            complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/**
+            complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts-manifest.json
+          sparse-checkout-cone-mode: false
       - name: Split and validate source features
         run: python3 scripts/split_oversized_geojson.py
       - name: Commit readable parts and manifest
