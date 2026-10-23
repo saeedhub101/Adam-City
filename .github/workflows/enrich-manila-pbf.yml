@@ -1,0 +1,36 @@
+name: Manila 3D building enrichment (long run)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "Manila/scripts/enrich_vector_tiles.py"
+      - ".github/workflows/enrich-manila-pbf.yml"
+
+permissions:
+  contents: write
+
+# Keep an active run alive; later runs wait instead of cancelling it.
+concurrency:
+  group: manila-3d-enrichment
+  cancel-in-progress: false
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Check out main with full history
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install PBF tools
+        run: python -m pip install --disable-pip-version-check mapbox-vector-tile requests
+      - name: Enrich render properties, find public KartaView imagery, and checkpoint
+        run: python -u Manila/scripts/enrich_vector_tiles.py
