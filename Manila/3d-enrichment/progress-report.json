@@ -2,10 +2,10 @@
   "status": "running",
   "pipeline_version": 2,
   "tile_files_found": 141,
-  "tiles_processed": 99,
-  "tiles_changed": 17,
+  "tiles_processed": 100,
+  "tiles_changed": 18,
   "decode_errors": 0,
-  "buildings_seen": 17,
+  "buildings_seen": 18,
   "render_properties_added": 0,
   "kartaview_queries": 0,
   "kartaview_photos_found": 0,
@@ -112,8 +112,9 @@
     "Manila/vector-tiles/13/6850/3758.pbf",
     "Manila/vector-tiles/13/6850/3759.pbf",
     "Manila/vector-tiles/13/6850/3760.pbf",
-    "Manila/vector-tiles/13/6850/3761.pbf"
+    "Manila/vector-tiles/13/6850/3761.pbf",
+    "Manila/vector-tiles/13/6850/3762.pbf"
   ],
   "note": "KartaView metadata is a photo reference only; sign placement/appearance needs visual confirmation.",
-  "derived_roof_sign_features_added": 17
+  "derived_roof_sign_features_added": 18
 }
