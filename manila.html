@@ -85,21 +85,7 @@ if(loaded.has(key)){setVisibility(loaded.get(key),on);return}
 if(!on)return;
 status.className='status';status.textContent='جارٍ تحميل '+file+'…';
 let features=[];
-if(key==='building'){
-  if(typeof DecompressionStream==='undefined')throw Error('المتصفح لا يدعم فك ضغط ملفات المباني');
-  async function readBuildingPart(path){
-    const response=await fetch(path);if(!response.ok)throw Error('HTTP '+response.status+' عند تحميل '+path);
-    const stream=response.body.pipeThrough(new DecompressionStream('gzip'));
-    const doc=await new Response(stream).json();
-    if(!doc||doc.type!=='FeatureCollection'||!Array.isArray(doc.features))throw Error('صيغة GeoJSON غير صحيحة: '+path);
-    return doc.features.filter(f=>f&&f.type==='Feature'&&f.geometry&&['Polygon','MultiPolygon'].includes(f.geometry.type));
-  }
-  const parts=await Promise.all([
-    readBuildingPart('Manila/layers/buildings-part1.geojson.gz'),
-    readBuildingPart('Manila/layers/buildings-part2.geojson.gz')
-  ]);
-  features=parts.flat();
-}else{
+{
   const response=await fetch('Manila/layers/'+file);if(!response.ok)throw Error('HTTP '+response.status);
   const text=await response.text();
   for(const line of text.split(/\r?\n/)){if(!line.trim())continue;try{const f=JSON.parse(line);if(f&&f.type==='Feature'&&f.geometry)features.push(f)}catch(e){}}
