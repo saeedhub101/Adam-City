@@ -63,7 +63,7 @@ async function loadSummary(){
   const res=await fetch(url);if(!res.ok)throw new Error('HTTP '+res.status);
   const parsed=Papa.parse(await res.text(),{header:true,skipEmptyLines:true});
   const countMap=new Map();
-  for(const r of parsed.data){const n=String(r.boundary_record||r['سجل الحد']||'').padStart(2,'0');const c=Number(r.building_count??r['عدد المباني']??r.count??0);if(/^\d{2}$/.test(n))countMap.set(n,Number.isFinite(c)?c:0)}
+  for(const r of parsed.data){const n=String(r.boundary_record||r['سجل الحد']||'').padStart(2,'0');const c=Number(r.building_features??r.building_count??r['عدد المباني']??r.count??0);if(/^\d{2}$/.test(n))countMap.set(n,Number.isFinite(c)?c:0)}
   for(let i=1;i<=51;i++){const n=String(i).padStart(2,'0');const opt=document.createElement('option');opt.value=n;opt.textContent='الحد '+n+(countMap.has(n)?' — '+countMap.get(n)+' سجل':'');select.append(opt)}
   return countMap;
  }catch(e){for(let i=1;i<=51;i++){const n=String(i).padStart(2,'0');const o=document.createElement('option');o.value=n;o.textContent='الحد '+n;select.append(o)}status.textContent='تعذر تحميل summary.csv؛ سيُحمّل ملف الحد المختار مباشرة. '+e.message;return new Map()}
