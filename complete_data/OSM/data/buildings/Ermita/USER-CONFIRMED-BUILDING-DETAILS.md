@@ -8,3 +8,7 @@ These supplemental records document the user's confirmed details for the first t
 - Height in metres and base height remain unknown; storey count must not be converted to a claimed measured height.
 - Files: `user-confirmed-building-details.geojson` and `user-confirmed-building-details.csv`.
 - Source feature data and main master files are not overwritten by this supplemental index.
+
+- Feature 344 (`footprints-feature-000344`): area Malate; street Roxas Boulevard. No other details supplied. Coordinates preserved: [120.9760138, 14.5802616].
+- Feature 350 (`footprints-feature-000350`): user-provided name `Martine Plaze`; area Malate; Antonio Flores Street, corner Cortada Street; full address retained as supplied: `A. Flores, corner Cortada St, Ermita, Manila, 1000 Metro Manila, Philippines`. Coordinates preserved: [120.9801973, 14.5793606].
+- Searchable fields are stored separately (`addr:suburb`, `addr:street`, `addr:corner`, `addr:barangay`) as well as in `address_full`.
