@@ -1,11 +1,11 @@
 {
-  "processed_files": 5,
+  "processed_files": 6,
   "total_files": 357,
-  "last_source": "ermita/maps/qa/consolidated-building-register.csv",
+  "last_source": "ermita/maps/qa/non-osm-building-canonical-register.geojson",
   "stats": {
-    "geojson_files": 0,
+    "geojson_files": 1,
     "csv_files": 5,
-    "geojson_features": 0,
+    "geojson_features": 8176,
     "csv_rows": 4573,
     "bad_files": 2
   }
