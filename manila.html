@@ -84,28 +84,39 @@ const [key,label,file,color,kind]=def;
 if(loaded.has(key)){setVisibility(loaded.get(key),on);return}
 if(!on)return;
 status.className='status';status.textContent='جارٍ تحميل '+file+'…';
-let features=[];
-{
-  const response=await fetch('Manila/layers/'+file);if(!response.ok)throw Error('HTTP '+response.status);
-  const text=await response.text();
-  for(const line of text.split(/\r?\n/)){if(!line.trim())continue;try{const f=JSON.parse(line);if(f&&f.type==='Feature'&&f.geometry)features.push(f)}catch(e){}}
-}
-if(!features.length)throw Error('لم يعثر المحلل على معالم GeoJSON صالحة');
-const sourceId='manila-'+key;map.addSource(sourceId,{type:'geojson',data:{type:'FeatureCollection',features},promoteId:'id'});
+const sourceId='manila-'+key;
 const ids=[];
 if(kind==='building'){
- const extrusion=sourceId+'-3d';map.addLayer({id:extrusion,type:'fill-extrusion',source:sourceId,filter:['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],paint:{
- 'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],color],
- 'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','building:height']],5]],
- 'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height']],0]],
- 'fill-extrusion-opacity':0.94,'fill-extrusion-vertical-gradient':true}});ids.push(extrusion);
-}else if(kind==='fill'){
- const id=sourceId+'-fill';map.addLayer({id,type:'fill',source:sourceId,paint:{'fill-color':color,'fill-opacity':0.27,'fill-outline-color':color}});ids.push(id);
- const line=sourceId+'-outline';map.addLayer({id:line,type:'line',source:sourceId,paint:{'line-color':color,'line-width':0.7,'line-opacity':0.8}});ids.push(line);
-}else if(kind==='line'){
- const id=sourceId+'-line';map.addLayer({id,type:'line',source:sourceId,paint:{'line-color':color,'line-width':['interpolate',['linear'],['zoom'],8,0.5,15,2.5],'line-opacity':0.9}});ids.push(id);
+ // Read the original OpenFreeMap vector tiles directly. This avoids relocating
+ // polygons through a separate GeoJSON conversion and preserves tile coordinates.
+ const tileTemplate=new URL('Manila/vector-tiles/{z}/{x}/{y}.pbf',window.location.href).href;
+ map.addSource(sourceId,{type:'vector',tiles:[tileTemplate],minzoom:10,maxzoom:14,scheme:'xyz'});
+ const extrusion=sourceId+'-3d';
+ map.addLayer({id:extrusion,type:'fill-extrusion',source:sourceId,'source-layer':'building',
+   filter:['==',['geometry-type'],'Polygon'],
+   paint:{
+    'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],color],
+    'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','building:height']],5]],
+    'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height']],0]],
+    'fill-extrusion-opacity':0.94,'fill-extrusion-vertical-gradient':true
+   }
+ });ids.push(extrusion);
+ status.textContent='تم ربط المباني مباشرة ببلاطات المتجهات الأصلية PBF (المستويات 10–14)، دون تحويل إحداثياتها.';
 }else{
- const id=sourceId+'-point';map.addLayer({id,type:'circle',source:sourceId,paint:{'circle-radius':['interpolate',['linear'],['zoom'],8,2,15,5],'circle-color':color,'circle-stroke-color':'#14232d','circle-stroke-width':0.7}});ids.push(id);
+ let features=[];
+ const response=await fetch('Manila/layers/'+file);if(!response.ok)throw Error('HTTP '+response.status);
+ const text=await response.text();
+ for(const line of text.split(/\r?\n/)){if(!line.trim())continue;try{const f=JSON.parse(line);if(f&&f.type==='Feature'&&f.geometry)features.push(f)}catch(e){}}
+ if(!features.length)throw Error('لم يعثر المحلل على معالم GeoJSON صالحة');
+ map.addSource(sourceId,{type:'geojson',data:{type:'FeatureCollection',features},promoteId:'id'});
+ if(kind==='fill'){
+  const id=sourceId+'-fill';map.addLayer({id,type:'fill',source:sourceId,paint:{'fill-color':color,'fill-opacity':0.27,'fill-outline-color':color}});ids.push(id);
+  const line=sourceId+'-outline';map.addLayer({id:line,type:'line',source:sourceId,paint:{'line-color':color,'line-width':0.7,'line-opacity':0.8}});ids.push(line);
+ }else if(kind==='line'){
+  const id=sourceId+'-line';map.addLayer({id,type:'line',source:sourceId,paint:{'line-color':color,'line-width':['interpolate',['linear'],['zoom'],8,0.5,15,2.5],'line-opacity':0.9}});ids.push(id);
+ }else{
+  const id=sourceId+'-point';map.addLayer({id,type:'circle',source:sourceId,paint:{'circle-radius':['interpolate',['linear'],['zoom'],8,2,15,5],'circle-color':color,'circle-stroke-color':'#14232d','circle-stroke-width':0.7}});ids.push(id);
+ }
 }
 for(const id of ids){map.on('click',id,featurePopup);map.on('mouseenter',id,()=>map.getCanvas().style.cursor='pointer');map.on('mouseleave',id,()=>map.getCanvas().style.cursor='')}
 loaded.set(key,ids);setVisibility(ids,on);status.textContent='تم تحميل '+label+': '+features.length.toLocaleString('en-US')+' معلم.';
@@ -122,7 +133,7 @@ for(const l of map.getStyle().layers||[]){if(baseBuildings.includes(l.id))contin
 document.getElementById('home').addEventListener('click',()=>map.flyTo({center:[120.982,14.585],zoom:13,pitch:26,bearing:0,duration:900}));
 document.getElementById('allOn').addEventListener('click',async()=>{for(const d of defs){const cb=checkboxes.get(d[0]);cb.checked=true;try{await loadLayer(d,true)}catch(e){status.className='status error';status.textContent='تعذر تحميل '+d[2]+': '+e.message;cb.checked=false}}});
 document.getElementById('allOff').addEventListener('click',()=>{for(const d of defs){const cb=checkboxes.get(d[0]);cb.checked=false;if(loaded.has(d[0]))setVisibility(loaded.get(d[0]),false)}status.textContent='تم إيقاف طبقات البيانات الإضافية.'});
-status.textContent='الخريطة جاهزة؛ جارٍ تحميل طبقة المباني تلقائيًا…';loadLayer(defs[0],true).catch(e=>{status.className='status error';status.textContent='تعذر تحميل طبقة المباني: '+e.message;});
+status.textContent='الخريطة جاهزة؛ جارٍ تحميل المباني مباشرة من بلاطات المتجهات…';loadLayer(defs[0],true).catch(e=>{status.className='status error';status.textContent='تعذر تحميل المباني من بلاطات المتجهات: '+e.message;});
 });
 for(const [id,file] of [['csv1','buildings-part1.csv'],['csv2','buildings-part2.csv'],['csv3','buildings-part1-enriched.csv.gz'],['csv4','buildings-part2-enriched.csv.gz']]){
 document.getElementById(id).addEventListener('change',e=>{const u='Manila/layers/'+file;document.getElementById('csvInfo').innerHTML=e.target.checked?'الملف: <a style="color:var(--accent)" target="_blank" rel="noopener" href="'+u+'">'+file+'</a>':'تم إخفاء رابط '+file;});
