@@ -252,3 +252,5 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+# Workflow execution is triggered by changes to this script.
