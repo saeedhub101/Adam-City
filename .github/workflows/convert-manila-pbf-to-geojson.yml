@@ -1,0 +1,53 @@
+name: Convert original Manila PBF tiles to GeoJSON
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Tiles to convert (0 means all source tiles)"
+        required: false
+        default: "0"
+  push:
+    branches: [main]
+    paths:
+      - "Manila/vector-tiles/**/*.pbf"
+      - "Manila/scripts/convert_pbf_to_geojson.py"
+      - ".github/workflows/convert-manila-pbf-to-geojson.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: manila-pbf-to-geojson
+  cancel-in-progress: false
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install decoder
+        run: python -m pip install --upgrade pip mapbox-vector-tile
+      - name: Convert PBF tiles to geographic GeoJSON
+        env:
+          TILE_LIMIT: ${{ github.event.inputs.limit || '0' }}
+        run: python Manila/scripts/convert_pbf_to_geojson.py --limit "$TILE_LIMIT"
+      - name: Commit converted GeoJSON files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Manila/GeoJSON_Source
+          if git diff --cached --quiet; then
+            echo "No GeoJSON changes to commit."
+          else
+            git commit -m "Convert original Manila PBF tiles to GeoJSON"
+            git push origin main
+          fi
