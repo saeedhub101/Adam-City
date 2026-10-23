@@ -36,7 +36,7 @@ def extract_features(raw):
             if in_string:
                 if escaped:
                     escaped = False
-                elif c == ord("\\\\"):
+                elif c == ord("\\"):
                     escaped = True
                 elif c == ord('"'):
                     in_string = False
@@ -83,7 +83,7 @@ def main():
         if len(parsed["features"]) != len(group):
             raise ValueError(f"Validation failed for {path}")
         entries.append({
-            "path": str(path).replace("\\\\", "/"),
+            "path": str(path).replace("\\", "/"),
             "features": len(group),
             "bytes": len(data),
             "sha256": sha256(data),
@@ -92,7 +92,7 @@ def main():
     if sum(item["features"] for item in entries) != len(features):
         raise ValueError("Feature count mismatch after splitting")
     manifest = {
-        "source": str(SOURCE).replace("\\\\", "/"),
+        "source": str(SOURCE).replace("\\", "/"),
         "source_bytes": len(raw),
         "source_sha256": sha256(raw),
         "source_features": len(features),
@@ -102,7 +102,7 @@ def main():
         "parts": entries,
     }
     manifest_path = ROOT / "part-001-readable-parts-manifest.json"
-    manifest_path.write_text(json.dumps(manifest, indent=2) + "\\n", encoding="utf-8")
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(f"Validated {len(features)} features into {len(entries)} readable files.")
     print(f"Original unchanged: {SOURCE}; manifest: {manifest_path}")
 
