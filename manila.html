@@ -29,6 +29,10 @@ h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var
 <div id="layerList"></div>
 </div>
 <div class="section">
+<div class="section-title">نتيجة تطبيق تقرير الأدلة على PBF</div>
+<div id="applySummary" class="meta">جارٍ قراءة ملخص التطبيق المنشور…</div>
+</div>
+<div class="section">
 <div class="section-title">بلاطات المتجهات PBF</div>
 <div class="meta">تُقرأ الطرق والمياه والأماكن وبقية الطبقات من الطبقات الداخلية للبلاطات نفسها، مثلما تُقرأ المباني من building. المستويات المحلية المتاحة: 10–14.</div>
 <div class="meta"><a style="color:var(--accent)" href="Manila/vector-tiles/" target="_blank" rel="noopener">فتح مجلد vector-tiles في المستودع</a></div>
@@ -87,7 +91,7 @@ if(kind==='building'){
    filter:['==',['geometry-type'],'Polygon'],
    paint:{
     'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],color],
-    'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','building:height']],5]],
+    'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','building:height']],['*',['to-number',['get','building:levels'],0],3.2],5]],
     'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height']],0]],
     'fill-extrusion-opacity':0.94,'fill-extrusion-vertical-gradient':true
    }
@@ -120,6 +124,7 @@ status.textContent='تم ربط طبقة '+label+' مباشرة من PBF، sourc
 defs.forEach(addCheckbox);
 const baseBuildings=[];
 map.on('load',()=>{
+fetch('Manila/3d-rag/apply-report.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(r=>{const el=document.getElementById('applySummary');el.innerHTML='<b>حالة التطبيق:</b> '+escapeHtml(r.status||'غير معروف')+'<br><b>بلاطات PBF التي تغيرت:</b> '+escapeHtml(r.changed_tile_count??'—')+' / '+escapeHtml(r.pbf_files_scanned??'—')+'<br><b>المباني التي تغيرت خصائصها:</b> '+escapeHtml(r.changed_building_features??'—')+'<br><b>الخصائص التي طُبقت:</b> '+escapeHtml(r.changed_property_count??'—')+'<br><b>الهندسة والإحداثيات:</b> لم تتغير<br><a style="color:var(--accent)" href="Manila/3d-rag/apply-report.json" target="_blank" rel="noopener">فتح التقرير الكامل</a>';}).catch(e=>{document.getElementById('applySummary').textContent='تعذر تحميل تقرير التطبيق: '+e.message});
 const styleLayers=map.getStyle().layers||[];
 for(const l of styleLayers){if(l.type==='fill-extrusion'&&/building/i.test(l.id+' '+(l['source-layer']||'')))baseBuildings.push(l.id)}
 document.getElementById('baseBuildings').addEventListener('change',e=>baseBuildings.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
