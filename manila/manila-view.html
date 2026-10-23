@@ -58,7 +58,7 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
   map.addSource(state.source,{type:'geojson',data:new URL(path,document.baseURI).href});
   map.addLayer({id:state.layer,type:'fill-extrusion',source:state.source,filter:['any',['==',['geometry-type'],'Polygon'],['==',['geometry-type'],'MultiPolygon']],layout:{visibility:'visible'},paint:{
    'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','facade_colour'],'#c8bca9'],
-   'fill-extrusion-height':['max',3,['case',['>', ['to-number',['coalesce',['get','height_m'],['get','height']],0],0],['to-number',['coalesce',['get','height_m'],['get','height']],0],['>', ['to-number',['coalesce',['get','building:levels'],['get','levels']],0],0],['*',['to-number',['coalesce',['get','building:levels'],['get','levels']],0],3.15],5]],
+   'fill-extrusion-height':['max',3,['case',['>', ['to-number',['coalesce',['get','height_m'],['get','height'],['get','building_height']],0],0],['to-number',['coalesce',['get','height_m'],['get','height'],['get','building_height']],0],['>', ['to-number',['coalesce',['get','building_levels'],['get','building:levels'],['get','levels']],0],0],['*',['to-number',['coalesce',['get','building_levels'],['get','building:levels'],['get','levels']],0],3.15],5]],
    'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','base_height_m'],['get','min_height']],0]],
    'fill-extrusion-opacity':0.9,'fill-extrusion-vertical-gradient':true
   }});
