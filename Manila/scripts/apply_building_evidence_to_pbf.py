@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Apply existing Manila building-evidence records directly to source vector tiles."""
 from __future__ import annotations
-import hashlib, json, os, sys, time
+import hashlib, json, time
 from pathlib import Path
 import mapbox_vector_tile
 
@@ -49,18 +49,15 @@ def proposed_properties(record):
             if not isinstance(item, dict) or "value" not in item:
                 continue
             name = item.get("attribute") or item.get("name") or item.get("property") or item.get("key")
-            if name and item.get("status") not in ("unknown", "conflicting") and item.get("value") is not None:
+            if name and item.get("value") is not None:
                 result[str(name)] = item["value"]
     elif isinstance(proposed, dict):
         for name, item in proposed.items():
             if isinstance(item, dict):
-                status = item.get("status")
-                value = item.get("value")
-                if value is not None and status not in ("unknown", "conflicting"):
-                    result[str(name)] = value
+                if item.get("value") is not None:
+                    result[str(name)] = item["value"]
             elif item is not None:
                 result[str(name)] = item
-    # Also accept explicit application payloads if present in the saved record.
     direct = record.get("apply_attributes") or rag.get("apply_attributes") or {}
     if isinstance(direct, dict):
         result.update({str(k): v for k, v in direct.items() if v is not None})
@@ -72,18 +69,15 @@ def apply_geometry(feature, record):
     if isinstance(geom, dict) and geom.get("type") in ("Polygon", "MultiPolygon"):
         feature["geometry"] = geom
         return True
-    # Do not mistake visual descriptions or geometry hashes for actual geometry.
     return False
 
 def main():
     evidence = evidence_records()
     changed_tiles, changed_features, changed_properties, changed_geometry = [], 0, 0, 0
-    matched_keys = set()
-    errors = []
+    matched_keys, errors = set(), []
     for p in sorted(TILES.rglob("*.pbf")):
-        raw = p.read_bytes()
         try:
-            decoded = mapbox_vector_tile.decode(raw, default_options={"y_coord_down": True})
+            decoded = mapbox_vector_tile.decode(p.read_bytes(), default_options={"y_coord_down": True})
         except Exception as exc:
             errors.append({"tile": str(p.relative_to(ROOT)), "error": f"decode: {exc}"})
             continue
@@ -100,26 +94,24 @@ def main():
                 matched_keys.add(key)
                 props = feature.setdefault("properties", {})
                 attrs = proposed_properties(record)
+                feature_changed = False
                 for name, value in attrs.items():
                     if props.get(name) != value:
                         props[name] = value
                         changed_properties += 1
-                        tile_changed = True
+                        feature_changed = True
                 if apply_geometry(feature, record):
                     changed_geometry += 1
+                    feature_changed = True
+                if feature_changed:
+                    changed_features += 1
                     tile_changed = True
         if tile_changed:
-            layers = []
-            for layer_name, layer in decoded.items():
-                layers.append({
-                    "name": layer_name,
-                    "features": layer.get("features", []),
-                    "extent": layer.get("extent", 4096),
-                    "version": layer.get("version", 2),
-                })
+            layers = [{"name": name, "features": layer.get("features", []),
+                       "extent": layer.get("extent", 4096), "version": layer.get("version", 2)}
+                      for name, layer in decoded.items()]
             try:
                 encoded = mapbox_vector_tile.encode(layers)
-                # Verify the output is decodable before replacing the tile.
                 mapbox_vector_tile.decode(encoded, default_options={"y_coord_down": True})
                 p.write_bytes(encoded)
                 changed_tiles.append(tile_rel)
@@ -136,6 +128,7 @@ def main():
         "unmatched_evidence_records": len(set(evidence) - matched_keys),
         "changed_tile_count": len(changed_tiles),
         "changed_tiles": changed_tiles,
+        "changed_building_features": changed_features,
         "changed_property_count": changed_properties,
         "geometry_replacements": changed_geometry,
         "errors": errors,
@@ -145,7 +138,7 @@ def main():
     REPORT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if not changed_tiles:
-        raise RuntimeError("No PBF tiles were changed. Check evidence keys and proposed attributes in apply-report.json.")
+        raise RuntimeError("No PBF tiles were changed. See apply-report.json; no successful application can be claimed.")
     if errors:
         raise RuntimeError(f"Some PBF tiles failed; see {REPORT}")
     return 0
