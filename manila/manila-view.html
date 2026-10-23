@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ADAM CITY — Manila View</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.css">
+<style>
+:root{color-scheme:dark;--panel:rgba(16,26,35,.96);--line:#344654;--text:#eef4f7;--muted:#a7b8c4;--accent:#67d5c2}
+*{box-sizing:border-box}html,body,#map{height:100%;width:100%;margin:0}body{font-family:system-ui,sans-serif;background:#101a23;color:var(--text)}#map{position:absolute;inset:0}
+.panel{position:absolute;z-index:5;top:10px;right:10px;width:min(320px,calc(100vw - 20px));max-height:76dvh;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#67d5c2 #172631;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:0 8px 26px #0005;backdrop-filter:blur(12px)}
+.panel::-webkit-scrollbar{width:7px}.panel::-webkit-scrollbar-track{background:#172631;border-radius:8px}.panel::-webkit-scrollbar-thumb{background:#527c83;border-radius:8px}
+h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(--muted);margin-bottom:10px}.group{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}.group-title{font-size:12px;font-weight:700;margin-bottom:6px;color:var(--accent)}
+.row{display:flex;align-items:flex-start;gap:8px;padding:7px 5px;border-radius:7px;font-size:12px;line-height:1.45;cursor:pointer}.row:hover{background:#ffffff0a}.row input{margin-top:3px;accent-color:var(--accent);flex-shrink:0}
+.status{font-size:11px;line-height:1.5;color:var(--muted);padding:8px 2px;overflow-wrap:anywhere}#error{display:none;color:#ffb4a8;font-size:11px;line-height:1.5;overflow-wrap:anywhere}.attribution{position:absolute;bottom:5px;left:8px;z-index:3;background:#101a23d9;color:#dbe6eb;padding:4px 7px;border-radius:5px;font-size:10px}
+</style>
+</head>
+<body>
+<div id="map" aria-label="خريطة مانيلا ثلاثية الأبعاد"></div>
+<section class="panel">
+<h1>ADAM CITY · MANILA TEST</h1>
+<div class="sub">مقارنة الخريطة ومباني المصدر الأصلية مع مباني GeoJSON من الجزء الأول والثاني. يمكن تشغيل كل طبقة أو إخفاؤها بصورة مستقلة.</div>
+<div class="group"><div class="group-title">المصادر الأصلية للخريطة</div>
+<label class="row"><input type="checkbox" id="baseGround" checked> إظهار أرضية الخريطة الأصلية (الشوارع والمياه والحدائق والتسميات)</label>
+<label class="row"><input type="checkbox" id="baseBuildings" checked> إظهار مباني المصدر الأصلية ثلاثية الأبعاد</label>
+</div>
+<div class="group"><div class="group-title">مباني GeoJSON — ملفات مانيلا</div>
+<label class="row"><input type="checkbox" id="part1"> عرض مباني GeoJSON — Part 1</label>
+<label class="row"><input type="checkbox" id="part2"> عرض مباني GeoJSON — Part 2</label>
+</div>
+<div class="status" id="status">جارٍ تحميل خريطة OpenFreeMap…</div><div id="error"></div>
+</section>
+<div class="attribution">OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors</div>
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
+<script>
+(async function(){
+ const status=document.getElementById('status'), errorBox=document.getElementById('error');
+ const showError=(message)=>{errorBox.style.display='block';errorBox.textContent=message;};
+ let style;
+ try{const res=await fetch('https://tiles.openfreemap.org/styles/liberty');if(!res.ok)throw new Error('Style HTTP '+res.status);style=await res.json();}
+ catch(e){status.textContent='تعذر تحميل الخريطة الأساسية.';showError('تعذر تحميل نمط OpenFreeMap: '+e.message);return;}
+ const originalLayers=style.layers.map(l=>({...l}));
+ const baseBuildingIds=originalLayers.filter(l=>l.type==='fill-extrusion'&&(/building/i.test(l.id+' '+(l['source-layer']||'')))).map(l=>l.id);
+ const map=new maplibregl.Map({container:'map',style,center:[120.9918,14.5707],zoom:14.8,pitch:55,bearing:-18,antialias:true});
+ window.manilaBuildingsMap=map;
+ map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');
+ map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
+ const visibility=(id,on)=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none');};
+ function setBaseGround(on){for(const l of originalLayers){if(baseBuildingIds.includes(l.id))continue;visibility(l.id,on);}}
+ function setBaseBuildings(on){baseBuildingIds.forEach(id=>visibility(id,on));}
+ document.getElementById('baseGround').addEventListener('change',e=>setBaseGround(e.target.checked));
+ document.getElementById('baseBuildings').addEventListener('change',e=>setBaseBuildings(e.target.checked));
+ const partStates={1:{ready:false,loading:false,source:'manila-geojson-part-1',layer:'manila-geojson-part-1-3d'},2:{ready:false,loading:false,source:'manila-geojson-part-2',layer:'manila-geojson-part-2-3d'}};
+ function addPart(part){
+  const state=partStates[part];if(state.ready||state.loading)return;
+  state.loading=true;status.textContent='جارٍ تحميل GeoJSON Part '+part+'…';
+  const path='manila/manila/ermita-buildings-master.parts/part-00'+part+'.geojson';
+  map.addSource(state.source,{type:'geojson',data:new URL(path,location.href).href});
+  map.addLayer({id:state.layer,type:'fill-extrusion',source:state.source,filter:['==',['geometry-type'],'Polygon'],layout:{visibility:'visible'},paint:{
+   'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','facade_colour'],'#c8bca9'],
+   'fill-extrusion-height':['max',3,['case',['>', ['to-number',['coalesce',['get','height_m'],['get','height']],0],0],['to-number',['coalesce',['get','height_m'],['get','height']],0],['>', ['to-number',['coalesce',['get','building:levels'],['get','levels']],0],0],['*',['to-number',['coalesce',['get','building:levels'],['get','levels']],0],3.15],5]],
+   'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','base_height_m'],['get','min_height']],0]],
+   'fill-extrusion-opacity':0.9,'fill-extrusion-vertical-gradient':true
+  }});
+  state.ready=true;state.loading=false;status.textContent='تم تفعيل طبقة GeoJSON Part '+part+'.';
+ }
+ document.getElementById('part1').addEventListener('change',e=>{try{if(e.target.checked)addPart(1);else if(map.getLayer(partStates[1].layer)){visibility(partStates[1].layer,false);status.textContent='تم إخفاء GeoJSON Part 1.';}}catch(err){showError('تعذر تحميل Part 1: '+err.message);}});
+ document.getElementById('part2').addEventListener('change',e=>{try{if(e.target.checked)addPart(2);else if(map.getLayer(partStates[2].layer)){visibility(partStates[2].layer,false);status.textContent='تم إخفاء GeoJSON Part 2.';}}catch(err){showError('تعذر تحميل Part 2: '+err.message);}});
+ map.on('load',()=>{setBaseGround(document.getElementById('baseGround').checked);setBaseBuildings(document.getElementById('baseBuildings').checked);status.textContent='الخريطة جاهزة. فعّل Part 1 أو Part 2 لعرض مباني GeoJSON.';});
+ map.on('error',e=>{if(e.error){const msg='خطأ في الخريطة: '+e.error.message+(e.sourceId?' | source='+e.sourceId:'');status.textContent=msg;showError(msg);console.error('MANILA TEST MAP ERROR',e);}});
+})();
+</script>
+</body>
+</html>
