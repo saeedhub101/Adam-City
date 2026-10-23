@@ -1,0 +1,29 @@
+{
+  "status": "running",
+  "pipeline": "multimodal-rag",
+  "pipeline_version": 1,
+  "source_tiles_root": "Manila/vector-tiles",
+  "source_pbf_modified": false,
+  "map_html_modified": false,
+  "tile_files_found": 141,
+  "building_features_found": 1846,
+  "processed_buildings": 10,
+  "retrieval_sources": [
+    "repository CSV/JSON/GeoJSON",
+    "KartaView",
+    "Wikimedia Commons",
+    "Wikipedia"
+  ],
+  "models": {
+    "vision": "gpt-4.1-mini",
+    "synthesis": "gpt-4.1",
+    "api_key_configured": true
+  },
+  "mode": "multimodal_model_enabled",
+  "visual_analyses": 8,
+  "syntheses": 10,
+  "errors": [],
+  "external_tile_queries": 10,
+  "review_required": 0,
+  "records_with_images": 8
+}
