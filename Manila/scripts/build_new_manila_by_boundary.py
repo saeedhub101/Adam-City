@@ -259,7 +259,7 @@ def main():
                 continue
             ai = area_index[boundary_id]
             lname = item["layer"]
-            output_buckets[(ai, z, tx, ty)][lname][fingerprint] = item["feature"]
+            output_buckets[(ai, z, tx, ty)][lname][fingerprint] = {"feature": item["feature"], "extent": item["extent"]}
 
     # Only replace the generated output after every source feature and boundary passed validation.
     if OUT.exists():
@@ -274,11 +274,12 @@ def main():
         outpath.parent.mkdir(parents=True, exist_ok=True)
         payload = []
         for lname, feature_map in layers.items():
-            features = list(feature_map.values())
-            payload.append({"name": lname, "features": features,
-                            "extent": int(mapbox_vector_tile.decode(tiles[0].read_bytes(),
-                                default_options={"y_coord_down": True}).get(lname, {}).get("extent", 4096)),
-                            "version": 2})
+            entries = list(feature_map.values())
+            features = [entry["feature"] for entry in entries]
+            extents = {int(entry["extent"]) for entry in entries}
+            if len(extents) != 1:
+                raise RuntimeError(f"Inconsistent extents in output layer {lname} at z={z}/{tx}/{ty}: {sorted(extents)}")
+            payload.append({"name": lname, "features": features, "extent": extents.pop(), "version": 2})
         encoded = mapbox_vector_tile.encode(payload, default_options={"y_coord_down": True})
         check = mapbox_vector_tile.decode(encoded, default_options={"y_coord_down": True})
         expected = sum(len(v["features"]) for v in payload)
