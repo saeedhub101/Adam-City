@@ -32,8 +32,8 @@ h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var
 
 </div>
 <div class="section" id="areasSection">
-<div class="section-title">مناطق الحدود · New_Manila PBF</div>
-<div class="meta" id="areasSummary">اختر رقماً لعرض جميع طبقات PBF التابعة لذلك الحد.</div>
+<div class="section-title">مناطق المباني · GeoJSON</div>
+<div class="meta" id="areasSummary">10 مناطق محفوظة. اضغط ✓ لإظهار مباني المنطقة أو إخفائها؛ يمكن تشغيل عدة مناطق معاً.</div>
 <div id="areaButtons" class="area-buttons"></div>
 </div>
 <div class="section" id="vectorSection">
@@ -46,7 +46,7 @@ h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var
 </div>
 <div class="section">
 <div class="section-title">بلاطات المتجهات PBF</div>
-<div class="meta">تُقرأ الطرق والمياه والأماكن وبقية الطبقات من الطبقات الداخلية للبلاطات نفسها، مثلما تُقرأ المباني من building. المستويات المحلية المتاحة: 10–14.</div>
+<div class="meta">تُقرأ الطرق والمياه والأماكن وبقية الطبقات من الطبقات الداخلية للبلاطات نفسها، مثلما تُقرأ المباني من building. المستويات المحلية المتاحة: 10–14. ملفات GeoJSON للمناطق العشر منفصلة وتُحمّل عند الطلب.</div>
 <div class="meta"><a style="color:var(--accent)" href="Manila/vector-tiles/" target="_blank" rel="noopener">فتح مجلد vector-tiles في المستودع</a></div>
 </div>
 <div id="status" class="status">جارٍ تشغيل الخريطة…</div>
@@ -137,95 +137,62 @@ const baseBuildings=[];
 const areaButtons=document.getElementById('areaButtons');
 const areasSummary=document.getElementById('areasSummary');
 const newManilaRoot=new URL('Manila/New_Manila/',window.location.href).href;
-const boundaryLayers=[
- ['aerodrome_label','تسميات المطارات','#e5c875','point'],
- ['aeroway','ممرات ومرافق الطيران','#d9b66f','line'],
- ['boundary','الحدود','#bc8be0','line'],
- ['building','المباني ثلاثية الأبعاد','#c7b39b','building'],
- ['building_roof_detail','تفاصيل الأسطح','#a99b89','roof'],
- ['housenumber','أرقام المباني','#f2e7c9','point'],
- ['landcover','الغطاء الأرضي','#81bd8c','fill'],
- ['landuse','استخدامات الأراضي','#75a98a','fill'],
- ['mountain_peak','قمم الجبال','#e4c77c','point'],
- ['park','الحدائق','#4cb982','fill'],
- ['place','الأماكن والتجمعات','#e9d4a0','point'],
- ['poi','نقاط الاهتمام والخدمات','#ffb86c','point'],
- ['transportation','الطرق والنقل','#70bce7','line'],
- ['transportation_name','أسماء الطرق','#b8dcf0','line'],
- ['water','المسطحات المائية','#4da9e8','fill'],
- ['water_name','أسماء المياه','#87d5f3','point'],
- ['waterway','المجاري المائية','#55b8ee','line']
-];
-const boundaryStats=new Map();
-let boundarySummary=null;
-fetch(newManilaRoot+'summary.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(summary=>{
- boundarySummary=summary;
- (summary.feature_occurrences_by_group||[]).forEach(item=>boundaryStats.set(String(item.group).padStart(2,'0'),item.feature_occurrences));
- areasSummary.textContent='جاهز: '+summary.group_count+' حدود · '+summary.output_pbf_files+' ملفات PBF · '+summary.source_pbf_tiles+' بلاطة أصلية · '+summary.source_feature_occurrences_decoded.toLocaleString()+' ظهوراً للمعالم عبر جميع الطبقات.';
-}).catch(e=>{areasSummary.textContent='تعذر قراءة ملخص New_Manila: '+e.message+' — الأزرار ستظل تحاول تحميل البلاطات.'});
-const activeBoundaryLayers=new Map();
-function addBoundaryButton(index){
- const record=String(index+1).padStart(2,'0');
- const folder='boundary-'+record;
+const activeRegions=new Map();
+function addRegionButton(index){
+ const number=String(index+1).padStart(2,'0');
  const button=document.createElement('button');
- button.type='button';button.className='area-btn';button.textContent=record;
- button.title='عرض/إخفاء جميع طبقات '+folder;
+ button.type='button';
+ button.className='area-btn';
+ button.textContent='✓ '+number;
+ button.title='إظهار/إخفاء مباني المنطقة '+number;
  button.setAttribute('aria-pressed','false');
- button.addEventListener('click',()=>{
+ button.disabled=true;
+ button.addEventListener('click',async()=>{
   const on=button.getAttribute('aria-pressed')!=='true';
   try{
-   let entry=activeBoundaryLayers.get(record);
+   let entry=activeRegions.get(number);
    if(!entry){
-    const sourceId='new-manila-'+record;
-    const tileTemplate=newManilaRoot+folder+'/{z}/{x}/{y}.pbf';
-    map.addSource(sourceId,{type:'vector',tiles:[tileTemplate],minzoom:10,maxzoom:14,scheme:'xyz'});
-    const ids=[];
-    for(const [sourceLayer,label,color,kind] of boundaryLayers){
-     const id=sourceId+'-'+sourceLayer;
-     if(kind==='building'){
-      map.addLayer({id,type:'fill-extrusion',source:sourceId,'source-layer':sourceLayer,
-       paint:{'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],color],
-        'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','building:height']],['*',['to-number',['get','building:levels'],0],3.2],5]],
-        'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height']],0]],
-        'fill-extrusion-opacity':0.94,'fill-extrusion-vertical-gradient':true}});
-     }else if(kind==='roof'){
-      map.addLayer({id,type:'fill-extrusion',source:sourceId,'source-layer':sourceLayer,
-       paint:{'fill-extrusion-color':['coalesce',['get','roof_color'],color],
-        'fill-extrusion-height':['max',2,['to-number',['get','roof_height'],5]],
-        'fill-extrusion-base':['max',0,['to-number',['get','roof_base'],0]],'fill-extrusion-opacity':0.95}});
-     }else if(kind==='fill'){
-      map.addLayer({id,type:'fill',source:sourceId,'source-layer':sourceLayer,
-       paint:{'fill-color':color,'fill-opacity':0.22,'fill-outline-color':color}});
-     }else if(kind==='line'){
-      map.addLayer({id,type:'line',source:sourceId,'source-layer':sourceLayer,
-       paint:{'line-color':color,'line-width':['interpolate',['linear'],['zoom'],8,0.5,15,2.5],'line-opacity':0.9}});
-     }else{
-      map.addLayer({id,type:'circle',source:sourceId,'source-layer':sourceLayer,
-       paint:{'circle-radius':['interpolate',['linear'],['zoom'],8,2,15,5],'circle-color':color,'circle-stroke-color':'#14232d','circle-stroke-width':0.7}});
-     }
-     ids.push(id);
-     map.on('click',id,featurePopup);
-     map.on('mouseenter',id,()=>map.getCanvas().style.cursor='pointer');
-     map.on('mouseleave',id,()=>map.getCanvas().style.cursor='');
-    }
-    entry={sourceId,ids};activeBoundaryLayers.set(record,entry);
+    status.className='status';
+    status.textContent='جارٍ تحميل مباني المنطقة '+number+' من GeoJSON…';
+    const sourceId='new-manila-region-'+number;
+    const url=newManilaRoot+'region_'+number+'.geojson';
+    const response=await fetch(url);
+    if(!response.ok)throw new Error('HTTP '+response.status+' عند قراءة '+url);
+    const geojson=await response.json();
+    if(!geojson||geojson.type!=='FeatureCollection'||!Array.isArray(geojson.features))throw new Error('ملف GeoJSON ليس FeatureCollection صالحاً');
+    map.addSource(sourceId,{type:'geojson',data:geojson});
+    const layerId=sourceId+'-buildings-3d';
+    map.addLayer({id:layerId,type:'fill-extrusion',source:sourceId,
+     filter:['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],
+     paint:{
+      'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','color'],'#c7b39b'],
+      'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','building:height']],['*',['to-number',['get','building:levels'],0],3.2],5]],
+      'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height']],0]],
+      'fill-extrusion-opacity':0.96,
+      'fill-extrusion-vertical-gradient':true
+     }});
+    map.on('click',layerId,featurePopup);
+    map.on('mouseenter',layerId,()=>map.getCanvas().style.cursor='pointer');
+    map.on('mouseleave',layerId,()=>map.getCanvas().style.cursor='');
+    entry={sourceId,layerId,count:geojson.features.length};
+    activeRegions.set(number,entry);
    }
-   entry.ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')});
+   if(map.getLayer(entry.layerId))map.setLayoutProperty(entry.layerId,'visibility',on?'visible':'none');
    button.setAttribute('aria-pressed',String(on));
    status.className='status';
-   status.textContent=(on?'تم عرض جميع طبقات ':'تم إخفاء جميع طبقات ')+folder+' — '+boundaryLayers.length+' طبقة متجهة.';
-   const total=boundaryStats.get(record);
+   status.textContent=(on?'تم عرض ':'تم إخفاء ')+'مباني المنطقة '+number+' من GeoJSON — '+entry.count.toLocaleString()+' معلمًا.';
    info.style.display='block';
-   info.innerHTML='<b>'+folder+'</b><div>عدد مرات ظهور المعالم: '+(total===undefined?'جارٍ تحميل الملخص':total.toLocaleString())+'</div><div>عدد طبقات PBF: '+boundaryLayers.length+'</div><div>البلاطات: '+(boundarySummary?.source_pbf_tiles??141)+'</div><div class="meta">طريقة التوزيع: مركز المعلم إلى أقرب خط حدود؛ تجميع تقريبي وليس قصاً هندسياً دقيقاً.</div><div class="meta">'+boundaryLayers.map(x=>escapeHtml(x[0])).join(' · ')+'</div>';
+   info.innerHTML='<b>المنطقة '+number+'</b><div>المصدر: <code>Manila/New_Manila/region_'+number+'.geojson</code></div><div>عدد المعالم: '+entry.count.toLocaleString()+'</div>';
   }catch(error){
-   status.className='status error';status.textContent='تعذر عرض '+folder+': '+error.message;
+   status.className='status error';
+   status.textContent='تعذر تحميل المنطقة '+number+': '+error.message;
    button.setAttribute('aria-pressed','false');
   }
  });
  areaButtons.appendChild(button);
 }
-areasSummary.textContent='جارٍ قراءة ملخص الحدود الـ51…';
-for(let i=0;i<51;i++)addBoundaryButton(i);
+for(let i=0;i<10;i++)addRegionButton(i);
+
 document.getElementById('toggleVector').addEventListener('click',()=>{const body=document.getElementById('vectorBody'),collapsed=body.classList.toggle('is-collapsed');document.getElementById('toggleVector').textContent=collapsed?'+':'−';document.getElementById('toggleVector').setAttribute('aria-expanded',String(!collapsed));});
 map.on('load',()=>{
 fetch('Manila/3d-rag/apply-report.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(r=>{const el=document.getElementById('applySummary');el.innerHTML='<b>حالة التطبيق:</b> '+escapeHtml(r.status||'غير معروف')+'<br><b>بلاطات PBF التي تغيرت:</b> '+escapeHtml(r.changed_tile_count??'—')+' / '+escapeHtml(r.pbf_files_scanned??'—')+'<br><b>المباني التي تغيرت خصائصها:</b> '+escapeHtml(r.changed_building_features??'—')+'<br><b>الخصائص التي طُبقت:</b> '+escapeHtml(r.changed_property_count??'—')+'<br><b>الهندسة والإحداثيات:</b> لم تتغير<br><a style="color:var(--accent)" href="Manila/3d-rag/apply-report.json" target="_blank" rel="noopener">فتح التقرير الكامل</a>';}).catch(e=>{document.getElementById('applySummary').textContent='تعذر تحميل تقرير التطبيق: '+e.message});
@@ -235,7 +202,7 @@ document.getElementById('baseBuildings').addEventListener('change',e=>baseBuildi
 document.getElementById('baseMap').addEventListener('change',e=>{
 for(const l of map.getStyle().layers||[]){if(baseBuildings.includes(l.id))continue;if(l.type==='background')continue;if(map.getLayer(l.id))map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}
 });
-status.textContent='الخريطة جاهزة؛ اختر رقم الطبقة لعرض ملفاتها من PBF_Files.';
+document.querySelectorAll('#areaButtons .area-btn').forEach(button=>button.disabled=false);\nstatus.textContent='الخريطة جاهزة؛ اختر أحد أزرار ✓ 01–✓ 10 لعرض مباني GeoJSON.';
 });
 map.on('error',e=>{if(e.error)console.warn('MapLibre',e.error.message)});
 })();

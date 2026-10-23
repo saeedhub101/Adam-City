@@ -8,7 +8,6 @@ on:
       - 'manila.html'
       - 'manila-bundry.html'
       - 'Manila/vector-tiles/**'
-      - 'Manila/buildings-by-boundary/**'
       - 'Manila/New_Manila/**'
       - 'Manila/3d-rag/apply-report.json'
   workflow_dispatch:
@@ -18,8 +17,7 @@ permissions:
   pages: write
   id-token: write
 
-# Keep one deployment at a time; do not cancel an active publish when another
-# matching update arrives.
+# Publishing only: no conversion, splitting, downloading, or data generation.
 concurrency:
   group: github-pages
   cancel-in-progress: false
@@ -34,24 +32,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Assemble static page and its existing data files
+      - name: Assemble the page from saved files only
         shell: bash
         run: |
           set -euo pipefail
           test -s manila.html
           test -s manila-bundry.html
-          test -s Manila/buildings-by-boundary/summary.csv
-          mkdir -p site/Manila/vector-tiles site/Manila/buildings-by-boundary site/Manila/New_Manila site/Manila/3d-rag
+          test -d Manila/vector-tiles
+          pbf_count="$(find Manila/vector-tiles -type f -name '*.pbf' | wc -l)"
+          test "$pbf_count" -gt 0
+          for i in $(seq -w 1 10); do
+            test -s "Manila/New_Manila/region_${i}.geojson"
+          done
+          test -s Manila/New_Manila/grouping-summary.json
+          mkdir -p site/Manila/vector-tiles site/Manila/New_Manila site/Manila/3d-rag
           cp manila.html site/manila.html
           cp manila-bundry.html site/manila-bundry.html
           cp -a Manila/vector-tiles/. site/Manila/vector-tiles/
-          cp -a Manila/buildings-by-boundary/. site/Manila/buildings-by-boundary/
-          test -s Manila/New_Manila/summary.json
           cp -a Manila/New_Manila/. site/Manila/New_Manila/
-          test -s Manila/3d-rag/apply-report.json
-          cp Manila/3d-rag/apply-report.json site/Manila/3d-rag/apply-report.json
+          if [ -s Manila/3d-rag/apply-report.json ]; then
+            cp Manila/3d-rag/apply-report.json site/Manila/3d-rag/apply-report.json
+          fi
           touch site/.nojekyll
           printf '%s' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=manila.html"><title>Manila</title><a href="manila.html">Open Manila</a></html>' > site/index.html
+          echo "Publish-only build: copied $pbf_count existing PBF files and 10 saved GeoJSON regions; no data generation performed."
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
