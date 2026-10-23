@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Manila — Data Explorer</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.css">
+<style>
+:root{color-scheme:dark;--bg:#0c141b;--panel:#121f29;--line:#2a414f;--text:#eaf3f7;--muted:#9db2bf;--accent:#6de0c7}
+*{box-sizing:border-box}html,body,#map{width:100%;height:100%;margin:0}body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text)}#map{position:absolute;inset:0}
+.panel{position:absolute;z-index:4;top:10px;right:10px;width:min(355px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow:auto;background:#101c25f5;border:1px solid var(--line);border-radius:14px;padding:13px;box-shadow:0 10px 35px #0006;backdrop-filter:blur(12px)}
+h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var(--muted);margin-bottom:10px}.section{border-top:1px solid var(--line);padding-top:9px;margin-top:9px}.section-title{font-weight:750;color:var(--accent);font-size:12px;margin-bottom:7px}.layer{display:flex;gap:8px;align-items:flex-start;font-size:12px;line-height:1.4;margin:7px 0}.layer input{accent-color:var(--accent);width:16px;height:16px;flex:0 0 auto;margin:1px 0 0}.meta{font-size:10px;color:var(--muted);line-height:1.6;overflow-wrap:anywhere}.status{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;font-size:11px;line-height:1.5;overflow-wrap:anywhere}.error{color:#ffd6d6}.actions{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.btn{background:#203641;color:var(--text);border:1px solid #395663;border-radius:7px;padding:7px 9px;font:inherit;font-size:11px;cursor:pointer}.btn:hover{border-color:var(--accent)}#info{display:none;margin-top:8px;padding:9px;background:#192c37;border-radius:8px;font-size:11px;line-height:1.6;overflow-wrap:anywhere}.attribution{position:absolute;bottom:8px;left:8px;background:#101c25e8;padding:5px 8px;border-radius:6px;font-size:10px;z-index:2;direction:ltr}
+@media(max-width:560px){.panel{top:6px;right:6px;width:min(315px,calc(100vw - 12px));max-height:62dvh;padding:10px}h1{font-size:16px}.layer{font-size:11px;margin:6px 0}}
+</style>
+</head>
+<body>
+<div id="map" aria-label="خريطة بيانات مانيلا"></div>
+<section class="panel">
+<h1>MANILA · DATA EXPLORER</h1>
+<div class="intro">عارض تفاعلي لملفات البيانات الموجودة في مجلد Manila. فعّل الطبقات التي تريدها، واضغط على المعالم لمعرفة خصائصها. المباني تستخدم ارتفاعات render_height عندما تكون متوفرة.</div>
+<div class="section">
+<div class="section-title">الخريطة الأساسية</div>
+<label class="layer"><input id="baseMap" type="checkbox" checked> خريطة OpenFreeMap الأساسية (الشوارع والمياه والتسميات)</label>
+<label class="layer"><input id="baseBuildings" type="checkbox" checked> مباني الخريطة الأساسية ثلاثية الأبعاد</label>
+<div class="actions"><button class="btn" id="home">العودة إلى مانيلا</button><button class="btn" id="allOn">تفعيل جميع طبقات البيانات</button><button class="btn" id="allOff">إيقاف طبقات البيانات</button></div>
+</div>
+<div class="section">
+<div class="section-title">ملفات GeoJSONL المكانية</div>
+<div id="layerList"></div>
+</div>
+<div class="section">
+<div class="section-title">ملفات CSV الخاصة بالمباني</div>
+<label class="layer"><input type="checkbox" id="csv1"> buildings-part1.csv</label>
+<label class="layer"><input type="checkbox" id="csv2"> buildings-part2.csv</label>
+<label class="layer"><input type="checkbox" id="csv3"> buildings-part1-enriched.csv.gz</label>
+<label class="layer"><input type="checkbox" id="csv4"> buildings-part2-enriched.csv.gz</label>
+<div class="meta">ملفات CSV جدولية وليست طبقات خريطة مباشرة. تفعيلها يعرض حالة الملف ورابط فتحه/تنزيله، ولا يضيف هندسة مكانية تلقائيًا.</div>
+<div id="csvInfo" class="meta"></div>
+</div>
+<div class="section">
+<div class="section-title">بلاطات المتجهات PBF</div>
+<div class="meta">المجلد يحتوي بلاطات للمستويات 10–14. يلزم تحديد أسماء الطبقات الداخلية في البلاطات قبل رسمها كطبقات MapLibre؛ لذلك لا أخلطها مع طبقات GeoJSONL قبل التحقق من بنيتها.</div>
+<div class="meta"><a style="color:var(--accent)" href="Manila/vector-tiles/" target="_blank" rel="noopener">فتح مجلد vector-tiles في المستودع</a></div>
+</div>
+<div id="status" class="status">جارٍ تشغيل الخريطة…</div>
+<div id="info"></div>
+</section>
+<div class="attribution">OpenFreeMap · OpenStreetMap contributors</div>
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
+<script>
+(async()=>{
+const status=document.getElementById('status'),info=document.getElementById('info'),list=document.getElementById('layerList');
+const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[120.982,14.585],zoom:12.6,pitch:48,bearing:-12,antialias:true});
+window.manilaMap=map;map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
+const defs=[
+['building','المباني','building.geojsonl','#c7b39b','building'],
+['aerodrome_label','تسميات المطارات','aerodrome_label.geojsonl','#e5c875','point'],
+['aeroway','ممرات ومرافق الطيران','aeroway.geojsonl','#d9b66f','line'],
+['boundary','الحدود','boundary.geojsonl','#bc8be0','line'],
+['housenumber','أرقام المباني','housenumber.geojsonl','#f2e7c9','point'],
+['landcover','الغطاء الأرضي','landcover.geojsonl','#81bd8c','fill'],
+['landuse','استخدامات الأراضي','landuse.geojsonl','#75a98a','fill'],
+['mountain_peak','قمم الجبال','mountain_peak.geojsonl','#e4c77c','point'],
+['park','الحدائق','park.geojsonl','#4cb982','fill'],
+['place','الأماكن والتجمعات','place.geojsonl','#e9d4a0','point'],
+['poi','نقاط الاهتمام والخدمات','poi.geojsonl','#ffb86c','point'],
+['transportation','الطرق والنقل','transportation.geojsonl','#70bce7','line'],
+['transportation_name','أسماء الطرق','transportation_name.geojsonl','#b8dcf0','line'],
+['water','المسطحات المائية','water.geojsonl','#4da9e8','fill'],
+['water_name','أسماء المياه','water_name.geojsonl','#87d5f3','point'],
+['waterway','المجاري المائية','waterway.geojsonl','#55b8ee','line']
+];
+const loaded=new Map(),checkboxes=new Map();
+const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function setVisibility(ids,on){ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')})}
+function featurePopup(e){const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};let rows=Object.entries(p).slice(0,35).map(([k,v])=>'<div><b>'+escapeHtml(k)+'</b>: '+escapeHtml(typeof v==='object'?JSON.stringify(v):v??'')+'</div>').join('');info.style.display='block';info.innerHTML='<b>خصائص المعلم</b>'+rows;new maplibregl.Popup({maxWidth:'340px'}).setLngLat(e.lngLat).setHTML('<div style="direction:ltr;text-align:left;max-height:260px;overflow:auto">'+rows+'</div>').addTo(map)}
+function addCheckbox(def){
+const [key,label,file,color,kind]=def;const wrap=document.createElement('label');wrap.className='layer';
+const cb=document.createElement('input');cb.type='checkbox';cb.checked=key==='building';wrap.append(cb,document.createTextNode(label+' · '+file));list.append(wrap);checkboxes.set(key,cb);
+cb.addEventListener('change',async()=>{try{await loadLayer(def,cb.checked)}catch(e){status.className='status error';status.textContent='فشل تحميل '+file+': '+e.message;cb.checked=false}});
+}
+async function loadLayer(def,on){
+const [key,label,file,color,kind]=def;
+if(loaded.has(key)){setVisibility(loaded.get(key),on);return}
+if(!on)return;
+status.className='status';status.textContent='جارٍ تحميل '+file+'…';
+const response=await fetch('Manila/layers/'+file);if(!response.ok)throw Error('HTTP '+response.status);
+const text=await response.text();const features=[];
+for(const line of text.split(/\r?\n/)){if(!line.trim())continue;try{const f=JSON.parse(line);if(f&&f.type==='Feature'&&f.geometry)features.push(f)}catch(e){}}
+if(!features.length)throw Error('لم يعثر المحلل على معالم GeoJSON صالحة');
+const sourceId='manila-'+key;map.addSource(sourceId,{type:'geojson',data:{type:'FeatureCollection',features},promoteId:'id'});
+const ids=[];
+if(kind==='building'){
+ const extrusion=sourceId+'-3d';map.addLayer({id:extrusion,type:'fill-extrusion',source:sourceId,filter:['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],paint:{
+ 'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],color],
+ 'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','building:height']],5]],
+ 'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height']],0]],
+ 'fill-extrusion-opacity':0.94,'fill-extrusion-vertical-gradient':true}});ids.push(extrusion);
+}else if(kind==='fill'){
+ const id=sourceId+'-fill';map.addLayer({id,type:'fill',source:sourceId,paint:{'fill-color':color,'fill-opacity':0.27,'fill-outline-color':color}});ids.push(id);
+ const line=sourceId+'-outline';map.addLayer({id:line,type:'line',source:sourceId,paint:{'line-color':color,'line-width':0.7,'line-opacity':0.8}});ids.push(line);
+}else if(kind==='line'){
+ const id=sourceId+'-line';map.addLayer({id,type:'line',source:sourceId,paint:{'line-color':color,'line-width':['interpolate',['linear'],['zoom'],8,0.5,15,2.5],'line-opacity':0.9}});ids.push(id);
+}else{
+ const id=sourceId+'-point';map.addLayer({id,type:'circle',source:sourceId,paint:{'circle-radius':['interpolate',['linear'],['zoom'],8,2,15,5],'circle-color':color,'circle-stroke-color':'#14232d','circle-stroke-width':0.7}});ids.push(id);
+}
+for(const id of ids){map.on('click',id,featurePopup);map.on('mouseenter',id,()=>map.getCanvas().style.cursor='pointer');map.on('mouseleave',id,()=>map.getCanvas().style.cursor='')}
+loaded.set(key,ids);setVisibility(ids,on);status.textContent='تم تحميل '+label+': '+features.length.toLocaleString('en-US')+' معلم.';
+}
+defs.forEach(addCheckbox);
+const baseBuildings=[];
+map.on('load',()=>{
+const styleLayers=map.getStyle().layers||[];
+for(const l of styleLayers){if(l.type==='fill-extrusion'&&/building/i.test(l.id+' '+(l['source-layer']||'')))baseBuildings.push(l.id)}
+document.getElementById('baseBuildings').addEventListener('change',e=>baseBuildings.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
+document.getElementById('baseMap').addEventListener('change',e=>{
+for(const l of map.getStyle().layers||[]){if(baseBuildings.includes(l.id))continue;if(l.type==='background')continue;if(map.getLayer(l.id))map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}
+});
+document.getElementById('home').addEventListener('click',()=>map.flyTo({center:[120.982,14.585],zoom:12.6,pitch:48,bearing:-12,duration:900}));
+document.getElementById('allOn').addEventListener('click',async()=>{for(const d of defs){const cb=checkboxes.get(d[0]);cb.checked=true;try{await loadLayer(d,true)}catch(e){status.className='status error';status.textContent='تعذر تحميل '+d[2]+': '+e.message;cb.checked=false}}});
+document.getElementById('allOff').addEventListener('click',()=>{for(const d of defs){const cb=checkboxes.get(d[0]);cb.checked=false;if(loaded.has(d[0]))setVisibility(loaded.get(d[0]),false)}status.textContent='تم إيقاف طبقات البيانات الإضافية.'});
+status.textContent='الخريطة جاهزة. طبقة المباني المحددة مبدئيًا ستُحمّل عند الطلب.';
+});
+for(const [id,file] of [['csv1','buildings-part1.csv'],['csv2','buildings-part2.csv'],['csv3','buildings-part1-enriched.csv.gz'],['csv4','buildings-part2-enriched.csv.gz']]){
+document.getElementById(id).addEventListener('change',e=>{const u='Manila/layers/'+file;document.getElementById('csvInfo').innerHTML=e.target.checked?'الملف: <a style="color:var(--accent)" target="_blank" rel="noopener" href="'+u+'">'+file+'</a>':'تم إخفاء رابط '+file;});
+}
+map.on('error',e=>{if(e.error)console.warn('MapLibre',e.error.message)});
+})();
+</script>
+</body>
+</html>
