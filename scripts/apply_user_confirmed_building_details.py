@@ -33,6 +33,21 @@ records = {
   "review_decision":"user_confirmed",
   "review_notes":"User-confirmed commercial use, two storeys, street, barangay and area. Building name, facade materials and measured height not provided."
  }
+
+ "footprints-feature-000344": {
+  "building":"commercial", "addr:suburb":"Malate", "addr:street":"Roxas Boulevard",
+  "address_full":"Roxas Boulevard, Malate, Manila, Metro Manila, Philippines",
+  "status":"user_confirmed_location_only", "review_decision":"user_confirmed",
+  "review_notes":"User supplied only the area (Malate) and street (Roxas Boulevard). No name, use subtype, storey count, facade material or measured height supplied."
+ },
+ "footprints-feature-000350": {
+  "name":"Martine Plaze", "source_name_or_brand":"Martine plaze",
+  "addr:suburb":"Malate", "addr:street":"Antonio Flores Street", "addr:corner":"Cortada Street",
+  "addr:city":"Manila", "addr:province":"Metro Manila", "addr:country":"Philippines",
+  "address_full":"A. Flores, corner Cortada St, Ermita, Manila, 1000 Metro Manila, Philippines",
+  "status":"user_confirmed_identity_and_address", "review_decision":"user_confirmed",
+  "review_notes":"User supplied name, street, area and full address. Retain user's spelling 'Martine plaze'; address string recorded as supplied. Building height and storey count not supplied."
+ }
 }
 
 def apply(props, fid):
@@ -41,7 +56,7 @@ def apply(props, fid):
     props.update(d)
     return True
 
-# Readable first part: update the existing two indexed features without changing coordinates/order.
+# Readable first part: update user-confirmed indexed features without changing coordinates/order.
 obj=json.loads(PART.read_text(encoding="utf-8"))
 changed=0
 for f in obj.get("features",[]):
@@ -75,7 +90,7 @@ master_result=update_csv(MASTER_CSV,["source_feature_id","source_feature_id","fe
 if MANIFEST.exists():
     m=json.loads(MANIFEST.read_text(encoding="utf-8"))
     m["user_confirmed_building_updates"]={
-      "records":["footprints-feature-000342","footprints-feature-000343"],
+      "records":["footprints-feature-000342","footprints-feature-000343","footprints-feature-000344","footprints-feature-000350"],
       "supplemental_files":[
         "complete_data/OSM/data/buildings/Ermita/user-confirmed-building-details.geojson",
         "complete_data/OSM/data/buildings/Ermita/user-confirmed-building-details.csv",
