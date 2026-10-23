@@ -1,0 +1,50 @@
+name: Enrich Manila vector-tile building attributes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Manila/scripts/enrich_vector_tiles.py"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: manila-pbf-enrichment
+  cancel-in-progress: false
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install vector-tile tools
+        run: python -m pip install --disable-pip-version-check mapbox-vector-tile requests
+
+      - name: Enrich existing building features from real OSM tags
+        run: python Manila/scripts/enrich_vector_tiles.py
+
+      - name: Commit changed PBF tiles only
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- 'Manila/vector-tiles/**/*.pbf'
+          if git diff --cached --quiet; then
+            echo "No PBF changes were produced; no commit needed."
+            exit 0
+          fi
+          git commit -m "Enrich Manila PBF building attributes from OSM"
+          git push origin HEAD:main
