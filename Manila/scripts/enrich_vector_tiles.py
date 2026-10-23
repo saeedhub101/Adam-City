@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Incrementally enrich Manila PBF building properties from verified OSM data.
+"""Restartable enrichment of Manila PBF building properties from verified OSM data.
 
 Processes one tile at a time, preserves feature geometry, and pushes each changed
 tile to main immediately so completed work survives interruption.
@@ -45,6 +45,24 @@ OSM_TAGS = (
 def git(*args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
     return subprocess.run(["git", *args], cwd=REPO_ROOT, text=True,
                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=check)
+
+
+def push_main_with_retry() -> None:
+    """Push a checkpoint safely if main advanced for an unrelated commit."""
+    for attempt in range(1, 6):
+        pushed = git("push", "origin", "HEAD:main", check=False)
+        if pushed.returncode == 0:
+            return
+        print(pushed.stdout, file=sys.stderr, flush=True)
+        fetched = git("fetch", "origin", "main", check=False)
+        if fetched.returncode != 0:
+            raise RuntimeError("Could not fetch origin/main after checkpoint push failed.")
+        rebased = git("rebase", "origin/main", check=False)
+        if rebased.returncode != 0:
+            git("rebase", "--abort", check=False)
+            raise RuntimeError("Checkpoint conflicted with changes on main; stopped without discarding local work.")
+        print(f"Retrying checkpoint push (attempt {attempt + 1}/5).", flush=True)
+    raise RuntimeError("Checkpoint push failed after 5 attempts.")
 
 
 def save_checkpoint(path: Path, report: dict[str, Any]) -> None:
@@ -297,9 +315,10 @@ def main() -> int:
     staged = git("diff", "--cached", "--quiet", check=False)
     if staged.returncode:
         git("commit", "-m", "Finalize Manila PBF enrichment report")
-        pushed = git("push", "origin", "HEAD:main", check=False)
-        if pushed.returncode:
-            print(pushed.stdout, file=sys.stderr, flush=True)
+        try:
+            push_main_with_retry()
+        except RuntimeError as exc:
+            print(str(exc), file=sys.stderr, flush=True)
             return 3
     print(json.dumps(report, ensure_ascii=False, indent=2), flush=True)
     return 0
