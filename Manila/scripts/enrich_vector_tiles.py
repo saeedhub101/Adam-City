@@ -201,6 +201,37 @@ def add_render_properties(props: dict[str, Any]) -> int:
     return added
 
 
+
+def add_pbf_detail_layers(decoded: dict[str, Any]) -> int:
+    """Write roof footprints and commercial sign candidates as layers in the same PBF."""
+    source = next((v for k, v in decoded.items() if str(k).lower() in ("building", "buildings")), None)
+    if not source: return 0
+    extent = source.get("extent", 4096)
+    roofs = decoded.setdefault("building_roof_detail", {"name": "building_roof_detail", "features": [], "extent": extent, "version": source.get("version", 2)})
+    signs = decoded.setdefault("building_sign_detail", {"name": "building_sign_detail", "features": [], "extent": extent, "version": source.get("version", 2)})
+    roof_ids = {str(f.get("properties", {}).get("building_uid") or f.get("id")) for f in roofs.get("features", [])}
+    sign_ids = {str(f.get("properties", {}).get("building_uid") or f.get("id")) for f in signs.get("features", [])}
+    added = 0
+    for i, feature in enumerate(source.get("features", [])):
+        geom = feature.get("geometry") or {}; kind, coords = geom.get("type"), geom.get("coordinates")
+        if kind == "Polygon" and coords: rings = [coords[0]]
+        elif kind == "MultiPolygon" and coords: rings = [p[0] for p in coords if p and p[0]]
+        else: continue
+        props = feature.get("properties") if isinstance(feature.get("properties"), dict) else {}
+        uid = str(props.get("building_uid") or props.get("osm_id") or feature.get("id") or "tile-building-" + str(i))
+        pts = [(float(p[0]), float(p[1])) for p in rings[0] if isinstance(p, (list, tuple)) and len(p) >= 2]
+        if len(pts) > 1 and pts[0] == pts[-1]: pts.pop()
+        if not pts: continue
+        cx = sum(p[0] for p in pts) / len(pts); cy = sum(p[1] for p in pts) / len(pts)
+        if uid not in roof_ids:
+            roofs["features"].append({"id": feature.get("id", i), "type": "Feature", "properties": {"building_uid": uid, "detail_kind": "roof_surface", "roof_color": props.get("render_roof_color") or props.get("roof:colour") or props.get("building:colour") or "#a99b89", "roof_material": props.get("render_roof_material") or props.get("roof:material") or "unknown", "source_geometry_preserved": True}, "geometry": json.loads(json.dumps(geom))})
+            roof_ids.add(uid); added += 1
+        commercial = bool(props.get("shop") or props.get("brand") or props.get("operator") or props.get("render_sign_candidate"))
+        if commercial and uid not in sign_ids:
+            signs["features"].append({"id": feature.get("id", i), "type": "Feature", "properties": {"building_uid": uid, "detail_kind": "sign_candidate", "sign_text": props.get("name") or props.get("brand") or props.get("operator") or "", "sign_color": props.get("brand:colour") or props.get("colour") or "#f2c94c", "placement": "building_center_candidate", "placement_confidence": "unverified; not a confirmed facade position"}, "geometry": {"type": "Point", "coordinates": [cx, cy]}})
+            sign_ids.add(uid); added += 1
+    return added
+
 def load_plan() -> dict[str, dict[str, Any]]:
     records: dict[str, dict[str, Any]] = {}
     if PLAN_PATH.exists():
@@ -333,7 +364,8 @@ def main() -> int:
                         report["buildings_with_nearby_photos"] += 1
                 plan[key] = rec
 
-        if tile_added:
+        detail_added = add_pbf_detail_layers(decoded)
+        if tile_added or detail_added:
             layer_list = [{"name": name, "features": layer.get("features", []),
                            "extent": layer.get("extent", 4096), "version": layer.get("version", 2)}
                           for name, layer in decoded.items()]
@@ -349,10 +381,11 @@ def main() -> int:
         report["tiles_processed"] += 1
         report["buildings_seen"] += tile_features
         report["render_properties_added"] += tile_added
+        report["derived_roof_sign_features_added"] = report.get("derived_roof_sign_features_added", 0) + detail_added
         report.setdefault("completed_tiles", []).append(rel)
         write_plan(plan)
         checkpoint(path, report)
-        print(f"Processed {rel}: buildings={tile_features}, render properties added={tile_added}", flush=True)
+        print(f"Processed {rel}: buildings={tile_features}, properties={tile_added}, roof/sign PBF features added={detail_added}", flush=True)
 
     report["status"] = "completed"
     report["completed_at_utc"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
