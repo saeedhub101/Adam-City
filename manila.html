@@ -9,7 +9,14 @@
 :root{color-scheme:dark;--bg:#0c141b;--panel:#121f29;--line:#2a414f;--text:#eaf3f7;--muted:#9db2bf;--accent:#6de0c7}
 *{box-sizing:border-box}html,body,#map{width:100%;height:100%;margin:0}body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text)}#map{position:absolute;inset:0}
 .panel{position:absolute;z-index:4;top:10px;right:10px;width:min(355px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow:auto;background:#101c25f5;border:1px solid var(--line);border-radius:14px;padding:13px;box-shadow:0 10px 35px #0006;backdrop-filter:blur(12px)}
-h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var(--muted);margin-bottom:10px}.section{border-top:1px solid var(--line);padding-top:9px;margin-top:9px}.section-title{font-weight:750;color:var(--accent);font-size:12px;margin-bottom:7px}.layer{display:flex;gap:8px;align-items:flex-start;font-size:12px;line-height:1.4;margin:7px 0}.layer input{accent-color:var(--accent);width:16px;height:16px;flex:0 0 auto;margin:1px 0 0}.meta{font-size:10px;color:var(--muted);line-height:1.6;overflow-wrap:anywhere}.status{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;font-size:11px;line-height:1.5;overflow-wrap:anywhere}.error{color:#ffd6d6}.actions{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.btn{background:#203641;color:var(--text);border:1px solid #395663;border-radius:7px;padding:7px 9px;font:inherit;font-size:11px;cursor:pointer}.btn:hover{border-color:var(--accent)}#info{display:none;margin-top:8px;padding:9px;background:#192c37;border-radius:8px;font-size:11px;line-height:1.6;overflow-wrap:anywhere}.attribution{position:absolute;bottom:8px;left:8px;background:#101c25e8;padding:5px 8px;border-radius:6px;font-size:10px;z-index:2;direction:ltr}
+h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var(--muted);margin-bottom:10px}.section{border-top:1px solid var(--line);padding-top:9px;margin-top:9px}.section-title{font-weight:750;color:var(--accent);font-size:12px;margin-bottom:7px}.layer{display:flex;gap:8px;align-items:flex-start;font-size:12px;line-height:1.4;margin:7px 0}.layer input{accent-color:var(--accent);width:16px;height:16px;flex:0 0 auto;margin:1px 0 0}.meta{font-size:10px;color:var(--muted);line-height:1.6;overflow-wrap:anywhere}.status{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;font-size:11px;line-height:1.5;overflow-wrap:anywhere}.error{color:#ffd6d6}.actions{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.btn{background:#203641;color:var(--text);border:1px solid #395663;border-radius:7px;padding:7px 9px;font:inherit;font-size:11px;cursor:pointer}.btn:hover{border-color:var(--accent)}#info{display:none;margin-top:8px;padding:9px;background:#192c37;border-radius:8px;font-size:11px;line-height:1.6;overflow-wrap:anywhere}.area-buttons{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-top:8px;max-height:34dvh;overflow:auto;padding:2px}
+.area-btn{background:#203641;color:var(--text);border:1px solid #395663;border-radius:7px;padding:7px 2px;font:inherit;font-size:11px;cursor:pointer;min-width:0}
+.area-btn[aria-pressed="true"]{background:#176e62;border-color:var(--accent);color:#fff}
+.area-btn:disabled{opacity:.45;cursor:wait}
+.vector-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.collapse-btn{font-size:17px;line-height:1;min-width:30px;padding:3px 8px}
+#vectorBody.is-collapsed{display:none}
+.attribution{position:absolute;bottom:8px;left:8px;background:#101c25e8;padding:5px 8px;border-radius:6px;font-size:10px;z-index:2;direction:ltr}
 @media(max-width:560px){.panel{top:6px;right:6px;width:min(315px,calc(100vw - 12px));max-height:62dvh;padding:10px}h1{font-size:16px}.layer{font-size:11px;margin:6px 0}}
 </style>
 </head>
@@ -22,11 +29,16 @@ h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var
 <div class="section-title">الخريطة الأساسية</div>
 <label class="layer"><input id="baseMap" type="checkbox" checked> خريطة OpenFreeMap الأساسية (الشوارع والمياه والتسميات)</label>
 <label class="layer"><input id="baseBuildings" type="checkbox" checked> مباني الخريطة الأساسية ثلاثية الأبعاد</label>
-<div class="actions"><button class="btn" id="home">العودة إلى مانيلا</button><button class="btn" id="allOn">تفعيل جميع طبقات البيانات</button><button class="btn" id="allOff">إيقاف طبقات البيانات</button></div>
+
 </div>
-<div class="section">
-<div class="section-title">طبقات المتجهات من PBF</div>
-<div id="layerList"></div>
+<div class="section" id="areasSection">
+<div class="section-title">مباني المناطق المعدّلة · New_Manila</div>
+<div class="meta" id="areasSummary">جارٍ قراءة المناطق التي صدّرها آخر workflow…</div>
+<div id="areaButtons" class="area-buttons"></div>
+</div>
+<div class="section" id="vectorSection">
+<div class="section-title vector-heading"><span>طبقات المتجهات من PBF</span><button class="btn collapse-btn" id="toggleVector" aria-expanded="true" aria-label="طي أو فتح طبقات المتجهات">−</button></div>
+<div id="vectorBody"><div id="layerList"></div></div>
 </div>
 <div class="section">
 <div class="section-title">نتيجة تطبيق تقرير الأدلة على PBF</div>
@@ -48,7 +60,6 @@ const status=document.getElementById('status'),info=document.getElementById('inf
 const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[120.982,14.585],zoom:13,pitch:26,bearing:0,antialias:true});
 window.manilaMap=map;map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
 const defs=[
-['building','المباني من بلاطات المتجهات','building','#c7b39b','building'],
 ['building_roof_detail','أسطح المباني المحسنة داخل PBF','building_roof_detail','#a99b89','roof'],
 ['building_sign_detail','مرشحات لافتات المحلات داخل PBF','building_sign_detail','#f2c94c','sign'],
 ['aerodrome_label','تسميات المطارات','aerodrome_label','#e5c875','point'],
@@ -67,13 +78,13 @@ const defs=[
 ['water_name','أسماء المياه','water_name','#87d5f3','point'],
 ['waterway','المجاري المائية','waterway','#55b8ee','line']
 ];
-const loaded=new Map(),checkboxes=new Map();
+const loaded=new Map(),checkboxes=new Map(),areaLoaded=new Map();
 const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function setVisibility(ids,on){ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')})}
 function featurePopup(e){const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};let rows=Object.entries(p).slice(0,35).map(([k,v])=>'<div><b>'+escapeHtml(k)+'</b>: '+escapeHtml(typeof v==='object'?JSON.stringify(v):v??'')+'</div>').join('');info.style.display='block';info.innerHTML='<b>خصائص المعلم</b>'+rows;new maplibregl.Popup({maxWidth:'340px'}).setLngLat(e.lngLat).setHTML('<div style="direction:ltr;text-align:left;max-height:260px;overflow:auto">'+rows+'</div>').addTo(map)}
 function addCheckbox(def){
 const [key,label,sourceLayer,color,kind]=def;const wrap=document.createElement('label');wrap.className='layer';
-const cb=document.createElement('input');cb.type='checkbox';cb.checked=key==='building';wrap.append(cb,document.createTextNode(label+' · PBF:'+sourceLayer));list.append(wrap);checkboxes.set(key,cb);
+const cb=document.createElement('input');cb.type='checkbox';cb.checked=false;wrap.append(cb,document.createTextNode(label+' · PBF:'+sourceLayer));list.append(wrap);checkboxes.set(key,cb);
 cb.addEventListener('change',async()=>{try{await loadLayer(def,cb.checked)}catch(e){status.className='status error';status.textContent='فشل تحميل طبقة PBF '+def[2]+': '+e.message;cb.checked=false}});
 }
 async function loadLayer(def,on){
@@ -123,6 +134,47 @@ status.textContent='تم ربط طبقة '+label+' مباشرة من PBF، sourc
 }
 defs.forEach(addCheckbox);
 const baseBuildings=[];
+const areaButtons=document.getElementById('areaButtons');
+const areasSummary=document.getElementById('areasSummary');
+const areaTemplateRoot=new URL('Manila/New_Manila/',window.location.href).href;
+function addAreaButton(area,index,layerName){
+ const folder=String(area.folder||('area-'+String(index+1).padStart(4,'0')));
+ const label=String(index+1);
+ const b=document.createElement('button');b.type='button';b.className='area-btn';b.textContent=label;b.title=folder+' — '+(area.building_features??'')+' مبنى/معلم';b.setAttribute('aria-pressed','false');
+ b.addEventListener('click',async()=>{
+  const on=b.getAttribute('aria-pressed')!=='true';
+  if(areaLoaded.has(folder)){const state=areaLoaded.get(folder);setVisibility(state.ids,on);b.setAttribute('aria-pressed',String(on));return;}
+  if(!on)return;
+  b.disabled=true;status.className='status';status.textContent='جارٍ تحميل مباني المنطقة '+label+' ('+folder+')…';
+  try{
+   const sid='new-manila-'+folder.replace(/[^a-zA-Z0-9_-]/g,'-');
+   const url=areaTemplateRoot+folder+'/{z}/{x}/{y}.pbf';
+   map.addSource(sid,{type:'vector',tiles:[url],minzoom:10,maxzoom:14,scheme:'xyz'});
+   const lid=sid+'-buildings';
+   map.addLayer({id:lid,type:'fill-extrusion',source:sid,'source-layer':layerName,
+    filter:['==',['geometry-type'],'Polygon'],
+    paint:{'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],'#c7b39b'],
+     'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height']],['*',['to-number',['get','building:levels'],0],3.2],5]],
+     'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height']],0]],
+     'fill-extrusion-opacity':0.96,'fill-extrusion-vertical-gradient':true}});
+   map.on('click',lid,featurePopup);map.on('mouseenter',lid,()=>map.getCanvas().style.cursor='pointer');map.on('mouseleave',lid,()=>map.getCanvas().style.cursor='');
+   areaLoaded.set(folder,{ids:[lid],source:sid});b.setAttribute('aria-pressed','true');
+   status.textContent='تم تفعيل مباني المنطقة '+label+' من '+folder+'.';
+  }catch(e){status.className='status error';status.textContent='تعذر تحميل المنطقة '+label+' ('+folder+'): '+e.message;b.setAttribute('aria-pressed','false');}
+  finally{b.disabled=false;}
+ });areaButtons.appendChild(b);
+}
+async function loadAreas(){
+ try{
+  const r=await fetch(areaTemplateRoot+'summary.json',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);
+  const data=await r.json();const areas=Array.isArray(data.areas)?data.areas:[];
+  const layerName=(Array.isArray(data.building_layer_names)&&data.building_layer_names[0])||'building';
+  if(!areas.length)throw new Error('لم يعثر التقرير على مناطق مصدّرة');
+  areasSummary.textContent='عدد المناطق المصدّرة: '+areas.length+' · اختر رقم المنطقة لإظهار مبانيها. أسماء المجلدات والأعداد مأخوذة من summary.json.';
+  areas.forEach((a,i)=>addAreaButton(a,i,layerName));
+ }catch(e){areasSummary.textContent='تعذرت قراءة مناطق New_Manila: '+e.message;status.className='status error';status.textContent='لم يتم إنشاء أزرار المناطق: '+e.message;}
+}
+document.getElementById('toggleVector').addEventListener('click',()=>{const body=document.getElementById('vectorBody'),collapsed=body.classList.toggle('is-collapsed');document.getElementById('toggleVector').textContent=collapsed?'+':'−';document.getElementById('toggleVector').setAttribute('aria-expanded',String(!collapsed));});
 map.on('load',()=>{
 fetch('Manila/3d-rag/apply-report.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(r=>{const el=document.getElementById('applySummary');el.innerHTML='<b>حالة التطبيق:</b> '+escapeHtml(r.status||'غير معروف')+'<br><b>بلاطات PBF التي تغيرت:</b> '+escapeHtml(r.changed_tile_count??'—')+' / '+escapeHtml(r.pbf_files_scanned??'—')+'<br><b>المباني التي تغيرت خصائصها:</b> '+escapeHtml(r.changed_building_features??'—')+'<br><b>الخصائص التي طُبقت:</b> '+escapeHtml(r.changed_property_count??'—')+'<br><b>الهندسة والإحداثيات:</b> لم تتغير<br><a style="color:var(--accent)" href="Manila/3d-rag/apply-report.json" target="_blank" rel="noopener">فتح التقرير الكامل</a>';}).catch(e=>{document.getElementById('applySummary').textContent='تعذر تحميل تقرير التطبيق: '+e.message});
 const styleLayers=map.getStyle().layers||[];
@@ -131,10 +183,7 @@ document.getElementById('baseBuildings').addEventListener('change',e=>baseBuildi
 document.getElementById('baseMap').addEventListener('change',e=>{
 for(const l of map.getStyle().layers||[]){if(baseBuildings.includes(l.id))continue;if(l.type==='background')continue;if(map.getLayer(l.id))map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}
 });
-document.getElementById('home').addEventListener('click',()=>map.flyTo({center:[120.982,14.585],zoom:13,pitch:26,bearing:0,duration:900}));
-document.getElementById('allOn').addEventListener('click',async()=>{for(const d of defs){const cb=checkboxes.get(d[0]);cb.checked=true;try{await loadLayer(d,true)}catch(e){status.className='status error';status.textContent='تعذر تحميل '+d[2]+': '+e.message;cb.checked=false}}});
-document.getElementById('allOff').addEventListener('click',()=>{for(const d of defs){const cb=checkboxes.get(d[0]);cb.checked=false;if(loaded.has(d[0]))setVisibility(loaded.get(d[0]),false)}status.textContent='تم إيقاف طبقات البيانات الإضافية.'});
-status.textContent='الخريطة جاهزة؛ جارٍ تحميل المباني مباشرة من بلاطات المتجهات…';loadLayer(defs[0],true).catch(e=>{status.className='status error';status.textContent='تعذر تحميل المباني من بلاطات المتجهات: '+e.message;});
+status.textContent='الخريطة جاهزة؛ اختر رقم المنطقة لعرض مبانيها من New_Manila.';loadAreas();
 });
 map.on('error',e=>{if(e.error)console.warn('MapLibre',e.error.message)});
 })();
