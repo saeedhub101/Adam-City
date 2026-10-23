@@ -1,0 +1,10 @@
+{
+  "status": "completed",
+  "source_directory": "Manila/vector-tiles",
+  "output_directory": "Manila/GeoJSON_Source",
+  "tiles_converted": 141,
+  "feature_count": 207321,
+  "source_files_modified": false,
+  "coordinate_system": "WGS84 (EPSG:4326)",
+  "note": "Each tile is exported independently; repeated features across zoom levels or tiles are not deduplicated."
+}
