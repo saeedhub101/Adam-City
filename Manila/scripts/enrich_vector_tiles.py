@@ -250,6 +250,25 @@ def main() -> int:
 
         tile_features = 0
         tile_added = 0
+        # Query KartaView once per zoom-14 tile, not once per building, to respect public rate limits.
+        tile_photo_records: list[dict[str, Any]] = []
+        tile_query_center = None
+        try:
+            z = int(path.relative_to(TILES_ROOT).parts[-3])
+        except (ValueError, IndexError):
+            z = 0
+        if z >= 14:
+            for candidate_layer in decoded.values():
+                if candidate_layer.get("features"):
+                    tile_query_center = feature_center(path, candidate_layer["features"][0], int(candidate_layer.get("extent", 4096)))
+                    if tile_query_center:
+                        break
+            if tile_query_center:
+                raw_photos = nearby_photos(tile_query_center[0], tile_query_center[1], 250)
+                report["kartaview_queries"] += 1
+                tile_photo_records = [photo_fields(p) for p in raw_photos]
+                tile_photo_records = [p for p in tile_photo_records if p.get("lat") is not None and p.get("lon") is not None]
+                report["kartaview_photos_found"] += len(tile_photo_records)
         for layer_name, layer in decoded.items():
             if str(layer_name).lower() not in ("building", "buildings"):
                 continue
@@ -280,25 +299,18 @@ def main() -> int:
                     "properties_before": before,
                 }
                 if center and len(plan) < 100000 and not rec.get("kartaview_photos_checked"):
-                    # Query one public coverage sample per zoom-14 tile; broader zooms are too large.
-                    try:
-                        z = int(path.relative_to(TILES_ROOT).parts[-3])
-                    except (ValueError, IndexError):
-                        z = 0
-                    if z >= 14:
-                        photos = nearby_photos(center[0], center[1], 250)
-                        report["kartaview_queries"] += 1
-                        normalized = [photo_fields(p) for p in photos]
-                        normalized = [p for p in normalized if p.get("lat") is not None and p.get("lon") is not None]
-                        normalized.sort(key=lambda p: distance_m(center, (p["lat"], p["lon"])))
-                        rec["kartaview_photos"] = [
-                            {**p, "distance_to_building_center_m": round(distance_m(center, (p["lat"], p["lon"])), 1)}
-                            for p in normalized[:8]
-                        ]
-                        rec["kartaview_photos_checked"] = True
-                        report["kartaview_photos_found"] += len(normalized)
-                        if normalized:
-                            report["buildings_with_nearby_photos"] += 1
+                    normalized = sorted(
+                        tile_photo_records,
+                        key=lambda p: distance_m(center, (p["lat"], p["lon"]))
+                    )
+                    close = [p for p in normalized if distance_m(center, (p["lat"], p["lon"])) <= 250.0]
+                    rec["kartaview_photos"] = [
+                        {**p, "distance_to_building_center_m": round(distance_m(center, (p["lat"], p["lon"])), 1)}
+                        for p in close[:8]
+                    ]
+                    rec["kartaview_photos_checked"] = True
+                    if close:
+                        report["buildings_with_nearby_photos"] += 1
                 plan[key] = rec
 
         if tile_added:
