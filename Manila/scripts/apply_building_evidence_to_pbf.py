@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Apply existing Manila building-evidence records directly to source vector tiles."""
+"""Apply only explicit, supported attributes from the saved Manila evidence records to source PBF tiles."""
 from __future__ import annotations
 import hashlib, json, time
 from pathlib import Path
@@ -40,42 +40,62 @@ def evidence_records():
         raise RuntimeError("Evidence report contains no usable building records; no PBF files changed.")
     return records
 
-def proposed_properties(record):
-    rag = record.get("rag_result") or {}
-    proposed = rag.get("proposed_attributes") or {}
+def normalize_attribute_map(value):
     result = {}
-    if isinstance(proposed, list):
-        for item in proposed:
-            if not isinstance(item, dict) or "value" not in item:
-                continue
-            name = item.get("attribute") or item.get("name") or item.get("property") or item.get("key")
-            if name and item.get("value") is not None:
-                result[str(name)] = item["value"]
-    elif isinstance(proposed, dict):
-        for name, item in proposed.items():
+    if isinstance(value, dict):
+        for name, item in value.items():
             if isinstance(item, dict):
-                if item.get("value") is not None:
-                    result[str(name)] = item["value"]
+                val = item.get("value")
+                status = str(item.get("status", "")).lower()
+                if val is not None and status not in {"conflicting", "unknown", "rejected"}:
+                    result[str(name)] = val
             elif item is not None:
                 result[str(name)] = item
-    direct = record.get("apply_attributes") or rag.get("apply_attributes") or {}
-    if isinstance(direct, dict):
-        result.update({str(k): v for k, v in direct.items() if v is not None})
+    elif isinstance(value, list):
+        for item in value:
+            if not isinstance(item, dict):
+                continue
+            name = item.get("attribute") or item.get("name") or item.get("property") or item.get("key") or item.get("tag")
+            if not name or item.get("value") is None:
+                continue
+            status = str(item.get("status", "")).lower()
+            if status not in {"conflicting", "unknown", "rejected"}:
+                result[str(name)] = item["value"]
     return result
 
-def apply_geometry(feature, record):
-    rag = record.get("rag_result") or {}
-    geom = rag.get("proposed_geometry") or rag.get("geometry")
-    if isinstance(geom, dict) and geom.get("type") in ("Polygon", "MultiPolygon"):
-        feature["geometry"] = geom
-        return True
-    return False
+def proposed_properties(record):
+    rag = record.get("rag_result")
+    if not isinstance(rag, dict):
+        rag = {}
+    result = {}
+    # Support the canonical RAG schema and common explicit application/update containers.
+    for container in (rag, record):
+        for field in ("proposed_attributes", "apply_attributes", "property_updates", "attribute_updates", "building_attributes", "proposed_properties", "changes"):
+            result.update(normalize_attribute_map(container.get(field)))
+    # A visual finding is actionable only when it names a specific attribute and has high confidence.
+    visual = record.get("visual_analysis")
+    if isinstance(visual, dict) and str(visual.get("building_match", "")).lower() in {"confirmed", "likely"}:
+        findings = visual.get("visible_features")
+        if isinstance(findings, list):
+            for item in findings:
+                if not isinstance(item, dict) or item.get("value") is None:
+                    continue
+                confidence = str(item.get("confidence", "")).lower()
+                name = item.get("attribute") or item.get("property") or item.get("tag") or item.get("key")
+                if name and confidence in {"high", "verified"}:
+                    result[str(name)] = item["value"]
+    return result
 
 def main():
     evidence = evidence_records()
-    changed_tiles, changed_features, changed_properties, changed_geometry = [], 0, 0, 0
+    changed_tiles, changed_features, changed_properties = [], 0, 0
     matched_keys, errors = set(), []
+    evidence_with_attributes = 0
+    proposed_attribute_count = 0
+    unchanged_property_count = 0
+    pbf_count = 0
     for p in sorted(TILES.rglob("*.pbf")):
+        pbf_count += 1
         try:
             decoded = mapbox_vector_tile.decode(p.read_bytes(), default_options={"y_coord_down": True})
         except Exception as exc:
@@ -92,16 +112,20 @@ def main():
                 if not record:
                     continue
                 matched_keys.add(key)
-                props = feature.setdefault("properties", {})
                 attrs = proposed_properties(record)
+                if attrs:
+                    evidence_with_attributes += 1
+                props = feature.setdefault("properties", {})
                 feature_changed = False
                 for name, value in attrs.items():
-                    if props.get(name) != value:
-                        props[name] = value
-                        changed_properties += 1
-                        feature_changed = True
-                if apply_geometry(feature, record):
-                    changed_geometry += 1
+                    proposed_attribute_count += 1
+                    # Avoid silently changing the source type of an existing value.
+                    old = props.get(name)
+                    if old == value or (old is not None and str(old) == str(value)):
+                        unchanged_property_count += 1
+                        continue
+                    props[name] = value
+                    changed_properties += 1
                     feature_changed = True
                 if feature_changed:
                     changed_features += 1
@@ -112,6 +136,7 @@ def main():
                       for name, layer in decoded.items()]
             try:
                 encoded = mapbox_vector_tile.encode(layers)
+                # Decode again before replacing the original tile.
                 mapbox_vector_tile.decode(encoded, default_options={"y_coord_down": True})
                 p.write_bytes(encoded)
                 changed_tiles.append(tile_rel)
@@ -123,14 +148,19 @@ def main():
         "operation": "apply_existing_evidence_to_pbf",
         "evidence_file": "Manila/3d-rag/building-evidence.jsonl",
         "pbf_root": "Manila/vector-tiles",
+        "pbf_files_scanned": pbf_count,
         "evidence_records": len(evidence),
         "matched_building_records": len(matched_keys),
         "unmatched_evidence_records": len(set(evidence) - matched_keys),
+        "records_with_actionable_attributes": evidence_with_attributes,
+        "proposed_attribute_count": proposed_attribute_count,
+        "properties_already_matching_evidence": unchanged_property_count,
         "changed_tile_count": len(changed_tiles),
         "changed_tiles": changed_tiles,
         "changed_building_features": changed_features,
         "changed_property_count": changed_properties,
-        "geometry_replacements": changed_geometry,
+        "geometry_replacements": 0,
+        "geometry_policy": "Geometry and coordinates are preserved; the existing evidence pipeline explicitly prohibited geometry changes and provided no tile-coordinate-safe geometry patch.",
         "errors": errors,
         "completed_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }
@@ -138,7 +168,7 @@ def main():
     REPORT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if not changed_tiles:
-        raise RuntimeError("No PBF tiles were changed. See apply-report.json; no successful application can be claimed.")
+        raise RuntimeError("No supported PBF property changes were available. Inspect aggregate counts in apply-report.json; do not fabricate changes.")
     if errors:
         raise RuntimeError(f"Some PBF tiles failed; see {REPORT}")
     return 0
