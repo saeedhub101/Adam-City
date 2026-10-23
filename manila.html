@@ -202,7 +202,8 @@ document.getElementById('baseBuildings').addEventListener('change',e=>baseBuildi
 document.getElementById('baseMap').addEventListener('change',e=>{
 for(const l of map.getStyle().layers||[]){if(baseBuildings.includes(l.id))continue;if(l.type==='background')continue;if(map.getLayer(l.id))map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}
 });
-document.querySelectorAll('#areaButtons .area-btn').forEach(button=>button.disabled=false);\nstatus.textContent='الخريطة جاهزة؛ اختر أحد أزرار ✓ 01–✓ 10 لعرض مباني GeoJSON.';
+document.querySelectorAll('#areaButtons .area-btn').forEach(button=>button.disabled=false);
+status.textContent='الخريطة جاهزة؛ اختر أحد أزرار ✓ 01–✓ 10 لعرض مباني GeoJSON.';
 });
 map.on('error',e=>{if(e.error)console.warn('MapLibre',e.error.message)});
 })();
