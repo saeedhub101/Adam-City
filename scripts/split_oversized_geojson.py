@@ -38,7 +38,7 @@ def extract_features(raw):
                     escaped = False
                 elif c == ord("\\"):
                     escaped = True
-                elif c == ord('"'):
+                elif c == ord("\\"):
                     in_string = False
             else:
                 if c == ord('"'):
