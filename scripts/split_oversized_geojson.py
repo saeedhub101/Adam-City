@@ -12,55 +12,33 @@ TARGET_BYTES = 2 * 1024 * 1024
 def sha256(data):
     return hashlib.sha256(data).hexdigest()
 
-def extract_features(raw):
-    marker = b'"features":['
-    marker_at = raw.find(marker)
+def extract_features(raw_text):
+    marker = '"features":['
+    marker_at = raw_text.find(marker)
     if marker_at < 0:
         raise ValueError('Could not find top-level "features" array')
+    decoder = json.JSONDecoder()
     i = marker_at + len(marker)
-    n = len(raw)
-    while i < n and raw[i] in b" \t\r\n":
-        i += 1
-    while i < n and raw[i] != ord("]"):
-        if raw[i] in b", \t\r\n":
+    n = len(raw_text)
+    while i < n:
+        while i < n and raw_text[i] in " \t\r\n,":
             i += 1
-            continue
-        if raw[i] != ord("{"):
-            raise ValueError(f"Unexpected byte at offset {i} in features array")
-        start = i
-        depth = 0
-        in_string = False
-        escaped = False
-        while i < n:
-            c = raw[i]
-            if in_string:
-                if escaped:
-                    escaped = False
-                elif c == ord("\\"):
-                    escaped = True
-                elif c == ord("\\"):
-                    in_string = False
-            else:
-                if c == ord('"'):
-                    in_string = True
-                elif c in (ord("{"), ord("[")):
-                    depth += 1
-                elif c in (ord("}"), ord("]")):
-                    depth -= 1
-                    if depth == 0:
-                        i += 1
-                        feature = raw[start:i]
-                        json.loads(feature)
-                        yield feature
-                        break
-            i += 1
-        else:
-            raise ValueError("Unterminated GeoJSON feature")
+        if i >= n:
+            raise ValueError("Unexpected end of GeoJSON")
+        if raw_text[i] == "]":
+            return
+        if raw_text[i] != "{":
+            raise ValueError(f"Expected feature object at character {i}")
+        _, end = decoder.raw_decode(raw_text, i)
+        yield raw_text[i:end].encode("utf-8")
+        i = end
+    raise ValueError("Unterminated features array")
 
 def main():
     raw = SOURCE.read_bytes()
+    text = raw.decode("utf-8")
     OUT.mkdir(parents=True, exist_ok=True)
-    features = list(extract_features(raw))
+    features = list(extract_features(text))
     chunks, current, current_bytes = [], [], 0
     for feature in features:
         if current and current_bytes + len(feature) + 1 > TARGET_BYTES:
