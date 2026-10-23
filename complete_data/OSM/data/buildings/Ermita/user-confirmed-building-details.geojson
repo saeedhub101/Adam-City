@@ -2,7 +2,7 @@
   "type": "FeatureCollection",
   "name": "ermita-building-visual-research-queue-enriched",
   "metadata": {
-    "purpose": "User-confirmed corrections for the first two records of part-001-readable-parts/part-001.geojson. Original coordinates and source indices preserved; building footprints are not represented by these Point features."
+    "purpose": "User-confirmed corrections for features 342, 343, 344 and 350 in part-001-readable-parts/part-001.geojson. Original point coordinates and source indices preserved; these are not building footprint polygons."
   },
   "features": [
     {
@@ -72,6 +72,54 @@
         "coordinates": [
           120.9871317,
           14.5750948
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "part": 1,
+        "source_feature_index": 344,
+        "source_feature_id": "footprints-feature-000344",
+        "name": "",
+        "building": "commercial",
+        "addr:suburb": "Malate",
+        "addr:street": "Roxas Boulevard",
+        "address_full": "Roxas Boulevard, Malate, Manila, Metro Manila, Philippines",
+        "status": "user_confirmed_location_only",
+        "review_notes": "User supplied only the area (Malate) and street (Roxas Boulevard). No name, storey count, facade material or measured height supplied."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          120.9760138,
+          14.5802616
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "part": 1,
+        "source_feature_index": 350,
+        "source_feature_id": "footprints-feature-000350",
+        "name": "Martine Plaze",
+        "source_name_or_brand": "Martine plaze",
+        "addr:suburb": "Malate",
+        "addr:street": "Antonio Flores Street",
+        "addr:corner": "Cortada Street",
+        "addr:city": "Manila",
+        "addr:province": "Metro Manila",
+        "addr:country": "Philippines",
+        "address_full": "A. Flores, corner Cortada St, Ermita, Manila, 1000 Metro Manila, Philippines",
+        "status": "user_confirmed_identity_and_address",
+        "review_notes": "User supplied name, street, area and full address. Retained spelling 'Martine plaze'. Storey count and measured height not supplied."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          120.9801973,
+          14.5793606
         ]
       }
     }
