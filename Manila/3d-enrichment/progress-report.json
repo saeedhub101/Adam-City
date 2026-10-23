@@ -2,7 +2,7 @@
   "status": "running",
   "pipeline_version": 2,
   "tile_files_found": 141,
-  "tiles_processed": 2,
+  "tiles_processed": 3,
   "tiles_changed": 0,
   "decode_errors": 0,
   "buildings_seen": 0,
@@ -15,7 +15,8 @@
   "kartaview_requires_api_key": false,
   "completed_tiles": [
     "Manila/vector-tiles/10/854/468.pbf",
-    "Manila/vector-tiles/10/854/469.pbf"
+    "Manila/vector-tiles/10/854/469.pbf",
+    "Manila/vector-tiles/10/854/470.pbf"
   ],
   "note": "KartaView metadata is a photo reference only; sign placement/appearance needs visual confirmation.",
   "derived_roof_sign_features_added": 0
