@@ -229,7 +229,7 @@ def main() -> int:
                             props[key] = value
                             properties_added += 1
                             tile_changed = True
-                    # Keep a convenient explicit display name; fall back to address number only if present.
+                    # Keep a convenient explicit display name when the source actually names it.
                     display_name = tags.get("name") or tags.get("name:en") or tags.get("name:tl")
                     if display_name and props.get("building_name") in (None, ""):
                         props["building_name"] = display_name
