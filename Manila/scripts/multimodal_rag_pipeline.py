@@ -198,7 +198,7 @@ def checkpoint(records,report,push=False):
  def git(args,check=True):return subprocess.run(["git",*args],cwd=REPO,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,check=check)
  git(["add","--",*rel])
  if git(["diff","--cached","--quiet"],False).returncode==0:return
- git(["config","user.name","github-actions[bot]"]);git(["config","user.email","41898282+users.noreply.github.com"])
+ git(["config","user.name","github-actions[bot]"]);git(["config","user.email","41898282+github-actions[bot]@users.noreply.github.com"])
  git(["commit","-m","Checkpoint Manila multimodal RAG evidence"])
  for _ in range(5):
   p=git(["push","origin","HEAD:main"],False)
