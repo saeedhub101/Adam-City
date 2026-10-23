@@ -3,6 +3,13 @@ name: Publish Manila page
 on:
   push:
     branches: [main]
+    paths:
+      - '.github/workflows/deploy-pages.yml'
+      - 'manila.html'
+      - 'manila-bundry.html'
+      - 'Manila/layers/**'
+      - 'Manila/vector-tiles/**'
+      - 'Manila/buildings-by-boundary/**'
   workflow_dispatch:
 
 permissions:
@@ -10,9 +17,11 @@ permissions:
   pages: write
   id-token: write
 
+# Keep one deployment at a time; do not cancel an active publish when another
+# matching update arrives.
 concurrency:
   group: github-pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   publish:
@@ -37,6 +46,7 @@ jobs:
           cp -a Manila/layers/. site/Manila/layers/
           cp -a Manila/vector-tiles/. site/Manila/vector-tiles/
           cp -a Manila/buildings-by-boundary/. site/Manila/buildings-by-boundary/
+          touch site/.nojekyll
           printf '%s' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=manila.html"><title>Manila</title><a href="manila.html">Open Manila</a></html>' > site/index.html
 
       - name: Configure GitHub Pages
