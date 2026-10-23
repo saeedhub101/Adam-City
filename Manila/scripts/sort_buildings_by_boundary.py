@@ -22,8 +22,8 @@ from shapely.ops import unary_union
 REPO = Path(__file__).resolve().parents[2]
 TILES_ROOT = REPO / "Manila" / "vector-tiles"
 BOUNDARY_PATH = REPO / "complete_data" / "open free tile" / "layers" / "boundary.geojsonl"
-OUT_ROOT = REPO / "Manila" / "buildings-by-boundary"
-PROGRESS_PATH = REPO / "Manila" / "buildings-by-boundary-progress.jsonl"
+OUT_ROOT = REPO / "Manila" / "New_Manila"
+PROGRESS_PATH = REPO / "Manila" / "New_Manila-progress.jsonl"
 CHECKPOINT_EVERY = 10
 EARTH_R = 6371008.8
 RAD = math.pi / 180.0
