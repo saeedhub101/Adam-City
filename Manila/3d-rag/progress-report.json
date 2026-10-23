@@ -1,5 +1,5 @@
 {
-  "status": "completed",
+  "status": "running",
   "pipeline": "multimodal-rag",
   "pipeline_version": 1,
   "source_tiles_root": "Manila/vector-tiles",
@@ -20,11 +20,11 @@
     "api_key_configured": true
   },
   "mode": "multimodal_model_enabled",
-  "visual_analyses": 150,
+  "visual_analyses": 146,
   "syntheses": 1742,
   "errors": [],
-  "external_tile_queries": 51,
+  "external_tile_queries": 54,
   "review_required": 0,
-  "records_with_images": 394,
+  "records_with_images": 399,
   "completed_at_utc": "2026-10-23T16:25:20Z"
 }
