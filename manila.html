@@ -9,14 +9,9 @@
 :root{color-scheme:dark;--bg:#0c141b;--panel:#121f29;--line:#2a414f;--text:#eaf3f7;--muted:#9db2bf;--accent:#6de0c7}
 *{box-sizing:border-box}html,body,#map{width:100%;height:100%;margin:0}body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text)}#map{position:absolute;inset:0}
 .panel{position:absolute;z-index:4;top:10px;right:10px;width:min(355px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow:auto;background:#101c25f5;border:1px solid var(--line);border-radius:14px;padding:13px;box-shadow:0 10px 35px #0006;backdrop-filter:blur(12px)}
-h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var(--muted);margin-bottom:10px}.section{border-top:1px solid var(--line);padding-top:9px;margin-top:9px}.section-title{font-weight:750;color:var(--accent);font-size:12px;margin-bottom:7px}.layer{display:flex;gap:8px;align-items:flex-start;font-size:12px;line-height:1.4;margin:7px 0}.layer input{accent-color:var(--accent);width:16px;height:16px;flex:0 0 auto;margin:1px 0 0}.meta{font-size:10px;color:var(--muted);line-height:1.6;overflow-wrap:anywhere}.status{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;font-size:11px;line-height:1.5;overflow-wrap:anywhere}.error{color:#ffd6d6}.actions{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.btn{background:#203641;color:var(--text);border:1px solid #395663;border-radius:7px;padding:7px 9px;font:inherit;font-size:11px;cursor:pointer}.btn:hover{border-color:var(--accent)}#info{display:none;margin-top:8px;padding:9px;background:#192c37;border-radius:8px;font-size:11px;line-height:1.6;overflow-wrap:anywhere}.area-buttons{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-top:8px;max-height:34dvh;overflow:auto;padding:2px}
-.area-btn{background:#203641;color:var(--text);border:1px solid #395663;border-radius:7px;padding:7px 2px;font:inherit;font-size:11px;cursor:pointer;min-width:0}
-.area-btn[aria-pressed="true"]{background:#176e62;border-color:var(--accent);color:#fff}
-.area-btn:disabled{opacity:.45;cursor:wait}
-.vector-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.collapse-btn{font-size:17px;line-height:1;min-width:30px;padding:3px 8px}
-#vectorBody.is-collapsed{display:none}
-.attribution{position:absolute;bottom:8px;left:8px;background:#101c25e8;padding:5px 8px;border-radius:6px;font-size:10px;z-index:2;direction:ltr}
+h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var(--muted);margin-bottom:10px}.section{border-top:1px solid var(--line);padding-top:9px;margin-top:9px}.section-title{font-weight:750;color:var(--accent);font-size:12px;margin-bottom:7px}.layer{display:flex;gap:8px;align-items:flex-start;font-size:12px;line-height:1.4;margin:7px 0}.layer input{accent-color:var(--accent);width:16px;height:16px;flex:0 0 auto;margin:1px 0 0}.meta{font-size:10px;color:var(--muted);line-height:1.6;overflow-wrap:anywhere}.status{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;font-size:11px;line-height:1.5;overflow-wrap:anywhere}.error{color:#ffd6d6}.btn{background:#203641;color:var(--text);border:1px solid #395663;border-radius:7px;padding:7px 9px;font:inherit;font-size:11px;cursor:pointer}.btn:hover{border-color:var(--accent)}#info{display:none;margin-top:8px;padding:9px;background:#192c37;border-radius:8px;font-size:11px;line-height:1.6;overflow-wrap:anywhere}
+.part-toggle{display:flex;gap:9px;align-items:center;margin:9px 0;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:#142630;cursor:pointer;font-size:12px}.part-toggle input{appearance:none;-webkit-appearance:none;width:19px;height:19px;flex:0 0 19px;margin:0;border:2px solid #76909d;border-radius:4px;background:#0c171e;display:grid;place-items:center}.part-toggle input:checked{background:var(--accent);border-color:var(--accent)}.part-toggle input:checked:after{content:'✓';font-size:15px;font-weight:900;line-height:1;color:#08201d}.part-toggle .part-name{font-weight:750}.part-toggle .part-file{display:block;color:var(--muted);font-size:10px;direction:ltr;text-align:right;overflow-wrap:anywhere}
+.vector-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.collapse-btn{font-size:17px;line-height:1;min-width:30px;padding:3px 8px}#vectorBody.is-collapsed{display:none}.attribution{position:absolute;bottom:8px;left:8px;background:#101c25e8;padding:5px 8px;border-radius:6px;font-size:10px;z-index:2;direction:ltr}
 @media(max-width:560px){.panel{top:6px;right:6px;width:min(315px,calc(100vw - 12px));max-height:62dvh;padding:10px}h1{font-size:16px}.layer{font-size:11px;margin:6px 0}}
 </style>
 </head>
@@ -24,17 +19,16 @@ h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var
 <div id="map" aria-label="خريطة بيانات مانيلا"></div>
 <section class="panel">
 <h1>MANILA · DATA EXPLORER</h1>
-<div class="intro">عارض لطبقات OpenMapTiles من بلاطات PBF المحلية داخل Manila. جميع الطبقات الإضافية تُقرأ مباشرة من البلاطات، دون تحميل GeoJSONL أو تحويل إحداثيات.</div>
+<div class="intro">عارض لطبقات OpenMapTiles من بلاطات PBF المحلية داخل Manila. مفاتيح ✓ أدناه تتحكم بملفي GeoJSON الأصليين part-001 وpart-002 مباشرة.</div>
 <div class="section">
 <div class="section-title">الخريطة الأساسية</div>
 <label class="layer"><input id="baseMap" type="checkbox" checked> خريطة OpenFreeMap الأساسية (الشوارع والمياه والتسميات)</label>
 <label class="layer"><input id="baseBuildings" type="checkbox" checked> مباني الخريطة الأساسية ثلاثية الأبعاد</label>
-
 </div>
-<div class="section" id="areasSection">
-<div class="section-title">مناطق المباني · GeoJSON</div>
-<div class="meta" id="areasSummary">10 مناطق محفوظة. اضغط ✓ لإظهار مباني المنطقة أو إخفائها؛ يمكن تشغيل عدة مناطق معاً.</div>
-<div id="areaButtons" class="area-buttons"></div>
+<div class="section" id="partsSection">
+<div class="section-title">مباني Ermita · ملفات GeoJSON الأصلية</div>
+<div class="meta">اختر ✓ بجانب أي جزء لإظهاره أو إخفائه. يمكن تشغيل الجزأين معًا.</div>
+<div id="partToggles"></div>
 </div>
 <div class="section" id="vectorSection">
 <div class="section-title vector-heading"><span>طبقات المتجهات من PBF</span><button class="btn collapse-btn" id="toggleVector" aria-expanded="true" aria-label="طي أو فتح طبقات المتجهات">−</button></div>
@@ -46,7 +40,7 @@ h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var
 </div>
 <div class="section">
 <div class="section-title">بلاطات المتجهات PBF</div>
-<div class="meta">تُقرأ الطرق والمياه والأماكن وبقية الطبقات من الطبقات الداخلية للبلاطات نفسها، مثلما تُقرأ المباني من building. المستويات المحلية المتاحة: 10–14. ملفات GeoJSON للمناطق العشر منفصلة وتُحمّل عند الطلب.</div>
+<div class="meta">تُقرأ الطرق والمياه والأماكن وبقية الطبقات من الطبقات الداخلية للبلاطات نفسها، مثلما تُقرأ المباني من building. المستويات المحلية المتاحة: 10–14.</div>
 <div class="meta"><a style="color:var(--accent)" href="Manila/vector-tiles/" target="_blank" rel="noopener">فتح مجلد vector-tiles في المستودع</a></div>
 </div>
 <div id="status" class="status">جارٍ تشغيل الخريطة…</div>
@@ -78,7 +72,7 @@ const defs=[
 ['water_name','أسماء المياه','water_name','#87d5f3','point'],
 ['waterway','المجاري المائية','waterway','#55b8ee','line']
 ];
-const loaded=new Map(),checkboxes=new Map(),areaLoaded=new Map();
+const loaded=new Map(),checkboxes=new Map(),partLayers=new Map();
 const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function setVisibility(ids,on){ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')})}
 function featurePopup(e){const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};let rows=Object.entries(p).slice(0,35).map(([k,v])=>'<div><b>'+escapeHtml(k)+'</b>: '+escapeHtml(typeof v==='object'?JSON.stringify(v):v??'')+'</div>').join('');info.style.display='block';info.innerHTML='<b>خصائص المعلم</b>'+rows;new maplibregl.Popup({maxWidth:'340px'}).setLngLat(e.lngLat).setHTML('<div style="direction:ltr;text-align:left;max-height:260px;overflow:auto">'+rows+'</div>').addTo(map)}
@@ -97,116 +91,70 @@ const tileTemplate=new URL('Manila/vector-tiles/',window.location.href).href+'{z
 map.addSource(sourceId,{type:'vector',tiles:[tileTemplate],minzoom:10,maxzoom:14,scheme:'xyz'});
 const ids=[];
 if(kind==='building'){
- const extrusion=sourceId+'-3d';
- map.addLayer({id:extrusion,type:'fill-extrusion',source:sourceId,'source-layer':sourceLayer,
-   filter:['==',['geometry-type'],'Polygon'],
-   paint:{
-    'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],color],
-    'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','building:height']],['*',['to-number',['get','building:levels'],0],3.2],5]],
-    'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height']],0]],
-    'fill-extrusion-opacity':0.94,'fill-extrusion-vertical-gradient':true
-   }
- });ids.push(extrusion);
+const extrusion=sourceId+'-3d';map.addLayer({id:extrusion,type:'fill-extrusion',source:sourceId,'source-layer':sourceLayer,filter:['==',['geometry-type'],'Polygon'],paint:{'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],color],'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','building:height']],['*',['to-number',['get','building:levels'],0],3.2],5]],'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height']],0]],'fill-extrusion-opacity':0.94,'fill-extrusion-vertical-gradient':true}});ids.push(extrusion);
 }else if(kind==='roof'){
- const id=sourceId+'-roof-3d';map.addLayer({id,type:'fill-extrusion',source:sourceId,'source-layer':sourceLayer,
-   paint:{'fill-extrusion-color':['coalesce',['get','roof_color'],color],
-    'fill-extrusion-height':['max',2,['to-number',['get','roof_height'],5]],
-    'fill-extrusion-base':['max',0,['to-number',['get','roof_base'],0]],
-    'fill-extrusion-opacity':0.98,'fill-extrusion-vertical-gradient':false}
- });ids.push(id);
+const id=sourceId+'-roof-3d';map.addLayer({id,type:'fill-extrusion',source:sourceId,'source-layer':sourceLayer,paint:{'fill-extrusion-color':['coalesce',['get','roof_color'],color],'fill-extrusion-height':['max',2,['to-number',['get','roof_height'],5]],'fill-extrusion-base':['max',0,['to-number',['get','roof_base'],0]],'fill-extrusion-opacity':0.98,'fill-extrusion-vertical-gradient':false}});ids.push(id);
 }else if(kind==='sign'){
- const id=sourceId+'-sign';map.addLayer({id,type:'symbol',source:sourceId,'source-layer':sourceLayer,
-   layout:{'text-field':['coalesce',['get','sign_text'],'SIGN'],'text-size':['interpolate',['linear'],['zoom'],12,9,16,13],
-    'text-font':['Open Sans Bold','Arial Unicode MS Bold'],'text-offset':[0,1.0],'text-anchor':'bottom','text-allow-overlap':true},
-   paint:{'text-color':['coalesce',['get','sign_color'],color],'text-halo-color':'#ffffff','text-halo-width':1.2}
- });ids.push(id);
+const id=sourceId+'-sign';map.addLayer({id,type:'symbol',source:sourceId,'source-layer':sourceLayer,layout:{'text-field':['coalesce',['get','sign_text'],'SIGN'],'text-size':['interpolate',['linear'],['zoom'],12,9,16,13],'text-font':['Open Sans Bold','Arial Unicode MS Bold'],'text-offset':[0,1.0],'text-anchor':'bottom','text-allow-overlap':true},paint:{'text-color':['coalesce',['get','sign_color'],color],'text-halo-color':'#ffffff','text-halo-width':1.2}});ids.push(id);
 }else if(kind==='fill'){
- const id=sourceId+'-fill';map.addLayer({id,type:'fill',source:sourceId,'source-layer':sourceLayer,paint:{'fill-color':color,'fill-opacity':0.27,'fill-outline-color':color}});ids.push(id);
- const line=sourceId+'-outline';map.addLayer({id:line,type:'line',source:sourceId,'source-layer':sourceLayer,paint:{'line-color':color,'line-width':0.7,'line-opacity':0.8}});ids.push(line);
+const id=sourceId+'-fill';map.addLayer({id,type:'fill',source:sourceId,'source-layer':sourceLayer,paint:{'fill-color':color,'fill-opacity':0.27,'fill-outline-color':color}});ids.push(id);
+const line=sourceId+'-outline';map.addLayer({id:line,type:'line',source:sourceId,'source-layer':sourceLayer,paint:{'line-color':color,'line-width':0.7,'line-opacity':0.8}});ids.push(line);
 }else if(kind==='line'){
- const id=sourceId+'-line';map.addLayer({id,type:'line',source:sourceId,'source-layer':sourceLayer,paint:{'line-color':color,'line-width':['interpolate',['linear'],['zoom'],8,0.5,15,2.5],'line-opacity':0.9}});ids.push(id);
+const id=sourceId+'-line';map.addLayer({id,type:'line',source:sourceId,'source-layer':sourceLayer,paint:{'line-color':color,'line-width':['interpolate',['linear'],['zoom'],8,0.5,15,2.5],'line-opacity':0.9}});ids.push(id);
 }else{
- const id=sourceId+'-point';map.addLayer({id,type:'circle',source:sourceId,'source-layer':sourceLayer,paint:{'circle-radius':['interpolate',['linear'],['zoom'],8,2,15,5],'circle-color':color,'circle-stroke-color':'#14232d','circle-stroke-width':0.7}});ids.push(id);
+const id=sourceId+'-point';map.addLayer({id,type:'circle',source:sourceId,'source-layer':sourceLayer,paint:{'circle-radius':['interpolate',['linear'],['zoom'],8,2,15,5],'circle-color':color,'circle-stroke-color':'#14232d','circle-stroke-width':0.7}});ids.push(id);
 }
 for(const id of ids){map.on('click',id,featurePopup);map.on('mouseenter',id,()=>map.getCanvas().style.cursor='pointer');map.on('mouseleave',id,()=>map.getCanvas().style.cursor='')}
-loaded.set(key,ids);setVisibility(ids,on);
-status.textContent='تم ربط طبقة '+label+' مباشرة من PBF، source-layer: '+sourceLayer+'.';
+loaded.set(key,ids);setVisibility(ids,on);status.textContent='تم ربط طبقة '+label+' مباشرة من PBF، source-layer: '+sourceLayer+'.';
 }
 defs.forEach(addCheckbox);
 const baseBuildings=[];
-const areaButtons=document.getElementById('areaButtons');
-const areasSummary=document.getElementById('areasSummary');
-const newManilaRoot=new URL('Manila/New_Manila/',window.location.href).href;
-// تجميعات العرض المطلوبة: 5+6، 4+3، 1+2، ثم المناطق 7 و8 و9 و10.
-const regionGroups=[[5,6],[4,3],[1,2],[7],[8],[9],[10]];
-const activeRegions=new Map();
-function addRegionButton(group,index){
- const label=group.map(n=>String(n).padStart(2,'0')).join('+');
- const button=document.createElement('button');
- button.type='button';
- button.className='area-btn';
- button.textContent='✓ '+label;
- button.title='إظهار/إخفاء المباني المدمجة من المنطقة '+label;
- button.setAttribute('aria-pressed','false');
- button.disabled=true;
- button.addEventListener('click',async()=>{
-  const on=button.getAttribute('aria-pressed')!=='true';
-  try{
-   let entry=activeRegions.get(label);
-   if(!entry){
-    status.className='status';
-    status.textContent='جارٍ تحميل ودمج GeoJSON للمناطق '+label+'…';
-    const filename='region_'+group.map(n=>String(n).padStart(2,'0')).join('_')+'.geojson';
-    const response=await fetch(newManilaRoot+filename);
-    if(!response.ok)throw new Error('HTTP '+response.status+' عند قراءة ملف الدمج '+filename);
-    const merged=await response.json();
-    if(!merged||merged.type!=='FeatureCollection'||!Array.isArray(merged.features))throw new Error(filename+' ليس FeatureCollection صالحاً');
-    const features=merged.features;
-    const sourceId='new-manila-region-'+group.map(n=>String(n).padStart(2,'0')).join('-');
-    map.addSource(sourceId,{type:'geojson',data:merged});
-    const layerId=sourceId+'-buildings-3d';
-    map.addLayer({id:layerId,type:'fill-extrusion',source:sourceId,
-     filter:['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],
-     paint:{
-      'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','color'],'#c7b39b'],
-      'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','building:height']],['*',['to-number',['get','building:levels'],0],3.2],5]],
-      'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height']],0]],
-      'fill-extrusion-opacity':0.96,
-      'fill-extrusion-vertical-gradient':true
-     }});
-    map.on('click',layerId,featurePopup);
-    map.on('mouseenter',layerId,()=>map.getCanvas().style.cursor='pointer');
-    map.on('mouseleave',layerId,()=>map.getCanvas().style.cursor='');
-    entry={sourceId,layerId,count:features.length};
-    activeRegions.set(label,entry);
-   }
-   if(map.getLayer(entry.layerId))map.setLayoutProperty(entry.layerId,'visibility',on?'visible':'none');
-   button.setAttribute('aria-pressed',String(on));
-   status.className='status';
-   status.textContent=(on?'تم عرض ':'تم إخفاء ')+'مباني المجموعة '+label+' — '+entry.count.toLocaleString()+' معلمًا.';
-   info.style.display='block';
-   info.innerHTML='<b>المجموعة '+label+'</b><div>ملف GeoJSON الفعلي: '+'region_'+group.map(n=>String(n).padStart(2,'0')).join('_')+'.geojson'+'</div><div>عدد المعالم: '+entry.count.toLocaleString()+'</div>';
-  }catch(error){
-   status.className='status error';
-   status.textContent='تعذر تحميل المجموعة '+label+': '+error.message;
-   button.setAttribute('aria-pressed','false');
-  }
- });
- areaButtons.appendChild(button);
+const partsRoot='old/manila/ermita-buildings-master.parts/';
+const parts=[
+{id:'part-001',label:'Part 1',file:'part-001.geojson'},
+{id:'part-002',label:'Part 2',file:'part-002.geojson'}
+];
+function addPartToggle(part){
+const label=document.createElement('label');label.className='part-toggle';
+const cb=document.createElement('input');cb.type='checkbox';cb.checked=false;cb.setAttribute('aria-label','إظهار '+part.label);
+const textWrap=document.createElement('span');textWrap.innerHTML='<span class="part-name">✓ '+part.label+'</span><span class="part-file">'+part.file+'</span>';
+label.append(cb,textWrap);document.getElementById('partToggles').append(label);
+cb.addEventListener('change',async()=>{
+const on=cb.checked;
+try{
+let entry=partLayers.get(part.id);
+if(!entry&&on){
+status.className='status';status.textContent='جارٍ تحميل '+part.file+' من مجلد ermita-buildings-master.parts…';
+const response=await fetch(partsRoot+part.file);
+if(!response.ok)throw new Error('HTTP '+response.status+' عند قراءة '+part.file);
+const data=await response.json();
+if(!data||data.type!=='FeatureCollection'||!Array.isArray(data.features))throw new Error(part.file+' ليس GeoJSON FeatureCollection صالحًا');
+const sourceId='ermita-'+part.id;
+map.addSource(sourceId,{type:'geojson',data});
+const layerId=sourceId+'-buildings-3d';
+map.addLayer({id:layerId,type:'fill-extrusion',source:sourceId,filter:['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],paint:{
+'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','color'],'#c7b39b'],
+'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','building:height']],['*',['to-number',['get','building:levels'],0],3.2],5]],
+'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height']],0]],
+'fill-extrusion-opacity':0.96,'fill-extrusion-vertical-gradient':true}});
+map.on('click',layerId,featurePopup);map.on('mouseenter',layerId,()=>map.getCanvas().style.cursor='pointer');map.on('mouseleave',layerId,()=>map.getCanvas().style.cursor='');
+entry={sourceId,layerId,count:data.features.length};partLayers.set(part.id,entry);
 }
-regionGroups.forEach((group,index)=>addRegionButton(group,index));
-areasSummary.textContent='7 مجموعات: 05+06، 04+03، 01+02، ثم 07 و08 و09 و10. المجموعات المدمجة تقرأ من ملفات GeoJSON موحدة.';
+if(entry&&map.getLayer(entry.layerId))map.setLayoutProperty(entry.layerId,'visibility',on?'visible':'none');
+status.className='status';status.textContent=(on?'تم عرض ':'تم إخفاء ')+part.label+' — '+(entry?entry.count.toLocaleString():'0')+' معلمًا.';
+info.style.display='block';info.innerHTML='<b>'+part.label+'</b><div>الملف: '+part.file+'</div><div>عدد المعالم: '+(entry?entry.count.toLocaleString():'—')+'</div>';
+}catch(e){cb.checked=false;status.className='status error';status.textContent='تعذر تحميل '+part.label+': '+e.message}
+});
+}
+parts.forEach(addPartToggle);
 document.getElementById('toggleVector').addEventListener('click',()=>{const body=document.getElementById('vectorBody'),collapsed=body.classList.toggle('is-collapsed');document.getElementById('toggleVector').textContent=collapsed?'+':'−';document.getElementById('toggleVector').setAttribute('aria-expanded',String(!collapsed));});
 map.on('load',()=>{
 fetch('Manila/3d-rag/apply-report.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(r=>{const el=document.getElementById('applySummary');el.innerHTML='<b>حالة التطبيق:</b> '+escapeHtml(r.status||'غير معروف')+'<br><b>بلاطات PBF التي تغيرت:</b> '+escapeHtml(r.changed_tile_count??'—')+' / '+escapeHtml(r.pbf_files_scanned??'—')+'<br><b>المباني التي تغيرت خصائصها:</b> '+escapeHtml(r.changed_building_features??'—')+'<br><b>الخصائص التي طُبقت:</b> '+escapeHtml(r.changed_property_count??'—')+'<br><b>الهندسة والإحداثيات:</b> لم تتغير<br><a style="color:var(--accent)" href="Manila/3d-rag/apply-report.json" target="_blank" rel="noopener">فتح التقرير الكامل</a>';}).catch(e=>{document.getElementById('applySummary').textContent='تعذر تحميل تقرير التطبيق: '+e.message});
 const styleLayers=map.getStyle().layers||[];
 for(const l of styleLayers){if(l.type==='fill-extrusion'&&/building/i.test(l.id+' '+(l['source-layer']||'')))baseBuildings.push(l.id)}
 document.getElementById('baseBuildings').addEventListener('change',e=>baseBuildings.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
-document.getElementById('baseMap').addEventListener('change',e=>{
-for(const l of map.getStyle().layers||[]){if(baseBuildings.includes(l.id))continue;if(l.type==='background')continue;if(map.getLayer(l.id))map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}
-});
-document.querySelectorAll('#areaButtons .area-btn').forEach(button=>button.disabled=false);
-status.textContent='الخريطة جاهزة؛ اختر إحدى مجموعات GeoJSON لعرض المباني.';
+document.getElementById('baseMap').addEventListener('change',e=>{for(const l of map.getStyle().layers||[]){if(baseBuildings.includes(l.id))continue;if(l.type==='background')continue;if(map.getLayer(l.id))map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}});
+status.textContent='الخريطة جاهزة؛ استخدم علامتي ✓ لتحميل Part 1 أو Part 2.';
 });
 map.on('error',e=>{if(e.error)console.warn('MapLibre',e.error.message)});
 })();
