@@ -58,14 +58,23 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
   map.addSource(state.source,{type:'geojson',data:new URL(path,document.baseURI).href});
   map.addLayer({id:state.layer,type:'fill-extrusion',source:state.source,filter:['any',['==',['geometry-type'],'Polygon'],['==',['geometry-type'],'MultiPolygon']],layout:{visibility:'visible'},paint:{
    'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','facade_colour'],'#c8bca9'],
-   'fill-extrusion-height':['max',3,['case',['>', ['to-number',['coalesce',['get','height_m'],['get','height'],['get','building_height']],0],0],['to-number',['coalesce',['get','height_m'],['get','height'],['get','building_height']],0],['>', ['to-number',['coalesce',['get','building_levels'],['get','building:levels'],['get','levels']],0],0],['*',['to-number',['coalesce',['get','building_levels'],['get','building:levels'],['get','levels']],0],3.15],5]],
+   'fill-extrusion-height':['max',3,
+    ['to-number',['get','height_m'],0],
+    ['to-number',['get','height'],0],
+    ['to-number',['get','building_height'],0],
+    ['to-number',['get','building:height'],0],
+    ['*',3.15,['to-number',['get','building_levels'],0]],
+    ['*',3.15,['to-number',['get','building:levels'],0]],
+    ['*',3.15,['to-number',['get','levels'],0]],
+    ['*',3.15,['to-number',['get','building:storeys'],0]],
+    5],
    'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','base_height_m'],['get','min_height']],0]],
    'fill-extrusion-opacity':0.9,'fill-extrusion-vertical-gradient':true
   }});
   state.ready=true;state.loading=false;status.textContent='تم تفعيل طبقة GeoJSON Part '+part+'.';
  }
- document.getElementById('part1').addEventListener('change',e=>{try{if(e.target.checked)addPart(1);else if(map.getLayer(partStates[1].layer)){visibility(partStates[1].layer,false);status.textContent='تم إخفاء GeoJSON Part 1.';}}catch(err){showError('تعذر تحميل Part 1: '+err.message);}});
- document.getElementById('part2').addEventListener('change',e=>{try{if(e.target.checked)addPart(2);else if(map.getLayer(partStates[2].layer)){visibility(partStates[2].layer,false);status.textContent='تم إخفاء GeoJSON Part 2.';}}catch(err){showError('تعذر تحميل Part 2: '+err.message);}});
+ document.getElementById('part1').addEventListener('change',e=>{try{const s=partStates[1];if(e.target.checked){if(s.ready)visibility(s.layer,true);else addPart(1);}else if(map.getLayer(s.layer)){visibility(s.layer,false);status.textContent='تم إخفاء GeoJSON Part 1.';}}catch(err){showError('تعذر تحميل Part 1: '+err.message);}});
+ document.getElementById('part2').addEventListener('change',e=>{try{const s=partStates[2];if(e.target.checked){if(s.ready)visibility(s.layer,true);else addPart(2);}else if(map.getLayer(s.layer)){visibility(s.layer,false);status.textContent='تم إخفاء GeoJSON Part 2.';}}catch(err){showError('تعذر تحميل Part 2: '+err.message);}});
  map.on('load',()=>{setBaseGround(document.getElementById('baseGround').checked);setBaseBuildings(document.getElementById('baseBuildings').checked);status.textContent='الخريطة جاهزة. فعّل Part 1 أو Part 2 لعرض مباني GeoJSON.';});
  map.on('error',e=>{if(e.error){const msg='خطأ في الخريطة: '+e.error.message+(e.sourceId?' | source='+e.sourceId:'');status.textContent=msg;showError(msg);console.error('MANILA TEST MAP ERROR',e);}});
 })();
