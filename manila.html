@@ -68,7 +68,7 @@ function featurePopup(e){const f=e.features&&e.features[0];if(!f)return;const p=
 function addCheckbox(def){
 const [key,label,sourceLayer,color,kind]=def;const wrap=document.createElement('label');wrap.className='layer';
 const cb=document.createElement('input');cb.type='checkbox';cb.checked=key==='building';wrap.append(cb,document.createTextNode(label+' · PBF:'+sourceLayer));list.append(wrap);checkboxes.set(key,cb);
-cb.addEventListener('change',async()=>{try{await loadLayer(def,cb.checked)}catch(e){status.className='status error';status.textContent='فشل تحميل '+file+': '+e.message;cb.checked=false}});
+cb.addEventListener('change',async()=>{try{await loadLayer(def,cb.checked)}catch(e){status.className='status error';status.textContent='فشل تحميل طبقة PBF '+def[2]+': '+e.message;cb.checked=false}});
 }
 async function loadLayer(def,on){
 const [key,label,sourceLayer,color,kind]=def;
