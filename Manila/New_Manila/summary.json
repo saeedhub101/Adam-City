@@ -1,0 +1,311 @@
+{
+  "status": "validated",
+  "source_directory": "Manila/vector-tiles",
+  "source_pbf_tiles": 141,
+  "source_pbf_modified": false,
+  "boundary_source": "complete_data/open free tile/layers/boundary.geojsonl",
+  "group_count": 51,
+  "assignment_method": "Each feature from every source layer is assigned by geometry centroid to the nearest of the 51 supplied boundary lines; features without geometry use the tile center. This is approximate spatial grouping, not exact administrative clipping.",
+  "all_source_layer_names": [
+    "aerodrome_label",
+    "aeroway",
+    "boundary",
+    "building",
+    "building_roof_detail",
+    "housenumber",
+    "landcover",
+    "landuse",
+    "mountain_peak",
+    "park",
+    "place",
+    "poi",
+    "transportation",
+    "transportation_name",
+    "water",
+    "water_name",
+    "waterway"
+  ],
+  "source_feature_occurrences_decoded": 207321,
+  "output_feature_occurrences_after_roundtrip": 207321,
+  "features_without_geometry_assigned_by_tile_center": 0,
+  "output_pbf_files": 7191,
+  "expected_output_pbf_files": 7191,
+  "all_51_groups_have_all_source_tile_paths": true,
+  "feature_occurrences_by_group": [
+    {
+      "group": "01",
+      "feature_occurrences": 76168
+    },
+    {
+      "group": "02",
+      "feature_occurrences": 1439
+    },
+    {
+      "group": "03",
+      "feature_occurrences": 1888
+    },
+    {
+      "group": "04",
+      "feature_occurrences": 12375
+    },
+    {
+      "group": "05",
+      "feature_occurrences": 933
+    },
+    {
+      "group": "06",
+      "feature_occurrences": 2181
+    },
+    {
+      "group": "07",
+      "feature_occurrences": 1824
+    },
+    {
+      "group": "08",
+      "feature_occurrences": 17877
+    },
+    {
+      "group": "09",
+      "feature_occurrences": 1012
+    },
+    {
+      "group": "10",
+      "feature_occurrences": 11193
+    },
+    {
+      "group": "11",
+      "feature_occurrences": 778
+    },
+    {
+      "group": "12",
+      "feature_occurrences": 4151
+    },
+    {
+      "group": "13",
+      "feature_occurrences": 1617
+    },
+    {
+      "group": "14",
+      "feature_occurrences": 31
+    },
+    {
+      "group": "15",
+      "feature_occurrences": 40
+    },
+    {
+      "group": "16",
+      "feature_occurrences": 240
+    },
+    {
+      "group": "17",
+      "feature_occurrences": 24195
+    },
+    {
+      "group": "18",
+      "feature_occurrences": 1070
+    },
+    {
+      "group": "19",
+      "feature_occurrences": 3967
+    },
+    {
+      "group": "20",
+      "feature_occurrences": 6235
+    },
+    {
+      "group": "21",
+      "feature_occurrences": 4300
+    },
+    {
+      "group": "22",
+      "feature_occurrences": 2202
+    },
+    {
+      "group": "23",
+      "feature_occurrences": 2274
+    },
+    {
+      "group": "24",
+      "feature_occurrences": 4
+    },
+    {
+      "group": "25",
+      "feature_occurrences": 3
+    },
+    {
+      "group": "26",
+      "feature_occurrences": 386
+    },
+    {
+      "group": "27",
+      "feature_occurrences": 1000
+    },
+    {
+      "group": "28",
+      "feature_occurrences": 959
+    },
+    {
+      "group": "29",
+      "feature_occurrences": 9
+    },
+    {
+      "group": "30",
+      "feature_occurrences": 577
+    },
+    {
+      "group": "31",
+      "feature_occurrences": 9225
+    },
+    {
+      "group": "32",
+      "feature_occurrences": 1582
+    },
+    {
+      "group": "33",
+      "feature_occurrences": 1589
+    },
+    {
+      "group": "34",
+      "feature_occurrences": 1856
+    },
+    {
+      "group": "35",
+      "feature_occurrences": 15
+    },
+    {
+      "group": "36",
+      "feature_occurrences": 836
+    },
+    {
+      "group": "37",
+      "feature_occurrences": 1092
+    },
+    {
+      "group": "38",
+      "feature_occurrences": 435
+    },
+    {
+      "group": "39",
+      "feature_occurrences": 2434
+    },
+    {
+      "group": "40",
+      "feature_occurrences": 1462
+    },
+    {
+      "group": "41",
+      "feature_occurrences": 7
+    },
+    {
+      "group": "42",
+      "feature_occurrences": 41
+    },
+    {
+      "group": "43",
+      "feature_occurrences": 131
+    },
+    {
+      "group": "44",
+      "feature_occurrences": 826
+    },
+    {
+      "group": "45",
+      "feature_occurrences": 1145
+    },
+    {
+      "group": "46",
+      "feature_occurrences": 185
+    },
+    {
+      "group": "47",
+      "feature_occurrences": 2025
+    },
+    {
+      "group": "48",
+      "feature_occurrences": 711
+    },
+    {
+      "group": "49",
+      "feature_occurrences": 82
+    },
+    {
+      "group": "50",
+      "feature_occurrences": 9
+    },
+    {
+      "group": "51",
+      "feature_occurrences": 705
+    }
+  ],
+  "feature_occurrences_by_layer": [
+    {
+      "layer": "aerodrome_label",
+      "feature_occurrences": 48
+    },
+    {
+      "layer": "aeroway",
+      "feature_occurrences": 1295
+    },
+    {
+      "layer": "boundary",
+      "feature_occurrences": 537
+    },
+    {
+      "layer": "building",
+      "feature_occurrences": 1846
+    },
+    {
+      "layer": "building_roof_detail",
+      "feature_occurrences": 43
+    },
+    {
+      "layer": "housenumber",
+      "feature_occurrences": 8603
+    },
+    {
+      "layer": "landcover",
+      "feature_occurrences": 3112
+    },
+    {
+      "layer": "landuse",
+      "feature_occurrences": 6541
+    },
+    {
+      "layer": "mountain_peak",
+      "feature_occurrences": 813
+    },
+    {
+      "layer": "park",
+      "feature_occurrences": 217
+    },
+    {
+      "layer": "place",
+      "feature_occurrences": 18622
+    },
+    {
+      "layer": "poi",
+      "feature_occurrences": 78036
+    },
+    {
+      "layer": "transportation",
+      "feature_occurrences": 67593
+    },
+    {
+      "layer": "transportation_name",
+      "feature_occurrences": 9727
+    },
+    {
+      "layer": "water",
+      "feature_occurrences": 4175
+    },
+    {
+      "layer": "water_name",
+      "feature_occurrences": 247
+    },
+    {
+      "layer": "waterway",
+      "feature_occurrences": 5866
+    }
+  ],
+  "completed_at_utc": "2026-10-23T18:58:56Z"
+}
