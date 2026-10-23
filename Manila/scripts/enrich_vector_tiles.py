@@ -76,11 +76,7 @@ def save_checkpoint(path: Path, report: dict[str, Any]) -> None:
     git("config", "user.name", "github-actions[bot]")
     git("config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com")
     git("commit", "-m", f"Checkpoint Manila PBF enrichment: {path.stem}")
-    pushed = git("push", "origin", "HEAD:main", check=False)
-    if pushed.returncode:
-        # A remote update should be rare because this workflow is serialized.
-        print(pushed.stdout, file=sys.stderr, flush=True)
-        raise RuntimeError("Checkpoint push failed; stopping rather than losing processed work.")
+    push_main_with_retry()
     print(f"CHECKPOINT PUSHED: {path.relative_to(REPO_ROOT)}", flush=True)
 
 
