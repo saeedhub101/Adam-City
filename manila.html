@@ -137,43 +137,109 @@ const baseBuildings=[];
 const areaButtons=document.getElementById('areaButtons');
 const areasSummary=document.getElementById('areasSummary');
 const areaTemplateRoot=new URL('Manila/New_Manila/',window.location.href).href;
-function addAreaButton(area,index,layerName){
- const folder=String(area.folder||('area-'+String(index+1).padStart(4,'0')));
- const label=String(index+1);
- const b=document.createElement('button');b.type='button';b.className='area-btn';b.textContent=label;b.title=folder+' — '+(area.building_features??'')+' مبنى/معلم';b.setAttribute('aria-pressed','false');
+const pbfTemplate=new URL('Manila/vector-tiles/',window.location.href).href+'{z}/{x}/{y}.pbf';
+let areaVectorSourceAdded=false;
+const csvCache=new Map();
+function parseCSV(text){
+ text=text.replace(/^\\uFEFF/,'');
+ const rows=[];let row=[],field='',quoted=false;
+ for(let i=0;i<text.length;i++){
+  const ch=text[i];
+  if(quoted){if(ch==='"'&&text[i+1]==='"'){field+='"';i++;}else if(ch==='"')quoted=false;else field+=ch;}
+  else if(ch==='"')quoted=true;
+  else if(ch===','){row.push(field);field='';}
+  else if(ch==='\\n'){row.push(field);rows.push(row);row=[];field='';}
+  else if(ch!=='\\r')field+=ch;
+ }
+ if(field.length||row.length){row.push(field);rows.push(row);}
+ if(!rows.length)return [];
+ const headers=rows.shift().map(h=>h.trim());
+ return rows.filter(r=>r.some(v=>v!=='')).map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]??''])));
+}
+async function readBoundaryCSV(folder){
+ if(csvCache.has(folder))return csvCache.get(folder);
+ const promise=(async()=>{
+  const url=areaTemplateRoot+folder+'/buildings.csv';
+  const response=await fetch(url,{cache:'no-store'});
+  if(!response.ok)throw new Error('CSV HTTP '+response.status+' ('+folder+'/buildings.csv)');
+  return parseCSV(await response.text());
+ })();
+ csvCache.set(folder,promise);
+ try{return await promise;}catch(e){csvCache.delete(folder);throw e;}
+}
+function idsForRows(rows){
+ const values=new Set();
+ for(const row of rows){
+  for(const field of ['building_uid','building_number','osm_id','osm_way_id','way_id','osm_wayid']){
+   const value=String(row[field]??'').trim();if(value)values.add(value);
+  }
+  try{
+   const p=JSON.parse(row.properties_json||'{}');
+   for(const field of ['building_uid','building_number','osm_id','osm_way_id','way_id','osm_wayid']){
+    const value=String(p[field]??'').trim();if(value)values.add(value);
+   }
+  }catch{}
+ }
+ return [...values];
+}
+function addAreaButton(area,index){
+ const record=String(area.boundary_record||String(index+1).padStart(2,'0')).padStart(2,'0');
+ const folder='boundary-'+record;
+ const count=Number(area.building_features||0);
+ const b=document.createElement('button');b.type='button';b.className='area-btn';b.textContent=record;
+ b.title=folder+' — '+count+' معلم مبنى';b.setAttribute('aria-pressed','false');
  b.addEventListener('click',async()=>{
   const on=b.getAttribute('aria-pressed')!=='true';
-  if(areaLoaded.has(folder)){const state=areaLoaded.get(folder);setVisibility(state.ids,on);b.setAttribute('aria-pressed',String(on));return;}
+  const layerId='new-manila-'+record+'-buildings';
+  if(map.getLayer(layerId)){
+   map.setLayoutProperty(layerId,'visibility',on?'visible':'none');
+   b.setAttribute('aria-pressed',String(on));
+   status.className='status';
+   status.textContent=(on?'تم تفعيل':'تم إخفاء')+' مباني سجل الحدود '+record+'.';
+   return;
+  }
   if(!on)return;
-  b.disabled=true;status.className='status';status.textContent='جارٍ تحميل مباني المنطقة '+label+' ('+folder+')…';
+  if(count===0){status.className='status';status.textContent='سجل الحدود '+record+' لا يحتوي معالم مبانٍ في نتيجة الفرز.';return;}
+  b.disabled=true;status.className='status';status.textContent='جارٍ تحميل CSV للحد '+record+' وربط المباني الأصلية من PBF…';
   try{
-   const sid='new-manila-'+folder.replace(/[^a-zA-Z0-9_-]/g,'-');
-   const url=areaTemplateRoot+folder+'/{z}/{x}/{y}.pbf';
-   map.addSource(sid,{type:'vector',tiles:[url],minzoom:10,maxzoom:14,scheme:'xyz'});
-   const lid=sid+'-buildings';
-   map.addLayer({id:lid,type:'fill-extrusion',source:sid,'source-layer':layerName,
-    filter:['==',['geometry-type'],'Polygon'],
-    paint:{'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],'#c7b39b'],
-     'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height']],['*',['to-number',['get','building:levels'],0],3.2],5]],
+   const rows=await readBoundaryCSV(folder);
+   const ids=idsForRows(rows);
+   if(!rows.length||!ids.length)throw new Error('ملف CSV فارغ أو لا يحتوي معرّفات مبانٍ قابلة للربط');
+   if(!areaVectorSourceAdded){
+    map.addSource('new-manila-pbf-source',{type:'vector',tiles:[pbfTemplate],minzoom:10,maxzoom:14,scheme:'xyz'});
+    areaVectorSourceAdded=true;
+   }
+   const layerNames=[...new Set(rows.map(r=>r.layer_name).filter(Boolean))];
+   const sourceLayer=layerNames.includes('building')?'building':(layerNames[0]||'building');
+   const featureKey=['to-string',['coalesce',['get','building_uid'],['get','building_number'],['get','osm_id'],['get','osm_way_id'],['get','osm_wayid'],['get','way_id']]];
+   map.addLayer({id:layerId,type:'fill-extrusion',source:'new-manila-pbf-source','source-layer':sourceLayer,
+    filter:['in',featureKey,['literal',ids]],
+    paint:{
+     'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],'#c7b39b'],
+     'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','building:height']],['*',['to-number',['get','building:levels'],0],3.2],5]],
      'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height']],0]],
-     'fill-extrusion-opacity':0.96,'fill-extrusion-vertical-gradient':true}});
-   map.on('click',lid,featurePopup);map.on('mouseenter',lid,()=>map.getCanvas().style.cursor='pointer');map.on('mouseleave',lid,()=>map.getCanvas().style.cursor='');
-   areaLoaded.set(folder,{ids:[lid],source:sid});b.setAttribute('aria-pressed','true');
-   status.textContent='تم تفعيل مباني المنطقة '+label+' من '+folder+'.';
-  }catch(e){status.className='status error';status.textContent='تعذر تحميل المنطقة '+label+' ('+folder+'): '+e.message;b.setAttribute('aria-pressed','false');}
+     'fill-extrusion-opacity':0.96,'fill-extrusion-vertical-gradient':true
+    }});
+   map.on('click',layerId,featurePopup);
+   map.on('mouseenter',layerId,()=>map.getCanvas().style.cursor='pointer');
+   map.on('mouseleave',layerId,()=>map.getCanvas().style.cursor='');
+   b.setAttribute('aria-pressed','true');
+   status.className='status';
+   status.textContent='تم تفعيل سجل الحدود '+record+'؛ ملف CSV يحدد المباني، والهندسة المعروضة مأخوذة من بلاطات PBF الأصلية. عدد السجلات: '+rows.length+'.';
+  }catch(e){status.className='status error';status.textContent='تعذر تحميل سجل الحدود '+record+': '+e.message;b.setAttribute('aria-pressed','false');}
   finally{b.disabled=false;}
- });areaButtons.appendChild(b);
+ });
+ areaButtons.appendChild(b);
 }
 async function loadAreas(){
  try{
   const r=await fetch(areaTemplateRoot+'summary.json',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);
-  const data=await r.json();const allAreas=Array.isArray(data.areas)?data.areas:[];
-  const areas=allAreas.filter(a=>Number(a.building_features||0)>0&&a.folder);
-  const layerName=(Array.isArray(data.building_layer_names)&&data.building_layer_names[0])||'building';
-  if(!areas.length)throw new Error('لم يعثر التقرير على مجلدات مناطق تحتوي مباني');
-  areasSummary.textContent='مناطق تحتوي مباني فعلية: '+areas.length+' من أصل '+allAreas.length+' منطقة في التقرير. اختر رقم المنطقة لإظهار مبانيها.';
-  areas.forEach((a,i)=>addAreaButton(a,i,layerName));
- }catch(e){areasSummary.textContent='تعذرت قراءة مناطق New_Manila: '+e.message;status.className='status error';status.textContent='لم يتم إنشاء أزرار المناطق: '+e.message;}
+  const data=await r.json();
+  const areas=Array.isArray(data.counts_by_boundary_record)?data.counts_by_boundary_record:[];
+  if(areas.length!==51)throw new Error('التقرير يحتوي '+areas.length+' سجلاً بدل 51');
+  areasSummary.textContent='تم التحقق من '+data.source_tile_count+' بلاطة PBF و'+data.building_features_extracted_from_pbf+' معلم مبنى؛ اختر أي سجل من 01 إلى 51. الأزرار تعرض هندسة المباني من PBF الأصلي حسب معرّفات CSV.';
+  areas.forEach((a,i)=>addAreaButton(a,i));
+ }catch(e){areasSummary.textContent='تعذرت قراءة نتائج New_Manila: '+e.message;status.className='status error';status.textContent='لم يتم إنشاء أزرار المناطق: '+e.message;}
 }
 document.getElementById('toggleVector').addEventListener('click',()=>{const body=document.getElementById('vectorBody'),collapsed=body.classList.toggle('is-collapsed');document.getElementById('toggleVector').textContent=collapsed?'+':'−';document.getElementById('toggleVector').setAttribute('aria-expanded',String(!collapsed));});
 map.on('load',()=>{
