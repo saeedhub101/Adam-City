@@ -102,7 +102,7 @@ def local_index(bs):
  for stale in CATALOG_DIR.glob("part-*.jsonl"): stale.unlink()
  part_no=1; part_bytes=0; catalog_file=None
  for r in idx:
-  line=(json.dumps(r,ensure_ascii=False,separators=(",",":"))+"\\n").encode("utf-8")
+  line=(json.dumps(r,ensure_ascii=False,separators=(",",":"))+"\n").encode("utf-8")
   if catalog_file is None or (part_bytes and part_bytes+len(line)>CATALOG_PART_BYTES):
    if catalog_file: catalog_file.close()
    catalog_file=(CATALOG_DIR/f"part-{part_no:04d}.jsonl").open("wb"); part_no+=1; part_bytes=0
