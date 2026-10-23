@@ -1,0 +1,79 @@
+{
+  "type": "FeatureCollection",
+  "name": "ermita-building-visual-research-queue-enriched",
+  "metadata": {
+    "purpose": "User-confirmed corrections for the first two records of part-001-readable-parts/part-001.geojson. Original coordinates and source indices preserved; building footprints are not represented by these Point features."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "part": 1,
+        "source_feature_index": 342,
+        "source_feature_id": "footprints-feature-000342",
+        "source_key": "footprints",
+        "status": "user_confirmed_identity_and_visual_notes",
+        "name": "Alkhaleej International Services Inc.",
+        "source_name_or_brand": "Alkhaleej International Services Inc.",
+        "building": "commercial",
+        "building:levels": 2,
+        "building_use": "commercial; shops",
+        "addr:suburb": "Malate",
+        "addr:street": "Roxas Boulevard",
+        "addr:corner": "Quirino Street",
+        "address_full": "Malate, Roxas Boulevard corner Quirino Street, Manila, Metro Manila, Philippines",
+        "area_m2": 2538.728852802794,
+        "height_m": "",
+        "base_height_m": "",
+        "source_colour": "gray-beige exposed concrete; dark-framed large glass facade",
+        "source_material": "exposed concrete columns/canopy; large glass storefront windows with dark metal frames",
+        "visual_evidence": "User-provided Google Street View screenshots dated April 2026",
+        "review_notes": "Name, two-storey commercial use, address and facade description supplied by user. Do not infer building height in metres. Original point coordinates retained; geometry is Point, not footprint polygon.",
+        "google_maps": "https://www.google.com/maps/search/?api=1&query=14.5728234%2C120.9818584"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          120.9818584,
+          14.5728234
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "part": 1,
+        "source_feature_index": 343,
+        "source_feature_id": "footprints-feature-000343",
+        "source_key": "footprints",
+        "status": "user_confirmed_identity_and_address",
+        "name": "",
+        "source_name_or_brand": "",
+        "building": "commercial",
+        "building:levels": 2,
+        "building_use": "commercial",
+        "addr:suburb": "Malate",
+        "addr:street": "HXGP Vasquez Street",
+        "addr:barangay": "696",
+        "addr:city": "Manila",
+        "addr:province": "Metro Manila",
+        "addr:country": "Philippines",
+        "address_full": "HXGP Vasquez St, Barangay 696, Manila, Metro Manila, Philippines",
+        "area_m2": 47735.99214969813,
+        "height_m": "",
+        "base_height_m": "",
+        "source_colour": "",
+        "source_material": "",
+        "review_notes": "User supplied commercial use, two storeys and full address. No building name or facade materials supplied. Original point coordinates retained; geometry is Point, not footprint polygon.",
+        "google_maps": "https://www.google.com/maps/search/?api=1&query=14.5750948%2C120.9871317"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          120.9871317,
+          14.5750948
+        ]
+      }
+    }
+  ]
+}
