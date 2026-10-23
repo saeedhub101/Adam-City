@@ -1,0 +1,321 @@
+{
+  "status": "completed",
+  "source_tiles_directory": "Manila/vector-tiles",
+  "source_tile_count": 141,
+  "source_boundary_file": "complete_data/open free tile/layers/boundary.geojsonl",
+  "boundary_record_count": 51,
+  "building_features_extracted_from_pbf": 1846,
+  "source_csv_files_used": false,
+  "pbf_tiles_modified": false,
+  "tile_decode_errors": [],
+  "method": "Each building feature centroid was converted from tile-local coordinates to longitude/latitude, then assigned to the nearest of the 51 line features. This is nearest-line grouping, not a claim that every record forms a closed polygon.",
+  "counts_by_boundary_record": [
+    {
+      "boundary_record": "01",
+      "feature_id": 40833320,
+      "admin_level": 6,
+      "building_features": 315
+    },
+    {
+      "boundary_record": "02",
+      "feature_id": 156938800,
+      "admin_level": 5,
+      "building_features": 0
+    },
+    {
+      "boundary_record": "03",
+      "feature_id": 273721330,
+      "admin_level": 3,
+      "building_features": 4
+    },
+    {
+      "boundary_record": "04",
+      "feature_id": 774923550,
+      "admin_level": 4,
+      "building_features": 93
+    },
+    {
+      "boundary_record": "05",
+      "feature_id": 3725978620,
+      "admin_level": 3,
+      "building_features": 0
+    },
+    {
+      "boundary_record": "06",
+      "feature_id": 3725978770,
+      "admin_level": 6,
+      "building_features": 0
+    },
+    {
+      "boundary_record": "07",
+      "feature_id": 9715203082,
+      "admin_level": 5,
+      "building_features": 0
+    },
+    {
+      "boundary_record": "08",
+      "feature_id": 40833320,
+      "admin_level": 6,
+      "building_features": 197
+    },
+    {
+      "boundary_record": "09",
+      "feature_id": 43046950,
+      "admin_level": 8,
+      "building_features": 1
+    },
+    {
+      "boundary_record": "10",
+      "feature_id": 44439150,
+      "admin_level": 7,
+      "building_features": 59
+    },
+    {
+      "boundary_record": "11",
+      "feature_id": 156938800,
+      "admin_level": 5,
+      "building_features": 0
+    },
+    {
+      "boundary_record": "12",
+      "feature_id": 239595940,
+      "admin_level": 7,
+      "building_features": 33
+    },
+    {
+      "boundary_record": "13",
+      "feature_id": 279067980,
+      "admin_level": 3,
+      "building_features": 28
+    },
+    {
+      "boundary_record": "14",
+      "feature_id": 3725978620,
+      "admin_level": 3,
+      "building_features": 0
+    },
+    {
+      "boundary_record": "15",
+      "feature_id": 3725978770,
+      "admin_level": 6,
+      "building_features": 0
+    },
+    {
+      "boundary_record": "16",
+      "feature_id": 9715203082,
+      "admin_level": 5,
+      "building_features": 2
+    },
+    {
+      "boundary_record": "17",
+      "feature_id": 40866640,
+      "admin_level": 10,
+      "building_features": 296
+    },
+    {
+      "boundary_record": "18",
+      "feature_id": 42017690,
+      "admin_level": 9,
+      "building_features": 15
+    },
+    {
+      "boundary_record": "19",
+      "feature_id": 43046950,
+      "admin_level": 8,
+      "building_features": 36
+    },
+    {
+      "boundary_record": "20",
+      "feature_id": 44439150,
+      "admin_level": 7,
+      "building_features": 53
+    },
+    {
+      "boundary_record": "21",
+      "feature_id": 156938800,
+      "admin_level": 5,
+      "building_features": 109
+    },
+    {
+      "boundary_record": "22",
+      "feature_id": 271314930,
+      "admin_level": 6,
+      "building_features": 24
+    },
+    {
+      "boundary_record": "23",
+      "feature_id": 329783870,
+      "admin_level": 7,
+      "building_features": 48
+    },
+    {
+      "boundary_record": "24",
+      "feature_id": 3725978620,
+      "admin_level": 3,
+      "building_features": 0
+    },
+    {
+      "boundary_record": "25",
+      "feature_id": 9715203082,
+      "admin_level": 5,
+      "building_features": 0
+    },
+    {
+      "boundary_record": "26",
+      "feature_id": 9715203092,
+      "admin_level": 6,
+      "building_features": 6
+    },
+    {
+      "boundary_record": "27",
+      "feature_id": 43046870,
+      "admin_level": 10,
+      "building_features": 28
+    },
+    {
+      "boundary_record": "28",
+      "feature_id": 43046950,
+      "admin_level": 8,
+      "building_features": 29
+    },
+    {
+      "boundary_record": "29",
+      "feature_id": 141168640,
+      "admin_level": 7,
+      "building_features": 0
+    },
+    {
+      "boundary_record": "30",
+      "feature_id": 329783870,
+      "admin_level": 7,
+      "building_features": 39
+    },
+    {
+      "boundary_record": "31",
+      "feature_id": 40866640,
+      "admin_level": 10,
+      "building_features": 85
+    },
+    {
+      "boundary_record": "32",
+      "feature_id": 43046950,
+      "admin_level": 8,
+      "building_features": 12
+    },
+    {
+      "boundary_record": "33",
+      "feature_id": 44439150,
+      "admin_level": 7,
+      "building_features": 15
+    },
+    {
+      "boundary_record": "34",
+      "feature_id": 156938800,
+      "admin_level": 5,
+      "building_features": 4
+    },
+    {
+      "boundary_record": "35",
+      "feature_id": 350667010,
+      "admin_level": 6,
+      "building_features": 0
+    },
+    {
+      "boundary_record": "36",
+      "feature_id": 1117955440,
+      "admin_level": 7,
+      "building_features": 13
+    },
+    {
+      "boundary_record": "37",
+      "feature_id": 43046870,
+      "admin_level": 10,
+      "building_features": 31
+    },
+    {
+      "boundary_record": "38",
+      "feature_id": 141168640,
+      "admin_level": 7,
+      "building_features": 25
+    },
+    {
+      "boundary_record": "39",
+      "feature_id": 227510400,
+      "admin_level": 8,
+      "building_features": 131
+    },
+    {
+      "boundary_record": "40",
+      "feature_id": 329783870,
+      "admin_level": 7,
+      "building_features": 5
+    },
+    {
+      "boundary_record": "41",
+      "feature_id": 43046950,
+      "admin_level": 8,
+      "building_features": 0
+    },
+    {
+      "boundary_record": "42",
+      "feature_id": 730325470,
+      "admin_level": 10,
+      "building_features": 0
+    },
+    {
+      "boundary_record": "43",
+      "feature_id": 1117983440,
+      "admin_level": 7,
+      "building_features": 4
+    },
+    {
+      "boundary_record": "44",
+      "feature_id": 44439150,
+      "admin_level": 7,
+      "building_features": 5
+    },
+    {
+      "boundary_record": "45",
+      "feature_id": 50554350,
+      "admin_level": 8,
+      "building_features": 21
+    },
+    {
+      "boundary_record": "46",
+      "feature_id": 351545490,
+      "admin_level": 10,
+      "building_features": 4
+    },
+    {
+      "boundary_record": "47",
+      "feature_id": 40866640,
+      "admin_level": 10,
+      "building_features": 59
+    },
+    {
+      "boundary_record": "48",
+      "feature_id": 43046950,
+      "admin_level": 8,
+      "building_features": 8
+    },
+    {
+      "boundary_record": "49",
+      "feature_id": 50554402,
+      "admin_level": 7,
+      "building_features": 0
+    },
+    {
+      "boundary_record": "50",
+      "feature_id": 270110120,
+      "admin_level": 5,
+      "building_features": 0
+    },
+    {
+      "boundary_record": "51",
+      "feature_id": 1118043650,
+      "admin_level": 7,
+      "building_features": 9
+    }
+  ],
+  "completed_at_utc": "2026-10-23T11:57:20Z"
+}
