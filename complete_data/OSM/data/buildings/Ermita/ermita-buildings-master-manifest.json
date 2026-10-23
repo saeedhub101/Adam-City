@@ -132,5 +132,28 @@
       "sha256": "7a23f4e8682e293be53b267a721120257878b02781f585883b9b53a37931ba4b"
     }
   ],
-  "deduplication": "Exact byte-identical source files are counted once. Features from different source files are retained even when they may describe the same real building."
+  "deduplication": "Exact byte-identical source files are counted once. Features from different source files are retained even when they may describe the same real building.",
+  "user_confirmed_building_updates": {
+    "records": [
+      "footprints-feature-000342",
+      "footprints-feature-000343"
+    ],
+    "supplemental_files": [
+      "complete_data/OSM/data/buildings/Ermita/user-confirmed-building-details.geojson",
+      "complete_data/OSM/data/buildings/Ermita/user-confirmed-building-details.csv",
+      "complete_data/OSM/data/buildings/Ermita/USER-CONFIRMED-BUILDING-DETAILS.md"
+    ],
+    "search_fields": [
+      "addr:suburb",
+      "addr:street",
+      "addr:corner",
+      "addr:barangay",
+      "addr:city",
+      "addr:province",
+      "addr:country",
+      "address_full"
+    ],
+    "coordinates_preserved": true,
+    "height_policy": "Storey count is recorded as supplied; measured height in metres remains unknown unless sourced independently."
+  }
 }
