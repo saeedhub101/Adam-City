@@ -585,7 +585,7 @@
         "source_key": "footprints",
         "source_feature_index": 407,
         "source_feature_id": "footprints-feature-000407",
-        "status": "unmatched",
+        "status": "user_confirmed_location_only",
         "candidate_osm_id_for_review_only": "",
         "candidate_name_for_review_only": "",
         "area_m2": 6211.108504731187,
@@ -599,10 +599,13 @@
         "mapillary": "https://www.mapillary.com/app/?lat=14.5415119&lng=120.9813321&z=18",
         "wikimedia_commons_search": "https://commons.wikimedia.org/wiki/Special:MediaSearch?type=image&search=building%20Ermita%20Manila",
         "openstreetmap_candidate": "",
-        "review_decision": "",
+        "review_decision": "user_confirmed",
         "review_notes": "",
         "_source_file": "complete_data/OSM/data/buildings/Ermita/building-visual-research-queue.geojson",
-        "_source_sha256": "b5bf00495a9deb938c205a0565b67a145d53f5b3b843c07cc93ffd08b2306731"
+        "_source_sha256": "b5bf00495a9deb938c205a0565b67a145d53f5b3b843c07cc93ffd08b2306731",
+        "addr:suburb": "Pasay",
+        "addr:street": "Seaside Boulevard",
+        "review_note": "User confirmed the area as Pasay and street as Seaside Boulevard. Building name, use, storeys, height, facade materials and colour not supplied."
       },
       "geometry": {
         "type": "Point",
@@ -619,7 +622,7 @@
         "source_key": "footprints",
         "source_feature_index": 408,
         "source_feature_id": "footprints-feature-000408",
-        "status": "unmatched",
+        "status": "user_confirmed_location_only",
         "candidate_osm_id_for_review_only": "",
         "candidate_name_for_review_only": "",
         "area_m2": 4659.208071069686,
@@ -633,10 +636,12 @@
         "mapillary": "https://www.mapillary.com/app/?lat=14.5536392&lng=120.9801911&z=18",
         "wikimedia_commons_search": "https://commons.wikimedia.org/wiki/Special:MediaSearch?type=image&search=building%20Ermita%20Manila",
         "openstreetmap_candidate": "",
-        "review_decision": "",
+        "review_decision": "user_confirmed",
         "review_notes": "",
         "_source_file": "complete_data/OSM/data/buildings/Ermita/building-visual-research-queue.geojson",
-        "_source_sha256": "b5bf00495a9deb938c205a0565b67a145d53f5b3b843c07cc93ffd08b2306731"
+        "_source_sha256": "b5bf00495a9deb938c205a0565b67a145d53f5b3b843c07cc93ffd08b2306731",
+        "addr:suburb": "Pasay",
+        "review_note": "User confirmed the area as Pasay. Street, building name, use, storeys, height, facade materials and colour not supplied."
       },
       "geometry": {
         "type": "Point",
@@ -653,7 +658,7 @@
         "source_key": "footprints",
         "source_feature_index": 409,
         "source_feature_id": "footprints-feature-000409",
-        "status": "unmatched",
+        "status": "user_confirmed_identity_location_and_facade_reference",
         "candidate_osm_id_for_review_only": "",
         "candidate_name_for_review_only": "",
         "area_m2": 2330.105764609832,
@@ -667,10 +672,26 @@
         "mapillary": "https://www.mapillary.com/app/?lat=14.5411261&lng=120.9814996&z=18",
         "wikimedia_commons_search": "https://commons.wikimedia.org/wiki/Special:MediaSearch?type=image&search=building%20Ermita%20Manila",
         "openstreetmap_candidate": "",
-        "review_decision": "",
+        "review_decision": "user_confirmed",
         "review_notes": "",
         "_source_file": "complete_data/OSM/data/buildings/Ermita/building-visual-research-queue.geojson",
-        "_source_sha256": "b5bf00495a9deb938c205a0565b67a145d53f5b3b843c07cc93ffd08b2306731"
+        "_source_sha256": "b5bf00495a9deb938c205a0565b67a145d53f5b3b843c07cc93ffd08b2306731",
+        "name": "Three E-Com Center",
+        "addr:suburb": "Pasay",
+        "addr:street": "Harbor Drive",
+        "building": "commercial",
+        "building_use": "office",
+        "building:levels": 15,
+        "facade_material": "reflective dark glass curtain wall; light silver/white horizontal aluminium-composite cladding bands",
+        "facade_colour": "dark charcoal/blue-black glazing with silver-white bands",
+        "review_note": "User identified this as Three E-Com Center and specified Pasay, Harbor Drive. User notes the footprint coordinate points to the rear building. Facade appearance recorded from the linked OneDay photo: dark reflective glass curtain-wall towers with repeated silver/white horizontal bands and curved tower ends. 15 storeys supported by official SM CPG and OneDay references; do not use this identification to shift or replace the existing geometry.",
+        "evidence_urls": [
+          "https://maps.app.goo.gl/4sbWVMN9bzmU8PS89",
+          "https://www.oneday.com.ph/en_US/buildings/three-e-com-center/",
+          "https://www.smcpg.com/location/pasay-city/threee-com-center/",
+          "https://n.oneday.com.ph/im/tIwghJHVXL_.jpg"
+        ],
+        "facade_photo_url": "https://n.oneday.com.ph/im/tIwghJHVXL_.jpg"
       },
       "geometry": {
         "type": "Point",
@@ -721,7 +742,7 @@
         "source_key": "footprints",
         "source_feature_index": 411,
         "source_feature_id": "footprints-feature-000411",
-        "status": "unmatched",
+        "status": "user_confirmed_location_only",
         "candidate_osm_id_for_review_only": "",
         "candidate_name_for_review_only": "",
         "area_m2": 2503.482759928204,
@@ -735,10 +756,12 @@
         "mapillary": "https://www.mapillary.com/app/?lat=14.5499891&lng=120.9809559&z=18",
         "wikimedia_commons_search": "https://commons.wikimedia.org/wiki/Special:MediaSearch?type=image&search=building%20Ermita%20Manila",
         "openstreetmap_candidate": "",
-        "review_decision": "",
+        "review_decision": "user_confirmed",
         "review_notes": "",
         "_source_file": "complete_data/OSM/data/buildings/Ermita/building-visual-research-queue.geojson",
-        "_source_sha256": "b5bf00495a9deb938c205a0565b67a145d53f5b3b843c07cc93ffd08b2306731"
+        "_source_sha256": "b5bf00495a9deb938c205a0565b67a145d53f5b3b843c07cc93ffd08b2306731",
+        "addr:suburb": "Pasay",
+        "review_note": "User confirmed the area as Pasay. Building name, street, use, storeys, height, facade materials and colour not supplied."
       },
       "geometry": {
         "type": "Point",
