@@ -20,7 +20,7 @@ import requests
 ROOT = Path(__file__).resolve().parents[1]
 TILES_ROOT = ROOT / "vector-tiles"
 OVERPASS_URL = os.environ.get("OVERPASS_URL", "https://overpass-api.de/api/interpreter")
-USER_AGENT = "Adam-City-Manila-PBF-Enrichment/1.0 (open-source map data enrichment)"
+USER_AGENT = "Adam-City-Manila-PBF-Enrichment/1.1 (open-source map data enrichment with coordinate matching)"
 BATCH_SIZE = 60
 REQUEST_TIMEOUT = 90
 
