@@ -29,17 +29,8 @@ h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var
 <div id="layerList"></div>
 </div>
 <div class="section">
-<div class="section-title">ملفات CSV الخاصة بالمباني</div>
-<label class="layer"><input type="checkbox" id="csv1"> buildings-part1.csv</label>
-<label class="layer"><input type="checkbox" id="csv2"> buildings-part2.csv</label>
-<label class="layer"><input type="checkbox" id="csv3"> buildings-part1-enriched.csv.gz</label>
-<label class="layer"><input type="checkbox" id="csv4"> buildings-part2-enriched.csv.gz</label>
-<div class="meta">ملفات CSV جدولية وليست طبقات خريطة مباشرة. تفعيلها يعرض حالة الملف ورابط فتحه/تنزيله، ولا يضيف هندسة مكانية تلقائيًا.</div>
-<div id="csvInfo" class="meta"></div>
-</div>
-<div class="section">
 <div class="section-title">بلاطات المتجهات PBF</div>
-<div class="meta">المجلد يحتوي بلاطات للمستويات 10–14. يلزم تحديد أسماء الطبقات الداخلية في البلاطات قبل رسمها كطبقات MapLibre؛ لذلك لا أخلطها مع طبقات GeoJSONL قبل التحقق من بنيتها.</div>
+<div class="meta">تُستخدم البلاطات المحلية للمستويات 10–14 مباشرةً لرسم المباني ثلاثية الأبعاد من الطبقة الداخلية building.</div>
 <div class="meta"><a style="color:var(--accent)" href="Manila/vector-tiles/" target="_blank" rel="noopener">فتح مجلد vector-tiles في المستودع</a></div>
 </div>
 <div id="status" class="status">جارٍ تشغيل الخريطة…</div>
@@ -53,7 +44,7 @@ const status=document.getElementById('status'),info=document.getElementById('inf
 const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[120.982,14.585],zoom:13,pitch:26,bearing:0,antialias:true});
 window.manilaMap=map;map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
 const defs=[
-['building','المباني','building.geojsonl','#c7b39b','building'],
+['building','المباني من بلاطات المتجهات','vector-tiles/{z}/{x}/{y}.pbf','#c7b39b','building'],
 ['aerodrome_label','تسميات المطارات','aerodrome_label.geojsonl','#e5c875','point'],
 ['aeroway','ممرات ومرافق الطيران','aeroway.geojsonl','#d9b66f','line'],
 ['boundary','الحدود','boundary.geojsonl','#bc8be0','line'],
@@ -135,9 +126,6 @@ document.getElementById('allOn').addEventListener('click',async()=>{for(const d 
 document.getElementById('allOff').addEventListener('click',()=>{for(const d of defs){const cb=checkboxes.get(d[0]);cb.checked=false;if(loaded.has(d[0]))setVisibility(loaded.get(d[0]),false)}status.textContent='تم إيقاف طبقات البيانات الإضافية.'});
 status.textContent='الخريطة جاهزة؛ جارٍ تحميل المباني مباشرة من بلاطات المتجهات…';loadLayer(defs[0],true).catch(e=>{status.className='status error';status.textContent='تعذر تحميل المباني من بلاطات المتجهات: '+e.message;});
 });
-for(const [id,file] of [['csv1','buildings-part1.csv'],['csv2','buildings-part2.csv'],['csv3','buildings-part1-enriched.csv.gz'],['csv4','buildings-part2-enriched.csv.gz']]){
-document.getElementById(id).addEventListener('change',e=>{const u='Manila/layers/'+file;document.getElementById('csvInfo').innerHTML=e.target.checked?'الملف: <a style="color:var(--accent)" target="_blank" rel="noopener" href="'+u+'">'+file+'</a>':'تم إخفاء رابط '+file;});
-}
 map.on('error',e=>{if(e.error)console.warn('MapLibre',e.error.message)});
 })();
 </script>
