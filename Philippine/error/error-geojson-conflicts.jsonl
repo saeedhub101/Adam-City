@@ -26686,3 +26686,8 @@
 {"key":"geom:ab3ba7db6c33660d8ba42540d993e3703fcb39ac","field":"_source_feature_id","primary":7294401142,"alternative":13113332522,"source":"Manila/GeoJSON_Source/13/6851/3758.geojson"}
 {"key":"geom:a4e25c2f1d5b5853ed95058805853d07e3c6989f","field":"_source_layer","primary":"building","alternative":"building_roof_detail","source":"Manila/GeoJSON_Source/13/6851/3758.geojson"}
 {"key":"geom:bb855cf9a437b2e165d64f993ee3bf31c02aa56f","field":"_source_layer","primary":"building","alternative":"building_roof_detail","source":"Manila/GeoJSON_Source/13/6851/3759.geojson"}
+{"key":"geom:ecad21de96808d828d422e285c82fb03d3d002f5","field":"class","primary":"grass","alternative":"commercial","source":"Manila/GeoJSON_Source/13/6851/3760.geojson"}
+{"key":"geom:ecad21de96808d828d422e285c82fb03d3d002f5","field":"_source_layer","primary":"landcover","alternative":"landuse","source":"Manila/GeoJSON_Source/13/6851/3760.geojson"}
+{"key":"geom:71d3e2d01659bbe95a6d7fb5f6e434dfe734515e","field":"class","primary":"grass","alternative":"protected_area","source":"Manila/GeoJSON_Source/13/6851/3760.geojson"}
+{"key":"geom:71d3e2d01659bbe95a6d7fb5f6e434dfe734515e","field":"_source_layer","primary":"landcover","alternative":"park","source":"Manila/GeoJSON_Source/13/6851/3760.geojson"}
+{"key":"geom:26ffb4d86180c9302d1888b1ec2fccfcb25378ce","field":"_source_layer","primary":"building","alternative":"building_roof_detail","source":"Manila/GeoJSON_Source/13/6851/3760.geojson"}
