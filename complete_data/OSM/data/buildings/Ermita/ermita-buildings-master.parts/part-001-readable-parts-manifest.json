@@ -3,303 +3,537 @@
   "source_bytes": 89128551,
   "source_sha256": "1b59298b6868b05b249d5587501f5b11567523b98b0cec171a19c0af8a07fd6f",
   "source_features": 12507,
-  "split_target_bytes": 2097152,
+  "split_target_bytes": 524288,
   "ordering": "Source feature order preserved; each feature kept intact.",
   "original_preserved": true,
   "parts": [
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-001.geojson",
-      "features": 2666,
-      "bytes": 2049192,
-      "sha256": "464defa02bb7fcb3e8d8328574370333cf60ed7602c1b3018d390eee719a1231"
+      "features": 512,
+      "bytes": 524059,
+      "sha256": "8c6dac886d8eb328b61287e73849ea756a29cfd9a7832f6e2276eb6de5c8b91b"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-002.geojson",
-      "features": 11,
-      "bytes": 1965950,
-      "sha256": "bec6ac03cb779be946c77dcefabcc8e6ffaf57cb30ad2fdbb41d517b577e0359"
+      "features": 518,
+      "bytes": 524138,
+      "sha256": "55f240f61b62b5cda9e4cd222ffef744041bae825bb7fa26c0817b1cd1efb771"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-003.geojson",
-      "features": 1,
-      "bytes": 4201908,
-      "sha256": "e82776bf21ea4fe2e6f691058af38d549ab5dbf6084e8a040211f7427a8df3f4"
+      "features": 816,
+      "bytes": 524679,
+      "sha256": "a086aed3a742b7885ced9a1c557eec30eba1204935d5aaefc8634381658cb112"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-004.geojson",
-      "features": 10,
-      "bytes": 30223,
-      "sha256": "92a1456a380e4dff660a0cedc9d788cc6250be2ba99f62ddfa06ce8094ec63a4"
+      "features": 820,
+      "bytes": 479109,
+      "sha256": "6cde9845f6dda10fbbb11b2841648934e6df2c0fe946a6e254a222d3e467335d"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-005.geojson",
       "features": 1,
-      "bytes": 5125740,
-      "sha256": "892cde8a056a99e31b267dca6c38fb69a11fac04ea4a635c4c1dece119b656be"
+      "bytes": 1397141,
+      "sha256": "9abf6f019372018db68d5cf3605758ccae99d1c3f36faeefa680a49a8af896ad"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-006.geojson",
-      "features": 128,
-      "bytes": 2097080,
-      "sha256": "c66ed096ff988abd4dc69c75f99547a9a3e505a19f5f10b6b4dfe5e340188711"
+      "features": 5,
+      "bytes": 153978,
+      "sha256": "ae7dfffbe4e3744872ef56e10a4c6a7dbc5f47cca9980c1742196f8b5a96b9b2"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-007.geojson",
-      "features": 313,
-      "bytes": 705149,
-      "sha256": "09e5beb82128aac99d24156fc5deb383a4d1f768f7633e56ca0a55dde16bd16a"
+      "features": 1,
+      "bytes": 2827069,
+      "sha256": "1c55fe08cab9a69b12dd8c11a9d67ed161d12570c2b45f3b9b6dbd1f285e1505"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-008.geojson",
-      "features": 1,
-      "bytes": 2468382,
-      "sha256": "db77904983f93144ced790b156d0fb70169106f0043333f188cbf2c48533a059"
+      "features": 4,
+      "bytes": 7832,
+      "sha256": "817eb566cf7fc5b6ad6ad14b98a918d5457835f4b1e70dfb6e4511dcf225d260"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-009.geojson",
-      "features": 22,
-      "bytes": 49589,
-      "sha256": "66a5878c199ce9a30e22c124edb9acdc28983f356f0f9131a4e220a8625663bb"
+      "features": 1,
+      "bytes": 9844340,
+      "sha256": "03d49d085c0573d8d132494eaf1f3012c12707f8c0b412f0e61f32e7e74edea2"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-010.geojson",
-      "features": 1,
-      "bytes": 3241080,
-      "sha256": "bd509e19c119b0fe2221bb7af24ecd2827eefb94d61a206cc4e7ae0b0fa909a6"
+      "features": 10,
+      "bytes": 30234,
+      "sha256": "6c0e7bb945da6a6ffddb4197e44146908d56548d1ac7efce9413f19a5ad361a8"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-011.geojson",
-      "features": 107,
-      "bytes": 2072546,
-      "sha256": "2f7a36574d3c67ec06fd9450eaa9b110c3a3b9d588a30175973bd9860ab6fed7"
+      "features": 1,
+      "bytes": 12010356,
+      "sha256": "7172fbc51d78d0d5a01ba6982fe1065f558a8f8026d5f8078f7757b182dd38b8"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-012.geojson",
-      "features": 82,
-      "bytes": 365540,
-      "sha256": "2c2580fd617e3d14ed132902e5e0f595a77d818cac0ed235ae5182a2d7ae1874"
+      "features": 79,
+      "bytes": 298296,
+      "sha256": "91627ac6a0971e9c5cfc58f0256740df02d73f4347613845aa91fedd15b2f322"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-013.geojson",
       "features": 1,
-      "bytes": 2604649,
-      "sha256": "a9b2b61c76d27d6e7e6c7e0a3952c7de28c63687f47ab89c17928aa2d2558fa2"
+      "bytes": 3538856,
+      "sha256": "0f18c6c2385c197d28d6bdb385638e399a89f6e6a6697466c457956f711bb337"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-014.geojson",
-      "features": 129,
-      "bytes": 385560,
-      "sha256": "398a149a134ed45327455d659aaf0635409d4e7e86bd06d4fef30e042d0e2de3"
+      "features": 99,
+      "bytes": 461874,
+      "sha256": "c48363a506390753a556c812390bc7f306af7a5fad8a1da41f417488e271eb5f"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-015.geojson",
-      "features": 95,
-      "bytes": 1899301,
-      "sha256": "5a2b064121a5ed7f666f1cede8e788e8d89893eff325e7e53c2a80bd89bfa3d6"
+      "features": 257,
+      "bytes": 524202,
+      "sha256": "b3f9ceffc10f82b630d62454045b88418f18d2628eb786b55785f5fa91e79b0b"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-016.geojson",
-      "features": 63,
-      "bytes": 1243833,
-      "sha256": "1a8bd80bae7d3c491f979d2b63f2c43e3ef20f855aa9a020ad8e58d0400b88a1"
+      "features": 5,
+      "bytes": 6484,
+      "sha256": "52ee9f16da1eb4775891b5c9da033439ea6d3ae0e0055bdd0bfd5e4ac7f9b53c"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-017.geojson",
       "features": 1,
-      "bytes": 3243874,
-      "sha256": "630979e03d9fd3220c201b13494475584280a60b74570972dfc70ed15b9b7ad2"
+      "bytes": 5779774,
+      "sha256": "c54f5cb238acab993bf09adeef31e4f13d5c8317421ec30727c481e55f76301f"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-018.geojson",
-      "features": 24,
-      "bytes": 25296,
-      "sha256": "759cdf8d5f6ce0254f08d69d47abf1b1664ef90f5d12afc2db41c280f6a9061e"
+      "features": 22,
+      "bytes": 49612,
+      "sha256": "61127b58c7344e652a9dbf4952d0ddff827a281b0097dda03ab4088b7f9eef13"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-019.geojson",
       "features": 1,
-      "bytes": 3576951,
-      "sha256": "2b58ac1995ad39aced7e09d26c7fa9da0ccecc2899b4733b5797fe3cb2167b06"
+      "bytes": 7592758,
+      "sha256": "c8b796dfb175942f4f4f910811218282b7710a4c4285ab112e64291765523b05"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-020.geojson",
-      "features": 31,
-      "bytes": 48421,
-      "sha256": "eb41c3d61bb6fcd178f9f616cc44eaa7c455e2db2eee075e5d585c33b6542a65"
+      "features": 93,
+      "bytes": 484164,
+      "sha256": "2513eccbbf4c506d76bbca567de6bdf549e27713efe20805f67c9a7582ceca1d"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-021.geojson",
       "features": 1,
-      "bytes": 3149013,
-      "sha256": "a803df343f09344e5632853a964611826da8ca195f81a29fb2ad0ede9fe8d54b"
+      "bytes": 3199255,
+      "sha256": "a74d18f6679d644dc377843e4fe1961ba4d1698bd104ea6863719fa6fee6fb40"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-022.geojson",
-      "features": 38,
-      "bytes": 70241,
-      "sha256": "88f5957ee053aa8ce9c078b9e0d41ddc1718a0fa227f733f4260337ce012f8a9"
+      "features": 57,
+      "bytes": 523821,
+      "sha256": "5ea74b2bcc1a124775a0a334dc49583c48e17d18b66b29234aeef137bc012a69"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-023.geojson",
-      "features": 1,
-      "bytes": 3449456,
-      "sha256": "34b0a80948f52114e680071b1b91243a049113c90407d37687dddc278d8bb2bf"
+      "features": 38,
+      "bytes": 62723,
+      "sha256": "3826a08a6a68260feb9cf492c2b0603bc3e2016610efbff06206868654bab333"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-024.geojson",
-      "features": 103,
-      "bytes": 2092135,
-      "sha256": "2be4c4ef7dcdd00325dc4378769c374c39be6634f7ef50184ca4b9ac5e98ba2d"
+      "features": 1,
+      "bytes": 6098083,
+      "sha256": "b772ae5fd3ea059c3dafc2c4fabe30052f02483de094245a82ef5adf6797860c"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-025.geojson",
-      "features": 162,
-      "bytes": 212495,
-      "sha256": "ecb0cd0738a698163993a23b0081d9c76684484161cf2451f1e25b5786b64e73"
+      "features": 129,
+      "bytes": 385690,
+      "sha256": "199e4a799233fa6a37a49ac383d6e441e729c127770f1872bc3809393387d0a6"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-026.geojson",
-      "features": 24,
-      "bytes": 1957366,
-      "sha256": "462830fa603d53bffa08f7e63adb20ae31dd5169d7f64df371af10395a2f2198"
+      "features": 1,
+      "bytes": 4147887,
+      "sha256": "93b39f6cdb01d9fea0c92e5720b712714e51b5366c5885ac92fe8051bfe18ca9"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-027.geojson",
-      "features": 1,
-      "bytes": 2217623,
-      "sha256": "51f5c57b304b6ba452a683d3e5c3680f39ca5d687f8a7624747010978ae87488"
+      "features": 94,
+      "bytes": 126712,
+      "sha256": "ce286fff9b0bad05ebd993eeeeb16bbefc989a330def3bd8fc9c9d1cca033cf4"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-028.geojson",
-      "features": 74,
-      "bytes": 98203,
-      "sha256": "d67c87706be209f589582532bb39fecd8ea0fce37d4a38754c84bfa81471fe2f"
+      "features": 1,
+      "bytes": 2562018,
+      "sha256": "e936b4f2395af9367b867fa164a7ba8205efb9d71af4df9c8f82f164a64e4922"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-029.geojson",
-      "features": 1,
-      "bytes": 2334903,
-      "sha256": "5c6969025413ed730c9c209179c6b615f18f9a9652c9bfd9069a09135ae8de65"
+      "features": 62,
+      "bytes": 148085,
+      "sha256": "5c36b0ec0ec1e36614523d2f81faaabeb62524d31eb2a3c844c4f49c4fdc2ccc"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-030.geojson",
-      "features": 58,
-      "bytes": 73482,
-      "sha256": "77d47b9697c39a7aeef030da37fdbab675dd95915bfc4dd3d18c00ee5e60d2a2"
+      "features": 1,
+      "bytes": 7585892,
+      "sha256": "3b86c660b3de6c5960b57cebb287715485e93fb1b3c72990a4512837271c9614"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-031.geojson",
-      "features": 1,
-      "bytes": 2990634,
-      "sha256": "f5a8bd4340b738514353a8e72668b16e98c77c8f0da0c8ad285f711c856db436"
+      "features": 24,
+      "bytes": 25321,
+      "sha256": "8398641bdc88081bc1c8fb8c6dea0efb95776349c630c9ac35e0d37ccf55bc68"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-032.geojson",
-      "features": 60,
-      "bytes": 123996,
-      "sha256": "1bd008bfecc043602eb54adb12fea946e0ea81a19f5a2ee6045f9ef82b03ced1"
+      "features": 1,
+      "bytes": 8368591,
+      "sha256": "a0436879cd0b116e886a5c8615ed04aad594c03a0f18db58fc4263fe8a0e05a1"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-033.geojson",
-      "features": 1,
-      "bytes": 3661673,
-      "sha256": "122edf96f0dd2c8181a32a7e418680358e0e3838fba7b41e8190492ca7c9d8b0"
+      "features": 31,
+      "bytes": 48453,
+      "sha256": "403d4be2de784c5d7b0923f0e0ecf37b34df294128d3f02c0c69d64b1ffe244d"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-034.geojson",
-      "features": 245,
-      "bytes": 1426315,
-      "sha256": "2b903c766e396b60bb48b875c41234bfb1cb480d735d312d7d38e8d7bbc75dbf"
+      "features": 1,
+      "bytes": 7371195,
+      "sha256": "094a8a95f0c0eb94d3beef07594e8306517408e43ddaa769b8d864cd2c50fabc"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-035.geojson",
-      "features": 14,
-      "bytes": 1271940,
-      "sha256": "64c78e69a7a091bba46dab9aabb249eed577d910f4c772cebd96a6b46af371a1"
+      "features": 38,
+      "bytes": 70280,
+      "sha256": "fdaea67459321fa497da8b1880129419b9e9665d4da22a314910b3f4a4d6a16b"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-036.geojson",
       "features": 1,
-      "bytes": 2917593,
-      "sha256": "8338c8fe50bde37c01de79475e10ce1f4802635d2b932553ec8064146ddd4019"
+      "bytes": 8077190,
+      "sha256": "669fb15a75181f05b34f4cb63a6171028cebd93a93e49878076a9885d5d250ef"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-037.geojson",
-      "features": 413,
-      "bytes": 1739755,
-      "sha256": "0a15513499f61ed9ccae73fb36040dee386dfcda7eedd77087d5d1174d59e2e3"
+      "features": 66,
+      "bytes": 101637,
+      "sha256": "79501ef95aaa7ceb8bf6850d874dcd6bc32944fe4b0a2079b96924e0e97b30b3"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-038.geojson",
-      "features": 84,
-      "bytes": 2096302,
-      "sha256": "8061148302dc8c81864290b9fc37cc28913de72b543ac5f50920b4521379e862"
+      "features": 1,
+      "bytes": 4432514,
+      "sha256": "3a4ff005eb71bd13885b4996f75e7c02207a65718316eebac8a35f5058c74a91"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-039.geojson",
-      "features": 4,
-      "bytes": 33282,
-      "sha256": "2942de326afb7a3a1bb3238fa0f5fd0835f5589bf36739854ebfd6c290a479f3"
+      "features": 198,
+      "bytes": 308068,
+      "sha256": "27c7aff8bbe05ef210e2b096ffe3b1085a2505990f42ebe534447ebb61444798"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-040.geojson",
       "features": 1,
-      "bytes": 2491407,
-      "sha256": "4b8d743f55028b88661f5582c27ec8c2b0072448506b96ff66c6eb320fe11aaf"
+      "bytes": 4472197,
+      "sha256": "e9875852082297e23a08fd1a47f678ea581e131454401055d4c2cebe2b082d1c"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-041.geojson",
-      "features": 202,
-      "bytes": 2076397,
-      "sha256": "f4a1604dfe960014e42d9af8c73199c193530074e69313a3cdb8a6fc18b88f2a"
+      "features": 23,
+      "bytes": 45544,
+      "sha256": "3268b066cf489be9c9881b97c6d941cdb90c6b29cc71f2ea4016c082c08cd2d4"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-042.geojson",
-      "features": 84,
-      "bytes": 1125917,
-      "sha256": "e8c67a3abf9ac9c840c06037b80dd3eabed1154f8eca5a731edd2e77865f8013"
+      "features": 1,
+      "bytes": 5182693,
+      "sha256": "551a302912d31e3e444d624e395a6fb0d9d8de3f4431106e535e69fed5685f37"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-043.geojson",
-      "features": 32,
-      "bytes": 2096401,
-      "sha256": "7caafd7bc759d6c21995cb5ea6de082c3e8d9c8f05b87fe8223fa11f50f3dc5b"
+      "features": 74,
+      "bytes": 98278,
+      "sha256": "1f188b0619d27c78573d37a6637c6751fed8959955e1be4545587b69daa036fe"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-044.geojson",
-      "features": 76,
-      "bytes": 2097062,
-      "sha256": "dc346bd8e414c791f45e064557dbb7ce9ffc6d4616bd6180240e92755951f5bf"
+      "features": 1,
+      "bytes": 5445271,
+      "sha256": "c52d97431805ae5fac931c781f3d57d255db47a906836c01a4e64774dee7d550"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-045.geojson",
-      "features": 804,
-      "bytes": 2096575,
-      "sha256": "e8c8286594f79e02654cea3533ab36cef4a4f820f3823a244c99818bc3d095c0"
+      "features": 58,
+      "bytes": 73541,
+      "sha256": "cdc8f94191221ffccbb6d669a5fa00bc13751da3fe7532a8315a2de39531cc18"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-046.geojson",
-      "features": 1699,
-      "bytes": 2096640,
-      "sha256": "09db3caccaf1d72436e79d65d43c28b243d648657ca0f6051984a3844f92b0ae"
+      "features": 1,
+      "bytes": 6991534,
+      "sha256": "af9ddb95d43e64d98e6b348bfe49f99fd23e955d818fa8523dcb85dc50fba63e"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-047.geojson",
-      "features": 1692,
-      "bytes": 2096072,
-      "sha256": "94848533029a8828fd3254a24f02fc546d3058006dd378980493129caaf109e5"
+      "features": 60,
+      "bytes": 124057,
+      "sha256": "ba41b31ca430ac622497ed68274762ebaee2a393ef13f5bc7232b274dab1759f"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-048.geojson",
-      "features": 1702,
-      "bytes": 2096451,
-      "sha256": "8d8436969b5c9e95a9b2a3a0ffdf2814fb9b73707b2a6014a43fbd1af36acf61"
+      "features": 1,
+      "bytes": 8572389,
+      "sha256": "7ede82fc11b35131f31873657f1ab8f8f27178da54c90deb7777163e5d305b8c"
     },
     {
       "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-049.geojson",
-      "features": 1241,
-      "bytes": 1540926,
-      "sha256": "9a4d40441b7bd6afad70ceea364960f731159485ff9d2bbcc2b85bd834fe30c5"
+      "features": 98,
+      "bytes": 153257,
+      "sha256": "99028b108cdf309adb44af721d1cea80d4f4a49dedc4c43c2a3e17b1e3a1ccc4"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-050.geojson",
+      "features": 1,
+      "bytes": 2592163,
+      "sha256": "fa8c1aceed5a3a5e2875de7cfa37a4d01ab2f366602d5460cfbbe9eb06f073c5"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-051.geojson",
+      "features": 146,
+      "bytes": 155235,
+      "sha256": "12b63d775d51c18d77b9e0e22cfcb8769039298c3ced167ba3d25b129867a6fd"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-052.geojson",
+      "features": 1,
+      "bytes": 2913376,
+      "sha256": "f3bbe47c9d5a221ae6b36f568a28ff7812429fabb4bc7f37534c67808583a7a4"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-053.geojson",
+      "features": 13,
+      "bytes": 20513,
+      "sha256": "c6be70f5d25d6561fd2346d79c328c0671a3bd22a49df17d814a8de588dc147d"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-054.geojson",
+      "features": 1,
+      "bytes": 9631681,
+      "sha256": "31504f0a57b9680078f92d92ea053e81fee4f03158621132c32732ab3e7fdaa9"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-055.geojson",
+      "features": 78,
+      "bytes": 231726,
+      "sha256": "f1388e8acca93095a4544e72ff233b4462fbac2caec2b741075a54612bf853c2"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-056.geojson",
+      "features": 1,
+      "bytes": 2756856,
+      "sha256": "4f9374cf951bd6b58c2b882579e337191b2fe02f816f594abff16864fe01fc20"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-057.geojson",
+      "features": 262,
+      "bytes": 521053,
+      "sha256": "a21626bb44c5b497e3b087ed61e16e8e62dc72a8e468582cfb3a9cdcef59722b"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-058.geojson",
+      "features": 72,
+      "bytes": 151206,
+      "sha256": "68e582149a6fe807199103fa4b0dea06c4f9392d1109383b99b2e67ca987e1b9"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-059.geojson",
+      "features": 1,
+      "bytes": 6066699,
+      "sha256": "4341f2088453a49a1a7a5d3066607a95397221bc3c633186944623c037bd26dd"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-060.geojson",
+      "features": 87,
+      "bytes": 292097,
+      "sha256": "2b6c569349c159a052c66430374cb181f3a99638763c7c0565c938004e055b47"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-061.geojson",
+      "features": 1,
+      "bytes": 8213871,
+      "sha256": "a92c62a57254b008928a741ce2228a8ffdb276a29c0cf1aaadf1513e52e64cc3"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-062.geojson",
+      "features": 78,
+      "bytes": 312545,
+      "sha256": "7e25d9089b3c806d60da9d93bfbfe9ff3351625690846a4711bb421624f9d87e"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-063.geojson",
+      "features": 1,
+      "bytes": 4941651,
+      "sha256": "7697490447598bd57e8ab15bde9f31ca702e83790ef28732e748238e274593db"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-064.geojson",
+      "features": 123,
+      "bytes": 265856,
+      "sha256": "199c23c25015102c84bd9a91aeee459a60bce87c4f200fea1fc88660993c787d"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-065.geojson",
+      "features": 1,
+      "bytes": 3367477,
+      "sha256": "83f7a00dd4a6f060ce53dc88bd97e610e193d62f14797549428e3c837e66fb35"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-066.geojson",
+      "features": 83,
+      "bytes": 104665,
+      "sha256": "2ed79248d852cd4bf6577382b29acdb907979ebbc92287807864b7d268036301"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-067.geojson",
+      "features": 1,
+      "bytes": 6764120,
+      "sha256": "adcf8e16c6cbd0c178d86cceec49f7e0d76d14dde4e9b7b8ae7fa4eba84e80e4"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-068.geojson",
+      "features": 68,
+      "bytes": 98971,
+      "sha256": "2db97274cb5a4a61317a6bd2854d5fc0d979c593f4c3f6ebab1677c40f7a32c9"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-069.geojson",
+      "features": 1,
+      "bytes": 6527983,
+      "sha256": "1bda882b65525c70aaf8eb4d134116a06ec2fbcd1dbe5837ba0caf4996e1f047"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-070.geojson",
+      "features": 65,
+      "bytes": 91868,
+      "sha256": "6a908a10de1a693b3a2327467dcd6f135b191e99d09e454e9fcedc8c9245249e"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-071.geojson",
+      "features": 1,
+      "bytes": 3579166,
+      "sha256": "366e3f9e2ab6401ff5966ad8e424cefd266b51bb53074f0d7029a558feb0424d"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-072.geojson",
+      "features": 406,
+      "bytes": 524610,
+      "sha256": "7d07f113d48a9058625647aa0aaf33076af801ee0aba99729e30bf20f9da2f23"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-073.geojson",
+      "features": 423,
+      "bytes": 524018,
+      "sha256": "36dbf7b29468daac2f1ffa69ee25363d5e45c0278ac1d31c26ae9bbd01691bf4"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-074.geojson",
+      "features": 420,
+      "bytes": 523332,
+      "sha256": "33afbfa91a437ad1ba7567d5198f5eb1a3b2088ad56220d6a4b0f154b67cfeea"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-075.geojson",
+      "features": 429,
+      "bytes": 523852,
+      "sha256": "9f1f4bf58cc6832bafa171801ebc5eee7c9961b82ea7dfa262075a981b1029a9"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-076.geojson",
+      "features": 424,
+      "bytes": 524597,
+      "sha256": "a30aea18e9d2b274ba5a5f4837cbdf5367546d11917060db8a9aaf7d2c25199b"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-077.geojson",
+      "features": 425,
+      "bytes": 524150,
+      "sha256": "3aa565c158f2d2cdb84a3df88ae9f9f7a9ff9856539e68518c342ebc31809591"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-078.geojson",
+      "features": 420,
+      "bytes": 524685,
+      "sha256": "dbf06e38e840c1c011d56ac5ac43ceeb2de307b1359e268488f225a15ed03be2"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-079.geojson",
+      "features": 424,
+      "bytes": 524387,
+      "sha256": "30be58de67106a7d932c117a13dbe49969a5b0e9709502368ad86d4b03d16310"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-080.geojson",
+      "features": 422,
+      "bytes": 524340,
+      "sha256": "a01ad40a1fc812ed79e9fc1481c1313149ef5f5de2bd055d0529713c5045d73e"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-081.geojson",
+      "features": 426,
+      "bytes": 523650,
+      "sha256": "7d93ffd14494834167dfa74e0865cb996b4f19916f5874a11f2c6d7032cb3590"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-082.geojson",
+      "features": 426,
+      "bytes": 523691,
+      "sha256": "df0f2723c56366eb52c8be4769fcaf477e3a8fe5e0dbcfaa3d610b00ceddd48e"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-083.geojson",
+      "features": 424,
+      "bytes": 524501,
+      "sha256": "6332c261351bddd0f55d2fb604c4b706128150eb06af74ac502a7c0d385da2e0"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-084.geojson",
+      "features": 430,
+      "bytes": 524379,
+      "sha256": "c61659155bc8d6733fc1775c40d3dd817a2660cac42b1ffc5a61c5a5048f9a7d"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-085.geojson",
+      "features": 418,
+      "bytes": 524392,
+      "sha256": "591cfec780e730100fc6b812528aef893319b52a815ebd08bd2d3b80fbf7021e"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-086.geojson",
+      "features": 419,
+      "bytes": 524201,
+      "sha256": "89cea9c71f69c530d6d3400f5d081157b14a6488310aa1dab66a1e6d7a0a14d7"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-087.geojson",
+      "features": 425,
+      "bytes": 524066,
+      "sha256": "74072f8360b7af9809e6112d883a280bec081e06941b2f56bee85c32408e0627"
+    },
+    {
+      "path": "complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-088.geojson",
+      "features": 349,
+      "bytes": 433289,
+      "sha256": "47e462587e7a9d77d7fd83333190795e68dd343c4850030864e46c5d06ff5138"
     }
   ]
 }
