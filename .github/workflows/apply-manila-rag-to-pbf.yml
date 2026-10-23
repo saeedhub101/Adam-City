@@ -1,0 +1,37 @@
+name: Apply verified RAG evidence to Manila PBF
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "Manila/scripts/apply_rag_evidence_to_pbf.py"
+      - ".github/workflows/apply-manila-rag-to-pbf.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: manila-3d-enrichment
+  cancel-in-progress: false
+
+jobs:
+  apply-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout main with full history
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install PBF parser
+        run: python -m pip install --disable-pip-version-check mapbox-vector-tile
+      - name: Validate script
+        run: python -m py_compile Manila/scripts/apply_rag_evidence_to_pbf.py
+      - name: Apply verified evidence and checkpoint results
+        run: python -u Manila/scripts/apply_rag_evidence_to_pbf.py
