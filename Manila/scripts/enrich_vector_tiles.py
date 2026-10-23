@@ -223,8 +223,11 @@ def add_pbf_detail_layers(decoded: dict[str, Any]) -> int:
         if len(pts) > 1 and pts[0] == pts[-1]: pts.pop()
         if not pts: continue
         cx = sum(p[0] for p in pts) / len(pts); cy = sum(p[1] for p in pts) / len(pts)
+        roof_top = as_float(props.get("render_height") or props.get("height") or props.get("building:height")) or 5.0
+        roof_floor = as_float(props.get("render_min_height") or props.get("min_height")) or 0.0
+        roof_base = max(roof_floor, roof_top - 0.35)
         if uid not in roof_ids:
-            roofs["features"].append({"id": feature.get("id", i), "type": "Feature", "properties": {"building_uid": uid, "detail_kind": "roof_surface", "roof_color": props.get("render_roof_color") or props.get("roof:colour") or props.get("building:colour") or "#a99b89", "roof_material": props.get("render_roof_material") or props.get("roof:material") or "unknown", "roof_height": props.get("render_height") or props.get("height") or 5, "roof_base": props.get("render_min_height") or props.get("min_height") or 0, "source_geometry_preserved": True}, "geometry": json.loads(json.dumps(geom))})
+            roofs["features"].append({"id": feature.get("id", i), "type": "Feature", "properties": {"building_uid": uid, "detail_kind": "roof_surface", "roof_color": props.get("render_roof_color") or props.get("roof:colour") or props.get("building:colour") or "#a99b89", "roof_material": props.get("render_roof_material") or props.get("roof:material") or "unknown", "roof_height": roof_top, "roof_base": roof_base, "source_geometry_preserved": True}, "geometry": json.loads(json.dumps(geom))})
             roof_ids.add(uid); added += 1
         commercial = bool(props.get("shop") or props.get("brand") or props.get("operator") or props.get("render_sign_candidate"))
         if commercial and uid not in sign_ids:
