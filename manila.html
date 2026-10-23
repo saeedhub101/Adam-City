@@ -8,16 +8,15 @@
 <style>
 :root{color-scheme:dark;--bg:#0c141b;--panel:#121f29;--line:#2a414f;--text:#eaf3f7;--muted:#9db2bf;--accent:#6de0c7}
 *{box-sizing:border-box}html,body,#map{width:100%;height:100%;margin:0}body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text)}#map{position:absolute;inset:0}
-.panel{position:absolute;z-index:4;top:10px;right:10px;width:min(355px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;background:#101c25f5;border:1px solid var(--line);border-radius:14px;padding:13px;box-shadow:0 10px 35px #0006;backdrop-filter:blur(12px)}
-.panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}.panel-head h1{min-width:0;overflow-wrap:anywhere}.panel-toggle{flex:0 0 auto;background:#203641;color:var(--text);border:1px solid #395663;border-radius:7px;padding:6px 9px;font:inherit;font-size:11px;cursor:pointer;max-width:100%;white-space:normal}.panel.collapsed{max-height:calc(100dvh - 20px);overflow:hidden}.panel.collapsed .intro,.panel.collapsed .section,.panel.collapsed #status,.panel.collapsed #info{display:none}.layer{min-width:0;max-width:100%;overflow-wrap:anywhere}.layer input{margin-inline-end:0}.actions{min-width:0;max-width:100%}.actions .btn{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;flex:1 1 auto}#layerList{min-width:0;max-width:100%}
+.panel{position:absolute;z-index:4;top:10px;right:10px;width:min(355px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow:auto;background:#101c25f5;border:1px solid var(--line);border-radius:14px;padding:13px;box-shadow:0 10px 35px #0006;backdrop-filter:blur(12px)}
 h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var(--muted);margin-bottom:10px}.section{border-top:1px solid var(--line);padding-top:9px;margin-top:9px}.section-title{font-weight:750;color:var(--accent);font-size:12px;margin-bottom:7px}.layer{display:flex;gap:8px;align-items:flex-start;font-size:12px;line-height:1.4;margin:7px 0}.layer input{accent-color:var(--accent);width:16px;height:16px;flex:0 0 auto;margin:1px 0 0}.meta{font-size:10px;color:var(--muted);line-height:1.6;overflow-wrap:anywhere}.status{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;font-size:11px;line-height:1.5;overflow-wrap:anywhere}.error{color:#ffd6d6}.actions{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.btn{background:#203641;color:var(--text);border:1px solid #395663;border-radius:7px;padding:7px 9px;font:inherit;font-size:11px;cursor:pointer}.btn:hover{border-color:var(--accent)}#info{display:none;margin-top:8px;padding:9px;background:#192c37;border-radius:8px;font-size:11px;line-height:1.6;overflow-wrap:anywhere}.attribution{position:absolute;bottom:8px;left:8px;background:#101c25e8;padding:5px 8px;border-radius:6px;font-size:10px;z-index:2;direction:ltr}
-@media(max-width:560px){.panel{top:6px;right:6px;width:min(315px,calc(100vw - 12px));max-height:68dvh;padding:10px}.panel.collapsed{max-height:54px}h1{font-size:16px}.layer{font-size:11px;margin:6px 0}.actions .btn{flex:1 1 100%}}
+@media(max-width:560px){.panel{top:6px;right:6px;width:min(315px,calc(100vw - 12px));max-height:62dvh;padding:10px}h1{font-size:16px}.layer{font-size:11px;margin:6px 0}}
 </style>
 </head>
 <body>
 <div id="map" aria-label="خريطة بيانات مانيلا"></div>
 <section class="panel">
-<div class="panel-head"><h1>MANILA · DATA EXPLORER</h1><button class="panel-toggle" id="panelToggle" type="button" aria-expanded="true">طي اللوحة</button></div>
+<h1>MANILA · DATA EXPLORER</h1>
 <div class="intro">عارض تفاعلي لملفات البيانات الموجودة في مجلد Manila. فعّل الطبقات التي تريدها، واضغط على المعالم لمعرفة خصائصها. المباني تستخدم ارتفاعات render_height عندما تكون متوفرة.</div>
 <div class="section">
 <div class="section-title">الخريطة الأساسية</div>
@@ -77,7 +76,7 @@ function setVisibility(ids,on){ids.forEach(id=>{if(map.getLayer(id))map.setLayou
 function featurePopup(e){const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};let rows=Object.entries(p).slice(0,35).map(([k,v])=>'<div><b>'+escapeHtml(k)+'</b>: '+escapeHtml(typeof v==='object'?JSON.stringify(v):v??'')+'</div>').join('');info.style.display='block';info.innerHTML='<b>خصائص المعلم</b>'+rows;new maplibregl.Popup({maxWidth:'340px'}).setLngLat(e.lngLat).setHTML('<div style="direction:ltr;text-align:left;max-height:260px;overflow:auto">'+rows+'</div>').addTo(map)}
 function addCheckbox(def){
 const [key,label,file,color,kind]=def;const wrap=document.createElement('label');wrap.className='layer';
-const cb=document.createElement('input');cb.type='checkbox';cb.checked=false;wrap.append(cb,document.createTextNode(label+' · '+file));list.append(wrap);checkboxes.set(key,cb);
+const cb=document.createElement('input');cb.type='checkbox';cb.checked=key==='building';wrap.append(cb,document.createTextNode(label+' · '+file));list.append(wrap);checkboxes.set(key,cb);
 cb.addEventListener('change',async()=>{try{await loadLayer(def,cb.checked)}catch(e){status.className='status error';status.textContent='فشل تحميل '+file+': '+e.message;cb.checked=false}});
 }
 async function loadLayer(def,on){
@@ -123,8 +122,7 @@ for(const l of map.getStyle().layers||[]){if(baseBuildings.includes(l.id))contin
 document.getElementById('home').addEventListener('click',()=>map.flyTo({center:[120.982,14.585],zoom:13,pitch:26,bearing:0,duration:900}));
 document.getElementById('allOn').addEventListener('click',async()=>{for(const d of defs){const cb=checkboxes.get(d[0]);cb.checked=true;try{await loadLayer(d,true)}catch(e){status.className='status error';status.textContent='تعذر تحميل '+d[2]+': '+e.message;cb.checked=false}}});
 document.getElementById('allOff').addEventListener('click',()=>{for(const d of defs){const cb=checkboxes.get(d[0]);cb.checked=false;if(loaded.has(d[0]))setVisibility(loaded.get(d[0]),false)}status.textContent='تم إيقاف طبقات البيانات الإضافية.'});
-status.textContent='الخريطة جاهزة. مباني الخريطة الأساسية ظاهرة؛ أوقفت تحميل طبقة building.geojsonl الإضافية تلقائيًا مؤقتًا لأنها تعرض هندسة غير متطابقة في بعض المواقع. يمكنك تفعيلها يدويًا بعد تصحيح ملف المصدر.';
-document.getElementById('panelToggle').addEventListener('click',()=>{const panel=document.querySelector('.panel');const collapsed=panel.classList.toggle('collapsed');const btn=document.getElementById('panelToggle');btn.textContent=collapsed?'عرض اللوحة':'طي اللوحة';btn.setAttribute('aria-expanded',String(!collapsed));});
+status.textContent='الخريطة جاهزة؛ جارٍ تحميل طبقة المباني تلقائيًا…';loadLayer(defs[0],true).catch(e=>{status.className='status error';status.textContent='تعذر تحميل طبقة المباني: '+e.message;});
 });
 for(const [id,file] of [['csv1','buildings-part1.csv'],['csv2','buildings-part2.csv'],['csv3','buildings-part1-enriched.csv.gz'],['csv4','buildings-part2-enriched.csv.gz']]){
 document.getElementById(id).addEventListener('change',e=>{const u='Manila/layers/'+file;document.getElementById('csvInfo').innerHTML=e.target.checked?'الملف: <a style="color:var(--accent)" target="_blank" rel="noopener" href="'+u+'">'+file+'</a>':'تم إخفاء رابط '+file;});
