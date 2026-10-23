@@ -1,5 +1,5 @@
 {
-  "status": "running",
+  "status": "completed",
   "pipeline": "multimodal-rag",
   "pipeline_version": 1,
   "source_tiles_root": "Manila/vector-tiles",
@@ -7,7 +7,7 @@
   "map_html_modified": false,
   "tile_files_found": 141,
   "building_features_found": 1846,
-  "processed_buildings": 1738,
+  "processed_buildings": 1742,
   "retrieval_sources": [
     "repository CSV/JSON/GeoJSON",
     "KartaView",
@@ -21,9 +21,10 @@
   },
   "mode": "multimodal_model_enabled",
   "visual_analyses": 150,
-  "syntheses": 1738,
+  "syntheses": 1742,
   "errors": [],
   "external_tile_queries": 51,
   "review_required": 0,
-  "records_with_images": 394
+  "records_with_images": 394,
+  "completed_at_utc": "2026-10-23T16:25:20Z"
 }
