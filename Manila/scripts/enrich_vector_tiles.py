@@ -55,8 +55,12 @@ session = requests.Session()
 session.headers.update({"User-Agent": USER_AGENT, "Accept": "application/json"})
 
 
-def explicit_osm_way_id(properties: dict[str, Any]) -> int | None:
-    """Return only a clearly labelled OSM way ID; never guess from a tile feature ID."""
+def explicit_osm_way_id(properties: dict[str, Any], feature_id: Any = None) -> int | None:
+    """Get a labelled OSM way ID, or test the vector feature ID against live OSM.
+
+    Feature IDs are treated only as candidates: they are enriched only if Overpass
+    confirms that the exact numeric ID is an existing OSM way.
+    """
     for key in ("osm_id", "osm_way_id", "osm_wayid", "way_id"):
         value = properties.get(key)
         if value is None:
@@ -67,7 +71,11 @@ def explicit_osm_way_id(properties: dict[str, Any]) -> int | None:
             continue
         if value > 0:
             return value
-    return None
+    try:
+        candidate = int(str(feature_id).strip())
+    except (TypeError, ValueError):
+        return None
+    return candidate if candidate > 0 else None
 
 
 def get_osm_tags(ids: list[int]) -> dict[int, dict[str, str]]:
@@ -137,7 +145,7 @@ def main() -> int:
                     continue
                 for feature in layer.get("features", []):
                     props = feature.get("properties") or {}
-                    osm_id = explicit_osm_way_id(props)
+                    osm_id = explicit_osm_way_id(props, feature.get("id"))
                     if osm_id is not None:
                         tile_ids.add(osm_id)
             ids_by_tile[path] = tile_ids
@@ -152,8 +160,8 @@ def main() -> int:
     )
     if not all_ids:
         print(
-            "No building features contain an explicit osm_id/osm_way_id/way_id property. "
-            "For safety, no tiles will be rewritten; the script will not guess from feature IDs."
+            "No numeric OSM candidate IDs were found on building features. "
+            "For safety, no tiles will be rewritten."
         )
         return 0
 
@@ -174,7 +182,7 @@ def main() -> int:
                 props = feature.get("properties")
                 if not isinstance(props, dict):
                     continue
-                osm_id = explicit_osm_way_id(props)
+                osm_id = explicit_osm_way_id(props, feature.get("id"))
                 if osm_id is None:
                     continue
                 tags = osm_tags.get(osm_id)
