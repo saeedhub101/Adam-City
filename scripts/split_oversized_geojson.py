@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path("complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts")
 SOURCE = ROOT / "part-001.geojson"
 OUT = ROOT / "part-001-readable-parts"
-TARGET_BYTES = 2 * 1024 * 1024
+TARGET_BYTES = 512 * 1024
 
 def sha256(data):
     return hashlib.sha256(data).hexdigest()
@@ -38,7 +38,11 @@ def main():
     raw = SOURCE.read_bytes()
     text = raw.decode("utf-8")
     OUT.mkdir(parents=True, exist_ok=True)
-    features = list(extract_features(text))
+    features = []
+    for feature in extract_features(text):
+        if len(feature) > TARGET_BYTES:
+            feature = json.dumps(json.loads(feature), ensure_ascii=False, indent=2).encode("utf-8")
+        features.append(feature)
     chunks, current, current_bytes = [], [], 0
     for feature in features:
         if current and current_bytes + len(feature) + 1 > TARGET_BYTES:
@@ -54,7 +58,7 @@ def main():
 
     entries = []
     for index, group in enumerate(chunks, 1):
-        data = b'{"type":"FeatureCollection","features":[' + b",".join(group) + b"]}"
+        data = b'{"type":"FeatureCollection","features":[\n' + b",\n".join(group) + b"\n]}"
         path = OUT / f"part-{index:03d}.geojson"
         path.write_bytes(data)
         parsed = json.loads(data)
