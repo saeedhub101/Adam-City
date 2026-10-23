@@ -1,0 +1,80 @@
+name: Merge Manila GeoJSON regions
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Manila/New_Manila/region_0[1-6].geojson"
+      - ".github/workflows/merge-manila-regions.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: merge-manila-geojson-main
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Merge actual GeoJSON FeatureCollections
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path("Manila/New_Manila")
+          groups = [(1, 2), (3, 4), (5, 6)]
+          for a, b in groups:
+              inputs = [root / f"region_{n:02d}.geojson" for n in (a, b)]
+              collections = []
+              features = []
+              for path in inputs:
+                  with path.open("r", encoding="utf-8") as f:
+                      data = json.load(f)
+                  if data.get("type") != "FeatureCollection" or not isinstance(data.get("features"), list):
+                      raise ValueError(f"{path} is not a valid GeoJSON FeatureCollection")
+                  collections.append(data)
+                  features.extend(data["features"])
+
+              output = {
+                  "type": "FeatureCollection",
+                  "name": f"Manila_Buildings_Region_{a:02d}_{b:02d}",
+                  "metadata": {
+                      "merged_from": [p.name for p in inputs],
+                      "region_numbers": [a, b],
+                      "feature_count": len(features),
+                      "source_feature_counts": [len(c["features"]) for c in collections],
+                      "coordinate_system": "WGS84 (EPSG:4326)"
+                  },
+                  "features": features
+              }
+              target = root / f"region_{a:02d}_{b:02d}.geojson"
+              target.write_text(json.dumps(output, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+              check = json.loads(target.read_text(encoding="utf-8"))
+              expected = sum(len(c["features"]) for c in collections)
+              if len(check["features"]) != expected:
+                  raise ValueError(f"Feature count mismatch in {target}: {len(check['features'])} != {expected}")
+              print(f"{target}: {len(check['features'])} features; source counts {[len(c['features']) for c in collections]}")
+
+          PY
+
+      - name: Commit merged files if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Manila/New_Manila/region_01_02.geojson Manila/New_Manila/region_03_04.geojson Manila/New_Manila/region_05_06.geojson
+          if git diff --cached --quiet; then
+            echo "Merged GeoJSON files are already up to date."
+          else
+            git commit -m "Merge Manila GeoJSON regions 1-2, 3-4, and 5-6"
+            git push origin main
+          fi
