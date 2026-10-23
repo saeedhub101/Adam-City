@@ -156,17 +156,12 @@ function addRegionButton(group,index){
    if(!entry){
     status.className='status';
     status.textContent='جارٍ تحميل ودمج GeoJSON للمناطق '+label+'…';
-    const parts=await Promise.all(group.map(async n=>{
-     const filename='region_'+String(n).padStart(2,'0')+'.geojson';
-     const url=newManilaRoot+filename;
-     const response=await fetch(url);
-     if(!response.ok)throw new Error('HTTP '+response.status+' عند قراءة '+filename);
-     const data=await response.json();
-     if(!data||data.type!=='FeatureCollection'||!Array.isArray(data.features))throw new Error(filename+' ليس FeatureCollection صالحاً');
-     return data.features;
-    }));
-    const features=parts.flat();
-    const merged={type:'FeatureCollection',name:'Manila_Buildings_Merged_'+label.replace('+','_'),features};
+    const filename='region_'+group.map(n=>String(n).padStart(2,'0')).join('_')+'.geojson';
+    const response=await fetch(newManilaRoot+filename);
+    if(!response.ok)throw new Error('HTTP '+response.status+' عند قراءة ملف الدمج '+filename);
+    const merged=await response.json();
+    if(!merged||merged.type!=='FeatureCollection'||!Array.isArray(merged.features))throw new Error(filename+' ليس FeatureCollection صالحاً');
+    const features=merged.features;
     const sourceId='new-manila-region-'+group.map(n=>String(n).padStart(2,'0')).join('-');
     map.addSource(sourceId,{type:'geojson',data:merged});
     const layerId=sourceId+'-buildings-3d';
@@ -190,7 +185,7 @@ function addRegionButton(group,index){
    status.className='status';
    status.textContent=(on?'تم عرض ':'تم إخفاء ')+'مباني المجموعة '+label+' — '+entry.count.toLocaleString()+' معلمًا.';
    info.style.display='block';
-   info.innerHTML='<b>المجموعة '+label+'</b><div>الملفات المدمجة للعرض: '+group.map(n=>'region_'+String(n).padStart(2,'0')+'.geojson').join(' + ')+'</div><div>عدد المعالم: '+entry.count.toLocaleString()+'</div>';
+   info.innerHTML='<b>المجموعة '+label+'</b><div>ملف GeoJSON الفعلي: '+'region_'+group.map(n=>String(n).padStart(2,'0')).join('_')+'.geojson'+'</div><div>عدد المعالم: '+entry.count.toLocaleString()+'</div>';
   }catch(error){
    status.className='status error';
    status.textContent='تعذر تحميل المجموعة '+label+': '+error.message;
@@ -200,7 +195,7 @@ function addRegionButton(group,index){
  areaButtons.appendChild(button);
 }
 regionGroups.forEach((group,index)=>addRegionButton(group,index));
-areasSummary.textContent='7 مجموعات: 05+06، 04+03، 01+02، ثم 07 و08 و09 و10. كل زر يعرض الملفات المحددة معاً.';
+areasSummary.textContent='7 مجموعات: 05+06، 04+03، 01+02، ثم 07 و08 و09 و10. المجموعات المدمجة تقرأ من ملفات GeoJSON موحدة.';
 document.getElementById('toggleVector').addEventListener('click',()=>{const body=document.getElementById('vectorBody'),collapsed=body.classList.toggle('is-collapsed');document.getElementById('toggleVector').textContent=collapsed?'+':'−';document.getElementById('toggleVector').setAttribute('aria-expanded',String(!collapsed));});
 map.on('load',()=>{
 fetch('Manila/3d-rag/apply-report.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(r=>{const el=document.getElementById('applySummary');el.innerHTML='<b>حالة التطبيق:</b> '+escapeHtml(r.status||'غير معروف')+'<br><b>بلاطات PBF التي تغيرت:</b> '+escapeHtml(r.changed_tile_count??'—')+' / '+escapeHtml(r.pbf_files_scanned??'—')+'<br><b>المباني التي تغيرت خصائصها:</b> '+escapeHtml(r.changed_building_features??'—')+'<br><b>الخصائص التي طُبقت:</b> '+escapeHtml(r.changed_property_count??'—')+'<br><b>الهندسة والإحداثيات:</b> لم تتغير<br><a style="color:var(--accent)" href="Manila/3d-rag/apply-report.json" target="_blank" rel="noopener">فتح التقرير الكامل</a>';}).catch(e=>{document.getElementById('applySummary').textContent='تعذر تحميل تقرير التطبيق: '+e.message});
@@ -211,7 +206,7 @@ document.getElementById('baseMap').addEventListener('change',e=>{
 for(const l of map.getStyle().layers||[]){if(baseBuildings.includes(l.id))continue;if(l.type==='background')continue;if(map.getLayer(l.id))map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}
 });
 document.querySelectorAll('#areaButtons .area-btn').forEach(button=>button.disabled=false);
-status.textContent='الخريطة جاهزة؛ اختر أحد أزرار ✓ 01–✓ 10 لعرض مباني GeoJSON.';
+status.textContent='الخريطة جاهزة؛ اختر إحدى مجموعات GeoJSON لعرض المباني.';
 });
 map.on('error',e=>{if(e.error)console.warn('MapLibre',e.error.message)});
 })();
