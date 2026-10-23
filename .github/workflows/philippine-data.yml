@@ -5,7 +5,6 @@ on:
   push:
     branches: [main]
     paths:
-      - 'Philippine/**'
       - 'scripts/aggregate_philippine_data.py'
       - '.github/workflows/philippine-data.yml'
 
