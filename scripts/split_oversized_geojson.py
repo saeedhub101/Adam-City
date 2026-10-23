@@ -54,7 +54,7 @@ def break_long_feature_lines(feature, interval=1000):
             elif c == ord(","):
                 commas += 1
                 if commas % interval == 0:
-                    out.append(ord("\\n"))
+                    out.append(10)
     return bytes(out)
 
 def main():
