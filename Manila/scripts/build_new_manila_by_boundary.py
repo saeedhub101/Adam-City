@@ -109,7 +109,7 @@ def main() -> None:
             z, tx, ty = map(int, path.relative_to(SOURCE).with_suffix("").parts[-3:])
             # Use tile center as a fallback for features without geometry so data is not lost.
             tile_lon = ((tx + 0.5) / (2 ** z)) * 360.0 - 180.0
-            tile_lat = math.degrees(math.atan(math.sinh(math.pi * (1 - 2 * (ty + 0.5) / (2 ** z))))
+            tile_lat = math.degrees(math.atan(math.sinh(math.pi * (1 - 2 * (ty + 0.5) / (2 ** z)))))
             fallback_group = assign_group(tile_lon, tile_lat, boundaries)
             for layer_name, layer in decoded.items():
                 extent = int(layer.get("extent", 4096))
