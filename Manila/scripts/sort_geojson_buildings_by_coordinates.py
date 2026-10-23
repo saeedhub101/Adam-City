@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """One-time grouping of GeoJSON building features into geographic coordinate cells.
-Run identifier: 2026-10-23-coordinate-grouping-v2.
+Run identifier: 2026-10-23-coordinate-grouping-v3.
 """
 from __future__ import annotations
 import json, math

@@ -8,16 +8,24 @@ permissions:
   contents: write
 concurrency:
   group: one-time-manila-coordinate-grouping
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   group-buildings:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
-      - name: Checkout main
+      - name: Checkout only required source data
         uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 1
+          sparse-checkout: |
+            Manila/GeoJSON_Source
+            Manila/scripts/sort_geojson_buildings_by_coordinates.py
+            Manila/scripts/convert_pbf_to_geojson.py
+            .github/workflows/convert-manila-pbf-to-geojson.yml
+            .github/workflows/sort-manila-geojson-buildings.yml
+          sparse-checkout-cone-mode: false
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
