@@ -1,11 +1,11 @@
 {
   "status": "running",
   "tile_files_found": 141,
-  "tiles_processed": 80,
-  "tiles_changed": 1,
+  "tiles_processed": 81,
+  "tiles_changed": 2,
   "decode_errors": 0,
-  "buildings_seen": 1,
-  "render_properties_added": 2,
+  "buildings_seen": 2,
+  "render_properties_added": 4,
   "kartaview_queries": 0,
   "kartaview_photos_found": 0,
   "buildings_with_nearby_photos": 0,
@@ -92,7 +92,8 @@
     "Manila/vector-tiles/13/6846/3759.pbf",
     "Manila/vector-tiles/13/6846/3760.pbf",
     "Manila/vector-tiles/13/6846/3761.pbf",
-    "Manila/vector-tiles/13/6846/3762.pbf"
+    "Manila/vector-tiles/13/6846/3762.pbf",
+    "Manila/vector-tiles/13/6847/3758.pbf"
   ],
   "note": "KartaView metadata is a photo reference only; sign placement/appearance needs visual confirmation."
 }
