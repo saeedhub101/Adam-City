@@ -34,6 +34,29 @@ def extract_features(raw_text):
         i = end
     raise ValueError("Unterminated features array")
 
+def break_long_feature_lines(feature, interval=1000):
+    out = bytearray()
+    in_string = False
+    escaped = False
+    commas = 0
+    for c in feature:
+        out.append(c)
+        if in_string:
+            if escaped:
+                escaped = False
+            elif c == ord("\\"):
+                escaped = True
+            elif c == ord('"'):
+                in_string = False
+        else:
+            if c == ord('"'):
+                in_string = True
+            elif c == ord(","):
+                commas += 1
+                if commas % interval == 0:
+                    out.append(ord("\\n"))
+    return bytes(out)
+
 def main():
     raw = SOURCE.read_bytes()
     text = raw.decode("utf-8")
@@ -41,7 +64,7 @@ def main():
     features = []
     for feature in extract_features(text):
         if len(feature) > TARGET_BYTES:
-            feature = json.dumps(json.loads(feature), ensure_ascii=False, indent=2).encode("utf-8")
+            feature = break_long_feature_lines(feature)
         features.append(feature)
     chunks, current, current_bytes = [], [], 0
     for feature in features:
