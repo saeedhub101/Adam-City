@@ -7,7 +7,7 @@ from typing import Any
 import mapbox_vector_tile, requests
 
 ROOT=Path(__file__).resolve().parents[1]; REPO=ROOT.parent; TILES=ROOT/"vector-tiles"; OUT=ROOT/"3d-rag"
-DATA=OUT/"building-evidence.jsonl"; REPORT=OUT/"progress-report.json"; CATALOG=OUT/"retrieval-catalog.jsonl"
+DATA=OUT/"building-evidence.jsonl"; REPORT=OUT/"progress-report.json"; CATALOG_DIR=OUT/"retrieval-catalog"; CATALOG_PART_BYTES=20*1024*1024
 KV="https://api.openstreetcam.org/1.0/list/nearby-photos/"; COMMONS="https://commons.wikimedia.org/w/api.php"; WIKI="https://en.wikipedia.org/w/api.php"
 KEY=os.getenv("OPENAI_API_KEY","").strip(); VISION=os.getenv("RAG_VISION_MODEL","gpt-4.1-mini"); SYNTH=os.getenv("RAG_SYNTHESIS_MODEL","gpt-4.1")
 RADIUS=int(os.getenv("RAG_PHOTO_RADIUS_M","500")); MAX_IMAGES=int(os.getenv("RAG_MAX_IMAGES_PER_BUILDING","4")); MAX_VISION=int(os.getenv("RAG_MAX_VISION_BUILDINGS","150")); BATCH=max(1,int(os.getenv("RAG_CHECKPOINT_EVERY","10")))
@@ -98,8 +98,17 @@ def local_index(bs):
     elif isinstance(obj,list):idx.extend(local_record(rel,r) for r in obj if isinstance(r,dict))
   except (OSError,UnicodeDecodeError,json.JSONDecodeError,csv.Error):continue
  OUT.mkdir(parents=True,exist_ok=True)
- with CATALOG.open("w",encoding="utf-8") as f:
-  for r in idx:f.write(json.dumps(r,ensure_ascii=False,separators=(",",":"))+"\n")
+ CATALOG_DIR.mkdir(parents=True,exist_ok=True)
+ for stale in CATALOG_DIR.glob("part-*.jsonl"): stale.unlink()
+ part_no=1; part_bytes=0; catalog_file=None
+ for r in idx:
+  line=(json.dumps(r,ensure_ascii=False,separators=(",",":"))+"\\n").encode("utf-8")
+  if catalog_file is None or (part_bytes and part_bytes+len(line)>CATALOG_PART_BYTES):
+   if catalog_file: catalog_file.close()
+   catalog_file=(CATALOG_DIR/f"part-{part_no:04d}.jsonl").open("wb"); part_no+=1; part_bytes=0
+  catalog_file.write(line); part_bytes+=len(line)
+ if catalog_file: catalog_file.close()
+ print(f"Repository retrieval catalog written in {part_no-1} part(s), each limited to about 20 MiB",flush=True)
  matches={}
  for b in bs:
   c=b["center"]; rank=[]
@@ -194,9 +203,9 @@ def checkpoint(records,report,push=False):
   for k in sorted(records):f.write(json.dumps(records[k],ensure_ascii=False,separators=(",",":"))+"\n")
  REPORT.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
  if not push:return
- rel=[str(DATA.relative_to(REPO)),str(REPORT.relative_to(REPO)),str(CATALOG.relative_to(REPO))]
+ rel=[str(DATA.relative_to(REPO)),str(REPORT.relative_to(REPO)),str(CATALOG_DIR.relative_to(REPO))]
  def git(args,check=True):return subprocess.run(["git",*args],cwd=REPO,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,check=check)
- git(["add","--",*rel])
+ git(["add","-A","--",*rel])
  if git(["diff","--cached","--quiet"],False).returncode==0:return
  git(["config","user.name","github-actions[bot]"]);git(["config","user.email","41898282+github-actions[bot]@users.noreply.github.com"])
  git(["commit","-m","Checkpoint Manila multimodal RAG evidence"])
