@@ -1,16 +1,12 @@
-name: Adam-City — validate and deploy existing assets
+name: Publish Manila page
 
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - 'ermita/maps/sources/openfreemap/building-fallback.geojson'
-      - 'ermita/maps/sources/openfreemap/ground-fallback.geojson'
-      - 'complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-enhanced.geojson'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -19,144 +15,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Fetch committed pages and assets only
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Assemble static page and its existing data files
         shell: bash
         run: |
           set -euo pipefail
-          git init .
-          git remote add origin https://github.com/saeedhub101/Adam-City.git
-          git -c protocol.version=2 fetch --depth=1 --filter=blob:none origin main
-          git sparse-checkout init --no-cone
-          git sparse-checkout set --no-cone --stdin <<'EOF'
-          /test.html
-          /manila/manila.html
-          /manila/manila-view.html
-          /manila/generate_roxas_enhanced_geojson.py
-          /manila/enrich_ermita_master_data.py
-          /manila/manila/
-          /ermita-malate-3d.html
-          /google-photorealistic-3d-tiles.html
-          /complete_data/OSM/data/
-          /complete_data/OSM/quality/building-height-evidence.csv
-          /ermita/3d/building-match-audit.csv
-          /ermita/3d/facade-photo-review.csv
-          /ermita/maps/generated/ermita-building-details.csv
-          /ermita/maps/qa/consolidated-building-register.csv
-          /ermita/stores/brand-building-match-audit.csv
-          /kartaview/ermita-real-facade-images.csv
-          /ermita/assets/textures/Painted-CMU-Block-Architextures.jpeg
-          /ermita/maps/sources/openfreemap/vector-tiles/
-          /ermita/maps/sources/openfreemap/building-fallback.geojson
-          /ermita/maps/sources/openfreemap/ground-fallback.geojson
-          /ermita/maps/generated/ermita-building-details.geojson
-          /ermita/3d/exports/adam-city-complete.glb
-          /ermita/3d/terrain/ermita-copernicus-dem-cropped.tif
-          /ermita/3d/generated/ermita-buildings-facade-details.glb
-          /ermita/3d/generated/facade-details-report.json
-          /ermita/3d/generated/facade-model-origin.json
-          /ermita/3d/generated/facade-signage-index.csv
-          /ermita/3d/landmarks/
-          EOF
-          git switch -C main FETCH_HEAD
-
-      - name: Enrich Ermita master CSV and GeoJSON from repository metadata and evidence
-        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'Run Ermita master enrichment')
-        shell: bash
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          python -m pip install --disable-pip-version-check shapely pyproj
-          python manila/enrich_ermita_master_data.py
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add manila/manila/ermita-buildings-master.csv manila/manila/ermita-buildings-master.parts/part-001.geojson manila/manila/ermita-buildings-master.parts/part-002.geojson manila/manila/ermita-master-enrichment-report.json
-          if git diff --cached --quiet; then
-            echo "Master enrichment produced no new changes."
-          else
-            git commit -m "Enrich Ermita master data from exact internal IDs"
-            git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/saeedhub101/Adam-City.git"
-            git push origin HEAD:main
-          fi
-
-      - name: Reuse or generate and commit Roxas Boulevard GeoJSON
-        shell: bash
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          OUTPUT="complete_data/OSM/data/buildings/roxas-boulevard/roxas-boulevard-enhanced.geojson"
-          if [[ ! -s "$OUTPUT" ]]; then
-            python -m pip install --disable-pip-version-check shapely pyproj
-            python manila/generate_roxas_enhanced_geojson.py
-            test -s "$OUTPUT"
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add "$OUTPUT"
-            git commit -m "Add precomputed Roxas Boulevard enhancement GeoJSON"
-            git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/saeedhub101/Adam-City.git"
-            git push origin HEAD:main
-          else
-            echo "Reusing committed Roxas Boulevard GeoJSON."
-          fi
-          test -s "$OUTPUT"
-
-      - name: Assemble site from committed assets and precomputed GeoJSON
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -s test.html
-          test -s ermita-malate-3d.html
-          test -s google-photorealistic-3d-tiles.html
-
-          mkdir -p site/complete_data/OSM/data site/ermita/maps/sources/openfreemap site/ermita/maps/generated
-          mkdir -p site/manila/manila
-          mkdir -p site/ermita/3d/exports site/ermita/3d/terrain site/ermita/3d/generated site/ermita/3d/landmarks
-          mkdir -p site/ermita/assets/textures
-
-          cp test.html site/test.html
-          cp manila/manila.html site/manila/manila.html
-          cp manila/manila-view.html site/manila/manila-view.html
-          cp -a manila/manila/. site/manila/manila/
-          cp ermita-malate-3d.html site/ermita-malate-3d.html
-          cp google-photorealistic-3d-tiles.html site/google-photorealistic-3d-tiles.html
-          cp -a complete_data/OSM/data/. site/complete_data/OSM/data/
-          cp -a ermita/maps/sources/openfreemap/vector-tiles site/ermita/maps/sources/openfreemap/
-          cp ermita/maps/sources/openfreemap/building-fallback.geojson site/ermita/maps/sources/openfreemap/
-          cp ermita/maps/sources/openfreemap/ground-fallback.geojson site/ermita/maps/sources/openfreemap/
-          cp ermita/maps/generated/ermita-building-details.geojson site/ermita/maps/generated/
-          cp ermita/3d/exports/adam-city-complete.glb site/ermita/3d/exports/
-          cp ermita/3d/terrain/ermita-copernicus-dem-cropped.tif site/ermita/3d/terrain/
-          cp ermita/3d/generated/ermita-buildings-facade-details.glb site/ermita/3d/generated/
-          cp ermita/3d/generated/facade-details-report.json site/ermita/3d/generated/
-          cp ermita/3d/generated/facade-model-origin.json site/ermita/3d/generated/
-          cp ermita/3d/generated/facade-signage-index.csv site/ermita/3d/generated/
-          cp -a ermita/3d/landmarks/. site/ermita/3d/landmarks/
-          cp ermita/assets/textures/Painted-CMU-Block-Architextures.jpeg site/ermita/assets/textures/
-
-          # Validate existing assets only. This workflow intentionally does not create or modify GLBs.
-          test -s site/complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb
-          test -s site/complete_data/OSM/data/buildings/Ermita/Parts1.glb
-          test -s site/complete_data/OSM/data/buildings/Ermita/Parts2.glb
-          test -s site/complete_data/OSM/data/buildings/Ermita/Parts3.glb
-          test -s site/complete_data/OSM/data/buildings/Ermita/Parts4.glb
-          test -s site/ermita/maps/sources/openfreemap/building-fallback.geojson
-          test -s site/ermita/maps/sources/openfreemap/ground-fallback.geojson
-          test -s site/ermita/3d/exports/adam-city-complete.glb
-          test -s site/ermita/3d/generated/ermita-buildings-facade-details.glb
-          test -s site/ermita/3d/landmarks/landmark-facade-details.glb
-
-          printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=test.html"><title>Adam-City</title><a href="test.html">Open Adam-City preview</a></html>' > site/index.html
-          echo "Validated committed assets and reused the persisted Roxas Boulevard GeoJSON. No GLB generation was performed."
-          du -sh site
-          find site -type f -name '*.pbf' | wc -l
+          test -s manila.html
+          test -s Manila/layers/building.geojsonl
+          mkdir -p site/Manila/layers site/Manila/vector-tiles
+          cp manila.html site/manila.html
+          cp -a Manila/layers/. site/Manila/layers/
+          cp -a Manila/vector-tiles/. site/Manila/vector-tiles/
+          printf '%s\\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=manila.html"><title>Manila</title><a href="manila.html">Open Manila</a></html>' > site/index.html
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -166,6 +44,6 @@ jobs:
         with:
           path: site
 
-      - name: Deploy existing assets
+      - name: Publish page
         id: deployment
         uses: actions/deploy-pages@v4
