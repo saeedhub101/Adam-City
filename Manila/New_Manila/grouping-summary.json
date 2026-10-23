@@ -1,0 +1,14 @@
+{
+  "status": "completed",
+  "source_directory": "Manila/GeoJSON_Source",
+  "output_directory": "Manila/New_Manila",
+  "source_geojson_tiles_read": 141,
+  "source_features_scanned": 207321,
+  "building_features_found": 1846,
+  "building_features_grouped": 1846,
+  "building_features_without_geometry": 0,
+  "coordinate_groups_created": 1088,
+  "cell_size_degrees": 0.001,
+  "source_geojson_modified": false,
+  "note": "Only the exact source layer 'building' is included. Other layers remain untouched in GeoJSON_Source. Repeated features across zoom levels/tiles are preserved, not deduplicated."
+}
