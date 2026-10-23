@@ -12,7 +12,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: philippine-data-consolidation
+  # Do not let an older stuck run block the newest run; each run keeps its own slot.
+  group: philippine-data-consolidation-${{ github.run_id }}
   cancel-in-progress: false
 
 jobs:
