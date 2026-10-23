@@ -85,7 +85,7 @@ def save_chunks(kind,records):
             s=io.StringIO(newline=""); w=csv.DictWriter(s,fieldnames=fields,extrasaction="ignore"); w.writeheader(); w.writerows(items)
             (folder/f"Philippine{i:02d}.{ext}").write_text(s.getvalue(),encoding="utf-8")
 
-files=list(sources()); print("Input files:",len(files),flush=True)
+files=list(sources()); print("Philippine consolidation started; chunk target bytes:",LIMIT,flush=True); print("Input files:",len(files),flush=True)
 for i,(kind,path) in enumerate(files,1):
     rel=path.relative_to(ROOT).as_posix()
     try:
