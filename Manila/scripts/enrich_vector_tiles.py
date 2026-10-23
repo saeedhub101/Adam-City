@@ -220,15 +220,28 @@ def main() -> int:
     if not paths:
         print(f"No PBF files found in {TILES_ROOT}", file=sys.stderr)
         return 2
-    report: dict[str, Any] = {
-        "status": "running", "tile_files_found": len(paths), "tiles_processed": 0,
-        "tiles_changed": 0, "decode_errors": 0, "buildings_seen": 0,
-        "render_properties_added": 0, "kartaview_queries": 0, "kartaview_photos_found": 0,
-        "buildings_with_nearby_photos": 0, "geometry_changed": False,
-        "osm_api_used": False, "kartaview_requires_api_key": False,
-        "note": "KartaView metadata is a photo reference only; sign placement/appearance needs visual confirmation.",
-    }
     plan = load_plan()
+    prior: dict[str, Any] = {}
+    if REPORT_PATH.exists():
+        try:
+            prior = json.loads(REPORT_PATH.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            prior = {}
+    if prior.get("status") == "running" and prior.get("completed_tiles"):
+        report = prior
+        report["tile_files_found"] = len(paths)
+        print("Resuming from the last durable checkpoint.", flush=True)
+    else:
+        report = {
+            "status": "running", "tile_files_found": len(paths), "tiles_processed": 0,
+            "tiles_changed": 0, "decode_errors": 0, "buildings_seen": 0,
+            "render_properties_added": 0, "kartaview_queries": 0, "kartaview_photos_found": 0,
+            "buildings_with_nearby_photos": 0, "geometry_changed": False,
+            "osm_api_used": False, "kartaview_requires_api_key": False,
+            "completed_tiles": [],
+            "note": "KartaView metadata is a photo reference only; sign placement/appearance needs visual confirmation.",
+        }
+    report["status"] = "running"
     REPORT_PATH.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Starting {len(paths)} PBF tiles; checkpoint after every tile; workflow limit is 6 hours.", flush=True)
 
