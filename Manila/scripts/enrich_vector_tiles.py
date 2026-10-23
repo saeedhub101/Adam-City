@@ -224,7 +224,7 @@ def add_pbf_detail_layers(decoded: dict[str, Any]) -> int:
         if not pts: continue
         cx = sum(p[0] for p in pts) / len(pts); cy = sum(p[1] for p in pts) / len(pts)
         if uid not in roof_ids:
-            roofs["features"].append({"id": feature.get("id", i), "type": "Feature", "properties": {"building_uid": uid, "detail_kind": "roof_surface", "roof_color": props.get("render_roof_color") or props.get("roof:colour") or props.get("building:colour") or "#a99b89", "roof_material": props.get("render_roof_material") or props.get("roof:material") or "unknown", "source_geometry_preserved": True}, "geometry": json.loads(json.dumps(geom))})
+            roofs["features"].append({"id": feature.get("id", i), "type": "Feature", "properties": {"building_uid": uid, "detail_kind": "roof_surface", "roof_color": props.get("render_roof_color") or props.get("roof:colour") or props.get("building:colour") or "#a99b89", "roof_material": props.get("render_roof_material") or props.get("roof:material") or "unknown", "roof_height": props.get("render_height") or props.get("height") or 5, "roof_base": props.get("render_min_height") or props.get("min_height") or 0, "source_geometry_preserved": True}, "geometry": json.loads(json.dumps(geom))})
             roof_ids.add(uid); added += 1
         commercial = bool(props.get("shop") or props.get("brand") or props.get("operator") or props.get("render_sign_candidate"))
         if commercial and uid not in sign_ids:
@@ -265,13 +265,13 @@ def main() -> int:
             prior = json.loads(REPORT_PATH.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
             prior = {}
-    if prior.get("status") == "running" and prior.get("completed_tiles"):
+    if prior.get("pipeline_version") == 2 and prior.get("status") == "running" and prior.get("completed_tiles"):
         report = prior
         report["tile_files_found"] = len(paths)
         print("Resuming from the last durable checkpoint.", flush=True)
     else:
         report = {
-            "status": "running", "tile_files_found": len(paths), "tiles_processed": 0,
+            "status": "running", "pipeline_version": 2, "tile_files_found": len(paths), "tiles_processed": 0,
             "tiles_changed": 0, "decode_errors": 0, "buildings_seen": 0,
             "render_properties_added": 0, "kartaview_queries": 0, "kartaview_photos_found": 0,
             "buildings_with_nearby_photos": 0, "geometry_changed": False,
@@ -280,6 +280,7 @@ def main() -> int:
             "note": "KartaView metadata is a photo reference only; sign placement/appearance needs visual confirmation.",
         }
     report["status"] = "running"
+    report["pipeline_version"] = 2
     REPORT_PATH.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Starting {len(paths)} PBF tiles; checkpoint after every tile; workflow limit is 6 hours.", flush=True)
 
