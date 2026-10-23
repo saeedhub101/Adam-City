@@ -1,0 +1,42 @@
+name: Manila multimodal RAG building evidence
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "Manila/scripts/multimodal_rag_pipeline.py"
+      - ".github/workflows/manila-multimodal-rag.yml"
+
+permissions:
+  contents: write
+
+# Queue behind the existing Manila enrichment run; do not cancel active work.
+concurrency:
+  group: manila-3d-enrichment
+  cancel-in-progress: false
+
+jobs:
+  rag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout main with full history for durable checkpoints
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install tile parser and HTTP client
+        run: python -m pip install --disable-pip-version-check mapbox-vector-tile requests
+      - name: Retrieve evidence, run vision and synthesis models, and checkpoint
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          RAG_VISION_MODEL: gpt-4.1-mini
+          RAG_SYNTHESIS_MODEL: gpt-4.1
+          RAG_MAX_VISION_BUILDINGS: "150"
+          RAG_CHECKPOINT_EVERY: "10"
+        run: python -u Manila/scripts/multimodal_rag_pipeline.py
