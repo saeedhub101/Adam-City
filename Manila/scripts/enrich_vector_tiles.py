@@ -131,8 +131,8 @@ def main() -> int:
             )
             decoded_tiles[path] = decoded
             tile_ids: set[int] = set()
-            for layer in decoded.values():
-                layer_name = str(layer.get("name", "")).lower()
+            for layer_name, layer in decoded.items():
+                layer_name = str(layer_name).lower()
                 if layer_name not in ("building", "buildings"):
                     continue
                 for feature in layer.get("features", []):
@@ -167,8 +167,8 @@ def main() -> int:
 
     for path, decoded in decoded_tiles.items():
         tile_changed = False
-        for layer in decoded.values():
-            if str(layer.get("name", "")).lower() not in ("building", "buildings"):
+        for layer_name, layer in decoded.items():
+            if str(layer_name).lower() not in ("building", "buildings"):
                 continue
             for feature in layer.get("features", []):
                 props = feature.get("properties")
@@ -198,9 +198,9 @@ def main() -> int:
         if tile_changed:
             # Re-encode all original layers; geometry and tile-local coordinates are preserved.
             layer_list = []
-            for layer in decoded.values():
+            for layer_name, layer in decoded.items():
                 layer_list.append({
-                    "name": layer["name"],
+                    "name": layer_name,
                     "features": layer.get("features", []),
                     "extent": layer.get("extent", 4096),
                     "version": layer.get("version", 2),
