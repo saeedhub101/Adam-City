@@ -32,6 +32,8 @@ jobs:
           python-version: "3.12"
       - name: Install tile parser and HTTP client
         run: python -m pip install --disable-pip-version-check mapbox-vector-tile requests
+      - name: Validate pipeline syntax
+        run: python -m py_compile Manila/scripts/multimodal_rag_pipeline.py
       - name: Retrieve evidence, run vision and synthesis models, and checkpoint
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
