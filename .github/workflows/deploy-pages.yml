@@ -10,6 +10,7 @@ on:
       - 'Manila/layers/**'
       - 'Manila/vector-tiles/**'
       - 'Manila/buildings-by-boundary/**'
+      - 'Manila/3d-rag/apply-report.json'
   workflow_dispatch:
 
 permissions:
@@ -40,12 +41,14 @@ jobs:
           test -s manila.html
           test -s manila-bundry.html
           test -s Manila/buildings-by-boundary/summary.csv
-          mkdir -p site/Manila/layers site/Manila/vector-tiles site/Manila/buildings-by-boundary
+          mkdir -p site/Manila/layers site/Manila/vector-tiles site/Manila/buildings-by-boundary site/Manila/3d-rag
           cp manila.html site/manila.html
           cp manila-bundry.html site/manila-bundry.html
           cp -a Manila/layers/. site/Manila/layers/
           cp -a Manila/vector-tiles/. site/Manila/vector-tiles/
           cp -a Manila/buildings-by-boundary/. site/Manila/buildings-by-boundary/
+          test -s Manila/3d-rag/apply-report.json
+          cp Manila/3d-rag/apply-report.json site/Manila/3d-rag/apply-report.json
           touch site/.nojekyll
           printf '%s' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=manila.html"><title>Manila</title><a href="manila.html">Open Manila</a></html>' > site/index.html
 
