@@ -40,7 +40,7 @@ jobs:
           test -d Manila/vector-tiles
           pbf_count="$(find Manila/vector-tiles -type f -name '*.pbf' | wc -l)"
           test "$pbf_count" -gt 0
-          mkdir -p site/Manila/vector-tiles site/Manila/3d-rag
+          test -s ermita/maps/generated/ermita-building-details.geojson\n          mkdir -p site/Manila/vector-tiles site/Manila/3d-rag site/ermita/maps/generated
           cp manila.html site/manila.html
           cp manila-bundry.html site/manila-bundry.html
           cp -a Manila/vector-tiles/. site/Manila/vector-tiles/
