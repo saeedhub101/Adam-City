@@ -67,8 +67,6 @@ def main():
                     run(["osmium", "tags-filter", str(src), *selectors, "-o", str(filtered), "--overwrite"])
                     run(["osmium", "export", str(filtered), "-o", str(raw), "--overwrite"])
                     raw_bytes = raw.stat().st_size
-                    if raw_bytes >= LIMIT:
-                        raise RuntimeError(f"uncompressed GeoJSON exceeds safe 90 MB limit ({raw_bytes} bytes); requires spatial partitioning")
                     with raw.open("r", encoding="utf-8") as f:
                         geo = json.load(f)
                     if geo.get("type") != "FeatureCollection" or not isinstance(geo.get("features"), list):
