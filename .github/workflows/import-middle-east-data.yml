@@ -35,11 +35,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-          fetch-depth: 1
-          sparse-checkout: |
-            middle east
-            .github/workflows/import-middle-east-data.yml
-          sparse-checkout-cone-mode: true
+          fetch-depth: 0
 
       - name: Install OSM PBF tools
         run: |
@@ -112,6 +108,27 @@ jobs:
           LIMIT = 90_000_000
           count = 0
           total_bytes = 0
+          def persist_tile(path):
+              subprocess.run(["git", "add", "--", path], check=True)
+              commit = subprocess.run(["git", "-c", "user.name=github-actions[bot]", "-c",
+                  "user.email=41898282+github-actions[bot]@users.noreply.github.com",
+                  "commit", "-m", "Checkpoint imported OSM tile " + os.path.basename(path)])
+              if commit.returncode not in (0, 1):
+                  raise RuntimeError("Failed to commit completed tile " + path)
+              if commit.returncode == 1:
+                  return
+              for attempt in range(3):
+                  subprocess.run(["git", "fetch", "origin", "main"], check=True)
+                  rb = subprocess.run(["git", "rebase", "origin/main"])
+                  if rb.returncode:
+                      subprocess.run(["git", "rebase", "--abort"], check=False)
+                      if attempt == 2: raise RuntimeError("Tile checkpoint rebase failed")
+                      continue
+                  pu = subprocess.run(["git", "push", "origin", "HEAD:main"])
+                  if pu.returncode == 0:
+                      print("CHECKPOINT_SAVED_TILE", os.path.basename(path), flush=True)
+                      return
+              raise RuntimeError("Tile checkpoint push failed: " + path)
           def extract(bbox, name, depth=0):
               global count, total_bytes
               out = os.path.join(outdir, name + ".osm.pbf")
@@ -119,7 +136,7 @@ jobs:
               size = os.path.getsize(out)
               if size >= LIMIT:
                   os.remove(out)
-                  if depth >= 5:
+                  if depth >= 7:
                       raise RuntimeError("Unable to keep tile under 90 MB: " + name)
                   w,s,e,n = map(float,bbox.split(","))
                   mx,my=(w+e)/2,(s+n)/2
@@ -131,10 +148,12 @@ jobs:
               subprocess.run(["osmium","fileinfo",out],stdout=subprocess.DEVNULL,check=True)
               count += 1
               total_bytes += size
-              print(f"VALID_TILE {name} {size} bytes bbox={bbox}")
+              print(f"VALID_TILE {name} {size} bytes bbox={bbox}", flush=True)
+              persist_tile(out)
           # Cover the geographic extent of the source with manageable 0.5-degree
           # cells. The source itself is a combined Israel+Palestine extract.
-          lat0, lat1, lon0, lon1 = 29.0, 33.5, 34.0, 36.0
+          # Broaden coverage to the western coast and northern source extent.
+          lat0, lat1, lon0, lon1 = 29.0, 34.0, 33.0, 36.5
           step = 0.5
           r=0
           lat=lat0
@@ -152,7 +171,9 @@ jobs:
           PY
 
             git add "$tile_dir" "$status"
-            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Import spatially split Middle East OSM tiles' || true
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Finalize Middle East OSM tile manifest' || true
+            git fetch origin main
+            git rebase origin/main
             git push origin HEAD:main
           done
 
@@ -166,7 +187,9 @@ jobs:
           python3 'middle east/scripts/import-landmark-photos.py' || echo '::warning::Wikimedia Commons photo import had failures; see logs and retry.'
           git add -A 'middle east'
           git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Build local Jordan and Palestine thematic OSM layers' || true
-          git push origin HEAD:main || echo '::warning::Local thematic layer updates could not be pushed; inspect the import logs.'
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
           
       - name: Preserve original combined source as temporary artifact
         if: always()
@@ -195,4 +218,6 @@ jobs:
           done
           git add 'middle east'
           git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Ensure Middle East regional data folders exist' || true
-          git push origin HEAD:main || echo '::warning::Could not push regional folder updates.'
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
