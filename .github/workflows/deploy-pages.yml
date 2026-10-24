@@ -9,7 +9,8 @@ on:
       - 'test.html'
       - 'ermita-malate-3d.html'
       - 'ermita/**'
-      - 'complete_data/OSM/data/**'\n      - 'complete_data/OSM/Markets/robinsons-place-facade-details.js'
+      - 'complete_data/OSM/data/**'
+      - 'complete_data/OSM/Markets/robinsons-place-facade-details.js'
       - 'ermita/maps/sources/openfreemap/building-fallback.geojson'
       - 'manila-bundry.html'
       - 'Manila/vector-tiles/**'
@@ -55,7 +56,16 @@ jobs:
           if [ -f manila.html ]; then cp manila.html site/manila.html; else echo "WARNING: manila.html is missing"; fi
           if [ -f test.html ]; then cp test.html site/test.html; else echo "ERROR: test.html is missing"; exit 1; fi
           if [ -f ermita-malate-3d.html ]; then cp ermita-malate-3d.html site/ermita-malate-3d.html; else echo "ERROR: ermita-malate-3d.html is missing"; exit 1; fi
-          if [ -d ermita ]; then cp -a ermita/. site/ermita/; else echo "ERROR: ermita assets directory is missing"; exit 1; fi\n\n          # Publish the standalone Robinsons facade-detail module used by test.html.\n          mkdir -p site/complete_data/OSM/Markets\n          if [ -s complete_data/OSM/Markets/robinsons-place-facade-details.js ]; then\n            cp complete_data/OSM/Markets/robinsons-place-facade-details.js site/complete_data/OSM/Markets/\n          else\n            echo "ERROR: Robinsons facade-detail module is missing or empty"\n            exit 1\n          fi
+          if [ -d ermita ]; then cp -a ermita/. site/ermita/; else echo "ERROR: ermita assets directory is missing"; exit 1; fi
+
+          # Publish the standalone Robinsons facade-detail module used by test.html.
+          mkdir -p site/complete_data/OSM/Markets
+          if [ -s complete_data/OSM/Markets/robinsons-place-facade-details.js ]; then
+            cp complete_data/OSM/Markets/robinsons-place-facade-details.js site/complete_data/OSM/Markets/
+          else
+            echo "ERROR: Robinsons facade-detail module is missing or empty"
+            exit 1
+          fi
           # Publish only OSM files actually referenced by manila.html. Copying the
           # entire source-data tree made the Pages artifact exceed GitHub's 1 GB limit.
           enhanced_src='complete_data/OSM/data/buildings/Ermita/enhanced'
