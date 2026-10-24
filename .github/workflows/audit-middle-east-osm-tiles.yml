@@ -1,0 +1,41 @@
+name: Audit Middle East OSM tile integrity
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'middle east/scripts/audit-osm-tiles.py'
+      - '.github/workflows/audit-middle-east-osm-tiles.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: middle-east-osm-tile-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Install osmium
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y osmium-tool
+      - name: Validate every saved tile and count OSM objects
+        run: python3 'middle east/scripts/audit-osm-tiles.py'
+      - name: Save integrity report to main
+        if: always()
+        run: |
+          set -euo pipefail
+          git add 'middle east/Palestine/reports/tile-integrity-report.json'
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Audit persisted Middle East OSM tiles' || true
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
