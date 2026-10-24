@@ -1,0 +1,96 @@
+name: Import Middle East free map data
+
+on:
+  workflow_dispatch:
+    inputs:
+      country:
+        description: Country dataset to process
+        type: choice
+        options: [both, jordan, palestine]
+        default: both
+      retry_failed:
+        description: Retry tasks not marked complete
+        type: boolean
+        default: true
+  schedule:
+    - cron: '30 1 * * 0'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: middle-east-import
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Prepare folders
+        run: mkdir -p 'middle east/Jordan' 'middle east/Palestine'
+      - name: Fetch and persist free OSM extracts
+        env:
+          COUNTRY: ${{ inputs.country || 'both' }}
+          RETRY_FAILED: ${{ inputs.retry_failed || 'true' }}
+        shell: bash
+        run: |
+          set +e
+          ROOT='middle east'
+          declare -A URL TARGET REGIONS
+          URL[jordan]='https://download.geofabrik.de/asia/jordan-latest.osm.pbf'
+          URL[palestine]='https://download.geofabrik.de/asia/israel-and-palestine-latest.osm.pbf'
+          TARGET[jordan]="$ROOT/Jordan/osm/jordan-latest.osm.pbf"
+          TARGET[palestine]="$ROOT/Palestine/osm/israel-and-palestine-latest.osm.pbf"
+          REGIONS[jordan]='amman irbid zarqa maan karak petra aqaba deadsea mafraq jerash ajloun madaba salt tafileh'
+          REGIONS[palestine]='jerusalem ramallah nablus jenin tulkarm qalqilya salfit jericho bethlehem hebron gaza north-gaza deir-al-balah khan-younis rafah tiberias'
+          if [ "$COUNTRY" = both ]; then COUNTRIES=(jordan palestine); else COUNTRIES=("$COUNTRY"); fi
+          for c in "${COUNTRIES[@]}"; do
+            dest="${TARGET[$c]}"; country="${c^}"
+            mkdir -p "$(dirname "$dest")" "$ROOT/$country/metadata" "$ROOT/$country/reports" "$ROOT/$country/openfreetile" "$ROOT/$country/openfreemap" "$ROOT/$country/terrain"
+            status="$ROOT/$country/metadata/import-status.json"
+            if [ -s "$dest" ] && [ "$RETRY_FAILED" != true ]; then echo "Existing file retained: $dest"; continue; fi
+            tmp="$dest.part"
+            echo "Downloading $c from ${URL[$c]}"
+            curl -fL --retry 4 --retry-all-errors --retry-delay 5 --connect-timeout 30 --max-time 2400 "${URL[$c]}" -o "$tmp"
+            rc=$?
+            if [ "$rc" -eq 0 ] && [ -s "$tmp" ]; then
+              bytes=$(stat -c%s "$tmp")
+              if [ "$bytes" -ge 90000000 ]; then
+                echo "Extract >=90 MB; do not commit an oversized Git blob. Keep as workflow artifact for manual review."
+                mkdir -p "$ROOT/$country/reports"
+                mv "$tmp" "$ROOT/$country/reports/$c-extract-too-large-for-git.pbf"
+                printf '{"task":"%s-osm-extract","status":"too_large_for_git","bytes":%s,"url":"%s"}\n' "$c" "$bytes" "${URL[$c]}" > "$status"
+              else
+                mv "$tmp" "$dest"; sha=$(sha256sum "$dest" | cut -d' ' -f1)
+                printf '{"task":"%s-osm-extract","status":"complete","url":"%s","bytes":%s,"sha256":"%s","retrieved_utc":"%s","license":"OpenStreetMap ODbL"}\n' "$c" "${URL[$c]}" "$bytes" "$sha" "$(date -u +%FT%TZ)" > "$status"
+              fi
+            else
+              rm -f "$tmp"; printf '{"task":"%s-osm-extract","status":"failed","url":"%s","time":"%s"}\n' "$c" "${URL[$c]}" "$(date -u +%FT%TZ)" > "$status"
+              echo "::warning::OSM download failed for $c; continuing to next country."
+            fi
+            git add "$ROOT/$country"; git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m "Import Middle East OSM extract: $c" || true
+            git push origin HEAD:main || echo '::warning::Could not push progress commit; continuing.'
+          done
+          # Region folders are initialized independently of source-download success.
+          for c in "${COUNTRIES[@]}"; do
+            country="${c^}"
+            for region in ${REGIONS[$c]}; do
+              d="$ROOT/$country/regions/$region"
+              mkdir -p "$d/osm" "$d/openfreetile" "$d/openfreemap" "$d/terrain" "$d/metadata" "$d/reports"
+              if [ ! -f "$d/README.md" ]; then printf '# %s — %s\n\nDestination only; data is complete only after source download, integrity check and coverage report.\n' "$c" "$region" > "$d/README.md"; fi
+            done
+            git add "$ROOT/$country/regions"; git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m "Initialize Middle East region folders: $c" || true
+            git push origin HEAD:main || echo '::warning::Could not push regional progress.'
+          done
+      - name: Explain source coverage
+        if: always()
+        run: |
+          echo 'Country OSM extracts are not separate municipal exports.'
+          echo 'Palestine source currently includes Israel and Palestine; the filename and manifest make this explicit.'
+          echo 'Hosted OpenFreeMap tiles remain remote; they are not represented as a local bulk archive.'
+          echo 'Failures are warnings and do not stop subsequent country tasks.'
