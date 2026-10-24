@@ -37,14 +37,22 @@ jobs:
               original="complete_data/OSM/data/buildings/Ermita/Parts${part}.glb"
               extra="complete_data/OSM/data/buildings/Ermita/Parts${part}-extra.glb"
               report="complete_data/OSM/data/buildings/Ermita/enhanced/part${part}-integrated-report.json"
+              manifest="complete_data/OSM/data/buildings/Ermita/enhanced/part${part}-regions.json"
               for f in "$original" "$extra"; do
                 if [ -f "$f" ]; then
                   size=$(stat -c%s "$f")
                   if [ "$size" -ge 99614720 ]; then echo "Unsafe file size: $f ($size)"; failed=1; fi
                 fi
               done
-              git add "$original" "$report"
-              if [ -f "$extra" ]; then git add "$extra"; else git rm --ignore-unmatch "$extra"; fi
+              git add "$original" "$report" "$manifest"
+              for region in complete_data/OSM/data/buildings/Ermita/Parts${part}-region-*.glb; do
+                if [ -f "$region" ]; then
+                  size=$(stat -c%s "$region")
+                  if [ "$size" -ge 99614720 ]; then echo "Unsafe file size: $region ($size)"; failed=1; fi
+                  git add "$region"
+                fi
+              done
+              if [ -f "$extra" ]; then git rm --ignore-unmatch "$extra"; fi
               if git diff --cached --quiet; then
                 echo "part${part}: no new changes to commit"
               else
