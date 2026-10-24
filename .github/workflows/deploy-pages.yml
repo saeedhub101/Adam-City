@@ -6,6 +6,10 @@ on:
     paths:
       - '.github/workflows/deploy-pages.yml'
       - 'manila.html'
+      - 'test.html'
+      - 'ermita-malate-3d.html'
+      - 'ermita/**'
+      - 'complete_data/OSM/data/**'
       - 'ermita/maps/sources/openfreemap/building-fallback.geojson'
       - 'manila-bundry.html'
       - 'Manila/vector-tiles/**'
@@ -49,12 +53,16 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p site/Manila/vector-tiles site/Manila/3d-rag
-          mkdir -p site/ermita/maps/sources/openfreemap site/complete_data/OFT/layers
+          mkdir -p site/ermita/maps/sources/openfreemap site/complete_data/OFT/layers site/complete_data/OSM/data
           geojson_dir='complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts'
           mkdir -p "site/$geojson_dir" site/complete_data/open-free-tile
 
           # Copy pages only when present; absent optional files should not fail publishing.
           if [ -f manila.html ]; then cp manila.html site/manila.html; else echo "WARNING: manila.html is missing"; fi
+          if [ -f test.html ]; then cp test.html site/test.html; else echo "ERROR: test.html is missing"; exit 1; fi
+          if [ -f ermita-malate-3d.html ]; then cp ermita-malate-3d.html site/ermita-malate-3d.html; else echo "ERROR: ermita-malate-3d.html is missing"; exit 1; fi
+          if [ -d ermita ]; then cp -a ermita/. site/ermita/; else echo "ERROR: ermita assets directory is missing"; exit 1; fi
+          if [ -d complete_data/OSM/data ]; then cp -a complete_data/OSM/data/. site/complete_data/OSM/data/; else echo "WARNING: OSM data directory is missing"; fi
           if [ -f manila-bundry.html ]; then cp manila-bundry.html site/manila-bundry.html; else echo "WARNING: manila-bundry.html is missing"; fi
 
           # Publish the exact OpenFreeMap GeoJSON path referenced by manila.html.
