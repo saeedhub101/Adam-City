@@ -30,12 +30,12 @@ import * as THREE from 'three';
   if(pts.length<3)throw Error('حدود المول غير صالحة');
   const shape=new THREE.Shape();shape.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<pts.length;i++)shape.lineTo(pts[i][0],pts[i][1]);shape.closePath();
   const group=new THREE.Group();
-  const concrete=new THREE.MeshStandardMaterial({color:0xd4d0c8,roughness:.84,metalness:.02});
-  const cream=new THREE.MeshStandardMaterial({color:0xe7dfd0,roughness:.78});
+  const concrete=new THREE.MeshStandardMaterial({color:0xd4d0c8,roughness:.84,metalness:.02,side:THREE.DoubleSide});
+  const cream=new THREE.MeshStandardMaterial({color:0xe7dfd0,roughness:.78,side:THREE.DoubleSide});
   const glass=new THREE.MeshStandardMaterial({color:0x31596b,roughness:.22,metalness:.25,side:THREE.DoubleSide});
   const darkGlass=new THREE.MeshStandardMaterial({color:0x1d3540,roughness:.2,metalness:.35,side:THREE.DoubleSide});
-  const red=new THREE.MeshStandardMaterial({color:0xb51228,roughness:.5});
-  const trim=new THREE.MeshStandardMaterial({color:0xb8b6b0,roughness:.5,metalness:.2});
+  const red=new THREE.MeshStandardMaterial({color:0xb51228,roughness:.5,side:THREE.DoubleSide});
+  const trim=new THREE.MeshStandardMaterial({color:0xb8b6b0,roughness:.5,metalness:.2,side:THREE.DoubleSide});
   // Main independent building mass; stepped volumes make the mall read as a single designed complex.
   const body=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:22,bevelEnabled:false,curveSegments:1}),concrete);body.position.z=0;group.add(body);
   const lower=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:5.2,bevelEnabled:false}),cream);lower.position.z=0.02;group.add(lower);
@@ -72,7 +72,7 @@ import * as THREE from 'three';
   }
   // Roof parapet and rooftop mechanical blocks give the silhouette a finished commercial-roof profile.
   const roof=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:.8,bevelEnabled:false}),cream);roof.position.z=22;group.add(roof);
-  const boxMat=new THREE.MeshStandardMaterial({color:0xb9b6ad,roughness:.9});
+  const boxMat=new THREE.MeshStandardMaterial({color:0xb9b6ad,roughness:.9,side:THREE.DoubleSide});
   const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
   for(let i=0;i<6;i++){const w=Math.max(3,(maxX-minX)*(.035+(i%2)*.012)),d=Math.max(3,(maxY-minY)*.035),h=1.8+(i%3)*.8;const b=new THREE.Mesh(new THREE.BoxGeometry(w,d,h),boxMat);b.position.set(minX+(maxX-minX)*(0.18+i*.125),minY+(maxY-minY)*(.28+(i%2)*.35),22.8+h/2);group.add(b);}
   group.traverse(o=>{if(o.isMesh){o.frustumCulled=false;o.renderOrder=10;}});return group;
@@ -87,9 +87,9 @@ import * as THREE from 'three';
    if(!mall)throw Error('لم يُعثر على حدود Robinsons Place Manila');
    const polys=polygonList(mall.geometry).sort((a,b)=>Math.abs(areaRing(b[0]))-Math.abs(areaRing(a[0])));const ring=polys[0]?.[0];if(!ring||ring.length<4)throw Error('مضلع المول غير صالح');
    const center=centroid(ring);model=build(ring,center);anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:center[0],lat:center[1]},0);scale=anchor.meterInMercatorCoordinateUnits();projectedScale=scale*Math.cos(center[1]*Math.PI/180);model.visible=toggle.checked;
-   map.addLayer({id:ID,type:'custom',renderingMode:'3d',onAdd(mapInstance,gl){renderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;camera=new THREE.Camera();scene=new THREE.Scene();scene.add(new THREE.AmbientLight(0xffffff,2.1));const l=new THREE.DirectionalLight(0xffffff,2.0);l.position.set(-40,-60,100).normalize();scene.add(l);scene.add(model);},render(gl,args){if(!renderer||!model||!model.visible)return;const matrix=args?.defaultProjectionData?.mainMatrix;if(!matrix)return;const values=Object.values(matrix);if(values.length!==16||values.some(v=>!Number.isFinite(Number(v))))return;const projection=new THREE.Matrix4().fromArray(values.map(Number)),transform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z).scale(new THREE.Vector3(projectedScale,-projectedScale,scale));camera.projectionMatrix.copy(projection).multiply(transform);camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();renderer.resetState();renderer.render(scene,camera);renderer.resetState();}});
-   map.moveLayer(ID);ready=true;loading=false;map.triggerRepaint();say('تم إنشاء نموذج Robinsons مستقل على الخريطة من حدود المول؛ فعّل/أخفِ الطبقة من مربع الاختيار.');
-  }catch(e){loading=false;if(error){error.style.display='block';error.textContent='فشل نموذج Robinsons المستقل: '+(e?.message||e);}say('تعذر تحميل نموذج Robinsons المستقل.');}
+   if(map.getLayer(ID))map.removeLayer(ID);\n   map.addLayer({id:ID,type:'custom',renderingMode:'3d',onAdd(mapInstance,gl){renderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;camera=new THREE.Camera();scene=new THREE.Scene();scene.add(new THREE.AmbientLight(0xffffff,2.1));const l=new THREE.DirectionalLight(0xffffff,2.0);l.position.set(-40,-60,100).normalize();scene.add(l);scene.add(model);},render(gl,args){if(!renderer||!model||!model.visible)return;const matrix=args?.defaultProjectionData?.mainMatrix;if(!matrix)return;const values=Object.values(matrix);if(values.length!==16||values.some(v=>!Number.isFinite(Number(v))))return;const projection=new THREE.Matrix4().fromArray(values.map(Number)),transform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z).scale(new THREE.Vector3(projectedScale,-projectedScale,scale));camera.projectionMatrix.copy(projection).multiply(transform);camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();renderer.resetState();renderer.render(scene,camera);renderer.resetState();}});
+   map.moveLayer(ID);ready=true;loading=false;map.triggerRepaint();say('Robinsons: تم بناء المجسم المستقل | boundary points='+ring.length+' | meshes='+model.children.length+' | layer='+ID);
+  }catch(e){loading=false;console.error('Robinsons rebuilt model failed',e);if(error){error.style.display='block';error.textContent='فشل نموذج Robinsons المستقل: '+(e?.stack||e?.message||e);}say('تعذر تحميل نموذج Robinsons المستقل؛ راجع رسالة الخطأ أعلاه.');}
  }
  function areaRing(r){let a=0;for(let i=0;i<r.length-1;i++)a+=r[i][0]*r[i+1][1]-r[i+1][0]*r[i][1];return Math.abs(a);}
  toggle.addEventListener('change',async()=>{if(toggle.checked){if(!ready)await ensure();else if(model){model.visible=true;map.triggerRepaint();}}else if(model){model.visible=false;map.triggerRepaint();say('تم إخفاء نموذج Robinsons المستقل.');}});
