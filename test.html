@@ -28,10 +28,10 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <label class="row"><input type="checkbox" id="osm-tags"> 3. tags — جدول الوسوم (بيانات وصفية وليست طبقة مكانية)</label>
 <label class="row"><input type="checkbox" id="roxas-boulevard-glb"> 4.1 Roxas Boulevard — مباني GLB (طبقة مستقلة)</label>
 <label class="row"><input type="checkbox" id="osm-roads" checked> 5. roads — الطرق وتفاصيل هندستها</label>
-<label class="row"><input type="checkbox" id="enhanced-glb-part-1"> 5.1 GLB محسن — الجزء 1 (مواد وواجهات ونوافذ)</label>
-<label class="row"><input type="checkbox" id="enhanced-glb-part-2"> 5.2 GLB محسن — الجزء 2 (مواد وواجهات ونوافذ)</label>
-<label class="row"><input type="checkbox" id="enhanced-glb-part-3"> 5.3 GLB محسن — الجزء 3 (مواد وواجهات ونوافذ)</label>
-<label class="row"><input type="checkbox" id="enhanced-glb-part-4"> 5.4 GLB محسن — الجزء 4 (مواد وواجهات ونوافذ)</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-1"> 5.1 GLB — الجزء 1 (مواد وواجهات ونوافذ)</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-2"> 5.2 GLB — الجزء 2 (مواد وواجهات ونوافذ)</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-3"> 5.3 GLB — الجزء 3 (مواد وواجهات ونوافذ)</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-4"> 5.4 GLB — الجزء 4 (مواد وواجهات ونوافذ)</label>
 <label class="row"><input type="checkbox" id="robinsons-enhancement"> Robinsons Place Manila — نموذج ثلاثي الأبعاد مستقل جديد</label>
 <label class="row"><input type="checkbox" id="osm-thematic"> 6. thematic — المتاجر والعلامات والتفاصيل الموضوعية</label>
 <label class="row"><input type="checkbox" id="osm-pedestrian"> 7. pedestrian — تفاصيل المشاة</label>
@@ -133,9 +133,8 @@ window.addEventListener("unhandledrejection",function(ev){
 
 
 <script type="module">
-/* Four independent comparison layers for the enhanced GLBs.
-   Reuse each original part's origin sidecar: the enhanced files preserve the
-   original part coordinate frame and add detail geometry without moving it. */
+/* Four independent GLB part layers. Load Parts1.glb–Parts4.glb directly.
+   Keep the existing origin sidecars and the same MapLibre/Three.js transform. */
 import * as THREE from 'three';
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.0/meshopt_decoder.module.js';
@@ -150,14 +149,14 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
   const map=await waitMap();
   for(let part=1;part<=4;part++) setupEnhancedPart(map,part);
  }catch(err){
-  if(errorBox){errorBox.style.display='block';errorBox.textContent='تعذر تجهيز طبقات GLB المحسنة: '+(err?.message||err);}
+  if(errorBox){errorBox.style.display='block';errorBox.textContent='تعذر تجهيز طبقات GLB: '+(err?.message||err);}
  }
  function setupEnhancedPart(map,part){
   const toggle=document.getElementById('enhanced-glb-part-'+part);
   const id='ermita-enhanced-building-glb-part-'+part;
   const base='complete_data/OSM/data/buildings/Ermita/';
   const manifestUrl=new URL(base+'enhanced/part'+part+'-regions.json',location.href).href;
-  const modelUrl=new URL(base+'enhanced/part'+part+'-roof-storefront-details.glb',location.href).href;
+  const modelUrl=new URL(base+'Parts'+part+'.glb',location.href).href;
   const originUrl=new URL(base+'part'+part+'/part'+part+'-origin.json',location.href).href;
   let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,meters=1,matrixWarned=false;
   const showError=err=>{
@@ -165,8 +164,8 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
    // Remove a partially loaded custom layer so retrying the checkbox cannot hit a duplicate-layer error.
    try{if(map.getLayer(id))map.removeLayer(id);}catch(_){}
    model=null;renderer=null;camera=null;scene=null;
-   if(errorBox){errorBox.style.display='block';errorBox.textContent='تعذر تحميل GLB المحسن الجزء '+part+': '+(err?.message||err);}
-   if(status)status.textContent='فشل تحميل GLB المحسن الجزء '+part+'. ألغِ التفعيل ثم أعده للمحاولة.';
+   if(errorBox){errorBox.style.display='block';errorBox.textContent='تعذر تحميل GLB الجزء '+part+': '+(err?.message||err);}
+   if(status)status.textContent='فشل تحميل GLB الجزء '+part+'. ألغِ التفعيل ثم أعده للمحاولة.';
   };
   async function ensureLayer(){
    if(ready||loading)return;loading=true;
@@ -224,7 +223,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
     if(!ready)await ensureLayer();
     else if(model){model.visible=true;map.triggerRepaint();}
    }else if(model){model.visible=false;map.triggerRepaint();}
-   if(!toggle.checked&&status)status.textContent='تم إخفاء GLB المحسن الجزء '+part+'.';
+   if(!toggle.checked&&status)status.textContent='تم إخفاء GLB الجزء '+part+'.';
   });
  }
 })();
