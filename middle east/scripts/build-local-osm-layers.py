@@ -58,7 +58,7 @@ def main():
                             with gzip.open(target, "rt", encoding="utf-8") as f:
                                 old_geo = json.load(f)
                             entry = json.loads(manifest.read_text(encoding="utf-8"))
-                            if old_geo.get("type") == "FeatureCollection" and entry.get("layer_version") == 5:
+                            if old_geo.get("type") == "FeatureCollection" and entry.get("layer_version") == 6:
                                 catalog["layers"].append({"country":country,"theme":theme,"path":target.as_posix(),**entry})
                                 print(f"SKIP verified {target}")
                                 continue
@@ -91,18 +91,18 @@ def main():
                             with gzip.open(part_path, "wt", encoding="utf-8", compresslevel=6) as part_out:
                                 json.dump(part_geo, part_out, ensure_ascii=False, separators=(",", ":"))
                             part_uncompressed = len(json.dumps(part_geo, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
-                            part_entry = {"layer_version":5,"country":country,"theme":theme,"path":part_path.as_posix(),"feature_count":len(part_geo["features"]),"compressed_bytes":part_path.stat().st_size,"uncompressed_bytes":part_uncompressed,"geometry_types":geometry_types,"source_file":str(src),"method":"osmium tags-filter + osmium export; lossless feature shards","license":"OpenStreetMap ODbL"}
+                            part_entry = {"layer_version":6,"country":country,"theme":theme,"path":part_path.as_posix(),"feature_count":len(part_geo["features"]),"compressed_bytes":part_path.stat().st_size,"uncompressed_bytes":part_uncompressed,"geometry_types":geometry_types,"source_file":str(src),"method":"osmium tags-filter + osmium export; lossless feature shards","license":"OpenStreetMap ODbL"}
                             if part_entry["compressed_bytes"] >= LIMIT:
                                 raise RuntimeError(f"shard exceeds safe 99 MB limit: {part_path}")
                             shard_records.append(part_entry)
                         if not shard_records:
                             raise RuntimeError("oversized layer could not be partitioned")
                         catalog["layers"].extend(shard_records)
-                        manifest.write_text(json.dumps({"layer_version":5,"country":country,"theme":theme,"sharded":True,"parts":shard_records}, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
+                        manifest.write_text(json.dumps({"layer_version":6,"country":country,"theme":theme,"sharded":True,"parts":shard_records}, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
                         print(f"IMPORTED {country}/{theme}: {len(geo['features'])} features in {len(shard_records)} shards")
                     else:
                         entry = {"feature_count":len(geo["features"]),"compressed_bytes":target_size,"uncompressed_bytes":raw_bytes,"geometry_types":geometry_types}
-                        record = {"layer_version":5,"country":country,"theme":theme,"source_file":str(src),"method":"osmium tags-filter + osmium export","license":"OpenStreetMap ODbL",**entry}
+                        record = {"layer_version":6,"country":country,"theme":theme,"source_file":str(src),"method":"osmium tags-filter + osmium export","license":"OpenStreetMap ODbL",**entry}
                         manifest.write_text(json.dumps(record, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
                         catalog["layers"].append({"country":country,"theme":theme,"path":target.as_posix(),**entry})
                         print(f"IMPORTED {country}/{theme}: {entry['feature_count']} features, {entry['compressed_bytes']} compressed bytes")
