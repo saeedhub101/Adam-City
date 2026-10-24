@@ -54,6 +54,54 @@ def split_by_size(items, part):
         pending.insert(0,group[:mid])
     return finished
 
+def add_embedded_windows(merged, part, ox, oy, bounds):
+    """Partition the existing window GLB triangles into each original part's local frame."""
+    win_path=ROOT/"complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb"
+    win_origin_path=ROOT/"complete_data/OSM/data/buildings/windows/facade-model-origin.json"
+    if not win_path.is_file() or not win_origin_path.is_file():
+        print("Existing windows GLB/origin missing; skipping embedded windows")
+        return 0
+    win_origin=json.loads(win_origin_path.read_text(encoding="utf-8"))
+    from pyproj import Transformer
+    wx,wy=Transformer.from_crs("EPSG:4326","EPSG:3857",always_xy=True).transform(
+        float(win_origin["longitude"]),float(win_origin["latitude"]))
+    altitude=float(win_origin.get("anchor_altitude_m",0))
+    xmin,xmax=float(bounds["min_x"]),float(bounds["max_x"])
+    ymin,ymax=float(bounds["min_y"]),float(bounds["max_y"])
+    win_scene=load_scene(win_path)
+    added=0
+    for node in list(win_scene.graph.nodes_geometry):
+        transform,geom_name=win_scene.graph.get(node)
+        source=win_scene.geometry[geom_name]
+        mesh=source.copy()
+        mesh.apply_transform(transform)
+        if not isinstance(mesh,trimesh.Trimesh) or len(mesh.faces)==0:
+            continue
+        # Mesh vertices are local EPSG:3857 metres around the windows origin.
+        global_xy=mesh.vertices[:,:2]+[wx,wy]
+        tri_centres=global_xy[mesh.faces].mean(axis=1)
+        keep=(tri_centres[:,0]>=xmin)&(tri_centres[:,0]<=xmax)&(tri_centres[:,1]>=ymin)&(tri_centres[:,1]<=ymax)
+        ids=keep.nonzero()[0]
+        if not len(ids):
+            continue
+        # Preserve the source material/UVs by extracting only the selected triangles.
+        try:
+            sub=mesh.submesh([ids],append=True,repair=False)
+            if isinstance(sub,list):
+                if not sub: continue
+                sub=sub[0]
+        except Exception:
+            sub=trimesh.Trimesh(vertices=mesh.vertices.copy(),faces=mesh.faces[ids],visual=mesh.visual,process=False)
+        if not isinstance(sub,trimesh.Trimesh) or not len(sub.faces):
+            continue
+        sub.vertices[:,0]+=wx-ox
+        sub.vertices[:,1]+=wy-oy
+        sub.vertices[:,2]+=altitude
+        merged.add_geometry(sub,node_name=f"embedded_windows_part{part}_{node}_{added}")
+        added+=1
+    print(f"part{part}: integrated windows geometry groups={added}")
+    return added
+
 def run(part):
     original=PARTS/f"Parts{part}.glb"
     overlay=PARTS/"enhanced"/f"part{part}-roof-storefront-details.glb"
@@ -72,15 +120,19 @@ def run(part):
     if not overlay.is_file():
         subprocess.run([sys.executable,str(GEN),"--part",str(part)],cwd=ROOT,check=True)
     base=load_scene(original); details=load_scene(overlay)
+    origin=json.loads((PARTS/f"part{part}"/f"part{part}-origin.json").read_text(encoding="utf-8"))
+    projected=origin.get("origin_projected_m") or {}
+    ox,oy=float(projected["x"]),float(projected["y"])
+    bounds=origin.get("bounds_epsg3857_m") or {}
     merged=trimesh.Scene()
-    # Keep original node transforms and geometry, then add overlay nodes. No original vertex
-    # positions are edited; export bakes scene graph transforms only when necessary.
+    # Keep original node transforms and geometry; preserve all original building coordinates.
     for node in list(base.graph.nodes_geometry):
         transform,geom_name=base.graph.get(node)
         merged.add_geometry(base.geometry[geom_name].copy(),node_name=f"original_{node}",transform=transform)
     for node in list(details.graph.nodes_geometry):
         transform,geom_name=details.graph.get(node)
         merged.add_geometry(details.geometry[geom_name].copy(),node_name=f"details_{node}",transform=transform)
+    window_groups=add_embedded_windows(merged,part,ox,oy,bounds)
     data=export_bytes(merged)
     outputs=[]
     if len(data)<LIMIT:
@@ -109,7 +161,7 @@ def run(part):
         temp.write_bytes(blob); os.replace(temp,target)
     report={"part":part,"original_file":str(original.relative_to(ROOT)),"merged_bytes":len(data),
             "outputs":[{"file":str(p.relative_to(ROOT)),"bytes":len(b),"meshes":len(load_scene(p).geometry)} for p,b in outputs],
-            "integrated_overlay":str(overlay.relative_to(ROOT)),"policy":"details integrated into original GLB scene; coordinates retained"}
+            "integrated_overlay":str(overlay.relative_to(ROOT)),"embedded_window_geometry_groups":window_groups,"policy":"roof/storefront details and matching existing window triangles integrated into original GLB scene; coordinates retained"}
     report_path.write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
     print(json.dumps(report,indent=2))
 
