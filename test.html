@@ -155,8 +155,8 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
   const toggle=document.getElementById('enhanced-glb-part-'+part);
   const id='ermita-enhanced-building-glb-part-'+part;
   const base='complete_data/OSM/data/buildings/Ermita/';
+  const manifestUrl=new URL(base+'enhanced/part'+part+'-regions.json',location.href).href;
   const modelUrl=new URL(base+'Parts'+part+'.glb',location.href).href;
-  const extraUrl=new URL(base+'Parts'+part+'-extra.glb',location.href).href;
   const originUrl=new URL(base+'part'+part+'/part'+part+'-origin.json',location.href).href;
   let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,projectedMeterScale=1,meterScale=1;
   const showError=err=>{
@@ -180,30 +180,29 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
       scene.add(new THREE.AmbientLight(0xffffff,2.0));
       const light=new THREE.DirectionalLight(0xffffff,2.0);light.position.set(0,-70,100).normalize();scene.add(light);
       const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
-      loader.load(modelUrl,gltf=>{
-       model=new THREE.Group();model.add(gltf.scene);model.position.set(0,0,0);model.scale.set(1,1,1);scene.add(model);
-       model.visible=!!toggle.checked;
-       let meshCount=0;model.traverse(o=>{if(o.isMesh)meshCount++;});
-       // Any size-split continuation is another piece of the same finished building GLB,
-       // not a detached detail layer. Missing continuation means this part fits in one file.
-       loader.load(extraUrl,extra=>{
-        if(model)model.add(extra.scene);
-        let totalMeshes=0;if(model)model.traverse(o=>{if(o.isMesh)totalMeshes++;});
-        if(status)status.textContent='تم تحميل المباني المحسنة للجزء '+part+' | meshes='+totalMeshes+' | '+(model.visible?'ظاهر':'مخفي');
-        mapInstance.triggerRepaint();
-       },undefined,extraErr=>{
-        console.info('No split continuation for part '+part,extraErr);
-        if(status)status.textContent='تم تحميل ملف المباني المحسن للجزء '+part+' | meshes='+meshCount+' | '+(model.visible?'ظاهر':'مخفي');
-       });
-       ready=true;loading=false;
-       window['adamEnhancedPart'+part+'Ready']=true;
-       window['adamSetEnhancedPart'+part+'Visible']=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
-       if(status)status.textContent='تم تحميل GLB الجزء '+part+' | meshes='+meshCount+' | '+(model.visible?'ظاهر':'مخفي');
-       mapInstance.triggerRepaint();
-      },progress=>{
-       if(status)status.textContent=progress.total?'تحميل GLB المحسن الجزء '+part+': '+Math.round(progress.loaded/progress.total*100)+'%':
-        'جارٍ تنزيل GLB المحسن الجزء '+part+' ('+Math.round(progress.loaded/1048576)+' MiB)…';
-      },showError);
+      model=new THREE.Group();model.position.set(0,0,0);model.scale.set(1,1,1);scene.add(model);
+      model.visible=!!toggle.checked;
+      const addRegion=(entry,index,total)=>{
+       const regionUrl=new URL(base+entry.file,location.href).href;
+       loader.load(regionUrl,gltf=>{
+        if(model)model.add(gltf.scene);
+        if(index===total-1){
+         let meshCount=0;if(model)model.traverse(o=>{if(o.isMesh)meshCount++;});
+         ready=true;loading=false;
+         window['adamEnhancedPart'+part+'Ready']=true;
+         window['adamSetEnhancedPart'+part+'Visible']=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
+         if(status)status.textContent='تم تحميل الجزء '+part+' مقسماً جغرافياً إلى '+total+' مناطق | meshes='+meshCount+' | '+(model.visible?'ظاهر':'مخفي');
+         mapInstance.triggerRepaint();
+        }
+       },progress=>{
+        if(status)status.textContent='تحميل الجزء '+part+' — المنطقة '+(index+1)+'/'+total+': '+(progress.total?Math.round(progress.loaded/progress.total*100)+'%':Math.round(progress.loaded/1048576)+' MiB');
+       },err=>showError(err));
+      };
+      fetch(manifestUrl).then(res=>{if(!res.ok)throw new Error('Regions manifest HTTP '+res.status);return res.json();})
+       .then(manifest=>{
+        if(!Array.isArray(manifest.regions)||!manifest.regions.length)throw new Error('ملف تقسيم المناطق فارغ');
+        manifest.regions.forEach((entry,index)=>addRegion(entry,index,manifest.regions.length));
+       }).catch(err=>showError(err));
      },
      render(gl,args){
       if(!renderer||!model||!model.visible)return;
