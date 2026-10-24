@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - ".github/workflows/generate-roof-storefront-glb.yml"
       - "complete_data/OSM/scripts/apply_details_to_original_glbs.py"
       - "complete_data/OSM/scripts/generate_roof_storefront_overlays.py"
       - "ermita/maps/generated/ermita-building-footprints.geojson"
@@ -50,7 +49,19 @@ jobs:
                 echo "part${part}: no new changes to commit"
               else
                 git commit -m "Improve original building GLB part ${part}"
-                git push origin HEAD:main
+                pushed=0
+                for attempt in 1 2 3; do
+                  git fetch origin main
+                  git rebase origin/main
+                  if git push origin HEAD:main; then pushed=1; break; fi
+                  echo "Push attempt ${attempt} failed; retrying after refreshing main"
+                  sleep 2
+                done
+                if [ "$pushed" -ne 1 ]; then
+                  echo "Could not checkpoint part ${part} to main after 3 attempts"
+                  failed=1
+                  git rebase --abort || true
+                fi
               fi
               echo "part${part}: saved checkpoint"
             else
