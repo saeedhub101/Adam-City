@@ -8,10 +8,10 @@
 <style>
 :root{color-scheme:dark;--bg:#0c141b;--panel:#121f29;--line:#2a414f;--text:#eaf3f7;--muted:#9db2bf;--accent:#6de0c7}
 *{box-sizing:border-box}html,body,#map{width:100%;height:100%;margin:0}body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text)}#map{position:absolute;inset:0}
-.panel{position:absolute;z-index:4;top:10px;right:10px;width:min(355px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow:auto;background:#101c25f5;border:1px solid var(--line);border-radius:14px;padding:13px;box-shadow:0 10px 35px #0006;backdrop-filter:blur(12px)}
+.panel{position:absolute;z-index:4;top:10px;right:10px;width:min(355px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow:auto;background:#101c25f5;border:1px solid var(--line);border-radius:14px;padding:13px;box-shadow:0 10px 35px #0006;backdrop-filter:blur(12px);transition:height .22s ease,max-height .22s ease}.panel.panel-short{height:30dvh;max-height:30dvh}
 h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var(--muted);margin-bottom:10px}.section{border-top:1px solid var(--line);padding-top:9px;margin-top:9px}.section-title{font-weight:750;color:var(--accent);font-size:12px;margin-bottom:7px}.layer{display:flex;gap:8px;align-items:flex-start;font-size:12px;line-height:1.4;margin:7px 0}.layer input{accent-color:var(--accent);width:16px;height:16px;flex:0 0 auto;margin:1px 0 0}.meta{font-size:10px;color:var(--muted);line-height:1.6;overflow-wrap:anywhere}.status{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;font-size:11px;line-height:1.5;overflow-wrap:anywhere}.error{color:#ffd6d6}.btn{background:#203641;color:var(--text);border:1px solid #395663;border-radius:7px;padding:7px 9px;font:inherit;font-size:11px;cursor:pointer}.btn:hover{border-color:var(--accent)}#info{display:none;margin-top:8px;padding:9px;background:#192c37;border-radius:8px;font-size:11px;line-height:1.6;overflow-wrap:anywhere}
 .part-toggle{display:flex;gap:9px;align-items:center;margin:9px 0;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:#142630;cursor:pointer;font-size:12px}.part-toggle input{appearance:none;-webkit-appearance:none;width:19px;height:19px;flex:0 0 19px;margin:0;border:2px solid #76909d;border-radius:4px;background:#0c171e;display:grid;place-items:center}.part-toggle input:checked{background:var(--accent);border-color:var(--accent)}.part-toggle input:checked:after{content:'✓';font-size:15px;font-weight:900;line-height:1;color:#08201d}.part-toggle .part-name{font-weight:750}.part-toggle .part-file{display:block;color:var(--muted);font-size:10px;direction:ltr;text-align:right;overflow-wrap:anywhere}
-.vector-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.collapse-btn{font-size:17px;line-height:1;min-width:30px;padding:3px 8px}#vectorBody.is-collapsed{display:none}.attribution{position:absolute;bottom:8px;left:8px;background:#101c25e8;padding:5px 8px;border-radius:6px;font-size:10px;z-index:2;direction:ltr}
+.vector-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.collapse-btn{font-size:17px;line-height:1;min-width:30px;padding:3px 8px}.attribution{position:absolute;bottom:8px;left:8px;background:#101c25e8;padding:5px 8px;border-radius:6px;font-size:10px;z-index:2;direction:ltr}
 @media(max-width:560px){.panel{top:6px;right:6px;width:min(315px,calc(100vw - 12px));max-height:62dvh;padding:10px}h1{font-size:16px}.layer{font-size:11px;margin:6px 0}}
 </style>
 </head>
@@ -26,7 +26,7 @@ h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var
 <label class="layer"><input id="baseBuildings" type="checkbox" checked> مباني الخريطة الأساسية ثلاثية الأبعاد</label>
 </div>
 <div class="section" id="vectorSection">
-<div class="section-title vector-heading"><span>طبقات المتجهات من PBF</span><button class="btn collapse-btn" id="toggleVector" aria-expanded="true" aria-label="طي أو فتح طبقات المتجهات">−</button></div>
+<div class="section-title vector-heading"><span>طبقات المتجهات من PBF</span><button class="btn collapse-btn" id="toggleVector" aria-expanded="true" aria-label="تصغير أو تكبير لوحة التحكم">−</button></div>
 <div id="vectorBody"><div id="layerList"></div></div>
 </div>
 <div class="section">
@@ -104,7 +104,7 @@ loaded.set(key,ids);setVisibility(ids,on);status.textContent='تم ربط طبق
 }
 defs.forEach(addCheckbox);
 const baseBuildings=[];
-document.getElementById('toggleVector').addEventListener('click',()=>{const body=document.getElementById('vectorBody'),collapsed=body.classList.toggle('is-collapsed');document.getElementById('toggleVector').textContent=collapsed?'+':'−';document.getElementById('toggleVector').setAttribute('aria-expanded',String(!collapsed));});
+document.getElementById('toggleVector').addEventListener('click',()=>{const panel=document.querySelector('.panel'),btn=document.getElementById('toggleVector'),isShort=panel.classList.toggle('panel-short');btn.textContent=isShort?'+':'−';btn.setAttribute('aria-expanded',String(!isShort));btn.setAttribute('aria-label',isShort?'تكبير لوحة التحكم':'تصغير لوحة التحكم');});
 map.on('load',()=>{
 fetch('Manila/3d-rag/apply-report.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(r=>{const el=document.getElementById('applySummary');el.innerHTML='<b>حالة التطبيق:</b> '+escapeHtml(r.status||'غير معروف')+'<br><b>بلاطات PBF التي تغيرت:</b> '+escapeHtml(r.changed_tile_count??'—')+' / '+escapeHtml(r.pbf_files_scanned??'—')+'<br><b>المباني التي تغيرت خصائصها:</b> '+escapeHtml(r.changed_building_features??'—')+'<br><b>الخصائص التي طُبقت:</b> '+escapeHtml(r.changed_property_count??'—')+'<br><b>الهندسة والإحداثيات:</b> لم تتغير<br><a style="color:var(--accent)" href="Manila/3d-rag/apply-report.json" target="_blank" rel="noopener">فتح التقرير الكامل</a>';}).catch(e=>{document.getElementById('applySummary').textContent='تعذر تحميل تقرير التطبيق: '+e.message});
 const styleLayers=map.getStyle().layers||[];
