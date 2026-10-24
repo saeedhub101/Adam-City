@@ -103,35 +103,39 @@ for(const id of ids){map.on('click',id,featurePopup);map.on('mouseenter',id,()=>
 loaded.set(key,ids);setVisibility(ids,on);status.textContent='تم ربط طبقة '+label+' مباشرة من PBF، source-layer: '+sourceLayer+'.';
 }
 
-// Ermita GeoJSON building overlay: insert immediately after the fourth checkbox.
+// Ermita master building data: use the two actual GeoJSON parts.
 let ermitaGeoJsonLoaded=false;
 function addErmitaGeoJsonCheckbox(){
   const wrap=document.createElement('label');wrap.className='layer';
   const cb=document.createElement('input');cb.type='checkbox';
-  wrap.append(cb,document.createTextNode('مباني Ermita من GeoJSON (مضلعات وارتفاعات)'));
+  wrap.append(cb,document.createTextNode('مباني Ermita الرئيسية من GeoJSON (الجزآن 1 و2)'));
   const fourth=checkboxes.get('aeroway')?.parentElement;
   if(fourth&&fourth.parentElement===list) fourth.insertAdjacentElement('afterend',wrap); else list.append(wrap);
   cb.addEventListener('change',()=>{
     try{
-      const sourceId='ermita-geojson-buildings';
-      const layerId='ermita-geojson-buildings-3d';
+      const base='complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/';
+      const parts=[
+        {source:'ermita-master-part-001',layer:'ermita-master-part-001-3d',url:base+'part-001.geojson'},
+        {source:'ermita-master-part-002',layer:'ermita-master-part-002-3d',url:base+'part-002.geojson'}
+      ];
       if(!ermitaGeoJsonLoaded){
-        const dataUrl=new URL('ermita/maps/generated/ermita-building-details.geojson',window.location.href).href;
-        map.addSource(sourceId,{type:'geojson',data:dataUrl});
-        map.addLayer({id:layerId,type:'fill-extrusion',source:sourceId,filter:['==',['geometry-type'],'Polygon'],paint:{
-          'fill-extrusion-color':['match',['get','building',['get','tags']],'commercial','#c9a27e','retail','#d8b17d','industrial','#9dabb4','yes','#b7a99a','#c7b9a7'],
-          'fill-extrusion-height':['max',2,['to-number',['get','height',['get','tags']],['*',['to-number',['get','building:levels',['get','tags']],1],3.2]],
-          'fill-extrusion-base':['max',0,['to-number',['get','min_height',['get','tags']],0]],
-          'fill-extrusion-opacity':0.9,'fill-extrusion-vertical-gradient':true
-        }});
-        map.on('click',layerId,featurePopup);
-        map.on('mouseenter',layerId,()=>map.getCanvas().style.cursor='pointer');
-        map.on('mouseleave',layerId,()=>map.getCanvas().style.cursor='');
+        for(const part of parts){
+          map.addSource(part.source,{type:'geojson',data:new URL(part.url,window.location.href).href});
+          map.addLayer({id:part.layer,type:'fill-extrusion',source:part.source,filter:['==',['geometry-type'],'Polygon'],paint:{
+            'fill-extrusion-color':['match',['get','building',['get','tags']],'commercial','#c9a27e','retail','#d8b17d','industrial','#9dabb4','residential','#c4b5a3','yes','#b7a99a','#c7b9a7'],
+            'fill-extrusion-height':['max',2,['to-number',['get','height',['get','tags']],['*',['to-number',['get','building:levels',['get','tags']],1],3.2]]],
+            'fill-extrusion-base':['max',0,['to-number',['get','min_height',['get','tags']],0]],
+            'fill-extrusion-opacity':0.9,'fill-extrusion-vertical-gradient':true
+          }});
+          map.on('click',part.layer,featurePopup);
+          map.on('mouseenter',part.layer,()=>map.getCanvas().style.cursor='pointer');
+          map.on('mouseleave',part.layer,()=>map.getCanvas().style.cursor='');
+        }
         ermitaGeoJsonLoaded=true;
       }
-      if(map.getLayer('ermita-geojson-buildings-3d'))map.setLayoutProperty('ermita-geojson-buildings-3d','visibility',cb.checked?'visible':'none');
-      status.className='status';status.textContent=cb.checked?'تم عرض مباني Ermita من ملف GeoJSON (1533 معلمًا، منها 1528 مضلعًا).':'تم إخفاء مباني Ermita من GeoJSON.';
-    }catch(e){cb.checked=false;status.className='status error';status.textContent='تعذر تحميل مباني Ermita من GeoJSON: '+e.message}
+      for(const part of parts)if(map.getLayer(part.layer))map.setLayoutProperty(part.layer,'visibility',cb.checked?'visible':'none');
+      status.className='status';status.textContent=cb.checked?'تم تشغيل جزأي ملف ermita-buildings-master.parts لعرض مباني Ermita.':'تم إخفاء مباني Ermita الرئيسية.';
+    }catch(e){cb.checked=false;status.className='status error';status.textContent='تعذر تحميل بيانات مباني Ermita الرئيسية: '+e.message}
   });
 }
 defs.forEach((d,i)=>{addCheckbox(d);if(i===3)addErmitaGeoJsonCheckbox();});
