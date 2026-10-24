@@ -8,7 +8,6 @@ on:
       - 'manila.html'
       - 'manila-bundry.html'
       - 'Manila/vector-tiles/**'
-      - 'old/manila/ermita-buildings-master.parts/**'
       - 'Manila/3d-rag/apply-report.json'
   workflow_dispatch:
 
@@ -41,11 +40,10 @@ jobs:
           test -d Manila/vector-tiles
           pbf_count="$(find Manila/vector-tiles -type f -name '*.pbf' | wc -l)"
           test "$pbf_count" -gt 0
-          mkdir -p site/Manila/vector-tiles site/Manila/3d-rag site/old/manila/ermita-buildings-master.parts
+          mkdir -p site/Manila/vector-tiles site/Manila/3d-rag
           cp manila.html site/manila.html
           cp manila-bundry.html site/manila-bundry.html
           cp -a Manila/vector-tiles/. site/Manila/vector-tiles/
-          cp -a old/manila/ermita-buildings-master.parts/. site/old/manila/ermita-buildings-master.parts/
           if [ -s Manila/3d-rag/apply-report.json ]; then
             cp Manila/3d-rag/apply-report.json site/Manila/3d-rag/apply-report.json
           fi
