@@ -36,37 +36,53 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Assemble the page from saved files only
+      - name: Assemble the page from available saved files
         shell: bash
         run: |
           set -euo pipefail
-          test -s manila.html
-          test -s manila-bundry.html
-          test -d Manila/vector-tiles
-          pbf_count="$(find Manila/vector-tiles -type f -name '*.pbf' | wc -l)"
-          test "$pbf_count" -gt 0
+          mkdir -p site/Manila/vector-tiles site/Manila/3d-rag
           geojson_dir='complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts'
-          test -s "$geojson_dir/part-004.geojson"
-          test -s "$geojson_dir/part-005.geojson"
-          test -s 'complete_data/open free tile/building-fallback.geojson'
-          test -s "$geojson_dir/part-011.geojson"
-          test -s "$geojson_dir/part-080.geojson"
-          mkdir -p site/Manila/vector-tiles site/Manila/3d-rag site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts 'site/complete_data/open free tile'
-          cp manila.html site/manila.html
-          cp manila-bundry.html site/manila-bundry.html
-          cp "$geojson_dir/part-004.geojson" site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/
-          cp "$geojson_dir/part-005.geojson" site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/
-          cp 'complete_data/open free tile/building-fallback.geojson' 'site/complete_data/open free tile/building-fallback.geojson'
-          cp "$geojson_dir/part-011.geojson" site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/
-          cp "$geojson_dir/part-080.geojson" site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/
-          cp -a Manila/vector-tiles/. site/Manila/vector-tiles/
+          mkdir -p "site/$geojson_dir" 'site/complete_data/open free tile'
+
+          # Copy pages only when present; absent optional files should not fail publishing.
+          if [ -f manila.html ]; then cp manila.html site/manila.html; else echo "WARNING: manila.html is missing"; fi
+          if [ -f manila-bundry.html ]; then cp manila-bundry.html site/manila-bundry.html; else echo "WARNING: manila-bundry.html is missing"; fi
+
+          for file in part-004.geojson part-005.geojson part-011.geojson part-080.geojson; do
+            if [ -f "$geojson_dir/$file" ]; then
+              cp "$geojson_dir/$file" "site/$geojson_dir/$file"
+            else
+              echo "WARNING: optional GeoJSON missing: $geojson_dir/$file"
+            fi
+          done
+
+          fallback='complete_data/open free tile/building-fallback.geojson'
+          if [ -f "$fallback" ]; then
+            cp "$fallback" 'site/complete_data/open free tile/building-fallback.geojson'
+          else
+            echo "WARNING: optional GeoJSON missing: $fallback"
+          fi
+
+          if [ -d Manila/vector-tiles ]; then
+            pbf_count="$(find Manila/vector-tiles -type f -name '*.pbf' | wc -l)"
+            if [ "$pbf_count" -gt 0 ]; then
+              cp -a Manila/vector-tiles/. site/Manila/vector-tiles/
+            else
+              echo "WARNING: no PBF files found; publishing without vector tiles"
+            fi
+          else
+            echo "WARNING: Manila/vector-tiles directory is missing; publishing without vector tiles"
+          fi
+
           if [ -s Manila/3d-rag/apply-report.json ]; then
             cp Manila/3d-rag/apply-report.json site/Manila/3d-rag/apply-report.json
+          else
+            echo "INFO: no apply-report.json; skipping report"
           fi
+
           touch site/.nojekyll
           printf '%s' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=manila.html"><title>Manila</title><a href="manila.html">Open Manila</a></html>' > site/index.html
-          echo "Publish-only build: copied $pbf_count existing PBF files; no data generation performed."
-
+          echo "Publish-only build complete. Existing files copied where available; no data generation performed."
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
