@@ -12,7 +12,7 @@ import * as THREE from 'three';
   if (!checkbox) return;
 
   const MAP_ID = 'robinsons-place-facade-details';
-  const mallBoundaryUrl = new URL('../../ermita/maps/generated/ermita-features.geojson', import.meta.url).href;
+  const mallBoundaryUrl = new URL('../../../ermita/maps/generated/ermita-features.geojson', import.meta.url).href;
   const buildingDetailsUrl = new URL('../data/buildings/Ermita/ermita-building-details.geojson', import.meta.url).href;
   let map = null, loading = false, ready = false, model = null;
   let renderer = null, camera = null, scene = null, anchor = null;
