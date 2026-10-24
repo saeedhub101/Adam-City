@@ -39,7 +39,7 @@ def main():
         params = {
             "action":"query", "format":"json", "generator":"geosearch",
             "ggscoord":f"{lat}|{lon}", "ggsradius":"10000", "ggslimit":"50",
-            "ggsnamespace":"6", "prop":"imageinfo", "iiprop":"url|extmetadata",
+            "ggsnamespace":"6", "prop":"coordinates|imageinfo", "iiprop":"url|extmetadata",
             "iiurlwidth":"720"
         }
         try:
@@ -82,7 +82,7 @@ def main():
                     continue
             seen.add(title)
             features.append({
-                "type":"Feature", "geometry":{"type":"Point","coordinates":[lon,lat]},
+                "type":"Feature", "geometry":{"type":"Point","coordinates":((page.get("coordinates") or [{}])[0].get("lon", lon), (page.get("coordinates") or [{}])[0].get("lat", lat))},
                 "properties":{
                     "name": re.sub(r"<[^>]+>", "", title.removeprefix("File:")),
                     "area":label, "image":"./" + urllib.parse.quote(filename, safe="/"),
