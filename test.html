@@ -197,23 +197,18 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
         if(status)status.textContent='تحميل الجزء '+part+' — المنطقة '+(index+1)+'/'+total+': '+(progress.total?Math.round(progress.loaded/progress.total*100)+'%':Math.round(progress.loaded/1048576)+' MiB');
        },err=>showError(new Error('المنطقة '+(index+1)+' ('+entry.file+'): '+(err?.message||err))));
       };
-      fetch(manifestUrl).then(res=>{if(!res.ok)throw new Error('Regions manifest HTTP '+res.status);return res.json();})
-       .then(manifest=>{
-        if(!Array.isArray(manifest.regions)||!manifest.regions.length)throw new Error('ملف تقسيم المناطق فارغ');
-        const total=manifest.regions.length;
-        let loadedRegions=0;
-        manifest.regions.forEach((entry,index)=>addRegion(entry,index,total,()=>{
-         loadedRegions++;
-         if(loadedRegions===total){
-          let meshCount=0;if(model)model.traverse(o=>{if(o.isMesh)meshCount++;});
-          ready=true;loading=false;
-          window['adamEnhancedPart'+part+'Ready']=true;
-          window['adamSetEnhancedPart'+part+'Visible']=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
-          if(status)status.textContent='تم تحميل الجزء '+part+' مقسماً جغرافياً إلى '+total+' مناطق | meshes='+meshCount+' | '+(model.visible?'ظاهر':'مخفي');
-          mapInstance.triggerRepaint();
-         }
-        }));
-       }).catch(err=>showError(err));
+      loader.load(modelUrl,gltf=>{
+       if(!model)return;
+       model.add(gltf.scene);
+       let meshCount=0;model.traverse(o=>{if(o.isMesh)meshCount++;});
+       ready=true;loading=false;
+       window['adamEnhancedPart'+part+'Ready']=true;
+       window['adamSetEnhancedPart'+part+'Visible']=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
+       if(status)status.textContent='تم تحميل ملف GLB الأصلي للجزء '+part+' | meshes='+meshCount+' | '+(model.visible?'ظاهر':'مخفي');
+       mapInstance.triggerRepaint();
+      },progress=>{
+       if(status)status.textContent='تحميل GLB الأصلي الجزء '+part+': '+(progress.total?Math.round(progress.loaded/progress.total*100)+'%':Math.round(progress.loaded/1048576)+' MiB');
+      },err=>showError(new Error('فشل تحميل الملف الأصلي '+modelUrl+': '+(err?.message||err))));
      },
      render(gl,args){
       if(!renderer||!model||!model.visible)return;
