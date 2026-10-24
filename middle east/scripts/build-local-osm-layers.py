@@ -8,9 +8,10 @@ LIMIT = 90_000_000
 THEMES = {
     "buildings": ["w/building", "r/building", "w/building:part"],
     "streets": ["w/highway", "r/route=road"],
-    "water": ["w/waterway", "r/waterway", "w/natural=water", "w/landuse=reservoir", "w/natural=coastline"],
-    "landcover": ["w/landuse", "w/natural", "w/leisure", "w/landcover"],
-    "places": ["n/place", "n/amenity", "n/shop", "n/tourism", "n/historic", "n/office", "n/healthcare", "n/railway=station", "n/public_transport=station"],
+    "streetnames": ["w/highway", "r/route=road"],
+    "water": ["w/waterway", "r/waterway", "w/natural=water", "w/landuse=reservoir", "w/natural=coastline", "n/natural=spring", "w/natural=spring", "n/man_made=water_well", "w/man_made=water_well", "n/amenity=drinking_water", "w/amenity=drinking_water"],
+    "landcover": ["w/landuse", "w/natural", "w/leisure", "w/landcover", "w/natural=wood", "w/natural=scrub", "w/natural=heath", "n/natural=tree", "n/natural=grassland"],
+    "places": ["n/place", "w/place", "r/place", "n/amenity", "w/amenity", "r/amenity", "n/shop", "w/shop", "r/shop", "n/tourism", "w/tourism", "r/tourism", "n/historic", "w/historic", "r/historic", "n/office", "w/office", "n/healthcare", "w/healthcare", "n/railway=station", "n/public_transport=station", "n/education", "w/education"],
     "addresses": ["n/addr:housenumber", "w/addr:housenumber", "r/addr:housenumber", "n/addr:street", "w/addr:street"],
 }
 def run(args):
