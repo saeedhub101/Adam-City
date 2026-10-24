@@ -189,7 +189,7 @@ const geoJsonBase='complete_data/OSM/data/buildings/Ermita/ermita-buildings-mast
   {key:'part-080',label:'مباني GeoJSON — الملف 80',url:geoJsonBase+'part-080.geojson'},
   {key:'part-011',label:'مباني GeoJSON — الملف 11',url:geoJsonBase+'part-011.geojson'},
   {key:'part-004',label:'مباني GeoJSON — الملف 4',url:geoJsonBase+'part-004.geojson'},
-  {key:'part-005',label:'مباني GeoJSON — building-fallback.geojson',url:'complete_data/open%20free%20tile/building-fallback.geojson'}
+  {key:'part-005',label:'مباني GeoJSON — building-fallback.geojson',url:'complete_data/open-free-tile/building-fallback.geojson'}
 ].forEach(addSingleGeoJsonCheckbox);
 
 defs.forEach(addCheckbox);
@@ -197,19 +197,37 @@ defs.forEach(addCheckbox);
 // Additional building datasets requested by the user: sources 1, 2, and 4.
 // These controls are independent; each displays only its own selected dataset.
 function normalizeBuildingData(textValue){
+  const asFeature=obj=>{
+    if(!obj||typeof obj!=='object')return null;
+    if(obj.type==='Feature'&&obj.geometry)return obj;
+    if(obj.type==='FeatureCollection'&&Array.isArray(obj.features))return obj.features;
+    if(obj.feature&&obj.feature.type==='Feature')return obj.feature;
+    if(obj.geometry&&obj.geometry.type&&Array.isArray(obj.geometry.coordinates)){
+      const props=obj.properties&&typeof obj.properties==='object'?obj.properties:Object.fromEntries(Object.entries(obj).filter(([k])=>!['geometry','type','id'].includes(k)));
+      return {type:'Feature',...(obj.id!==undefined?{id:obj.id}:{}),geometry:obj.geometry,properties:props};
+    }
+    if(['Polygon','MultiPolygon','Point','MultiPoint','LineString','MultiLineString','GeometryCollection'].includes(obj.type)&& (obj.coordinates||obj.geometries)){
+      return {type:'Feature',geometry:obj,properties:obj.properties||{}};
+    }
+    return null;
+  };
   try {
     const parsed=JSON.parse(textValue);
-    if(parsed.type==='FeatureCollection')return parsed;
+    if(parsed.type==='FeatureCollection')return {type:'FeatureCollection',features:parsed.features||[]};
     if(parsed.type==='Feature')return {type:'FeatureCollection',features:[parsed]};
-    if(Array.isArray(parsed))return {type:'FeatureCollection',features:parsed.filter(f=>f&&f.type==='Feature')};
+    if(Array.isArray(parsed))return {type:'FeatureCollection',features:parsed.flatMap(f=>{const v=asFeature(f);return Array.isArray(v)?v:v?[v]:[]})};
+    const converted=asFeature(parsed);
+    if(Array.isArray(converted))return {type:'FeatureCollection',features:converted};
+    if(converted)return {type:'FeatureCollection',features:[converted]};
   } catch(e) {}
   const features=[];
   for(const line of textValue.split(/\\r?\\n/)){
     const trimmed=line.trim(); if(!trimmed)continue;
     try {
       const obj=JSON.parse(trimmed);
-      if(obj.type==='Feature')features.push(obj);
-      else if(obj.type==='FeatureCollection'&&Array.isArray(obj.features))features.push(...obj.features);
+      const converted=asFeature(obj);
+      if(Array.isArray(converted))features.push(...converted);
+      else if(converted)features.push(converted);
     } catch(e) {}
   }
   if(!features.length)throw new Error('لم يمكن تحليل الملف كـ GeoJSON أو GeoJSONL');
@@ -270,8 +288,8 @@ function addBuildingDatasetCheckbox(config){
   });
 }
 [
- {key:'source-2-building-layer',label:'المصدر 2 — طبقة building',description:'layers/building.geojsonl',urls:['https://raw.githubusercontent.com/saeedhub101/Adam-City/main/complete_data/open%20free%20tile/layers/building.geojsonl']},
- {key:'source-4-parts',label:'المصدر 4 — الجزآن 1 و2',description:'buildings-part1.geojson.gz + buildings-part2.geojson.gz',urls:['https://raw.githubusercontent.com/saeedhub101/Adam-City/main/complete_data/open%20free%20tile/buildings-part1.geojson.gz','https://raw.githubusercontent.com/saeedhub101/Adam-City/main/complete_data/open%20free%20tile/buildings-part2.geojson.gz']}
+ {key:'source-2-building-layer',label:'المصدر 2 — طبقة building',description:'layers/building.geojsonl',urls:['complete_data/open-free-tile/layers/building.geojsonl']},
+ {key:'source-4-parts',label:'المصدر 4 — الجزآن 1 و2',description:'buildings-part1.geojson.gz + buildings-part2.geojson.gz',urls:['complete_data/open-free-tile/buildings-part1.geojson.gz','complete_data/open-free-tile/buildings-part2.geojson.gz']}
 ].forEach(addBuildingDatasetCheckbox);
 
 const baseBuildings=[];
