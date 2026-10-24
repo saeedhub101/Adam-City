@@ -1,0 +1,76 @@
+name: Generate rooftop and storefront GLB overlays
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "complete_data/OSM/scripts/generate_roof_storefront_overlays.py"
+      - "ermita/scripts/generate_roxas_boulevard_buildings.py"
+      - "complete_data/OSM/data/buildings/Ermita/ermita-building-footprints.geojson"
+      - "complete_data/OSM/data/buildings/Ermita/part*/part*-origin.json"
+permissions:
+  contents: write
+concurrency:
+  group: adam-city-roof-storefront-glb
+  cancel-in-progress: false
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install geometry dependencies
+        run: python -m pip install --upgrade numpy trimesh pyproj shapely
+      - name: Generate, validate, and commit each part immediately
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          failed=0
+          for part in 1 2 3 4; do
+            output="complete_data/OSM/data/buildings/Ermita/enhanced/part${part}-roof-storefront-details.glb"
+            report="complete_data/OSM/data/buildings/Ermita/enhanced/part${part}-roof-storefront-details-report.json"
+            if [ -s "$output" ] && [ -s "$report" ]; then
+              echo "part${part}: already generated and checkpointed; skipping"
+              continue
+            fi
+            echo "=== Generating part ${part} ==="
+            if python complete_data/OSM/scripts/generate_roof_storefront_overlays.py --part "$part"; then
+              if [ -s "$output" ] && [ -s "$report" ]; then
+                size=$(stat -c%s "$output")
+                if [ "$size" -ge 99614720 ]; then
+                  echo "part${part} output approaches GitHub 100 MB limit; not committing"
+                  failed=1
+                  continue
+                fi
+                git add "$output" "$report"
+                git commit -m "Add roof and storefront GLB overlay part ${part}" || true
+                # Push this checkpoint now; do not wait for later parts.
+                git push origin HEAD:main
+                echo "part${part}: checkpoint committed and pushed immediately"
+              else
+                echo "part${part}: expected output/report missing after generation"
+                failed=1
+              fi
+            else
+              echo "part${part}: generation failed; continuing with remaining parts"
+              failed=1
+            fi
+          done
+          # Persist a final summary even if one or more parts failed.
+          mkdir -p complete_data/OSM/data/buildings/Ermita/enhanced
+          printf '{"parts_attempted":[1,2,3,4],"failed_or_missing":%s,"resume_policy":"valid committed outputs are skipped on rerun"}\n' "$failed" > complete_data/OSM/data/buildings/Ermita/enhanced/run-summary.json
+          git add complete_data/OSM/data/buildings/Ermita/enhanced/run-summary.json
+          git commit -m "Record rooftop and storefront overlay run summary" || true
+          git push origin HEAD:main
+          if [ "$failed" -ne 0 ]; then
+            echo "Some parts failed; successful parts remain committed. Re-run workflow to resume."
+            exit 1
+          fi
