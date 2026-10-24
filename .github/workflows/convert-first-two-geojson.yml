@@ -1,0 +1,49 @@
+name: Convert first two GeoJSON chunks for mapping
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/convert_first_two_geojson_jsonl.py'
+      - '.github/workflows/convert-first-two-geojson.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: convert-first-two-geojson
+  cancel-in-progress: false
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - name: Convert JSONL files to GeoJSON FeatureCollections
+        run: python3 scripts/convert_first_two_geojson_jsonl.py
+      - name: Validate and commit map-ready files
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for n in (1, 2):
+              p = Path(f'Philippine/GeoJSON_Map/Philippine{n:02d}.geojson')
+              obj = json.loads(p.read_text(encoding='utf-8'))
+              assert obj.get('type') == 'FeatureCollection', p
+              assert all(f.get('type') == 'Feature' and 'geometry' in f for f in obj['features']), p
+              print(f'{p}: valid FeatureCollection, {len(obj["features"])} features')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Philippine/GeoJSON_Map/Philippine01.geojson Philippine/GeoJSON_Map/Philippine02.geojson
+          if git diff --cached --quiet; then
+            echo 'No generated changes to commit.'
+          else
+            git commit -m 'Add map-ready GeoJSON FeatureCollections for chunks 01-02'
+            git push origin HEAD:main
+          fi
