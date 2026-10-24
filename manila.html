@@ -25,14 +25,6 @@ h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var
 <label class="layer"><input id="baseMap" type="checkbox" checked> خريطة OpenFreeMap الأساسية (الشوارع والمياه والتسميات)</label>
 <label class="layer"><input id="baseBuildings" type="checkbox" checked> مباني الخريطة الأساسية ثلاثية الأبعاد</label>
 </div>
-<div class="section" id="finalGlbSection">
-<div class="section-title">ملفات GLB النهائية المحسّنة — تفاصيل الأسطح والواجهات</div>
-<label class="part-toggle"><input id="final-detail-glb-part-1" type="checkbox"><span><span class="part-name">GLB النهائي — الجزء 1</span><span class="part-file">part1-roof-storefront-details.glb · 19.7 MB</span></span></label>
-<label class="part-toggle"><input id="final-detail-glb-part-2" type="checkbox"><span><span class="part-name">GLB النهائي — الجزء 2</span><span class="part-file">part2-roof-storefront-details.glb · 81.4 MB</span></span></label>
-<label class="part-toggle"><input id="final-detail-glb-part-3" type="checkbox"><span><span class="part-name">GLB النهائي — الجزء 3</span><span class="part-file">part3-roof-storefront-details.glb · 62.6 MB</span></span></label>
-<label class="part-toggle"><input id="final-detail-glb-part-4" type="checkbox"><span><span class="part-name">GLB النهائي — الجزء 4</span><span class="part-file">part4-roof-storefront-details.glb · 86.1 MB</span></span></label>
-<div class="meta">كل مفتاح يعرض ملف التفاصيل الخاص به فوق الخريطة الأصلية دون استبدال المباني أو تغيير إحداثياتها.</div>
-</div>
 <div class="section" id="vectorSection">
 <div class="section-title vector-heading"><span>طبقات المتجهات من PBF</span><button class="btn collapse-btn" id="toggleVector" aria-expanded="true" aria-label="تصغير أو تكبير لوحة التحكم">−</button></div>
 <div id="vectorBody"><div id="layerList"></div></div>
@@ -190,11 +182,20 @@ function addSingleGeoJsonCheckbox(config){
 
 const geoJsonBase='complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/';
 [
-  {key:'part-080',label:'مباني GeoJSON — الملف 80',url:geoJsonBase+'part-080.geojson'},
-  {key:'part-011',label:'مباني GeoJSON — الملف 11',url:geoJsonBase+'part-011.geojson'},
-  {key:'part-004',label:'مباني GeoJSON — الملف 4',url:geoJsonBase+'part-004.geojson'},
   {key:'part-005',label:'مباني GeoJSON — building-fallback.geojson',url:'complete_data/OFT/building-fallback.geojson'}
 ].forEach(addSingleGeoJsonCheckbox);
+
+// Replace the former GeoJSON file 80, 11, and 4 controls with compact GLB toggles.
+function addFinalGlbCheckbox(part){
+  const wrap=document.createElement('label');wrap.className='layer';
+  const cb=document.createElement('input');cb.type='checkbox';cb.id='final-detail-glb-part-'+part;
+  const labelText=document.createElement('span');
+  labelText.textContent='تفاصيل الأسطح والواجهات — GLB part'+part;
+  wrap.append(cb,labelText);
+  const fourth=checkboxes.get('aeroway')?.parentElement;
+  if(fourth&&fourth.parentElement===list)fourth.insertAdjacentElement('afterend',wrap);else list.append(wrap);
+}
+for(let part=1;part<=4;part++)addFinalGlbCheckbox(part);
 
 defs.forEach(addCheckbox);
 
