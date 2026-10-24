@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Merge detail geometry and spatially split each building part into bounded GLBs."""
+"""Merge detail geometry and split each building part north/south or east/west into bounded GLBs."""
 import json, os, subprocess, sys, tempfile
 from pathlib import Path
 import numpy as np
