@@ -38,7 +38,6 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <label class="row"><input type="checkbox" id="osm-administrative"> 9. administrative — الحدود الإدارية</label>
 <label class="row"><input type="checkbox" id="osm-places"> 10. places — المتاجر والطعام والصحة والتعليم والخدمات</label>
 <label class="row"><input type="checkbox" id="osm-nature"> 11. nature — المياه والأشجار والحدائق والغطاء النباتي</label>
-<label class="row"><input type="checkbox" id="osm-windows"> 12. windows — تفاصيل الواجهات والشبابيك</label>
 
 </div>
 <div class="status" id="status">جارٍ تحميل خريطة المصدر…</div><div id="error"></div>
@@ -127,107 +126,7 @@ window.addEventListener("unhandledrejection",function(ev){
  if(status)status.textContent="توقف تحميل نموذج windows بسبب خطأ JavaScript.";
 });
 </script>
-<script type="module">
-import * as THREE from 'three';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
-import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.0/meshopt_decoder.module.js';
-const windowsCheckbox=document.getElementById('osm-windows');
-window.adamWindowsEnabled=!!windowsCheckbox?.checked;
-windowsCheckbox?.addEventListener('change',ev=>{
- window.adamWindowsEnabled=ev.target.checked;
- if(window.adamWindowsLayerReady && window.adamSetWindowsVisible) window.adamSetWindowsVisible(ev.target.checked);
- else if(ev.target.checked) {const s=document.getElementById('status');if(s)s.textContent='جارٍ تحميل نموذج windows ثلاثي الأبعاد…';}
-});
-const waitMap=()=>new Promise(resolve=>{const check=()=>{if(window.adamCityMap?.isStyleLoaded())resolve(window.adamCityMap);else setTimeout(check,100)};check()});
-try {
- const map=await waitMap();
- const modelUrl=new URL('complete_data/OSM/data/buildings/windows/ermita-buildings-facade-details.glb',location.href).href;
- const originUrl=new URL('complete_data/OSM/data/buildings/windows/facade-model-origin.json',location.href).href;
- const originResponse=await fetch(originUrl);
- if(!originResponse.ok)throw new Error('Origin JSON HTTP '+originResponse.status);
- const origin=await originResponse.json();
- const anchorLatitude=Number(origin.latitude);
- const anchor=maplibregl.MercatorCoordinate.fromLngLat(
-  {lng:Number(origin.longitude),lat:anchorLatitude},
-  Number(origin.anchor_altitude_m)
- );
- // GLB X/Y are EPSG:3857 projected metres, not ground-distance metres.
- // Convert projected X/Y with 1 / Earth circumference; meterScale is for true ground metres (e.g. Z altitude).
- const meterScale=anchor.meterInMercatorCoordinateUnits();
- const projectedMeterScale=meterScale*Math.cos(anchorLatitude*Math.PI/180);
- let renderer,camera,scene,model;
- const customLayer={
-  id:'windows-facade-details',type:'custom',renderingMode:'3d',
-  onAdd(mapInstance,gl){
-   renderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});
-   renderer.autoClear=false;
-   camera=new THREE.Camera();scene=new THREE.Scene();
-   scene.add(new THREE.AmbientLight(0xffffff,2.0));
-   const light=new THREE.DirectionalLight(0xffffff,2.2);light.position.set(0,-70,100).normalize();scene.add(light);
-   const loader=new GLTFLoader();
-   loader.setMeshoptDecoder(MeshoptDecoder);
-   loader.load(modelUrl,gltf=>{
-    model=gltf.scene;
-    // Preserve original GLB materials and textures; diagnostic recoloring and markers are disabled.
-     let windowsMeshCount=0;
-     model.traverse(object=>{if(object.isMesh)windowsMeshCount++;});
-     model.position.set(0,0,0);
-     model.scale.set(1,1,1);
-     scene.add(model);
-    window.adamWindowsLayerReady=true;
-    window.adamSetWindowsVisible=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
-    model.visible=!!document.getElementById('osm-windows')?.checked;
-    const s=document.getElementById('status');
-     if(s)s.textContent='تم تحميل نموذج windows ثلاثي الأبعاد | meshes='+windowsMeshCount;
-     // Ensure this diagnostic layer is above the map's building/extrusion layers.
-    if(mapInstance.getLayer('windows-facade-details')) mapInstance.moveLayer('windows-facade-details');
-    mapInstance.triggerRepaint();
-   },progress=>{
-    const s=document.getElementById('status');
-    if(s && progress.total) s.textContent='جارٍ تحميل نموذج windows: '+Math.round(progress.loaded/progress.total*100)+'%';
-    else if(s) s.textContent='جارٍ تنزيل نموذج windows ثلاثي الأبعاد ('+Math.round(progress.loaded/1048576)+' MB)…';
-   },err=>{
-    const e=document.getElementById('error');e.style.display='block';e.textContent='تعذر تحميل نموذج windows: '+(err?.message||err);
-    document.getElementById('status').textContent='تعذر تحميل نموذج windows ثلاثي الأبعاد.';
-   });
-  },
-  render(gl,args){
-   if(!renderer||!model||!model.visible)return;
-   // MapLibre GL JS 5.x passes a CustomRenderMethodInput object, not a raw matrix.
-   // Its Mercator view/projection matrix is defaultProjectionData.mainMatrix.
-   const mainMatrix=args?.defaultProjectionData?.mainMatrix;
-   if(!mainMatrix){
-    const s=document.getElementById('status');
-    if(s)s.textContent='GLB loaded, but MapLibre did not provide defaultProjectionData.mainMatrix.';
-    return;
-   }
-   const matrixValues=Object.values(mainMatrix);
-   if(matrixValues.length!==16 || matrixValues.some(value=>!Number.isFinite(Number(value)))){
-    const s=document.getElementById('status');
-    if(s)s.textContent='GLB loaded, but MapLibre projection matrix is invalid (expected 16 finite values).';
-    return;
-   }
-   const mapProjection=new THREE.Matrix4().fromArray(matrixValues.map(Number));
-   const modelTransform=new THREE.Matrix4()
-    .makeTranslation(anchor.x,anchor.y,anchor.z)
-    .scale(new THREE.Vector3(projectedMeterScale,-projectedMeterScale,meterScale));
-   camera.projectionMatrix.copy(mapProjection).multiply(modelTransform);
-   camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
-   renderer.resetState();
-   renderer.render(scene,camera);
-   renderer.resetState();
-  }
- };
- map.addLayer(customLayer);
- // Add it at the top of the current style so it is independent of buildings underneath.
- if(map.getLayer('windows-facade-details')) map.moveLayer('windows-facade-details');
-} catch(err) {
- const e=document.getElementById('error');if(e){e.style.display='block';e.textContent='تعذر إعداد طبقة windows: '+(err?.message||err);}
-}
 
-
-})();
-</script>
 
 
 
