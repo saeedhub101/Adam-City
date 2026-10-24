@@ -51,39 +51,41 @@ def pack_region(meshes,region_id):
     return export_bytes(scene)
 
 def spatial_split(meshes,part):
-    """Partition by triangle centroid in projected local X/Y; every source triangle goes once."""
-    faces=[]
-    for mesh_index,(name,mesh) in enumerate(meshes):
-        tri=mesh.triangles_center
-        for face_index,center in enumerate(tri):
-            faces.append((float(center[0]),float(center[1]),mesh_index,face_index))
-    if not faces: raise RuntimeError(f"Part {part} has no triangles")
-    pending=[faces]; regions=[]
+    """Partition triangle-centroids geographically using compact NumPy arrays."""
+    cx=[];cy=[];mi_all=[];fi_all=[]
+    for mesh_index,(_,mesh) in enumerate(meshes):
+        centers=np.asarray(mesh.triangles_center)
+        if not len(centers): continue
+        cx.append(centers[:,0]);cy.append(centers[:,1])
+        mi_all.append(np.full(len(centers),mesh_index,dtype=np.int32))
+        fi_all.append(np.arange(len(centers),dtype=np.int32))
+    if not cx: raise RuntimeError(f"Part {part} has no triangles")
+    xs=np.concatenate(cx);ys=np.concatenate(cy);mis=np.concatenate(mi_all);fis=np.concatenate(fi_all)
+    pending=[np.arange(len(xs),dtype=np.int32)];regions=[]
     while pending:
-        group=pending.pop(0)
-        grouped={}
-        for _,_,mi,fi in group: grouped.setdefault(mi,[]).append(fi)
+        ids=pending.pop(0)
+        unique_meshes=np.unique(mis[ids])
         meshes_for_region=[]
-        for mi,face_ids in grouped.items():
-            sub=submesh_faces(meshes[mi][1],np.asarray(face_ids,dtype=np.int64))
-            if sub is not None: meshes_for_region.append((meshes[mi][0],sub))
+        for mesh_index in unique_meshes:
+            selected=ids[mis[ids]==mesh_index]
+            sub=submesh_faces(meshes[int(mesh_index)][1],fis[selected].astype(np.int64,copy=False))
+            if sub is not None: meshes_for_region.append((meshes[int(mesh_index)][0],sub))
         blob=pack_region(meshes_for_region,len(regions)+len(pending)+1)
         if len(blob)<=LIMIT:
-            regions.append((group,meshes_for_region,blob)); continue
-        if len(group)<2: raise RuntimeError(f"One triangle exceeds GLB size limit in part {part}")
-        xs=np.fromiter((f[0] for f in group),dtype=float)
-        ys=np.fromiter((f[1] for f in group),dtype=float)
-        # Alternate north/south and east/west using the wider geographic spread.
-        axis=1 if np.ptp(ys)>=np.ptp(xs) else 0
-        values=ys if axis==1 else xs
-        median=float(np.median(values))
-        left=[f for f in group if (f[1] if axis==1 else f[0])<=median]
-        right=[f for f in group if (f[1] if axis==1 else f[0])>median]
-        if not left or not right:
-            order=np.argsort(values); midpoint=len(order)//2
-            left=[group[int(i)] for i in order[:midpoint]]
-            right=[group[int(i)] for i in order[midpoint:]]
+            regions.append((ids,meshes_for_region,blob));continue
+        if len(ids)<2: raise RuntimeError(f"One triangle exceeds GLB size limit in part {part}")
+        xspan=float(xs[ids].max()-xs[ids].min());yspan=float(ys[ids].max()-ys[ids].min())
+        axis=ys if yspan>=xspan else xs
+        values=axis[ids];median=float(np.median(values))
+        left=ids[values<=median];right=ids[values>median]
+        if not len(left) or not len(right):
+            order=np.argsort(values);mid=len(order)//2
+            left=ids[order[:mid]];right=ids[order[mid:]]
+        # Each triangle index is placed in exactly one region; split axis follows local north/south
+        # or east/west extent and recursively subdivides until every GLB is safely below 78 MiB.
         pending.insert(0,right);pending.insert(0,left)
+    total=sum(len(region[0]) for region in regions)
+    if total!=len(xs): raise RuntimeError(f"Spatial split lost triangles: {total} != {len(xs)}")
     return regions
 
 def run(part):
