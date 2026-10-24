@@ -47,7 +47,7 @@ def main():
             for theme, selectors in THEMES.items():
                 target = dest / f"{theme}.geojson.gz"
                 manifest = dest / f"{theme}.metadata.json"
-                # Reuse a valid existing result. Delete it to force a refresh.
+                    # Reuse a valid existing result. Delete it to force a refresh.
                 if target.is_file() and target.stat().st_size > 0 and manifest.is_file():
                     try:
                         with gzip.open(target, "rt", encoding="utf-8") as f:
@@ -72,11 +72,11 @@ def main():
                 with gzip.open(target, "wt", encoding="utf-8", compresslevel=6) as f:
                     json.dump(geo, f, ensure_ascii=False, separators=(",", ":"))
                 entry = {"feature_count":len(geo["features"]), "compressed_bytes":target.stat().st_size, "uncompressed_bytes":raw_bytes, "geometry_types":sorted({x.get("geometry",{}).get("type","null") for x in geo["features"] if x.get("geometry")})}
-                manifest.write_text(json.dumps({"country":country,"theme":theme,"source_file":str(src),"method":"osmium tags-filter + osmium export","license":"OpenStreetMap ODbL",**entry}, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
+                manifest.write_text(json.dumps({"country":country,"theme":theme,"source_file":str(src),"method":"osmium tags-filter + osmium export","license":"OpenStreetMap ODbL",**entry}, ensure_ascii=False, indent=2)+"\n    ", encoding="utf-8")
                 catalog["layers"].append({"country":country, "theme":theme, "path":str(target).replace("\\","/"), **entry})
                 print(f"IMPORTED {country}/{theme}: {entry['feature_count']} features, {entry['compressed_bytes']} compressed bytes")
         catalog_path = ROOT / "layers-catalog.json"
-        catalog_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
+        catalog_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2)+"\n    ", encoding="utf-8")
         print(f"CATALOG {catalog_path} ({len(catalog['layers'])} layers)")
 if __name__ == "__main__":
-    main()
+    main()\n                except Exception as exc:\n                    print(f"ERROR: {country}/{theme} failed; continuing: {exc}")\n                    catalog.setdefault("errors", []).append({"country":country,"theme":theme,"error":str(exc)})\n                    continue
