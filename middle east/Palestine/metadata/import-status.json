@@ -1,11 +1,12 @@
 {
   "status": "complete",
+  "coverage_version": 2,
   "source": "Geofabrik Israel and Palestine combined extract (not Palestine-only)",
   "source_url": "https://download.geofabrik.de/asia/israel-and-palestine-latest.osm.pbf",
   "source_bytes": 120651115,
-  "tile_count": 36,
-  "tile_bytes_total": 124519691,
+  "tile_count": 70,
+  "tile_bytes_total": 124608711,
   "max_tile_bytes": 89999999,
   "method": "osmium complete_ways spatial extraction; recursive subdivision for any tile >=90 MB",
-  "retrieved_utc": "2026-10-24T18:49:33.994999+00:00"
+  "retrieved_utc": "2026-10-24T20:31:34.886086+00:00"
 }
