@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/import-middle-east-data.yml'
+      - '.github/workflows/import-middle-east-data.yml'\n      - 'middle east/scripts/**'
   workflow_dispatch:
     inputs:
       country:
@@ -151,6 +151,17 @@ jobs:
             git push origin HEAD:main
           done
 
+      - name: Build local thematic GeoJSON layers from saved OSM files
+        if: always()
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          sudo apt-get install -y osmium-tool
+          python3 'middle east/scripts/build-local-osm-layers.py'
+          git add 'middle east/Jordan/layers' 'middle east/Palestine/layers' 'middle east/layers-catalog.json' 2>/dev/null || true
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Build local Jordan and Palestine thematic OSM layers' || true
+          git push origin HEAD:main || echo '::warning::Local thematic layer updates could not be pushed; inspect the import logs.'
+          
       - name: Preserve original combined source as temporary artifact
         if: always()
         uses: actions/upload-artifact@v4
