@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/deploy-pages.yml'
+      - 'middle-east.html'
+      - 'middle east/**'
       - 'manila.html'
       - 'test.html'
       - 'ermita-malate-3d.html'
@@ -54,6 +56,7 @@ jobs:
 
           # Copy pages only when present; absent optional files should not fail publishing.
           if [ -f manila.html ]; then cp manila.html site/manila.html; else echo "WARNING: manila.html is missing"; fi
+          if [ -f middle-east.html ]; then cp middle-east.html site/middle-east.html; else echo "WARNING: middle-east.html is missing"; fi
           if [ -f test.html ]; then cp test.html site/test.html; else echo "ERROR: test.html is missing"; exit 1; fi
           if [ -f ermita-malate-3d.html ]; then cp ermita-malate-3d.html site/ermita-malate-3d.html; else echo "ERROR: ermita-malate-3d.html is missing"; exit 1; fi
           if [ -d ermita ]; then cp -a ermita/. site/ermita/; else echo "ERROR: ermita assets directory is missing"; exit 1; fi
