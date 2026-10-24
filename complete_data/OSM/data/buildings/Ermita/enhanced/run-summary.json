@@ -1,1 +1,52 @@
-{"parts_attempted":[1,2,3,4],"failed_or_missing":1,"resume_policy":"valid committed outputs are skipped on rerun"}
+{
+  "status": "success",
+  "enhancement_version": 4,
+  "parts_attempted": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "outputs_present": 4,
+  "failed_or_missing": 0,
+  "total_bytes": 249844424,
+  "storefront_sign_panels": 68,
+  "storefront_doors": 68,
+  "skipped_features": 0,
+  "output_files": [
+    {
+      "part": 1,
+      "file": "part1-roof-storefront-details.glb",
+      "bytes": 19689572,
+      "storefront_sign_panels": 60,
+      "skipped_features": 0
+    },
+    {
+      "part": 2,
+      "file": "part2-roof-storefront-details.glb",
+      "bytes": 81383136,
+      "storefront_sign_panels": 0,
+      "skipped_features": 0
+    },
+    {
+      "part": 3,
+      "file": "part3-roof-storefront-details.glb",
+      "bytes": 62628616,
+      "storefront_sign_panels": 8,
+      "skipped_features": 0
+    },
+    {
+      "part": 4,
+      "file": "part4-roof-storefront-details.glb",
+      "bytes": 86143100,
+      "storefront_sign_panels": 0,
+      "skipped_features": 0
+    }
+  ],
+  "resume_policy": "valid committed outputs are skipped on rerun",
+  "notes": [
+    "All four final detail GLBs and their reports are present and validated.",
+    "Parts 2 and 4 report zero storefront panels because no eligible storefront records were identified in their source footprints; this is not counted as skipped_features.",
+    "The original building GLBs and origin sidecars are unchanged."
+  ]
+}
