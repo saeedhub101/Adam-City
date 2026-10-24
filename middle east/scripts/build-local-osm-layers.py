@@ -9,6 +9,7 @@ THEMES = {
     "buildings": ["w/building", "r/building", "w/building:part"],
     "streets": ["w/highway", "r/route=road"],
     "streetnames": ["w/highway", "r/route=road"],
+    "boundaries": ["w/boundary=administrative", "r/boundary=administrative", "r/type=boundary"],
     "water": ["w/waterway", "r/waterway", "w/natural=water", "w/landuse=reservoir", "w/natural=coastline", "n/natural=spring", "w/natural=spring", "n/man_made=water_well", "w/man_made=water_well", "n/amenity=drinking_water", "w/amenity=drinking_water"],
     "landcover": ["w/landuse", "w/natural", "w/leisure", "w/landcover", "w/natural=wood", "w/natural=scrub", "w/natural=heath", "n/natural=tree", "n/natural=grassland"],
     "places": ["n/place", "w/place", "r/place", "n/amenity", "w/amenity", "r/amenity", "n/shop", "w/shop", "r/shop", "n/tourism", "w/tourism", "r/tourism", "n/historic", "w/historic", "r/historic", "n/office", "w/office", "n/healthcare", "w/healthcare", "n/railway=station", "n/public_transport=station", "n/education", "w/education"],
