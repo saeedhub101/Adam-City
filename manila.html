@@ -293,9 +293,7 @@ function addBuildingDatasetCheckbox(config){
   });
 }
 [
- {key:'source-ermita-fallback',label:'مباني OpenFreeMap المحلية — Ermita',description:'ermita/maps/sources/openfreemap/building-fallback.geojson',urls:['ermita/maps/sources/openfreemap/building-fallback.geojson']},
- {key:'source-2-building-layer',label:'المصدر 2 — طبقة building',description:'layers/building.geojsonl',urls:['complete_data/OFT/layers/building.geojsonl']},
- {key:'source-4-parts',label:'المصدر 4 — الجزآن 1 و2',description:'buildings-part1.geojson.gz + buildings-part2.geojson.gz',urls:['complete_data/OFT/buildings-part1.geojson.gz','complete_data/OFT/buildings-part2.geojson.gz']}
+ {key:'source-ermita-fallback',label:'مباني OpenFreeMap المحلية — Ermita',description:'ermita/maps/sources/openfreemap/building-fallback.geojson',urls:['ermita/maps/sources/openfreemap/building-fallback.geojson']}
 ].forEach(addBuildingDatasetCheckbox);
 
 const baseBuildings=[];
@@ -333,6 +331,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
  function showError(message){if(info){info.style.display='block';info.textContent=message;}if(status){status.className='status error';status.textContent=message;}}
  function setupPart(part){
   const toggle=document.getElementById('final-detail-glb-part-'+part);
+  if(!toggle){showError('لم يتم العثور على مفتاح GLB للجزء '+part+'.');return;}
   const layerId='manila-final-detail-glb-'+part;
   const root='complete_data/OSM/data/buildings/Ermita/';
   const originUrl=new URL(root+'part'+part+'/part'+part+'-origin.json',location.href).href;
@@ -352,7 +351,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
     const lon=Number(origin.origin_wgs84?.longitude),lat=Number(origin.origin_wgs84?.latitude);
     if(!Number.isFinite(lon)||!Number.isFinite(lat))throw new Error('إحداثيات الأصل غير صالحة');
     anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:lon,lat},0);
-    meters=anchor.meterInMercatorCoordinateUnits();projectedMeters=meters*Math.cos(lat*Math.PI/180);
+    meters=anchor.meterInMercatorCoordinateUnits();projectedMeters=meters;
     const customLayer={
      id:layerId,type:'custom',renderingMode:'3d',
      onAdd(mapInstance,gl){
