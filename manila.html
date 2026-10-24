@@ -146,6 +146,17 @@ function addErmitaGeoJsonCheckbox(){
       }
       sourceParts.push({id:'ermita-master-part-002',url:new URL(base+'part-002.geojson',window.location.href).href,features:0});
       if(!sourceParts.length)throw new Error('لم يتم العثور على ملفات GeoJSON.');
+      const sourceErrors=[];
+      const onSourceError=e=>{
+        const sid=e?.sourceId;
+        if(sid&&sourceParts.some(p=>p.id===sid)){
+          const message=e.error?.message||'خطأ غير معروف';
+          if(!sourceErrors.some(x=>x.source===sid))sourceErrors.push({source:sid,message});
+          status.className='status error';
+          status.textContent='خطأ في تحميل '+sourceErrors.length+' ملف GeoJSON على الأقل. آخر خطأ: '+sid+' — '+message;
+        }
+      };
+      map.on('error',onSourceError);
       let added=0;
       for(let i=0;i<sourceParts.length;i++){
         const part=sourceParts[i];
@@ -173,18 +184,7 @@ function addErmitaGeoJsonCheckbox(){
           await new Promise(resolve=>requestAnimationFrame(resolve));
         }
       }
-      // Report actual source loading failures instead of claiming success just after addSource.
-      const sourceErrors=[];
-      const onSourceError=e=>{
-        const sid=e?.sourceId;
-        if(sid&&sourceParts.some(p=>p.id===sid)){
-          const message=e.error?.message||'خطأ غير معروف';
-          if(!sourceErrors.some(x=>x.source===sid))sourceErrors.push({source:sid,message});
-          status.className='status error';
-          status.textContent='خطأ في تحميل '+sourceErrors.length+' ملف GeoJSON على الأقل. آخر خطأ: '+sid+' — '+message;
-        }
-      };
-      map.on('error',onSourceError);
+      // Wait for MapLibre to finish processing visible sources before reporting success.
       await new Promise(resolve=>map.once('idle',resolve));
       map.off('error',onSourceError);
       if(sourceErrors.length)throw new Error(sourceErrors.length+' مصدر/مصادر GeoJSON فشل تحميلها. '+sourceErrors[0].source+': '+sourceErrors[0].message);
