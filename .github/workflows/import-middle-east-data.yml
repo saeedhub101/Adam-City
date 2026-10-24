@@ -90,7 +90,7 @@ jobs:
             # Keep the original as a workflow artifact and save valid, spatial PBF
             # extracts in the repository, each below 90 MB. Never byte-split PBF.
             tile_dir="$ROOT/Palestine/osm/tiles"
-            if find "$tile_dir" -maxdepth 1 -type f -name '*.osm.pbf' -size +0c -print -quit | grep -q . && grep -Eq '"status"[[:space:]]*:[[:space:]]*"complete"' "$status" 2>/dev/null; then
+            if find "$tile_dir" -maxdepth 1 -type f -name '*.osm.pbf' -size +0c -print -quit | grep -q . && grep -Eq '"coverage_version"[[:space:]]*:[[:space:]]*2' "$status" 2>/dev/null && grep -Eq '"status"[[:space:]]*:[[:space:]]*"complete"' "$status" 2>/dev/null; then
               echo "Existing Palestine/Israel spatial extracts are present; preserving them."
               continue
             fi
@@ -108,8 +108,18 @@ jobs:
           LIMIT = 90_000_000
           count = 0
           total_bytes = 0
+          progress_path = os.path.join(outdir, "tile-progress.json")
+          try:
+              with open(progress_path, encoding="utf-8") as f: progress = json.load(f)
+          except Exception:
+              progress = {}
+          def save_progress(name, bbox, size):
+              progress[name] = {"bbox": bbox, "bytes": size}
+              tmp = progress_path + ".tmp"
+              with open(tmp, "w", encoding="utf-8") as f: json.dump(progress, f, indent=2)
+              os.replace(tmp, progress_path)
           def persist_tile(path):
-              subprocess.run(["git", "add", "--", path], check=True)
+              subprocess.run(["git", "add", "--", path, progress_path], check=True)
               commit = subprocess.run(["git", "-c", "user.name=github-actions[bot]", "-c",
                   "user.email=41898282+github-actions[bot]@users.noreply.github.com",
                   "commit", "-m", "Checkpoint imported OSM tile " + os.path.basename(path)])
@@ -132,6 +142,11 @@ jobs:
           def extract(bbox, name, depth=0):
               global count, total_bytes
               out = os.path.join(outdir, name + ".osm.pbf")
+              if name in progress and progress[name].get("bbox") == bbox and os.path.isfile(out) and os.path.getsize(out) == progress[name].get("bytes") and 0 < os.path.getsize(out) < LIMIT:
+                  count += 1
+                  total_bytes += os.path.getsize(out)
+                  print(f"RESUME_SKIP_VALID_TILE {name}", flush=True)
+                  return
               subprocess.run(["osmium","extract","--strategy","complete_ways","-b",bbox,src,"-o",out,"--overwrite"], check=True)
               size = os.path.getsize(out)
               if size >= LIMIT:
@@ -149,6 +164,7 @@ jobs:
               count += 1
               total_bytes += size
               print(f"VALID_TILE {name} {size} bytes bbox={bbox}", flush=True)
+              save_progress(name, bbox, size)
               persist_tile(out)
           # Cover the geographic extent of the source with manageable 0.5-degree
           # cells. The source itself is a combined Israel+Palestine extract.
@@ -165,7 +181,7 @@ jobs:
                   extract(f"{lon:.6f},{lat:.6f},{east:.6f},{north:.6f}",f"tile-r{r:02d}-c{c:02d}")
                   lon=east; c+=1
               lat=north; r+=1
-          manifest={"status":"complete","source":"Geofabrik Israel and Palestine combined extract (not Palestine-only)","source_url":"https://download.geofabrik.de/asia/israel-and-palestine-latest.osm.pbf","source_bytes":os.path.getsize(src),"tile_count":count,"tile_bytes_total":total_bytes,"max_tile_bytes":LIMIT-1,"method":"osmium complete_ways spatial extraction; recursive subdivision for any tile >=90 MB","retrieved_utc":__import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()}
+          manifest={"status":"complete","coverage_version":2,"source":"Geofabrik Israel and Palestine combined extract (not Palestine-only)","source_url":"https://download.geofabrik.de/asia/israel-and-palestine-latest.osm.pbf","source_bytes":os.path.getsize(src),"tile_count":count,"tile_bytes_total":total_bytes,"max_tile_bytes":LIMIT-1,"method":"osmium complete_ways spatial extraction; recursive subdivision for any tile >=90 MB","retrieved_utc":__import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()}
           with open(os.path.join(os.path.dirname(os.path.dirname(outdir)),"metadata","import-status.json"),"w") as f: json.dump(manifest,f,indent=2); f.write("\n")
           print("TILE_SUMMARY",json.dumps(manifest))
           PY
