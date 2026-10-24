@@ -175,15 +175,9 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
     const origin=await response.json();
     const lon=Number(origin.origin_wgs84.longitude),lat=Number(origin.origin_wgs84.latitude);
     if(!Number.isFinite(lon)||!Number.isFinite(lat))throw new Error('إحداثيات أصل الجزء غير صحيحة');
-    // The GLB parts are stored in a local EPSG:3857 metre frame relative to
-    // origin_projected_m. MapLibre's Mercator coordinates are normalized world
-    // units, so convert projected metres with the latitude-independent world scale.
-    // Do not apply meterInMercatorCoordinateUnits() to projected X/Y: it already
-    // includes a latitude correction for ground-distance metres and shifts/scales
-    // these EPSG:3857-local meshes incorrectly when combined with the anchor.
     anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:lon,lat},0);
-    meterScale=1/(2*Math.PI*6378137);
-    projectedMeterScale=meterScale;
+    meterScale=anchor.meterInMercatorCoordinateUnits();
+    projectedMeterScale=meterScale*Math.cos(lat*Math.PI/180);
     const layer={
      id,type:'custom',renderingMode:'3d',
      onAdd(mapInstance,gl){
