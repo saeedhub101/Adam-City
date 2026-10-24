@@ -55,7 +55,7 @@ def main():
                             with gzip.open(target, "rt", encoding="utf-8") as f:
                                 old_geo = json.load(f)
                             entry = json.loads(manifest.read_text(encoding="utf-8"))
-                            if old_geo.get("type") == "FeatureCollection":
+                            if old_geo.get("type") == "FeatureCollection" and entry.get("layer_version") == 2:
                                 catalog["layers"].append({"country":country,"theme":theme,"path":target.as_posix(),**entry})
                                 print(f"SKIP verified {target}")
                                 continue
@@ -75,7 +75,7 @@ def main():
                     with gzip.open(target, "wt", encoding="utf-8", compresslevel=6) as f:
                         json.dump(geo, f, ensure_ascii=False, separators=(",", ":"))
                     if target.stat().st_size >= LIMIT:\n                        target.unlink(missing_ok=True)\n                        raise RuntimeError(f"compressed GeoJSON exceeds safe 90 MB limit ({target.stat().st_size} bytes); requires spatial partitioning")\n                    entry = {"feature_count":len(geo["features"]),"compressed_bytes":target.stat().st_size,"uncompressed_bytes":raw_bytes,"geometry_types":sorted({x.get("geometry",{}).get("type","null") for x in geo["features"] if x.get("geometry")})}
-                    record = {"country":country,"theme":theme,"source_file":str(src),"method":"osmium tags-filter + osmium export","license":"OpenStreetMap ODbL",**entry}
+                    record = {"layer_version":2,"country":country,"theme":theme,"source_file":str(src),"method":"osmium tags-filter + osmium export","license":"OpenStreetMap ODbL",**entry}
                     manifest.write_text(json.dumps(record, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
                     catalog["layers"].append({"country":country,"theme":theme,"path":target.as_posix(),**entry})
                     print(f"IMPORTED {country}/{theme}: {entry['feature_count']} features, {entry['compressed_bytes']} compressed bytes")
