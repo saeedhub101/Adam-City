@@ -1,13 +1,13 @@
 {
-  "layer_version": 2,
+  "layer_version": 6,
   "country": "Jordan",
   "theme": "streets",
   "source_file": "middle east/Jordan/osm/jordan-latest.osm.pbf",
   "method": "osmium tags-filter + osmium export",
   "license": "OpenStreetMap ODbL",
-  "feature_count": 172071,
-  "compressed_bytes": 18520343,
-  "uncompressed_bytes": 79474848,
+  "feature_count": 174522,
+  "compressed_bytes": 18712325,
+  "uncompressed_bytes": 80333643,
   "geometry_types": [
     "LineString",
     "MultiPolygon",
