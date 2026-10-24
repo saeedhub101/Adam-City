@@ -102,7 +102,39 @@ const id=sourceId+'-point';map.addLayer({id,type:'circle',source:sourceId,'sourc
 for(const id of ids){map.on('click',id,featurePopup);map.on('mouseenter',id,()=>map.getCanvas().style.cursor='pointer');map.on('mouseleave',id,()=>map.getCanvas().style.cursor='')}
 loaded.set(key,ids);setVisibility(ids,on);status.textContent='تم ربط طبقة '+label+' مباشرة من PBF، source-layer: '+sourceLayer+'.';
 }
-defs.forEach(addCheckbox);
+
+// Ermita GeoJSON building overlay: insert immediately after the fourth checkbox.
+let ermitaGeoJsonLoaded=false;
+function addErmitaGeoJsonCheckbox(){
+  const wrap=document.createElement('label');wrap.className='layer';
+  const cb=document.createElement('input');cb.type='checkbox';
+  wrap.append(cb,document.createTextNode('مباني Ermita من GeoJSON (مضلعات وارتفاعات)'));
+  const fourth=checkboxes.get('aeroway')?.parentElement;
+  if(fourth&&fourth.parentElement===list) fourth.insertAdjacentElement('afterend',wrap); else list.append(wrap);
+  cb.addEventListener('change',()=>{
+    try{
+      const sourceId='ermita-geojson-buildings';
+      const layerId='ermita-geojson-buildings-3d';
+      if(!ermitaGeoJsonLoaded){
+        const dataUrl=new URL('ermita/maps/generated/ermita-building-details.geojson',window.location.href).href;
+        map.addSource(sourceId,{type:'geojson',data:dataUrl});
+        map.addLayer({id:layerId,type:'fill-extrusion',source:sourceId,filter:['in',['geometry-type'],'Polygon','MultiPolygon'],paint:{
+          'fill-extrusion-color':['match',['get','building',['get','tags']],'commercial','#c9a27e','retail','#d8b17d','industrial','#9dabb4','yes','#b7a99a','#c7b9a7'],
+          'fill-extrusion-height':['max',2,['to-number',['get','height',['get','tags']],['*',['to-number',['get','building:levels',['get','tags']],1],3.2]],
+          'fill-extrusion-base':['max',0,['to-number',['get','min_height',['get','tags']],0]],
+          'fill-extrusion-opacity':0.9,'fill-extrusion-vertical-gradient':true
+        }});
+        map.on('click',layerId,featurePopup);
+        map.on('mouseenter',layerId,()=>map.getCanvas().style.cursor='pointer');
+        map.on('mouseleave',layerId,()=>map.getCanvas().style.cursor='');
+        ermitaGeoJsonLoaded=true;
+      }
+      if(map.getLayer('ermita-geojson-buildings-3d'))map.setLayoutProperty('ermita-geojson-buildings-3d','visibility',cb.checked?'visible':'none');
+      status.className='status';status.textContent=cb.checked?'تم عرض مباني Ermita من ملف GeoJSON (1533 معلمًا، منها 1528 مضلعًا).':'تم إخفاء مباني Ermita من GeoJSON.';
+    }catch(e){cb.checked=false;status.className='status error';status.textContent='تعذر تحميل مباني Ermita من GeoJSON: '+e.message}
+  });
+}
+defs.forEach((d,i)=>{addCheckbox(d);if(i===3)addErmitaGeoJsonCheckbox();});
 const baseBuildings=[];
 document.getElementById('toggleVector').addEventListener('click',()=>{const panel=document.querySelector('.panel'),btn=document.getElementById('toggleVector'),isShort=panel.classList.toggle('panel-short');btn.textContent=isShort?'+':'−';btn.setAttribute('aria-expanded',String(!isShort));btn.setAttribute('aria-label',isShort?'تكبير لوحة التحكم':'تصغير لوحة التحكم');});
 map.on('load',()=>{
