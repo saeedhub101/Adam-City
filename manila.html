@@ -118,7 +118,7 @@ function addErmitaGeoJsonCheckbox(){
       if(!ermitaGeoJsonLoaded){
         const dataUrl=new URL('ermita/maps/generated/ermita-building-details.geojson',window.location.href).href;
         map.addSource(sourceId,{type:'geojson',data:dataUrl});
-        map.addLayer({id:layerId,type:'fill-extrusion',source:sourceId,filter:['in',['geometry-type'],'Polygon','MultiPolygon'],paint:{
+        map.addLayer({id:layerId,type:'fill-extrusion',source:sourceId,filter:['==',['geometry-type'],'Polygon'],paint:{
           'fill-extrusion-color':['match',['get','building',['get','tags']],'commercial','#c9a27e','retail','#d8b17d','industrial','#9dabb4','yes','#b7a99a','#c7b9a7'],
           'fill-extrusion-height':['max',2,['to-number',['get','height',['get','tags']],['*',['to-number',['get','building:levels',['get','tags']],1],3.2]],
           'fill-extrusion-base':['max',0,['to-number',['get','min_height',['get','tags']],0]],
