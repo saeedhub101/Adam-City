@@ -94,7 +94,7 @@ jobs:
             # Keep the original as a workflow artifact and save valid, spatial PBF
             # extracts in the repository, each below 90 MB. Never byte-split PBF.
             tile_dir="$ROOT/Palestine/osm/tiles"
-            if find "$tile_dir" -maxdepth 1 -type f -name '*.osm.pbf' -size +0c -print -quit | grep -q . && grep -q '"status":"complete"' "$status" 2>/dev/null; then
+            if find "$tile_dir" -maxdepth 1 -type f -name '*.osm.pbf' -size +0c -print -quit | grep -q . && grep -Eq '"status"[[:space:]]*:[[:space:]]*"complete"' "$status" 2>/dev/null; then
               echo "Existing Palestine/Israel spatial extracts are present; preserving them."
               continue
             fi
