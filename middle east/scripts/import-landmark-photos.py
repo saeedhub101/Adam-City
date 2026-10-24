@@ -85,7 +85,7 @@ def main():
                 "type":"Feature", "geometry":{"type":"Point","coordinates":((page.get("coordinates") or [{}])[0].get("lon", lon), (page.get("coordinates") or [{}])[0].get("lat", lat))},
                 "properties":{
                     "name": re.sub(r"<[^>]+>", "", title.removeprefix("File:")),
-                    "area":label, "image":"./" + urllib.parse.quote(filename, safe="/"),
+                    "area":label, "image":"./middle%20east/" + urllib.parse.quote(filename, safe="/"),
                     "commons_page":commons_page, "license":re.sub(r"<[^>]+>", "", license_name),
                     "artist":re.sub(r"<[^>]+>", "", artist)[:400],
                     "description":re.sub(r"<[^>]+>", "", description)[:500],
