@@ -9,6 +9,7 @@ on:
       - 'manila-bundry.html'
       - 'Manila/vector-tiles/**'
       - 'old/manila/ermita-buildings-master.parts/**'
+      - 'Philippine/GeoJSON_Map/**'
       - 'Manila/3d-rag/apply-report.json'
   workflow_dispatch:
 
@@ -41,19 +42,21 @@ jobs:
           test -d Manila/vector-tiles
           pbf_count="$(find Manila/vector-tiles -type f -name '*.pbf' | wc -l)"
           test "$pbf_count" -gt 0
-          test -s old/manila/ermita-buildings-master.parts/part-001.geojson
-          test -s old/manila/ermita-buildings-master.parts/part-002.geojson
-          mkdir -p site/Manila/vector-tiles site/Manila/3d-rag site/old/manila/ermita-buildings-master.parts
+          test -s Philippine/GeoJSON_Map/Philippine01.geojson
+          test -s Philippine/GeoJSON_Map/Philippine02.geojson
+          mkdir -p site/Manila/vector-tiles site/Manila/3d-rag site/old/manila/ermita-buildings-master.parts site/Philippine/GeoJSON_Map
           cp manila.html site/manila.html
           cp manila-bundry.html site/manila-bundry.html
           cp -a Manila/vector-tiles/. site/Manila/vector-tiles/
           cp -a old/manila/ermita-buildings-master.parts/. site/old/manila/ermita-buildings-master.parts/
+          cp Philippine/GeoJSON_Map/Philippine01.geojson site/Philippine/GeoJSON_Map/Philippine01.geojson
+          cp Philippine/GeoJSON_Map/Philippine02.geojson site/Philippine/GeoJSON_Map/Philippine02.geojson
           if [ -s Manila/3d-rag/apply-report.json ]; then
             cp Manila/3d-rag/apply-report.json site/Manila/3d-rag/apply-report.json
           fi
           touch site/.nojekyll
           printf '%s' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=manila.html"><title>Manila</title><a href="manila.html">Open Manila</a></html>' > site/index.html
-          echo "Publish-only build: copied $pbf_count existing PBF files and the original part-001.geojson and part-002.geojson files; no data generation performed."
+          echo "Publish-only build: copied $pbf_count existing PBF files and Philippine01.geojson and Philippine02.geojson; no data generation performed."
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
