@@ -6,8 +6,8 @@ on:
       maxzoom:
         description: Maximum vector tile zoom (higher zooms produce much larger files)
         type: choice
-        options: ["8", "10", "12", "14"]
-        default: "10"
+        options: ["8", "10", "12", "14", "17"]
+        default: "17"
       country:
         description: Region to build
         type: choice
@@ -73,7 +73,7 @@ jobs:
 
       - name: Build OpenMapTiles-compatible MBTiles
         env:
-          MAXZOOM: ${{ inputs.maxzoom || '10' }}
+          MAXZOOM: ${{ inputs.maxzoom || '17' }}
           COUNTRY: ${{ inputs.country || 'both' }}
         shell: bash
         run: |
@@ -93,7 +93,7 @@ jobs:
       - name: Upload generated vector tile packages
         uses: actions/upload-artifact@v4
         with:
-          name: openmaptiles-jordan-palestine-z${{ inputs.maxzoom || '10' }}
+          name: openmaptiles-jordan-palestine-z${{ inputs.maxzoom || '17' }}
           path: build/openmaptiles/
           if-no-files-found: error
           retention-days: 30
