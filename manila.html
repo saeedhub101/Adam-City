@@ -262,7 +262,7 @@ function addBuildingDatasetCheckbox(config){
       const collections=await Promise.all(config.urls.map(readBuildingFile));
       const features=collections.flatMap(fc=>fc.features||[]);
       if(!features.length)throw new Error('لم يعثر الملف على معالم مبانٍ');
-      map.addSource(sourceId,{type:'geojson',data:{type:'FeatureCollection',features},tolerance:0.5});
+      map.addSource(sourceId,{type:'geojson',data:{type:'FeatureCollection',features},maxzoom:14});
       // Match the original Ermita page's 3D building paint logic exactly.
       const color=['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building_colour'],['match',['get','class'],'commercial','#c9b8a4','industrial','#b9b7b1','public','#c4c9ce','residential','#d8cdbd','#c9bfb0']];
       const firstSymbolLayer=(map.getStyle().layers||[]).find(layer=>layer.type==='symbol');
