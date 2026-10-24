@@ -6,7 +6,9 @@ from pathlib import Path
 ROOT = Path("middle east")
 LIMIT = 90_000_000
 THEMES = {
-    "buildings": ["w/building", "r/building", "w/building:part"],
+    "buildings": ["w/building", "r/building", "w/building:part", "r/building:part"],
+    # Export complete tags on building features, including roof/facade/material/color/height/levels.
+    "building_details": ["w/building", "r/building", "w/building:part", "r/building:part", "w/roof:shape", "w/roof:material", "w/roof:colour", "w/roof:levels", "w/building:material", "w/building:colour", "w/facade:material", "w/facade:colour", "w/window", "n/window", "w/door", "n/door", "w/entrance", "n/entrance"],
     "streets": ["w/highway", "r/route=road"],
     "streetnames": ["w/highway", "r/route=road"],
     "boundaries": ["w/boundary=administrative", "r/boundary=administrative", "r/type=boundary"],
@@ -30,7 +32,7 @@ def country_source(country, temp):
     return merged
 
 def main():
-    catalog = {"format":"adam-city-local-osm-layers-v1", "source":"Repository-stored OpenStreetMap PBF extracts", "license":"OpenStreetMap ODbL", "layers":[], "errors":[]}
+    catalog = {"format":"adam-city-local-osm-layers-v2", "source":"Repository-stored OpenStreetMap PBF extracts", "license":"OpenStreetMap ODbL", "layers":[], "errors":[]}
     with tempfile.TemporaryDirectory(prefix="me-layers-") as td:
         temp = Path(td)
         for country in ("Jordan", "Palestine"):
@@ -56,7 +58,7 @@ def main():
                             with gzip.open(target, "rt", encoding="utf-8") as f:
                                 old_geo = json.load(f)
                             entry = json.loads(manifest.read_text(encoding="utf-8"))
-                            if old_geo.get("type") == "FeatureCollection" and entry.get("layer_version") == 2:
+                            if old_geo.get("type") == "FeatureCollection" and entry.get("layer_version") == 3:
                                 catalog["layers"].append({"country":country,"theme":theme,"path":target.as_posix(),**entry})
                                 print(f"SKIP verified {target}")
                                 continue
@@ -77,7 +79,7 @@ def main():
                         target.unlink(missing_ok=True)
                         raise RuntimeError(f"compressed GeoJSON exceeds safe 90 MB limit ({target.stat().st_size} bytes); requires spatial partitioning")
                     entry = {"feature_count":len(geo["features"]),"compressed_bytes":target.stat().st_size,"uncompressed_bytes":raw_bytes,"geometry_types":sorted({x.get("geometry",{}).get("type","null") for x in geo["features"] if x.get("geometry")})}
-                    record = {"layer_version":2,"country":country,"theme":theme,"source_file":str(src),"method":"osmium tags-filter + osmium export","license":"OpenStreetMap ODbL",**entry}
+                    record = {"layer_version":3,"country":country,"theme":theme,"source_file":str(src),"method":"osmium tags-filter + osmium export","license":"OpenStreetMap ODbL",**entry}
                     manifest.write_text(json.dumps(record, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
                     catalog["layers"].append({"country":country,"theme":theme,"path":target.as_posix(),**entry})
                     print(f"IMPORTED {country}/{theme}: {entry['feature_count']} features, {entry['compressed_bytes']} compressed bytes")
