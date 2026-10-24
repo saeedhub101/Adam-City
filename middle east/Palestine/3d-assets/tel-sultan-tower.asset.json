@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "asset_id": "pal-jericho-tel-sultan-tower",
+  "name": "Tel Sultan Tower, Jericho",
+  "region": "Palestine",
+  "source": {
+    "provider": "Sketchfab",
+    "creator": "MiddleAsset",
+    "model_uid": "a6147999cab34e3e8d767a9eda81eabe",
+    "page": "https://sketchfab.com/3d-models/tel-sultan-tower-jericho-a6147999cab34e3e8d767a9eda81eabe",
+    "api_metadata": "https://api.sketchfab.com/v3/models/a6147999cab34e3e8d767a9eda81eabe",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Tel Sultan Tower Jericho / برج تل السلطان أريحا — MiddleAsset, Sketchfab (CC BY 4.0)",
+    "triangles": 999127,
+    "vertices": 889692
+  },
+  "status": "downloadable_source_verified_download_requires_authenticated_sketchfab_api",
+  "downloaded_into_repository": false,
+  "georeferenced": false,
+  "integrated_into_map": false,
+  "placement_policy": "Do not place or publish as a map overlay until the actual source mesh is obtained, its local origin/units/up-axis are inspected, and its location/scale/orientation are verified against reliable geographic control.",
+  "verification_date": "2026-10-25",
+  "notes": [
+    "Public model metadata confirms the model is marked downloadable and licensed CC BY 4.0.",
+    "The Sketchfab download endpoint returned HTTP 401 without authentication credentials. No authentication was bypassed and no model file has been downloaded.",
+    "Next step: download the model from its Sketchfab page while signed in, then upload the downloaded archive/GLB to the repository or this chat for inspection and georeferencing."
+  ]
+}
