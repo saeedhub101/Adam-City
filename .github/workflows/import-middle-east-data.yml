@@ -158,7 +158,7 @@ jobs:
           set -Eeuo pipefail
           sudo apt-get install -y osmium-tool
           python3 'middle east/scripts/build-local-osm-layers.py'
-          git add 'middle east/Jordan/layers' 'middle east/Palestine/layers' 'middle east/layers-catalog.json' 2>/dev/null || true
+          git add -A 'middle east'
           git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Build local Jordan and Palestine thematic OSM layers' || true
           git push origin HEAD:main || echo '::warning::Local thematic layer updates could not be pushed; inspect the import logs.'
           
