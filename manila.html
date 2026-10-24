@@ -19,15 +19,15 @@ h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var
 <div id="map" aria-label="خريطة بيانات مانيلا"></div>
 <section class="panel">
 <h1>MANILA · DATA EXPLORER</h1>
-<div class="intro">عارض لطبقات OpenMapTiles من بلاطات PBF المحلية داخل Manila. مفاتيح ✓ أدناه تتحكم بملفي GeoJSON الأصليين part-001 وpart-002 مباشرة.</div>
+<div class="intro">عارض ثلاثي الأبعاد لمانيلا. مفاتيح ✓ أدناه تعرض ملفي Philippine GeoJSON المحوّلين إلى FeatureCollection صالحين للخريطة.</div>
 <div class="section">
 <div class="section-title">الخريطة الأساسية</div>
 <label class="layer"><input id="baseMap" type="checkbox" checked> خريطة OpenFreeMap الأساسية (الشوارع والمياه والتسميات)</label>
 <label class="layer"><input id="baseBuildings" type="checkbox" checked> مباني الخريطة الأساسية ثلاثية الأبعاد</label>
 </div>
 <div class="section" id="partsSection">
-<div class="section-title">مباني Ermita · ملفات GeoJSON الأصلية</div>
-<div class="meta">اختر ✓ بجانب أي جزء لإظهاره أو إخفائه. يمكن تشغيل الجزأين معًا.</div>
+<div class="section-title">مباني الفلبين · ملفات GeoJSON</div>
+<div class="meta">اختر ✓ بجانب أي ملف لإظهاره أو إخفائه. يمكن عرض الملفين معًا.</div>
 <div id="partToggles"></div>
 </div>
 <div class="section" id="vectorSection">
@@ -109,10 +109,10 @@ loaded.set(key,ids);setVisibility(ids,on);status.textContent='تم ربط طبق
 }
 defs.forEach(addCheckbox);
 const baseBuildings=[];
-const partsRoot='old/manila/ermita-buildings-master.parts/';
+const partsRoot='Philippine/GeoJSON_Map/';
 const parts=[
-{id:'part-001',label:'Part 1',file:'part-001.geojson'},
-{id:'part-002',label:'Part 2',file:'part-002.geojson'}
+{id:'philippine-01',label:'Philippine 01',file:'Philippine01.geojson'},
+{id:'philippine-02',label:'Philippine 02',file:'Philippine02.geojson'}
 ];
 function addPartToggle(part){
 const label=document.createElement('label');label.className='part-toggle';
@@ -124,7 +124,7 @@ const on=cb.checked;
 try{
 let entry=partLayers.get(part.id);
 if(!entry&&on){
-status.className='status';status.textContent='جارٍ تحميل '+part.file+' من مجلد ermita-buildings-master.parts…';
+status.className='status';status.textContent='جارٍ تحميل '+part.file+' من مجلد Philippine/GeoJSON_Map…';
 const response=await fetch(partsRoot+part.file);
 if(!response.ok)throw new Error('HTTP '+response.status+' عند قراءة '+part.file);
 const data=await response.json();
@@ -154,7 +154,7 @@ const styleLayers=map.getStyle().layers||[];
 for(const l of styleLayers){if(l.type==='fill-extrusion'&&/building/i.test(l.id+' '+(l['source-layer']||'')))baseBuildings.push(l.id)}
 document.getElementById('baseBuildings').addEventListener('change',e=>baseBuildings.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('baseMap').addEventListener('change',e=>{for(const l of map.getStyle().layers||[]){if(baseBuildings.includes(l.id))continue;if(l.type==='background')continue;if(map.getLayer(l.id))map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}});
-status.textContent='الخريطة جاهزة؛ استخدم علامتي ✓ لتحميل Part 1 أو Part 2.';
+status.textContent='الخريطة جاهزة؛ استخدم علامتي ✓ لعرض Philippine 01 أو Philippine 02.';
 });
 map.on('error',e=>{if(e.error)console.warn('MapLibre',e.error.message)});
 })();
