@@ -35,65 +35,147 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
+
+      - name: Install OSM PBF tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y osmium-tool
+
       - name: Prepare folders
-        run: mkdir -p 'middle east/Jordan' 'middle east/Palestine'
-      - name: Fetch and persist free OSM extracts
+        run: mkdir -p 'middle east/Jordan' 'middle east/Palestine' "$RUNNER_TEMP/middle-east-source"
+
+      - name: Fetch, validate, and persist OSM data
         env:
           COUNTRY: ${{ inputs.country || 'both' }}
-          RETRY_FAILED: ${{ inputs.retry_failed || 'true' }}
+          RETRY_FAILED: ${{ inputs.retry_failed }}
         shell: bash
         run: |
-          set +e
+          set -Eeuo pipefail
           ROOT='middle east'
-          declare -A URL TARGET REGIONS
+          mkdir -p "$ROOT/Jordan/osm" "$ROOT/Jordan/metadata" "$ROOT/Palestine/osm/tiles" "$ROOT/Palestine/metadata" "$ROOT/Palestine/reports"
+          declare -A URL
           URL[jordan]='https://download.geofabrik.de/asia/jordan-latest.osm.pbf'
           URL[palestine]='https://download.geofabrik.de/asia/israel-and-palestine-latest.osm.pbf'
-          TARGET[jordan]="$ROOT/Jordan/osm/jordan-latest.osm.pbf"
-          TARGET[palestine]="$ROOT/Palestine/osm/israel-and-palestine-latest.osm.pbf"
-          REGIONS[jordan]='amman irbid zarqa maan karak petra aqaba deadsea mafraq jerash ajloun madaba salt tafileh'
-          REGIONS[palestine]='jerusalem ramallah nablus jenin tulkarm qalqilya salfit jericho bethlehem hebron gaza north-gaza deir-al-balah khan-younis rafah tiberias'
-          if [ "$COUNTRY" = both ]; then COUNTRIES=(jordan palestine); else COUNTRIES=("$COUNTRY"); fi
-          for c in "${COUNTRIES[@]}"; do
-            dest="${TARGET[$c]}"; country="${c^}"
-            mkdir -p "$(dirname "$dest")" "$ROOT/$country/metadata" "$ROOT/$country/reports" "$ROOT/$country/openfreetile" "$ROOT/$country/openfreemap" "$ROOT/$country/terrain"
-            status="$ROOT/$country/metadata/import-status.json"
-            if [ -s "$dest" ]; then echo "Existing file retained; skipping completed extract: $dest"; continue; fi
-            tmp="$dest.part"
-            echo "Downloading $c from ${URL[$c]}"
-            curl -fL --retry 4 --retry-all-errors --retry-delay 5 --connect-timeout 30 --max-time 2400 "${URL[$c]}" -o "$tmp"
-            rc=$?
-            if [ "$rc" -eq 0 ] && [ -s "$tmp" ]; then
-              bytes=$(stat -c%s "$tmp")
-              if [ "$bytes" -ge 90000000 ]; then
-                echo "Extract >=90 MB; do not commit an oversized Git blob. Download remains available from the source URL."
-                rm -f "$tmp"
-                printf '{"task":"%s-osm-extract","status":"too_large_for_git","bytes":%s,"url":"%s"}\n' "$c" "$bytes" "${URL[$c]}" > "$status"
-              else
-                mv "$tmp" "$dest"; sha=$(sha256sum "$dest" | cut -d' ' -f1)
-                printf '{"task":"%s-osm-extract","status":"complete","url":"%s","bytes":%s,"sha256":"%s","retrieved_utc":"%s","license":"OpenStreetMap ODbL"}\n' "$c" "${URL[$c]}" "$bytes" "$sha" "$(date -u +%FT%TZ)" > "$status"
-              fi
-            else
-              rm -f "$tmp"; printf '{"task":"%s-osm-extract","status":"failed","url":"%s","time":"%s"}\n' "$c" "${URL[$c]}" "$(date -u +%FT%TZ)" > "$status"
-              echo "::warning::OSM download failed for $c; continuing to next country."
-            fi
-            git add "$ROOT/$country"; git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m "Import Middle East OSM extract: $c" || true
-            git push origin HEAD:main || echo '::warning::Could not push progress commit; continuing.'
-          done
-          # Region folders are initialized independently of source-download success.
+          if [[ "$COUNTRY" == "both" ]]; then COUNTRIES=(jordan palestine); else COUNTRIES=("$COUNTRY"); fi
+
+          # Jordan's source is already below the GitHub 100 MB hard limit.
           for c in "${COUNTRIES[@]}"; do
             country="${c^}"
-            for region in ${REGIONS[$c]}; do
-              d="$ROOT/$country/regions/$region"
-              mkdir -p "$d/osm" "$d/openfreetile" "$d/openfreemap" "$d/terrain" "$d/metadata" "$d/reports"
-              if [ ! -f "$d/README.md" ]; then printf '# %s — %s\n\nDestination only; data is complete only after source download, integrity check and coverage report.\n' "$c" "$region" > "$d/README.md"; fi
-            done
-            git add "$ROOT/$country/regions"; git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m "Initialize Middle East region folders: $c" || true
-            git push origin HEAD:main || echo '::warning::Could not push regional progress.'
+            status="$ROOT/$country/metadata/import-status.json"
+            if [[ "$c" == "jordan" ]]; then
+              dest="$ROOT/Jordan/osm/jordan-latest.osm.pbf"
+              if [[ -s "$dest" ]]; then
+                echo "Jordan extract already exists; preserving it: $dest"
+                continue
+              fi
+              tmp="$RUNNER_TEMP/jordan-latest.osm.pbf"
+              curl -fL --retry 4 --retry-all-errors --retry-delay 5 --connect-timeout 30 --max-time 2400 "${URL[jordan]}" -o "$tmp"
+              bytes=$(stat -c%s "$tmp")
+              if (( bytes >= 90000000 )); then
+                echo "::error::Jordan source is >=90 MB; refusing to commit an oversized file."
+                exit 1
+              fi
+              osmium fileinfo "$tmp" >/dev/null
+              cp "$tmp" "$dest"
+              sha=$(sha256sum "$dest" | cut -d' ' -f1)
+              printf '{"task":"jordan-osm-extract","status":"complete","url":"%s","bytes":%s,"sha256":"%s","retrieved_utc":"%s","license":"OpenStreetMap ODbL"}\n' "${URL[jordan]}" "$bytes" "$sha" "$(date -u +%FT%TZ)" > "$status"
+              git add "$dest" "$status"
+              git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Import Jordan OSM extract' || true
+              git push origin HEAD:main
+              continue
+            fi
+
+            # Geofabrik's available extract covers BOTH Israel and Palestine.
+            # Keep the original as a workflow artifact and save valid, spatial PBF
+            # extracts in the repository, each below 90 MB. Never byte-split PBF.
+            tile_dir="$ROOT/Palestine/osm/tiles"
+            if find "$tile_dir" -maxdepth 1 -type f -name '*.osm.pbf' -size +0c -print -quit | grep -q . && grep -q '"status":"complete"' "$status" 2>/dev/null; then
+              echo "Existing Palestine/Israel spatial extracts are present; preserving them."
+              continue
+            fi
+
+            src="$RUNNER_TEMP/middle-east-source/israel-and-palestine-latest.osm.pbf"
+            curl -fL --retry 4 --retry-all-errors --retry-delay 5 --connect-timeout 30 --max-time 2400 "${URL[palestine]}" -o "$src"
+            osmium fileinfo "$src" >/dev/null
+            source_bytes=$(stat -c%s "$src")
+            echo "Downloaded combined Israel+Palestine source: $source_bytes bytes"
+
+            python3 - "$src" "$tile_dir" <<'PY'
+          import os, sys, subprocess, math, json
+          src, outdir = sys.argv[1], sys.argv[2]
+          os.makedirs(outdir, exist_ok=True)
+          LIMIT = 90_000_000
+          count = 0
+          total_bytes = 0
+          def extract(bbox, name, depth=0):
+              global count, total_bytes
+              out = os.path.join(outdir, name + ".osm.pbf")
+              subprocess.run(["osmium","extract","--strategy","complete_ways","-b",bbox,src,"-o",out,"--overwrite"], check=True)
+              size = os.path.getsize(out)
+              if size >= LIMIT:
+                  os.remove(out)
+                  if depth >= 5:
+                      raise RuntimeError("Unable to keep tile under 90 MB: " + name)
+                  w,s,e,n = map(float,bbox.split(","))
+                  mx,my=(w+e)/2,(s+n)/2
+                  for suffix,bb in [
+                    ("a",f"{w},{s},{mx},{my}"),("b",f"{mx},{s},{e},{my}"),
+                    ("c",f"{w},{my},{mx},{n}"),("d",f"{mx},{my},{e},{n}")]:
+                      extract(bb,name+suffix,depth+1)
+                  return
+              subprocess.run(["osmium","fileinfo",out],stdout=subprocess.DEVNULL,check=True)
+              count += 1
+              total_bytes += size
+              print(f"VALID_TILE {name} {size} bytes bbox={bbox}")
+          # Cover the geographic extent of the source with manageable 0.5-degree
+          # cells. The source itself is a combined Israel+Palestine extract.
+          lat0, lat1, lon0, lon1 = 29.0, 33.5, 34.0, 36.0
+          step = 0.5
+          r=0
+          lat=lat0
+          while lat < lat1 - 1e-9:
+              north=min(lat+step,lat1)
+              c=0; lon=lon0
+              while lon < lon1 - 1e-9:
+                  east=min(lon+step,lon1)
+                  extract(f"{lon:.6f},{lat:.6f},{east:.6f},{north:.6f}",f"tile-r{r:02d}-c{c:02d}")
+                  lon=east; c+=1
+              lat=north; r+=1
+          manifest={"status":"complete","source":"Geofabrik Israel and Palestine combined extract (not Palestine-only)","source_url":"https://download.geofabrik.de/asia/israel-and-palestine-latest.osm.pbf","source_bytes":os.path.getsize(src),"tile_count":count,"tile_bytes_total":total_bytes,"max_tile_bytes":LIMIT-1,"method":"osmium complete_ways spatial extraction; recursive subdivision for any tile >=90 MB","retrieved_utc":__import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()}
+          with open(os.path.join(os.path.dirname(outdir),"metadata","import-status.json"),"w") as f: json.dump(manifest,f,indent=2); f.write("\n")
+          print("TILE_SUMMARY",json.dumps(manifest))
+          PY
+
+            git add "$tile_dir" "$status"
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Import spatially split Middle East OSM tiles' || true
+            git push origin HEAD:main
           done
-      - name: Explain source coverage
+
+      - name: Preserve original combined source as temporary artifact
         if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: geofabrik-israel-and-palestine-original-pbf
+          path: ${{ runner.temp }}/middle-east-source/israel-and-palestine-latest.osm.pbf
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Initialize region folders without overwriting existing data
+        if: always()
+        shell: bash
         run: |
-          echo 'Country OSM extracts are not separate municipal exports.'
-          echo 'Palestine source currently includes Israel and Palestine; the filename and manifest make this explicit.'
-          echo 'Hosted OpenFreeMap tiles remain remote; they are not represented as a local bulk archive.'
-          echo 'Failures are warnings and do not stop subsequent country tasks.'
+          set -euo pipefail
+          for country in Jordan Palestine; do
+            case "$country" in
+              Jordan) regions='amman irbid zarqa maan karak petra aqaba deadsea mafraq jerash ajloun madaba salt tafileh' ;;
+              Palestine) regions='jerusalem ramallah nablus jenin tulkarm qalqilya salfit jericho bethlehem hebron gaza north-gaza deir-al-balah khan-younis rafah tiberias' ;;
+            esac
+            for region in $regions; do
+              d="middle east/$country/regions/$region"
+              mkdir -p "$d/osm" "$d/openfreetile" "$d/openfreemap" "$d/terrain" "$d/metadata" "$d/reports"
+              if [[ ! -f "$d/README.md" ]]; then printf '# %s — %s\n\nDestination folder. A region is complete only after its own source extract, integrity check and coverage report exist.\n' "$country" "$region" > "$d/README.md"; fi
+            done
+          done
+          git add 'middle east'
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Ensure Middle East regional data folders exist' || true
+          git push origin HEAD:main || echo '::warning::Could not push regional folder updates.'
