@@ -3,13 +3,12 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "complete_data/OSM/scripts/apply_details_to_original_glbs.py"
       - "complete_data/OSM/scripts/generate_roof_storefront_overlays.py"
       - "ermita/maps/generated/ermita-building-footprints.geojson"
 permissions:
   contents: write
 concurrency:
-  group: adam-city-geographic-glb-partition-v2
+  group: adam-city-roof-storefront-enhancement
   cancel-in-progress: false
 jobs:
   improve:
@@ -25,56 +24,27 @@ jobs:
           python-version: "3.11"
       - name: Install geometry dependencies
         run: python -m pip install --upgrade numpy trimesh pyproj shapely pillow
-      - name: Improve and checkpoint each original GLB
+      - name: Generate and checkpoint enhanced detail GLBs
         shell: bash
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          failed=0
           for part in 1 2 3 4; do
-            echo "=== Integrating details into original Parts${part}.glb ==="
-            if python complete_data/OSM/scripts/apply_details_to_original_glbs.py --part "$part"; then
-              original="complete_data/OSM/data/buildings/Ermita/Parts${part}.glb"
-              extra="complete_data/OSM/data/buildings/Ermita/Parts${part}-extra.glb"
-              report="complete_data/OSM/data/buildings/Ermita/enhanced/part${part}-integrated-report.json"
-              manifest="complete_data/OSM/data/buildings/Ermita/enhanced/part${part}-regions.json"
-              for f in "$original" "$extra"; do
-                if [ -f "$f" ]; then
-                  size=$(stat -c%s "$f")
-                  if [ "$size" -ge 99614720 ]; then echo "Unsafe file size: $f ($size)"; failed=1; fi
-                fi
-              done
-              git add "$original" "$report" "$manifest"
-              for region in complete_data/OSM/data/buildings/Ermita/Parts${part}-region-*.glb; do
-                if [ -f "$region" ]; then
-                  size=$(stat -c%s "$region")
-                  if [ "$size" -ge 99614720 ]; then echo "Unsafe file size: $region ($size)"; failed=1; fi
-                  git add "$region"
-                fi
-              done
-              if [ -f "$extra" ]; then git rm --ignore-unmatch "$extra"; fi
-              if git diff --cached --quiet; then
-                echo "part${part}: no new changes to commit"
-              else
-                git commit -m "Improve original building GLB part ${part}"
-                pushed=0
-                for attempt in 1 2 3; do
-                  git fetch origin main
-                  git rebase origin/main
-                  if git push origin HEAD:main; then pushed=1; break; fi
-                  echo "Push attempt ${attempt} failed; retrying after refreshing main"
-                  sleep 2
-                done
-                if [ "$pushed" -ne 1 ]; then
-                  echo "Could not checkpoint part ${part} to main after 3 attempts"
-                  failed=1
-                  git rebase --abort || true
-                fi
-              fi
-              echo "part${part}: saved checkpoint"
-            else
-              echo "part${part}: failed; continue with next part"
-              failed=1
+            echo "=== Generating enhanced roof, facade, glass/PBR, and storefront detail GLB for part ${part} ==="
+            python complete_data/OSM/scripts/generate_roof_storefront_overlays.py --part "${part}"
+            output="complete_data/OSM/data/buildings/Ermita/enhanced/part${part}-roof-storefront-details.glb"
+            report="complete_data/OSM/data/buildings/Ermita/enhanced/part${part}-roof-storefront-details-report.json"
+            test -s "${output}"
+            test -s "${report}"
+            size=$(stat -c%s "${output}")
+            if [ "${size}" -ge 99614720 ]; then echo "Unsafe GLB size: ${output} (${size})"; exit 1; fi
+            git add "${output}" "${report}"
+            if ! git diff --cached --quiet; then
+              git commit -m "Add enhanced GLB detail overlay for part ${part}"
+              git fetch origin main
+              git rebase origin/main
+              git push origin HEAD:main
             fi
+            echo "part${part}: generated, validated, and checkpointed (${size} bytes)"
           done
-          if [ "$failed" -ne 0 ]; then exit 1; fi
