@@ -1,6 +1,6 @@
 /* Robinsons Place Manila facade-detail overlay for Adam-City.
- * Uses the exact OSM mall boundary (way/48894714) and existing OSM building
- * polygons inside it. It adds only thin facade details; it does not replace,
+ * Uses the exact OSM mall boundary (way/48894714) and authoritative OpenFreeMap-derived
+ * building polygons inside it. It adds only thin facade details; it does not replace,
  * translate, resize, or recolor the authoritative OpenFreeMap building meshes.
  */
 import * as THREE from 'three';
@@ -250,7 +250,7 @@ import * as THREE from 'three';
       const selected = (buildingData.features || []).filter(f => {
         if (!isPolygon(f.geometry)) return false;
         const tags = tagsOf(f);
-        const p = f.properties || {};\n        if (!(Number.isFinite(num(p.basemap_render_height ?? p.adam_height_m ?? p.render_height ?? p.height ?? tags.height)) || Number.isFinite(num(tags['building:levels'] ?? p.building_levels)))) return false;
+        const p = f.properties || {};\n        if (!(Number.isFinite(num(p.basemap_render_height ?? p.basemap_properties?.render_height ?? p.adam_height_m ?? p.render_height ?? p.height ?? tags.height)) || Number.isFinite(num(tags['building:levels'] ?? p.building_levels)))) return false;
         const polygonRings = outerRingsOf(f.geometry);
         if (!polygonRings.length) return false;
         const ring = polygonRings[0];
