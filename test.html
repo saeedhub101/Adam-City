@@ -159,7 +159,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
   const manifestUrl=new URL(base+'enhanced/part'+part+'-regions.json',location.href).href;
   const modelUrl=new URL(base+'Parts'+part+'.glb',location.href).href;
   const originUrl=new URL(base+'part'+part+'/part'+part+'-origin.json',location.href).href;
-  let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,meterScale=1;
+  let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,meters=1,matrixWarned=false;
   const showError=err=>{
    loading=false;ready=false;
    // Remove a partially loaded custom layer so retrying the checkbox cannot hit a duplicate-layer error.
@@ -176,7 +176,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
     const lon=Number(origin.origin_wgs84.longitude),lat=Number(origin.origin_wgs84.latitude);
     if(!Number.isFinite(lon)||!Number.isFinite(lat))throw new Error('إحداثيات أصل الجزء غير صحيحة');
     anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:lon,lat},0);
-    meterScale=anchor.meterInMercatorCoordinateUnits();
+    meters=anchor.meterInMercatorCoordinateUnits();
     const layer={
      id,type:'custom',renderingMode:'3d',
      onAdd(mapInstance,gl){
@@ -185,22 +185,10 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
       scene.add(new THREE.AmbientLight(0xffffff,2.0));
       const light=new THREE.DirectionalLight(0xffffff,2.0);light.position.set(0,-70,100).normalize();scene.add(light);
       const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
-      model=new THREE.Group();model.position.set(0,0,0);model.scale.set(1,1,1);scene.add(model);
-      model.visible=!!toggle.checked;
-      const addRegion=(entry,index,total,onRegionLoaded)=>{
-       if(!entry||typeof entry.file!=='string'||!entry.file)throw new Error('اسم ملف منطقة غير صالح عند الفهرس '+index);
-       const regionUrl=new URL(base+entry.file,location.href).href;
-       loader.load(regionUrl,gltf=>{
-        if(!model)return;
-        model.add(gltf.scene);
-        onRegionLoaded();
-       },progress=>{
-        if(status)status.textContent='تحميل الجزء '+part+' — المنطقة '+(index+1)+'/'+total+': '+(progress.total?Math.round(progress.loaded/progress.total*100)+'%':Math.round(progress.loaded/1048576)+' MiB');
-       },err=>showError(new Error('المنطقة '+(index+1)+' ('+entry.file+'): '+(err?.message||err))));
-      };
       loader.load(modelUrl,gltf=>{
-       if(!model)return;
-       model.add(gltf.scene);
+       model=gltf.scene;
+       model.visible=!!toggle.checked;
+       scene.add(model);
        let meshCount=0;model.traverse(o=>{if(o.isMesh)meshCount++;});
        ready=true;loading=false;
        window['adamEnhancedPart'+part+'Ready']=true;
@@ -213,12 +201,17 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
      },
      render(gl,args){
       if(!renderer||!model||!model.visible)return;
-      const mainMatrix=args?.defaultProjectionData?.mainMatrix;if(!mainMatrix)return;
-      const values=Object.values(mainMatrix);if(values.length!==16||values.some(v=>!Number.isFinite(Number(v))))return;
-      const projection=new THREE.Matrix4().fromArray(values.map(Number));
-      const transform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
-       .scale(new THREE.Vector3(meterScale,-meterScale,meterScale));
-      camera.projectionMatrix.copy(projection).multiply(transform);
+      const values=args?.defaultProjectionData?.mainMatrix||args?.modelViewProjectionMatrix||
+       ((Array.isArray(args)||ArrayBuffer.isView(args))?args:null);
+      if(!values||values.length!==16){
+       if(!matrixWarned){matrixWarned=true;if(errorBox){errorBox.style.display='block';errorBox.textContent='تم تحميل GLB للجزء '+part+' لكن MapLibre لم يوفر مصفوفة العرض المتوقعة.';}}
+       return;
+      }
+      const matrix=Array.from(values,Number);if(matrix.some(v=>!Number.isFinite(v)))return;
+      const projection=new THREE.Matrix4().fromArray(matrix);
+      const localTransform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
+       .scale(new THREE.Vector3(meters,-meters,meters));
+      camera.projectionMatrix.copy(projection).multiply(localTransform);
       camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
       renderer.resetState();renderer.render(scene,camera);renderer.resetState();
      }
