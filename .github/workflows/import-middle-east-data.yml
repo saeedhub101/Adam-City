@@ -163,6 +163,7 @@ jobs:
           set -Eeuo pipefail
           sudo apt-get install -y osmium-tool
           python3 'middle east/scripts/build-local-osm-layers.py'
+          python3 'middle east/scripts/import-landmark-photos.py' || echo '::warning::Wikimedia Commons photo import had failures; see logs and retry.'
           git add -A 'middle east'
           git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Build local Jordan and Palestine thematic OSM layers' || true
           git push origin HEAD:main || echo '::warning::Local thematic layer updates could not be pushed; inspect the import logs.'
