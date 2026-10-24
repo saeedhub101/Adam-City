@@ -59,8 +59,15 @@ import * as THREE from 'three';
   let best=null;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length],len=Math.hypot(b[0]-a[0],b[1]-a[1]);if(!best||len>best.len)best={a,b,len};}
   if(best&&best.len>20){
    const dx=(best.b[0]-best.a[0])/best.len,dy=(best.b[1]-best.a[1])/best.len, nx=dy,ny=-dx, width=Math.min(best.len*.7,48),cx=(best.a[0]+best.b[0])/2,cy=(best.a[1]+best.b[1])/2;
-   const signGeo=new THREE.PlaneGeometry(width,4.8);const signMat=new THREE.MeshStandardMaterial({map:signTexture(),roughness:.55,metalness:0,side:THREE.DoubleSide});
-   const sign=new THREE.Mesh(signGeo,signMat);sign.position.set(cx+nx*.34,cy+ny*.34,23.7);sign.rotation.z=Math.atan2(dy,dx);group.add(sign);
+   const sx=cx+nx*.36,sy=cy+ny*.36,half=width/2,z0=23.1,z1=27.9;
+   const signGeo=new THREE.BufferGeometry();
+   signGeo.setAttribute('position',new THREE.Float32BufferAttribute([
+    sx-dx*half,sy-dy*half,z0, sx+dx*half,sy+dy*half,z0,
+    sx+dx*half,sy+dy*half,z1, sx-dx*half,sy-dy*half,z1
+   ],3));
+   signGeo.setAttribute('uv',new THREE.Float32BufferAttribute([0,0,1,0,1,1,0,1],2));signGeo.setIndex([0,1,2,0,2,3]);signGeo.computeVertexNormals();
+   const signMat=new THREE.MeshStandardMaterial({map:signTexture(),roughness:.55,metalness:0,side:THREE.DoubleSide});
+   const sign=new THREE.Mesh(signGeo,signMat);sign.frustumCulled=false;group.add(sign);
    const canopyGeo=new THREE.BoxGeometry(width*.72,3.2,.75);const canopy=new THREE.Mesh(canopyGeo,red);canopy.position.set(cx+nx*2.1,cy+ny*2.1,5.0);canopy.rotation.z=Math.atan2(dy,dx);group.add(canopy);
   }
   // Roof parapet and rooftop mechanical blocks give the silhouette a finished commercial-roof profile.
