@@ -13,7 +13,6 @@ on:
       - 'complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-005.geojson'
       - 'complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-011.geojson'
       - 'complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-080.geojson'
-      - 'complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/**'
   workflow_dispatch:
 
 permissions:
@@ -53,7 +52,10 @@ jobs:
           mkdir -p site/Manila/vector-tiles site/Manila/3d-rag site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts
           cp manila.html site/manila.html
           cp manila-bundry.html site/manila-bundry.html
-          cp -a "$geojson_dir"/. site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/
+          cp "$geojson_dir/part-004.geojson" site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/
+          cp "$geojson_dir/part-005.geojson" site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/
+          cp "$geojson_dir/part-011.geojson" site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/
+          cp "$geojson_dir/part-080.geojson" site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/
           cp -a Manila/vector-tiles/. site/Manila/vector-tiles/
           if [ -s Manila/3d-rag/apply-report.json ]; then
             cp Manila/3d-rag/apply-report.json site/Manila/3d-rag/apply-report.json
