@@ -123,13 +123,14 @@ function addSingleGeoJsonCheckbox(config){
   map.on('error',reportError);
 
   cb.addEventListener('change',async()=>{
+    const fillId=sourceId+'-2d-fill',outlineId=sourceId+'-2d-outline';
     if(!cb.checked){
-      if(map.getLayer(layerId))map.setLayoutProperty(layerId,'visibility','none');
+      [layerId,fillId,outlineId].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none')});
       status.className='status';status.textContent='تم إخفاء '+config.label+'.';
       return;
     }
     if(loaded){
-      if(map.getLayer(layerId))map.setLayoutProperty(layerId,'visibility','visible');
+      [layerId,fillId,outlineId].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility','visible')});
       status.className='status';status.textContent='تم إظهار '+config.label+'.';
       return;
     }
@@ -138,10 +139,18 @@ function addSingleGeoJsonCheckbox(config){
     status.className='status';status.textContent='جارٍ تحميل '+config.label+'…';
     try{
       map.addSource(sourceId,{type:'geojson',data:new URL(config.url,window.location.href).href,tolerance:0.5});
+      // Always draw a visible 2D footprint first; extrusion is an additional rendering pass.
+      const buildingColor=['coalesce',['get','render_color'],['get','colour'],['get','building:colour',['get','tags']],['match',['get','building',['get','tags']],'commercial','#c9a27e','retail','#d8b17d','industrial','#9dabb4','residential','#c4b5a3','#c7b9a7']];
+      map.addLayer({id:sourceId+'-2d-fill',type:'fill',source:sourceId,
+        filter:['==',['geometry-type'],'Polygon'],
+        paint:{'fill-color':buildingColor,'fill-opacity':0.78,'fill-antialias':true}});
+      map.addLayer({id:sourceId+'-2d-outline',type:'line',source:sourceId,
+        filter:['==',['geometry-type'],'Polygon'],
+        paint:{'line-color':'#44382d','line-width':['interpolate',['linear'],['zoom'],10,0.35,16,1.1],'line-opacity':0.9}});
       map.addLayer({id:layerId,type:'fill-extrusion',source:sourceId,
-        filter:['in',['geometry-type'],'Polygon','MultiPolygon'],
+        filter:['==',['geometry-type'],'Polygon'],
         paint:{
-          'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour',['get','tags']],['match',['get','building',['get','tags']],'commercial','#c9a27e','retail','#d8b17d','industrial','#9dabb4','residential','#c4b5a3','#c7b9a7']],
+          'fill-extrusion-color':buildingColor,
           'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','height',['get','tags']]],['*',['to-number',['coalesce',['get','building:levels'],['get','building:levels',['get','tags']]],1],3.2],5]],
           'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height'],['get','min_height',['get','tags']]],0]],
           'fill-extrusion-opacity':0.92,'fill-extrusion-vertical-gradient':true
@@ -165,7 +174,8 @@ function addSingleGeoJsonCheckbox(config){
         if(source?.loaded&&source.loaded())finish();
       });
       loaded=true;
-      status.className='status';status.textContent='تم تحميل '+config.label+' بنجاح؛ مصدر مستقل، ولا يتم دمجه مع الملفات الأخرى.';
+      const count=map.querySourceFeatures(sourceId).length;
+      status.className='status';status.textContent='تم تحميل '+config.label+'؛ معالم GeoJSON المقروءة في مستوى العرض الحالي: '+count+'. أُضيف رسم ثنائي الأبعاد وحدود مع المجسمات ثلاثية الأبعاد.';
     }catch(e){
       cb.checked=false;
       if(map.getLayer(layerId))map.setLayoutProperty(layerId,'visibility','none');
