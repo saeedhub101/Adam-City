@@ -1,13 +1,13 @@
-name: Build regional OpenMapTiles vector tiles
+name: Build regional OpenMapTiles-compatible vector tiles
 
 on:
   workflow_dispatch:
     inputs:
       maxzoom:
-        description: Maximum vector tile zoom (higher zooms produce much larger files)
+        description: Planetiler supports generated tiles up to zoom 16; maps can overzoom to 17
         type: choice
-        options: ["8", "10", "12", "14", "17"]
-        default: "17"
+        options: ["8", "10", "12", "14", "16"]
+        default: "16"
       country:
         description: Region to build
         type: choice
@@ -69,7 +69,8 @@ jobs:
             osmium fileinfo build/openmaptiles/palestine-area.osm.pbf >/dev/null
           fi
           cat > build/openmaptiles/SOURCE-NOTES.txt <<'EOF'
-          Vector tiles generated locally with Planetiler's OpenMapTiles-compatible schema from repository-stored OpenStreetMap PBF sources.
+          Vector tiles generated with Planetiler's OpenMapTiles-compatible schema from repository-stored OpenStreetMap PBF sources.
+          Planetiler currently limits generated maxzoom to 16. A map viewer may overzoom to 17, but that does not create additional source detail beyond zoom 16.
           Jordan source: Geofabrik Jordan extract.
           Palestine-area source: spatial tiles cut from Geofabrik's combined Israel and Palestine extract; NOT Palestine-only.
           OpenStreetMap data is licensed under ODbL. See https://www.openstreetmap.org/copyright.
@@ -78,18 +79,30 @@ jobs:
 
       - name: Build OpenMapTiles-compatible MBTiles
         env:
-          MAXZOOM: ${{ inputs.maxzoom || '17' }}
+          MAXZOOM: ${{ inputs.maxzoom || '16' }}
           COUNTRY: ${{ inputs.country || 'both' }}
         shell: bash
         run: |
           set -Eeuo pipefail
-          curl -fL --retry 4 --retry-all-errors --connect-timeout 30 --max-time 600             https://github.com/onthegomap/planetiler/releases/latest/download/planetiler.jar             -o build/openmaptiles/planetiler.jar
+          curl -fL --retry 4 --retry-all-errors --connect-timeout 30 --max-time 600 \
+            https://github.com/onthegomap/planetiler/releases/latest/download/planetiler.jar \
+            -o build/openmaptiles/planetiler.jar
           java -version
+          if [[ "$MAXZOOM" -gt 16 ]]; then
+            echo "::error::Planetiler only supports generated maxzoom up to 16; choose 16 or lower."
+            exit 1
+          fi
           if [[ "$COUNTRY" == "both" || "$COUNTRY" == "jordan" ]]; then
-            java -Xmx6g -jar build/openmaptiles/planetiler.jar               --osm-path=build/openmaptiles/jordan.osm.pbf               --output=build/openmaptiles/jordan-openmaptiles.mbtiles               --force --maxzoom="$MAXZOOM"
+            java -Xmx6g -jar build/openmaptiles/planetiler.jar \
+              --osm-path=build/openmaptiles/jordan.osm.pbf \
+              --output=build/openmaptiles/jordan-openmaptiles.mbtiles \
+              --force --maxzoom="$MAXZOOM"
           fi
           if [[ "$COUNTRY" == "both" || "$COUNTRY" == "palestine" ]]; then
-            java -Xmx6g -jar build/openmaptiles/planetiler.jar               --osm-path=build/openmaptiles/palestine-area.osm.pbf               --output=build/openmaptiles/palestine-area-openmaptiles.mbtiles               --force --maxzoom="$MAXZOOM"
+            java -Xmx6g -jar build/openmaptiles/planetiler.jar \
+              --osm-path=build/openmaptiles/palestine-area.osm.pbf \
+              --output=build/openmaptiles/palestine-area-openmaptiles.mbtiles \
+              --force --maxzoom="$MAXZOOM"
           fi
           rm -f build/openmaptiles/planetiler.jar build/openmaptiles/*.osm.pbf
           sha256sum build/openmaptiles/*.mbtiles > build/openmaptiles/SHA256SUMS.txt
@@ -98,7 +111,7 @@ jobs:
       - name: Upload generated vector tile packages
         uses: actions/upload-artifact@v4
         with:
-          name: openmaptiles-jordan-palestine-z${{ inputs.maxzoom || '17' }}
+          name: openmaptiles-jordan-palestine-z${{ inputs.maxzoom || '16' }}
           path: build/openmaptiles/
           if-no-files-found: error
           retention-days: 30
