@@ -42,7 +42,7 @@ jobs:
           set -euo pipefail
           mkdir -p site/Manila/vector-tiles site/Manila/3d-rag
           geojson_dir='complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts'
-          mkdir -p "site/$geojson_dir" 'site/complete_data/open free tile'
+          mkdir -p "site/$geojson_dir" site/complete_data/open-free-tile
 
           # Copy pages only when present; absent optional files should not fail publishing.
           if [ -f manila.html ]; then cp manila.html site/manila.html; else echo "WARNING: manila.html is missing"; fi
@@ -58,7 +58,7 @@ jobs:
 
           fallback='complete_data/open free tile/building-fallback.geojson'
           if [ -f "$fallback" ]; then
-            cp "$fallback" 'site/complete_data/open free tile/building-fallback.geojson'
+            cp "$fallback" site/complete_data/open-free-tile/building-fallback.geojson
           else
             echo "WARNING: optional GeoJSON missing: $fallback"
           fi
