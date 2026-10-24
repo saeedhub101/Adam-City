@@ -140,10 +140,10 @@ function addSingleGeoJsonCheckbox(config){
     try{
       map.addSource(sourceId,{type:'geojson',data:new URL(config.url,window.location.href).href,tolerance:0.5});
       // Always draw a visible 2D footprint first; extrusion is an additional rendering pass.
-      const buildingColor=['coalesce',['get','render_color'],['get','colour'],['get','building:colour',['get','tags']],['match',['get','building',['get','tags']],'commercial','#c9a27e','retail','#d8b17d','industrial','#9dabb4','residential','#c4b5a3','#c7b9a7']];
+      const buildingColor=['match',['to-string',['coalesce',['get','building'],['get','building',['get','tags']],'yes']],'commercial','#d6b18a','retail','#e0c49b','industrial','#aab6bd','residential','#c8b9a6','apartments','#c4b5a2','office','#b8c6ce','yes','#d0c2af','#c9bba8'];
       map.addLayer({id:sourceId+'-2d-fill',type:'fill',source:sourceId,
         filter:['==',['geometry-type'],'Polygon'],
-        paint:{'fill-color':buildingColor,'fill-opacity':0.78,'fill-antialias':true}});
+        paint:{'fill-color':buildingColor,'fill-opacity':0.9,'fill-antialias':true}});
       map.addLayer({id:sourceId+'-2d-outline',type:'line',source:sourceId,
         filter:['==',['geometry-type'],'Polygon'],
         paint:{'line-color':'#44382d','line-width':['interpolate',['linear'],['zoom'],10,0.35,16,1.1],'line-opacity':0.9}});
@@ -153,7 +153,7 @@ function addSingleGeoJsonCheckbox(config){
           'fill-extrusion-color':buildingColor,
           'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','height',['get','tags']]],['*',['to-number',['coalesce',['get','building:levels'],['get','building:levels',['get','tags']]],1],3.2],5]],
           'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height'],['get','min_height',['get','tags']]],0]],
-          'fill-extrusion-opacity':0.92,'fill-extrusion-vertical-gradient':true
+          'fill-extrusion-opacity':0.96,'fill-extrusion-vertical-gradient':false
         }});
       map.on('click',layerId,featurePopup);
       map.on('mouseenter',layerId,()=>map.getCanvas().style.cursor='pointer');
