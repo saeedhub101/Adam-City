@@ -15,7 +15,7 @@ ROOT=Path(__file__).resolve().parents[3]
 PARTS=ROOT/"complete_data/OSM/data/buildings/Ermita"
 SOURCE=ROOT/"ermita/maps/generated/ermita-building-footprints.geojson"
 OUT=PARTS/"enhanced"
-ENHANCEMENT_VERSION=3
+ENHANCEMENT_VERSION=4
 GEN=ROOT/"ermita/scripts/generate_roxas_boulevard_buildings.py"
 TO_M=Transformer.from_crs("EPSG:4326","EPSG:3857",always_xy=True).transform
 spec=importlib.util.spec_from_file_location("facade_generator",GEN)
