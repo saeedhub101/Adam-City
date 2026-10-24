@@ -222,47 +222,56 @@ import * as THREE from 'three';
   }
 
   function addRobinsonsSign(group, features, originXY) {
-    // Realistic storefront sign panel: branded red fascia with a white Robinsons wordmark.
-    // It is an overlay only; no source building geometry is moved or replaced.
+    // Oversized rooftop fascia sign inspired by the real Robinsons Place Manila frontage.
+    // It is an independent overlay; source footprints and building transforms remain unchanged.
     let best = null;
     for (const feature of features) {
       const g = feature.geometry;
       const polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
+      const props = feature.properties || {}, tags = tagsOf(feature);
+      const h = num(props.basemap_render_height ?? props.basemap_properties?.render_height ?? props.adam_height_m ?? props.render_height ?? props.height ?? tags.height ?? tags['building:height']);
       for (const poly of polys) {
         const ring = poly[0];
         if (!ring || ring.length < 4) continue;
+        const area = polygonAreaMeters(ring);
         for (let i = 0; i < ring.length - 1; i++) {
           const a0 = mercatorXY(ring[i][0], ring[i][1]);
           const b0 = mercatorXY(ring[i+1][0], ring[i+1][1]);
           const len = Math.hypot(b0[0]-a0[0], b0[1]-a0[1]);
-          if (!best || len > best.len) best = {a:a0,b:b0,len};
+          const score = area * Math.min(len, 80) * (Number.isFinite(h) ? 1.15 : 1);
+          if (!best || score > best.score) best = {a:a0,b:b0,len,score,height:Number.isFinite(h)&&h>4?h:23};
         }
       }
     }
     if (!best || best.len < 12 || typeof document === 'undefined') return;
     const dx = (best.b[0]-best.a[0])/best.len, dy=(best.b[1]-best.a[1])/best.len;
     const nx = dy, ny = -dx;
-    const width = Math.min(25, best.len*0.66), height = 2.2;
+    const width = Math.min(34, best.len*0.78), height = 2.8;
     const midX=(best.a[0]+best.b[0])/2-originXY[0], midY=(best.a[1]+best.b[1])/2-originXY[1];
-    const cx=midX+nx*0.34, cy=midY+ny*0.34, z0=3.3, z1=z0+height;
+    const cx=midX+nx*0.55, cy=midY+ny*0.55, z0=best.height+0.3, z1=z0+height;
     const half=width/2;
     const pts=[
       [cx-dx*half,cy-dy*half,z0],[cx+dx*half,cy+dy*half,z0],
       [cx+dx*half,cy+dy*half,z1],[cx-dx*half,cy-dy*half,z1]
     ];
-    const canvas=document.createElement('canvas'); canvas.width=1024; canvas.height=256;
+    const canvas=document.createElement('canvas'); canvas.width=1536; canvas.height=384;
     const ctx=canvas.getContext('2d');
     if (!ctx) return;
-    ctx.fillStyle='#bd1727'; ctx.fillRect(0,0,1024,256);
-    ctx.fillStyle='#f8f4ec'; ctx.fillRect(0,0,1024,12);
-    ctx.fillRect(0,244,1024,12);
-    // A compact white mall mark and the recognizable Robinsons wordmark treatment.
-    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(105,128,63,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='#bd1727'; ctx.font='bold 100px Arial, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('R',105,129);
-    ctx.fillStyle='#fff'; ctx.textAlign='left'; ctx.font='700 91px Arial, sans-serif'; ctx.fillText('ROBINSONS',195,116);
-    ctx.font='600 36px Arial, sans-serif'; ctx.letterSpacing='9px'; ctx.fillText('PLACE MANILA',201,190);
+    ctx.fillStyle='#c51b2b'; ctx.fillRect(0,0,1536,384);
+    ctx.fillStyle='#f6f0e5'; ctx.fillRect(0,0,1536,12);
+    ctx.fillRect(0,372,1536,12);
+    // Large red square and a white flowing R mark, matching the photographed rooftop identity.
+    ctx.fillStyle='#b80f20'; ctx.fillRect(22,22,340,340);
+    ctx.strokeStyle='#fff'; ctx.lineWidth=42; ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.beginPath(); ctx.moveTo(128,300); ctx.bezierCurveTo(155,225,172,162,177,90);
+    ctx.bezierCurveTo(184,40,294,50,286,117); ctx.bezierCurveTo(282,163,223,178,177,179);
+    ctx.bezierCurveTo(220,210,260,254,304,303); ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.font='700 118px Georgia, serif'; ctx.fillText('ROBINSONS',395,150);
+    ctx.font='700 76px Georgia, serif'; ctx.fillText('PLACE',400,270);
+    ctx.font='600 64px Arial, sans-serif'; ctx.fillText('Manila',760,272);
     const texture=new THREE.CanvasTexture(canvas); texture.colorSpace=THREE.SRGBColorSpace; texture.anisotropy=4;
-    const material=new THREE.MeshStandardMaterial({map:texture,roughness:0.62,metalness:0.02,side:THREE.DoubleSide});
+    const material=new THREE.MeshStandardMaterial({map:texture,roughness:0.68,metalness:0.01,side:THREE.DoubleSide});
     const geometry=new THREE.BufferGeometry();
     geometry.setAttribute('position',new THREE.Float32BufferAttribute([...pts[0],...pts[1],...pts[2],...pts[0],...pts[2],...pts[3]],3));
     geometry.setAttribute('uv',new THREE.Float32BufferAttribute([0,0,1,0,1,1,0,0,1,1,0,1],2));
