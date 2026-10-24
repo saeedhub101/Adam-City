@@ -160,8 +160,12 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
   const originUrl=new URL(base+'part'+part+'/part'+part+'-origin.json',location.href).href;
   let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,projectedMeterScale=1,meterScale=1;
   const showError=err=>{
-   loading=false;if(errorBox){errorBox.style.display='block';errorBox.textContent='تعذر تحميل GLB المحسن الجزء '+part+': '+(err?.message||err);}
-   if(status)status.textContent='فشل تحميل GLB المحسن الجزء '+part+'.';
+   loading=false;ready=false;
+   // Remove a partially loaded custom layer so retrying the checkbox cannot hit a duplicate-layer error.
+   try{if(map.getLayer(id))map.removeLayer(id);}catch(_){}
+   model=null;renderer=null;camera=null;scene=null;
+   if(errorBox){errorBox.style.display='block';errorBox.textContent='تعذر تحميل GLB المحسن الجزء '+part+': '+(err?.message||err);}
+   if(status)status.textContent='فشل تحميل GLB المحسن الجزء '+part+'. ألغِ التفعيل ثم أعده للمحاولة.';
   };
   async function ensureLayer(){
    if(ready||loading)return;loading=true;
@@ -182,26 +186,33 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
       const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
       model=new THREE.Group();model.position.set(0,0,0);model.scale.set(1,1,1);scene.add(model);
       model.visible=!!toggle.checked;
-      const addRegion=(entry,index,total)=>{
+      const addRegion=(entry,index,total,onRegionLoaded)=>{
+       if(!entry||typeof entry.file!=='string'||!entry.file)throw new Error('اسم ملف منطقة غير صالح عند الفهرس '+index);
        const regionUrl=new URL(base+entry.file,location.href).href;
        loader.load(regionUrl,gltf=>{
-        if(model)model.add(gltf.scene);
-        if(index===total-1){
-         let meshCount=0;if(model)model.traverse(o=>{if(o.isMesh)meshCount++;});
-         ready=true;loading=false;
-         window['adamEnhancedPart'+part+'Ready']=true;
-         window['adamSetEnhancedPart'+part+'Visible']=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
-         if(status)status.textContent='تم تحميل الجزء '+part+' مقسماً جغرافياً إلى '+total+' مناطق | meshes='+meshCount+' | '+(model.visible?'ظاهر':'مخفي');
-         mapInstance.triggerRepaint();
-        }
+        if(!model)return;
+        model.add(gltf.scene);
+        onRegionLoaded();
        },progress=>{
         if(status)status.textContent='تحميل الجزء '+part+' — المنطقة '+(index+1)+'/'+total+': '+(progress.total?Math.round(progress.loaded/progress.total*100)+'%':Math.round(progress.loaded/1048576)+' MiB');
-       },err=>showError(err));
+       },err=>showError(new Error('المنطقة '+(index+1)+' ('+entry.file+'): '+(err?.message||err))));
       };
       fetch(manifestUrl).then(res=>{if(!res.ok)throw new Error('Regions manifest HTTP '+res.status);return res.json();})
        .then(manifest=>{
         if(!Array.isArray(manifest.regions)||!manifest.regions.length)throw new Error('ملف تقسيم المناطق فارغ');
-        manifest.regions.forEach((entry,index)=>addRegion(entry,index,manifest.regions.length));
+        const total=manifest.regions.length;
+        let loadedRegions=0;
+        manifest.regions.forEach((entry,index)=>addRegion(entry,index,total,()=>{
+         loadedRegions++;
+         if(loadedRegions===total){
+          let meshCount=0;if(model)model.traverse(o=>{if(o.isMesh)meshCount++;});
+          ready=true;loading=false;
+          window['adamEnhancedPart'+part+'Ready']=true;
+          window['adamSetEnhancedPart'+part+'Visible']=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
+          if(status)status.textContent='تم تحميل الجزء '+part+' مقسماً جغرافياً إلى '+total+' مناطق | meshes='+meshCount+' | '+(model.visible?'ظاهر':'مخفي');
+          mapInstance.triggerRepaint();
+         }
+        }));
        }).catch(err=>showError(err));
      },
      render(gl,args){
