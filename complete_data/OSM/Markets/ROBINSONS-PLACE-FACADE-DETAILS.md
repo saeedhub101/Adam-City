@@ -6,13 +6,13 @@ This enhancement is a separate, optional overlay for the Robinsons Manila mall a
 
 - Target boundary: OSM way `48894714`, named **Robinsons Manila** / formerly Robinsons Place Manila.
 - Boundary source: `ermita/maps/generated/ermita-features.geojson`.
-- Building footprint/tag source: `complete_data/OSM/data/buildings/Ermita/ermita-building-details.geojson`.
+- Building geometry/height source: `ermita/maps/generated/ermita-building-footprints.geojson` (the repository's OpenFreeMap-derived authoritative building geometry).
 - Viewer: root `test.html`, checkbox **Robinsons Place Manila — facade details**.
 - Runtime implementation: `complete_data/OSM/Markets/robinsons-place-facade-details.js`.
 
 ## What it adds
 
-The viewer finds building polygons inside the existing OSM mall boundary and adds thin, separate facade-detail geometry: blue-grey glazing, narrow window frames, floor bands, vertical piers, and subtle roof-edge trim. It uses available source heights and/or floor-count tags to lay out the detail. The overlay is generated in the browser and does not need a workflow build step.
+The viewer finds authoritative OpenFreeMap building polygons inside the existing OSM mall boundary and adds thin, separate facade-detail geometry: blue-grey glazing, narrow window frames, floor bands, vertical piers, and subtle roof-edge trim. It uses available source heights and/or floor-count tags to lay out the detail. The overlay is generated in the browser and does not need a workflow build step.
 
 ## Preservation rules
 
