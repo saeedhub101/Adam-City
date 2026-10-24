@@ -3,6 +3,7 @@
 Never modifies original GLBs or origin sidecars. Each part is independently resumable.
 """
 import argparse, importlib.util, json, math
+from PIL import Image, ImageDraw, ImageFont
 from pathlib import Path
 import numpy as np
 import trimesh
@@ -14,18 +15,39 @@ ROOT=Path(__file__).resolve().parents[3]
 PARTS=ROOT/"complete_data/OSM/data/buildings/Ermita"
 SOURCE=ROOT/"ermita/maps/generated/ermita-building-footprints.geojson"
 OUT=PARTS/"enhanced"
+ENHANCEMENT_VERSION=2
 GEN=ROOT/"ermita/scripts/generate_roxas_boulevard_buildings.py"
 TO_M=Transformer.from_crs("EPSG:4326","EPSG:3857",always_xy=True).transform
 spec=importlib.util.spec_from_file_location("facade_generator",GEN)
 facade=importlib.util.module_from_spec(spec); spec.loader.exec_module(facade)
 
 def mat(name,color,metal=0.0,rough=.8):
-    return trimesh.visual.material.PBRMaterial(name=name,baseColorFactor=list(color),metallicFactor=metal,roughnessFactor=rough)
+    # glTF PBR baseColorFactor is normalized 0..1, not 0..255.
+    rgba=[float(v) for v in color]
+    if max(rgba)>1.0: rgba=[v/255.0 for v in rgba]
+    return trimesh.visual.material.PBRMaterial(name=name,baseColorFactor=rgba,metallicFactor=metal,roughnessFactor=rough)
+def sign_texture(label):
+    # Use the real OSM shop/brand label as visible text; never fabricate a logo.
+    image=Image.new("RGBA",(512,128),(30,48,57,255))
+    draw=ImageDraw.Draw(image)
+    draw.rectangle((5,5,506,122),outline=(225,194,113,255),width=5)
+    text=str(label or "STORE").strip()[:48]
+    font_path="/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+    size=54
+    while size>16:
+        try: font=ImageFont.truetype(font_path,size)
+        except OSError: font=ImageFont.load_default(); break
+        box=draw.textbbox((0,0),text,font=font)
+        if box[2]-box[0]<=470 and box[3]-box[1]<=82: break
+        size-=2
+    box=draw.textbbox((0,0),text,font=font)
+    draw.text(((512-(box[2]-box[0]))/2,(128-(box[3]-box[1]))/2-box[1]),text,font=font,fill=(255,255,255,255))
+    return image
 def box_mesh(center, extents, material, name):
     m=trimesh.creation.box(extents=extents); m.apply_translation(center)
     m.visual=trimesh.visual.TextureVisuals(material=material); m.metadata["name"]=name
     return m
-def panel(a,b,z,width,height,offset,material,name):
+def panel(a,b,z,width,height,offset,material,name,texture=None):
     dx,dy=b[0]-a[0],b[1]-a[1]; length=math.hypot(dx,dy)
     if length<1:return None
     tx,ty=dx/length,dy/length
@@ -34,18 +56,23 @@ def panel(a,b,z,width,height,offset,material,name):
     verts=[[cx-tx*width/2,cy-ty*width/2,z-height/2],[cx+tx*width/2,cy+ty*width/2,z-height/2],
            [cx+tx*width/2,cy+ty*width/2,z+height/2],[cx-tx*width/2,cy-ty*width/2,z+height/2]]
     m=trimesh.Trimesh(vertices=verts,faces=[[0,1,2],[0,2,3]],process=False)
-    m.visual=trimesh.visual.TextureVisuals(material=material);m.metadata["name"]=name
+    if texture is not None:
+        m.visual=trimesh.visual.TextureVisuals(uv=np.array([[0,0],[1,0],[1,1],[0,1]],dtype=float),material=trimesh.visual.material.PBRMaterial(name=name+"_textured",baseColorFactor=[1,1,1,1],baseColorTexture=texture,metallicFactor=0.05,roughnessFactor=0.55))
+    else:
+        m.visual=trimesh.visual.TextureVisuals(material=material)
+    m.metadata["name"]=name
     return m
 def run(part):
     for p in (SOURCE,GEN,PARTS/f"part{part}"/f"part{part}-origin.json"):
         if not p.is_file(): raise FileNotFoundError(p)
     out=OUT/f"part{part}-roof-storefront-details.glb"
     report_path=OUT/f"part{part}-roof-storefront-details-report.json"
-    if out.exists() and out.stat().st_size>1000:
+    if out.exists() and out.stat().st_size>1000 and report_path.is_file():
         try:
+            prior=json.loads(report_path.read_text(encoding="utf-8"))
             check=trimesh.load(out,force="scene",process=False)
-            if len(check.geometry)>0:
-                print(f"part{part}: RESUME skip valid existing {out}");return
+            if prior.get("enhancement_version")==ENHANCEMENT_VERSION and len(check.geometry)>0:
+                print(f"part{part}: RESUME skip valid version-{ENHANCEMENT_VERSION} overlay {out}");return
         except Exception: pass
     origin=json.loads((PARTS/f"part{part}"/f"part{part}-origin.json").read_text())
     projected=origin.get("origin_projected_m") or {}; ox,oy=float(projected["x"]),float(projected["y"])
@@ -117,7 +144,7 @@ def run(part):
             d.apply_translation([-ox,-oy,0]);scene.add_geometry(d,node_name=f"{fid}_storefront_door_{fi}_{pi}");door_count+=1
            signname=str(tags.get("brand") or tags.get("name") or tags.get("shop") or tags.get("amenity") or "STORE")
            # Use real OSM text in metadata; plain fascia panel is a restrained placeholder, not fake logo artwork.
-           sm=panel(a,b,min(height-.55,3.15),min(max(1.8,len(signname)*.24),length*.82),.62,.10,signmat,f"{fid}_sign_{signname}")
+           sm=panel(a,b,min(height-.55,3.15),min(max(1.8,len(signname)*.24),length*.82),.62,.10,signmat,f"{fid}_sign_{signname}",texture=sign_texture(signname))
            if sm is not None:
             sm.apply_translation([-ox,-oy,0]);sm.metadata["source_label"]=signname
             scene.add_geometry(sm,node_name=f"{fid}_store_sign_{fi}_{pi}");sign_count+=1
@@ -130,7 +157,7 @@ def run(part):
     check=trimesh.load(out,force="scene",process=False)
     if not isinstance(check,trimesh.Scene) or not check.geometry:raise RuntimeError(f"GLB validation failed: {out}")
     if out.stat().st_size>=95*1024*1024:raise RuntimeError(f"Overlay too large ({out.stat().st_size}); refusing >95 MiB output")
-    report={"part":part,"output":str(out.relative_to(ROOT)),"bytes":out.stat().st_size,"meshes":len(check.geometry),"roof_parapet_segments":roof_count,"hvac_units":ac_count,"water_tanks":tank_count,"storefront_sign_panels":sign_count,"storefront_doors":door_count,"facade_material_and_accent_meshes":facade_count,"skipped_features":skipped,"origin_projected_m":{"x":ox,"y":oy},"coordinate_policy":"overlay-only; original PartsN.glb and origin sidecar unchanged","notes":["Rooftop equipment is procedural illustrative detail, not verified building-by-building inventory.","Storefront fascia panels use names/brands from OSM tags where available; they are not exact logo artwork.","Real-time shadows are renderer-controlled, not baked into GLB. PBR materials include roughness and metalness."]
+    report={"enhancement_version":ENHANCEMENT_VERSION,"part":part,"output":str(out.relative_to(ROOT)),"bytes":out.stat().st_size,"meshes":len(check.geometry),"roof_parapet_segments":roof_count,"hvac_units":ac_count,"water_tanks":tank_count,"storefront_sign_panels":sign_count,"storefront_doors":door_count,"facade_material_and_accent_meshes":facade_count,"skipped_features":skipped,"origin_projected_m":{"x":ox,"y":oy},"coordinate_policy":"overlay-only; original PartsN.glb and origin sidecar unchanged","notes":["Rooftop equipment is procedural illustrative detail, not verified building-by-building inventory.","Storefront fascia panels use names/brands from OSM tags where available; they are not exact logo artwork.","Real-time shadows are renderer-controlled, not baked into GLB. PBR materials include roughness and metalness."]
     }
     report_path.write_text(json.dumps(report,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     print(json.dumps(report,indent=2,ensure_ascii=False))
