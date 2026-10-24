@@ -96,13 +96,13 @@ jobs:
             java -Xmx6g -jar build/openmaptiles/planetiler.jar \
               --osm-path=build/openmaptiles/jordan.osm.pbf \
               --output=build/openmaptiles/jordan-openmaptiles.mbtiles \
-              --force --maxzoom="$MAXZOOM"
+              --download --force --maxzoom="$MAXZOOM"
           fi
           if [[ "$COUNTRY" == "both" || "$COUNTRY" == "palestine" ]]; then
             java -Xmx6g -jar build/openmaptiles/planetiler.jar \
               --osm-path=build/openmaptiles/palestine-area.osm.pbf \
               --output=build/openmaptiles/palestine-area-openmaptiles.mbtiles \
-              --force --maxzoom="$MAXZOOM"
+              --download --force --maxzoom="$MAXZOOM"
           fi
           rm -f build/openmaptiles/planetiler.jar build/openmaptiles/*.osm.pbf
           sha256sum build/openmaptiles/*.mbtiles > build/openmaptiles/SHA256SUMS.txt
