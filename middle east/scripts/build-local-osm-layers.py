@@ -73,16 +73,39 @@ def main():
                         geo = json.load(f)
                     if geo.get("type") != "FeatureCollection" or not isinstance(geo.get("features"), list):
                         raise RuntimeError("export is not a valid GeoJSON FeatureCollection")
-                    with gzip.open(target, "wt", encoding="utf-8", compresslevel=6) as f:
-                        json.dump(geo, f, ensure_ascii=False, separators=(",", ":"))
-                    if target.stat().st_size >= LIMIT:
+                    with gzip.open(target, "wt", encoding="utf-8", compresslevel=6) as out:
+                        json.dump(geo, out, ensure_ascii=False, separators=(",", ":"))
+                    target_size = target.stat().st_size
+                    geometry_types = sorted({x.get("geometry",{}).get("type","null") for x in geo["features"] if x.get("geometry")})
+                    if target_size >= LIMIT:
+                        # Split losslessly so each GitHub-hosted file remains below the repository limit.
                         target.unlink(missing_ok=True)
-                        raise RuntimeError(f"compressed GeoJSON exceeds safe 99 MB limit ({target.stat().st_size} bytes); requires spatial partitioning")
-                    entry = {"feature_count":len(geo["features"]),"compressed_bytes":target.stat().st_size,"uncompressed_bytes":raw_bytes,"geometry_types":sorted({x.get("geometry",{}).get("type","null") for x in geo["features"] if x.get("geometry")})}
-                    record = {"layer_version":5,"country":country,"theme":theme,"source_file":str(src),"method":"osmium tags-filter + osmium export","license":"OpenStreetMap ODbL",**entry}
-                    manifest.write_text(json.dumps(record, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
-                    catalog["layers"].append({"country":country,"theme":theme,"path":target.as_posix(),**entry})
-                    print(f"IMPORTED {country}/{theme}: {entry['feature_count']} features, {entry['compressed_bytes']} compressed bytes")
+                        shard_size = 12000
+                        for stale in dest.glob(f"{theme}-part-*.geojson.gz"):
+                            stale.unlink(missing_ok=True)
+                        shard_records = []
+                        for offset in range(0, len(geo["features"]), shard_size):
+                            part_no = offset // shard_size + 1
+                            part_path = dest / f"{theme}-part-{part_no:04d}.geojson.gz"
+                            part_geo = {"type":"FeatureCollection","features":geo["features"][offset:offset+shard_size]}
+                            with gzip.open(part_path, "wt", encoding="utf-8", compresslevel=6) as part_out:
+                                json.dump(part_geo, part_out, ensure_ascii=False, separators=(",", ":"))
+                            part_uncompressed = len(json.dumps(part_geo, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+                            part_entry = {"layer_version":5,"country":country,"theme":theme,"path":part_path.as_posix(),"feature_count":len(part_geo["features"]),"compressed_bytes":part_path.stat().st_size,"uncompressed_bytes":part_uncompressed,"geometry_types":geometry_types,"source_file":str(src),"method":"osmium tags-filter + osmium export; lossless feature shards","license":"OpenStreetMap ODbL"}
+                            if part_entry["compressed_bytes"] >= LIMIT:
+                                raise RuntimeError(f"shard exceeds safe 99 MB limit: {part_path}")
+                            shard_records.append(part_entry)
+                        if not shard_records:
+                            raise RuntimeError("oversized layer could not be partitioned")
+                        catalog["layers"].extend(shard_records)
+                        manifest.write_text(json.dumps({"layer_version":5,"country":country,"theme":theme,"sharded":True,"parts":shard_records}, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
+                        print(f"IMPORTED {country}/{theme}: {len(geo['features'])} features in {len(shard_records)} shards")
+                    else:
+                        entry = {"feature_count":len(geo["features"]),"compressed_bytes":target_size,"uncompressed_bytes":raw_bytes,"geometry_types":geometry_types}
+                        record = {"layer_version":5,"country":country,"theme":theme,"source_file":str(src),"method":"osmium tags-filter + osmium export","license":"OpenStreetMap ODbL",**entry}
+                        manifest.write_text(json.dumps(record, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
+                        catalog["layers"].append({"country":country,"theme":theme,"path":target.as_posix(),**entry})
+                        print(f"IMPORTED {country}/{theme}: {entry['feature_count']} features, {entry['compressed_bytes']} compressed bytes")
                 except Exception as exc:
                     target.unlink(missing_ok=True)
                     catalog["errors"].append({"country":country,"theme":theme,"error":str(exc)})
