@@ -34,7 +34,9 @@ import * as THREE from 'three';
   const tagsOf = (feature) => feature?.properties?.tags || {};
   const idOf = (feature) => {
     const p = feature?.properties || {};
-    return p.osm_feature_id || (p.type && p.id !== undefined ? p.type + '/' + p.id : '');
+    return p.osm_feature_id || p.osm_id || p['@id'] ||
+      (p.type && p.id !== undefined ? p.type + '/' + p.id : '') ||
+      (p.id !== undefined ? String(p.id) : '');
   };
   const isPolygon = (g) => g && (g.type === 'Polygon' || g.type === 'MultiPolygon');
   const ringsOf = (g) => g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
@@ -294,11 +296,15 @@ import * as THREE from 'three';
       if (!mallResponse.ok) throw new Error('Mall boundary HTTP ' + mallResponse.status);
       if (!buildingResponse.ok) throw new Error('Building details HTTP ' + buildingResponse.status);
       const [mallData, buildingData] = await Promise.all([mallResponse.json(), buildingResponse.json()]);
-      const mall = (mallData.features || []).find(f =>
-        isPolygon(f.geometry) &&
-        (idOf(f) === 'way/48894714' ||
-         (String(tagsOf(f).name || '').toLowerCase() === 'robinsons manila' && tagsOf(f).shop === 'mall'))
-      );
+      const mall = (mallData.features || []).find(f => {
+        if (!isPolygon(f.geometry)) return false;
+        const p = f.properties || {}, tags = tagsOf(f);
+        const id = String(idOf(f)).toLowerCase();
+        const names = [tags.name, p.name, p.name_en, p['name:en'], p.label, p.title]
+          .filter(Boolean).map(v => String(v).toLowerCase());
+        return id === 'way/48894714' || id === '48894714' ||
+          names.some(name => name.includes('robinsons') && (name.includes('manila') || name.includes('place')));
+      });
       if (!mall) throw new Error('لم أجد مضلع Robinsons Manila (OSM way/48894714) في ermita-features.geojson.');
       const mallRings = ringsOf(mall.geometry);
       const outer = mallRings[0]?.[0];
