@@ -385,13 +385,28 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
     const customLayer={
      id:layerId,type:'custom',renderingMode:'3d',
      onAdd(mapInstance,gl){
-      renderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;
+      renderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});
+      renderer.autoClear=false;
+      renderer.outputColorSpace=THREE.SRGBColorSpace;
+      renderer.toneMapping=THREE.NoToneMapping;
       camera=new THREE.Camera();scene=new THREE.Scene();
-      scene.add(new THREE.AmbientLight(0xffffff,2.0));
-      const sun=new THREE.DirectionalLight(0xffffff,2.0);sun.position.set(-45,-35,90).normalize();scene.add(sun);
+      scene.add(new THREE.AmbientLight(0xffffff,2.2));
+      scene.add(new THREE.HemisphereLight(0xffffff,0x777777,1.4));
+      const sun=new THREE.DirectionalLight(0xffffff,2.2);sun.position.set(-45,-35,90).normalize();scene.add(sun);
       const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
       loader.load(new URL(config.glb,location.href).href,gltf=>{
-       model=gltf.scene;model.visible=!!toggle.checked;scene.add(model);
+       model=gltf.scene;
+       model.traverse(object=>{
+        if(!object.isMesh)return;
+        const materials=Array.isArray(object.material)?object.material:[object.material];
+        for(const material of materials){
+         if(!material)continue;
+         if(material.vertexColors&&(!object.geometry||!object.geometry.getAttribute('color')))material.vertexColors=false;
+         material.needsUpdate=true;
+        }
+        if(object.geometry&&!object.geometry.getAttribute('normal'))object.geometry.computeVertexNormals();
+       });
+       model.visible=!!toggle.checked;scene.add(model);
        ready=true;loading=false;mapInstance.triggerRepaint();
        status.className='status';status.textContent='تم تحميل '+config.label+' بنجاح.';
       },progress=>{
