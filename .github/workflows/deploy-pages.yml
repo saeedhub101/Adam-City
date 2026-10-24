@@ -66,6 +66,17 @@ jobs:
             echo "ERROR: Robinsons facade-detail module is missing or empty"
             exit 1
           fi
+          # Publish the independent Robinsons Place Manila 3D model module used by test.html.
+          robinsons_model='complete_data/OSM/Markets/robinsons-rebuilt-model.js'
+          if [ -s "$robinsons_model" ]; then
+            mkdir -p site/complete_data/OSM/Markets
+            cp "$robinsons_model" site/complete_data/OSM/Markets/
+            echo "Published independent Robinsons Place Manila model module."
+          else
+            echo "ERROR: Robinsons model module is missing or empty: $robinsons_model"
+            exit 1
+          fi
+
           # Publish the four GLB models used by the enhanced-GLB controls on test.html.
           # The source files live at the repository root, but Pages serves only the site/ artifact.
           for part in 1 2 3 4; do
