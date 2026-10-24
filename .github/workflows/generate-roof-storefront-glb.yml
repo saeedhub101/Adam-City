@@ -9,7 +9,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: adam-city-original-glb-improvements
+  group: adam-city-geographic-glb-partition-v2
   cancel-in-progress: false
 jobs:
   improve:
