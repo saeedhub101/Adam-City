@@ -61,9 +61,8 @@ jobs:
             if [ "$rc" -eq 0 ] && [ -s "$tmp" ]; then
               bytes=$(stat -c%s "$tmp")
               if [ "$bytes" -ge 90000000 ]; then
-                echo "Extract >=90 MB; do not commit an oversized Git blob. Keep as workflow artifact for manual review."
-                mkdir -p "$ROOT/$country/reports"
-                mv "$tmp" "$ROOT/$country/reports/$c-extract-too-large-for-git.pbf"
+                echo "Extract >=90 MB; do not commit an oversized Git blob. Download remains available from the source URL."
+                rm -f "$tmp"
                 printf '{"task":"%s-osm-extract","status":"too_large_for_git","bytes":%s,"url":"%s"}\n' "$c" "$bytes" "${URL[$c]}" > "$status"
               else
                 mv "$tmp" "$dest"; sha=$(sha256sum "$dest" | cut -d' ' -f1)
