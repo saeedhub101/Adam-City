@@ -1,13 +1,13 @@
 {
-  "layer_version": 2,
+  "layer_version": 6,
   "country": "Jordan",
   "theme": "water",
   "source_file": "middle east/Jordan/osm/jordan-latest.osm.pbf",
   "method": "osmium tags-filter + osmium export",
   "license": "OpenStreetMap ODbL",
-  "feature_count": 13800,
-  "compressed_bytes": 3071582,
-  "uncompressed_bytes": 11206095,
+  "feature_count": 13821,
+  "compressed_bytes": 3198700,
+  "uncompressed_bytes": 11629342,
   "geometry_types": [
     "LineString",
     "MultiPolygon",
