@@ -19,16 +19,11 @@ h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var
 <div id="map" aria-label="خريطة بيانات مانيلا"></div>
 <section class="panel">
 <h1>MANILA · DATA EXPLORER</h1>
-<div class="intro">عارض ثلاثي الأبعاد لمانيلا. مفاتيح ✓ أدناه تعرض ملفي Philippine GeoJSON المحوّلين إلى FeatureCollection صالحين للخريطة.</div>
+<div class="intro">عارض ثلاثي الأبعاد لمانيلا. اختر طبقات المتجهات من PBF لمقارنة بيانات المباني والطرق والمياه والأماكن.</div>
 <div class="section">
 <div class="section-title">الخريطة الأساسية</div>
 <label class="layer"><input id="baseMap" type="checkbox" checked> خريطة OpenFreeMap الأساسية (الشوارع والمياه والتسميات)</label>
 <label class="layer"><input id="baseBuildings" type="checkbox" checked> مباني الخريطة الأساسية ثلاثية الأبعاد</label>
-</div>
-<div class="section" id="partsSection">
-<div class="section-title">مباني الفلبين · ملفات GeoJSON</div>
-<div class="meta">اختر ✓ بجانب أي ملف لإظهاره أو إخفائه. يمكن عرض الملفين معًا.</div>
-<div id="partToggles"></div>
 </div>
 <div class="section" id="vectorSection">
 <div class="section-title vector-heading"><span>طبقات المتجهات من PBF</span><button class="btn collapse-btn" id="toggleVector" aria-expanded="true" aria-label="طي أو فتح طبقات المتجهات">−</button></div>
@@ -72,7 +67,7 @@ const defs=[
 ['water_name','أسماء المياه','water_name','#87d5f3','point'],
 ['waterway','المجاري المائية','waterway','#55b8ee','line']
 ];
-const loaded=new Map(),checkboxes=new Map(),partLayers=new Map();
+const loaded=new Map(),checkboxes=new Map();
 const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function setVisibility(ids,on){ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')})}
 function featurePopup(e){const f=e.features&&e.features[0];if(!f)return;const p=f.properties||{};let rows=Object.entries(p).slice(0,35).map(([k,v])=>'<div><b>'+escapeHtml(k)+'</b>: '+escapeHtml(typeof v==='object'?JSON.stringify(v):v??'')+'</div>').join('');info.style.display='block';info.innerHTML='<b>خصائص المعلم</b>'+rows;new maplibregl.Popup({maxWidth:'340px'}).setLngLat(e.lngLat).setHTML('<div style="direction:ltr;text-align:left;max-height:260px;overflow:auto">'+rows+'</div>').addTo(map)}
@@ -109,44 +104,6 @@ loaded.set(key,ids);setVisibility(ids,on);status.textContent='تم ربط طبق
 }
 defs.forEach(addCheckbox);
 const baseBuildings=[];
-const partsRoot='Philippine/GeoJSON_Map/';
-const parts=[
-{id:'philippine-01',label:'Philippine 01',file:'Philippine01.geojson'},
-{id:'philippine-02',label:'Philippine 02',file:'Philippine02.geojson'}
-];
-function addPartToggle(part){
-const label=document.createElement('label');label.className='part-toggle';
-const cb=document.createElement('input');cb.type='checkbox';cb.checked=false;cb.setAttribute('aria-label','إظهار '+part.label);
-const textWrap=document.createElement('span');textWrap.innerHTML='<span class="part-name">✓ '+part.label+'</span><span class="part-file">'+part.file+'</span>';
-label.append(cb,textWrap);document.getElementById('partToggles').append(label);
-cb.addEventListener('change',async()=>{
-const on=cb.checked;
-try{
-let entry=partLayers.get(part.id);
-if(!entry&&on){
-status.className='status';status.textContent='جارٍ تحميل '+part.file+' من مجلد Philippine/GeoJSON_Map…';
-const response=await fetch(partsRoot+part.file);
-if(!response.ok)throw new Error('HTTP '+response.status+' عند قراءة '+part.file);
-const data=await response.json();
-if(!data||data.type!=='FeatureCollection'||!Array.isArray(data.features))throw new Error(part.file+' ليس GeoJSON FeatureCollection صالحًا');
-const sourceId='ermita-'+part.id;
-map.addSource(sourceId,{type:'geojson',data});
-const layerId=sourceId+'-buildings-3d';
-map.addLayer({id:layerId,type:'fill-extrusion',source:sourceId,filter:['in',['geometry-type'],['literal',['Polygon','MultiPolygon']]],paint:{
-'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','color'],'#c7b39b'],
-'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','building:height']],['*',['to-number',['get','building:levels'],0],3.2],5]],
-'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height']],0]],
-'fill-extrusion-opacity':0.96,'fill-extrusion-vertical-gradient':true}});
-map.on('click',layerId,featurePopup);map.on('mouseenter',layerId,()=>map.getCanvas().style.cursor='pointer');map.on('mouseleave',layerId,()=>map.getCanvas().style.cursor='');
-entry={sourceId,layerId,count:data.features.length};partLayers.set(part.id,entry);
-}
-if(entry&&map.getLayer(entry.layerId))map.setLayoutProperty(entry.layerId,'visibility',on?'visible':'none');
-status.className='status';status.textContent=(on?'تم عرض ':'تم إخفاء ')+part.label+' — '+(entry?entry.count.toLocaleString():'0')+' معلمًا.';
-info.style.display='block';info.innerHTML='<b>'+part.label+'</b><div>الملف: '+part.file+'</div><div>عدد المعالم: '+(entry?entry.count.toLocaleString():'—')+'</div>';
-}catch(e){cb.checked=false;status.className='status error';status.textContent='تعذر تحميل '+part.label+': '+e.message}
-});
-}
-parts.forEach(addPartToggle);
 document.getElementById('toggleVector').addEventListener('click',()=>{const body=document.getElementById('vectorBody'),collapsed=body.classList.toggle('is-collapsed');document.getElementById('toggleVector').textContent=collapsed?'+':'−';document.getElementById('toggleVector').setAttribute('aria-expanded',String(!collapsed));});
 map.on('load',()=>{
 fetch('Manila/3d-rag/apply-report.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(r=>{const el=document.getElementById('applySummary');el.innerHTML='<b>حالة التطبيق:</b> '+escapeHtml(r.status||'غير معروف')+'<br><b>بلاطات PBF التي تغيرت:</b> '+escapeHtml(r.changed_tile_count??'—')+' / '+escapeHtml(r.pbf_files_scanned??'—')+'<br><b>المباني التي تغيرت خصائصها:</b> '+escapeHtml(r.changed_building_features??'—')+'<br><b>الخصائص التي طُبقت:</b> '+escapeHtml(r.changed_property_count??'—')+'<br><b>الهندسة والإحداثيات:</b> لم تتغير<br><a style="color:var(--accent)" href="Manila/3d-rag/apply-report.json" target="_blank" rel="noopener">فتح التقرير الكامل</a>';}).catch(e=>{document.getElementById('applySummary').textContent='تعذر تحميل تقرير التطبيق: '+e.message});
@@ -154,7 +111,7 @@ const styleLayers=map.getStyle().layers||[];
 for(const l of styleLayers){if(l.type==='fill-extrusion'&&/building/i.test(l.id+' '+(l['source-layer']||'')))baseBuildings.push(l.id)}
 document.getElementById('baseBuildings').addEventListener('change',e=>baseBuildings.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('baseMap').addEventListener('change',e=>{for(const l of map.getStyle().layers||[]){if(baseBuildings.includes(l.id))continue;if(l.type==='background')continue;if(map.getLayer(l.id))map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}});
-status.textContent='الخريطة جاهزة؛ استخدم علامتي ✓ لعرض Philippine 01 أو Philippine 02.';
+status.textContent='الخريطة جاهزة؛ فعّل طبقات PBF من القائمة لمعاينة البيانات.';
 });
 map.on('error',e=>{if(e.error)console.warn('MapLibre',e.error.message)});
 })();
