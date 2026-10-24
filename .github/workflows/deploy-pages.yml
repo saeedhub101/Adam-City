@@ -7,6 +7,7 @@ on:
       - '.github/workflows/deploy-pages.yml'
       - 'manila.html'
       - 'manila-bundry.html'
+      - 'ermita/maps/generated/ermita-building-details.geojson'
       - 'Manila/vector-tiles/**'
       - 'Manila/3d-rag/apply-report.json'
   workflow_dispatch:
@@ -40,9 +41,11 @@ jobs:
           test -d Manila/vector-tiles
           pbf_count="$(find Manila/vector-tiles -type f -name '*.pbf' | wc -l)"
           test "$pbf_count" -gt 0
-          test -s ermita/maps/generated/ermita-building-details.geojson\n          mkdir -p site/Manila/vector-tiles site/Manila/3d-rag site/ermita/maps/generated
+          test -s ermita/maps/generated/ermita-building-details.geojson
+          mkdir -p site/Manila/vector-tiles site/Manila/3d-rag site/ermita/maps/generated
           cp manila.html site/manila.html
           cp manila-bundry.html site/manila-bundry.html
+          cp ermita/maps/generated/ermita-building-details.geojson site/ermita/maps/generated/ermita-building-details.geojson
           cp -a Manila/vector-tiles/. site/Manila/vector-tiles/
           if [ -s Manila/3d-rag/apply-report.json ]; then
             cp Manila/3d-rag/apply-report.json site/Manila/3d-rag/apply-report.json
