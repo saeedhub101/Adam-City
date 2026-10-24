@@ -221,6 +221,55 @@ import * as THREE from 'three';
     return {group, detailedBuildings, windows};
   }
 
+  function addRobinsonsSign(group, features, originXY) {
+    // Realistic storefront sign panel: branded red fascia with a white Robinsons wordmark.
+    // It is an overlay only; no source building geometry is moved or replaced.
+    let best = null;
+    for (const feature of features) {
+      const g = feature.geometry;
+      const polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
+      for (const poly of polys) {
+        const ring = poly[0];
+        if (!ring || ring.length < 4) continue;
+        for (let i = 0; i < ring.length - 1; i++) {
+          const a0 = mercatorXY(ring[i][0], ring[i][1]);
+          const b0 = mercatorXY(ring[i+1][0], ring[i+1][1]);
+          const len = Math.hypot(b0[0]-a0[0], b0[1]-a0[1]);
+          if (!best || len > best.len) best = {a:a0,b:b0,len};
+        }
+      }
+    }
+    if (!best || best.len < 12 || typeof document === 'undefined') return;
+    const dx = (best.b[0]-best.a[0])/best.len, dy=(best.b[1]-best.a[1])/best.len;
+    const nx = dy, ny = -dx;
+    const width = Math.min(25, best.len*0.66), height = 2.2;
+    const midX=(best.a[0]+best.b[0])/2-originXY[0], midY=(best.a[1]+best.b[1])/2-originXY[1];
+    const cx=midX+nx*0.34, cy=midY+ny*0.34, z0=3.3, z1=z0+height;
+    const half=width/2;
+    const pts=[
+      [cx-dx*half,cy-dy*half,z0],[cx+dx*half,cy+dy*half,z0],
+      [cx+dx*half,cy+dy*half,z1],[cx-dx*half,cy-dy*half,z1]
+    ];
+    const canvas=document.createElement('canvas'); canvas.width=1024; canvas.height=256;
+    const ctx=canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.fillStyle='#bd1727'; ctx.fillRect(0,0,1024,256);
+    ctx.fillStyle='#f8f4ec'; ctx.fillRect(0,0,1024,12);
+    ctx.fillRect(0,244,1024,12);
+    // A compact white mall mark and the recognizable Robinsons wordmark treatment.
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(105,128,63,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#bd1727'; ctx.font='bold 100px Arial, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('R',105,129);
+    ctx.fillStyle='#fff'; ctx.textAlign='left'; ctx.font='700 91px Arial, sans-serif'; ctx.fillText('ROBINSONS',195,116);
+    ctx.font='600 36px Arial, sans-serif'; ctx.letterSpacing='9px'; ctx.fillText('PLACE MANILA',201,190);
+    const texture=new THREE.CanvasTexture(canvas); texture.colorSpace=THREE.SRGBColorSpace; texture.anisotropy=4;
+    const material=new THREE.MeshStandardMaterial({map:texture,roughness:0.62,metalness:0.02,side:THREE.DoubleSide});
+    const geometry=new THREE.BufferGeometry();
+    geometry.setAttribute('position',new THREE.Float32BufferAttribute([...pts[0],...pts[1],...pts[2],...pts[0],...pts[2],...pts[3]],3));
+    geometry.setAttribute('uv',new THREE.Float32BufferAttribute([0,0,1,0,1,1,0,0,1,1,0,1],2));
+    geometry.computeVertexNormals();
+    const sign=new THREE.Mesh(geometry,material); sign.frustumCulled=false; group.add(sign);
+  }
+
   async function ensureLayer() {
     if (ready || loading) return;
     loading = true;
@@ -250,7 +299,8 @@ import * as THREE from 'three';
       const selected = (buildingData.features || []).filter(f => {
         if (!isPolygon(f.geometry)) return false;
         const tags = tagsOf(f);
-        const p = f.properties || {};\n        if (!(Number.isFinite(num(p.basemap_render_height ?? p.basemap_properties?.render_height ?? p.adam_height_m ?? p.render_height ?? p.height ?? tags.height)) || Number.isFinite(num(tags['building:levels'] ?? p.building_levels)))) return false;
+        const p = f.properties || {};
+        if (!(Number.isFinite(num(p.basemap_render_height ?? p.basemap_properties?.render_height ?? p.adam_height_m ?? p.render_height ?? p.height ?? tags.height)) || Number.isFinite(num(tags['building:levels'] ?? p.building_levels)))) return false;
         const polygonRings = outerRingsOf(f.geometry);
         if (!polygonRings.length) return false;
         const ring = polygonRings[0];
@@ -259,6 +309,7 @@ import * as THREE from 'three';
       });
       if (!selected.length) throw new Error('لم أجد بصمات مبانٍ داخل حدود Robinsons Manila؛ لم يتم إنشاء هندسة بديلة.');
       const built = createFacadeGeometry(selected, originXY);
+      addRobinsonsSign(built.group, selected, originXY);
       if (!built.detailedBuildings || !built.group.children.length) {
         throw new Error('لم تتوفر ارتفاعات أو مستويات مصدرية كافية لإنشاء تفاصيل الواجهات؛ لم يتم تغيير المباني الأصلية.');
       }
