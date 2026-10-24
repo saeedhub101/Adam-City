@@ -1,0 +1,16 @@
+{
+  "layer_version": 6,
+  "country": "Jordan",
+  "theme": "building_details",
+  "source_file": "middle east/Jordan/osm/jordan-latest.osm.pbf",
+  "method": "osmium tags-filter + osmium export",
+  "license": "OpenStreetMap ODbL",
+  "feature_count": 464456,
+  "compressed_bytes": 20532664,
+  "uncompressed_bytes": 125918518,
+  "geometry_types": [
+    "LineString",
+    "MultiPolygon",
+    "Point"
+  ]
+}
