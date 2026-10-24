@@ -13,7 +13,7 @@ import * as THREE from 'three';
 
   const MAP_ID = 'robinsons-place-facade-details';
   const mallBoundaryUrl = new URL('../../../ermita/maps/generated/ermita-features.geojson', import.meta.url).href;
-  const buildingDetailsUrl = new URL('../data/buildings/Ermita/ermita-building-details.geojson', import.meta.url).href;
+  const buildingDetailsUrl = new URL('../../../ermita/maps/generated/ermita-building-footprints.geojson', import.meta.url).href;
   let map = null, loading = false, ready = false, model = null;
   let renderer = null, camera = null, scene = null, anchor = null;
   let meterScale = 1, projectedMeterScale = 1;
@@ -125,8 +125,8 @@ import * as THREE from 'three';
       const geometry = feature.geometry;
       const tags = tagsOf(feature);
       const polygons = geometry.type === 'Polygon' ? [geometry.coordinates] : geometry.coordinates;
-      const explicitHeight = num(tags.height ?? tags['building:height'] ?? feature.properties?.basemap_render_height ?? feature.properties?.adam_height_m);
-      const explicitLevels = num(tags['building:levels'] ?? tags.levels ?? feature.properties?.building_levels);
+      const explicitHeight = num(feature.properties?.basemap_render_height ?? feature.properties?.basemap_properties?.render_height ?? feature.properties?.adam_height_m ?? feature.properties?.render_height ?? feature.properties?.height ?? tags.height ?? tags['building:height']);
+      const explicitLevels = num(tags['building:levels'] ?? tags.levels ?? feature.properties?.building_levels ?? feature.properties?.basemap_properties?.building_levels);
       if (!Number.isFinite(explicitHeight) && !Number.isFinite(explicitLevels)) continue;
       const rings = polygons.map(poly => poly[0]).filter(r => r?.length >= 4);
       if (!rings.length) continue;
@@ -134,7 +134,7 @@ import * as THREE from 'three';
         ? explicitHeight
         : Math.max(3.2, explicitLevels * 3.35);
       const levels = Math.max(1, Math.min(45, Math.round(Number.isFinite(explicitLevels) && explicitLevels > 0 ? explicitLevels : height / 3.35)));
-      const minHeight = Math.max(0, num(tags.min_height ?? tags['building:min_level'] * 3.2) || 0);
+      const minHeight = Math.max(0, num(feature.properties?.basemap_render_min_height ?? feature.properties?.basemap_properties?.render_min_height ?? tags.min_height ?? (num(tags['building:min_level']) * 3.2)) || 0);
       const floorHeight = Math.max(2.6, Math.min(5.2, (height - minHeight) / levels));
       let addedForFeature = false;
 
@@ -250,7 +250,7 @@ import * as THREE from 'three';
       const selected = (buildingData.features || []).filter(f => {
         if (!isPolygon(f.geometry)) return false;
         const tags = tagsOf(f);
-        if (!(tags.building || tags['building:part'])) return false;
+        const p = f.properties || {};\n        if (!(Number.isFinite(num(p.basemap_render_height ?? p.adam_height_m ?? p.render_height ?? p.height ?? tags.height)) || Number.isFinite(num(tags['building:levels'] ?? p.building_levels)))) return false;
         const polygonRings = outerRingsOf(f.geometry);
         if (!polygonRings.length) return false;
         const ring = polygonRings[0];
