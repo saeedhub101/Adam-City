@@ -4,7 +4,7 @@ import gzip, json, subprocess, tempfile
 from pathlib import Path
 
 ROOT = Path("middle east")
-LIMIT = 99_000_000
+LIMIT = 99_000_000  # GitHub hard file limit is 100 MB; keep a safe margin
 THEMES = {
     "buildings": ["w/building", "r/building", "w/building:part", "r/building:part"],
     # Export complete tags on building features, including roof/facade/material/color/height/levels.
@@ -19,6 +19,32 @@ THEMES = {
 }
 def run(args):
     subprocess.run(args, check=True)
+
+def checkpoint(paths, message):
+    """Commit and push each finished layer, with safe retries against main."""
+    paths = [str(p) for p in paths if p and Path(p).exists()]
+    if not paths:
+        return
+    run(["git", "add", "--", *paths])
+    if subprocess.run(["git", "diff", "--cached", "--quiet"]).returncode == 0:
+        return
+    subprocess.run(["git", "-c", "user.name=github-actions[bot]", "-c",
+                    "user.email=41898282+github-actions[bot]@users.noreply.github.com",
+                    "commit", "-m", message], check=True)
+    for attempt in range(1, 4):
+        subprocess.run(["git", "fetch", "origin", "main"], check=True)
+        rebase = subprocess.run(["git", "rebase", "origin/main"])
+        if rebase.returncode:
+            subprocess.run(["git", "rebase", "--abort"], check=False)
+            if attempt == 3:
+                raise RuntimeError("Could not rebase completed import checkpoint onto main")
+            continue
+        if subprocess.run(["git", "push", "origin", "HEAD:main"]).returncode == 0:
+            print(f"CHECKPOINT_SAVED {message}")
+            return
+        if attempt == 3:
+            raise RuntimeError("Could not push completed import checkpoint to main")
+    raise RuntimeError("Checkpoint retry limit reached")
 
 def country_source(country, temp):
     if country == "Jordan":
@@ -52,18 +78,33 @@ def main():
                 target = dest / f"{theme}.geojson.gz"
                 manifest = dest / f"{theme}.metadata.json"
                 try:
-                    # Verify and resume completed outputs.
-                    if target.is_file() and target.stat().st_size and manifest.is_file():
+                    # Resume only when manifest and every output file verify.
+                    if manifest.is_file():
                         try:
-                            with gzip.open(target, "rt", encoding="utf-8") as f:
-                                old_geo = json.load(f)
                             entry = json.loads(manifest.read_text(encoding="utf-8"))
-                            if old_geo.get("type") == "FeatureCollection" and entry.get("layer_version") == 6:
-                                catalog["layers"].append({"country":country,"theme":theme,"path":target.as_posix(),**entry})
-                                print(f"SKIP verified {target}")
+                            valid = entry.get("layer_version") == 6
+                            if entry.get("sharded"):
+                                parts = entry.get("parts", [])
+                                valid = valid and bool(parts) and all(
+                                    Path(p.get("path", "")).is_file()
+                                    and Path(p.get("path", "")).stat().st_size == p.get("compressed_bytes")
+                                    and Path(p.get("path", "")).stat().st_size < LIMIT
+                                    for p in parts)
+                                if valid:
+                                    catalog["layers"].extend({"country":country,"theme":theme,**p} for p in parts)
+                            else:
+                                valid = valid and target.is_file() and target.stat().st_size == entry.get("compressed_bytes")
+                                if valid:
+                                    with gzip.open(target, "rt", encoding="utf-8") as f:
+                                        old_geo = json.load(f)
+                                    valid = old_geo.get("type") == "FeatureCollection" and isinstance(old_geo.get("features"), list)
+                                    if valid:
+                                        catalog["layers"].append({"country":country,"theme":theme,"path":target.as_posix(),**entry})
+                            if valid:
+                                print(f"SKIP verified completed layer {country}/{theme}")
                                 continue
-                        except Exception:
-                            target.unlink(missing_ok=True)
+                        except Exception as verify_error:
+                            print(f"RESUME: rebuilding incomplete/corrupt {country}/{theme}: {verify_error}")
                     filtered = temp / f"{country}-{theme}.osm.pbf"
                     raw = temp / f"{country}-{theme}.geojson"
                     run(["osmium", "tags-filter", str(src), *selectors, "-o", str(filtered), "--overwrite"])
@@ -100,18 +141,23 @@ def main():
                         catalog["layers"].extend(shard_records)
                         manifest.write_text(json.dumps({"layer_version":6,"country":country,"theme":theme,"sharded":True,"parts":shard_records}, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
                         print(f"IMPORTED {country}/{theme}: {len(geo['features'])} features in {len(shard_records)} shards")
+                        checkpoint([*dest.glob(f"{theme}-part-*.geojson.gz"), manifest],
+                                   f"Checkpoint {country} {theme} ({len(geo['features'])} features)")
                     else:
                         entry = {"feature_count":len(geo["features"]),"compressed_bytes":target_size,"uncompressed_bytes":raw_bytes,"geometry_types":geometry_types}
                         record = {"layer_version":6,"country":country,"theme":theme,"source_file":str(src),"method":"osmium tags-filter + osmium export","license":"OpenStreetMap ODbL",**entry}
                         manifest.write_text(json.dumps(record, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
                         catalog["layers"].append({"country":country,"theme":theme,"path":target.as_posix(),**entry})
                         print(f"IMPORTED {country}/{theme}: {entry['feature_count']} features, {entry['compressed_bytes']} compressed bytes")
+                        checkpoint([target, manifest],
+                                   f"Checkpoint {country} {theme} ({entry['feature_count']} features)")
                 except Exception as exc:
-                    target.unlink(missing_ok=True)
+                    # Preserve any previously committed output if a retry fails.
                     catalog["errors"].append({"country":country,"theme":theme,"error":str(exc)})
                     print(f"ERROR {country}/{theme}; continuing: {exc}")
         catalog_path = ROOT / "layers-catalog.json"
         catalog_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
+        checkpoint([catalog_path], "Update Middle East layer catalog and import errors")
         print(f"CATALOG {catalog_path}: {len(catalog['layers'])} layers, {len(catalog['errors'])} errors")
 if __name__ == "__main__":
     main()
