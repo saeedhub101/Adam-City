@@ -336,7 +336,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
   const root='complete_data/OSM/data/buildings/Ermita/';
   const originUrl=new URL(root+'part'+part+'/part'+part+'-origin.json',location.href).href;
   const glbUrl=new URL(root+'enhanced/part'+part+'-roof-storefront-details.glb',location.href).href;
-  let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,meters=1,projectedMeters=1;
+  let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,meters=1,projectedMeters=1,matrixWarned=false;
   function fail(err){
    loading=false;ready=false;
    try{if(map.getLayer(layerId))map.removeLayer(layerId);}catch(_){}
@@ -370,8 +370,14 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
      },
      render(gl,args){
       if(!renderer||!model||!model.visible)return;
-      const values=args?.defaultProjectionData?.mainMatrix;
-      if(!values||values.length!==16)return;
+      // MapLibre v5 supplies defaultProjectionData.mainMatrix; retain fallbacks
+      // for compatible custom-layer render signatures instead of silently skipping.
+      const values=args?.defaultProjectionData?.mainMatrix||args?.modelViewProjectionMatrix||
+       ((Array.isArray(args)||ArrayBuffer.isView(args))?args:null);
+      if(!values||values.length!==16){
+       if(!matrixWarned){matrixWarned=true;showError('تم تحميل GLB للجزء '+part+' لكن الخريطة لم توفر مصفوفة العرض المتوقعة؛ تعذر رسم المجسم.');}
+       return;
+      }
       const matrix=Array.from(values,Number);if(matrix.some(v=>!Number.isFinite(v)))return;
       const projection=new THREE.Matrix4().fromArray(matrix);
       const localTransform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
