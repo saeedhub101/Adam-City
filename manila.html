@@ -263,7 +263,7 @@ function addBuildingDatasetCheckbox(config){
       const features=collections.flatMap(fc=>fc.features||[]);
       if(!features.length)throw new Error('لم يعثر الملف على معالم مبانٍ');
       map.addSource(sourceId,{type:'geojson',data:{type:'FeatureCollection',features},tolerance:0.5});
-      const color=['match',['to-string',['coalesce',['get','building'],['get','building',['get','tags']],'yes']],'commercial','#d6b18a','retail','#e0c49b','industrial','#aab6bd','residential','#c8b9a6','apartments','#c4b5a2','office','#b8c6ce','#c9bba8'];
+      const color=['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building_colour'],['get','render_color',['get','tags']],['get','colour',['get','tags']],['get','building:colour',['get','tags']],['match',['to-string',['coalesce',['get','class'],['get','building'],['get','type'],['get','building',['get','tags']],'yes']],'commercial','#c9b8a4','industrial','#b9b7b1','public','#c4c9ce','residential','#d8cdbd','apartments','#d8cdbd','#c9bfb0']];
       map.addLayer({id:extrusionId,type:'fill-extrusion',source:sourceId,filter:['==',['geometry-type'],'Polygon'],paint:{
         'fill-extrusion-color':color,
         'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','height',['get','tags']]],['*',['to-number',['coalesce',['get','building:levels'],['get','building:levels',['get','tags']]],1],3.2],5]],
