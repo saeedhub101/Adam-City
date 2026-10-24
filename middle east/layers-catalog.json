@@ -1,0 +1,209 @@
+{
+  "format": "adam-city-local-osm-layers-v1",
+  "source": "Repository-stored OpenStreetMap PBF extracts",
+  "license": "OpenStreetMap ODbL",
+  "layers": [
+    {
+      "country": "Jordan",
+      "theme": "buildings",
+      "path": "middle east/Jordan/layers/buildings.geojson.gz",
+      "feature_count": 464413,
+      "compressed_bytes": 20530748,
+      "uncompressed_bytes": 125910168,
+      "geometry_types": [
+        "LineString",
+        "MultiPolygon",
+        "Point"
+      ]
+    },
+    {
+      "country": "Jordan",
+      "theme": "streets",
+      "path": "middle east/Jordan/layers/streets.geojson.gz",
+      "feature_count": 172071,
+      "compressed_bytes": 18520343,
+      "uncompressed_bytes": 79474848,
+      "geometry_types": [
+        "LineString",
+        "MultiPolygon",
+        "Point"
+      ]
+    },
+    {
+      "country": "Jordan",
+      "theme": "streetnames",
+      "path": "middle east/Jordan/layers/streetnames.geojson.gz",
+      "feature_count": 172071,
+      "compressed_bytes": 18520347,
+      "uncompressed_bytes": 79474848,
+      "geometry_types": [
+        "LineString",
+        "MultiPolygon",
+        "Point"
+      ]
+    },
+    {
+      "country": "Jordan",
+      "theme": "boundaries",
+      "path": "middle east/Jordan/layers/boundaries.geojson.gz",
+      "feature_count": 3287,
+      "compressed_bytes": 1060812,
+      "uncompressed_bytes": 4338192,
+      "geometry_types": [
+        "LineString",
+        "MultiPolygon",
+        "Point"
+      ]
+    },
+    {
+      "country": "Jordan",
+      "theme": "water",
+      "path": "middle east/Jordan/layers/water.geojson.gz",
+      "feature_count": 13800,
+      "compressed_bytes": 3071582,
+      "uncompressed_bytes": 11206095,
+      "geometry_types": [
+        "LineString",
+        "MultiPolygon",
+        "Point"
+      ]
+    },
+    {
+      "country": "Jordan",
+      "theme": "landcover",
+      "path": "middle east/Jordan/layers/landcover.geojson.gz",
+      "feature_count": 31067,
+      "compressed_bytes": 4759481,
+      "uncompressed_bytes": 18317766,
+      "geometry_types": [
+        "LineString",
+        "MultiPolygon",
+        "Point"
+      ]
+    },
+    {
+      "country": "Jordan",
+      "theme": "places",
+      "path": "middle east/Jordan/layers/places.geojson.gz",
+      "feature_count": 30128,
+      "compressed_bytes": 2101286,
+      "uncompressed_bytes": 10462164,
+      "geometry_types": [
+        "LineString",
+        "MultiPolygon",
+        "Point"
+      ]
+    },
+    {
+      "country": "Jordan",
+      "theme": "addresses",
+      "path": "middle east/Jordan/layers/addresses.geojson.gz",
+      "feature_count": 42614,
+      "compressed_bytes": 2453314,
+      "uncompressed_bytes": 14326952,
+      "geometry_types": [
+        "LineString",
+        "MultiPolygon",
+        "Point"
+      ]
+    },
+    {
+      "country": "Palestine",
+      "theme": "streets",
+      "path": "middle east/Palestine/layers/streets.geojson.gz",
+      "feature_count": 617466,
+      "compressed_bytes": 48387868,
+      "uncompressed_bytes": 223975422,
+      "geometry_types": [
+        "LineString",
+        "MultiPolygon",
+        "Point"
+      ]
+    },
+    {
+      "country": "Palestine",
+      "theme": "streetnames",
+      "path": "middle east/Palestine/layers/streetnames.geojson.gz",
+      "feature_count": 617466,
+      "compressed_bytes": 48387872,
+      "uncompressed_bytes": 223975422,
+      "geometry_types": [
+        "LineString",
+        "MultiPolygon",
+        "Point"
+      ]
+    },
+    {
+      "country": "Palestine",
+      "theme": "boundaries",
+      "path": "middle east/Palestine/layers/boundaries.geojson.gz",
+      "feature_count": 5418,
+      "compressed_bytes": 5679550,
+      "uncompressed_bytes": 18646200,
+      "geometry_types": [
+        "LineString",
+        "MultiPolygon",
+        "Point"
+      ]
+    },
+    {
+      "country": "Palestine",
+      "theme": "water",
+      "path": "middle east/Palestine/layers/water.geojson.gz",
+      "feature_count": 36617,
+      "compressed_bytes": 5670188,
+      "uncompressed_bytes": 22033902,
+      "geometry_types": [
+        "LineString",
+        "MultiPolygon",
+        "Point"
+      ]
+    },
+    {
+      "country": "Palestine",
+      "theme": "landcover",
+      "path": "middle east/Palestine/layers/landcover.geojson.gz",
+      "feature_count": 221960,
+      "compressed_bytes": 30882579,
+      "uncompressed_bytes": 122056580,
+      "geometry_types": [
+        "LineString",
+        "MultiPolygon",
+        "Point"
+      ]
+    },
+    {
+      "country": "Palestine",
+      "theme": "places",
+      "path": "middle east/Palestine/layers/places.geojson.gz",
+      "feature_count": 144810,
+      "compressed_bytes": 12379938,
+      "uncompressed_bytes": 53453417,
+      "geometry_types": [
+        "LineString",
+        "MultiPolygon",
+        "Point"
+      ]
+    },
+    {
+      "country": "Palestine",
+      "theme": "addresses",
+      "path": "middle east/Palestine/layers/addresses.geojson.gz",
+      "feature_count": 229593,
+      "compressed_bytes": 8446223,
+      "uncompressed_bytes": 59129900,
+      "geometry_types": [
+        "LineString",
+        "MultiPolygon",
+        "Point"
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "country": "Palestine",
+      "theme": "buildings",
+      "error": "[Errno 2] No such file or directory: 'middle east/Palestine/layers/buildings.geojson.gz'"
+    }
+  ]
+}

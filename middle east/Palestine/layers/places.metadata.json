@@ -1,0 +1,16 @@
+{
+  "layer_version": 2,
+  "country": "Palestine",
+  "theme": "places",
+  "source_file": "/tmp/me-layers-cx1tiac7/palestine-area-merged.osm.pbf",
+  "method": "osmium tags-filter + osmium export",
+  "license": "OpenStreetMap ODbL",
+  "feature_count": 144810,
+  "compressed_bytes": 12379938,
+  "uncompressed_bytes": 53453417,
+  "geometry_types": [
+    "LineString",
+    "MultiPolygon",
+    "Point"
+  ]
+}
