@@ -1,6 +1,10 @@
 name: Import Middle East free map data
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/import-middle-east-data.yml'
   workflow_dispatch:
     inputs:
       country:
@@ -53,7 +57,7 @@ jobs:
             dest="${TARGET[$c]}"; country="${c^}"
             mkdir -p "$(dirname "$dest")" "$ROOT/$country/metadata" "$ROOT/$country/reports" "$ROOT/$country/openfreetile" "$ROOT/$country/openfreemap" "$ROOT/$country/terrain"
             status="$ROOT/$country/metadata/import-status.json"
-            if [ -s "$dest" ] && [ "$RETRY_FAILED" != true ]; then echo "Existing file retained: $dest"; continue; fi
+            if [ -s "$dest" ]; then echo "Existing file retained; skipping completed extract: $dest"; continue; fi
             tmp="$dest.part"
             echo "Downloading $c from ${URL[$c]}"
             curl -fL --retry 4 --retry-all-errors --retry-delay 5 --connect-timeout 30 --max-time 2400 "${URL[$c]}" -o "$tmp"
