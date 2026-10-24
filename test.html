@@ -28,10 +28,10 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <label class="row"><input type="checkbox" id="osm-tags"> 3. tags — جدول الوسوم (بيانات وصفية وليست طبقة مكانية)</label>
 <label class="row"><input type="checkbox" id="roxas-boulevard-glb"> 4.1 Roxas Boulevard — مباني GLB (طبقة مستقلة)</label>
 <label class="row"><input type="checkbox" id="osm-roads" checked> 5. roads — الطرق وتفاصيل هندستها</label>
-<label class="row"><input type="checkbox" id="enhanced-glb-part-1"> 5.1 GLB — الجزء 1 (مواد وواجهات ونوافذ)</label>
-<label class="row"><input type="checkbox" id="enhanced-glb-part-2"> 5.2 GLB — الجزء 2 (مواد وواجهات ونوافذ)</label>
-<label class="row"><input type="checkbox" id="enhanced-glb-part-3"> 5.3 GLB — الجزء 3 (مواد وواجهات ونوافذ)</label>
-<label class="row"><input type="checkbox" id="enhanced-glb-part-4"> 5.4 GLB — الجزء 4 (مواد وواجهات ونوافذ)</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-1" checked> 5.1 تفاصيل الواجهات والنوافذ واليافطات — المنطقة 1</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-2"> 5.2 تفاصيل الواجهات والنوافذ واليافطات — المنطقة 2</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-3"> 5.3 تفاصيل الواجهات والنوافذ واليافطات — المنطقة 3</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-4"> 5.4 تفاصيل الواجهات والنوافذ واليافطات — المنطقة 4</label>
 <label class="row"><input type="checkbox" id="robinsons-enhancement"> Robinsons Place Manila — نموذج ثلاثي الأبعاد مستقل جديد</label>
 <label class="row"><input type="checkbox" id="osm-thematic"> 6. thematic — المتاجر والعلامات والتفاصيل الموضوعية</label>
 <label class="row"><input type="checkbox" id="osm-pedestrian"> 7. pedestrian — تفاصيل المشاة</label>
@@ -156,7 +156,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
   const id='ermita-enhanced-building-glb-part-'+part;
   const base='complete_data/OSM/data/buildings/Ermita/';
   const manifestUrl=new URL(base+'enhanced/part'+part+'-regions.json',location.href).href;
-  const modelUrl=new URL(base+'Parts'+part+'.glb',location.href).href;
+  const modelUrl=new URL(base+'enhanced/part'+part+'-roof-storefront-details.glb',location.href).href;
   const originUrl=new URL(base+'part'+part+'/part'+part+'-origin.json',location.href).href;
   let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,meters=1,matrixWarned=false;
   const showError=err=>{
@@ -192,11 +192,11 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
        ready=true;loading=false;
        window['adamEnhancedPart'+part+'Ready']=true;
        window['adamSetEnhancedPart'+part+'Visible']=visible=>{if(model)model.visible=visible;mapInstance.triggerRepaint();};
-       if(status)status.textContent='تم تحميل ملف GLB الأصلي للجزء '+part+' | meshes='+meshCount+' | '+(model.visible?'ظاهر':'مخفي');
+       if(status)status.textContent='تم تحميل طبقة تفاصيل الواجهات للمنطقة '+part+' | meshes='+meshCount+' | '+(model.visible?'ظاهر':'مخفي');
        mapInstance.triggerRepaint();
       },progress=>{
-       if(status)status.textContent='تحميل GLB الأصلي الجزء '+part+': '+(progress.total?Math.round(progress.loaded/progress.total*100)+'%':Math.round(progress.loaded/1048576)+' MiB');
-      },err=>showError(new Error('فشل تحميل الملف الأصلي '+modelUrl+': '+(err?.message||err))));
+       if(status)status.textContent='تحميل تفاصيل الواجهات للمنطقة '+part+': '+(progress.total?Math.round(progress.loaded/progress.total*100)+'%':Math.round(progress.loaded/1048576)+' MiB');
+      },err=>showError(new Error('فشل تحميل ملف تفاصيل الواجهات '+modelUrl+': '+(err?.message||err))));
      },
      render(gl,args){
       if(!renderer||!model||!model.visible)return;
@@ -218,6 +218,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
     map.addLayer(layer);if(map.getLayer(id))map.moveLayer(id);
    }catch(err){showError(err);}
   }
+  if(toggle.checked) ensureLayer();
   toggle.addEventListener('change',async()=>{
    if(toggle.checked){
     if(!ready)await ensureLayer();
