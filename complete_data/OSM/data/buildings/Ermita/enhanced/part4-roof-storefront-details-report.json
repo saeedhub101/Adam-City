@@ -1,0 +1,24 @@
+{
+  "enhancement_version": 4,
+  "part": 4,
+  "output": "complete_data/OSM/data/buildings/Ermita/enhanced/part4-roof-storefront-details.glb",
+  "bytes": 86143100,
+  "meshes": 120628,
+  "roof_parapet_segments": 79062,
+  "hvac_units": 11534,
+  "water_tanks": 5750,
+  "storefront_sign_panels": 0,
+  "storefront_doors": 0,
+  "facade_material_and_accent_meshes": 24282,
+  "skipped_features": 0,
+  "origin_projected_m": {
+    "x": 13470866.419399105,
+    "y": 1643608.5953451272
+  },
+  "coordinate_policy": "overlay-only; original PartsN.glb and origin sidecar unchanged",
+  "notes": [
+    "Rooftop equipment is procedural illustrative detail, not verified building-by-building inventory.",
+    "Storefront fascia panels use names/brands from OSM tags where available; they are not exact logo artwork.",
+    "Real-time shadows are renderer-controlled, not baked into GLB. PBR materials include roughness and metalness."
+  ]
+}
