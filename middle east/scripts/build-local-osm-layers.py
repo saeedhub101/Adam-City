@@ -77,7 +77,7 @@ def main():
                         json.dump(geo, f, ensure_ascii=False, separators=(",", ":"))
                     if target.stat().st_size >= LIMIT:
                         target.unlink(missing_ok=True)
-                        raise RuntimeError(f"compressed GeoJSON exceeds safe 90 MB limit ({target.stat().st_size} bytes); requires spatial partitioning")
+                        raise RuntimeError(f"compressed GeoJSON exceeds safe 99 MB limit ({target.stat().st_size} bytes); requires spatial partitioning")
                     entry = {"feature_count":len(geo["features"]),"compressed_bytes":target.stat().st_size,"uncompressed_bytes":raw_bytes,"geometry_types":sorted({x.get("geometry",{}).get("type","null") for x in geo["features"] if x.get("geometry")})}
                     record = {"layer_version":5,"country":country,"theme":theme,"source_file":str(src),"method":"osmium tags-filter + osmium export","license":"OpenStreetMap ODbL",**entry}
                     manifest.write_text(json.dumps(record, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
