@@ -159,7 +159,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
   const manifestUrl=new URL(base+'enhanced/part'+part+'-regions.json',location.href).href;
   const modelUrl=new URL(base+'Parts'+part+'.glb',location.href).href;
   const originUrl=new URL(base+'part'+part+'/part'+part+'-origin.json',location.href).href;
-  let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,projectedMeterScale=1,meterScale=1;
+  let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,meterScale=1;
   const showError=err=>{
    loading=false;ready=false;
    // Remove a partially loaded custom layer so retrying the checkbox cannot hit a duplicate-layer error.
@@ -177,7 +177,6 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
     if(!Number.isFinite(lon)||!Number.isFinite(lat))throw new Error('إحداثيات أصل الجزء غير صحيحة');
     anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:lon,lat},0);
     meterScale=anchor.meterInMercatorCoordinateUnits();
-    projectedMeterScale=meterScale*Math.cos(lat*Math.PI/180);
     const layer={
      id,type:'custom',renderingMode:'3d',
      onAdd(mapInstance,gl){
@@ -218,7 +217,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
       const values=Object.values(mainMatrix);if(values.length!==16||values.some(v=>!Number.isFinite(Number(v))))return;
       const projection=new THREE.Matrix4().fromArray(values.map(Number));
       const transform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
-       .scale(new THREE.Vector3(projectedMeterScale,-projectedMeterScale,meterScale));
+       .scale(new THREE.Vector3(meterScale,-meterScale,meterScale));
       camera.projectionMatrix.copy(projection).multiply(transform);
       camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
       renderer.resetState();renderer.render(scene,camera);renderer.resetState();
