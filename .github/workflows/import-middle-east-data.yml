@@ -4,7 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/import-middle-east-data.yml'\n      - 'middle east/scripts/**'
+      - '.github/workflows/import-middle-east-data.yml'
+      - 'middle east/scripts/**'
   workflow_dispatch:
     inputs:
       country:
