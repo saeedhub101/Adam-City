@@ -62,7 +62,34 @@ jobs:
           if [ -f test.html ]; then cp test.html site/test.html; else echo "ERROR: test.html is missing"; exit 1; fi
           if [ -f ermita-malate-3d.html ]; then cp ermita-malate-3d.html site/ermita-malate-3d.html; else echo "ERROR: ermita-malate-3d.html is missing"; exit 1; fi
           if [ -d ermita ]; then cp -a ermita/. site/ermita/; else echo "ERROR: ermita assets directory is missing"; exit 1; fi
-          if [ -d complete_data/OSM/data ]; then cp -a complete_data/OSM/data/. site/complete_data/OSM/data/; else echo "WARNING: OSM data directory is missing"; fi
+          # Publish only OSM files actually referenced by manila.html. Copying the
+          # entire source-data tree made the Pages artifact exceed GitHub's 1 GB limit.
+          enhanced_src='complete_data/OSM/data/buildings/Ermita/enhanced'
+          enhanced_dst='site/complete_data/OSM/data/buildings/Ermita/enhanced'
+          if [ -d "$enhanced_src" ]; then
+            mkdir -p "$enhanced_dst"
+            for part in 1 2 3 4; do
+              glb="$enhanced_src/part$part-roof-storefront-details.glb"
+              origin="complete_data/OSM/data/buildings/Ermita/part$part/part$part-origin.json"
+              if [ -s "$glb" ]; then
+                cp "$glb" "$enhanced_dst/"
+              else
+                echo "ERROR: required enhanced GLB is missing or empty: $glb"
+                exit 1
+              fi
+              if [ -s "$origin" ]; then
+                mkdir -p "site/complete_data/OSM/data/buildings/Ermita/part$part"
+                cp "$origin" "site/complete_data/OSM/data/buildings/Ermita/part$part/"
+              else
+                echo "ERROR: required origin sidecar is missing or empty: $origin"
+                exit 1
+              fi
+            done
+            echo "Published four enhanced GLB overlays and their origin sidecars."
+          else
+            echo "ERROR: enhanced GLB directory is missing: $enhanced_src"
+            exit 1
+          fi
           if [ -f manila-bundry.html ]; then cp manila-bundry.html site/manila-bundry.html; else echo "WARNING: manila-bundry.html is missing"; fi
 
           # Publish the exact OpenFreeMap GeoJSON path referenced by manila.html.
