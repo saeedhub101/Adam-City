@@ -66,6 +66,28 @@ jobs:
             echo "ERROR: Robinsons facade-detail module is missing or empty"
             exit 1
           fi
+          # Publish the four GLB models used by the enhanced-GLB controls on test.html.
+          # The source files live at the repository root, but Pages serves only the site/ artifact.
+          for part in 1 2 3 4; do
+            glb="complete_data/OSM/data/buildings/Ermita/Parts$part.glb"
+            origin="complete_data/OSM/data/buildings/Ermita/part$part/part$part-origin.json"
+            if [ -s "$glb" ]; then
+              mkdir -p site/complete_data/OSM/data/buildings/Ermita
+              cp "$glb" site/complete_data/OSM/data/buildings/Ermita/
+            else
+              echo "ERROR: required test.html GLB is missing or empty: $glb"
+              exit 1
+            fi
+            if [ -s "$origin" ]; then
+              mkdir -p "site/complete_data/OSM/data/buildings/Ermita/part$part"
+              cp "$origin" "site/complete_data/OSM/data/buildings/Ermita/part$part/"
+            else
+              echo "ERROR: required test.html origin sidecar is missing or empty: $origin"
+              exit 1
+            fi
+          done
+          echo "Published Parts1.glb–Parts4.glb and origin sidecars for test.html."
+
           # Publish only OSM files actually referenced by manila.html. Copying the
           # entire source-data tree made the Pages artifact exceed GitHub's 1 GB limit.
           enhanced_src='complete_data/OSM/data/buildings/Ermita/enhanced'
