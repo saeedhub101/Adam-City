@@ -191,7 +191,89 @@ const geoJsonBase='complete_data/OSM/data/buildings/Ermita/ermita-buildings-mast
   {key:'part-004',label:'مباني GeoJSON — الملف 4',url:geoJsonBase+'part-004.geojson'},
   {key:'part-005',label:'مباني GeoJSON — building-fallback.geojson',url:'complete_data/open%20free%20tile/building-fallback.geojson'}
 ].forEach(addSingleGeoJsonCheckbox);
+
 defs.forEach(addCheckbox);
+
+// Additional building datasets requested by the user: sources 1, 2, and 4.
+// These controls are independent; each displays only its own selected dataset.
+function normalizeBuildingData(textValue){
+  try {
+    const parsed=JSON.parse(textValue);
+    if(parsed.type==='FeatureCollection')return parsed;
+    if(parsed.type==='Feature')return {type:'FeatureCollection',features:[parsed]};
+    if(Array.isArray(parsed))return {type:'FeatureCollection',features:parsed.filter(f=>f&&f.type==='Feature')};
+  } catch(e) {}
+  const features=[];
+  for(const line of textValue.split(/\\r?\\n/)){
+    const trimmed=line.trim(); if(!trimmed)continue;
+    try {
+      const obj=JSON.parse(trimmed);
+      if(obj.type==='Feature')features.push(obj);
+      else if(obj.type==='FeatureCollection'&&Array.isArray(obj.features))features.push(...obj.features);
+    } catch(e) {}
+  }
+  if(!features.length)throw new Error('لم يمكن تحليل الملف كـ GeoJSON أو GeoJSONL');
+  return {type:'FeatureCollection',features};
+}
+async function readBuildingFile(url){
+  const response=await fetch(url);
+  if(!response.ok)throw new Error('HTTP '+response.status+' — '+url);
+  const buffer=await response.arrayBuffer();
+  const bytes=new Uint8Array(buffer);
+  let dataBuffer=buffer;
+  if(bytes.length>=2&&bytes[0]===0x1f&&bytes[1]===0x8b){
+    if(!('DecompressionStream' in window))throw new Error('المتصفح لا يدعم فك ضغط gzip لهذا الملف');
+    dataBuffer=await new Response(new Blob([buffer]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+  }
+  return normalizeBuildingData(new TextDecoder('utf-8').decode(dataBuffer));
+}
+function addBuildingDatasetCheckbox(config){
+  const wrap=document.createElement('label');wrap.className='part-toggle';
+  const cb=document.createElement('input');cb.type='checkbox';
+  const label=document.createElement('span');label.innerHTML='<span class="part-name">'+escapeHtml(config.label)+'</span><span class="part-file">'+escapeHtml(config.description)+'</span>';
+  wrap.append(cb,label);
+  const fourth=checkboxes.get('aeroway')?.parentElement;
+  if(fourth&&fourth.parentElement===list)fourth.insertAdjacentElement('afterend',wrap);else list.prepend(wrap);
+  const sourceId='manila-extra-'+config.key;
+  const fillId=sourceId+'-fill',outlineId=sourceId+'-outline',extrusionId=sourceId+'-3d';
+  let loaded=false,loading=false;
+  cb.addEventListener('change',async()=>{
+    if(!cb.checked){
+      [fillId,outlineId,extrusionId].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none')});
+      status.className='status';status.textContent='تم إخفاء '+config.label+'.';return;
+    }
+    if(loaded){[fillId,outlineId,extrusionId].forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility','visible')});return;}
+    if(loading){cb.checked=false;return;}
+    loading=true;cb.disabled=true;status.className='status';status.textContent='جارٍ قراءة '+config.label+'…';
+    try{
+      const collections=await Promise.all(config.urls.map(readBuildingFile));
+      const features=collections.flatMap(fc=>fc.features||[]);
+      if(!features.length)throw new Error('لم يعثر الملف على معالم مبانٍ');
+      map.addSource(sourceId,{type:'geojson',data:{type:'FeatureCollection',features},tolerance:0.5});
+      const color=['match',['to-string',['coalesce',['get','building'],['get','building',['get','tags']],'yes']],'commercial','#d6b18a','retail','#e0c49b','industrial','#aab6bd','residential','#c8b9a6','apartments','#c4b5a2','office','#b8c6ce','#c9bba8'];
+      map.addLayer({id:fillId,type:'fill',source:sourceId,filter:['==',['geometry-type'],'Polygon'],paint:{'fill-color':color,'fill-opacity':0.88}});
+      map.addLayer({id:outlineId,type:'line',source:sourceId,filter:['==',['geometry-type'],'Polygon'],paint:{'line-color':'#57483a','line-width':['interpolate',['linear'],['zoom'],10,0.3,16,1],'line-opacity':0.85}});
+      map.addLayer({id:extrusionId,type:'fill-extrusion',source:sourceId,filter:['==',['geometry-type'],'Polygon'],paint:{
+        'fill-extrusion-color':color,
+        'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','height',['get','tags']]],['*',['to-number',['coalesce',['get','building:levels'],['get','building:levels',['get','tags']]],1],3.2],5]],
+        'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height'],['get','min_height',['get','tags']]],0]],
+        'fill-extrusion-opacity':0.94,'fill-extrusion-vertical-gradient':false
+      }});
+      map.on('click',extrusionId,featurePopup);
+      loaded=true;
+      status.className='status';status.textContent='تم تحميل '+config.label+' بنجاح؛ عدد المعالم في المصدر: '+features.length+'.';
+    }catch(e){
+      cb.checked=false;status.className='status error';status.textContent='فشل تحميل '+config.label+': '+(e?.message||e);
+      [fillId,outlineId,extrusionId].forEach(id=>{if(map.getLayer(id))map.removeLayer(id)});
+      if(map.getSource(sourceId))map.removeSource(sourceId);
+    }finally{loading=false;cb.disabled=false;}
+  });
+}
+[
+ {key:'source-1-fallback',label:'المصدر 1 — Building fallback',description:'building-fallback.geojson',urls:['complete_data/open%20free%20tile/building-fallback.geojson']},
+ {key:'source-2-building-layer',label:'المصدر 2 — طبقة building',description:'layers/building.geojsonl',urls:['complete_data/open%20free%20tile/layers/building.geojsonl']},
+ {key:'source-4-parts',label:'المصدر 4 — الجزآن 1 و2',description:'buildings-part1.geojson.gz + buildings-part2.geojson.gz',urls:['complete_data/open%20free%20tile/buildings-part1.geojson.gz','complete_data/open%20free%20tile/buildings-part2.geojson.gz']}
+].forEach(addBuildingDatasetCheckbox);
 
 const baseBuildings=[];
 document.getElementById('toggleVector').addEventListener('click',()=>{const panel=document.querySelector('.panel'),btn=document.getElementById('toggleVector'),isShort=panel.classList.toggle('panel-short');btn.textContent=isShort?'+':'−';btn.setAttribute('aria-expanded',String(!isShort));btn.setAttribute('aria-label',isShort?'تكبير لوحة التحكم':'تصغير لوحة التحكم');});
