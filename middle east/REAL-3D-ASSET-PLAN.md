@@ -19,6 +19,8 @@ Branch: `main`
 | [Madaba — Burnt Palace](https://openheritage3d.org/project.php?id=7bzx-v340) | Madaba, Jordan | Terrestrial photogrammetry (49.02 GB) and aerial photogrammetry (3.36 GB) | CC BY-NC-SA; non-commercial only, attribution and share-alike apply | Candidate only. Download links are delivered by Open Heritage 3D after request. Do not position on map until the model and georeferencing are inspected. |
 | [Madaba — Church of the Virgin Mary & Hippolytus Hall](https://openheritage3d.org/project.php?id=mv5j-ef62) | Madaba, Jordan | Terrestrial photogrammetry (75.98 GB) and aerial photogrammetry (13.25 GB) | CC BY-NC-SA; non-commercial only, attribution and share-alike apply | Candidate only. Large dataset; request only when storage/processing is available. Spatial georeferencing is not guaranteed. |
 | [ACOR–Global Digital Heritage collection](https://acorjordan.org/acor-gdh/) | Multiple sites in Jordan | Published photogrammetry/3D documentation; collection includes Amman Citadel Museum, Petra Museum and Petra Archaeological Park among listed items | Check the individual asset's terms before reuse; no blanket license assumed | Research catalogue. Select individual downloadable models, verify file format/license/coordinates, then add per-asset manifest entries. |
+| [Tel Sultan Tower](https://sketchfab.com/3d-models/tel-sultan-tower-jericho-a6147999cab34e3e8d767a9eda81eabe) | Jericho, Palestine | Published 3D model; creator describes it as heritage/3D-scanning content | CC Attribution (CC BY); confirm model download and exact attribution on source page | Candidate for a single landmark overlay. No georeferencing has been verified; do not place until the mesh is obtained and aligned from reliable control evidence. |
+| [Jerusalem 3D model collection](https://sketchfab.com/moshecaine/collections/jerusalem-6330574898e84031816a3384c3233f7e) | Jerusalem | Collection includes building/heritage scans and photogrammetry/point-cloud items | License varies per model; verify each item's license individually | Candidate catalogue only. Prioritize textured mesh models; point clouds are not directly interchangeable with GLB building meshes. |
 
 ## Coverage gap
 
@@ -55,6 +57,8 @@ Before adding any model to the map, create a record containing:
 - Burnt Palace dataset details and license: https://openheritage3d.org/project.php?id=7bzx-v340
 - Church of the Virgin Mary & Hippolytus Hall dataset details and license: https://openheritage3d.org/project.php?id=mv5j-ef62
 - ACOR–Global Digital Heritage collection: https://acorjordan.org/acor-gdh/
+- Tel Sultan Tower, Jericho: https://sketchfab.com/3d-models/tel-sultan-tower-jericho-a6147999cab34e3e8d767a9eda81eabe
+- Jerusalem 3D collection: https://sketchfab.com/moshecaine/collections/jerusalem-6330574898e84031816a3384c3233f7e
 - GlobalBuildingAtlas overview: https://huggingface.co/datasets/zhu-xlab/GBA.ODbLPolygon
 
 This document is an asset intake register, not a claim that the listed models have already been downloaded, georeferenced, or rendered.
