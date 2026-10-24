@@ -141,12 +141,6 @@ function addSingleGeoJsonCheckbox(config){
       map.addSource(sourceId,{type:'geojson',data:new URL(config.url,window.location.href).href,tolerance:0.5});
       // Always draw a visible 2D footprint first; extrusion is an additional rendering pass.
       const buildingColor=['match',['to-string',['coalesce',['get','building'],['get','building',['get','tags']],'yes']],'commercial','#d6b18a','retail','#e0c49b','industrial','#aab6bd','residential','#c8b9a6','apartments','#c4b5a2','office','#b8c6ce','yes','#d0c2af','#c9bba8'];
-      map.addLayer({id:sourceId+'-2d-fill',type:'fill',source:sourceId,
-        filter:['==',['geometry-type'],'Polygon'],
-        paint:{'fill-color':buildingColor,'fill-opacity':0.9,'fill-antialias':true}});
-      map.addLayer({id:sourceId+'-2d-outline',type:'line',source:sourceId,
-        filter:['==',['geometry-type'],'Polygon'],
-        paint:{'line-color':'#44382d','line-width':['interpolate',['linear'],['zoom'],10,0.35,16,1.1],'line-opacity':0.9}});
       map.addLayer({id:layerId,type:'fill-extrusion',source:sourceId,
         filter:['==',['geometry-type'],'Polygon'],
         paint:{
@@ -175,7 +169,7 @@ function addSingleGeoJsonCheckbox(config){
       });
       loaded=true;
       const count=map.querySourceFeatures(sourceId).length;
-      status.className='status';status.textContent='تم تحميل '+config.label+'؛ معالم GeoJSON المقروءة في مستوى العرض الحالي: '+count+'. أُضيف رسم ثنائي الأبعاد وحدود مع المجسمات ثلاثية الأبعاد.';
+      status.className='status';status.textContent='تم تحميل '+config.label+'؛ معالم GeoJSON المقروءة في مستوى العرض الحالي: '+count+'. تم عرض المجسمات ثلاثية الأبعاد فقط.';
     }catch(e){
       cb.checked=false;
       if(map.getLayer(layerId))map.setLayoutProperty(layerId,'visibility','none');
@@ -189,7 +183,7 @@ const geoJsonBase='complete_data/OSM/data/buildings/Ermita/ermita-buildings-mast
   {key:'part-080',label:'مباني GeoJSON — الملف 80',url:geoJsonBase+'part-080.geojson'},
   {key:'part-011',label:'مباني GeoJSON — الملف 11',url:geoJsonBase+'part-011.geojson'},
   {key:'part-004',label:'مباني GeoJSON — الملف 4',url:geoJsonBase+'part-004.geojson'},
-  {key:'part-005',label:'مباني GeoJSON — building-fallback.geojson',url:'complete_data/open-free-tile/building-fallback.geojson'}
+  {key:'part-005',label:'مباني GeoJSON — building-fallback.geojson',url:'complete_data/open%20free%20tile/building-fallback.geojson'}
 ].forEach(addSingleGeoJsonCheckbox);
 
 defs.forEach(addCheckbox);
@@ -269,8 +263,6 @@ function addBuildingDatasetCheckbox(config){
       if(!features.length)throw new Error('لم يعثر الملف على معالم مبانٍ');
       map.addSource(sourceId,{type:'geojson',data:{type:'FeatureCollection',features},tolerance:0.5});
       const color=['match',['to-string',['coalesce',['get','building'],['get','building',['get','tags']],'yes']],'commercial','#d6b18a','retail','#e0c49b','industrial','#aab6bd','residential','#c8b9a6','apartments','#c4b5a2','office','#b8c6ce','#c9bba8'];
-      map.addLayer({id:fillId,type:'fill',source:sourceId,filter:['==',['geometry-type'],'Polygon'],paint:{'fill-color':color,'fill-opacity':0.88}});
-      map.addLayer({id:outlineId,type:'line',source:sourceId,filter:['==',['geometry-type'],'Polygon'],paint:{'line-color':'#57483a','line-width':['interpolate',['linear'],['zoom'],10,0.3,16,1],'line-opacity':0.85}});
       map.addLayer({id:extrusionId,type:'fill-extrusion',source:sourceId,filter:['==',['geometry-type'],'Polygon'],paint:{
         'fill-extrusion-color':color,
         'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','height',['get','tags']]],['*',['to-number',['coalesce',['get','building:levels'],['get','building:levels',['get','tags']]],1],3.2],5]],
@@ -288,8 +280,7 @@ function addBuildingDatasetCheckbox(config){
   });
 }
 [
- {key:'source-2-building-layer',label:'المصدر 2 — طبقة building',description:'layers/building.geojsonl',urls:['complete_data/open-free-tile/layers/building.geojsonl']},
- {key:'source-4-parts',label:'المصدر 4 — الجزآن 1 و2',description:'buildings-part1.geojson.gz + buildings-part2.geojson.gz',urls:['complete_data/open-free-tile/buildings-part1.geojson.gz','complete_data/open-free-tile/buildings-part2.geojson.gz']}
+ {key:'source-4-parts',label:'المصدر 4 — الجزآن 1 و2',description:'buildings-part1.geojson.gz + buildings-part2.geojson.gz',urls:['complete_data/open%20free%20tile/buildings-part1.geojson.gz','complete_data/open%20free%20tile/buildings-part2.geojson.gz']}
 ].forEach(addBuildingDatasetCheckbox);
 
 const baseBuildings=[];
