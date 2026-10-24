@@ -12,6 +12,10 @@ on:
       - 'Manila/3d-rag/apply-report.json'
       - 'complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-004.geojson'
       - 'complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-005.geojson'
+      - 'complete_data/OFT/building-fallback.geojson'
+      - 'complete_data/OFT/layers/building.geojsonl'
+      - 'complete_data/OFT/buildings-part1.geojson.gz'
+      - 'complete_data/OFT/buildings-part2.geojson.gz'
       - 'complete_data/open free tile/building-fallback.geojson'
       - 'complete_data/open free tile/layers/building.geojsonl'
       - 'complete_data/open free tile/buildings-part1.geojson.gz'
@@ -45,7 +49,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p site/Manila/vector-tiles site/Manila/3d-rag
-          mkdir -p site/ermita/maps/sources/openfreemap
+          mkdir -p site/ermita/maps/sources/openfreemap site/complete_data/OFT/layers
           geojson_dir='complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts'
           mkdir -p "site/$geojson_dir" site/complete_data/open-free-tile
 
@@ -77,6 +81,29 @@ jobs:
           else
             echo "WARNING: optional GeoJSON missing: $fallback"
           fi
+
+          # Publish the exact complete_data/OFT paths referenced by the GeoJSON checkboxes.
+          for file in building-fallback.geojson; do
+            if [ -s "complete_data/OFT/$file" ]; then
+              cp "complete_data/OFT/$file" "site/complete_data/OFT/$file"
+              echo "Published OFT GeoJSON: complete_data/OFT/$file ($(wc -c < "complete_data/OFT/$file") bytes)"
+            else
+              echo "ERROR: required OFT GeoJSON is missing or empty: complete_data/OFT/$file"
+              exit 1
+            fi
+          done
+          if [ -s complete_data/OFT/layers/building.geojsonl ]; then
+            cp complete_data/OFT/layers/building.geojsonl site/complete_data/OFT/layers/building.geojsonl
+          else
+            echo "WARNING: optional OFT building layer missing: complete_data/OFT/layers/building.geojsonl"
+          fi
+          for file in buildings-part1.geojson.gz buildings-part2.geojson.gz; do
+            if [ -s "complete_data/OFT/$file" ]; then
+              cp "complete_data/OFT/$file" "site/complete_data/OFT/$file"
+            else
+              echo "WARNING: optional OFT building part missing: complete_data/OFT/$file"
+            fi
+          done
 
           # Publish the exact source files used by the independent building toggles.
           layers_building='complete_data/open free tile/layers/building.geojsonl'
