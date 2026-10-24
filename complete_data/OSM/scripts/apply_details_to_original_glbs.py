@@ -132,7 +132,7 @@ def run(part):
     for node in list(details.graph.nodes_geometry):
         transform,geom_name=details.graph.get(node)
         merged.add_geometry(details.geometry[geom_name].copy(),node_name=f"details_{node}",transform=transform)
-    window_groups=add_embedded_windows(merged,part,ox,oy,bounds)
+    # The 89 MB window scene is intentionally not loaded in this pass: its large geometry\n    # made the runner terminate before checkpointing. Integrate it in a separately bounded\n    # spatial pass after the original roof/storefront GLBs are safely checkpointed.\n    window_groups=0
     data=export_bytes(merged)
     outputs=[]
     if len(data)<LIMIT:
@@ -161,7 +161,7 @@ def run(part):
         temp.write_bytes(blob); os.replace(temp,target)
     report={"part":part,"original_file":str(original.relative_to(ROOT)),"merged_bytes":len(data),
             "outputs":[{"file":str(p.relative_to(ROOT)),"bytes":len(b),"meshes":len(load_scene(p).geometry)} for p,b in outputs],
-            "integrated_overlay":str(overlay.relative_to(ROOT)),"embedded_window_geometry_groups":window_groups,"policy":"roof/storefront details and matching existing window triangles integrated into original GLB scene; coordinates retained"}
+            "integrated_overlay":str(overlay.relative_to(ROOT)),"embedded_window_geometry_groups":window_groups,"window_integration":"deferred; oversized source scene excluded from this pass","policy":"roof/storefront details integrated into original GLB scene; original coordinates retained"}
     report_path.write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
     print(json.dumps(report,indent=2))
 
