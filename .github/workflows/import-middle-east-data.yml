@@ -142,7 +142,7 @@ jobs:
                   lon=east; c+=1
               lat=north; r+=1
           manifest={"status":"complete","source":"Geofabrik Israel and Palestine combined extract (not Palestine-only)","source_url":"https://download.geofabrik.de/asia/israel-and-palestine-latest.osm.pbf","source_bytes":os.path.getsize(src),"tile_count":count,"tile_bytes_total":total_bytes,"max_tile_bytes":LIMIT-1,"method":"osmium complete_ways spatial extraction; recursive subdivision for any tile >=90 MB","retrieved_utc":__import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()}
-          with open(os.path.join(os.path.dirname(outdir),"metadata","import-status.json"),"w") as f: json.dump(manifest,f,indent=2); f.write("\n")
+          with open(os.path.join(os.path.dirname(os.path.dirname(outdir)),"metadata","import-status.json"),"w") as f: json.dump(manifest,f,indent=2); f.write("\n")
           print("TILE_SUMMARY",json.dumps(manifest))
           PY
 
