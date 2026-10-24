@@ -70,8 +70,38 @@ import * as THREE from 'three';
    const sign=new THREE.Mesh(signGeo,signMat);sign.frustumCulled=false;group.add(sign);
    const canopyGeo=new THREE.BoxGeometry(width*.72,3.2,.75);const canopy=new THREE.Mesh(canopyGeo,red);canopy.position.set(cx+nx*2.1,cy+ny*2.1,5.0);canopy.rotation.z=Math.atan2(dy,dx);group.add(canopy);
   }
+  // Realistic retail frontage details: continuous dark sign fascia, illuminated shop panels,
+  // entrance glazing, canopy supports and roof plant screened behind the parapet.
+  const fasciaMat=new THREE.MeshStandardMaterial({color:0x29343a,roughness:.48,metalness:.12,side:THREE.DoubleSide});
+  const shopSignMats=[0x8b1724,0x263e58,0x9c6b26,0x315b50,0x51436a].map(color=>new THREE.MeshStandardMaterial({color,roughness:.55,side:THREE.DoubleSide}));
+  const entranceGlass=new THREE.MeshStandardMaterial({color:0x8ab8c8,roughness:.12,metalness:.18,transparent:true,opacity:.72,side:THREE.DoubleSide});
+  const entranceFrame=new THREE.MeshStandardMaterial({color:0x42484b,roughness:.42,metalness:.35,side:THREE.DoubleSide});
+  for(let i=0;i<pts.length;i++){
+   const a=pts[i],b=pts[(i+1)%pts.length],dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);if(len<8)continue;
+   const bays=Math.max(1,Math.min(70,Math.floor(len/7.5))),nx=dy/len,ny=-dx/len;
+   const panel=(t0,t1,z0,z1,off,mat)=>{const p=[a[0]+dx*t0+nx*off,a[1]+dy*t0+ny*off],q=[a[0]+dx*t1+nx*off,a[1]+dy*t1+ny*off];const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute([p[0],p[1],z0,q[0],q[1],z0,q[0],q[1],z1,p[0],p[1],z1],3));g.setIndex([0,1,2,0,2,3]);g.computeVertexNormals();const m=new THREE.Mesh(g,mat);m.frustumCulled=false;group.add(m);};
+   // Separate shop fascia modules make the ground floor read as occupied storefronts.
+   for(let bay=0;bay<bays;bay++){
+    const t0=(bay+.08)/bays,t1=(bay+.92)/bays;
+    panel(t0,t1,4.32,5.12,.32,shopSignMats[(bay+i)%shopSignMats.length]);
+    if(bay%Math.max(1,Math.floor(bays/5))===0)panel(t0,t1,.85,3.95,.31,entranceGlass);
+   }
+   // Dark continuous spandrel bands and fine horizontal trim separate the mall's floors.
+   for(const z of [5.12,8.65,12.05,15.45,18.85])panel(0,1,z,z+.12,.28,fasciaMat);
+  }
   // Roof parapet and rooftop mechanical blocks give the silhouette a finished commercial-roof profile.
   const roof=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:.8,bevelEnabled:false}),cream);roof.position.z=22;group.add(roof);
+  // Rooftop skylight strips, service corridors and repeated HVAC housings.
+  const roofGlass=new THREE.MeshStandardMaterial({color:0x55727a,roughness:.28,metalness:.16,side:THREE.DoubleSide});
+  const roofTrim=new THREE.MeshStandardMaterial({color:0x777d7d,roughness:.72,metalness:.1,side:THREE.DoubleSide});
+  const xs0=pts.map(p=>p[0]),ys0=pts.map(p=>p[1]),rx0=Math.min(...xs0),rx1=Math.max(...xs0),ry0=Math.min(...ys0),ry1=Math.max(...ys0);
+  for(let i=0;i<5;i++){
+   const sx=rx1-rx0,sy=ry1-ry0;
+   const skylight=new THREE.Mesh(new THREE.BoxGeometry(Math.max(5,sx*(.18+i*.012)),Math.max(1.2,sy*.025),.16),roofGlass);
+   skylight.position.set(rx0+sx*(.22+i*.13),ry0+sy*.52,22.92);group.add(skylight);
+   const service=new THREE.Mesh(new THREE.BoxGeometry(Math.max(4,sx*.055),Math.max(3,sy*.08),.22),roofTrim);
+   service.position.set(rx0+sx*(.22+i*.14),ry0+sy*(.2+(i%2)*.58),22.94);group.add(service);
+  }
   const boxMat=new THREE.MeshStandardMaterial({color:0xb9b6ad,roughness:.9,side:THREE.DoubleSide});
   const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
   for(let i=0;i<6;i++){const w=Math.max(3,(maxX-minX)*(.035+(i%2)*.012)),d=Math.max(3,(maxY-minY)*.035),h=1.8+(i%3)*.8;const b=new THREE.Mesh(new THREE.BoxGeometry(w,d,h),boxMat);b.position.set(minX+(maxX-minX)*(0.18+i*.125),minY+(maxY-minY)*(.28+(i%2)*.35),22.8+h/2);group.add(b);}
