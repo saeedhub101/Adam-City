@@ -58,6 +58,16 @@ def run(part):
     original=PARTS/f"Parts{part}.glb"
     overlay=PARTS/"enhanced"/f"part{part}-roof-storefront-details.glb"
     extra=PARTS/f"Parts{part}-extra.glb"
+    report_path=PARTS/"enhanced"/f"part{part}-integrated-report.json"
+    # Idempotent resume: never merge the same details into an already-finalized file again.
+    if report_path.is_file() and original.is_file():
+        try:
+            load_scene(original)
+            if extra.exists(): load_scene(extra)
+            print(f"part{part}: RESUME skip; original GLB integration report already exists")
+            return
+        except Exception:
+            pass
     if not original.is_file(): raise FileNotFoundError(original)
     if not overlay.is_file():
         subprocess.run([sys.executable,str(GEN),"--part",str(part)],cwd=ROOT,check=True)
@@ -100,7 +110,6 @@ def run(part):
     report={"part":part,"original_file":str(original.relative_to(ROOT)),"merged_bytes":len(data),
             "outputs":[{"file":str(p.relative_to(ROOT)),"bytes":len(b),"meshes":len(load_scene(p).geometry)} for p,b in outputs],
             "integrated_overlay":str(overlay.relative_to(ROOT)),"policy":"details integrated into original GLB scene; coordinates retained"}
-    report_path=PARTS/"enhanced"/f"part{part}-integrated-report.json"
     report_path.write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
     print(json.dumps(report,indent=2))
 
