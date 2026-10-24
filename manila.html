@@ -118,88 +118,83 @@ function addErmitaGeoJsonCheckbox(){
   const fourth=checkboxes.get('aeroway')?.parentElement;
   if(fourth&&fourth.parentElement===list) fourth.insertAdjacentElement('afterend',wrap); else list.append(wrap);
 
+  const base='complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/';
+  const parts=[
+    {source:'ermita-master-part-001',layer:'ermita-master-part-001-3d',url:base+'part-001.geojson'},
+    {source:'ermita-master-part-002',layer:'ermita-master-part-002-3d',url:base+'part-002.geojson'}
+  ];
+  const pending=new Set();
+  let loadTimer=null;
+  const onSourceError=e=>{
+    const sid=e?.sourceId;
+    if(!sid||!parts.some(p=>p.source===sid))return;
+    status.className='status error';
+    status.textContent='فشل تحميل '+sid+' من ملف GeoJSON: '+(e.error?.message||'خطأ في الطلب أو تحليل الملف');
+  };
+  map.on('error',onSourceError);
+
   cb.addEventListener('change',async()=>{
     if(!cb.checked){
-      ermitaGeoJsonLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none')});
+      parts.forEach(p=>{if(map.getLayer(p.layer))map.setLayoutProperty(p.layer,'visibility','none')});
       status.className='status';status.textContent='تم إخفاء مباني Ermita من GeoJSON.';
       return;
     }
     if(ermitaGeoJsonLoading){cb.checked=false;return}
     if(ermitaGeoJsonLoaded){
-      ermitaGeoJsonLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility','visible')});
+      parts.forEach(p=>{if(map.getLayer(p.layer))map.setLayoutProperty(p.layer,'visibility','visible')});
       status.className='status';status.textContent='مباني Ermita ظاهرة من ملفات GeoJSON المحمّلة.';
       return;
     }
     ermitaGeoJsonLoading=true;cb.disabled=true;
-    status.className='status';status.textContent='جارٍ تحميل فهرس ملفات مباني Ermita…';
-    const base='complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/';
-    const sourceParts=[];
+    status.className='status';status.textContent='جارٍ تحميل ملفي GeoJSON الأصليين؛ الجزء الأول حجمه نحو 89 MB وقد يستغرق وقتًا على الهاتف…';
     try{
-      const manifestUrl=new URL(base+'part-001-readable-parts-manifest.json',window.location.href).href;
-      const response=await fetch(manifestUrl,{cache:'no-cache'});
-      if(!response.ok)throw new Error('تعذر تحميل فهرس الجزء الأول (HTTP '+response.status+').');
-      const manifest=await response.json();
-      if(!Array.isArray(manifest.parts)||!manifest.parts.length)throw new Error('فهرس الجزء الأول لا يحتوي على قائمة ملفات صالحة.');
-      for(const item of manifest.parts){
-        if(!item.path)continue;
-        sourceParts.push({id:'ermita-master-001-'+String(sourceParts.length+1).padStart(3,'0'),url:new URL(item.path,window.location.href).href,features:item.features||0});
+      for(const p of parts){
+        map.addSource(p.source,{type:'geojson',data:new URL(p.url,window.location.href).href,tolerance:0.5});
+        map.addLayer({id:p.layer,type:'fill-extrusion',source:p.source,
+          filter:['==',['geometry-type'],'Polygon'],
+          paint:{
+            'fill-extrusion-color':['match',['get','building',['get','tags']],'commercial','#c9a27e','retail','#d8b17d','industrial','#9dabb4','residential','#c4b5a3','yes','#b7a99a','#c7b9a7'],
+            'fill-extrusion-height':['max',2,['to-number',['get','height',['get','tags']],['*',['to-number',['get','building:levels',['get','tags']],1],3.2]]],
+            'fill-extrusion-base':['max',0,['to-number',['get','min_height',['get','tags']],0]],
+            'fill-extrusion-opacity':0.92,'fill-extrusion-vertical-gradient':true
+          }});
+        map.on('click',p.layer,featurePopup);
+        map.on('mouseenter',p.layer,()=>map.getCanvas().style.cursor='pointer');
+        map.on('mouseleave',p.layer,()=>map.getCanvas().style.cursor='');
+        ermitaGeoJsonLayerIds.push(p.layer);
       }
-      sourceParts.push({id:'ermita-master-part-002',url:new URL(base+'part-002.geojson',window.location.href).href,features:0});
-      if(!sourceParts.length)throw new Error('لم يتم العثور على ملفات GeoJSON.');
-      const sourceErrors=[];
-      const onSourceError=e=>{
-        const sid=e?.sourceId;
-        if(sid&&sourceParts.some(p=>p.id===sid)){
-          const message=e.error?.message||'خطأ غير معروف';
-          if(!sourceErrors.some(x=>x.source===sid))sourceErrors.push({source:sid,message});
-          status.className='status error';
-          status.textContent='خطأ في تحميل '+sourceErrors.length+' ملف GeoJSON على الأقل. آخر خطأ: '+sid+' — '+message;
-        }
-      };
-      map.on('error',onSourceError);
-      let added=0;
-      for(let i=0;i<sourceParts.length;i++){
-        const part=sourceParts[i];
-        const sourceId=part.id;
-        const layerId=sourceId+'-3d';
-        if(!map.getSource(sourceId)){
-          map.addSource(sourceId,{type:'geojson',data:part.url,buffer:64,tolerance:0.5});
-          map.addLayer({id:layerId,type:'fill-extrusion',source:sourceId,
-            paint:{
-              'fill-extrusion-color':['match',['get','building',['get','tags']],'commercial','#c9a27e','retail','#d8b17d','industrial','#9dabb4','residential','#c4b5a3','yes','#b7a99a','#c7b9a7'],
-              'fill-extrusion-height':['max',2,['to-number',['get','height',['get','tags']],['*',['to-number',['get','building:levels',['get','tags']],1],3.2]]],
-              'fill-extrusion-base':['max',0,['to-number',['get','min_height',['get','tags']],0]],
-              'fill-extrusion-opacity':0.92,
-              'fill-extrusion-vertical-gradient':true
-            }});
-          map.on('click',layerId,featurePopup);
-          map.on('mouseenter',layerId,()=>map.getCanvas().style.cursor='pointer');
-          map.on('mouseleave',layerId,()=>map.getCanvas().style.cursor='');
-        }else if(map.getLayer(layerId)){
-          map.setLayoutProperty(layerId,'visibility','visible');
-        }
-        ermitaGeoJsonLayerIds.push(layerId);added++;
-        if(i%8===0||i===sourceParts.length-1){
-          status.textContent='تم إعداد '+added+' من '+sourceParts.length+' مصدر GeoJSON؛ جارٍ تحميل المباني…';
-          await new Promise(resolve=>requestAnimationFrame(resolve));
-        }
-      }
-      // Wait for MapLibre to finish processing visible sources before reporting success.
+      const deadline=Date.now()+120000;
+      await new Promise((resolve,reject)=>{
+        const check=e=>{
+          if(e?.sourceId&&pending.has(e.sourceId)&&e.isSourceLoaded)pending.delete(e.sourceId);
+          if(pending.size===0){map.off('sourcedata',check);resolve()}
+        };
+        pending.clear();parts.forEach(p=>pending.add(p.source));
+        map.on('sourcedata',check);
+        loadTimer=setTimeout(()=>{map.off('sourcedata',check);reject(new Error('انتهت مهلة 120 ثانية ولم يؤكد MapLibre اكتمال تحميل كل الملفات.'))},120000);
+        // Handle a source that finished before the listener was attached.
+        for(const p of parts){const src=map.getSource(p.source);if(src&&src.loaded&&src.loaded())pending.delete(p.source)}
+        if(!pending.size){map.off('sourcedata',check);resolve()}
+      });
+      clearTimeout(loadTimer);
       await new Promise(resolve=>map.once('idle',resolve));
-      map.off('error',onSourceError);
-      if(sourceErrors.length)throw new Error(sourceErrors.length+' مصدر/مصادر GeoJSON فشل تحميلها. '+sourceErrors[0].source+': '+sourceErrors[0].message);
       ermitaGeoJsonLoaded=true;
-      status.className='status';status.textContent='تم تحميل مصادر GeoJSON بنجاح: '+sourceParts.length+' ملفًا (88 جزءًا صغيرًا للجزء الأول + part-002.geojson). انقر على المباني لعرض خصائصها.';
+      const visibleCount=parts.reduce((n,p)=>n+(map.getLayer(p.layer)?map.queryRenderedFeatures({layers:[p.layer]}).length:0),0);
+      status.className='status';
+      status.textContent=visibleCount
+        ?'تم تحميل ملفي GeoJSON الأصليين؛ عدد المعالم المرئية داخل إطار الخريطة: '+visibleCount+'.'
+        :'اكتمل تحميل ملفي GeoJSON، لكن لا توجد مبانٍ مرئية داخل إطار الخريطة الحالي؛ قد تكون الهندسة أو الإحداثيات غير متوافقة.';
     }catch(e){
+      if(loadTimer)clearTimeout(loadTimer);
       cb.checked=false;
-      ermitaGeoJsonLayerIds.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility','none')});
-      status.className='status error';status.textContent='فشل عرض مباني Ermita من GeoJSON: '+(e?.message||e);
+      parts.forEach(p=>{if(map.getLayer(p.layer))map.setLayoutProperty(p.layer,'visibility','none')});
+      status.className='status error';
+      status.textContent='فشل عرض مباني Ermita من ملفات GeoJSON الأصلية: '+(e?.message||e);
     }finally{
       ermitaGeoJsonLoading=false;cb.disabled=false;
     }
   });
 }
-
 defs.forEach((d,i)=>{addCheckbox(d);if(i===3)addErmitaGeoJsonCheckbox();});
 const baseBuildings=[];
 document.getElementById('toggleVector').addEventListener('click',()=>{const panel=document.querySelector('.panel'),btn=document.getElementById('toggleVector'),isShort=panel.classList.toggle('panel-short');btn.textContent=isShort?'+':'−';btn.setAttribute('aria-expanded',String(!isShort));btn.setAttribute('aria-label',isShort?'تكبير لوحة التحكم':'تصغير لوحة التحكم');});
