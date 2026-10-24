@@ -6,9 +6,7 @@ on:
       - ".github/workflows/generate-roof-storefront-glb.yml"
       - "complete_data/OSM/scripts/apply_details_to_original_glbs.py"
       - "complete_data/OSM/scripts/generate_roof_storefront_overlays.py"
-      - "ermita/scripts/generate_roxas_boulevard_buildings.py"
       - "ermita/maps/generated/ermita-building-footprints.geojson"
-      - "complete_data/OSM/data/buildings/Ermita/part*/part*-origin.json"
 permissions:
   contents: write
 concurrency:
