@@ -1,13 +1,13 @@
 {
-  "layer_version": 2,
+  "layer_version": 6,
   "country": "Palestine",
   "theme": "places",
-  "source_file": "/tmp/me-layers-cx1tiac7/palestine-area-merged.osm.pbf",
+  "source_file": "/tmp/me-layers-5a9majvy/palestine-area-merged.osm.pbf",
   "method": "osmium tags-filter + osmium export",
   "license": "OpenStreetMap ODbL",
-  "feature_count": 144810,
-  "compressed_bytes": 12379938,
-  "uncompressed_bytes": 53453417,
+  "feature_count": 238945,
+  "compressed_bytes": 17273854,
+  "uncompressed_bytes": 84521175,
   "geometry_types": [
     "LineString",
     "MultiPolygon",
