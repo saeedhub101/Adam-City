@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - ".github/workflows/generate-roof-storefront-glb.yml"
       - "complete_data/OSM/scripts/generate_roof_storefront_overlays.py"
       - "ermita/scripts/generate_roxas_boulevard_buildings.py"
       - "complete_data/OSM/data/buildings/Ermita/ermita-building-footprints.geojson"
