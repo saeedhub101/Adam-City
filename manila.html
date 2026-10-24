@@ -49,6 +49,7 @@ const status=document.getElementById('status'),info=document.getElementById('inf
 const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[120.982,14.585],zoom:13,pitch:26,bearing:0,antialias:true});
 window.manilaMap=map;map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
 const defs=[
+['building','المباني — المصدر 2 من PBF','building','#c9bba8','building'],
 ['building_roof_detail','أسطح المباني المحسنة داخل PBF','building_roof_detail','#a99b89','roof'],
 ['building_sign_detail','مرشحات لافتات المحلات داخل PBF','building_sign_detail','#f2c94c','sign'],
 ['aerodrome_label','تسميات المطارات','aerodrome_label','#e5c875','point'],
