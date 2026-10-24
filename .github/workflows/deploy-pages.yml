@@ -61,6 +61,23 @@ jobs:
           if [ -f ermita-malate-3d.html ]; then cp ermita-malate-3d.html site/ermita-malate-3d.html; else echo "ERROR: ermita-malate-3d.html is missing"; exit 1; fi
           if [ -d ermita ]; then cp -a ermita/. site/ermita/; else echo "ERROR: ermita assets directory is missing"; exit 1; fi
 
+          # Publish the independent Middle East map and its verified regional OSM files.
+          if [ -d 'middle east' ]; then
+            cp -a 'middle east' site/
+            mkdir -p 'site/middle east/Palestine/osm/tiles'
+            tile_index='site/middle east/Palestine/osm/tiles/index.html'
+            {
+              printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Palestine-area OSM tiles</title><body style="font:16px system-ui;max-width:900px;margin:2rem auto;padding:0 1rem"><h1>Palestine-area OSM tiles</h1><p>Geofabrik combined Israel + Palestine extract, spatially partitioned into valid OSM PBF files. This is not a Palestine-only source. See the manifest for provenance.</p><ul>'
+              find 'site/middle east/Palestine/osm/tiles' -maxdepth 1 -type f -name '*.osm.pbf' -printf '%f\n' | sort | while IFS= read -r file; do
+                printf '<li><a href="%s">%s</a></li>\n' "$file" "$file"
+              done
+              printf '%s\n' '</ul><p><a href="../../metadata/import-status.json">Import manifest</a> · <a href="../../../../middle-east.html">Back to map</a></p></body></html>'
+            } > "$tile_index"
+            echo "Published Middle East map data and download index."
+          else
+            echo "WARNING: Middle East data directory is missing; publishing map page only."
+          fi
+
           # Publish the standalone Robinsons facade-detail module used by test.html.
           mkdir -p site/complete_data/OSM/Markets
           if [ -s complete_data/OSM/Markets/robinsons-place-facade-details.js ]; then
