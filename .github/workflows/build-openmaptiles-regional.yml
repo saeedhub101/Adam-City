@@ -1,0 +1,100 @@
+name: Build regional OpenMapTiles vector tiles
+
+on:
+  workflow_dispatch:
+    inputs:
+      maxzoom:
+        description: Maximum vector tile zoom (higher zooms produce much larger files)
+        type: choice
+        options: ["8", "10", "12", "14"]
+        default: "10"
+      country:
+        description: Region to build
+        type: choice
+        options: [both, jordan, palestine]
+        default: both
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/build-openmaptiles-regional.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: regional-openmaptiles-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - name: Checkout regional OSM sources
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+          lfs: true
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y osmium-tool
+          sudo apt-get install -y openjdk-21-jre-headless
+          mkdir -p build/openmaptiles
+
+      - name: Validate source data and prepare regional PBFs
+        env:
+          COUNTRY: ${{ inputs.country || 'both' }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p build/openmaptiles
+          if [[ "$COUNTRY" == "both" || "$COUNTRY" == "jordan" ]]; then
+            src='middle east/Jordan/osm/jordan-latest.osm.pbf'
+            test -s "$src"
+            osmium fileinfo "$src" >/dev/null
+            cp "$src" build/openmaptiles/jordan.osm.pbf
+          fi
+          if [[ "$COUNTRY" == "both" || "$COUNTRY" == "palestine" ]]; then
+            mapfile -t files < <(find 'middle east/Palestine/osm/tiles' -maxdepth 1 -type f -name '*.osm.pbf' -size +0c | sort)
+            if (( ${#files[@]} == 0 )); then echo "::error::No saved Palestine-area OSM PBF tiles found"; exit 1; fi
+            osmium merge "${files[@]}" -o build/openmaptiles/palestine-area.osm.pbf --overwrite
+            osmium fileinfo build/openmaptiles/palestine-area.osm.pbf >/dev/null
+          fi
+          cat > build/openmaptiles/SOURCE-NOTES.txt <<'EOF'
+          Vector tiles generated locally with Planetiler's OpenMapTiles-compatible schema from repository-stored OpenStreetMap PBF sources.
+          Jordan source: Geofabrik Jordan extract.
+          Palestine-area source: spatial tiles cut from Geofabrik's combined Israel and Palestine extract; NOT Palestine-only.
+          OpenStreetMap data is licensed under ODbL. See https://www.openstreetmap.org/copyright.
+          The generated tile package is a build artifact, not committed to GitHub Pages because regional vector-tile archives can exceed GitHub repository and Pages limits.
+          EOF
+
+      - name: Build OpenMapTiles-compatible MBTiles
+        env:
+          MAXZOOM: ${{ inputs.maxzoom || '10' }}
+          COUNTRY: ${{ inputs.country || 'both' }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          curl -fL --retry 4 --retry-all-errors --connect-timeout 30 --max-time 600             https://github.com/onthegomap/planetiler/releases/latest/download/planetiler.jar             -o build/openmaptiles/planetiler.jar
+          java -version
+          if [[ "$COUNTRY" == "both" || "$COUNTRY" == "jordan" ]]; then
+            java -Xmx6g -jar build/openmaptiles/planetiler.jar               --osm-path=build/openmaptiles/jordan.osm.pbf               --output=build/openmaptiles/jordan-openmaptiles.mbtiles               --force --maxzoom="$MAXZOOM"
+          fi
+          if [[ "$COUNTRY" == "both" || "$COUNTRY" == "palestine" ]]; then
+            java -Xmx6g -jar build/openmaptiles/planetiler.jar               --osm-path=build/openmaptiles/palestine-area.osm.pbf               --output=build/openmaptiles/palestine-area-openmaptiles.mbtiles               --force --maxzoom="$MAXZOOM"
+          fi
+          rm -f build/openmaptiles/planetiler.jar build/openmaptiles/*.osm.pbf
+          sha256sum build/openmaptiles/*.mbtiles > build/openmaptiles/SHA256SUMS.txt
+          ls -lh build/openmaptiles
+
+      - name: Upload generated vector tile packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmaptiles-jordan-palestine-z${{ inputs.maxzoom || '10' }}
+          path: build/openmaptiles/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
