@@ -11,6 +11,7 @@ on:
       - 'Manila/3d-rag/apply-report.json'
       - 'complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-004.geojson'
       - 'complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-005.geojson'
+      - 'complete_data/open free tile/building-fallback.geojson'
       - 'complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-011.geojson'
       - 'complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-080.geojson'
   workflow_dispatch:
@@ -47,13 +48,15 @@ jobs:
           geojson_dir='complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts'
           test -s "$geojson_dir/part-004.geojson"
           test -s "$geojson_dir/part-005.geojson"
+          test -s 'complete_data/open free tile/building-fallback.geojson'
           test -s "$geojson_dir/part-011.geojson"
           test -s "$geojson_dir/part-080.geojson"
-          mkdir -p site/Manila/vector-tiles site/Manila/3d-rag site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts
+          mkdir -p site/Manila/vector-tiles site/Manila/3d-rag site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts 'site/complete_data/open free tile'
           cp manila.html site/manila.html
           cp manila-bundry.html site/manila-bundry.html
           cp "$geojson_dir/part-004.geojson" site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/
           cp "$geojson_dir/part-005.geojson" site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/
+          cp 'complete_data/open free tile/building-fallback.geojson' 'site/complete_data/open free tile/building-fallback.geojson'
           cp "$geojson_dir/part-011.geojson" site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/
           cp "$geojson_dir/part-080.geojson" site/complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/
           cp -a Manila/vector-tiles/. site/Manila/vector-tiles/
