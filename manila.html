@@ -46,7 +46,7 @@ h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var
 <script>
 (async()=>{
 const status=document.getElementById('status'),info=document.getElementById('info'),list=document.getElementById('layerList');
-const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[120.982,14.585],zoom:13,pitch:26,bearing:0,antialias:true});
+const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[120.9918,14.5707],zoom:15,pitch:57,bearing:-18,antialias:true});
 window.manilaMap=map;map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
 const defs=[
 ['building','المباني — المصدر 2 من PBF','building','#c9bba8','building'],
@@ -263,13 +263,15 @@ function addBuildingDatasetCheckbox(config){
       const features=collections.flatMap(fc=>fc.features||[]);
       if(!features.length)throw new Error('لم يعثر الملف على معالم مبانٍ');
       map.addSource(sourceId,{type:'geojson',data:{type:'FeatureCollection',features},tolerance:0.5});
-      const color=['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building_colour'],['get','render_color',['get','tags']],['get','colour',['get','tags']],['get','building:colour',['get','tags']],['match',['to-string',['coalesce',['get','class'],['get','building'],['get','type'],['get','building',['get','tags']],'yes']],'commercial','#c9b8a4','industrial','#b9b7b1','public','#c4c9ce','residential','#d8cdbd','apartments','#d8cdbd','#c9bfb0']];
+      // Match the original Ermita page's 3D building paint logic exactly.
+      const color=['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building_colour'],['match',['get','class'],'commercial','#c9b8a4','industrial','#b9b7b1','public','#c4c9ce','residential','#d8cdbd','#c9bfb0']];
+      const firstSymbolLayer=(map.getStyle().layers||[]).find(layer=>layer.type==='symbol');
       map.addLayer({id:extrusionId,type:'fill-extrusion',source:sourceId,filter:['==',['geometry-type'],'Polygon'],paint:{
         'fill-extrusion-color':color,
-        'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],['get','height',['get','tags']]],['*',['to-number',['coalesce',['get','building:levels'],['get','building:levels',['get','tags']]],1],3.2],5]],
-        'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],['get','min_height'],['get','min_height',['get','tags']]],0]],
-        'fill-extrusion-opacity':0.94,'fill-extrusion-vertical-gradient':false
-      }});
+        'fill-extrusion-height':['max',3,['case',['>', ['to-number',['get','render_height'],0],0],['to-number',['get','render_height'],0],['>', ['to-number',['get','height'],0],0],['to-number',['get','height'],0],['>', ['to-number',['get','building:levels'],0],0],['*',['to-number',['get','building:levels'],0],3.15],['>', ['to-number',['get','levels'],0],0],['*',['to-number',['get','levels'],0],3.15],5]],
+        'fill-extrusion-base':['max',0,['case',['>', ['to-number',['get','render_min_height'],0],0],['to-number',['get','render_min_height'],0],['>', ['to-number',['get','min_height'],0],0],['to-number',['get','min_height'],0],0]],
+        'fill-extrusion-opacity':0.97,'fill-extrusion-vertical-gradient':true
+      }},firstSymbolLayer?.id);
       map.on('click',extrusionId,featurePopup);
       loaded=true;
       status.className='status';status.textContent='تم تحميل '+config.label+' بنجاح؛ عدد المعالم في المصدر: '+features.length+'.';
@@ -291,8 +293,7 @@ document.getElementById('toggleVector').addEventListener('click',()=>{const pane
 map.on('load',()=>{
 fetch('Manila/3d-rag/apply-report.json').then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(r=>{const el=document.getElementById('applySummary');el.innerHTML='<b>حالة التطبيق:</b> '+escapeHtml(r.status||'غير معروف')+'<br><b>بلاطات PBF التي تغيرت:</b> '+escapeHtml(r.changed_tile_count??'—')+' / '+escapeHtml(r.pbf_files_scanned??'—')+'<br><b>المباني التي تغيرت خصائصها:</b> '+escapeHtml(r.changed_building_features??'—')+'<br><b>الخصائص التي طُبقت:</b> '+escapeHtml(r.changed_property_count??'—')+'<br><b>الهندسة والإحداثيات:</b> لم تتغير<br><a style="color:var(--accent)" href="Manila/3d-rag/apply-report.json" target="_blank" rel="noopener">فتح التقرير الكامل</a>';}).catch(e=>{document.getElementById('applySummary').textContent='تعذر تحميل تقرير التطبيق: '+e.message});
 const styleLayers=map.getStyle().layers||[];
-const safeBuildingColor=['match',['to-string',['coalesce',['get','class'],['get','building'],['get','type'],'yes']],'commercial','#d6b18a','retail','#e0c49b','industrial','#aab6bd','residential','#c8b9a6','apartments','#c4b5a2','office','#b8c6ce','#c9bba8'];
-for(const l of styleLayers){if(l.type==='fill-extrusion'&&/building/i.test(l.id+' '+(l['source-layer']||''))){baseBuildings.push(l.id);map.setPaintProperty(l.id,'fill-extrusion-color',safeBuildingColor);map.setPaintProperty(l.id,'fill-extrusion-opacity',0.96);}}
+for(const l of styleLayers){if(l.type==='fill-extrusion'&&/building/i.test(l.id+' '+(l['source-layer']||''))){baseBuildings.push(l.id);}}
 document.getElementById('baseBuildings').addEventListener('change',e=>baseBuildings.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',e.target.checked?'visible':'none')}));
 document.getElementById('baseMap').addEventListener('change',e=>{for(const l of map.getStyle().layers||[]){if(baseBuildings.includes(l.id))continue;if(l.type==='background')continue;if(map.getLayer(l.id))map.setLayoutProperty(l.id,'visibility',e.target.checked?'visible':'none')}});
 status.textContent='الخريطة جاهزة؛ فعّل طبقات PBF من القائمة لمعاينة البيانات.';
