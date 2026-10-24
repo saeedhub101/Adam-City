@@ -25,6 +25,14 @@ h1{font-size:18px;margin:0 0 5px}.intro{font-size:11px;line-height:1.6;color:var
 <label class="layer"><input id="baseMap" type="checkbox" checked> خريطة OpenFreeMap الأساسية (الشوارع والمياه والتسميات)</label>
 <label class="layer"><input id="baseBuildings" type="checkbox" checked> مباني الخريطة الأساسية ثلاثية الأبعاد</label>
 </div>
+<div class="section" id="finalGlbSection">
+<div class="section-title">ملفات GLB النهائية المحسّنة — تفاصيل الأسطح والواجهات</div>
+<label class="part-toggle"><input id="final-detail-glb-part-1" type="checkbox"><span><span class="part-name">GLB النهائي — الجزء 1</span><span class="part-file">part1-roof-storefront-details.glb · 19.7 MB</span></span></label>
+<label class="part-toggle"><input id="final-detail-glb-part-2" type="checkbox"><span><span class="part-name">GLB النهائي — الجزء 2</span><span class="part-file">part2-roof-storefront-details.glb · 81.4 MB</span></span></label>
+<label class="part-toggle"><input id="final-detail-glb-part-3" type="checkbox"><span><span class="part-name">GLB النهائي — الجزء 3</span><span class="part-file">part3-roof-storefront-details.glb · 62.6 MB</span></span></label>
+<label class="part-toggle"><input id="final-detail-glb-part-4" type="checkbox"><span><span class="part-name">GLB النهائي — الجزء 4</span><span class="part-file">part4-roof-storefront-details.glb · 86.1 MB</span></span></label>
+<div class="meta">كل مفتاح يعرض ملف التفاصيل الخاص به فوق الخريطة الأصلية دون استبدال المباني أو تغيير إحداثياتها.</div>
+</div>
 <div class="section" id="vectorSection">
 <div class="section-title vector-heading"><span>طبقات المتجهات من PBF</span><button class="btn collapse-btn" id="toggleVector" aria-expanded="true" aria-label="تصغير أو تكبير لوحة التحكم">−</button></div>
 <div id="vectorBody"><div id="layerList"></div></div>
@@ -302,5 +310,87 @@ status.textContent='الخريطة جاهزة؛ فعّل طبقات PBF من ا�
 map.on('error',e=>{if(e.error)console.warn('MapLibre',e.error.message)});
 })();
 </script>
+
+<script type="module">
+/* Final generated detail overlays; one independent checkbox per GLB. */
+import * as THREE from 'three';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.0/meshopt_decoder.module.js';
+
+(async()=>{
+ const status=document.getElementById('status'), info=document.getElementById('info');
+ const waitForMap=()=>new Promise((resolve,reject)=>{
+  let tries=0;const check=()=>{
+   if(window.manilaMap?.isStyleLoaded())return resolve(window.manilaMap);
+   if(++tries>600)return reject(new Error('انتهت مهلة انتظار الخريطة'));
+   setTimeout(check,100);
+  };check();
+ });
+ let map;
+ try{map=await waitForMap();}catch(e){showError('تعذر تهيئة ملفات GLB النهائية: '+e.message);return;}
+ for(let part=1;part<=4;part++)setupPart(part);
+ function showError(message){if(info){info.style.display='block';info.textContent=message;}if(status){status.className='status error';status.textContent=message;}}
+ function setupPart(part){
+  const toggle=document.getElementById('final-detail-glb-part-'+part);
+  const layerId='manila-final-detail-glb-'+part;
+  const root='complete_data/OSM/data/buildings/Ermita/';
+  const originUrl=new URL(root+'part'+part+'/part'+part+'-origin.json',location.href).href;
+  const glbUrl=new URL(root+'enhanced/part'+part+'-roof-storefront-details.glb',location.href).href;
+  let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,meters=1,projectedMeters=1;
+  function fail(err){
+   loading=false;ready=false;
+   try{if(map.getLayer(layerId))map.removeLayer(layerId);}catch(_){}
+   model=null;renderer=null;camera=null;scene=null;
+   showError('فشل تحميل GLB النهائي للجزء '+part+': '+(err?.message||err));
+  }
+  async function ensureLayer(){
+   if(loading||ready)return;loading=true;
+   try{
+    const response=await fetch(originUrl);if(!response.ok)throw new Error('Origin JSON HTTP '+response.status);
+    const origin=await response.json();
+    const lon=Number(origin.origin_wgs84?.longitude),lat=Number(origin.origin_wgs84?.latitude);
+    if(!Number.isFinite(lon)||!Number.isFinite(lat))throw new Error('إحداثيات الأصل غير صالحة');
+    anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:lon,lat},0);
+    meters=anchor.meterInMercatorCoordinateUnits();projectedMeters=meters*Math.cos(lat*Math.PI/180);
+    const customLayer={
+     id:layerId,type:'custom',renderingMode:'3d',
+     onAdd(mapInstance,gl){
+      renderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;
+      camera=new THREE.Camera();scene=new THREE.Scene();
+      scene.add(new THREE.AmbientLight(0xffffff,2.0));
+      const sun=new THREE.DirectionalLight(0xffffff,2.0);sun.position.set(-45,-35,90).normalize();scene.add(sun);
+      const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
+      loader.load(glbUrl,gltf=>{
+       model=gltf.scene;model.visible=!!toggle.checked;scene.add(model);
+       ready=true;loading=false;mapInstance.triggerRepaint();
+       if(status)status.textContent='تم تحميل GLB النهائي للجزء '+part+' بنجاح.';
+      },progress=>{
+       if(status)status.textContent='تحميل GLB النهائي للجزء '+part+': '+(progress.total?Math.round(progress.loaded/progress.total*100)+'%':Math.round(progress.loaded/1048576)+' MiB');
+      },err=>fail(err||new Error('تعذّر قراءة GLB')));
+     },
+     render(gl,args){
+      if(!renderer||!model||!model.visible)return;
+      const values=args?.defaultProjectionData?.mainMatrix;
+      if(!values||values.length!==16)return;
+      const matrix=Array.from(values,Number);if(matrix.some(v=>!Number.isFinite(v)))return;
+      const projection=new THREE.Matrix4().fromArray(matrix);
+      const localTransform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
+       .scale(new THREE.Vector3(projectedMeters,-projectedMeters,meters));
+      camera.projectionMatrix.copy(projection).multiply(localTransform);
+      camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+      renderer.resetState();renderer.render(scene,camera);renderer.resetState();
+     }
+    };
+    map.addLayer(customLayer);if(map.getLayer(layerId))map.moveLayer(layerId);
+   }catch(err){fail(err);}
+  }
+  toggle.addEventListener('change',()=>{
+   if(toggle.checked){if(!ready)ensureLayer();else if(model){model.visible=true;map.triggerRepaint();}}
+   else if(model){model.visible=false;map.triggerRepaint();if(status)status.textContent='تم إخفاء GLB النهائي للجزء '+part+'.';}
+  });
+ }
+})();
+</script>
+
 </body>
 </html>
