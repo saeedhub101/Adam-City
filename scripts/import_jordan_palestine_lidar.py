@@ -76,6 +76,16 @@ def download(url,title,source):
         headers={"Range":f"bytes={offset}-"} if offset else {}
         with S.get(url,headers=headers,stream=True,timeout=(30,180),allow_redirects=True) as r:
             if r.status_code in (401,403,404):
+                # Persist any interrupted partial as small resume chunks before checkpointing.
+                if part.exists() and part.stat().st_size>CHUNK:
+                    for old in resume_chunks: old.unlink(missing_ok=True)
+                    with open(part,"rb") as src:
+                        index=0
+                        while True:
+                            block=src.read(CHUNK)
+                            if not block: break
+                            (RAW/f"{stem}{suffix}.resume.part{index:04d}").write_bytes(block); index+=1
+                    part.unlink(missing_ok=True)
                 state["skipped_assets"][ident]={"url":url,"title":title,"source":source,"status":f"HTTP {r.status_code}; not anonymously downloadable"}
                 checkpoint("LiDAR checkpoint: unavailable public asset"); return state["skipped_assets"][ident]["status"]
             if offset and r.status_code!=206: offset=0; part.unlink(missing_ok=True)
@@ -102,6 +112,7 @@ def download(url,title,source):
             manifest=RAW/(stem+suffix+".chunks.json")
             save_json(manifest,{"original_filename":stem+suffix,"source_url":url,"chunk_size":CHUNK,"chunks":stored,"reassembly":"concatenate chunk files in numeric order"})
             stored.append({"file":str(manifest),"bytes":manifest.stat().st_size})
+        for old in resume_chunks: old.unlink(missing_ok=True)
         state["completed_assets"][ident]={"url":url,"title":title,"source":source,"bytes":size,"stored":stored}
         state["errors"].pop(ident,None); assets_run+=1
         checkpoint("Import LiDAR asset checkpoint: "+safe(title,80))
