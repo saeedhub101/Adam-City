@@ -79,7 +79,7 @@ def main():
             raise SystemExit("Required layer missing: "+str(source))
         handles={}; per_cell={}
         with gzip.open(source,"rb") as fh:
-            for feature in ijson.items(fh,"features.item"):
+            for feature in ijson.items(fh,"features.item", use_float=True):
                 center=feature_center(feature,swap=swap)
                 if not center: continue
                 lon,lat=center
