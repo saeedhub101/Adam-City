@@ -69,6 +69,15 @@ def main():
         for h in handles.values(): h.close()
         counts[layer]={"cells":len(per_cell),"features":sum(per_cell.values())}
         print("SPLIT",layer,json.dumps(counts[layer]))
+    # Every chunk with buildings must have all required input files, even if empty.
+    for folder in out.iterdir():
+        if not folder.is_dir():
+            continue
+        for layer in ("buildings","streets"):
+            target=folder/(layer+".geojson.gz")
+            if not target.exists():
+                with gzip.open(target,"wt",encoding="utf-8") as empty:
+                    empty.write('{"type":"FeatureCollection","features":[]}')
     (out/"split-report.json").write_text(json.dumps({
         "source":"Geofabrik Israel and Palestine / OpenStreetMap",
         "source_url":"https://download.geofabrik.de/asia/israel-and-palestine.html",
