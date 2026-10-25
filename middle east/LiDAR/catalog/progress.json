@@ -8615,5 +8615,9 @@
     }
   },
   "skipped_assets": {},
-  "errors": {}
+  "errors": {
+    "aws_open_lidar_catalog": {
+      "error": "CalledProcessError: Command '['git', 'push', 'origin', 'HEAD:main']' returned non-zero exit status 1."
+    }
+  }
 }
