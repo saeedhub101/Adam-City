@@ -47,5 +47,17 @@ jobs:
             echo "No Microsoft footprint changes to commit."
           else
             git commit -m "Add Microsoft satellite footprints for Malate"
-            git push origin HEAD:main
+            # Other page/workflow commits can land while the 1.2 GB archive is processed.
+            # Rebase onto the latest main and retry rather than losing the generated subset.
+            for attempt in 1 2 3 4 5; do
+              git fetch origin main
+              git rebase origin/main
+              if git push origin HEAD:main; then
+                exit 0
+              fi
+              echo "Push attempt $attempt raced with another main update; retrying."
+              sleep 2
+            done
+            echo "Unable to push after 5 attempts."
+            exit 1
           fi
