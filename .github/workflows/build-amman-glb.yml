@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "middle east/UnityGame/tools/build_amman_glb.py"
+      - "middle east/UnityGame/tools/split_osm_regions.py"
       - "middle east/Jordan/layers/**"
       - "middle east/Palestine/layers/**"
       - ".github/workflows/build-amman-glb.yml"
@@ -22,21 +23,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 350
     steps:
-      - name: Checkout with permission to save generated files to main
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           lfs: true
           fetch-depth: 0
 
-      - name: Install Blender and dependencies
-        continue-on-error: true
+      - name: Install Blender and streaming JSON dependency
         run: |
-          sudo apt-get update || true
-          sudo apt-get install -y blender python3-numpy || true
-          blender --version || true
+          sudo apt-get update
+          sudo apt-get install -y blender python3-numpy python3-ijson
+          blender --version
+          python3 -c "import ijson; print('ijson ready')"
 
-      - name: Generate regions and checkpoint each GLB directly into the repository
+      - name: Generate and checkpoint regional GLB tiles on main
         shell: bash
         run: |
           set +e
@@ -48,7 +49,7 @@ jobs:
             city="$1"; data="$2"; west="$3"; east="$4"; south="$5"; north="$6"; prefix="$7"
             echo "===== REGION START: $city ====="
             if [ ! -f "$data/buildings.geojson.gz" ]; then
-              echo "REGION SKIPPED: missing buildings layer: $data/buildings.geojson.gz"
+              echo "REGION SKIPPED: missing $data/buildings.geojson.gz"
               return 0
             fi
             blender --background --python "middle east/UnityGame/tools/build_amman_glb.py" -- \
@@ -57,11 +58,10 @@ jobs:
               --tile 0.01 --city "$city" --prefix "$prefix" --repo_commit True
             rc=$?
             if [ "$rc" -ne 0 ]; then echo "REGION FAILED BUT CONTINUING: $city (exit $rc)"; fi
-            # A failed region must not prevent later regions from running.
             return 0
           }
 
-          # Jordan regions
+          # Jordan regions use the existing locally stored Jordan extract.
           run_region "Amman" "middle east/Jordan/layers" 35.72 36.08 31.70 32.12 "amman"
           run_region "Aqaba" "middle east/Jordan/layers" 34.90 35.15 29.45 29.65 "aqaba"
           run_region "Irbid" "middle east/Jordan/layers" 35.75 35.95 32.45 32.65 "irbid"
@@ -71,16 +71,20 @@ jobs:
           run_region "Jerash" "middle east/Jordan/layers" 35.85 36.00 32.25 32.35 "jerash"
           run_region "Karak" "middle east/Jordan/layers" 35.65 35.80 31.15 31.25 "karak"
 
-          # Palestinian regions. These use only the data already stored in the repository.
-          run_region "Ramallah" "middle east/Palestine/layers" 35.15 35.30 31.85 32.00 "ramallah"
-          run_region "Jerusalem" "middle east/Palestine/layers" 35.15 35.30 31.70 31.85 "jerusalem"
-          run_region "Nablus" "middle east/Palestine/layers" 35.20 35.35 32.15 32.30 "nablus"
-          run_region "Hebron" "middle east/Palestine/layers" 35.05 35.20 31.45 31.60 "hebron"
-          run_region "Bethlehem" "middle east/Palestine/layers" 35.15 35.25 31.65 31.75 "bethlehem"
-          run_region "Jenin" "middle east/Palestine/layers" 35.15 35.35 32.40 32.55 "jenin"
-          run_region "Tulkarm" "middle east/Palestine/layers" 35.00 35.15 32.25 32.35 "tulkarm"
-          run_region "Gaza" "middle east/Palestine/layers" 34.40 34.55 31.45 31.60 "gaza"
+          # Split the repository's stored Geofabrik Israel-and-Palestine extract into small
+          # temporary spatial chunks before Blender; this includes Tel Aviv and coastal,
+          # northern, central, southern, West Bank and Gaza coverage where mapped in OSM.
+          # All chunks use the same global local-coordinate origin so GLB tiles align.
+          python3 "middle east/UnityGame/tools/split_osm_regions.py" \
+            --layers "middle east/Palestine/layers" --out /tmp/historic-palestine-cells
+          if [ -d /tmp/historic-palestine-cells ]; then
+            find /tmp/historic-palestine-cells -mindepth 2 -maxdepth 2 -name buildings.geojson.gz -print0 |
+            while IFS= read -r -d '' building_file; do
+              data="$(dirname "$building_file")"
+              cell="$(basename "$data")"
+              run_region "Historic Palestine cell $cell" "$data" 34.15 35.95 29.40 33.35 "historic-palestine"
+            done
+          fi
 
-          # Tel Aviv is intentionally not fabricated: no Israeli source layer is present in the current repository.
-          echo "All configured regions attempted. Individual tile failures are logged and skipped."
+          echo "Generation pass ended. Inspect the per-tile logs and repository outputs; OSM footprints are not photogrammetry."
           git status --short
