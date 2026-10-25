@@ -1,0 +1,101 @@
+{
+  "schema": "adam-city-game-world-building-readiness-v1",
+  "source_licence": "OpenStreetMap ODbL",
+  "purpose": "Audit mapped building attributes before game export; does not generate or invent building geometry.",
+  "reports": [
+    {
+      "country": "Jordan",
+      "layer": "buildings",
+      "status": "ok",
+      "path": "middle east/Jordan/layers/buildings.geojson.gz",
+      "features_scanned": 464413,
+      "geometry_types": {
+        "Point": 2299,
+        "LineString": 230906,
+        "MultiPolygon": 231208
+      },
+      "features_with_any_tag_group": {
+        "window_door_entrance": 256,
+        "explicit_height": 7546,
+        "levels": 9552,
+        "roof_detail": 253,
+        "facade_material_or_colour": 24
+      },
+      "explicit_height_tag_counts": {
+        "height": 7546
+      },
+      "note": "Counts are per feature and groups can overlap; tags are mapped data, not proof of a field survey."
+    },
+    {
+      "country": "Jordan",
+      "layer": "building_details",
+      "status": "ok",
+      "path": "middle east/Jordan/layers/building_details.geojson.gz",
+      "features_scanned": 464456,
+      "geometry_types": {
+        "Point": 2340,
+        "LineString": 230907,
+        "MultiPolygon": 231209
+      },
+      "features_with_any_tag_group": {
+        "window_door_entrance": 297,
+        "explicit_height": 7546,
+        "levels": 9552,
+        "roof_detail": 253,
+        "facade_material_or_colour": 26
+      },
+      "explicit_height_tag_counts": {
+        "height": 7546
+      },
+      "note": "Counts are per feature and groups can overlap; tags are mapped data, not proof of a field survey."
+    },
+    {
+      "country": "Palestine",
+      "layer": "buildings",
+      "status": "ok",
+      "path": "middle east/Palestine/layers/buildings.geojson.gz",
+      "features_scanned": 2087961,
+      "geometry_types": {
+        "Point": 60218,
+        "LineString": 1013189,
+        "MultiPolygon": 1014554
+      },
+      "features_with_any_tag_group": {
+        "window_door_entrance": 10176,
+        "levels": 60995,
+        "roof_detail": 52153,
+        "explicit_height": 12753,
+        "facade_material_or_colour": 10288
+      },
+      "explicit_height_tag_counts": {
+        "height": 12753,
+        "building:height": 12
+      },
+      "note": "Counts are per feature and groups can overlap; tags are mapped data, not proof of a field survey."
+    },
+    {
+      "country": "Palestine",
+      "layer": "building_details",
+      "status": "ok",
+      "path": "middle east/Palestine/layers/building_details.geojson.gz",
+      "features_scanned": 2088828,
+      "geometry_types": {
+        "Point": 60976,
+        "LineString": 1013254,
+        "MultiPolygon": 1014598
+      },
+      "features_with_any_tag_group": {
+        "window_door_entrance": 10927,
+        "levels": 60999,
+        "roof_detail": 52255,
+        "explicit_height": 12843,
+        "facade_material_or_colour": 10381
+      },
+      "explicit_height_tag_counts": {
+        "height": 12843,
+        "building:height": 12
+      },
+      "note": "Counts are per feature and groups can overlap; tags are mapped data, not proof of a field survey."
+    }
+  ]
+}
