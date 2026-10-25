@@ -1,0 +1,25 @@
+{
+  "city": "Historic Palestine cell 05_05",
+  "bounds": {
+    "west": 34.15,
+    "east": 35.95,
+    "south": 29.4,
+    "north": 33.35
+  },
+  "tile_degrees": 0.01,
+  "tiles": [
+    {
+      "tile": "3474_2992",
+      "file": "historic-palestine-05_05_3474_2992.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 2212
+    }
+  ],
+  "counts": {
+    "buildings": 0,
+    "streets": 1,
+    "street_labels": 0
+  }
+}
