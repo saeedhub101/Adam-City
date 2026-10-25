@@ -1,0 +1,36 @@
+name: Prepare Middle East Open-World Data
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "middle east/UnityGame/tools/prepare_unity_data.py"
+      - "middle east/Jordan/layers/**"
+      - "middle east/Palestine/layers/**"
+
+permissions:
+  contents: read
+
+jobs:
+  prepare-region-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout repository data
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Prepare chunked Unity runtime data
+        working-directory: middle east/UnityGame
+        run: python3 tools/prepare_unity_data.py
+      - name: Upload Jordan and Palestine runtime chunks
+        uses: actions/upload-artifact@v4
+        with:
+          name: middle-east-unity-runtime-data
+          path: |
+            middle east/UnityGame/BuildData/Jordan/**
+            middle east/UnityGame/BuildData/Palestine/**
+          if-no-files-found: error
+          compression-level: 1
+          retention-days: 30
