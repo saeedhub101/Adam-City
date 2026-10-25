@@ -2,6 +2,9 @@
 
 This is the regional data root for the combined Jordan–Palestine map. Each country has its own folders; shared map display does not merge source datasets.
 
+## Current work
+- [Photogrammetry intake — Jordan and Palestine](PHOTOGRAMMETRY-INTAKE.md): no-API research and source tracking for downloadable real-world 3D scans. The catalogue distinguishes verified dataset availability from candidates still needing download, licence, and georeferencing checks.
+
 ## Source rules
 - OpenStreetMap (OSM): free under ODbL; preserve attribution and source timestamps. Keep object type + id.
 - OpenFreeMap: hosted vector style is used by the live map without a private API key. Hosted access does not guarantee bulk/offline extraction.
