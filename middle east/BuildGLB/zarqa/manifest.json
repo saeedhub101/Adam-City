@@ -1,0 +1,1657 @@
+{
+  "city": "Zarqa",
+  "bounds": {
+    "west": 36.05,
+    "east": 36.2,
+    "south": 32.0,
+    "north": 32.15
+  },
+  "tile_degrees": 0.01,
+  "tiles": [
+    {
+      "tile": "3605_3200",
+      "file": "zarqa_3605_3200.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 17288
+    },
+    {
+      "tile": "3605_3201",
+      "file": "zarqa_3605_3201.glb",
+      "buildings": 0,
+      "streets": 107,
+      "labels": 1,
+      "bytes": 121924
+    },
+    {
+      "tile": "3605_3202",
+      "file": "zarqa_3605_3202.glb",
+      "buildings": 10,
+      "streets": 120,
+      "labels": 7,
+      "bytes": 284428
+    },
+    {
+      "tile": "3605_3203",
+      "file": "zarqa_3605_3203.glb",
+      "buildings": 4,
+      "streets": 88,
+      "labels": 18,
+      "bytes": 139464
+    },
+    {
+      "tile": "3605_3204",
+      "file": "zarqa_3605_3204.glb",
+      "buildings": 1,
+      "streets": 100,
+      "labels": 5,
+      "bytes": 124444
+    },
+    {
+      "tile": "3605_3205",
+      "file": "zarqa_3605_3205.glb",
+      "buildings": 0,
+      "streets": 72,
+      "labels": 0,
+      "bytes": 82724
+    },
+    {
+      "tile": "3605_3206",
+      "file": "zarqa_3605_3206.glb",
+      "buildings": 1,
+      "streets": 109,
+      "labels": 3,
+      "bytes": 116000
+    },
+    {
+      "tile": "3605_3207",
+      "file": "zarqa_3605_3207.glb",
+      "buildings": 1,
+      "streets": 86,
+      "labels": 2,
+      "bytes": 98436
+    },
+    {
+      "tile": "3605_3208",
+      "file": "zarqa_3605_3208.glb",
+      "buildings": 0,
+      "streets": 46,
+      "labels": 0,
+      "bytes": 50924
+    },
+    {
+      "tile": "3605_3209",
+      "file": "zarqa_3605_3209.glb",
+      "buildings": 0,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 24580
+    },
+    {
+      "tile": "3605_3210",
+      "file": "zarqa_3605_3210.glb",
+      "buildings": 0,
+      "streets": 32,
+      "labels": 0,
+      "bytes": 38536
+    },
+    {
+      "tile": "3605_3211",
+      "file": "zarqa_3605_3211.glb",
+      "buildings": 0,
+      "streets": 44,
+      "labels": 0,
+      "bytes": 49320
+    },
+    {
+      "tile": "3605_3212",
+      "file": "zarqa_3605_3212.glb",
+      "buildings": 0,
+      "streets": 19,
+      "labels": 0,
+      "bytes": 21440
+    },
+    {
+      "tile": "3605_3213",
+      "file": "zarqa_3605_3213.glb",
+      "buildings": 0,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 9816
+    },
+    {
+      "tile": "3605_3214",
+      "file": "zarqa_3605_3214.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 10884
+    },
+    {
+      "tile": "3606_3200",
+      "file": "zarqa_3606_3200.glb",
+      "buildings": 1,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 45984
+    },
+    {
+      "tile": "3606_3201",
+      "file": "zarqa_3606_3201.glb",
+      "buildings": 2,
+      "streets": 97,
+      "labels": 2,
+      "bytes": 115864
+    },
+    {
+      "tile": "3606_3202",
+      "file": "zarqa_3606_3202.glb",
+      "buildings": 23,
+      "streets": 123,
+      "labels": 12,
+      "bytes": 475224
+    },
+    {
+      "tile": "3606_3203",
+      "file": "zarqa_3606_3203.glb",
+      "buildings": 2,
+      "streets": 102,
+      "labels": 3,
+      "bytes": 122132
+    },
+    {
+      "tile": "3606_3204",
+      "file": "zarqa_3606_3204.glb",
+      "buildings": 0,
+      "streets": 48,
+      "labels": 0,
+      "bytes": 56696
+    },
+    {
+      "tile": "3606_3205",
+      "file": "zarqa_3606_3205.glb",
+      "buildings": 0,
+      "streets": 111,
+      "labels": 0,
+      "bytes": 119744
+    },
+    {
+      "tile": "3606_3206",
+      "file": "zarqa_3606_3206.glb",
+      "buildings": 2,
+      "streets": 126,
+      "labels": 0,
+      "bytes": 146128
+    },
+    {
+      "tile": "3606_3207",
+      "file": "zarqa_3606_3207.glb",
+      "buildings": 1,
+      "streets": 95,
+      "labels": 0,
+      "bytes": 104656
+    },
+    {
+      "tile": "3606_3208",
+      "file": "zarqa_3606_3208.glb",
+      "buildings": 0,
+      "streets": 45,
+      "labels": 0,
+      "bytes": 68488
+    },
+    {
+      "tile": "3606_3209",
+      "file": "zarqa_3606_3209.glb",
+      "buildings": 0,
+      "streets": 51,
+      "labels": 0,
+      "bytes": 83280
+    },
+    {
+      "tile": "3606_3210",
+      "file": "zarqa_3606_3210.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 8644
+    },
+    {
+      "tile": "3606_3211",
+      "file": "zarqa_3606_3211.glb",
+      "buildings": 4,
+      "streets": 49,
+      "labels": 0,
+      "bytes": 119812
+    },
+    {
+      "tile": "3606_3212",
+      "file": "zarqa_3606_3212.glb",
+      "buildings": 0,
+      "streets": 40,
+      "labels": 0,
+      "bytes": 42468
+    },
+    {
+      "tile": "3606_3213",
+      "file": "zarqa_3606_3213.glb",
+      "buildings": 3,
+      "streets": 80,
+      "labels": 0,
+      "bytes": 136904
+    },
+    {
+      "tile": "3606_3214",
+      "file": "zarqa_3606_3214.glb",
+      "buildings": 0,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 33232
+    },
+    {
+      "tile": "3607_3200",
+      "file": "zarqa_3607_3200.glb",
+      "buildings": 0,
+      "streets": 21,
+      "labels": 0,
+      "bytes": 41428
+    },
+    {
+      "tile": "3607_3201",
+      "file": "zarqa_3607_3201.glb",
+      "buildings": 0,
+      "streets": 61,
+      "labels": 4,
+      "bytes": 87688
+    },
+    {
+      "tile": "3607_3202",
+      "file": "zarqa_3607_3202.glb",
+      "buildings": 0,
+      "streets": 86,
+      "labels": 13,
+      "bytes": 184964
+    },
+    {
+      "tile": "3607_3203",
+      "file": "zarqa_3607_3203.glb",
+      "buildings": 1,
+      "streets": 107,
+      "labels": 2,
+      "bytes": 121664
+    },
+    {
+      "tile": "3607_3204",
+      "file": "zarqa_3607_3204.glb",
+      "buildings": 1,
+      "streets": 115,
+      "labels": 0,
+      "bytes": 115564
+    },
+    {
+      "tile": "3607_3205",
+      "file": "zarqa_3607_3205.glb",
+      "buildings": 0,
+      "streets": 114,
+      "labels": 0,
+      "bytes": 139964
+    },
+    {
+      "tile": "3607_3206",
+      "file": "zarqa_3607_3206.glb",
+      "buildings": 1,
+      "streets": 114,
+      "labels": 2,
+      "bytes": 147912
+    },
+    {
+      "tile": "3607_3207",
+      "file": "zarqa_3607_3207.glb",
+      "buildings": 4,
+      "streets": 109,
+      "labels": 1,
+      "bytes": 234072
+    },
+    {
+      "tile": "3607_3208",
+      "file": "zarqa_3607_3208.glb",
+      "buildings": 14,
+      "streets": 107,
+      "labels": 0,
+      "bytes": 464988
+    },
+    {
+      "tile": "3607_3209",
+      "file": "zarqa_3607_3209.glb",
+      "buildings": 2,
+      "streets": 81,
+      "labels": 1,
+      "bytes": 128840
+    },
+    {
+      "tile": "3607_3210",
+      "file": "zarqa_3607_3210.glb",
+      "buildings": 0,
+      "streets": 38,
+      "labels": 0,
+      "bytes": 56304
+    },
+    {
+      "tile": "3607_3211",
+      "file": "zarqa_3607_3211.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 9168
+    },
+    {
+      "tile": "3607_3212",
+      "file": "zarqa_3607_3212.glb",
+      "buildings": 0,
+      "streets": 21,
+      "labels": 0,
+      "bytes": 31648
+    },
+    {
+      "tile": "3607_3213",
+      "file": "zarqa_3607_3213.glb",
+      "buildings": 1,
+      "streets": 84,
+      "labels": 0,
+      "bytes": 108848
+    },
+    {
+      "tile": "3607_3214",
+      "file": "zarqa_3607_3214.glb",
+      "buildings": 0,
+      "streets": 22,
+      "labels": 0,
+      "bytes": 30744
+    },
+    {
+      "tile": "3608_3200",
+      "file": "zarqa_3608_3200.glb",
+      "buildings": 1,
+      "streets": 32,
+      "labels": 0,
+      "bytes": 80516
+    },
+    {
+      "tile": "3608_3201",
+      "file": "zarqa_3608_3201.glb",
+      "buildings": 0,
+      "streets": 19,
+      "labels": 0,
+      "bytes": 31480
+    },
+    {
+      "tile": "3608_3202",
+      "file": "zarqa_3608_3202.glb",
+      "buildings": 0,
+      "streets": 120,
+      "labels": 4,
+      "bytes": 126584
+    },
+    {
+      "tile": "3608_3203",
+      "file": "zarqa_3608_3203.glb",
+      "buildings": 0,
+      "streets": 95,
+      "labels": 2,
+      "bytes": 157028
+    },
+    {
+      "tile": "3608_3204",
+      "file": "zarqa_3608_3204.glb",
+      "buildings": 0,
+      "streets": 127,
+      "labels": 2,
+      "bytes": 180096
+    },
+    {
+      "tile": "3608_3205",
+      "file": "zarqa_3608_3205.glb",
+      "buildings": 3,
+      "streets": 139,
+      "labels": 2,
+      "bytes": 197680
+    },
+    {
+      "tile": "3608_3206",
+      "file": "zarqa_3608_3206.glb",
+      "buildings": 1,
+      "streets": 71,
+      "labels": 0,
+      "bytes": 85500
+    },
+    {
+      "tile": "3608_3207",
+      "file": "zarqa_3608_3207.glb",
+      "buildings": 3,
+      "streets": 87,
+      "labels": 0,
+      "bytes": 220788
+    },
+    {
+      "tile": "3608_3208",
+      "file": "zarqa_3608_3208.glb",
+      "buildings": 7,
+      "streets": 104,
+      "labels": 1,
+      "bytes": 570892
+    },
+    {
+      "tile": "3608_3209",
+      "file": "zarqa_3608_3209.glb",
+      "buildings": 0,
+      "streets": 106,
+      "labels": 0,
+      "bytes": 268384
+    },
+    {
+      "tile": "3608_3210",
+      "file": "zarqa_3608_3210.glb",
+      "buildings": 0,
+      "streets": 44,
+      "labels": 0,
+      "bytes": 53396
+    },
+    {
+      "tile": "3608_3211",
+      "file": "zarqa_3608_3211.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 10272
+    },
+    {
+      "tile": "3608_3213",
+      "file": "zarqa_3608_3213.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 13900
+    },
+    {
+      "tile": "3608_3214",
+      "file": "zarqa_3608_3214.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 5212
+    },
+    {
+      "tile": "3609_3200",
+      "file": "zarqa_3609_3200.glb",
+      "buildings": 0,
+      "streets": 19,
+      "labels": 0,
+      "bytes": 47376
+    },
+    {
+      "tile": "3609_3201",
+      "file": "zarqa_3609_3201.glb",
+      "buildings": 0,
+      "streets": 14,
+      "labels": 0,
+      "bytes": 20444
+    },
+    {
+      "tile": "3609_3202",
+      "file": "zarqa_3609_3202.glb",
+      "buildings": 1,
+      "streets": 44,
+      "labels": 3,
+      "bytes": 63304
+    },
+    {
+      "tile": "3609_3203",
+      "file": "zarqa_3609_3203.glb",
+      "buildings": 2,
+      "streets": 104,
+      "labels": 12,
+      "bytes": 142024
+    },
+    {
+      "tile": "3609_3204",
+      "file": "zarqa_3609_3204.glb",
+      "buildings": 3,
+      "streets": 135,
+      "labels": 8,
+      "bytes": 259272
+    },
+    {
+      "tile": "3609_3205",
+      "file": "zarqa_3609_3205.glb",
+      "buildings": 0,
+      "streets": 116,
+      "labels": 2,
+      "bytes": 168220
+    },
+    {
+      "tile": "3609_3206",
+      "file": "zarqa_3609_3206.glb",
+      "buildings": 2,
+      "streets": 82,
+      "labels": 8,
+      "bytes": 172168
+    },
+    {
+      "tile": "3609_3207",
+      "file": "zarqa_3609_3207.glb",
+      "buildings": 3,
+      "streets": 52,
+      "labels": 1,
+      "bytes": 79012
+    },
+    {
+      "tile": "3609_3208",
+      "file": "zarqa_3609_3208.glb",
+      "buildings": 1,
+      "streets": 94,
+      "labels": 0,
+      "bytes": 114956
+    },
+    {
+      "tile": "3609_3209",
+      "file": "zarqa_3609_3209.glb",
+      "buildings": 1,
+      "streets": 122,
+      "labels": 2,
+      "bytes": 156224
+    },
+    {
+      "tile": "3609_3210",
+      "file": "zarqa_3609_3210.glb",
+      "buildings": 0,
+      "streets": 68,
+      "labels": 0,
+      "bytes": 68436
+    },
+    {
+      "tile": "3609_3211",
+      "file": "zarqa_3609_3211.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 5216
+    },
+    {
+      "tile": "3609_3213",
+      "file": "zarqa_3609_3213.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1180
+    },
+    {
+      "tile": "3609_3214",
+      "file": "zarqa_3609_3214.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 14016
+    },
+    {
+      "tile": "3610_3200",
+      "file": "zarqa_3610_3200.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1244
+    },
+    {
+      "tile": "3610_3201",
+      "file": "zarqa_3610_3201.glb",
+      "buildings": 1,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 31072
+    },
+    {
+      "tile": "3610_3202",
+      "file": "zarqa_3610_3202.glb",
+      "buildings": 1,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 49912
+    },
+    {
+      "tile": "3610_3203",
+      "file": "zarqa_3610_3203.glb",
+      "buildings": 0,
+      "streets": 41,
+      "labels": 8,
+      "bytes": 54928
+    },
+    {
+      "tile": "3610_3204",
+      "file": "zarqa_3610_3204.glb",
+      "buildings": 0,
+      "streets": 59,
+      "labels": 14,
+      "bytes": 63756
+    },
+    {
+      "tile": "3610_3205",
+      "file": "zarqa_3610_3205.glb",
+      "buildings": 0,
+      "streets": 25,
+      "labels": 0,
+      "bytes": 33244
+    },
+    {
+      "tile": "3610_3206",
+      "file": "zarqa_3610_3206.glb",
+      "buildings": 1,
+      "streets": 91,
+      "labels": 13,
+      "bytes": 158912
+    },
+    {
+      "tile": "3610_3207",
+      "file": "zarqa_3610_3207.glb",
+      "buildings": 2,
+      "streets": 83,
+      "labels": 22,
+      "bytes": 250528
+    },
+    {
+      "tile": "3610_3208",
+      "file": "zarqa_3610_3208.glb",
+      "buildings": 0,
+      "streets": 107,
+      "labels": 7,
+      "bytes": 204180
+    },
+    {
+      "tile": "3610_3209",
+      "file": "zarqa_3610_3209.glb",
+      "buildings": 1,
+      "streets": 110,
+      "labels": 1,
+      "bytes": 124532
+    },
+    {
+      "tile": "3610_3210",
+      "file": "zarqa_3610_3210.glb",
+      "buildings": 8,
+      "streets": 136,
+      "labels": 1,
+      "bytes": 179988
+    },
+    {
+      "tile": "3610_3211",
+      "file": "zarqa_3610_3211.glb",
+      "buildings": 27,
+      "streets": 32,
+      "labels": 3,
+      "bytes": 363400
+    },
+    {
+      "tile": "3610_3212",
+      "file": "zarqa_3610_3212.glb",
+      "buildings": 24,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 314664
+    },
+    {
+      "tile": "3610_3213",
+      "file": "zarqa_3610_3213.glb",
+      "buildings": 0,
+      "streets": 18,
+      "labels": 2,
+      "bytes": 100572
+    },
+    {
+      "tile": "3610_3214",
+      "file": "zarqa_3610_3214.glb",
+      "buildings": 0,
+      "streets": 15,
+      "labels": 0,
+      "bytes": 53584
+    },
+    {
+      "tile": "3611_3200",
+      "file": "zarqa_3611_3200.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 2880
+    },
+    {
+      "tile": "3611_3201",
+      "file": "zarqa_3611_3201.glb",
+      "buildings": 0,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 11140
+    },
+    {
+      "tile": "3611_3202",
+      "file": "zarqa_3611_3202.glb",
+      "buildings": 1,
+      "streets": 22,
+      "labels": 6,
+      "bytes": 45988
+    },
+    {
+      "tile": "3611_3203",
+      "file": "zarqa_3611_3203.glb",
+      "buildings": 0,
+      "streets": 26,
+      "labels": 2,
+      "bytes": 23252
+    },
+    {
+      "tile": "3611_3204",
+      "file": "zarqa_3611_3204.glb",
+      "buildings": 1,
+      "streets": 41,
+      "labels": 2,
+      "bytes": 60188
+    },
+    {
+      "tile": "3611_3205",
+      "file": "zarqa_3611_3205.glb",
+      "buildings": 0,
+      "streets": 60,
+      "labels": 1,
+      "bytes": 62752
+    },
+    {
+      "tile": "3611_3206",
+      "file": "zarqa_3611_3206.glb",
+      "buildings": 0,
+      "streets": 65,
+      "labels": 3,
+      "bytes": 68576
+    },
+    {
+      "tile": "3611_3207",
+      "file": "zarqa_3611_3207.glb",
+      "buildings": 1,
+      "streets": 34,
+      "labels": 5,
+      "bytes": 59060
+    },
+    {
+      "tile": "3611_3208",
+      "file": "zarqa_3611_3208.glb",
+      "buildings": 0,
+      "streets": 36,
+      "labels": 0,
+      "bytes": 135328
+    },
+    {
+      "tile": "3611_3209",
+      "file": "zarqa_3611_3209.glb",
+      "buildings": 22,
+      "streets": 25,
+      "labels": 2,
+      "bytes": 446472
+    },
+    {
+      "tile": "3611_3210",
+      "file": "zarqa_3611_3210.glb",
+      "buildings": 7,
+      "streets": 35,
+      "labels": 5,
+      "bytes": 123424
+    },
+    {
+      "tile": "3611_3211",
+      "file": "zarqa_3611_3211.glb",
+      "buildings": 68,
+      "streets": 64,
+      "labels": 8,
+      "bytes": 783900
+    },
+    {
+      "tile": "3611_3212",
+      "file": "zarqa_3611_3212.glb",
+      "buildings": 89,
+      "streets": 40,
+      "labels": 1,
+      "bytes": 793140
+    },
+    {
+      "tile": "3611_3213",
+      "file": "zarqa_3611_3213.glb",
+      "buildings": 2,
+      "streets": 105,
+      "labels": 0,
+      "bytes": 119776
+    },
+    {
+      "tile": "3611_3214",
+      "file": "zarqa_3611_3214.glb",
+      "buildings": 0,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 19888
+    },
+    {
+      "tile": "3612_3200",
+      "file": "zarqa_3612_3200.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 3896
+    },
+    {
+      "tile": "3612_3201",
+      "file": "zarqa_3612_3201.glb",
+      "buildings": 0,
+      "streets": 16,
+      "labels": 0,
+      "bytes": 18224
+    },
+    {
+      "tile": "3612_3202",
+      "file": "zarqa_3612_3202.glb",
+      "buildings": 46,
+      "streets": 58,
+      "labels": 6,
+      "bytes": 634676
+    },
+    {
+      "tile": "3612_3203",
+      "file": "zarqa_3612_3203.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 22684
+    },
+    {
+      "tile": "3612_3204",
+      "file": "zarqa_3612_3204.glb",
+      "buildings": 0,
+      "streets": 45,
+      "labels": 0,
+      "bytes": 41864
+    },
+    {
+      "tile": "3612_3205",
+      "file": "zarqa_3612_3205.glb",
+      "buildings": 0,
+      "streets": 62,
+      "labels": 1,
+      "bytes": 68664
+    },
+    {
+      "tile": "3612_3206",
+      "file": "zarqa_3612_3206.glb",
+      "buildings": 0,
+      "streets": 34,
+      "labels": 0,
+      "bytes": 35340
+    },
+    {
+      "tile": "3612_3207",
+      "file": "zarqa_3612_3207.glb",
+      "buildings": 18,
+      "streets": 31,
+      "labels": 3,
+      "bytes": 330636
+    },
+    {
+      "tile": "3612_3208",
+      "file": "zarqa_3612_3208.glb",
+      "buildings": 0,
+      "streets": 25,
+      "labels": 3,
+      "bytes": 26232
+    },
+    {
+      "tile": "3612_3209",
+      "file": "zarqa_3612_3209.glb",
+      "buildings": 0,
+      "streets": 10,
+      "labels": 1,
+      "bytes": 16876
+    },
+    {
+      "tile": "3612_3210",
+      "file": "zarqa_3612_3210.glb",
+      "buildings": 7,
+      "streets": 26,
+      "labels": 2,
+      "bytes": 217428
+    },
+    {
+      "tile": "3612_3211",
+      "file": "zarqa_3612_3211.glb",
+      "buildings": 3,
+      "streets": 44,
+      "labels": 0,
+      "bytes": 79356
+    },
+    {
+      "tile": "3612_3212",
+      "file": "zarqa_3612_3212.glb",
+      "buildings": 1,
+      "streets": 52,
+      "labels": 1,
+      "bytes": 60844
+    },
+    {
+      "tile": "3612_3213",
+      "file": "zarqa_3612_3213.glb",
+      "buildings": 9,
+      "streets": 98,
+      "labels": 0,
+      "bytes": 178384
+    },
+    {
+      "tile": "3612_3214",
+      "file": "zarqa_3612_3214.glb",
+      "buildings": 0,
+      "streets": 84,
+      "labels": 1,
+      "bytes": 158036
+    },
+    {
+      "tile": "3613_3200",
+      "file": "zarqa_3613_3200.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 2512
+    },
+    {
+      "tile": "3613_3201",
+      "file": "zarqa_3613_3201.glb",
+      "buildings": 0,
+      "streets": 8,
+      "labels": 1,
+      "bytes": 18112
+    },
+    {
+      "tile": "3613_3202",
+      "file": "zarqa_3613_3202.glb",
+      "buildings": 3,
+      "streets": 17,
+      "labels": 0,
+      "bytes": 59880
+    },
+    {
+      "tile": "3613_3203",
+      "file": "zarqa_3613_3203.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1852
+    },
+    {
+      "tile": "3613_3204",
+      "file": "zarqa_3613_3204.glb",
+      "buildings": 0,
+      "streets": 37,
+      "labels": 0,
+      "bytes": 38884
+    },
+    {
+      "tile": "3613_3205",
+      "file": "zarqa_3613_3205.glb",
+      "buildings": 12,
+      "streets": 24,
+      "labels": 1,
+      "bytes": 216468
+    },
+    {
+      "tile": "3613_3206",
+      "file": "zarqa_3613_3206.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 8812
+    },
+    {
+      "tile": "3613_3207",
+      "file": "zarqa_3613_3207.glb",
+      "buildings": 4,
+      "streets": 48,
+      "labels": 6,
+      "bytes": 78444
+    },
+    {
+      "tile": "3613_3208",
+      "file": "zarqa_3613_3208.glb",
+      "buildings": 0,
+      "streets": 19,
+      "labels": 4,
+      "bytes": 23692
+    },
+    {
+      "tile": "3613_3209",
+      "file": "zarqa_3613_3209.glb",
+      "buildings": 13,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 208608
+    },
+    {
+      "tile": "3613_3210",
+      "file": "zarqa_3613_3210.glb",
+      "buildings": 0,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 14148
+    },
+    {
+      "tile": "3613_3211",
+      "file": "zarqa_3613_3211.glb",
+      "buildings": 1,
+      "streets": 15,
+      "labels": 1,
+      "bytes": 38012
+    },
+    {
+      "tile": "3613_3212",
+      "file": "zarqa_3613_3212.glb",
+      "buildings": 0,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 33536
+    },
+    {
+      "tile": "3613_3213",
+      "file": "zarqa_3613_3213.glb",
+      "buildings": 0,
+      "streets": 43,
+      "labels": 0,
+      "bytes": 50228
+    },
+    {
+      "tile": "3613_3214",
+      "file": "zarqa_3613_3214.glb",
+      "buildings": 2,
+      "streets": 44,
+      "labels": 0,
+      "bytes": 115944
+    },
+    {
+      "tile": "3614_3202",
+      "file": "zarqa_3614_3202.glb",
+      "buildings": 3,
+      "streets": 15,
+      "labels": 0,
+      "bytes": 90068
+    },
+    {
+      "tile": "3614_3203",
+      "file": "zarqa_3614_3203.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 9016
+    },
+    {
+      "tile": "3614_3205",
+      "file": "zarqa_3614_3205.glb",
+      "buildings": 1,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 43140
+    },
+    {
+      "tile": "3614_3206",
+      "file": "zarqa_3614_3206.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 7084
+    },
+    {
+      "tile": "3614_3207",
+      "file": "zarqa_3614_3207.glb",
+      "buildings": 6,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 37268
+    },
+    {
+      "tile": "3614_3208",
+      "file": "zarqa_3614_3208.glb",
+      "buildings": 2,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 37396
+    },
+    {
+      "tile": "3614_3209",
+      "file": "zarqa_3614_3209.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 4488
+    },
+    {
+      "tile": "3614_3210",
+      "file": "zarqa_3614_3210.glb",
+      "buildings": 1,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 13968
+    },
+    {
+      "tile": "3614_3211",
+      "file": "zarqa_3614_3211.glb",
+      "buildings": 2,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 42572
+    },
+    {
+      "tile": "3614_3212",
+      "file": "zarqa_3614_3212.glb",
+      "buildings": 0,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 12700
+    },
+    {
+      "tile": "3614_3213",
+      "file": "zarqa_3614_3213.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 8724
+    },
+    {
+      "tile": "3614_3214",
+      "file": "zarqa_3614_3214.glb",
+      "buildings": 9,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 125624
+    },
+    {
+      "tile": "3615_3200",
+      "file": "zarqa_3615_3200.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 25528
+    },
+    {
+      "tile": "3615_3202",
+      "file": "zarqa_3615_3202.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 1,
+      "bytes": 4776
+    },
+    {
+      "tile": "3615_3203",
+      "file": "zarqa_3615_3203.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 11676
+    },
+    {
+      "tile": "3615_3204",
+      "file": "zarqa_3615_3204.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1376
+    },
+    {
+      "tile": "3615_3205",
+      "file": "zarqa_3615_3205.glb",
+      "buildings": 6,
+      "streets": 37,
+      "labels": 0,
+      "bytes": 153328
+    },
+    {
+      "tile": "3615_3206",
+      "file": "zarqa_3615_3206.glb",
+      "buildings": 1,
+      "streets": 15,
+      "labels": 0,
+      "bytes": 41136
+    },
+    {
+      "tile": "3615_3207",
+      "file": "zarqa_3615_3207.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 2888
+    },
+    {
+      "tile": "3615_3208",
+      "file": "zarqa_3615_3208.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 8376
+    },
+    {
+      "tile": "3615_3209",
+      "file": "zarqa_3615_3209.glb",
+      "buildings": 0,
+      "streets": 24,
+      "labels": 0,
+      "bytes": 31496
+    },
+    {
+      "tile": "3615_3210",
+      "file": "zarqa_3615_3210.glb",
+      "buildings": 0,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 18652
+    },
+    {
+      "tile": "3615_3211",
+      "file": "zarqa_3615_3211.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 10208
+    },
+    {
+      "tile": "3615_3213",
+      "file": "zarqa_3615_3213.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 10140
+    },
+    {
+      "tile": "3615_3214",
+      "file": "zarqa_3615_3214.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 6564
+    },
+    {
+      "tile": "3616_3200",
+      "file": "zarqa_3616_3200.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 9632
+    },
+    {
+      "tile": "3616_3201",
+      "file": "zarqa_3616_3201.glb",
+      "buildings": 0,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 17708
+    },
+    {
+      "tile": "3616_3202",
+      "file": "zarqa_3616_3202.glb",
+      "buildings": 0,
+      "streets": 10,
+      "labels": 1,
+      "bytes": 12932
+    },
+    {
+      "tile": "3616_3203",
+      "file": "zarqa_3616_3203.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1560
+    },
+    {
+      "tile": "3616_3205",
+      "file": "zarqa_3616_3205.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1488
+    },
+    {
+      "tile": "3616_3206",
+      "file": "zarqa_3616_3206.glb",
+      "buildings": 7,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 56676
+    },
+    {
+      "tile": "3616_3207",
+      "file": "zarqa_3616_3207.glb",
+      "buildings": 4,
+      "streets": 10,
+      "labels": 1,
+      "bytes": 55164
+    },
+    {
+      "tile": "3616_3208",
+      "file": "zarqa_3616_3208.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 14240
+    },
+    {
+      "tile": "3616_3209",
+      "file": "zarqa_3616_3209.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 20176
+    },
+    {
+      "tile": "3616_3210",
+      "file": "zarqa_3616_3210.glb",
+      "buildings": 1,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 10200
+    },
+    {
+      "tile": "3616_3212",
+      "file": "zarqa_3616_3212.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 2088
+    },
+    {
+      "tile": "3616_3213",
+      "file": "zarqa_3616_3213.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 10940
+    },
+    {
+      "tile": "3616_3214",
+      "file": "zarqa_3616_3214.glb",
+      "buildings": 1,
+      "streets": 13,
+      "labels": 0,
+      "bytes": 18088
+    },
+    {
+      "tile": "3617_3201",
+      "file": "zarqa_3617_3201.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 2880
+    },
+    {
+      "tile": "3617_3202",
+      "file": "zarqa_3617_3202.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 3052
+    },
+    {
+      "tile": "3617_3203",
+      "file": "zarqa_3617_3203.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 3108
+    },
+    {
+      "tile": "3617_3205",
+      "file": "zarqa_3617_3205.glb",
+      "buildings": 3,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 23556
+    },
+    {
+      "tile": "3617_3206",
+      "file": "zarqa_3617_3206.glb",
+      "buildings": 33,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 252724
+    },
+    {
+      "tile": "3617_3207",
+      "file": "zarqa_3617_3207.glb",
+      "buildings": 10,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 79296
+    },
+    {
+      "tile": "3617_3208",
+      "file": "zarqa_3617_3208.glb",
+      "buildings": 0,
+      "streets": 14,
+      "labels": 0,
+      "bytes": 19572
+    },
+    {
+      "tile": "3617_3209",
+      "file": "zarqa_3617_3209.glb",
+      "buildings": 0,
+      "streets": 12,
+      "labels": 1,
+      "bytes": 33760
+    },
+    {
+      "tile": "3617_3210",
+      "file": "zarqa_3617_3210.glb",
+      "buildings": 2,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 30356
+    },
+    {
+      "tile": "3617_3211",
+      "file": "zarqa_3617_3211.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 8152
+    },
+    {
+      "tile": "3617_3212",
+      "file": "zarqa_3617_3212.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 11896
+    },
+    {
+      "tile": "3617_3213",
+      "file": "zarqa_3617_3213.glb",
+      "buildings": 0,
+      "streets": 13,
+      "labels": 0,
+      "bytes": 16388
+    },
+    {
+      "tile": "3617_3214",
+      "file": "zarqa_3617_3214.glb",
+      "buildings": 0,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 11756
+    },
+    {
+      "tile": "3618_3202",
+      "file": "zarqa_3618_3202.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 1,
+      "bytes": 9752
+    },
+    {
+      "tile": "3618_3203",
+      "file": "zarqa_3618_3203.glb",
+      "buildings": 16,
+      "streets": 10,
+      "labels": 4,
+      "bytes": 241656
+    },
+    {
+      "tile": "3618_3204",
+      "file": "zarqa_3618_3204.glb",
+      "buildings": 1,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 9120
+    },
+    {
+      "tile": "3618_3205",
+      "file": "zarqa_3618_3205.glb",
+      "buildings": 32,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 243072
+    },
+    {
+      "tile": "3618_3206",
+      "file": "zarqa_3618_3206.glb",
+      "buildings": 22,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 162364
+    },
+    {
+      "tile": "3618_3207",
+      "file": "zarqa_3618_3207.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 10268
+    },
+    {
+      "tile": "3618_3208",
+      "file": "zarqa_3618_3208.glb",
+      "buildings": 0,
+      "streets": 28,
+      "labels": 2,
+      "bytes": 32980
+    },
+    {
+      "tile": "3618_3209",
+      "file": "zarqa_3618_3209.glb",
+      "buildings": 20,
+      "streets": 36,
+      "labels": 8,
+      "bytes": 212960
+    },
+    {
+      "tile": "3618_3210",
+      "file": "zarqa_3618_3210.glb",
+      "buildings": 180,
+      "streets": 501,
+      "labels": 120,
+      "bytes": 2546568
+    },
+    {
+      "tile": "3618_3211",
+      "file": "zarqa_3618_3211.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 4804
+    },
+    {
+      "tile": "3618_3213",
+      "file": "zarqa_3618_3213.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 3708
+    },
+    {
+      "tile": "3619_3200",
+      "file": "zarqa_3619_3200.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 2756
+    },
+    {
+      "tile": "3619_3201",
+      "file": "zarqa_3619_3201.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 3604
+    },
+    {
+      "tile": "3619_3205",
+      "file": "zarqa_3619_3205.glb",
+      "buildings": 17,
+      "streets": 0,
+      "labels": 1,
+      "bytes": 123372
+    },
+    {
+      "tile": "3619_3206",
+      "file": "zarqa_3619_3206.glb",
+      "buildings": 5,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 41400
+    },
+    {
+      "tile": "3619_3208",
+      "file": "zarqa_3619_3208.glb",
+      "buildings": 6,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 118812
+    },
+    {
+      "tile": "3619_3209",
+      "file": "zarqa_3619_3209.glb",
+      "buildings": 5,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 94360
+    },
+    {
+      "tile": "3619_3210",
+      "file": "zarqa_3619_3210.glb",
+      "buildings": 19,
+      "streets": 30,
+      "labels": 2,
+      "bytes": 158896
+    },
+    {
+      "tile": "3619_3211",
+      "file": "zarqa_3619_3211.glb",
+      "buildings": 4,
+      "streets": 17,
+      "labels": 5,
+      "bytes": 59424
+    },
+    {
+      "tile": "3619_3212",
+      "file": "zarqa_3619_3212.glb",
+      "buildings": 0,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 35568
+    },
+    {
+      "tile": "3619_3213",
+      "file": "zarqa_3619_3213.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 4412
+    }
+  ],
+  "counts": {
+    "buildings": 901,
+    "streets": 7970,
+    "street_labels": 407
+  }
+}
