@@ -33,12 +33,23 @@ def checkpoint(message):
     subprocess.run(["git","config","user.name","github-actions[bot]"],check=True)
     subprocess.run(["git","config","user.email","41898282+github-actions[bot]@users.noreply.github.com"],check=True)
     subprocess.run(["git","commit","-m",message[:180]],check=True)
-    subprocess.run(["git","fetch","origin","main"],check=True)
-    p=subprocess.run(["git","rebase","origin/main"])
-    if p.returncode:
-        subprocess.run(["git","rebase","--abort"],check=False)
-        raise RuntimeError("Checkpoint rebase failed; rerun will resume from last pushed checkpoint")
-    subprocess.run(["git","push","origin","HEAD:main"],check=True)
+    # A concurrent commit can land on main between fetch/rebase/push. Retry the
+    # whole synchronization several times rather than losing the checkpoint.
+    last_error=""
+    for attempt in range(1,6):
+        subprocess.run(["git","fetch","origin","main"],check=True)
+        p=subprocess.run(["git","-c","rebase.autoStash=true","rebase","-X","ours","origin/main"])
+        if p.returncode:
+            subprocess.run(["git","rebase","--abort"],check=False)
+            last_error=f"rebase failed on attempt {attempt}"
+            time.sleep(attempt*2)
+            continue
+        pushed=subprocess.run(["git","push","origin","HEAD:main"])
+        if pushed.returncode==0:
+            return
+        last_error=f"push rejected on attempt {attempt}"
+        time.sleep(attempt*2)
+    raise RuntimeError(f"Could not push LiDAR checkpoint after 5 retries ({last_error}); local checkpoint is retained for resume")
 
 def safe(s,n=100): return (re.sub(r"[^A-Za-z0-9._-]+","_",str(s)).strip("._") or "asset")[:n]
 def aid(url): return hashlib.sha256(url.encode()).hexdigest()[:20]
