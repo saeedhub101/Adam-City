@@ -1,0 +1,35 @@
+{
+  "schema": "adam-city-game-building-tiles-v1",
+  "source": "Repository-stored OpenStreetMap GeoJSON exports",
+  "license": "OpenStreetMap ODbL; retain attribution and comply with ODbL",
+  "coordinate_reference_system": "EPSG:4326 (longitude, latitude)",
+  "tile_scheme": {
+    "type": "fixed geographic grid",
+    "tile_degrees": 0.05,
+    "assignment": "centre of source geometry bounding box; no geometry simplification or coordinate transformation"
+  },
+  "format": "gzip-compressed newline-delimited GeoJSON Features; one feature per line",
+  "height_policy": {
+    "osm_height": "parsed from explicit OSM height tag; units assumed metres unless suffix indicates metres",
+    "levels_estimate": "building levels multiplied by 3 m; approximate, not surveyed",
+    "unknown": "no usable height tag; do not silently invent a height"
+  },
+  "countries": {
+    "Jordan": {
+      "buildings_features_scanned": 464413,
+      "skipped_empty_geometry": 462328,
+      "building_details_features_scanned": 464456,
+      "unique_tiles": 0,
+      "features_exported_total": 0,
+      "warning": "buildings and building_details may overlap; this first export preserves both source layers for comparison and does not deduplicate physical buildings"
+    },
+    "Palestine": {
+      "buildings_features_scanned": 2087961,
+      "skipped_empty_geometry": 2028670,
+      "building_details_features_scanned": 2088828,
+      "unique_tiles": 0,
+      "features_exported_total": 0,
+      "warning": "buildings and building_details may overlap; this first export preserves both source layers for comparison and does not deduplicate physical buildings"
+    }
+  }
+}
