@@ -74,8 +74,14 @@ jobs:
           # temporary spatial chunks before Blender; this includes Tel Aviv and coastal,
           # northern, central, southern, West Bank and Gaza coverage where mapped in OSM.
           # All chunks use the same global local-coordinate origin so GLB tiles align.
+          rm -rf /tmp/historic-palestine-cells
           python3 "middle east/UnityGame/tools/split_osm_regions.py" \
             --layers "middle east/Palestine/layers" --out /tmp/historic-palestine-cells
+          split_rc=$?
+          if [ "$split_rc" -ne 0 ]; then
+            echo "FATAL: Palestine/Israel split failed; not treating an empty import as success."
+            exit "$split_rc"
+          fi
           if [ -d /tmp/historic-palestine-cells ]; then
             find /tmp/historic-palestine-cells -mindepth 2 -maxdepth 2 -name buildings.geojson.gz -print0 |
             while IFS= read -r -d '' building_file; do
