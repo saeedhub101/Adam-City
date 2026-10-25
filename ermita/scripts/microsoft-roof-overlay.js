@@ -290,7 +290,8 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
     if (map.getLayer(layerId)) {
       map.moveLayer(layerId);
     }
-    group.visible = enabled;\n    return { layerIds: [layerId], group, candidateCount: candidatesCount, roofCount };
+    group.visible = enabled;
+    return { layerIds: [layerId], group, candidateCount: candidatesCount, roofCount };
   }
 
   function loadModel(url) {
