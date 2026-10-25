@@ -1,0 +1,977 @@
+{
+  "city": "Karak",
+  "bounds": {
+    "west": 35.65,
+    "east": 35.8,
+    "south": 31.15,
+    "north": 31.25
+  },
+  "tile_degrees": 0.01,
+  "tiles": [
+    {
+      "tile": "3565_3115",
+      "file": "karak_3565_3115.glb",
+      "buildings": 0,
+      "streets": 10,
+      "labels": 1,
+      "bytes": 11816
+    },
+    {
+      "tile": "3565_3116",
+      "file": "karak_3565_3116.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1720
+    },
+    {
+      "tile": "3565_3119",
+      "file": "karak_3565_3119.glb",
+      "buildings": 0,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 21552
+    },
+    {
+      "tile": "3565_3120",
+      "file": "karak_3565_3120.glb",
+      "buildings": 0,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 14408
+    },
+    {
+      "tile": "3565_3121",
+      "file": "karak_3565_3121.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 19640
+    },
+    {
+      "tile": "3565_3122",
+      "file": "karak_3565_3122.glb",
+      "buildings": 0,
+      "streets": 15,
+      "labels": 2,
+      "bytes": 29016
+    },
+    {
+      "tile": "3565_3123",
+      "file": "karak_3565_3123.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 8484
+    },
+    {
+      "tile": "3566_3116",
+      "file": "karak_3566_3116.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 17208
+    },
+    {
+      "tile": "3566_3117",
+      "file": "karak_3566_3117.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1968
+    },
+    {
+      "tile": "3566_3118",
+      "file": "karak_3566_3118.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 3236
+    },
+    {
+      "tile": "3566_3119",
+      "file": "karak_3566_3119.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 3168
+    },
+    {
+      "tile": "3566_3120",
+      "file": "karak_3566_3120.glb",
+      "buildings": 0,
+      "streets": 26,
+      "labels": 0,
+      "bytes": 46480
+    },
+    {
+      "tile": "3566_3121",
+      "file": "karak_3566_3121.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 18004
+    },
+    {
+      "tile": "3566_3122",
+      "file": "karak_3566_3122.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 21552
+    },
+    {
+      "tile": "3566_3123",
+      "file": "karak_3566_3123.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 18180
+    },
+    {
+      "tile": "3567_3115",
+      "file": "karak_3567_3115.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 8808
+    },
+    {
+      "tile": "3567_3117",
+      "file": "karak_3567_3117.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 5876
+    },
+    {
+      "tile": "3567_3118",
+      "file": "karak_3567_3118.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 1,
+      "bytes": 4120
+    },
+    {
+      "tile": "3567_3119",
+      "file": "karak_3567_3119.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 7556
+    },
+    {
+      "tile": "3567_3120",
+      "file": "karak_3567_3120.glb",
+      "buildings": 0,
+      "streets": 11,
+      "labels": 6,
+      "bytes": 19544
+    },
+    {
+      "tile": "3567_3121",
+      "file": "karak_3567_3121.glb",
+      "buildings": 0,
+      "streets": 25,
+      "labels": 0,
+      "bytes": 33380
+    },
+    {
+      "tile": "3567_3122",
+      "file": "karak_3567_3122.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 18884
+    },
+    {
+      "tile": "3568_3115",
+      "file": "karak_3568_3115.glb",
+      "buildings": 6,
+      "streets": 3,
+      "labels": 1,
+      "bytes": 42844
+    },
+    {
+      "tile": "3568_3116",
+      "file": "karak_3568_3116.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 1,
+      "bytes": 13800
+    },
+    {
+      "tile": "3568_3117",
+      "file": "karak_3568_3117.glb",
+      "buildings": 0,
+      "streets": 24,
+      "labels": 0,
+      "bytes": 34896
+    },
+    {
+      "tile": "3568_3118",
+      "file": "karak_3568_3118.glb",
+      "buildings": 0,
+      "streets": 19,
+      "labels": 1,
+      "bytes": 32060
+    },
+    {
+      "tile": "3568_3119",
+      "file": "karak_3568_3119.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 17716
+    },
+    {
+      "tile": "3568_3120",
+      "file": "karak_3568_3120.glb",
+      "buildings": 0,
+      "streets": 18,
+      "labels": 1,
+      "bytes": 42228
+    },
+    {
+      "tile": "3568_3121",
+      "file": "karak_3568_3121.glb",
+      "buildings": 0,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 25096
+    },
+    {
+      "tile": "3568_3122",
+      "file": "karak_3568_3122.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 8992
+    },
+    {
+      "tile": "3568_3123",
+      "file": "karak_3568_3123.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 27964
+    },
+    {
+      "tile": "3569_3115",
+      "file": "karak_3569_3115.glb",
+      "buildings": 20,
+      "streets": 35,
+      "labels": 0,
+      "bytes": 177688
+    },
+    {
+      "tile": "3569_3116",
+      "file": "karak_3569_3116.glb",
+      "buildings": 49,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 357564
+    },
+    {
+      "tile": "3569_3117",
+      "file": "karak_3569_3117.glb",
+      "buildings": 24,
+      "streets": 12,
+      "labels": 1,
+      "bytes": 192140
+    },
+    {
+      "tile": "3569_3118",
+      "file": "karak_3569_3118.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 26628
+    },
+    {
+      "tile": "3569_3119",
+      "file": "karak_3569_3119.glb",
+      "buildings": 0,
+      "streets": 33,
+      "labels": 0,
+      "bytes": 40144
+    },
+    {
+      "tile": "3569_3120",
+      "file": "karak_3569_3120.glb",
+      "buildings": 0,
+      "streets": 16,
+      "labels": 7,
+      "bytes": 32976
+    },
+    {
+      "tile": "3569_3121",
+      "file": "karak_3569_3121.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 1,
+      "bytes": 9164
+    },
+    {
+      "tile": "3569_3123",
+      "file": "karak_3569_3123.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 4216
+    },
+    {
+      "tile": "3569_3124",
+      "file": "karak_3569_3124.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 9956
+    },
+    {
+      "tile": "3570_3115",
+      "file": "karak_3570_3115.glb",
+      "buildings": 0,
+      "streets": 37,
+      "labels": 0,
+      "bytes": 47328
+    },
+    {
+      "tile": "3570_3116",
+      "file": "karak_3570_3116.glb",
+      "buildings": 27,
+      "streets": 34,
+      "labels": 0,
+      "bytes": 251908
+    },
+    {
+      "tile": "3570_3117",
+      "file": "karak_3570_3117.glb",
+      "buildings": 225,
+      "streets": 52,
+      "labels": 4,
+      "bytes": 1517844
+    },
+    {
+      "tile": "3570_3118",
+      "file": "karak_3570_3118.glb",
+      "buildings": 537,
+      "streets": 90,
+      "labels": 2,
+      "bytes": 4279612
+    },
+    {
+      "tile": "3570_3119",
+      "file": "karak_3570_3119.glb",
+      "buildings": 1,
+      "streets": 6,
+      "labels": 3,
+      "bytes": 22892
+    },
+    {
+      "tile": "3570_3120",
+      "file": "karak_3570_3120.glb",
+      "buildings": 1,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 31764
+    },
+    {
+      "tile": "3570_3121",
+      "file": "karak_3570_3121.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 4512
+    },
+    {
+      "tile": "3570_3122",
+      "file": "karak_3570_3122.glb",
+      "buildings": 0,
+      "streets": 43,
+      "labels": 3,
+      "bytes": 40396
+    },
+    {
+      "tile": "3570_3123",
+      "file": "karak_3570_3123.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 4824
+    },
+    {
+      "tile": "3570_3124",
+      "file": "karak_3570_3124.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 5088
+    },
+    {
+      "tile": "3571_3115",
+      "file": "karak_3571_3115.glb",
+      "buildings": 1,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 32412
+    },
+    {
+      "tile": "3571_3116",
+      "file": "karak_3571_3116.glb",
+      "buildings": 35,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 274864
+    },
+    {
+      "tile": "3571_3117",
+      "file": "karak_3571_3117.glb",
+      "buildings": 269,
+      "streets": 73,
+      "labels": 1,
+      "bytes": 1963332
+    },
+    {
+      "tile": "3571_3118",
+      "file": "karak_3571_3118.glb",
+      "buildings": 36,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 281512
+    },
+    {
+      "tile": "3571_3119",
+      "file": "karak_3571_3119.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 7168
+    },
+    {
+      "tile": "3571_3120",
+      "file": "karak_3571_3120.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 13484
+    },
+    {
+      "tile": "3571_3122",
+      "file": "karak_3571_3122.glb",
+      "buildings": 0,
+      "streets": 21,
+      "labels": 0,
+      "bytes": 21280
+    },
+    {
+      "tile": "3571_3123",
+      "file": "karak_3571_3123.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 3712
+    },
+    {
+      "tile": "3571_3124",
+      "file": "karak_3571_3124.glb",
+      "buildings": 0,
+      "streets": 7,
+      "labels": 1,
+      "bytes": 10760
+    },
+    {
+      "tile": "3572_3115",
+      "file": "karak_3572_3115.glb",
+      "buildings": 21,
+      "streets": 19,
+      "labels": 0,
+      "bytes": 181344
+    },
+    {
+      "tile": "3572_3116",
+      "file": "karak_3572_3116.glb",
+      "buildings": 156,
+      "streets": 76,
+      "labels": 0,
+      "bytes": 1102932
+    },
+    {
+      "tile": "3572_3117",
+      "file": "karak_3572_3117.glb",
+      "buildings": 117,
+      "streets": 67,
+      "labels": 1,
+      "bytes": 842580
+    },
+    {
+      "tile": "3572_3119",
+      "file": "karak_3572_3119.glb",
+      "buildings": 0,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 18696
+    },
+    {
+      "tile": "3572_3120",
+      "file": "karak_3572_3120.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 4708
+    },
+    {
+      "tile": "3572_3121",
+      "file": "karak_3572_3121.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 6452
+    },
+    {
+      "tile": "3572_3122",
+      "file": "karak_3572_3122.glb",
+      "buildings": 0,
+      "streets": 22,
+      "labels": 0,
+      "bytes": 29144
+    },
+    {
+      "tile": "3572_3123",
+      "file": "karak_3572_3123.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 10856
+    },
+    {
+      "tile": "3572_3124",
+      "file": "karak_3572_3124.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 3316
+    },
+    {
+      "tile": "3573_3115",
+      "file": "karak_3573_3115.glb",
+      "buildings": 2,
+      "streets": 21,
+      "labels": 0,
+      "bytes": 39708
+    },
+    {
+      "tile": "3573_3116",
+      "file": "karak_3573_3116.glb",
+      "buildings": 41,
+      "streets": 74,
+      "labels": 17,
+      "bytes": 427852
+    },
+    {
+      "tile": "3573_3117",
+      "file": "karak_3573_3117.glb",
+      "buildings": 55,
+      "streets": 86,
+      "labels": 3,
+      "bytes": 495608
+    },
+    {
+      "tile": "3573_3118",
+      "file": "karak_3573_3118.glb",
+      "buildings": 0,
+      "streets": 49,
+      "labels": 0,
+      "bytes": 71620
+    },
+    {
+      "tile": "3573_3119",
+      "file": "karak_3573_3119.glb",
+      "buildings": 0,
+      "streets": 44,
+      "labels": 0,
+      "bytes": 53940
+    },
+    {
+      "tile": "3573_3120",
+      "file": "karak_3573_3120.glb",
+      "buildings": 0,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 10824
+    },
+    {
+      "tile": "3573_3121",
+      "file": "karak_3573_3121.glb",
+      "buildings": 0,
+      "streets": 30,
+      "labels": 0,
+      "bytes": 33756
+    },
+    {
+      "tile": "3573_3122",
+      "file": "karak_3573_3122.glb",
+      "buildings": 0,
+      "streets": 24,
+      "labels": 0,
+      "bytes": 30692
+    },
+    {
+      "tile": "3573_3123",
+      "file": "karak_3573_3123.glb",
+      "buildings": 0,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 19708
+    },
+    {
+      "tile": "3573_3124",
+      "file": "karak_3573_3124.glb",
+      "buildings": 0,
+      "streets": 15,
+      "labels": 0,
+      "bytes": 24480
+    },
+    {
+      "tile": "3574_3115",
+      "file": "karak_3574_3115.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 1,
+      "bytes": 10272
+    },
+    {
+      "tile": "3574_3116",
+      "file": "karak_3574_3116.glb",
+      "buildings": 70,
+      "streets": 38,
+      "labels": 11,
+      "bytes": 569520
+    },
+    {
+      "tile": "3574_3117",
+      "file": "karak_3574_3117.glb",
+      "buildings": 18,
+      "streets": 13,
+      "labels": 0,
+      "bytes": 140408
+    },
+    {
+      "tile": "3574_3118",
+      "file": "karak_3574_3118.glb",
+      "buildings": 0,
+      "streets": 50,
+      "labels": 0,
+      "bytes": 58644
+    },
+    {
+      "tile": "3574_3119",
+      "file": "karak_3574_3119.glb",
+      "buildings": 0,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 27808
+    },
+    {
+      "tile": "3574_3120",
+      "file": "karak_3574_3120.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 8600
+    },
+    {
+      "tile": "3574_3121",
+      "file": "karak_3574_3121.glb",
+      "buildings": 0,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 12328
+    },
+    {
+      "tile": "3574_3122",
+      "file": "karak_3574_3122.glb",
+      "buildings": 0,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 12728
+    },
+    {
+      "tile": "3574_3123",
+      "file": "karak_3574_3123.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 6328
+    },
+    {
+      "tile": "3574_3124",
+      "file": "karak_3574_3124.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 10396
+    },
+    {
+      "tile": "3575_3116",
+      "file": "karak_3575_3116.glb",
+      "buildings": 7,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 77236
+    },
+    {
+      "tile": "3575_3117",
+      "file": "karak_3575_3117.glb",
+      "buildings": 0,
+      "streets": 21,
+      "labels": 0,
+      "bytes": 25004
+    },
+    {
+      "tile": "3575_3118",
+      "file": "karak_3575_3118.glb",
+      "buildings": 1,
+      "streets": 29,
+      "labels": 0,
+      "bytes": 54300
+    },
+    {
+      "tile": "3575_3119",
+      "file": "karak_3575_3119.glb",
+      "buildings": 0,
+      "streets": 46,
+      "labels": 0,
+      "bytes": 63740
+    },
+    {
+      "tile": "3575_3120",
+      "file": "karak_3575_3120.glb",
+      "buildings": 0,
+      "streets": 42,
+      "labels": 0,
+      "bytes": 55212
+    },
+    {
+      "tile": "3575_3121",
+      "file": "karak_3575_3121.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 10368
+    },
+    {
+      "tile": "3575_3122",
+      "file": "karak_3575_3122.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 8160
+    },
+    {
+      "tile": "3575_3123",
+      "file": "karak_3575_3123.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1496
+    },
+    {
+      "tile": "3575_3124",
+      "file": "karak_3575_3124.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 2872
+    },
+    {
+      "tile": "3576_3115",
+      "file": "karak_3576_3115.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1724
+    },
+    {
+      "tile": "3576_3116",
+      "file": "karak_3576_3116.glb",
+      "buildings": 0,
+      "streets": 22,
+      "labels": 0,
+      "bytes": 22868
+    },
+    {
+      "tile": "3576_3117",
+      "file": "karak_3576_3117.glb",
+      "buildings": 0,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 16300
+    },
+    {
+      "tile": "3576_3119",
+      "file": "karak_3576_3119.glb",
+      "buildings": 0,
+      "streets": 11,
+      "labels": 0,
+      "bytes": 17920
+    },
+    {
+      "tile": "3576_3120",
+      "file": "karak_3576_3120.glb",
+      "buildings": 0,
+      "streets": 77,
+      "labels": 0,
+      "bytes": 91676
+    },
+    {
+      "tile": "3576_3121",
+      "file": "karak_3576_3121.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 9336
+    },
+    {
+      "tile": "3577_3115",
+      "file": "karak_3577_3115.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 19216
+    },
+    {
+      "tile": "3577_3117",
+      "file": "karak_3577_3117.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 7464
+    },
+    {
+      "tile": "3577_3118",
+      "file": "karak_3577_3118.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 24944
+    },
+    {
+      "tile": "3577_3119",
+      "file": "karak_3577_3119.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 2032
+    },
+    {
+      "tile": "3577_3120",
+      "file": "karak_3577_3120.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 3880
+    },
+    {
+      "tile": "3577_3121",
+      "file": "karak_3577_3121.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1164
+    },
+    {
+      "tile": "3577_3122",
+      "file": "karak_3577_3122.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 3432
+    },
+    {
+      "tile": "3578_3115",
+      "file": "karak_3578_3115.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 4328
+    },
+    {
+      "tile": "3578_3116",
+      "file": "karak_3578_3116.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 16176
+    },
+    {
+      "tile": "3578_3117",
+      "file": "karak_3578_3117.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 7976
+    },
+    {
+      "tile": "3578_3118",
+      "file": "karak_3578_3118.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 15968
+    },
+    {
+      "tile": "3578_3119",
+      "file": "karak_3578_3119.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 9632
+    },
+    {
+      "tile": "3578_3120",
+      "file": "karak_3578_3120.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 12532
+    },
+    {
+      "tile": "3578_3122",
+      "file": "karak_3578_3122.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 5396
+    },
+    {
+      "tile": "3579_3115",
+      "file": "karak_3579_3115.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 6620
+    },
+    {
+      "tile": "3579_3118",
+      "file": "karak_3579_3118.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 3928
+    },
+    {
+      "tile": "3579_3119",
+      "file": "karak_3579_3119.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 4160
+    }
+  ],
+  "counts": {
+    "buildings": 1719,
+    "streets": 1830,
+    "street_labels": 70
+  }
+}
