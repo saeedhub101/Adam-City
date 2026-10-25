@@ -14,17 +14,19 @@
         "LineString": 230906,
         "MultiPolygon": 231208
       },
+      "features_tagged_as_building_or_part": 462048,
+      "polygon_building_features": 231164,
       "features_with_any_tag_group": {
-        "window_door_entrance": 256,
-        "explicit_height": 7546,
-        "levels": 9552,
-        "roof_detail": 253,
-        "facade_material_or_colour": 24
+        "explicit_height": 3776,
+        "levels": 4783,
+        "roof_detail": 127,
+        "facade_material_or_colour": 12,
+        "window_door_entrance": 1
       },
       "explicit_height_tag_counts": {
-        "height": 7546
+        "height": 3776
       },
-      "note": "Counts are per feature and groups can overlap; tags are mapped data, not proof of a field survey."
+      "note": "Coverage counts below are only for polygon features tagged building/building:part; groups overlap and OSM tags are not proof of a field survey."
     },
     {
       "country": "Jordan",
@@ -37,17 +39,19 @@
         "LineString": 230907,
         "MultiPolygon": 231209
       },
+      "features_tagged_as_building_or_part": 462048,
+      "polygon_building_features": 231164,
       "features_with_any_tag_group": {
-        "window_door_entrance": 297,
-        "explicit_height": 7546,
-        "levels": 9552,
-        "roof_detail": 253,
-        "facade_material_or_colour": 26
+        "explicit_height": 3776,
+        "levels": 4783,
+        "roof_detail": 127,
+        "facade_material_or_colour": 12,
+        "window_door_entrance": 1
       },
       "explicit_height_tag_counts": {
-        "height": 7546
+        "height": 3776
       },
-      "note": "Counts are per feature and groups can overlap; tags are mapped data, not proof of a field survey."
+      "note": "Coverage counts below are only for polygon features tagged building/building:part; groups overlap and OSM tags are not proof of a field survey."
     },
     {
       "country": "Palestine",
@@ -60,18 +64,20 @@
         "LineString": 1013189,
         "MultiPolygon": 1014554
       },
+      "features_tagged_as_building_or_part": 2027454,
+      "polygon_building_features": 1014335,
       "features_with_any_tag_group": {
-        "window_door_entrance": 10176,
-        "levels": 60995,
-        "roof_detail": 52153,
-        "explicit_height": 12753,
-        "facade_material_or_colour": 10288
+        "explicit_height": 6397,
+        "roof_detail": 26100,
+        "facade_material_or_colour": 5157,
+        "levels": 30577,
+        "window_door_entrance": 2
       },
       "explicit_height_tag_counts": {
-        "height": 12753,
-        "building:height": 12
+        "height": 6397,
+        "building:height": 6
       },
-      "note": "Counts are per feature and groups can overlap; tags are mapped data, not proof of a field survey."
+      "note": "Coverage counts below are only for polygon features tagged building/building:part; groups overlap and OSM tags are not proof of a field survey."
     },
     {
       "country": "Palestine",
@@ -84,18 +90,20 @@
         "LineString": 1013254,
         "MultiPolygon": 1014598
       },
+      "features_tagged_as_building_or_part": 2027455,
+      "polygon_building_features": 1014335,
       "features_with_any_tag_group": {
-        "window_door_entrance": 10927,
-        "levels": 60999,
-        "roof_detail": 52255,
-        "explicit_height": 12843,
-        "facade_material_or_colour": 10381
+        "explicit_height": 6397,
+        "roof_detail": 26100,
+        "facade_material_or_colour": 5157,
+        "levels": 30577,
+        "window_door_entrance": 2
       },
       "explicit_height_tag_counts": {
-        "height": 12843,
-        "building:height": 12
+        "height": 6397,
+        "building:height": 6
       },
-      "note": "Counts are per feature and groups can overlap; tags are mapped data, not proof of a field survey."
+      "note": "Coverage counts below are only for polygon features tagged building/building:part; groups overlap and OSM tags are not proof of a field survey."
     }
   ]
 }
