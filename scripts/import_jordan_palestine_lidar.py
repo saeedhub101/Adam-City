@@ -61,6 +61,16 @@ def download(url,title,source):
     if suffix not in {".h5",".hdf5",".nc",".laz",".las",".tif",".tiff",".zip",".gz",".bin"}: suffix=".bin"
     stem=safe(title,80)+"_"+ident
     part=RAW/(stem+suffix+".part")
+    # Reconstruct any committed resume chunks from a previous interrupted attempt.
+    resume_chunks=sorted(RAW.glob(stem+suffix+".resume.part[0-9][0-9][0-9][0-9]"))
+    if not part.exists() and resume_chunks:
+        with open(part,"wb") as out:
+            for chunk_path in resume_chunks:
+                with open(chunk_path,"rb") as src:
+                    while True:
+                        block=src.read(4*1024*1024)
+                        if not block: break
+                        out.write(block)
     try:
         offset=part.stat().st_size if part.exists() else 0
         headers={"Range":f"bytes={offset}-"} if offset else {}
@@ -98,7 +108,20 @@ def download(url,title,source):
         print(f"IMPORTED {source}: {title} ({size} bytes)",flush=True)
         return f"downloaded {size} bytes"
     except Exception as e:
-        state["errors"][ident]={"url":url,"title":title,"source":source,"error":f"{type(e).__name__}: {e}","partial_bytes":part.stat().st_size if part.exists() else 0}
+        partial_size=part.stat().st_size if part.exists() else 0
+        # Persist interrupted downloads in sub-100-MiB chunks so GitHub can store them.
+        if partial_size>CHUNK:
+            for old in resume_chunks: old.unlink(missing_ok=True)
+            with open(part,"rb") as src:
+                index=0
+                while True:
+                    block=src.read(CHUNK)
+                    if not block: break
+                    (RAW/f"{stem}{suffix}.resume.part{index:04d}").write_bytes(block)
+                    index+=1
+            part.unlink(missing_ok=True)
+            partial_size=sum(p.stat().st_size for p in RAW.glob(stem+suffix+".resume.part[0-9][0-9][0-9][0-9]"))
+        state["errors"][ident]={"url":url,"title":title,"source":source,"error":f"{type(e).__name__}: {e}","partial_bytes":partial_size}
         checkpoint("LiDAR retry checkpoint: "+safe(title,80))
         print(f"RETRY NEXT RUN {title}: {e}",flush=True); return f"retryable error: {e}"
 
