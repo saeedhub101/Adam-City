@@ -39,12 +39,22 @@ def main():
             geometry_types = Counter()
             counts = Counter()
             height_values = Counter()
+            polygon_buildings = 0
+            tagged_building_features = 0
             with gzip.open(path, "rb") as stream:
                 for feature in ijson.items(stream, "features.item"):
                     total += 1
                     geom = feature.get("geometry") or {}
                     geometry_types[geom.get("type", "missing")] += 1
                     props = feature.get("properties") or {}
+                    is_building = props.get("building") not in (None, "", "no") or props.get("building:part") not in (None, "", "no")
+                    is_polygon = geom.get("type") in ("Polygon", "MultiPolygon")
+                    if is_building:
+                        tagged_building_features += 1
+                    if is_building and is_polygon:
+                        polygon_buildings += 1
+                    if not (is_building and is_polygon):
+                        continue
                     for group, keys in (
                         ("explicit_height", HEIGHT_KEYS),
                         ("levels", LEVEL_KEYS),
@@ -64,9 +74,11 @@ def main():
                 "path": str(path),
                 "features_scanned": total,
                 "geometry_types": dict(geometry_types),
+                "features_tagged_as_building_or_part": tagged_building_features,
+                "polygon_building_features": polygon_buildings,
                 "features_with_any_tag_group": dict(counts),
                 "explicit_height_tag_counts": dict(height_values),
-                "note": "Counts are per feature and groups can overlap; tags are mapped data, not proof of a field survey."
+                "note": "Coverage counts below are only for polygon features tagged building/building:part; groups overlap and OSM tags are not proof of a field survey."
             })
 
     output = ROOT / "game-world-building-readiness.json"
