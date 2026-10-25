@@ -1,0 +1,3185 @@
+{
+  "city": "Irbid",
+  "bounds": {
+    "west": 35.75,
+    "east": 35.95,
+    "south": 32.45,
+    "north": 32.65
+  },
+  "tile_degrees": 0.01,
+  "tiles": [
+    {
+      "tile": "3575_3245",
+      "file": "irbid_3575_3245.glb",
+      "buildings": 6,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 43732
+    },
+    {
+      "tile": "3575_3246",
+      "file": "irbid_3575_3246.glb",
+      "buildings": 2,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 15052
+    },
+    {
+      "tile": "3575_3247",
+      "file": "irbid_3575_3247.glb",
+      "buildings": 14,
+      "streets": 48,
+      "labels": 0,
+      "bytes": 147644
+    },
+    {
+      "tile": "3575_3248",
+      "file": "irbid_3575_3248.glb",
+      "buildings": 0,
+      "streets": 13,
+      "labels": 0,
+      "bytes": 14308
+    },
+    {
+      "tile": "3575_3249",
+      "file": "irbid_3575_3249.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 3952
+    },
+    {
+      "tile": "3575_3250",
+      "file": "irbid_3575_3250.glb",
+      "buildings": 1,
+      "streets": 15,
+      "labels": 1,
+      "bytes": 38044
+    },
+    {
+      "tile": "3575_3251",
+      "file": "irbid_3575_3251.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 15344
+    },
+    {
+      "tile": "3575_3252",
+      "file": "irbid_3575_3252.glb",
+      "buildings": 2,
+      "streets": 25,
+      "labels": 2,
+      "bytes": 44368
+    },
+    {
+      "tile": "3575_3253",
+      "file": "irbid_3575_3253.glb",
+      "buildings": 0,
+      "streets": 25,
+      "labels": 3,
+      "bytes": 37116
+    },
+    {
+      "tile": "3575_3254",
+      "file": "irbid_3575_3254.glb",
+      "buildings": 0,
+      "streets": 12,
+      "labels": 2,
+      "bytes": 16532
+    },
+    {
+      "tile": "3575_3255",
+      "file": "irbid_3575_3255.glb",
+      "buildings": 0,
+      "streets": 37,
+      "labels": 4,
+      "bytes": 36048
+    },
+    {
+      "tile": "3575_3256",
+      "file": "irbid_3575_3256.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 12452
+    },
+    {
+      "tile": "3575_3257",
+      "file": "irbid_3575_3257.glb",
+      "buildings": 0,
+      "streets": 12,
+      "labels": 1,
+      "bytes": 19084
+    },
+    {
+      "tile": "3575_3258",
+      "file": "irbid_3575_3258.glb",
+      "buildings": 18,
+      "streets": 24,
+      "labels": 0,
+      "bytes": 169580
+    },
+    {
+      "tile": "3575_3259",
+      "file": "irbid_3575_3259.glb",
+      "buildings": 194,
+      "streets": 29,
+      "labels": 2,
+      "bytes": 1375688
+    },
+    {
+      "tile": "3575_3260",
+      "file": "irbid_3575_3260.glb",
+      "buildings": 3,
+      "streets": 2,
+      "labels": 2,
+      "bytes": 36700
+    },
+    {
+      "tile": "3575_3261",
+      "file": "irbid_3575_3261.glb",
+      "buildings": 23,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 155828
+    },
+    {
+      "tile": "3575_3262",
+      "file": "irbid_3575_3262.glb",
+      "buildings": 122,
+      "streets": 16,
+      "labels": 0,
+      "bytes": 791864
+    },
+    {
+      "tile": "3575_3263",
+      "file": "irbid_3575_3263.glb",
+      "buildings": 3,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 48600
+    },
+    {
+      "tile": "3575_3264",
+      "file": "irbid_3575_3264.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 10920
+    },
+    {
+      "tile": "3576_3245",
+      "file": "irbid_3576_3245.glb",
+      "buildings": 1,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 24692
+    },
+    {
+      "tile": "3576_3246",
+      "file": "irbid_3576_3246.glb",
+      "buildings": 3,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 24600
+    },
+    {
+      "tile": "3576_3247",
+      "file": "irbid_3576_3247.glb",
+      "buildings": 101,
+      "streets": 22,
+      "labels": 0,
+      "bytes": 695544
+    },
+    {
+      "tile": "3576_3248",
+      "file": "irbid_3576_3248.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 10988
+    },
+    {
+      "tile": "3576_3249",
+      "file": "irbid_3576_3249.glb",
+      "buildings": 0,
+      "streets": 11,
+      "labels": 0,
+      "bytes": 28700
+    },
+    {
+      "tile": "3576_3250",
+      "file": "irbid_3576_3250.glb",
+      "buildings": 0,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 17164
+    },
+    {
+      "tile": "3576_3251",
+      "file": "irbid_3576_3251.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 23192
+    },
+    {
+      "tile": "3576_3252",
+      "file": "irbid_3576_3252.glb",
+      "buildings": 0,
+      "streets": 14,
+      "labels": 0,
+      "bytes": 18364
+    },
+    {
+      "tile": "3576_3253",
+      "file": "irbid_3576_3253.glb",
+      "buildings": 1,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 29980
+    },
+    {
+      "tile": "3576_3254",
+      "file": "irbid_3576_3254.glb",
+      "buildings": 0,
+      "streets": 15,
+      "labels": 1,
+      "bytes": 23988
+    },
+    {
+      "tile": "3576_3255",
+      "file": "irbid_3576_3255.glb",
+      "buildings": 1,
+      "streets": 52,
+      "labels": 0,
+      "bytes": 68104
+    },
+    {
+      "tile": "3576_3256",
+      "file": "irbid_3576_3256.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 4344
+    },
+    {
+      "tile": "3576_3257",
+      "file": "irbid_3576_3257.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 2644
+    },
+    {
+      "tile": "3576_3258",
+      "file": "irbid_3576_3258.glb",
+      "buildings": 160,
+      "streets": 39,
+      "labels": 0,
+      "bytes": 1128860
+    },
+    {
+      "tile": "3576_3259",
+      "file": "irbid_3576_3259.glb",
+      "buildings": 166,
+      "streets": 12,
+      "labels": 1,
+      "bytes": 1112028
+    },
+    {
+      "tile": "3576_3260",
+      "file": "irbid_3576_3260.glb",
+      "buildings": 225,
+      "streets": 40,
+      "labels": 0,
+      "bytes": 1548572
+    },
+    {
+      "tile": "3576_3261",
+      "file": "irbid_3576_3261.glb",
+      "buildings": 418,
+      "streets": 37,
+      "labels": 1,
+      "bytes": 2856716
+    },
+    {
+      "tile": "3576_3262",
+      "file": "irbid_3576_3262.glb",
+      "buildings": 12,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 118620
+    },
+    {
+      "tile": "3576_3263",
+      "file": "irbid_3576_3263.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 11220
+    },
+    {
+      "tile": "3576_3264",
+      "file": "irbid_3576_3264.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 14988
+    },
+    {
+      "tile": "3577_3245",
+      "file": "irbid_3577_3245.glb",
+      "buildings": 2,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 16164
+    },
+    {
+      "tile": "3577_3246",
+      "file": "irbid_3577_3246.glb",
+      "buildings": 116,
+      "streets": 21,
+      "labels": 0,
+      "bytes": 811628
+    },
+    {
+      "tile": "3577_3247",
+      "file": "irbid_3577_3247.glb",
+      "buildings": 44,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 350136
+    },
+    {
+      "tile": "3577_3248",
+      "file": "irbid_3577_3248.glb",
+      "buildings": 4,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 41908
+    },
+    {
+      "tile": "3577_3249",
+      "file": "irbid_3577_3249.glb",
+      "buildings": 27,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 161144
+    },
+    {
+      "tile": "3577_3250",
+      "file": "irbid_3577_3250.glb",
+      "buildings": 8,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 42468
+    },
+    {
+      "tile": "3577_3251",
+      "file": "irbid_3577_3251.glb",
+      "buildings": 8,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 78480
+    },
+    {
+      "tile": "3577_3252",
+      "file": "irbid_3577_3252.glb",
+      "buildings": 53,
+      "streets": 17,
+      "labels": 0,
+      "bytes": 406152
+    },
+    {
+      "tile": "3577_3253",
+      "file": "irbid_3577_3253.glb",
+      "buildings": 0,
+      "streets": 21,
+      "labels": 0,
+      "bytes": 28852
+    },
+    {
+      "tile": "3577_3254",
+      "file": "irbid_3577_3254.glb",
+      "buildings": 85,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 570660
+    },
+    {
+      "tile": "3577_3255",
+      "file": "irbid_3577_3255.glb",
+      "buildings": 197,
+      "streets": 54,
+      "labels": 0,
+      "bytes": 1415508
+    },
+    {
+      "tile": "3577_3256",
+      "file": "irbid_3577_3256.glb",
+      "buildings": 204,
+      "streets": 31,
+      "labels": 0,
+      "bytes": 1412904
+    },
+    {
+      "tile": "3577_3257",
+      "file": "irbid_3577_3257.glb",
+      "buildings": 24,
+      "streets": 7,
+      "labels": 1,
+      "bytes": 175092
+    },
+    {
+      "tile": "3577_3258",
+      "file": "irbid_3577_3258.glb",
+      "buildings": 212,
+      "streets": 46,
+      "labels": 0,
+      "bytes": 1483776
+    },
+    {
+      "tile": "3577_3259",
+      "file": "irbid_3577_3259.glb",
+      "buildings": 57,
+      "streets": 16,
+      "labels": 1,
+      "bytes": 419124
+    },
+    {
+      "tile": "3577_3260",
+      "file": "irbid_3577_3260.glb",
+      "buildings": 151,
+      "streets": 38,
+      "labels": 0,
+      "bytes": 1037900
+    },
+    {
+      "tile": "3577_3261",
+      "file": "irbid_3577_3261.glb",
+      "buildings": 12,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 105840
+    },
+    {
+      "tile": "3577_3262",
+      "file": "irbid_3577_3262.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 5276
+    },
+    {
+      "tile": "3577_3263",
+      "file": "irbid_3577_3263.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 6948
+    },
+    {
+      "tile": "3577_3264",
+      "file": "irbid_3577_3264.glb",
+      "buildings": 325,
+      "streets": 56,
+      "labels": 0,
+      "bytes": 2099796
+    },
+    {
+      "tile": "3578_3245",
+      "file": "irbid_3578_3245.glb",
+      "buildings": 3,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 26704
+    },
+    {
+      "tile": "3578_3246",
+      "file": "irbid_3578_3246.glb",
+      "buildings": 0,
+      "streets": 16,
+      "labels": 0,
+      "bytes": 23348
+    },
+    {
+      "tile": "3578_3247",
+      "file": "irbid_3578_3247.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 11428
+    },
+    {
+      "tile": "3578_3248",
+      "file": "irbid_3578_3248.glb",
+      "buildings": 5,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 53472
+    },
+    {
+      "tile": "3578_3249",
+      "file": "irbid_3578_3249.glb",
+      "buildings": 130,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 869388
+    },
+    {
+      "tile": "3578_3250",
+      "file": "irbid_3578_3250.glb",
+      "buildings": 13,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 108336
+    },
+    {
+      "tile": "3578_3251",
+      "file": "irbid_3578_3251.glb",
+      "buildings": 2,
+      "streets": 40,
+      "labels": 1,
+      "bytes": 79260
+    },
+    {
+      "tile": "3578_3252",
+      "file": "irbid_3578_3252.glb",
+      "buildings": 0,
+      "streets": 36,
+      "labels": 0,
+      "bytes": 49832
+    },
+    {
+      "tile": "3578_3253",
+      "file": "irbid_3578_3253.glb",
+      "buildings": 5,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 59720
+    },
+    {
+      "tile": "3578_3254",
+      "file": "irbid_3578_3254.glb",
+      "buildings": 36,
+      "streets": 14,
+      "labels": 0,
+      "bytes": 306232
+    },
+    {
+      "tile": "3578_3255",
+      "file": "irbid_3578_3255.glb",
+      "buildings": 77,
+      "streets": 16,
+      "labels": 0,
+      "bytes": 596452
+    },
+    {
+      "tile": "3578_3256",
+      "file": "irbid_3578_3256.glb",
+      "buildings": 211,
+      "streets": 34,
+      "labels": 0,
+      "bytes": 1479860
+    },
+    {
+      "tile": "3578_3257",
+      "file": "irbid_3578_3257.glb",
+      "buildings": 82,
+      "streets": 7,
+      "labels": 1,
+      "bytes": 552868
+    },
+    {
+      "tile": "3578_3258",
+      "file": "irbid_3578_3258.glb",
+      "buildings": 19,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 154780
+    },
+    {
+      "tile": "3578_3259",
+      "file": "irbid_3578_3259.glb",
+      "buildings": 18,
+      "streets": 5,
+      "labels": 1,
+      "bytes": 135376
+    },
+    {
+      "tile": "3578_3260",
+      "file": "irbid_3578_3260.glb",
+      "buildings": 77,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 547924
+    },
+    {
+      "tile": "3578_3261",
+      "file": "irbid_3578_3261.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1964
+    },
+    {
+      "tile": "3578_3262",
+      "file": "irbid_3578_3262.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 17060
+    },
+    {
+      "tile": "3578_3263",
+      "file": "irbid_3578_3263.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 13436
+    },
+    {
+      "tile": "3578_3264",
+      "file": "irbid_3578_3264.glb",
+      "buildings": 19,
+      "streets": 28,
+      "labels": 0,
+      "bytes": 163516
+    },
+    {
+      "tile": "3579_3245",
+      "file": "irbid_3579_3245.glb",
+      "buildings": 4,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 32764
+    },
+    {
+      "tile": "3579_3246",
+      "file": "irbid_3579_3246.glb",
+      "buildings": 15,
+      "streets": 39,
+      "labels": 0,
+      "bytes": 129332
+    },
+    {
+      "tile": "3579_3247",
+      "file": "irbid_3579_3247.glb",
+      "buildings": 21,
+      "streets": 65,
+      "labels": 0,
+      "bytes": 211888
+    },
+    {
+      "tile": "3579_3248",
+      "file": "irbid_3579_3248.glb",
+      "buildings": 127,
+      "streets": 75,
+      "labels": 1,
+      "bytes": 921748
+    },
+    {
+      "tile": "3579_3249",
+      "file": "irbid_3579_3249.glb",
+      "buildings": 136,
+      "streets": 38,
+      "labels": 0,
+      "bytes": 932648
+    },
+    {
+      "tile": "3579_3250",
+      "file": "irbid_3579_3250.glb",
+      "buildings": 10,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 82504
+    },
+    {
+      "tile": "3579_3251",
+      "file": "irbid_3579_3251.glb",
+      "buildings": 0,
+      "streets": 13,
+      "labels": 0,
+      "bytes": 24032
+    },
+    {
+      "tile": "3579_3252",
+      "file": "irbid_3579_3252.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 7980
+    },
+    {
+      "tile": "3579_3253",
+      "file": "irbid_3579_3253.glb",
+      "buildings": 46,
+      "streets": 22,
+      "labels": 0,
+      "bytes": 322124
+    },
+    {
+      "tile": "3579_3254",
+      "file": "irbid_3579_3254.glb",
+      "buildings": 41,
+      "streets": 48,
+      "labels": 0,
+      "bytes": 341916
+    },
+    {
+      "tile": "3579_3255",
+      "file": "irbid_3579_3255.glb",
+      "buildings": 81,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 589484
+    },
+    {
+      "tile": "3579_3256",
+      "file": "irbid_3579_3256.glb",
+      "buildings": 183,
+      "streets": 29,
+      "labels": 0,
+      "bytes": 1280672
+    },
+    {
+      "tile": "3579_3257",
+      "file": "irbid_3579_3257.glb",
+      "buildings": 119,
+      "streets": 15,
+      "labels": 0,
+      "bytes": 816584
+    },
+    {
+      "tile": "3579_3258",
+      "file": "irbid_3579_3258.glb",
+      "buildings": 377,
+      "streets": 70,
+      "labels": 1,
+      "bytes": 2608552
+    },
+    {
+      "tile": "3579_3259",
+      "file": "irbid_3579_3259.glb",
+      "buildings": 43,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 315528
+    },
+    {
+      "tile": "3579_3260",
+      "file": "irbid_3579_3260.glb",
+      "buildings": 69,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 475496
+    },
+    {
+      "tile": "3579_3262",
+      "file": "irbid_3579_3262.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 15804
+    },
+    {
+      "tile": "3579_3264",
+      "file": "irbid_3579_3264.glb",
+      "buildings": 0,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 21684
+    },
+    {
+      "tile": "3580_3245",
+      "file": "irbid_3580_3245.glb",
+      "buildings": 66,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 392084
+    },
+    {
+      "tile": "3580_3246",
+      "file": "irbid_3580_3246.glb",
+      "buildings": 61,
+      "streets": 15,
+      "labels": 0,
+      "bytes": 419548
+    },
+    {
+      "tile": "3580_3247",
+      "file": "irbid_3580_3247.glb",
+      "buildings": 11,
+      "streets": 54,
+      "labels": 0,
+      "bytes": 133012
+    },
+    {
+      "tile": "3580_3248",
+      "file": "irbid_3580_3248.glb",
+      "buildings": 86,
+      "streets": 35,
+      "labels": 0,
+      "bytes": 651352
+    },
+    {
+      "tile": "3580_3249",
+      "file": "irbid_3580_3249.glb",
+      "buildings": 8,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 60092
+    },
+    {
+      "tile": "3580_3250",
+      "file": "irbid_3580_3250.glb",
+      "buildings": 3,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 25640
+    },
+    {
+      "tile": "3580_3251",
+      "file": "irbid_3580_3251.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 12980
+    },
+    {
+      "tile": "3580_3252",
+      "file": "irbid_3580_3252.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 7184
+    },
+    {
+      "tile": "3580_3253",
+      "file": "irbid_3580_3253.glb",
+      "buildings": 0,
+      "streets": 55,
+      "labels": 0,
+      "bytes": 57440
+    },
+    {
+      "tile": "3580_3254",
+      "file": "irbid_3580_3254.glb",
+      "buildings": 253,
+      "streets": 94,
+      "labels": 0,
+      "bytes": 1926404
+    },
+    {
+      "tile": "3580_3255",
+      "file": "irbid_3580_3255.glb",
+      "buildings": 323,
+      "streets": 84,
+      "labels": 0,
+      "bytes": 2511416
+    },
+    {
+      "tile": "3580_3256",
+      "file": "irbid_3580_3256.glb",
+      "buildings": 80,
+      "streets": 28,
+      "labels": 0,
+      "bytes": 641300
+    },
+    {
+      "tile": "3580_3257",
+      "file": "irbid_3580_3257.glb",
+      "buildings": 297,
+      "streets": 51,
+      "labels": 0,
+      "bytes": 2062264
+    },
+    {
+      "tile": "3580_3258",
+      "file": "irbid_3580_3258.glb",
+      "buildings": 116,
+      "streets": 15,
+      "labels": 0,
+      "bytes": 791464
+    },
+    {
+      "tile": "3580_3259",
+      "file": "irbid_3580_3259.glb",
+      "buildings": 43,
+      "streets": 8,
+      "labels": 1,
+      "bytes": 279312
+    },
+    {
+      "tile": "3580_3260",
+      "file": "irbid_3580_3260.glb",
+      "buildings": 122,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 827864
+    },
+    {
+      "tile": "3580_3261",
+      "file": "irbid_3580_3261.glb",
+      "buildings": 0,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 9300
+    },
+    {
+      "tile": "3580_3262",
+      "file": "irbid_3580_3262.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 4972
+    },
+    {
+      "tile": "3580_3264",
+      "file": "irbid_3580_3264.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 9776
+    },
+    {
+      "tile": "3581_3245",
+      "file": "irbid_3581_3245.glb",
+      "buildings": 14,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 98408
+    },
+    {
+      "tile": "3581_3246",
+      "file": "irbid_3581_3246.glb",
+      "buildings": 31,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 238804
+    },
+    {
+      "tile": "3581_3247",
+      "file": "irbid_3581_3247.glb",
+      "buildings": 66,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 474636
+    },
+    {
+      "tile": "3581_3248",
+      "file": "irbid_3581_3248.glb",
+      "buildings": 30,
+      "streets": 17,
+      "labels": 0,
+      "bytes": 232000
+    },
+    {
+      "tile": "3581_3249",
+      "file": "irbid_3581_3249.glb",
+      "buildings": 110,
+      "streets": 16,
+      "labels": 0,
+      "bytes": 753604
+    },
+    {
+      "tile": "3581_3250",
+      "file": "irbid_3581_3250.glb",
+      "buildings": 16,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 111824
+    },
+    {
+      "tile": "3581_3251",
+      "file": "irbid_3581_3251.glb",
+      "buildings": 11,
+      "streets": 33,
+      "labels": 0,
+      "bytes": 114240
+    },
+    {
+      "tile": "3581_3252",
+      "file": "irbid_3581_3252.glb",
+      "buildings": 1,
+      "streets": 26,
+      "labels": 0,
+      "bytes": 48664
+    },
+    {
+      "tile": "3581_3253",
+      "file": "irbid_3581_3253.glb",
+      "buildings": 8,
+      "streets": 29,
+      "labels": 0,
+      "bytes": 102040
+    },
+    {
+      "tile": "3581_3254",
+      "file": "irbid_3581_3254.glb",
+      "buildings": 65,
+      "streets": 48,
+      "labels": 0,
+      "bytes": 491296
+    },
+    {
+      "tile": "3581_3255",
+      "file": "irbid_3581_3255.glb",
+      "buildings": 34,
+      "streets": 32,
+      "labels": 0,
+      "bytes": 300276
+    },
+    {
+      "tile": "3581_3256",
+      "file": "irbid_3581_3256.glb",
+      "buildings": 1,
+      "streets": 14,
+      "labels": 0,
+      "bytes": 36012
+    },
+    {
+      "tile": "3581_3257",
+      "file": "irbid_3581_3257.glb",
+      "buildings": 27,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 229548
+    },
+    {
+      "tile": "3581_3258",
+      "file": "irbid_3581_3258.glb",
+      "buildings": 33,
+      "streets": 32,
+      "labels": 0,
+      "bytes": 274736
+    },
+    {
+      "tile": "3581_3259",
+      "file": "irbid_3581_3259.glb",
+      "buildings": 17,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 132560
+    },
+    {
+      "tile": "3581_3260",
+      "file": "irbid_3581_3260.glb",
+      "buildings": 83,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 563136
+    },
+    {
+      "tile": "3581_3261",
+      "file": "irbid_3581_3261.glb",
+      "buildings": 11,
+      "streets": 13,
+      "labels": 0,
+      "bytes": 107748
+    },
+    {
+      "tile": "3581_3262",
+      "file": "irbid_3581_3262.glb",
+      "buildings": 0,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 27996
+    },
+    {
+      "tile": "3581_3263",
+      "file": "irbid_3581_3263.glb",
+      "buildings": 14,
+      "streets": 27,
+      "labels": 0,
+      "bytes": 141872
+    },
+    {
+      "tile": "3581_3264",
+      "file": "irbid_3581_3264.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 6852
+    },
+    {
+      "tile": "3582_3245",
+      "file": "irbid_3582_3245.glb",
+      "buildings": 128,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 881528
+    },
+    {
+      "tile": "3582_3246",
+      "file": "irbid_3582_3246.glb",
+      "buildings": 10,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 84840
+    },
+    {
+      "tile": "3582_3247",
+      "file": "irbid_3582_3247.glb",
+      "buildings": 27,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 196356
+    },
+    {
+      "tile": "3582_3248",
+      "file": "irbid_3582_3248.glb",
+      "buildings": 192,
+      "streets": 24,
+      "labels": 0,
+      "bytes": 1256092
+    },
+    {
+      "tile": "3582_3249",
+      "file": "irbid_3582_3249.glb",
+      "buildings": 276,
+      "streets": 36,
+      "labels": 0,
+      "bytes": 1827952
+    },
+    {
+      "tile": "3582_3250",
+      "file": "irbid_3582_3250.glb",
+      "buildings": 30,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 201076
+    },
+    {
+      "tile": "3582_3251",
+      "file": "irbid_3582_3251.glb",
+      "buildings": 0,
+      "streets": 17,
+      "labels": 0,
+      "bytes": 40220
+    },
+    {
+      "tile": "3582_3252",
+      "file": "irbid_3582_3252.glb",
+      "buildings": 0,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 12236
+    },
+    {
+      "tile": "3582_3253",
+      "file": "irbid_3582_3253.glb",
+      "buildings": 97,
+      "streets": 33,
+      "labels": 0,
+      "bytes": 806072
+    },
+    {
+      "tile": "3582_3254",
+      "file": "irbid_3582_3254.glb",
+      "buildings": 63,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 536836
+    },
+    {
+      "tile": "3582_3255",
+      "file": "irbid_3582_3255.glb",
+      "buildings": 489,
+      "streets": 55,
+      "labels": 0,
+      "bytes": 3355112
+    },
+    {
+      "tile": "3582_3256",
+      "file": "irbid_3582_3256.glb",
+      "buildings": 59,
+      "streets": 72,
+      "labels": 0,
+      "bytes": 517620
+    },
+    {
+      "tile": "3582_3257",
+      "file": "irbid_3582_3257.glb",
+      "buildings": 38,
+      "streets": 60,
+      "labels": 0,
+      "bytes": 415720
+    },
+    {
+      "tile": "3582_3258",
+      "file": "irbid_3582_3258.glb",
+      "buildings": 55,
+      "streets": 45,
+      "labels": 0,
+      "bytes": 437848
+    },
+    {
+      "tile": "3582_3259",
+      "file": "irbid_3582_3259.glb",
+      "buildings": 10,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 78012
+    },
+    {
+      "tile": "3582_3260",
+      "file": "irbid_3582_3260.glb",
+      "buildings": 3,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 31904
+    },
+    {
+      "tile": "3582_3261",
+      "file": "irbid_3582_3261.glb",
+      "buildings": 88,
+      "streets": 37,
+      "labels": 0,
+      "bytes": 623316
+    },
+    {
+      "tile": "3582_3262",
+      "file": "irbid_3582_3262.glb",
+      "buildings": 46,
+      "streets": 37,
+      "labels": 0,
+      "bytes": 367252
+    },
+    {
+      "tile": "3582_3263",
+      "file": "irbid_3582_3263.glb",
+      "buildings": 51,
+      "streets": 52,
+      "labels": 0,
+      "bytes": 412880
+    },
+    {
+      "tile": "3582_3264",
+      "file": "irbid_3582_3264.glb",
+      "buildings": 4,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 58396
+    },
+    {
+      "tile": "3583_3245",
+      "file": "irbid_3583_3245.glb",
+      "buildings": 32,
+      "streets": 11,
+      "labels": 0,
+      "bytes": 225732
+    },
+    {
+      "tile": "3583_3246",
+      "file": "irbid_3583_3246.glb",
+      "buildings": 39,
+      "streets": 11,
+      "labels": 0,
+      "bytes": 261072
+    },
+    {
+      "tile": "3583_3247",
+      "file": "irbid_3583_3247.glb",
+      "buildings": 68,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 434496
+    },
+    {
+      "tile": "3583_3248",
+      "file": "irbid_3583_3248.glb",
+      "buildings": 114,
+      "streets": 44,
+      "labels": 0,
+      "bytes": 766224
+    },
+    {
+      "tile": "3583_3249",
+      "file": "irbid_3583_3249.glb",
+      "buildings": 114,
+      "streets": 19,
+      "labels": 0,
+      "bytes": 750124
+    },
+    {
+      "tile": "3583_3250",
+      "file": "irbid_3583_3250.glb",
+      "buildings": 39,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 269768
+    },
+    {
+      "tile": "3583_3251",
+      "file": "irbid_3583_3251.glb",
+      "buildings": 5,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 63200
+    },
+    {
+      "tile": "3583_3252",
+      "file": "irbid_3583_3252.glb",
+      "buildings": 93,
+      "streets": 79,
+      "labels": 0,
+      "bytes": 847832
+    },
+    {
+      "tile": "3583_3253",
+      "file": "irbid_3583_3253.glb",
+      "buildings": 455,
+      "streets": 73,
+      "labels": 0,
+      "bytes": 3567864
+    },
+    {
+      "tile": "3583_3254",
+      "file": "irbid_3583_3254.glb",
+      "buildings": 664,
+      "streets": 92,
+      "labels": 0,
+      "bytes": 4930308
+    },
+    {
+      "tile": "3583_3255",
+      "file": "irbid_3583_3255.glb",
+      "buildings": 1263,
+      "streets": 129,
+      "labels": 0,
+      "bytes": 8858096
+    },
+    {
+      "tile": "3583_3256",
+      "file": "irbid_3583_3256.glb",
+      "buildings": 705,
+      "streets": 111,
+      "labels": 0,
+      "bytes": 4878100
+    },
+    {
+      "tile": "3583_3257",
+      "file": "irbid_3583_3257.glb",
+      "buildings": 309,
+      "streets": 103,
+      "labels": 0,
+      "bytes": 2304504
+    },
+    {
+      "tile": "3583_3258",
+      "file": "irbid_3583_3258.glb",
+      "buildings": 208,
+      "streets": 75,
+      "labels": 0,
+      "bytes": 1604624
+    },
+    {
+      "tile": "3583_3259",
+      "file": "irbid_3583_3259.glb",
+      "buildings": 0,
+      "streets": 19,
+      "labels": 0,
+      "bytes": 33884
+    },
+    {
+      "tile": "3583_3260",
+      "file": "irbid_3583_3260.glb",
+      "buildings": 0,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 23164
+    },
+    {
+      "tile": "3583_3261",
+      "file": "irbid_3583_3261.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 9060
+    },
+    {
+      "tile": "3583_3262",
+      "file": "irbid_3583_3262.glb",
+      "buildings": 23,
+      "streets": 16,
+      "labels": 0,
+      "bytes": 191692
+    },
+    {
+      "tile": "3583_3263",
+      "file": "irbid_3583_3263.glb",
+      "buildings": 46,
+      "streets": 35,
+      "labels": 4,
+      "bytes": 413976
+    },
+    {
+      "tile": "3583_3264",
+      "file": "irbid_3583_3264.glb",
+      "buildings": 67,
+      "streets": 16,
+      "labels": 0,
+      "bytes": 550760
+    },
+    {
+      "tile": "3584_3245",
+      "file": "irbid_3584_3245.glb",
+      "buildings": 5,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 47488
+    },
+    {
+      "tile": "3584_3246",
+      "file": "irbid_3584_3246.glb",
+      "buildings": 11,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 108104
+    },
+    {
+      "tile": "3584_3247",
+      "file": "irbid_3584_3247.glb",
+      "buildings": 62,
+      "streets": 43,
+      "labels": 0,
+      "bytes": 472576
+    },
+    {
+      "tile": "3584_3248",
+      "file": "irbid_3584_3248.glb",
+      "buildings": 38,
+      "streets": 62,
+      "labels": 0,
+      "bytes": 324392
+    },
+    {
+      "tile": "3584_3249",
+      "file": "irbid_3584_3249.glb",
+      "buildings": 3,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 41760
+    },
+    {
+      "tile": "3584_3250",
+      "file": "irbid_3584_3250.glb",
+      "buildings": 11,
+      "streets": 31,
+      "labels": 0,
+      "bytes": 127684
+    },
+    {
+      "tile": "3584_3251",
+      "file": "irbid_3584_3251.glb",
+      "buildings": 47,
+      "streets": 58,
+      "labels": 0,
+      "bytes": 430664
+    },
+    {
+      "tile": "3584_3252",
+      "file": "irbid_3584_3252.glb",
+      "buildings": 203,
+      "streets": 91,
+      "labels": 0,
+      "bytes": 1695452
+    },
+    {
+      "tile": "3584_3253",
+      "file": "irbid_3584_3253.glb",
+      "buildings": 755,
+      "streets": 82,
+      "labels": 0,
+      "bytes": 6315484
+    },
+    {
+      "tile": "3584_3254",
+      "file": "irbid_3584_3254.glb",
+      "buildings": 1165,
+      "streets": 107,
+      "labels": 1,
+      "bytes": 8513800
+    },
+    {
+      "tile": "3584_3255",
+      "file": "irbid_3584_3255.glb",
+      "buildings": 737,
+      "streets": 149,
+      "labels": 1,
+      "bytes": 6728052
+    },
+    {
+      "tile": "3584_3256",
+      "file": "irbid_3584_3256.glb",
+      "buildings": 426,
+      "streets": 137,
+      "labels": 2,
+      "bytes": 3254848
+    },
+    {
+      "tile": "3584_3257",
+      "file": "irbid_3584_3257.glb",
+      "buildings": 853,
+      "streets": 93,
+      "labels": 0,
+      "bytes": 6256460
+    },
+    {
+      "tile": "3584_3258",
+      "file": "irbid_3584_3258.glb",
+      "buildings": 289,
+      "streets": 77,
+      "labels": 0,
+      "bytes": 2129380
+    },
+    {
+      "tile": "3584_3259",
+      "file": "irbid_3584_3259.glb",
+      "buildings": 25,
+      "streets": 42,
+      "labels": 0,
+      "bytes": 222828
+    },
+    {
+      "tile": "3584_3260",
+      "file": "irbid_3584_3260.glb",
+      "buildings": 1,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 25488
+    },
+    {
+      "tile": "3584_3261",
+      "file": "irbid_3584_3261.glb",
+      "buildings": 3,
+      "streets": 17,
+      "labels": 0,
+      "bytes": 61160
+    },
+    {
+      "tile": "3584_3262",
+      "file": "irbid_3584_3262.glb",
+      "buildings": 7,
+      "streets": 28,
+      "labels": 0,
+      "bytes": 77372
+    },
+    {
+      "tile": "3584_3263",
+      "file": "irbid_3584_3263.glb",
+      "buildings": 20,
+      "streets": 21,
+      "labels": 0,
+      "bytes": 175600
+    },
+    {
+      "tile": "3584_3264",
+      "file": "irbid_3584_3264.glb",
+      "buildings": 41,
+      "streets": 25,
+      "labels": 0,
+      "bytes": 323752
+    },
+    {
+      "tile": "3585_3245",
+      "file": "irbid_3585_3245.glb",
+      "buildings": 66,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 440940
+    },
+    {
+      "tile": "3585_3246",
+      "file": "irbid_3585_3246.glb",
+      "buildings": 80,
+      "streets": 22,
+      "labels": 0,
+      "bytes": 563700
+    },
+    {
+      "tile": "3585_3247",
+      "file": "irbid_3585_3247.glb",
+      "buildings": 15,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 131780
+    },
+    {
+      "tile": "3585_3248",
+      "file": "irbid_3585_3248.glb",
+      "buildings": 0,
+      "streets": 22,
+      "labels": 0,
+      "bytes": 43176
+    },
+    {
+      "tile": "3585_3249",
+      "file": "irbid_3585_3249.glb",
+      "buildings": 6,
+      "streets": 13,
+      "labels": 0,
+      "bytes": 72036
+    },
+    {
+      "tile": "3585_3250",
+      "file": "irbid_3585_3250.glb",
+      "buildings": 43,
+      "streets": 59,
+      "labels": 0,
+      "bytes": 355684
+    },
+    {
+      "tile": "3585_3251",
+      "file": "irbid_3585_3251.glb",
+      "buildings": 94,
+      "streets": 69,
+      "labels": 0,
+      "bytes": 743908
+    },
+    {
+      "tile": "3585_3252",
+      "file": "irbid_3585_3252.glb",
+      "buildings": 377,
+      "streets": 82,
+      "labels": 0,
+      "bytes": 3129672
+    },
+    {
+      "tile": "3585_3253",
+      "file": "irbid_3585_3253.glb",
+      "buildings": 348,
+      "streets": 121,
+      "labels": 9,
+      "bytes": 4756024
+    },
+    {
+      "tile": "3585_3254",
+      "file": "irbid_3585_3254.glb",
+      "buildings": 379,
+      "streets": 112,
+      "labels": 4,
+      "bytes": 3544724
+    },
+    {
+      "tile": "3585_3255",
+      "file": "irbid_3585_3255.glb",
+      "buildings": 430,
+      "streets": 116,
+      "labels": 0,
+      "bytes": 3768816
+    },
+    {
+      "tile": "3585_3256",
+      "file": "irbid_3585_3256.glb",
+      "buildings": 309,
+      "streets": 108,
+      "labels": 0,
+      "bytes": 2640744
+    },
+    {
+      "tile": "3585_3257",
+      "file": "irbid_3585_3257.glb",
+      "buildings": 1052,
+      "streets": 124,
+      "labels": 1,
+      "bytes": 8336408
+    },
+    {
+      "tile": "3585_3258",
+      "file": "irbid_3585_3258.glb",
+      "buildings": 675,
+      "streets": 86,
+      "labels": 0,
+      "bytes": 4797876
+    },
+    {
+      "tile": "3585_3259",
+      "file": "irbid_3585_3259.glb",
+      "buildings": 410,
+      "streets": 84,
+      "labels": 1,
+      "bytes": 2741924
+    },
+    {
+      "tile": "3585_3260",
+      "file": "irbid_3585_3260.glb",
+      "buildings": 85,
+      "streets": 28,
+      "labels": 0,
+      "bytes": 939684
+    },
+    {
+      "tile": "3585_3261",
+      "file": "irbid_3585_3261.glb",
+      "buildings": 21,
+      "streets": 25,
+      "labels": 0,
+      "bytes": 210344
+    },
+    {
+      "tile": "3585_3262",
+      "file": "irbid_3585_3262.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 15904
+    },
+    {
+      "tile": "3585_3263",
+      "file": "irbid_3585_3263.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 10196
+    },
+    {
+      "tile": "3585_3264",
+      "file": "irbid_3585_3264.glb",
+      "buildings": 6,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 53260
+    },
+    {
+      "tile": "3586_3245",
+      "file": "irbid_3586_3245.glb",
+      "buildings": 39,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 297120
+    },
+    {
+      "tile": "3586_3246",
+      "file": "irbid_3586_3246.glb",
+      "buildings": 6,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 59764
+    },
+    {
+      "tile": "3586_3247",
+      "file": "irbid_3586_3247.glb",
+      "buildings": 9,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 87440
+    },
+    {
+      "tile": "3586_3248",
+      "file": "irbid_3586_3248.glb",
+      "buildings": 4,
+      "streets": 42,
+      "labels": 0,
+      "bytes": 87516
+    },
+    {
+      "tile": "3586_3249",
+      "file": "irbid_3586_3249.glb",
+      "buildings": 154,
+      "streets": 23,
+      "labels": 0,
+      "bytes": 1193940
+    },
+    {
+      "tile": "3586_3250",
+      "file": "irbid_3586_3250.glb",
+      "buildings": 112,
+      "streets": 67,
+      "labels": 0,
+      "bytes": 977448
+    },
+    {
+      "tile": "3586_3251",
+      "file": "irbid_3586_3251.glb",
+      "buildings": 107,
+      "streets": 78,
+      "labels": 0,
+      "bytes": 1112588
+    },
+    {
+      "tile": "3586_3252",
+      "file": "irbid_3586_3252.glb",
+      "buildings": 284,
+      "streets": 104,
+      "labels": 0,
+      "bytes": 2637028
+    },
+    {
+      "tile": "3586_3253",
+      "file": "irbid_3586_3253.glb",
+      "buildings": 344,
+      "streets": 144,
+      "labels": 6,
+      "bytes": 3455428
+    },
+    {
+      "tile": "3586_3254",
+      "file": "irbid_3586_3254.glb",
+      "buildings": 268,
+      "streets": 102,
+      "labels": 3,
+      "bytes": 3459808
+    },
+    {
+      "tile": "3586_3255",
+      "file": "irbid_3586_3255.glb",
+      "buildings": 110,
+      "streets": 110,
+      "labels": 5,
+      "bytes": 950904
+    },
+    {
+      "tile": "3586_3256",
+      "file": "irbid_3586_3256.glb",
+      "buildings": 294,
+      "streets": 96,
+      "labels": 0,
+      "bytes": 2171296
+    },
+    {
+      "tile": "3586_3257",
+      "file": "irbid_3586_3257.glb",
+      "buildings": 69,
+      "streets": 127,
+      "labels": 0,
+      "bytes": 645632
+    },
+    {
+      "tile": "3586_3258",
+      "file": "irbid_3586_3258.glb",
+      "buildings": 18,
+      "streets": 90,
+      "labels": 0,
+      "bytes": 225104
+    },
+    {
+      "tile": "3586_3259",
+      "file": "irbid_3586_3259.glb",
+      "buildings": 9,
+      "streets": 69,
+      "labels": 0,
+      "bytes": 140196
+    },
+    {
+      "tile": "3586_3260",
+      "file": "irbid_3586_3260.glb",
+      "buildings": 3,
+      "streets": 50,
+      "labels": 0,
+      "bytes": 86308
+    },
+    {
+      "tile": "3586_3261",
+      "file": "irbid_3586_3261.glb",
+      "buildings": 0,
+      "streets": 42,
+      "labels": 1,
+      "bytes": 38928
+    },
+    {
+      "tile": "3586_3262",
+      "file": "irbid_3586_3262.glb",
+      "buildings": 24,
+      "streets": 66,
+      "labels": 0,
+      "bytes": 261204
+    },
+    {
+      "tile": "3586_3263",
+      "file": "irbid_3586_3263.glb",
+      "buildings": 2,
+      "streets": 29,
+      "labels": 0,
+      "bytes": 50596
+    },
+    {
+      "tile": "3586_3264",
+      "file": "irbid_3586_3264.glb",
+      "buildings": 0,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 23568
+    },
+    {
+      "tile": "3587_3245",
+      "file": "irbid_3587_3245.glb",
+      "buildings": 47,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 308876
+    },
+    {
+      "tile": "3587_3246",
+      "file": "irbid_3587_3246.glb",
+      "buildings": 45,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 329520
+    },
+    {
+      "tile": "3587_3247",
+      "file": "irbid_3587_3247.glb",
+      "buildings": 29,
+      "streets": 39,
+      "labels": 0,
+      "bytes": 248608
+    },
+    {
+      "tile": "3587_3248",
+      "file": "irbid_3587_3248.glb",
+      "buildings": 119,
+      "streets": 89,
+      "labels": 1,
+      "bytes": 902840
+    },
+    {
+      "tile": "3587_3249",
+      "file": "irbid_3587_3249.glb",
+      "buildings": 89,
+      "streets": 40,
+      "labels": 1,
+      "bytes": 679772
+    },
+    {
+      "tile": "3587_3250",
+      "file": "irbid_3587_3250.glb",
+      "buildings": 27,
+      "streets": 24,
+      "labels": 0,
+      "bytes": 280604
+    },
+    {
+      "tile": "3587_3251",
+      "file": "irbid_3587_3251.glb",
+      "buildings": 55,
+      "streets": 37,
+      "labels": 2,
+      "bytes": 561140
+    },
+    {
+      "tile": "3587_3252",
+      "file": "irbid_3587_3252.glb",
+      "buildings": 79,
+      "streets": 83,
+      "labels": 0,
+      "bytes": 905272
+    },
+    {
+      "tile": "3587_3253",
+      "file": "irbid_3587_3253.glb",
+      "buildings": 259,
+      "streets": 85,
+      "labels": 2,
+      "bytes": 2394600
+    },
+    {
+      "tile": "3587_3254",
+      "file": "irbid_3587_3254.glb",
+      "buildings": 84,
+      "streets": 87,
+      "labels": 0,
+      "bytes": 863508
+    },
+    {
+      "tile": "3587_3255",
+      "file": "irbid_3587_3255.glb",
+      "buildings": 6,
+      "streets": 69,
+      "labels": 0,
+      "bytes": 120036
+    },
+    {
+      "tile": "3587_3256",
+      "file": "irbid_3587_3256.glb",
+      "buildings": 59,
+      "streets": 72,
+      "labels": 0,
+      "bytes": 645000
+    },
+    {
+      "tile": "3587_3257",
+      "file": "irbid_3587_3257.glb",
+      "buildings": 231,
+      "streets": 76,
+      "labels": 0,
+      "bytes": 1622816
+    },
+    {
+      "tile": "3587_3258",
+      "file": "irbid_3587_3258.glb",
+      "buildings": 0,
+      "streets": 70,
+      "labels": 0,
+      "bytes": 68580
+    },
+    {
+      "tile": "3587_3259",
+      "file": "irbid_3587_3259.glb",
+      "buildings": 2,
+      "streets": 46,
+      "labels": 0,
+      "bytes": 74452
+    },
+    {
+      "tile": "3587_3260",
+      "file": "irbid_3587_3260.glb",
+      "buildings": 0,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 15800
+    },
+    {
+      "tile": "3587_3261",
+      "file": "irbid_3587_3261.glb",
+      "buildings": 0,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 17112
+    },
+    {
+      "tile": "3587_3262",
+      "file": "irbid_3587_3262.glb",
+      "buildings": 201,
+      "streets": 44,
+      "labels": 0,
+      "bytes": 1427248
+    },
+    {
+      "tile": "3587_3263",
+      "file": "irbid_3587_3263.glb",
+      "buildings": 6,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 55924
+    },
+    {
+      "tile": "3587_3264",
+      "file": "irbid_3587_3264.glb",
+      "buildings": 2,
+      "streets": 28,
+      "labels": 0,
+      "bytes": 52504
+    },
+    {
+      "tile": "3588_3245",
+      "file": "irbid_3588_3245.glb",
+      "buildings": 44,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 291372
+    },
+    {
+      "tile": "3588_3246",
+      "file": "irbid_3588_3246.glb",
+      "buildings": 27,
+      "streets": 49,
+      "labels": 0,
+      "bytes": 241192
+    },
+    {
+      "tile": "3588_3247",
+      "file": "irbid_3588_3247.glb",
+      "buildings": 84,
+      "streets": 58,
+      "labels": 0,
+      "bytes": 666868
+    },
+    {
+      "tile": "3588_3248",
+      "file": "irbid_3588_3248.glb",
+      "buildings": 244,
+      "streets": 87,
+      "labels": 0,
+      "bytes": 2089484
+    },
+    {
+      "tile": "3588_3249",
+      "file": "irbid_3588_3249.glb",
+      "buildings": 475,
+      "streets": 65,
+      "labels": 0,
+      "bytes": 3567984
+    },
+    {
+      "tile": "3588_3250",
+      "file": "irbid_3588_3250.glb",
+      "buildings": 385,
+      "streets": 41,
+      "labels": 0,
+      "bytes": 2637036
+    },
+    {
+      "tile": "3588_3251",
+      "file": "irbid_3588_3251.glb",
+      "buildings": 178,
+      "streets": 38,
+      "labels": 0,
+      "bytes": 1436424
+    },
+    {
+      "tile": "3588_3252",
+      "file": "irbid_3588_3252.glb",
+      "buildings": 152,
+      "streets": 36,
+      "labels": 0,
+      "bytes": 1353124
+    },
+    {
+      "tile": "3588_3253",
+      "file": "irbid_3588_3253.glb",
+      "buildings": 135,
+      "streets": 51,
+      "labels": 1,
+      "bytes": 1293568
+    },
+    {
+      "tile": "3588_3254",
+      "file": "irbid_3588_3254.glb",
+      "buildings": 52,
+      "streets": 75,
+      "labels": 0,
+      "bytes": 504812
+    },
+    {
+      "tile": "3588_3255",
+      "file": "irbid_3588_3255.glb",
+      "buildings": 8,
+      "streets": 54,
+      "labels": 0,
+      "bytes": 115128
+    },
+    {
+      "tile": "3588_3256",
+      "file": "irbid_3588_3256.glb",
+      "buildings": 106,
+      "streets": 47,
+      "labels": 0,
+      "bytes": 917796
+    },
+    {
+      "tile": "3588_3257",
+      "file": "irbid_3588_3257.glb",
+      "buildings": 148,
+      "streets": 23,
+      "labels": 0,
+      "bytes": 1206052
+    },
+    {
+      "tile": "3588_3258",
+      "file": "irbid_3588_3258.glb",
+      "buildings": 8,
+      "streets": 27,
+      "labels": 0,
+      "bytes": 82152
+    },
+    {
+      "tile": "3588_3259",
+      "file": "irbid_3588_3259.glb",
+      "buildings": 8,
+      "streets": 103,
+      "labels": 0,
+      "bytes": 168156
+    },
+    {
+      "tile": "3588_3260",
+      "file": "irbid_3588_3260.glb",
+      "buildings": 50,
+      "streets": 26,
+      "labels": 0,
+      "bytes": 402952
+    },
+    {
+      "tile": "3588_3261",
+      "file": "irbid_3588_3261.glb",
+      "buildings": 0,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 17804
+    },
+    {
+      "tile": "3588_3262",
+      "file": "irbid_3588_3262.glb",
+      "buildings": 95,
+      "streets": 25,
+      "labels": 0,
+      "bytes": 677116
+    },
+    {
+      "tile": "3588_3263",
+      "file": "irbid_3588_3263.glb",
+      "buildings": 12,
+      "streets": 36,
+      "labels": 0,
+      "bytes": 121832
+    },
+    {
+      "tile": "3588_3264",
+      "file": "irbid_3588_3264.glb",
+      "buildings": 39,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 284312
+    },
+    {
+      "tile": "3589_3245",
+      "file": "irbid_3589_3245.glb",
+      "buildings": 4,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 39588
+    },
+    {
+      "tile": "3589_3246",
+      "file": "irbid_3589_3246.glb",
+      "buildings": 0,
+      "streets": 26,
+      "labels": 0,
+      "bytes": 35400
+    },
+    {
+      "tile": "3589_3247",
+      "file": "irbid_3589_3247.glb",
+      "buildings": 0,
+      "streets": 51,
+      "labels": 0,
+      "bytes": 56560
+    },
+    {
+      "tile": "3589_3248",
+      "file": "irbid_3589_3248.glb",
+      "buildings": 48,
+      "streets": 44,
+      "labels": 0,
+      "bytes": 449168
+    },
+    {
+      "tile": "3589_3249",
+      "file": "irbid_3589_3249.glb",
+      "buildings": 343,
+      "streets": 60,
+      "labels": 0,
+      "bytes": 2398584
+    },
+    {
+      "tile": "3589_3250",
+      "file": "irbid_3589_3250.glb",
+      "buildings": 739,
+      "streets": 130,
+      "labels": 2,
+      "bytes": 5061060
+    },
+    {
+      "tile": "3589_3251",
+      "file": "irbid_3589_3251.glb",
+      "buildings": 497,
+      "streets": 98,
+      "labels": 0,
+      "bytes": 4074248
+    },
+    {
+      "tile": "3589_3252",
+      "file": "irbid_3589_3252.glb",
+      "buildings": 268,
+      "streets": 63,
+      "labels": 0,
+      "bytes": 2283800
+    },
+    {
+      "tile": "3589_3253",
+      "file": "irbid_3589_3253.glb",
+      "buildings": 517,
+      "streets": 50,
+      "labels": 0,
+      "bytes": 3694744
+    },
+    {
+      "tile": "3589_3254",
+      "file": "irbid_3589_3254.glb",
+      "buildings": 45,
+      "streets": 22,
+      "labels": 0,
+      "bytes": 355136
+    },
+    {
+      "tile": "3589_3255",
+      "file": "irbid_3589_3255.glb",
+      "buildings": 0,
+      "streets": 68,
+      "labels": 0,
+      "bytes": 65440
+    },
+    {
+      "tile": "3589_3256",
+      "file": "irbid_3589_3256.glb",
+      "buildings": 219,
+      "streets": 49,
+      "labels": 0,
+      "bytes": 1628020
+    },
+    {
+      "tile": "3589_3257",
+      "file": "irbid_3589_3257.glb",
+      "buildings": 16,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 127700
+    },
+    {
+      "tile": "3589_3258",
+      "file": "irbid_3589_3258.glb",
+      "buildings": 18,
+      "streets": 14,
+      "labels": 0,
+      "bytes": 138384
+    },
+    {
+      "tile": "3589_3259",
+      "file": "irbid_3589_3259.glb",
+      "buildings": 0,
+      "streets": 34,
+      "labels": 0,
+      "bytes": 34836
+    },
+    {
+      "tile": "3589_3260",
+      "file": "irbid_3589_3260.glb",
+      "buildings": 107,
+      "streets": 42,
+      "labels": 0,
+      "bytes": 809252
+    },
+    {
+      "tile": "3589_3261",
+      "file": "irbid_3589_3261.glb",
+      "buildings": 0,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 34020
+    },
+    {
+      "tile": "3589_3262",
+      "file": "irbid_3589_3262.glb",
+      "buildings": 0,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 21044
+    },
+    {
+      "tile": "3589_3263",
+      "file": "irbid_3589_3263.glb",
+      "buildings": 10,
+      "streets": 14,
+      "labels": 0,
+      "bytes": 84952
+    },
+    {
+      "tile": "3589_3264",
+      "file": "irbid_3589_3264.glb",
+      "buildings": 7,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 67492
+    },
+    {
+      "tile": "3590_3245",
+      "file": "irbid_3590_3245.glb",
+      "buildings": 33,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 289780
+    },
+    {
+      "tile": "3590_3246",
+      "file": "irbid_3590_3246.glb",
+      "buildings": 2,
+      "streets": 24,
+      "labels": 0,
+      "bytes": 37384
+    },
+    {
+      "tile": "3590_3247",
+      "file": "irbid_3590_3247.glb",
+      "buildings": 8,
+      "streets": 121,
+      "labels": 0,
+      "bytes": 249812
+    },
+    {
+      "tile": "3590_3248",
+      "file": "irbid_3590_3248.glb",
+      "buildings": 27,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 196216
+    },
+    {
+      "tile": "3590_3249",
+      "file": "irbid_3590_3249.glb",
+      "buildings": 88,
+      "streets": 27,
+      "labels": 0,
+      "bytes": 690228
+    },
+    {
+      "tile": "3590_3250",
+      "file": "irbid_3590_3250.glb",
+      "buildings": 240,
+      "streets": 51,
+      "labels": 0,
+      "bytes": 1794780
+    },
+    {
+      "tile": "3590_3251",
+      "file": "irbid_3590_3251.glb",
+      "buildings": 251,
+      "streets": 66,
+      "labels": 0,
+      "bytes": 2095948
+    },
+    {
+      "tile": "3590_3252",
+      "file": "irbid_3590_3252.glb",
+      "buildings": 415,
+      "streets": 71,
+      "labels": 6,
+      "bytes": 3164664
+    },
+    {
+      "tile": "3590_3253",
+      "file": "irbid_3590_3253.glb",
+      "buildings": 757,
+      "streets": 111,
+      "labels": 0,
+      "bytes": 5244108
+    },
+    {
+      "tile": "3590_3254",
+      "file": "irbid_3590_3254.glb",
+      "buildings": 88,
+      "streets": 15,
+      "labels": 0,
+      "bytes": 641456
+    },
+    {
+      "tile": "3590_3255",
+      "file": "irbid_3590_3255.glb",
+      "buildings": 0,
+      "streets": 23,
+      "labels": 0,
+      "bytes": 31484
+    },
+    {
+      "tile": "3590_3256",
+      "file": "irbid_3590_3256.glb",
+      "buildings": 200,
+      "streets": 79,
+      "labels": 0,
+      "bytes": 1467576
+    },
+    {
+      "tile": "3590_3257",
+      "file": "irbid_3590_3257.glb",
+      "buildings": 35,
+      "streets": 32,
+      "labels": 0,
+      "bytes": 304052
+    },
+    {
+      "tile": "3590_3258",
+      "file": "irbid_3590_3258.glb",
+      "buildings": 53,
+      "streets": 23,
+      "labels": 0,
+      "bytes": 355604
+    },
+    {
+      "tile": "3590_3259",
+      "file": "irbid_3590_3259.glb",
+      "buildings": 36,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 248952
+    },
+    {
+      "tile": "3590_3260",
+      "file": "irbid_3590_3260.glb",
+      "buildings": 3,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 19796
+    },
+    {
+      "tile": "3590_3261",
+      "file": "irbid_3590_3261.glb",
+      "buildings": 26,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 214324
+    },
+    {
+      "tile": "3590_3262",
+      "file": "irbid_3590_3262.glb",
+      "buildings": 2,
+      "streets": 44,
+      "labels": 0,
+      "bytes": 69580
+    },
+    {
+      "tile": "3590_3263",
+      "file": "irbid_3590_3263.glb",
+      "buildings": 7,
+      "streets": 58,
+      "labels": 0,
+      "bytes": 115344
+    },
+    {
+      "tile": "3590_3264",
+      "file": "irbid_3590_3264.glb",
+      "buildings": 10,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 96552
+    },
+    {
+      "tile": "3591_3245",
+      "file": "irbid_3591_3245.glb",
+      "buildings": 58,
+      "streets": 15,
+      "labels": 1,
+      "bytes": 478748
+    },
+    {
+      "tile": "3591_3246",
+      "file": "irbid_3591_3246.glb",
+      "buildings": 27,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 202996
+    },
+    {
+      "tile": "3591_3247",
+      "file": "irbid_3591_3247.glb",
+      "buildings": 20,
+      "streets": 33,
+      "labels": 0,
+      "bytes": 162452
+    },
+    {
+      "tile": "3591_3248",
+      "file": "irbid_3591_3248.glb",
+      "buildings": 10,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 62084
+    },
+    {
+      "tile": "3591_3249",
+      "file": "irbid_3591_3249.glb",
+      "buildings": 4,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 35836
+    },
+    {
+      "tile": "3591_3250",
+      "file": "irbid_3591_3250.glb",
+      "buildings": 44,
+      "streets": 24,
+      "labels": 0,
+      "bytes": 386664
+    },
+    {
+      "tile": "3591_3251",
+      "file": "irbid_3591_3251.glb",
+      "buildings": 13,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 118456
+    },
+    {
+      "tile": "3591_3252",
+      "file": "irbid_3591_3252.glb",
+      "buildings": 257,
+      "streets": 51,
+      "labels": 0,
+      "bytes": 2018884
+    },
+    {
+      "tile": "3591_3253",
+      "file": "irbid_3591_3253.glb",
+      "buildings": 234,
+      "streets": 27,
+      "labels": 0,
+      "bytes": 1634356
+    },
+    {
+      "tile": "3591_3254",
+      "file": "irbid_3591_3254.glb",
+      "buildings": 69,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 413180
+    },
+    {
+      "tile": "3591_3255",
+      "file": "irbid_3591_3255.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1184
+    },
+    {
+      "tile": "3591_3256",
+      "file": "irbid_3591_3256.glb",
+      "buildings": 152,
+      "streets": 38,
+      "labels": 0,
+      "bytes": 1114120
+    },
+    {
+      "tile": "3591_3257",
+      "file": "irbid_3591_3257.glb",
+      "buildings": 73,
+      "streets": 43,
+      "labels": 0,
+      "bytes": 526688
+    },
+    {
+      "tile": "3591_3258",
+      "file": "irbid_3591_3258.glb",
+      "buildings": 13,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 113684
+    },
+    {
+      "tile": "3591_3259",
+      "file": "irbid_3591_3259.glb",
+      "buildings": 64,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 443244
+    },
+    {
+      "tile": "3591_3260",
+      "file": "irbid_3591_3260.glb",
+      "buildings": 29,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 187228
+    },
+    {
+      "tile": "3591_3261",
+      "file": "irbid_3591_3261.glb",
+      "buildings": 9,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 52392
+    },
+    {
+      "tile": "3591_3262",
+      "file": "irbid_3591_3262.glb",
+      "buildings": 1,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 16952
+    },
+    {
+      "tile": "3591_3263",
+      "file": "irbid_3591_3263.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 7120
+    },
+    {
+      "tile": "3591_3264",
+      "file": "irbid_3591_3264.glb",
+      "buildings": 3,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 44492
+    },
+    {
+      "tile": "3592_3245",
+      "file": "irbid_3592_3245.glb",
+      "buildings": 25,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 172652
+    },
+    {
+      "tile": "3592_3246",
+      "file": "irbid_3592_3246.glb",
+      "buildings": 5,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 34204
+    },
+    {
+      "tile": "3592_3247",
+      "file": "irbid_3592_3247.glb",
+      "buildings": 11,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 60604
+    },
+    {
+      "tile": "3592_3248",
+      "file": "irbid_3592_3248.glb",
+      "buildings": 8,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 51732
+    },
+    {
+      "tile": "3592_3249",
+      "file": "irbid_3592_3249.glb",
+      "buildings": 10,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 92620
+    },
+    {
+      "tile": "3592_3250",
+      "file": "irbid_3592_3250.glb",
+      "buildings": 0,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 19308
+    },
+    {
+      "tile": "3592_3251",
+      "file": "irbid_3592_3251.glb",
+      "buildings": 3,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 26692
+    },
+    {
+      "tile": "3592_3252",
+      "file": "irbid_3592_3252.glb",
+      "buildings": 47,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 364292
+    },
+    {
+      "tile": "3592_3253",
+      "file": "irbid_3592_3253.glb",
+      "buildings": 28,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 205308
+    },
+    {
+      "tile": "3592_3254",
+      "file": "irbid_3592_3254.glb",
+      "buildings": 27,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 222416
+    },
+    {
+      "tile": "3592_3255",
+      "file": "irbid_3592_3255.glb",
+      "buildings": 24,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 179404
+    },
+    {
+      "tile": "3592_3256",
+      "file": "irbid_3592_3256.glb",
+      "buildings": 7,
+      "streets": 11,
+      "labels": 0,
+      "bytes": 92084
+    },
+    {
+      "tile": "3592_3257",
+      "file": "irbid_3592_3257.glb",
+      "buildings": 6,
+      "streets": 11,
+      "labels": 0,
+      "bytes": 61328
+    },
+    {
+      "tile": "3592_3258",
+      "file": "irbid_3592_3258.glb",
+      "buildings": 31,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 263452
+    },
+    {
+      "tile": "3592_3259",
+      "file": "irbid_3592_3259.glb",
+      "buildings": 142,
+      "streets": 30,
+      "labels": 0,
+      "bytes": 1003156
+    },
+    {
+      "tile": "3592_3260",
+      "file": "irbid_3592_3260.glb",
+      "buildings": 106,
+      "streets": 23,
+      "labels": 0,
+      "bytes": 725172
+    },
+    {
+      "tile": "3592_3261",
+      "file": "irbid_3592_3261.glb",
+      "buildings": 23,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 148220
+    },
+    {
+      "tile": "3592_3262",
+      "file": "irbid_3592_3262.glb",
+      "buildings": 1,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 16652
+    },
+    {
+      "tile": "3592_3263",
+      "file": "irbid_3592_3263.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 2312
+    },
+    {
+      "tile": "3593_3245",
+      "file": "irbid_3593_3245.glb",
+      "buildings": 13,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 107272
+    },
+    {
+      "tile": "3593_3246",
+      "file": "irbid_3593_3246.glb",
+      "buildings": 12,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 65372
+    },
+    {
+      "tile": "3593_3247",
+      "file": "irbid_3593_3247.glb",
+      "buildings": 3,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 32800
+    },
+    {
+      "tile": "3593_3248",
+      "file": "irbid_3593_3248.glb",
+      "buildings": 10,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 67312
+    },
+    {
+      "tile": "3593_3249",
+      "file": "irbid_3593_3249.glb",
+      "buildings": 3,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 62624
+    },
+    {
+      "tile": "3593_3250",
+      "file": "irbid_3593_3250.glb",
+      "buildings": 4,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 100212
+    },
+    {
+      "tile": "3593_3251",
+      "file": "irbid_3593_3251.glb",
+      "buildings": 14,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 119480
+    },
+    {
+      "tile": "3593_3252",
+      "file": "irbid_3593_3252.glb",
+      "buildings": 11,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 73800
+    },
+    {
+      "tile": "3593_3253",
+      "file": "irbid_3593_3253.glb",
+      "buildings": 8,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 69580
+    },
+    {
+      "tile": "3593_3254",
+      "file": "irbid_3593_3254.glb",
+      "buildings": 69,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 370704
+    },
+    {
+      "tile": "3593_3255",
+      "file": "irbid_3593_3255.glb",
+      "buildings": 22,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 162820
+    },
+    {
+      "tile": "3593_3256",
+      "file": "irbid_3593_3256.glb",
+      "buildings": 8,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 61656
+    },
+    {
+      "tile": "3593_3257",
+      "file": "irbid_3593_3257.glb",
+      "buildings": 10,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 74740
+    },
+    {
+      "tile": "3593_3258",
+      "file": "irbid_3593_3258.glb",
+      "buildings": 39,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 249776
+    },
+    {
+      "tile": "3593_3259",
+      "file": "irbid_3593_3259.glb",
+      "buildings": 26,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 175716
+    },
+    {
+      "tile": "3593_3260",
+      "file": "irbid_3593_3260.glb",
+      "buildings": 231,
+      "streets": 42,
+      "labels": 0,
+      "bytes": 1548772
+    },
+    {
+      "tile": "3593_3261",
+      "file": "irbid_3593_3261.glb",
+      "buildings": 23,
+      "streets": 21,
+      "labels": 0,
+      "bytes": 211304
+    },
+    {
+      "tile": "3593_3262",
+      "file": "irbid_3593_3262.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 2520
+    },
+    {
+      "tile": "3593_3263",
+      "file": "irbid_3593_3263.glb",
+      "buildings": 0,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 13360
+    },
+    {
+      "tile": "3593_3264",
+      "file": "irbid_3593_3264.glb",
+      "buildings": 171,
+      "streets": 86,
+      "labels": 0,
+      "bytes": 1237260
+    },
+    {
+      "tile": "3594_3245",
+      "file": "irbid_3594_3245.glb",
+      "buildings": 36,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 219616
+    },
+    {
+      "tile": "3594_3246",
+      "file": "irbid_3594_3246.glb",
+      "buildings": 2,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 13112
+    },
+    {
+      "tile": "3594_3247",
+      "file": "irbid_3594_3247.glb",
+      "buildings": 1,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 20224
+    },
+    {
+      "tile": "3594_3248",
+      "file": "irbid_3594_3248.glb",
+      "buildings": 8,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 50436
+    },
+    {
+      "tile": "3594_3249",
+      "file": "irbid_3594_3249.glb",
+      "buildings": 2,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 33148
+    },
+    {
+      "tile": "3594_3250",
+      "file": "irbid_3594_3250.glb",
+      "buildings": 1,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 21860
+    },
+    {
+      "tile": "3594_3251",
+      "file": "irbid_3594_3251.glb",
+      "buildings": 28,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 283272
+    },
+    {
+      "tile": "3594_3252",
+      "file": "irbid_3594_3252.glb",
+      "buildings": 6,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 59824
+    },
+    {
+      "tile": "3594_3253",
+      "file": "irbid_3594_3253.glb",
+      "buildings": 7,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 38588
+    },
+    {
+      "tile": "3594_3254",
+      "file": "irbid_3594_3254.glb",
+      "buildings": 27,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 124672
+    },
+    {
+      "tile": "3594_3255",
+      "file": "irbid_3594_3255.glb",
+      "buildings": 8,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 49536
+    },
+    {
+      "tile": "3594_3256",
+      "file": "irbid_3594_3256.glb",
+      "buildings": 29,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 199156
+    },
+    {
+      "tile": "3594_3257",
+      "file": "irbid_3594_3257.glb",
+      "buildings": 2,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 23184
+    },
+    {
+      "tile": "3594_3258",
+      "file": "irbid_3594_3258.glb",
+      "buildings": 15,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 134296
+    },
+    {
+      "tile": "3594_3259",
+      "file": "irbid_3594_3259.glb",
+      "buildings": 46,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 311496
+    },
+    {
+      "tile": "3594_3260",
+      "file": "irbid_3594_3260.glb",
+      "buildings": 3,
+      "streets": 34,
+      "labels": 0,
+      "bytes": 67200
+    },
+    {
+      "tile": "3594_3261",
+      "file": "irbid_3594_3261.glb",
+      "buildings": 138,
+      "streets": 53,
+      "labels": 0,
+      "bytes": 973092
+    },
+    {
+      "tile": "3594_3262",
+      "file": "irbid_3594_3262.glb",
+      "buildings": 4,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 39768
+    },
+    {
+      "tile": "3594_3263",
+      "file": "irbid_3594_3263.glb",
+      "buildings": 62,
+      "streets": 52,
+      "labels": 0,
+      "bytes": 459816
+    },
+    {
+      "tile": "3594_3264",
+      "file": "irbid_3594_3264.glb",
+      "buildings": 157,
+      "streets": 87,
+      "labels": 0,
+      "bytes": 1171896
+    }
+  ],
+  "counts": {
+    "buildings": 35431,
+    "streets": 11798,
+    "street_labels": 82
+  }
+}
