@@ -163,7 +163,14 @@ def main():
     known={entry.get("file") for entry in manifest["tiles"]}
     for (tx,ty),items in sorted(tiles.items()):
         filename=f"{prefix}_{tx}_{ty}.glb";target=out/filename
-        if target.exists() and target.stat().st_size>1024: print("RESUME_SKIP_EXISTING",target);continue
+        if target.exists() and target.stat().st_size>1024:
+            print("RESUME_SKIP_EXISTING",target)
+            if filename not in known:
+                # Recover tile inventory after interrupted runs whose manifest was overwritten.
+                manifest["tiles"].append({"tile":f"{tx}_{ty}","file":filename,"buildings":None,"streets":None,"labels":None,"bytes":target.stat().st_size,"counts_known":False})
+                known.add(filename)
+                manifest_path.write_text(json.dumps(manifest,indent=2,ensure_ascii=False),encoding="utf-8")
+            continue
         try:
             bpy.ops.object.select_all(action="SELECT");bpy.ops.object.delete(use_global=False)
             bpy.context.scene.unit_settings.system="METRIC"
