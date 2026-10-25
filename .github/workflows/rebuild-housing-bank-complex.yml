@@ -14,34 +14,43 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+      - name: Preserve existing GLB tile as rebuild source
+        run: |
+          set -euo pipefail
+          TILE="middle east/BuildGLB/amman/amman_3590_3197.glb"
+          SOURCE="middle east/BuildGLB/amman/amman_3590_3197_source.glb"
+          test -s "$TILE"
+          cp "$TILE" "$SOURCE"
+          cmp -s "$TILE" "$SOURCE"
+          echo "Using the GLB already committed in this repository; no external tile download."
       - name: Install Blender
         run: |
           sudo apt-get update
           sudo apt-get install -y blender
-      - name: Download source tile
-        run: |
-          curl -fL --retry 3 "https://raw.githubusercontent.com/saeedhub101/Adam-City/main/middle%20east/BuildGLB/amman/amman_3590_3197.glb" -o "middle east/BuildGLB/amman/amman_3590_3197_source.glb"
-          test -s "middle east/BuildGLB/amman/amman_3590_3197_source.glb"
       - name: Rebuild complex in Blender
         run: blender -b --python "middle east/BuildGLB/amman/housing-bank/rebuild_housing_bank.py"
-      - name: Validate GLB
+      - name: Validate GLB and replacement
         run: |
+          set -euo pipefail
           python3 - <<'PY'
-          import json,struct
-          p="middle east/BuildGLB/amman/amman_3590_3197.glb"
-          b=open(p,"rb").read()
-          assert b[:4]==b"glTF" and struct.unpack_from("<I",b,8)[0]==len(b)
+          import json,struct,pathlib
+          p=pathlib.Path("middle east/BuildGLB/amman/amman_3590_3197.glb")
+          b=p.read_bytes()
+          assert b[:4]==b"glTF" and struct.unpack_from("<I",b,8)[0]==len(b), "Invalid GLB"
           n=struct.unpack_from("<I",b,12)[0]
           j=json.loads(b[20:20+n].decode("utf-8").rstrip("\x00 "))
           names=[x.get("name","") for x in j.get("nodes",[])]
-          assert "HousingBank_Podium" in names and "HousingBank_F21_ProjectingSlab" in names
+          assert "HousingBank_Podium" in names and "HousingBank_F21_ProjectingSlab" in names, "Rebuilt building nodes missing"
+          report=pathlib.Path("middle east/BuildGLB/amman/housing-bank/REBUILD_REPORT.md").read_text()
+          assert "Removed nearby source building meshes: NONE FOUND" not in report, "No original building mesh was identified for replacement; refusing to publish output"
           print("VALID GLB",len(b),"bytes; nodes",len(names))
           PY
       - name: Save rebuilt tile and report
         run: |
+          set -euo pipefail
           rm -f "middle east/BuildGLB/amman/amman_3590_3197_source.glb"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "middle east/BuildGLB/amman/amman_3590_3197.glb" "middle east/BuildGLB/amman/housing-bank/REBUILD_REPORT.md"
-          git commit -m "Rebuild Housing Bank Complex in Amman GLB tile" || echo "No changes to commit"
+          git commit -m "Rebuild Housing Bank Complex in existing Amman GLB tile" || echo "No changes to commit"
           git push
