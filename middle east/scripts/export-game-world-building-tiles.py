@@ -9,6 +9,7 @@ metadata explicitly distinguishes mapped values from level-based estimates.
 import gzip
 import json
 import math
+import numbers
 import os
 from collections import OrderedDict, Counter
 from pathlib import Path
@@ -24,7 +25,7 @@ MAX_LEVELS_ESTIMATE_M = 60.0
 
 def numbers_in_coords(value):
     if isinstance(value, (list, tuple)):
-        if len(value) >= 2 and isinstance(value[0], (int, float)) and isinstance(value[1], (int, float)):
+        if len(value) >= 2 and isinstance(value[0], numbers.Number) and isinstance(value[1], numbers.Number):
             yield float(value[0]), float(value[1])
         else:
             for child in value:
