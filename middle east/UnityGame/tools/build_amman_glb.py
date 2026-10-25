@@ -11,7 +11,7 @@ def args():
     d={"data":"../Jordan/layers","out":"../BuildGLB/Amman","west":35.72,"east":36.08,"south":31.70,"north":32.12,"tile":0.01,"city":"Amman","prefix":"amman","repo_commit":True}
     for i in range(0,len(a),2):
         k=a[i].lstrip("-"); v=a[i+1]
-        d[k]=float(v) if k in ("west","east","south","north","tile") else v
+        d[k]=float(v) if k in ("west","east","south","north","tile") else (v.lower() in ("true","1","yes") if k=="repo_commit" else v)
     return d
 
 def read(path):
@@ -173,7 +173,7 @@ def main():
             (out/"manifest.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False),encoding="utf-8")
             if cfg.get("repo_commit",True):
                 try:
-                    repo_root=Path(os.environ.get("GITHUB_WORKSPACE", subprocess.check_output(["git","rev-parse","--show-toplevel"],cwd=Path(__file__).resolve().parents[4],text=True).strip())).resolve()
+                    repo_root=Path(os.environ.get("GITHUB_WORKSPACE", subprocess.check_output(["git","rev-parse","--show-toplevel"],cwd=Path(__file__).resolve().parents[3],text=True).strip())).resolve()
                     rel=target.resolve().relative_to(repo_root)
                     subprocess.run(["git","add","--",str(rel),str((out/"manifest.json").resolve().relative_to(repo_root.resolve()))],cwd=repo_root,check=True)
                     subprocess.run(["git","-c","user.name=github-actions[bot]","-c","user.email=41898282+github-actions[bot]@users.noreply.github.com","commit","-m",f"Add generated {city} GLB tile {tx}_{ty}"],cwd=repo_root,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
