@@ -116,7 +116,7 @@ def main():
             if handle is None:
                 handle = gzip.open(path, "at", encoding="utf-8", compresslevel=6)
             handles[path] = handle
-            handle.write(json.dumps(record, ensure_ascii=False, separators=(",", ":")) + "\n")
+            handle.write(json.dumps(record, ensure_ascii=False, separators=(",", ":"), default=float) + "\n")
             if len(handles) > MAX_OPEN_FILES:
                 _, old_handle = handles.popitem(last=False)
                 old_handle.close()
