@@ -55,9 +55,15 @@ jobs:
             blender --background --python "middle east/UnityGame/tools/build_amman_glb.py" -- \
               --data "$data" --out "middle east/BuildGLB/$prefix" \
               --west "$west" --east "$east" --south "$south" --north "$north" \
-              --tile 0.01 --city "$city" --prefix "$prefix" --repo_commit True
+              --tile 0.01 --city "$city" --prefix "$prefix" --repo_commit False
             rc=$?
             if [ "$rc" -ne 0 ]; then echo "REGION FAILED BUT CONTINUING: $city (exit $rc)"; fi
+            # Checkpoint each completed region/cell to main, rather than pushing once per tile.
+            git add -- "middle east/BuildGLB/$prefix"
+            if ! git diff --cached --quiet; then
+              git commit -m "Checkpoint GLB tiles: $city" || true
+              git push origin HEAD:main || echo "PUSH FAILED: $city"
+            fi
             return 0
           }
 
