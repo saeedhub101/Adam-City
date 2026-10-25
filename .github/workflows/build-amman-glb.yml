@@ -81,7 +81,7 @@ jobs:
             while IFS= read -r -d '' building_file; do
               data="$(dirname "$building_file")"
               cell="$(basename "$data")"
-              run_region "Historic Palestine cell $cell" "$data" 34.15 35.95 29.40 33.35 "historic-palestine"
+              run_region "Historic Palestine cell $cell" "$data" 34.15 35.95 29.40 33.35 "historic-palestine-$cell"
             done
           fi
 
@@ -95,5 +95,5 @@ jobs:
           run_region "Salt" "middle east/Jordan/layers" 35.65 35.80 32.00 32.10 "salt"
           run_region "Jerash" "middle east/Jordan/layers" 35.85 36.00 32.25 32.35 "jerash"
           run_region "Karak" "middle east/Jordan/layers" 35.65 35.80 31.15 31.25 "karak"
-          echo "Generation pass ended. Inspect the per-tile logs and repository outputs; OSM footprints are not photogrammetry."
+          echo "Generation pass ended. Inspect per-cell prefixes and repository outputs; OSM footprints are not photogrammetry."
           git status --short
