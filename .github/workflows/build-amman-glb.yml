@@ -7,6 +7,7 @@ on:
     paths:
       - "middle east/UnityGame/tools/build_amman_glb.py"
       - "middle east/Jordan/layers/**"
+      - ".github/workflows/build-amman-glb.yml"
 
 permissions:
   contents: read
@@ -23,10 +24,11 @@ jobs:
       - name: Install Blender exporter
         run: |
           sudo apt-get update
-          sudo apt-get install -y blender
+          sudo apt-get install -y blender python3-numpy
       - name: Export Amman buildings, roads, windows, roofs and labels
         working-directory: middle east/UnityGame
         run: |
+          export PYTHONPATH="/usr/lib/python3/dist-packages:${PYTHONPATH:-}"
           blender --background --python tools/build_amman_glb.py -- --data ../Jordan/layers --out BuildGLB/Amman --west 35.72 --east 36.08 --south 31.70 --north 32.12 --tile 0.01
       - name: Upload tiled GLB city
         uses: actions/upload-artifact@v4
