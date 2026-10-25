@@ -1,0 +1,1153 @@
+{
+  "city": "Aqaba",
+  "bounds": {
+    "west": 34.9,
+    "east": 35.15,
+    "south": 29.45,
+    "north": 29.65
+  },
+  "tile_degrees": 0.01,
+  "tiles": [
+    {
+      "tile": "3497_2945",
+      "file": "aqaba_3497_2945.glb",
+      "buildings": 4,
+      "streets": 14,
+      "labels": 0,
+      "bytes": 288540
+    },
+    {
+      "tile": "3497_2946",
+      "file": "aqaba_3497_2946.glb",
+      "buildings": 3,
+      "streets": 35,
+      "labels": 2,
+      "bytes": 200160
+    },
+    {
+      "tile": "3497_2947",
+      "file": "aqaba_3497_2947.glb",
+      "buildings": 0,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 32080
+    },
+    {
+      "tile": "3497_2953",
+      "file": "aqaba_3497_2953.glb",
+      "buildings": 0,
+      "streets": 0,
+      "labels": 1,
+      "bytes": 252
+    },
+    {
+      "tile": "3497_2954",
+      "file": "aqaba_3497_2954.glb",
+      "buildings": 0,
+      "streets": 15,
+      "labels": 3,
+      "bytes": 17296
+    },
+    {
+      "tile": "3497_2955",
+      "file": "aqaba_3497_2955.glb",
+      "buildings": 11,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 128140
+    },
+    {
+      "tile": "3497_2956",
+      "file": "aqaba_3497_2956.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 3428
+    },
+    {
+      "tile": "3497_2957",
+      "file": "aqaba_3497_2957.glb",
+      "buildings": 29,
+      "streets": 40,
+      "labels": 1,
+      "bytes": 385264
+    },
+    {
+      "tile": "3498_2945",
+      "file": "aqaba_3498_2945.glb",
+      "buildings": 4,
+      "streets": 38,
+      "labels": 0,
+      "bytes": 121692
+    },
+    {
+      "tile": "3498_2946",
+      "file": "aqaba_3498_2946.glb",
+      "buildings": 1,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 43380
+    },
+    {
+      "tile": "3498_2947",
+      "file": "aqaba_3498_2947.glb",
+      "buildings": 2,
+      "streets": 31,
+      "labels": 9,
+      "bytes": 88024
+    },
+    {
+      "tile": "3498_2948",
+      "file": "aqaba_3498_2948.glb",
+      "buildings": 7,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 89652
+    },
+    {
+      "tile": "3498_2949",
+      "file": "aqaba_3498_2949.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 10824
+    },
+    {
+      "tile": "3498_2953",
+      "file": "aqaba_3498_2953.glb",
+      "buildings": 22,
+      "streets": 8,
+      "labels": 4,
+      "bytes": 212032
+    },
+    {
+      "tile": "3498_2954",
+      "file": "aqaba_3498_2954.glb",
+      "buildings": 45,
+      "streets": 114,
+      "labels": 6,
+      "bytes": 828988
+    },
+    {
+      "tile": "3498_2955",
+      "file": "aqaba_3498_2955.glb",
+      "buildings": 0,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 25392
+    },
+    {
+      "tile": "3498_2956",
+      "file": "aqaba_3498_2956.glb",
+      "buildings": 0,
+      "streets": 14,
+      "labels": 2,
+      "bytes": 57836
+    },
+    {
+      "tile": "3498_2957",
+      "file": "aqaba_3498_2957.glb",
+      "buildings": 9,
+      "streets": 20,
+      "labels": 2,
+      "bytes": 158680
+    },
+    {
+      "tile": "3498_2958",
+      "file": "aqaba_3498_2958.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 2580
+    },
+    {
+      "tile": "3498_2959",
+      "file": "aqaba_3498_2959.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 6456
+    },
+    {
+      "tile": "3498_2960",
+      "file": "aqaba_3498_2960.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 2176
+    },
+    {
+      "tile": "3498_2962",
+      "file": "aqaba_3498_2962.glb",
+      "buildings": 0,
+      "streets": 0,
+      "labels": 1,
+      "bytes": 252
+    },
+    {
+      "tile": "3499_2945",
+      "file": "aqaba_3499_2945.glb",
+      "buildings": 0,
+      "streets": 14,
+      "labels": 1,
+      "bytes": 11552
+    },
+    {
+      "tile": "3499_2947",
+      "file": "aqaba_3499_2947.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 1,
+      "bytes": 18688
+    },
+    {
+      "tile": "3499_2949",
+      "file": "aqaba_3499_2949.glb",
+      "buildings": 0,
+      "streets": 11,
+      "labels": 0,
+      "bytes": 24316
+    },
+    {
+      "tile": "3499_2950",
+      "file": "aqaba_3499_2950.glb",
+      "buildings": 5,
+      "streets": 39,
+      "labels": 3,
+      "bytes": 106216
+    },
+    {
+      "tile": "3499_2951",
+      "file": "aqaba_3499_2951.glb",
+      "buildings": 10,
+      "streets": 16,
+      "labels": 0,
+      "bytes": 120564
+    },
+    {
+      "tile": "3499_2952",
+      "file": "aqaba_3499_2952.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1440
+    },
+    {
+      "tile": "3499_2953",
+      "file": "aqaba_3499_2953.glb",
+      "buildings": 168,
+      "streets": 69,
+      "labels": 11,
+      "bytes": 2151744
+    },
+    {
+      "tile": "3499_2954",
+      "file": "aqaba_3499_2954.glb",
+      "buildings": 178,
+      "streets": 111,
+      "labels": 16,
+      "bytes": 2180064
+    },
+    {
+      "tile": "3499_2955",
+      "file": "aqaba_3499_2955.glb",
+      "buildings": 236,
+      "streets": 57,
+      "labels": 13,
+      "bytes": 2049188
+    },
+    {
+      "tile": "3499_2956",
+      "file": "aqaba_3499_2956.glb",
+      "buildings": 88,
+      "streets": 37,
+      "labels": 7,
+      "bytes": 791228
+    },
+    {
+      "tile": "3499_2957",
+      "file": "aqaba_3499_2957.glb",
+      "buildings": 16,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 110656
+    },
+    {
+      "tile": "3499_2960",
+      "file": "aqaba_3499_2960.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1312
+    },
+    {
+      "tile": "3499_2961",
+      "file": "aqaba_3499_2961.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 5780
+    },
+    {
+      "tile": "3499_2962",
+      "file": "aqaba_3499_2962.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 3532
+    },
+    {
+      "tile": "3499_2963",
+      "file": "aqaba_3499_2963.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 2556
+    },
+    {
+      "tile": "3499_2964",
+      "file": "aqaba_3499_2964.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 2820
+    },
+    {
+      "tile": "3500_2947",
+      "file": "aqaba_3500_2947.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1188
+    },
+    {
+      "tile": "3500_2949",
+      "file": "aqaba_3500_2949.glb",
+      "buildings": 1,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 21904
+    },
+    {
+      "tile": "3500_2950",
+      "file": "aqaba_3500_2950.glb",
+      "buildings": 0,
+      "streets": 17,
+      "labels": 0,
+      "bytes": 18576
+    },
+    {
+      "tile": "3500_2951",
+      "file": "aqaba_3500_2951.glb",
+      "buildings": 110,
+      "streets": 63,
+      "labels": 14,
+      "bytes": 1204844
+    },
+    {
+      "tile": "3500_2952",
+      "file": "aqaba_3500_2952.glb",
+      "buildings": 308,
+      "streets": 187,
+      "labels": 27,
+      "bytes": 5644392
+    },
+    {
+      "tile": "3500_2953",
+      "file": "aqaba_3500_2953.glb",
+      "buildings": 443,
+      "streets": 140,
+      "labels": 84,
+      "bytes": 6520576
+    },
+    {
+      "tile": "3500_2954",
+      "file": "aqaba_3500_2954.glb",
+      "buildings": 673,
+      "streets": 97,
+      "labels": 50,
+      "bytes": 7024416
+    },
+    {
+      "tile": "3500_2955",
+      "file": "aqaba_3500_2955.glb",
+      "buildings": 823,
+      "streets": 115,
+      "labels": 13,
+      "bytes": 7506792
+    },
+    {
+      "tile": "3500_2956",
+      "file": "aqaba_3500_2956.glb",
+      "buildings": 663,
+      "streets": 74,
+      "labels": 0,
+      "bytes": 5841740
+    },
+    {
+      "tile": "3500_2957",
+      "file": "aqaba_3500_2957.glb",
+      "buildings": 0,
+      "streets": 13,
+      "labels": 0,
+      "bytes": 14108
+    },
+    {
+      "tile": "3500_2958",
+      "file": "aqaba_3500_2958.glb",
+      "buildings": 3,
+      "streets": 4,
+      "labels": 1,
+      "bytes": 73396
+    },
+    {
+      "tile": "3500_2959",
+      "file": "aqaba_3500_2959.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 3452
+    },
+    {
+      "tile": "3500_2960",
+      "file": "aqaba_3500_2960.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 6204
+    },
+    {
+      "tile": "3500_2963",
+      "file": "aqaba_3500_2963.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 6900
+    },
+    {
+      "tile": "3500_2964",
+      "file": "aqaba_3500_2964.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 4152
+    },
+    {
+      "tile": "3501_2946",
+      "file": "aqaba_3501_2946.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 6060
+    },
+    {
+      "tile": "3501_2949",
+      "file": "aqaba_3501_2949.glb",
+      "buildings": 5,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 32472
+    },
+    {
+      "tile": "3501_2951",
+      "file": "aqaba_3501_2951.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1196
+    },
+    {
+      "tile": "3501_2952",
+      "file": "aqaba_3501_2952.glb",
+      "buildings": 513,
+      "streets": 64,
+      "labels": 23,
+      "bytes": 4758588
+    },
+    {
+      "tile": "3501_2953",
+      "file": "aqaba_3501_2953.glb",
+      "buildings": 214,
+      "streets": 88,
+      "labels": 45,
+      "bytes": 3684100
+    },
+    {
+      "tile": "3501_2954",
+      "file": "aqaba_3501_2954.glb",
+      "buildings": 588,
+      "streets": 160,
+      "labels": 68,
+      "bytes": 8033284
+    },
+    {
+      "tile": "3501_2955",
+      "file": "aqaba_3501_2955.glb",
+      "buildings": 783,
+      "streets": 116,
+      "labels": 25,
+      "bytes": 8832480
+    },
+    {
+      "tile": "3501_2956",
+      "file": "aqaba_3501_2956.glb",
+      "buildings": 341,
+      "streets": 63,
+      "labels": 0,
+      "bytes": 3005308
+    },
+    {
+      "tile": "3501_2957",
+      "file": "aqaba_3501_2957.glb",
+      "buildings": 11,
+      "streets": 40,
+      "labels": 0,
+      "bytes": 248380
+    },
+    {
+      "tile": "3501_2958",
+      "file": "aqaba_3501_2958.glb",
+      "buildings": 6,
+      "streets": 4,
+      "labels": 1,
+      "bytes": 125836
+    },
+    {
+      "tile": "3501_2959",
+      "file": "aqaba_3501_2959.glb",
+      "buildings": 3,
+      "streets": 32,
+      "labels": 0,
+      "bytes": 95336
+    },
+    {
+      "tile": "3501_2960",
+      "file": "aqaba_3501_2960.glb",
+      "buildings": 14,
+      "streets": 75,
+      "labels": 5,
+      "bytes": 227404
+    },
+    {
+      "tile": "3501_2961",
+      "file": "aqaba_3501_2961.glb",
+      "buildings": 1,
+      "streets": 42,
+      "labels": 5,
+      "bytes": 63024
+    },
+    {
+      "tile": "3502_2945",
+      "file": "aqaba_3502_2945.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 2352
+    },
+    {
+      "tile": "3502_2946",
+      "file": "aqaba_3502_2946.glb",
+      "buildings": 1,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 11576
+    },
+    {
+      "tile": "3502_2952",
+      "file": "aqaba_3502_2952.glb",
+      "buildings": 37,
+      "streets": 3,
+      "labels": 1,
+      "bytes": 249500
+    },
+    {
+      "tile": "3502_2953",
+      "file": "aqaba_3502_2953.glb",
+      "buildings": 1,
+      "streets": 0,
+      "labels": 1,
+      "bytes": 7088
+    },
+    {
+      "tile": "3502_2954",
+      "file": "aqaba_3502_2954.glb",
+      "buildings": 441,
+      "streets": 95,
+      "labels": 23,
+      "bytes": 4333324
+    },
+    {
+      "tile": "3502_2955",
+      "file": "aqaba_3502_2955.glb",
+      "buildings": 235,
+      "streets": 76,
+      "labels": 16,
+      "bytes": 2592484
+    },
+    {
+      "tile": "3502_2956",
+      "file": "aqaba_3502_2956.glb",
+      "buildings": 89,
+      "streets": 54,
+      "labels": 0,
+      "bytes": 960416
+    },
+    {
+      "tile": "3502_2957",
+      "file": "aqaba_3502_2957.glb",
+      "buildings": 12,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 117804
+    },
+    {
+      "tile": "3502_2958",
+      "file": "aqaba_3502_2958.glb",
+      "buildings": 13,
+      "streets": 31,
+      "labels": 2,
+      "bytes": 201524
+    },
+    {
+      "tile": "3502_2959",
+      "file": "aqaba_3502_2959.glb",
+      "buildings": 38,
+      "streets": 22,
+      "labels": 0,
+      "bytes": 623476
+    },
+    {
+      "tile": "3502_2960",
+      "file": "aqaba_3502_2960.glb",
+      "buildings": 11,
+      "streets": 35,
+      "labels": 3,
+      "bytes": 269952
+    },
+    {
+      "tile": "3502_2961",
+      "file": "aqaba_3502_2961.glb",
+      "buildings": 1,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 94880
+    },
+    {
+      "tile": "3502_2962",
+      "file": "aqaba_3502_2962.glb",
+      "buildings": 3,
+      "streets": 39,
+      "labels": 2,
+      "bytes": 176072
+    },
+    {
+      "tile": "3503_2945",
+      "file": "aqaba_3503_2945.glb",
+      "buildings": 5,
+      "streets": 8,
+      "labels": 1,
+      "bytes": 69956
+    },
+    {
+      "tile": "3503_2946",
+      "file": "aqaba_3503_2946.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 1,
+      "bytes": 4608
+    },
+    {
+      "tile": "3503_2954",
+      "file": "aqaba_3503_2954.glb",
+      "buildings": 401,
+      "streets": 57,
+      "labels": 0,
+      "bytes": 3431560
+    },
+    {
+      "tile": "3503_2955",
+      "file": "aqaba_3503_2955.glb",
+      "buildings": 158,
+      "streets": 59,
+      "labels": 3,
+      "bytes": 1450716
+    },
+    {
+      "tile": "3503_2956",
+      "file": "aqaba_3503_2956.glb",
+      "buildings": 60,
+      "streets": 44,
+      "labels": 0,
+      "bytes": 551004
+    },
+    {
+      "tile": "3503_2957",
+      "file": "aqaba_3503_2957.glb",
+      "buildings": 0,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 14240
+    },
+    {
+      "tile": "3503_2958",
+      "file": "aqaba_3503_2958.glb",
+      "buildings": 22,
+      "streets": 41,
+      "labels": 0,
+      "bytes": 212908
+    },
+    {
+      "tile": "3503_2959",
+      "file": "aqaba_3503_2959.glb",
+      "buildings": 68,
+      "streets": 16,
+      "labels": 0,
+      "bytes": 1089840
+    },
+    {
+      "tile": "3503_2960",
+      "file": "aqaba_3503_2960.glb",
+      "buildings": 1,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 17324
+    },
+    {
+      "tile": "3503_2961",
+      "file": "aqaba_3503_2961.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 4152
+    },
+    {
+      "tile": "3503_2962",
+      "file": "aqaba_3503_2962.glb",
+      "buildings": 14,
+      "streets": 15,
+      "labels": 0,
+      "bytes": 136756
+    },
+    {
+      "tile": "3503_2963",
+      "file": "aqaba_3503_2963.glb",
+      "buildings": 6,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 129436
+    },
+    {
+      "tile": "3504_2954",
+      "file": "aqaba_3504_2954.glb",
+      "buildings": 12,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 102016
+    },
+    {
+      "tile": "3504_2955",
+      "file": "aqaba_3504_2955.glb",
+      "buildings": 72,
+      "streets": 13,
+      "labels": 0,
+      "bytes": 657960
+    },
+    {
+      "tile": "3504_2956",
+      "file": "aqaba_3504_2956.glb",
+      "buildings": 33,
+      "streets": 34,
+      "labels": 0,
+      "bytes": 273780
+    },
+    {
+      "tile": "3504_2957",
+      "file": "aqaba_3504_2957.glb",
+      "buildings": 11,
+      "streets": 59,
+      "labels": 0,
+      "bytes": 145300
+    },
+    {
+      "tile": "3504_2958",
+      "file": "aqaba_3504_2958.glb",
+      "buildings": 1,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 41156
+    },
+    {
+      "tile": "3504_2959",
+      "file": "aqaba_3504_2959.glb",
+      "buildings": 1,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 25324
+    },
+    {
+      "tile": "3504_2960",
+      "file": "aqaba_3504_2960.glb",
+      "buildings": 8,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 125012
+    },
+    {
+      "tile": "3504_2961",
+      "file": "aqaba_3504_2961.glb",
+      "buildings": 32,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 274480
+    },
+    {
+      "tile": "3504_2962",
+      "file": "aqaba_3504_2962.glb",
+      "buildings": 22,
+      "streets": 3,
+      "labels": 1,
+      "bytes": 178156
+    },
+    {
+      "tile": "3504_2964",
+      "file": "aqaba_3504_2964.glb",
+      "buildings": 1,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 10844
+    },
+    {
+      "tile": "3505_2956",
+      "file": "aqaba_3505_2956.glb",
+      "buildings": 129,
+      "streets": 7,
+      "labels": 5,
+      "bytes": 788068
+    },
+    {
+      "tile": "3505_2957",
+      "file": "aqaba_3505_2957.glb",
+      "buildings": 22,
+      "streets": 19,
+      "labels": 2,
+      "bytes": 187996
+    },
+    {
+      "tile": "3505_2958",
+      "file": "aqaba_3505_2958.glb",
+      "buildings": 174,
+      "streets": 65,
+      "labels": 0,
+      "bytes": 1578024
+    },
+    {
+      "tile": "3505_2959",
+      "file": "aqaba_3505_2959.glb",
+      "buildings": 158,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 1575988
+    },
+    {
+      "tile": "3505_2960",
+      "file": "aqaba_3505_2960.glb",
+      "buildings": 13,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 152900
+    },
+    {
+      "tile": "3506_2945",
+      "file": "aqaba_3506_2945.glb",
+      "buildings": 0,
+      "streets": 0,
+      "labels": 11,
+      "bytes": 1252
+    },
+    {
+      "tile": "3506_2947",
+      "file": "aqaba_3506_2947.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 35552
+    },
+    {
+      "tile": "3506_2955",
+      "file": "aqaba_3506_2955.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1968
+    },
+    {
+      "tile": "3506_2956",
+      "file": "aqaba_3506_2956.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 2944
+    },
+    {
+      "tile": "3506_2957",
+      "file": "aqaba_3506_2957.glb",
+      "buildings": 0,
+      "streets": 9,
+      "labels": 1,
+      "bytes": 15892
+    },
+    {
+      "tile": "3506_2958",
+      "file": "aqaba_3506_2958.glb",
+      "buildings": 183,
+      "streets": 58,
+      "labels": 0,
+      "bytes": 1423948
+    },
+    {
+      "tile": "3506_2959",
+      "file": "aqaba_3506_2959.glb",
+      "buildings": 188,
+      "streets": 35,
+      "labels": 0,
+      "bytes": 1813248
+    },
+    {
+      "tile": "3506_2960",
+      "file": "aqaba_3506_2960.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 5848
+    },
+    {
+      "tile": "3507_2945",
+      "file": "aqaba_3507_2945.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 7,
+      "bytes": 48664
+    },
+    {
+      "tile": "3507_2955",
+      "file": "aqaba_3507_2955.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1788
+    },
+    {
+      "tile": "3507_2956",
+      "file": "aqaba_3507_2956.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 8368
+    },
+    {
+      "tile": "3507_2957",
+      "file": "aqaba_3507_2957.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 1,
+      "bytes": 6172
+    },
+    {
+      "tile": "3507_2958",
+      "file": "aqaba_3507_2958.glb",
+      "buildings": 22,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 175720
+    },
+    {
+      "tile": "3507_2959",
+      "file": "aqaba_3507_2959.glb",
+      "buildings": 13,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 118612
+    },
+    {
+      "tile": "3507_2960",
+      "file": "aqaba_3507_2960.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 5056
+    },
+    {
+      "tile": "3508_2945",
+      "file": "aqaba_3508_2945.glb",
+      "buildings": 0,
+      "streets": 0,
+      "labels": 4,
+      "bytes": 556
+    },
+    {
+      "tile": "3508_2949",
+      "file": "aqaba_3508_2949.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 5924
+    },
+    {
+      "tile": "3508_2955",
+      "file": "aqaba_3508_2955.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1188
+    },
+    {
+      "tile": "3508_2956",
+      "file": "aqaba_3508_2956.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 30492
+    },
+    {
+      "tile": "3509_2950",
+      "file": "aqaba_3509_2950.glb",
+      "buildings": 5,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 69136
+    },
+    {
+      "tile": "3509_2956",
+      "file": "aqaba_3509_2956.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 23332
+    },
+    {
+      "tile": "3511_2946",
+      "file": "aqaba_3511_2946.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 4,
+      "bytes": 32932
+    },
+    {
+      "tile": "3511_2947",
+      "file": "aqaba_3511_2947.glb",
+      "buildings": 0,
+      "streets": 0,
+      "labels": 1,
+      "bytes": 248
+    },
+    {
+      "tile": "3511_2952",
+      "file": "aqaba_3511_2952.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 164056
+    },
+    {
+      "tile": "3511_2955",
+      "file": "aqaba_3511_2955.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 8284
+    },
+    {
+      "tile": "3512_2947",
+      "file": "aqaba_3512_2947.glb",
+      "buildings": 0,
+      "streets": 0,
+      "labels": 1,
+      "bytes": 252
+    },
+    {
+      "tile": "3512_2952",
+      "file": "aqaba_3512_2952.glb",
+      "buildings": 1,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 8684
+    },
+    {
+      "tile": "3512_2953",
+      "file": "aqaba_3512_2953.glb",
+      "buildings": 4,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 36608
+    },
+    {
+      "tile": "3512_2955",
+      "file": "aqaba_3512_2955.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1192
+    },
+    {
+      "tile": "3513_2947",
+      "file": "aqaba_3513_2947.glb",
+      "buildings": 0,
+      "streets": 0,
+      "labels": 2,
+      "bytes": 352
+    },
+    {
+      "tile": "3513_2951",
+      "file": "aqaba_3513_2951.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 11220
+    },
+    {
+      "tile": "3513_2954",
+      "file": "aqaba_3513_2954.glb",
+      "buildings": 0,
+      "streets": 15,
+      "labels": 2,
+      "bytes": 245636
+    },
+    {
+      "tile": "3513_2955",
+      "file": "aqaba_3513_2955.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 1,
+      "bytes": 67924
+    },
+    {
+      "tile": "3514_2947",
+      "file": "aqaba_3514_2947.glb",
+      "buildings": 0,
+      "streets": 0,
+      "labels": 1,
+      "bytes": 252
+    },
+    {
+      "tile": "3514_2955",
+      "file": "aqaba_3514_2955.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 6008
+    },
+    {
+      "tile": "3514_2956",
+      "file": "aqaba_3514_2956.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 96604
+    }
+  ],
+  "counts": {
+    "buildings": 9063,
+    "streets": 3271,
+    "street_labels": 541
+  }
+}
