@@ -1,0 +1,585 @@
+{
+  "city": "Historic Palestine cell 07_01",
+  "bounds": {
+    "west": 34.15,
+    "east": 35.95,
+    "south": 29.4,
+    "north": 33.35
+  },
+  "tile_degrees": 0.01,
+  "tiles": [
+    {
+      "tile": "3485_2959",
+      "file": "historic-palestine-07_01_3485_2959.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 2500
+    },
+    {
+      "tile": "3486_2958",
+      "file": "historic-palestine-07_01_3486_2958.glb",
+      "buildings": 1,
+      "streets": 0,
+      "labels": 0,
+      "bytes": 9064
+    },
+    {
+      "tile": "3486_2959",
+      "file": "historic-palestine-07_01_3486_2959.glb",
+      "buildings": 1,
+      "streets": 4,
+      "labels": 3,
+      "bytes": 126216
+    },
+    {
+      "tile": "3487_2954",
+      "file": "historic-palestine-07_01_3487_2954.glb",
+      "buildings": 1,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 7624
+    },
+    {
+      "tile": "3487_2955",
+      "file": "historic-palestine-07_01_3487_2955.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 2616
+    },
+    {
+      "tile": "3487_2956",
+      "file": "historic-palestine-07_01_3487_2956.glb",
+      "buildings": 1,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 18004
+    },
+    {
+      "tile": "3487_2957",
+      "file": "historic-palestine-07_01_3487_2957.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 1,
+      "bytes": 2580
+    },
+    {
+      "tile": "3487_2958",
+      "file": "historic-palestine-07_01_3487_2958.glb",
+      "buildings": 0,
+      "streets": 12,
+      "labels": 2,
+      "bytes": 19568
+    },
+    {
+      "tile": "3487_2959",
+      "file": "historic-palestine-07_01_3487_2959.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 4612
+    },
+    {
+      "tile": "3488_2953",
+      "file": "historic-palestine-07_01_3488_2953.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 1,
+      "bytes": 8848
+    },
+    {
+      "tile": "3488_2954",
+      "file": "historic-palestine-07_01_3488_2954.glb",
+      "buildings": 0,
+      "streets": 8,
+      "labels": 1,
+      "bytes": 19188
+    },
+    {
+      "tile": "3488_2955",
+      "file": "historic-palestine-07_01_3488_2955.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 1,
+      "bytes": 14632
+    },
+    {
+      "tile": "3488_2956",
+      "file": "historic-palestine-07_01_3488_2956.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 1,
+      "bytes": 10892
+    },
+    {
+      "tile": "3488_2957",
+      "file": "historic-palestine-07_01_3488_2957.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 15360
+    },
+    {
+      "tile": "3488_2958",
+      "file": "historic-palestine-07_01_3488_2958.glb",
+      "buildings": 0,
+      "streets": 20,
+      "labels": 3,
+      "bytes": 29672
+    },
+    {
+      "tile": "3488_2959",
+      "file": "historic-palestine-07_01_3488_2959.glb",
+      "buildings": 0,
+      "streets": 14,
+      "labels": 3,
+      "bytes": 31416
+    },
+    {
+      "tile": "3489_2950",
+      "file": "historic-palestine-07_01_3489_2950.glb",
+      "buildings": 1,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 11556
+    },
+    {
+      "tile": "3489_2951",
+      "file": "historic-palestine-07_01_3489_2951.glb",
+      "buildings": 1,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 9656
+    },
+    {
+      "tile": "3489_2952",
+      "file": "historic-palestine-07_01_3489_2952.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1248
+    },
+    {
+      "tile": "3489_2953",
+      "file": "historic-palestine-07_01_3489_2953.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 1,
+      "bytes": 8360
+    },
+    {
+      "tile": "3489_2954",
+      "file": "historic-palestine-07_01_3489_2954.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 1,
+      "bytes": 17548
+    },
+    {
+      "tile": "3489_2955",
+      "file": "historic-palestine-07_01_3489_2955.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 13436
+    },
+    {
+      "tile": "3489_2956",
+      "file": "historic-palestine-07_01_3489_2956.glb",
+      "buildings": 0,
+      "streets": 7,
+      "labels": 1,
+      "bytes": 20756
+    },
+    {
+      "tile": "3489_2957",
+      "file": "historic-palestine-07_01_3489_2957.glb",
+      "buildings": 0,
+      "streets": 11,
+      "labels": 1,
+      "bytes": 15544
+    },
+    {
+      "tile": "3489_2958",
+      "file": "historic-palestine-07_01_3489_2958.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 2,
+      "bytes": 20928
+    },
+    {
+      "tile": "3489_2959",
+      "file": "historic-palestine-07_01_3489_2959.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 3,
+      "bytes": 12960
+    },
+    {
+      "tile": "3490_2950",
+      "file": "historic-palestine-07_01_3490_2950.glb",
+      "buildings": 1,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 16160
+    },
+    {
+      "tile": "3490_2951",
+      "file": "historic-palestine-07_01_3490_2951.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 2956
+    },
+    {
+      "tile": "3490_2952",
+      "file": "historic-palestine-07_01_3490_2952.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 11224
+    },
+    {
+      "tile": "3490_2953",
+      "file": "historic-palestine-07_01_3490_2953.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 22956
+    },
+    {
+      "tile": "3490_2954",
+      "file": "historic-palestine-07_01_3490_2954.glb",
+      "buildings": 2,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 51004
+    },
+    {
+      "tile": "3490_2955",
+      "file": "historic-palestine-07_01_3490_2955.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 9456
+    },
+    {
+      "tile": "3490_2956",
+      "file": "historic-palestine-07_01_3490_2956.glb",
+      "buildings": 57,
+      "streets": 11,
+      "labels": 0,
+      "bytes": 407620
+    },
+    {
+      "tile": "3490_2957",
+      "file": "historic-palestine-07_01_3490_2957.glb",
+      "buildings": 10,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 89236
+    },
+    {
+      "tile": "3490_2958",
+      "file": "historic-palestine-07_01_3490_2958.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 10604
+    },
+    {
+      "tile": "3490_2959",
+      "file": "historic-palestine-07_01_3490_2959.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 1,
+      "bytes": 8756
+    },
+    {
+      "tile": "3491_2950",
+      "file": "historic-palestine-07_01_3491_2950.glb",
+      "buildings": 104,
+      "streets": 56,
+      "labels": 2,
+      "bytes": 823032
+    },
+    {
+      "tile": "3491_2951",
+      "file": "historic-palestine-07_01_3491_2951.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 12948
+    },
+    {
+      "tile": "3491_2952",
+      "file": "historic-palestine-07_01_3491_2952.glb",
+      "buildings": 8,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 58512
+    },
+    {
+      "tile": "3491_2953",
+      "file": "historic-palestine-07_01_3491_2953.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 15508
+    },
+    {
+      "tile": "3491_2954",
+      "file": "historic-palestine-07_01_3491_2954.glb",
+      "buildings": 11,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 210752
+    },
+    {
+      "tile": "3491_2955",
+      "file": "historic-palestine-07_01_3491_2955.glb",
+      "buildings": 8,
+      "streets": 13,
+      "labels": 0,
+      "bytes": 153304
+    },
+    {
+      "tile": "3491_2956",
+      "file": "historic-palestine-07_01_3491_2956.glb",
+      "buildings": 1,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 13568
+    },
+    {
+      "tile": "3491_2958",
+      "file": "historic-palestine-07_01_3491_2958.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 2,
+      "bytes": 1868
+    },
+    {
+      "tile": "3491_2959",
+      "file": "historic-palestine-07_01_3491_2959.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 1,
+      "bytes": 6528
+    },
+    {
+      "tile": "3492_2950",
+      "file": "historic-palestine-07_01_3492_2950.glb",
+      "buildings": 19,
+      "streets": 24,
+      "labels": 1,
+      "bytes": 219292
+    },
+    {
+      "tile": "3492_2951",
+      "file": "historic-palestine-07_01_3492_2951.glb",
+      "buildings": 60,
+      "streets": 103,
+      "labels": 6,
+      "bytes": 1299732
+    },
+    {
+      "tile": "3492_2952",
+      "file": "historic-palestine-07_01_3492_2952.glb",
+      "buildings": 1,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 21780
+    },
+    {
+      "tile": "3492_2953",
+      "file": "historic-palestine-07_01_3492_2953.glb",
+      "buildings": 4,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 58188
+    },
+    {
+      "tile": "3492_2954",
+      "file": "historic-palestine-07_01_3492_2954.glb",
+      "buildings": 356,
+      "streets": 319,
+      "labels": 0,
+      "bytes": 3230176
+    },
+    {
+      "tile": "3492_2955",
+      "file": "historic-palestine-07_01_3492_2955.glb",
+      "buildings": 72,
+      "streets": 57,
+      "labels": 0,
+      "bytes": 821940
+    },
+    {
+      "tile": "3492_2956",
+      "file": "historic-palestine-07_01_3492_2956.glb",
+      "buildings": 0,
+      "streets": 19,
+      "labels": 0,
+      "bytes": 38420
+    },
+    {
+      "tile": "3492_2957",
+      "file": "historic-palestine-07_01_3492_2957.glb",
+      "buildings": 0,
+      "streets": 10,
+      "labels": 1,
+      "bytes": 30224
+    },
+    {
+      "tile": "3492_2958",
+      "file": "historic-palestine-07_01_3492_2958.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 1,
+      "bytes": 11328
+    },
+    {
+      "tile": "3492_2959",
+      "file": "historic-palestine-07_01_3492_2959.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 3,
+      "bytes": 7176
+    },
+    {
+      "tile": "3493_2951",
+      "file": "historic-palestine-07_01_3493_2951.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 1184
+    },
+    {
+      "tile": "3493_2952",
+      "file": "historic-palestine-07_01_3493_2952.glb",
+      "buildings": 19,
+      "streets": 26,
+      "labels": 7,
+      "bytes": 305312
+    },
+    {
+      "tile": "3493_2953",
+      "file": "historic-palestine-07_01_3493_2953.glb",
+      "buildings": 224,
+      "streets": 123,
+      "labels": 3,
+      "bytes": 1917256
+    },
+    {
+      "tile": "3493_2954",
+      "file": "historic-palestine-07_01_3493_2954.glb",
+      "buildings": 596,
+      "streets": 456,
+      "labels": 6,
+      "bytes": 5456936
+    },
+    {
+      "tile": "3493_2955",
+      "file": "historic-palestine-07_01_3493_2955.glb",
+      "buildings": 530,
+      "streets": 460,
+      "labels": 2,
+      "bytes": 5364872
+    },
+    {
+      "tile": "3493_2956",
+      "file": "historic-palestine-07_01_3493_2956.glb",
+      "buildings": 99,
+      "streets": 150,
+      "labels": 0,
+      "bytes": 1229304
+    },
+    {
+      "tile": "3493_2957",
+      "file": "historic-palestine-07_01_3493_2957.glb",
+      "buildings": 0,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 33588
+    },
+    {
+      "tile": "3493_2958",
+      "file": "historic-palestine-07_01_3493_2958.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 13328
+    },
+    {
+      "tile": "3493_2959",
+      "file": "historic-palestine-07_01_3493_2959.glb",
+      "buildings": 0,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 13752
+    },
+    {
+      "tile": "3494_2953",
+      "file": "historic-palestine-07_01_3494_2953.glb",
+      "buildings": 18,
+      "streets": 37,
+      "labels": 5,
+      "bytes": 336292
+    },
+    {
+      "tile": "3494_2954",
+      "file": "historic-palestine-07_01_3494_2954.glb",
+      "buildings": 549,
+      "streets": 198,
+      "labels": 1,
+      "bytes": 4182112
+    },
+    {
+      "tile": "3494_2955",
+      "file": "historic-palestine-07_01_3494_2955.glb",
+      "buildings": 595,
+      "streets": 536,
+      "labels": 11,
+      "bytes": 5941216
+    },
+    {
+      "tile": "3494_2956",
+      "file": "historic-palestine-07_01_3494_2956.glb",
+      "buildings": 349,
+      "streets": 313,
+      "labels": 0,
+      "bytes": 3581380
+    },
+    {
+      "tile": "3494_2957",
+      "file": "historic-palestine-07_01_3494_2957.glb",
+      "buildings": 1,
+      "streets": 49,
+      "labels": 0,
+      "bytes": 68796
+    },
+    {
+      "tile": "3494_2958",
+      "file": "historic-palestine-07_01_3494_2958.glb",
+      "buildings": 0,
+      "streets": 17,
+      "labels": 0,
+      "bytes": 23276
+    },
+    {
+      "tile": "3494_2959",
+      "file": "historic-palestine-07_01_3494_2959.glb",
+      "buildings": 0,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 13592
+    }
+  ],
+  "counts": {
+    "buildings": 3700,
+    "streets": 3202,
+    "street_labels": 78
+  }
+}
