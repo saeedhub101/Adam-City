@@ -158,7 +158,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
   const manifestUrl=new URL(base+'enhanced/part'+part+'-regions.json',location.href).href;
   const modelUrl=new URL(base+'Parts'+part+'.glb',location.href).href;
   const originUrl=new URL(base+'part'+part+'/part'+part+'-origin.json',location.href).href;
-  let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,meters=1,matrixWarned=false;
+  let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null,anchor=null,meters=1,projectedMeters=1,matrixWarned=false;
   const showError=err=>{
    loading=false;ready=false;
    // Remove a partially loaded custom layer so retrying the checkbox cannot hit a duplicate-layer error.
@@ -176,6 +176,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
     if(!Number.isFinite(lon)||!Number.isFinite(lat))throw new Error('إحداثيات أصل الجزء غير صحيحة');
     anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:lon,lat},0);
     meters=anchor.meterInMercatorCoordinateUnits();
+    projectedMeters=meters*Math.cos(lat*Math.PI/180);
     const layer={
      id,type:'custom',renderingMode:'3d',
      onAdd(mapInstance,gl){
@@ -208,8 +209,10 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
       }
       const matrix=Array.from(values,Number);if(matrix.some(v=>!Number.isFinite(v)))return;
       const projection=new THREE.Matrix4().fromArray(matrix);
+      // Match the previously working GLB transform: horizontal EPSG:3857 meters
+      // require the latitude cosine correction; vertical meters use Mercator units.
       const localTransform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
-       .scale(new THREE.Vector3(meters,-meters,meters));
+       .scale(new THREE.Vector3(projectedMeters,-projectedMeters,meters));
       camera.projectionMatrix.copy(projection).multiply(localTransform);
       camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
       renderer.resetState();renderer.render(scene,camera);renderer.resetState();
