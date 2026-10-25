@@ -1,0 +1,25 @@
+{
+  "status": "success",
+  "source": "Microsoft Bing Maps satellite-derived building footprints for the Philippines",
+  "project_url": "https://github.com/microsoft/IdMyPhBuildingFootprints",
+  "source_url": "https://minedbuildings.z5.web.core.windows.net/legacy/southeast-asia/philippines.geojsonl.zip",
+  "license": "Open Data Commons Open Database License (ODbL)",
+  "license_reference": "https://opendatacommons.org/licenses/odbl/1-0/",
+  "imagery_vintage": "2016-2020 Maxar imagery (project documentation)",
+  "area": "Malate-focused AOI, Manila, Philippines (includes a surrounding buffer)",
+  "bbox_wgs84": [
+    120.972,
+    14.55,
+    121.005,
+    14.58
+  ],
+  "retrieved_at_utc": "2026-10-25T04:56:19.758321+00:00",
+  "policy": "Full Philippines archive is temporary CI input; only the clipped Malate-area subset and provenance report are committed. Original GLB geometry and coordinates are not modified.",
+  "archive_bytes": 1189283353,
+  "zip_member": "philippines.geojsonl",
+  "rows_examined": 17421764,
+  "feature_count": 7772,
+  "warnings": [],
+  "output_file": "ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-malate.geojson",
+  "output_bytes": 4172122
+}
