@@ -12397,6 +12397,13 @@
       "source": "NASA CMR ATL03",
       "error": "CalledProcessError: Command '['git', 'push', 'origin', 'HEAD:main']' returned non-zero exit status 1.",
       "partial_bytes": 0
+    },
+    "6302eb0fe50c77371895": {
+      "url": "https://opendap.earthdata.nasa.gov/collections/C3326974349-NSIDC_CPRD/granules/ATL03_20240110053936_03422206_007_01.h5",
+      "title": "ATL03_20240110053936_03422206_007_01.h5_ATL03_20240110053936_03422206_007_01.h5",
+      "source": "NASA CMR ATL03",
+      "error": "CalledProcessError: Command '['git', 'push', 'origin', 'HEAD:main']' returned non-zero exit status 1.",
+      "partial_bytes": 0
     }
   }
 }
