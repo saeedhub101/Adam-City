@@ -1,0 +1,32 @@
+name: Texture two Tabarbour buildings
+on:
+  push:
+    branches: [main]
+    paths:
+      - "middle east/BuildGLB/amman/realistic/texture_two_buildings.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  texture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Blender
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y blender
+      - name: Build textured individual building GLBs
+        run: blender --background --python "middle east/BuildGLB/amman/realistic/texture_two_buildings.py"
+      - name: Commit outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "middle east/BuildGLB/amman/realistic/buildings"
+          if git diff --cached --quiet; then
+            echo "No output changes to commit"
+          else
+            git commit -m "Add textured individual Tabarbour building models"
+            git push origin main
+          fi
