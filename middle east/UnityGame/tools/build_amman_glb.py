@@ -173,7 +173,7 @@ def main():
             (out/"manifest.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False),encoding="utf-8")
             if cfg.get("repo_commit",True):
                 try:
-                    repo_root=Path.cwd().parents[1];rel=target.resolve().relative_to(repo_root.resolve())
+                    repo_root=Path(subprocess.check_output(["git","rev-parse","--show-toplevel"],cwd=Path.cwd(),text=True).strip());rel=target.resolve().relative_to(repo_root.resolve())
                     subprocess.run(["git","add","--",str(rel),str((out/"manifest.json").resolve().relative_to(repo_root.resolve()))],cwd=repo_root,check=True)
                     subprocess.run(["git","-c","user.name=github-actions[bot]","-c","user.email=41898282+github-actions[bot]@users.noreply.github.com","commit","-m",f"Add generated {city} GLB tile {tx}_{ty}"],cwd=repo_root,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
                     subprocess.run(["git","push","origin","HEAD:main"],cwd=repo_root,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
