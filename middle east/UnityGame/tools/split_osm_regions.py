@@ -38,7 +38,7 @@ def detect_axis(source):
     direct=swapped=0
     sampled=0
     with gzip.open(source,"rb") as fh:
-        for feature in ijson.items(fh,"features.item"):
+        for feature in ijson.items(fh,"features.item", use_float=True):
             c=feature_center(feature)
             if c:
                 direct += int(inside(*c))
