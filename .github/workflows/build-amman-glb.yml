@@ -15,7 +15,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: regional-glb-generation
+  group: historic-palestine-regional-glb-v2
   cancel-in-progress: false
 
 jobs:
