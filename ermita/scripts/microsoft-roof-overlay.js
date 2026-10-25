@@ -12,7 +12,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
   const map = await waitForMap();
   if (!map) return;
 
-  const sourceUrl = new URL('ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-ermita.geojson', location.href).href;
+  const sourceUrl = new URL('ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-malate.geojson', location.href).href;
   const root = 'complete_data/OSM/data/buildings/Ermita/';
   const checkbox = makeToggle();
   const parts = new Map();
@@ -39,7 +39,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
   function makeToggle() {
     const label = document.createElement('label');
     label.style.cssText = 'display:flex;gap:8px;align-items:flex-start;margin:8px 0;padding:9px;border:1px solid #607987;border-radius:8px;background:#182b35;color:#f2f6f8;font-size:12px;line-height:1.45;cursor:pointer;';
-    label.innerHTML = '<input id="microsoft-roof-overlay-toggle" type="checkbox" style="flex:0 0 auto;margin-top:2px;accent-color:#d6b58a;width:16px;height:16px"><span><b>Microsoft — أسطح مباني Malate / Ermita فوق GLB</b><small style="display:block;color:#b9c8cf;font-size:10px">تراكب أسطح فقط؛ هندسة GLB الأصلية لا تتغير</small></span>';
+    label.innerHTML = '<input id="microsoft-roof-overlay-toggle" type="checkbox" style="flex:0 0 auto;margin-top:2px;accent-color:#d6b58a;width:16px;height:16px"><span><b>Microsoft — أسطح مباني Malate فوق GLB</b><small style="display:block;color:#b9c8cf;font-size:10px">تراكب أسطح فقط؛ هندسة GLB الأصلية لا تتغير</small></span>';
     const panel = document.querySelector('.panel') || document.querySelector('aside');
     if (panel) panel.insertBefore(label, panel.firstChild);
     const input = label.querySelector('input');
@@ -95,9 +95,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
           entry = await buildPartOverlay(part, features);
           parts.set(part, entry);
         }
-        entry.layerIds.forEach(id => {
-          if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', 'visible');
-        });
+        entry.group.visible = true;
         total += entry.candidateCount;
         matched += entry.roofCount;
       }
@@ -109,9 +107,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
 
   function hideOverlays() {
     for (const entry of parts.values()) {
-      entry.layerIds.forEach(id => {
-        if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', 'none');
-      });
+      entry.group.visible = false;
     }
     if (status) status.textContent = 'تم إخفاء أسطح Microsoft؛ ملفات GLB الأصلية لم تتغير.';
   }
@@ -290,10 +286,9 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
     };
     map.addLayer(layer);
     if (map.getLayer(layerId)) {
-      map.setLayoutProperty(layerId, 'visibility', enabled ? 'visible' : 'none');
       map.moveLayer(layerId);
     }
-    return { layerIds: [layerId], candidateCount: candidatesCount, roofCount };
+    group.visible = enabled;\n    return { layerIds: [layerId], group, candidateCount: candidatesCount, roofCount };
   }
 
   function loadModel(url) {
@@ -309,6 +304,6 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
     const palette = [0xaaa397, 0xb9b3a7, 0x989b98, 0xc1b8a8, 0x8e9694, 0xb0a99b];
     let hash = complexity | 0;
     for (let i = 0; i < key.length; i++) hash = (hash * 31 + key.charCodeAt(i)) | 0;
-    return palette[Math.abs(hash) % palette.length];
+    return palette[(hash >>> 0) % palette.length];
   }
 })();
