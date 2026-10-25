@@ -1,0 +1,1177 @@
+{
+  "city": "Salt",
+  "bounds": {
+    "west": 35.65,
+    "east": 35.8,
+    "south": 32.0,
+    "north": 32.1
+  },
+  "tile_degrees": 0.01,
+  "tiles": [
+    {
+      "tile": "3565_3201",
+      "file": "salt_3565_3201.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 7376
+    },
+    {
+      "tile": "3565_3202",
+      "file": "salt_3565_3202.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 24348
+    },
+    {
+      "tile": "3565_3203",
+      "file": "salt_3565_3203.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 3008
+    },
+    {
+      "tile": "3565_3204",
+      "file": "salt_3565_3204.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 13904
+    },
+    {
+      "tile": "3565_3205",
+      "file": "salt_3565_3205.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 5828
+    },
+    {
+      "tile": "3565_3207",
+      "file": "salt_3565_3207.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 7236
+    },
+    {
+      "tile": "3565_3208",
+      "file": "salt_3565_3208.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 11604
+    },
+    {
+      "tile": "3566_3200",
+      "file": "salt_3566_3200.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 9956
+    },
+    {
+      "tile": "3566_3201",
+      "file": "salt_3566_3201.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 3668
+    },
+    {
+      "tile": "3566_3202",
+      "file": "salt_3566_3202.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 12732
+    },
+    {
+      "tile": "3566_3203",
+      "file": "salt_3566_3203.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 15796
+    },
+    {
+      "tile": "3566_3204",
+      "file": "salt_3566_3204.glb",
+      "buildings": 0,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 25692
+    },
+    {
+      "tile": "3566_3205",
+      "file": "salt_3566_3205.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 55956
+    },
+    {
+      "tile": "3566_3206",
+      "file": "salt_3566_3206.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 6836
+    },
+    {
+      "tile": "3566_3207",
+      "file": "salt_3566_3207.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 3536
+    },
+    {
+      "tile": "3566_3208",
+      "file": "salt_3566_3208.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 7524
+    },
+    {
+      "tile": "3566_3209",
+      "file": "salt_3566_3209.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 36212
+    },
+    {
+      "tile": "3567_3200",
+      "file": "salt_3567_3200.glb",
+      "buildings": 0,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 21436
+    },
+    {
+      "tile": "3567_3201",
+      "file": "salt_3567_3201.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 7584
+    },
+    {
+      "tile": "3567_3202",
+      "file": "salt_3567_3202.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 5548
+    },
+    {
+      "tile": "3567_3203",
+      "file": "salt_3567_3203.glb",
+      "buildings": 0,
+      "streets": 11,
+      "labels": 0,
+      "bytes": 26320
+    },
+    {
+      "tile": "3567_3204",
+      "file": "salt_3567_3204.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 10392
+    },
+    {
+      "tile": "3567_3205",
+      "file": "salt_3567_3205.glb",
+      "buildings": 0,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 15768
+    },
+    {
+      "tile": "3567_3206",
+      "file": "salt_3567_3206.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 15804
+    },
+    {
+      "tile": "3567_3207",
+      "file": "salt_3567_3207.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 3604
+    },
+    {
+      "tile": "3567_3208",
+      "file": "salt_3567_3208.glb",
+      "buildings": 0,
+      "streets": 1,
+      "labels": 0,
+      "bytes": 3424
+    },
+    {
+      "tile": "3567_3209",
+      "file": "salt_3567_3209.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 9740
+    },
+    {
+      "tile": "3568_3201",
+      "file": "salt_3568_3201.glb",
+      "buildings": 0,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 50364
+    },
+    {
+      "tile": "3568_3202",
+      "file": "salt_3568_3202.glb",
+      "buildings": 0,
+      "streets": 15,
+      "labels": 0,
+      "bytes": 21156
+    },
+    {
+      "tile": "3568_3203",
+      "file": "salt_3568_3203.glb",
+      "buildings": 0,
+      "streets": 11,
+      "labels": 0,
+      "bytes": 31552
+    },
+    {
+      "tile": "3568_3204",
+      "file": "salt_3568_3204.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 18648
+    },
+    {
+      "tile": "3568_3205",
+      "file": "salt_3568_3205.glb",
+      "buildings": 3,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 49296
+    },
+    {
+      "tile": "3568_3206",
+      "file": "salt_3568_3206.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 0,
+      "bytes": 12044
+    },
+    {
+      "tile": "3568_3208",
+      "file": "salt_3568_3208.glb",
+      "buildings": 0,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 14876
+    },
+    {
+      "tile": "3568_3209",
+      "file": "salt_3568_3209.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 19284
+    },
+    {
+      "tile": "3569_3200",
+      "file": "salt_3569_3200.glb",
+      "buildings": 0,
+      "streets": 26,
+      "labels": 0,
+      "bytes": 49396
+    },
+    {
+      "tile": "3569_3201",
+      "file": "salt_3569_3201.glb",
+      "buildings": 0,
+      "streets": 14,
+      "labels": 0,
+      "bytes": 40132
+    },
+    {
+      "tile": "3569_3202",
+      "file": "salt_3569_3202.glb",
+      "buildings": 0,
+      "streets": 13,
+      "labels": 0,
+      "bytes": 37436
+    },
+    {
+      "tile": "3569_3203",
+      "file": "salt_3569_3203.glb",
+      "buildings": 0,
+      "streets": 27,
+      "labels": 4,
+      "bytes": 51524
+    },
+    {
+      "tile": "3569_3204",
+      "file": "salt_3569_3204.glb",
+      "buildings": 44,
+      "streets": 25,
+      "labels": 0,
+      "bytes": 583464
+    },
+    {
+      "tile": "3569_3205",
+      "file": "salt_3569_3205.glb",
+      "buildings": 53,
+      "streets": 13,
+      "labels": 0,
+      "bytes": 985760
+    },
+    {
+      "tile": "3569_3206",
+      "file": "salt_3569_3206.glb",
+      "buildings": 26,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 370292
+    },
+    {
+      "tile": "3569_3207",
+      "file": "salt_3569_3207.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 15288
+    },
+    {
+      "tile": "3569_3208",
+      "file": "salt_3569_3208.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 19604
+    },
+    {
+      "tile": "3569_3209",
+      "file": "salt_3569_3209.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 10524
+    },
+    {
+      "tile": "3570_3200",
+      "file": "salt_3570_3200.glb",
+      "buildings": 47,
+      "streets": 23,
+      "labels": 0,
+      "bytes": 728676
+    },
+    {
+      "tile": "3570_3201",
+      "file": "salt_3570_3201.glb",
+      "buildings": 34,
+      "streets": 11,
+      "labels": 0,
+      "bytes": 532124
+    },
+    {
+      "tile": "3570_3202",
+      "file": "salt_3570_3202.glb",
+      "buildings": 14,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 338484
+    },
+    {
+      "tile": "3570_3203",
+      "file": "salt_3570_3203.glb",
+      "buildings": 122,
+      "streets": 52,
+      "labels": 1,
+      "bytes": 3353924
+    },
+    {
+      "tile": "3570_3204",
+      "file": "salt_3570_3204.glb",
+      "buildings": 165,
+      "streets": 74,
+      "labels": 0,
+      "bytes": 4479768
+    },
+    {
+      "tile": "3570_3205",
+      "file": "salt_3570_3205.glb",
+      "buildings": 113,
+      "streets": 39,
+      "labels": 0,
+      "bytes": 2052280
+    },
+    {
+      "tile": "3570_3206",
+      "file": "salt_3570_3206.glb",
+      "buildings": 79,
+      "streets": 79,
+      "labels": 2,
+      "bytes": 1482872
+    },
+    {
+      "tile": "3570_3207",
+      "file": "salt_3570_3207.glb",
+      "buildings": 26,
+      "streets": 11,
+      "labels": 0,
+      "bytes": 418060
+    },
+    {
+      "tile": "3570_3208",
+      "file": "salt_3570_3208.glb",
+      "buildings": 0,
+      "streets": 17,
+      "labels": 0,
+      "bytes": 30560
+    },
+    {
+      "tile": "3570_3209",
+      "file": "salt_3570_3209.glb",
+      "buildings": 0,
+      "streets": 11,
+      "labels": 0,
+      "bytes": 63924
+    },
+    {
+      "tile": "3571_3200",
+      "file": "salt_3571_3200.glb",
+      "buildings": 7,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 219332
+    },
+    {
+      "tile": "3571_3201",
+      "file": "salt_3571_3201.glb",
+      "buildings": 112,
+      "streets": 28,
+      "labels": 2,
+      "bytes": 2122196
+    },
+    {
+      "tile": "3571_3202",
+      "file": "salt_3571_3202.glb",
+      "buildings": 161,
+      "streets": 62,
+      "labels": 3,
+      "bytes": 2298620
+    },
+    {
+      "tile": "3571_3203",
+      "file": "salt_3571_3203.glb",
+      "buildings": 169,
+      "streets": 79,
+      "labels": 0,
+      "bytes": 3665164
+    },
+    {
+      "tile": "3571_3204",
+      "file": "salt_3571_3204.glb",
+      "buildings": 103,
+      "streets": 67,
+      "labels": 1,
+      "bytes": 2480948
+    },
+    {
+      "tile": "3571_3205",
+      "file": "salt_3571_3205.glb",
+      "buildings": 172,
+      "streets": 42,
+      "labels": 0,
+      "bytes": 2034868
+    },
+    {
+      "tile": "3571_3206",
+      "file": "salt_3571_3206.glb",
+      "buildings": 123,
+      "streets": 57,
+      "labels": 2,
+      "bytes": 2779632
+    },
+    {
+      "tile": "3571_3207",
+      "file": "salt_3571_3207.glb",
+      "buildings": 10,
+      "streets": 28,
+      "labels": 2,
+      "bytes": 170404
+    },
+    {
+      "tile": "3571_3208",
+      "file": "salt_3571_3208.glb",
+      "buildings": 0,
+      "streets": 19,
+      "labels": 0,
+      "bytes": 44456
+    },
+    {
+      "tile": "3571_3209",
+      "file": "salt_3571_3209.glb",
+      "buildings": 0,
+      "streets": 30,
+      "labels": 2,
+      "bytes": 38556
+    },
+    {
+      "tile": "3572_3200",
+      "file": "salt_3572_3200.glb",
+      "buildings": 6,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 202460
+    },
+    {
+      "tile": "3572_3201",
+      "file": "salt_3572_3201.glb",
+      "buildings": 4,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 166180
+    },
+    {
+      "tile": "3572_3202",
+      "file": "salt_3572_3202.glb",
+      "buildings": 109,
+      "streets": 36,
+      "labels": 0,
+      "bytes": 1782188
+    },
+    {
+      "tile": "3572_3203",
+      "file": "salt_3572_3203.glb",
+      "buildings": 428,
+      "streets": 89,
+      "labels": 2,
+      "bytes": 5798604
+    },
+    {
+      "tile": "3572_3204",
+      "file": "salt_3572_3204.glb",
+      "buildings": 571,
+      "streets": 51,
+      "labels": 0,
+      "bytes": 4912196
+    },
+    {
+      "tile": "3572_3205",
+      "file": "salt_3572_3205.glb",
+      "buildings": 74,
+      "streets": 65,
+      "labels": 0,
+      "bytes": 815416
+    },
+    {
+      "tile": "3572_3206",
+      "file": "salt_3572_3206.glb",
+      "buildings": 23,
+      "streets": 26,
+      "labels": 0,
+      "bytes": 829968
+    },
+    {
+      "tile": "3572_3207",
+      "file": "salt_3572_3207.glb",
+      "buildings": 0,
+      "streets": 15,
+      "labels": 0,
+      "bytes": 36724
+    },
+    {
+      "tile": "3572_3208",
+      "file": "salt_3572_3208.glb",
+      "buildings": 0,
+      "streets": 15,
+      "labels": 0,
+      "bytes": 31412
+    },
+    {
+      "tile": "3572_3209",
+      "file": "salt_3572_3209.glb",
+      "buildings": 0,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 18892
+    },
+    {
+      "tile": "3573_3200",
+      "file": "salt_3573_3200.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 0,
+      "bytes": 9536
+    },
+    {
+      "tile": "3573_3201",
+      "file": "salt_3573_3201.glb",
+      "buildings": 0,
+      "streets": 19,
+      "labels": 0,
+      "bytes": 40396
+    },
+    {
+      "tile": "3573_3202",
+      "file": "salt_3573_3202.glb",
+      "buildings": 12,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 153152
+    },
+    {
+      "tile": "3573_3203",
+      "file": "salt_3573_3203.glb",
+      "buildings": 175,
+      "streets": 66,
+      "labels": 1,
+      "bytes": 2139740
+    },
+    {
+      "tile": "3573_3204",
+      "file": "salt_3573_3204.glb",
+      "buildings": 86,
+      "streets": 77,
+      "labels": 2,
+      "bytes": 861088
+    },
+    {
+      "tile": "3573_3205",
+      "file": "salt_3573_3205.glb",
+      "buildings": 1,
+      "streets": 39,
+      "labels": 0,
+      "bytes": 75872
+    },
+    {
+      "tile": "3573_3206",
+      "file": "salt_3573_3206.glb",
+      "buildings": 2,
+      "streets": 30,
+      "labels": 0,
+      "bytes": 82916
+    },
+    {
+      "tile": "3573_3207",
+      "file": "salt_3573_3207.glb",
+      "buildings": 0,
+      "streets": 13,
+      "labels": 0,
+      "bytes": 40608
+    },
+    {
+      "tile": "3573_3208",
+      "file": "salt_3573_3208.glb",
+      "buildings": 1,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 31288
+    },
+    {
+      "tile": "3573_3209",
+      "file": "salt_3573_3209.glb",
+      "buildings": 0,
+      "streets": 32,
+      "labels": 0,
+      "bytes": 48876
+    },
+    {
+      "tile": "3574_3200",
+      "file": "salt_3574_3200.glb",
+      "buildings": 1,
+      "streets": 2,
+      "labels": 1,
+      "bytes": 13404
+    },
+    {
+      "tile": "3574_3201",
+      "file": "salt_3574_3201.glb",
+      "buildings": 0,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 30572
+    },
+    {
+      "tile": "3574_3202",
+      "file": "salt_3574_3202.glb",
+      "buildings": 0,
+      "streets": 21,
+      "labels": 0,
+      "bytes": 29196
+    },
+    {
+      "tile": "3574_3203",
+      "file": "salt_3574_3203.glb",
+      "buildings": 2,
+      "streets": 41,
+      "labels": 1,
+      "bytes": 89728
+    },
+    {
+      "tile": "3574_3204",
+      "file": "salt_3574_3204.glb",
+      "buildings": 2,
+      "streets": 37,
+      "labels": 0,
+      "bytes": 209292
+    },
+    {
+      "tile": "3574_3205",
+      "file": "salt_3574_3205.glb",
+      "buildings": 24,
+      "streets": 69,
+      "labels": 0,
+      "bytes": 377308
+    },
+    {
+      "tile": "3574_3206",
+      "file": "salt_3574_3206.glb",
+      "buildings": 59,
+      "streets": 37,
+      "labels": 0,
+      "bytes": 653780
+    },
+    {
+      "tile": "3574_3207",
+      "file": "salt_3574_3207.glb",
+      "buildings": 0,
+      "streets": 14,
+      "labels": 0,
+      "bytes": 31864
+    },
+    {
+      "tile": "3574_3208",
+      "file": "salt_3574_3208.glb",
+      "buildings": 0,
+      "streets": 17,
+      "labels": 0,
+      "bytes": 42612
+    },
+    {
+      "tile": "3574_3209",
+      "file": "salt_3574_3209.glb",
+      "buildings": 0,
+      "streets": 15,
+      "labels": 0,
+      "bytes": 35460
+    },
+    {
+      "tile": "3575_3200",
+      "file": "salt_3575_3200.glb",
+      "buildings": 3,
+      "streets": 4,
+      "labels": 1,
+      "bytes": 57152
+    },
+    {
+      "tile": "3575_3201",
+      "file": "salt_3575_3201.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 14836
+    },
+    {
+      "tile": "3575_3202",
+      "file": "salt_3575_3202.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 1,
+      "bytes": 8256
+    },
+    {
+      "tile": "3575_3203",
+      "file": "salt_3575_3203.glb",
+      "buildings": 0,
+      "streets": 8,
+      "labels": 1,
+      "bytes": 13432
+    },
+    {
+      "tile": "3575_3204",
+      "file": "salt_3575_3204.glb",
+      "buildings": 0,
+      "streets": 39,
+      "labels": 0,
+      "bytes": 45396
+    },
+    {
+      "tile": "3575_3205",
+      "file": "salt_3575_3205.glb",
+      "buildings": 0,
+      "streets": 31,
+      "labels": 0,
+      "bytes": 40784
+    },
+    {
+      "tile": "3575_3206",
+      "file": "salt_3575_3206.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 18864
+    },
+    {
+      "tile": "3575_3207",
+      "file": "salt_3575_3207.glb",
+      "buildings": 0,
+      "streets": 13,
+      "labels": 0,
+      "bytes": 20392
+    },
+    {
+      "tile": "3575_3208",
+      "file": "salt_3575_3208.glb",
+      "buildings": 0,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 18256
+    },
+    {
+      "tile": "3575_3209",
+      "file": "salt_3575_3209.glb",
+      "buildings": 0,
+      "streets": 15,
+      "labels": 0,
+      "bytes": 29384
+    },
+    {
+      "tile": "3576_3200",
+      "file": "salt_3576_3200.glb",
+      "buildings": 290,
+      "streets": 47,
+      "labels": 0,
+      "bytes": 2559772
+    },
+    {
+      "tile": "3576_3201",
+      "file": "salt_3576_3201.glb",
+      "buildings": 72,
+      "streets": 41,
+      "labels": 0,
+      "bytes": 666504
+    },
+    {
+      "tile": "3576_3202",
+      "file": "salt_3576_3202.glb",
+      "buildings": 0,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 41712
+    },
+    {
+      "tile": "3576_3203",
+      "file": "salt_3576_3203.glb",
+      "buildings": 0,
+      "streets": 5,
+      "labels": 1,
+      "bytes": 12304
+    },
+    {
+      "tile": "3576_3204",
+      "file": "salt_3576_3204.glb",
+      "buildings": 0,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 23472
+    },
+    {
+      "tile": "3576_3205",
+      "file": "salt_3576_3205.glb",
+      "buildings": 0,
+      "streets": 24,
+      "labels": 0,
+      "bytes": 37320
+    },
+    {
+      "tile": "3576_3206",
+      "file": "salt_3576_3206.glb",
+      "buildings": 0,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 32096
+    },
+    {
+      "tile": "3576_3207",
+      "file": "salt_3576_3207.glb",
+      "buildings": 0,
+      "streets": 12,
+      "labels": 0,
+      "bytes": 22516
+    },
+    {
+      "tile": "3576_3208",
+      "file": "salt_3576_3208.glb",
+      "buildings": 0,
+      "streets": 6,
+      "labels": 0,
+      "bytes": 13652
+    },
+    {
+      "tile": "3576_3209",
+      "file": "salt_3576_3209.glb",
+      "buildings": 0,
+      "streets": 15,
+      "labels": 0,
+      "bytes": 32912
+    },
+    {
+      "tile": "3577_3200",
+      "file": "salt_3577_3200.glb",
+      "buildings": 449,
+      "streets": 93,
+      "labels": 0,
+      "bytes": 3967712
+    },
+    {
+      "tile": "3577_3201",
+      "file": "salt_3577_3201.glb",
+      "buildings": 106,
+      "streets": 38,
+      "labels": 0,
+      "bytes": 1023412
+    },
+    {
+      "tile": "3577_3202",
+      "file": "salt_3577_3202.glb",
+      "buildings": 0,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 20672
+    },
+    {
+      "tile": "3577_3203",
+      "file": "salt_3577_3203.glb",
+      "buildings": 0,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 18532
+    },
+    {
+      "tile": "3577_3204",
+      "file": "salt_3577_3204.glb",
+      "buildings": 1,
+      "streets": 68,
+      "labels": 19,
+      "bytes": 101760
+    },
+    {
+      "tile": "3577_3205",
+      "file": "salt_3577_3205.glb",
+      "buildings": 0,
+      "streets": 25,
+      "labels": 0,
+      "bytes": 32508
+    },
+    {
+      "tile": "3577_3206",
+      "file": "salt_3577_3206.glb",
+      "buildings": 0,
+      "streets": 13,
+      "labels": 0,
+      "bytes": 20664
+    },
+    {
+      "tile": "3577_3207",
+      "file": "salt_3577_3207.glb",
+      "buildings": 0,
+      "streets": 23,
+      "labels": 0,
+      "bytes": 39720
+    },
+    {
+      "tile": "3577_3208",
+      "file": "salt_3577_3208.glb",
+      "buildings": 0,
+      "streets": 18,
+      "labels": 0,
+      "bytes": 29684
+    },
+    {
+      "tile": "3577_3209",
+      "file": "salt_3577_3209.glb",
+      "buildings": 0,
+      "streets": 7,
+      "labels": 0,
+      "bytes": 29844
+    },
+    {
+      "tile": "3578_3200",
+      "file": "salt_3578_3200.glb",
+      "buildings": 386,
+      "streets": 72,
+      "labels": 2,
+      "bytes": 3445880
+    },
+    {
+      "tile": "3578_3201",
+      "file": "salt_3578_3201.glb",
+      "buildings": 11,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 131560
+    },
+    {
+      "tile": "3578_3202",
+      "file": "salt_3578_3202.glb",
+      "buildings": 0,
+      "streets": 21,
+      "labels": 0,
+      "bytes": 36100
+    },
+    {
+      "tile": "3578_3203",
+      "file": "salt_3578_3203.glb",
+      "buildings": 1,
+      "streets": 34,
+      "labels": 4,
+      "bytes": 63908
+    },
+    {
+      "tile": "3578_3204",
+      "file": "salt_3578_3204.glb",
+      "buildings": 0,
+      "streets": 49,
+      "labels": 7,
+      "bytes": 54836
+    },
+    {
+      "tile": "3578_3205",
+      "file": "salt_3578_3205.glb",
+      "buildings": 0,
+      "streets": 15,
+      "labels": 9,
+      "bytes": 22832
+    },
+    {
+      "tile": "3578_3206",
+      "file": "salt_3578_3206.glb",
+      "buildings": 0,
+      "streets": 11,
+      "labels": 1,
+      "bytes": 26048
+    },
+    {
+      "tile": "3578_3207",
+      "file": "salt_3578_3207.glb",
+      "buildings": 0,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 21016
+    },
+    {
+      "tile": "3578_3208",
+      "file": "salt_3578_3208.glb",
+      "buildings": 0,
+      "streets": 4,
+      "labels": 1,
+      "bytes": 17736
+    },
+    {
+      "tile": "3578_3209",
+      "file": "salt_3578_3209.glb",
+      "buildings": 1,
+      "streets": 11,
+      "labels": 0,
+      "bytes": 67700
+    },
+    {
+      "tile": "3579_3200",
+      "file": "salt_3579_3200.glb",
+      "buildings": 201,
+      "streets": 65,
+      "labels": 8,
+      "bytes": 2042224
+    },
+    {
+      "tile": "3579_3201",
+      "file": "salt_3579_3201.glb",
+      "buildings": 175,
+      "streets": 54,
+      "labels": 6,
+      "bytes": 1213880
+    },
+    {
+      "tile": "3579_3202",
+      "file": "salt_3579_3202.glb",
+      "buildings": 210,
+      "streets": 66,
+      "labels": 6,
+      "bytes": 1530960
+    },
+    {
+      "tile": "3579_3203",
+      "file": "salt_3579_3203.glb",
+      "buildings": 75,
+      "streets": 44,
+      "labels": 4,
+      "bytes": 519664
+    },
+    {
+      "tile": "3579_3204",
+      "file": "salt_3579_3204.glb",
+      "buildings": 0,
+      "streets": 21,
+      "labels": 0,
+      "bytes": 26468
+    },
+    {
+      "tile": "3579_3205",
+      "file": "salt_3579_3205.glb",
+      "buildings": 0,
+      "streets": 31,
+      "labels": 0,
+      "bytes": 45748
+    },
+    {
+      "tile": "3579_3206",
+      "file": "salt_3579_3206.glb",
+      "buildings": 0,
+      "streets": 20,
+      "labels": 0,
+      "bytes": 27296
+    },
+    {
+      "tile": "3579_3207",
+      "file": "salt_3579_3207.glb",
+      "buildings": 0,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 11368
+    },
+    {
+      "tile": "3579_3208",
+      "file": "salt_3579_3208.glb",
+      "buildings": 0,
+      "streets": 25,
+      "labels": 0,
+      "bytes": 37048
+    },
+    {
+      "tile": "3579_3209",
+      "file": "salt_3579_3209.glb",
+      "buildings": 0,
+      "streets": 10,
+      "labels": 0,
+      "bytes": 23288
+    }
+  ],
+  "counts": {
+    "buildings": 5144,
+    "streets": 3135,
+    "street_labels": 97
+  }
+}
