@@ -2,13 +2,13 @@
 """Blender batch exporter: Amman tiled GLBs from the repository's Jordan OSM GeoJSON only.
 Run with: blender -b --python tools/build_amman_glb.py -- --data Jordan/layers --out BuildGLB/Amman
 """
-import bpy, sys, gzip, json, math, os
+import bpy, sys, gzip, json, math, os, subprocess, traceback
 from pathlib import Path
 from collections import defaultdict
 
 def args():
     a=sys.argv[sys.argv.index("--")+1:] if "--" in sys.argv else []
-    d={"data":"../Jordan/layers","out":"../BuildGLB/Amman","west":35.72,"east":36.08,"south":31.70,"north":32.12,"tile":0.01}
+    d={"data":"../Jordan/layers","out":"../BuildGLB/Amman","west":35.72,"east":36.08,"south":31.70,"north":32.12,"tile":0.01,"city":"Amman","prefix":"amman","repo_commit":True}
     for i in range(0,len(a),2):
         k=a[i].lstrip("-"); v=a[i+1]
         d[k]=float(v) if k in ("west","east","south","north","tile") else v
@@ -122,6 +122,7 @@ def road_mesh(line,origin,width,material,name):
 def main():
     cfg=args();data=Path(cfg["data"]).resolve();out=Path(cfg["out"]).resolve();out.mkdir(parents=True,exist_ok=True)
     west,east,south,north,tile=[cfg[k] for k in ("west","east","south","north","tile")]
+    city=cfg.get("city","Amman");prefix=cfg.get("prefix",city.lower().replace(" ","-"))
     origin=( (west+east)/2,(south+north)/2 )
     buildings=read(data/"buildings.geojson.gz");streets=read(data/"streets.geojson.gz");names=read(data/"streetnames.geojson.gz") if (data/"streetnames.geojson.gz").exists() else []
     tiles=defaultdict(lambda:{"buildings":[],"streets":[],"labels":[]})
@@ -149,24 +150,40 @@ def main():
             tiles[key(c[0],c[1])]["labels"].append({"name":tag(p,"name","name:en"),"point":c})
     walls=mat("Amman limestone facade",(.72,.65,.52));roofm=mat("Concrete and stone roofs",(.48,.43,.36));glass=mat("Blue grey window glass",(.22,.38,.46),.24,.18);trim=mat("Facade trim",(.88,.82,.68));signm=mat("Shop sign backing",(.12,.20,.16),.65)
     asphalt=mat("Asphalt",(.16,.16,.15));residential=mat("Residential road",(.27,.26,.24))
-    manifest={"city":"Amman","bounds":{"west":west,"east":east,"south":south,"north":north},"tile_degrees":tile,"tiles":[],"counts":{"buildings":0,"streets":0,"street_labels":0}}
+    manifest={"city":city,"bounds":{"west":west,"east":east,"south":south,"north":north},"tile_degrees":tile,"tiles":[],"counts":{"buildings":0,"streets":0,"street_labels":0}}
     for (tx,ty),items in sorted(tiles.items()):
-        bpy.ops.object.select_all(action="SELECT");bpy.ops.object.delete(use_global=False)
-        bpy.context.scene.unit_settings.system="METRIC"
-        for b in items["buildings"]:add_building(b,origin,walls,roofm,glass,trim,signm)
-        for s in items["streets"]:
-            hw=s["highway"].lower();w=12 if hw in ("motorway","trunk") else 8 if hw in ("primary","secondary") else 5 if hw=="tertiary" else 3.2 if hw in ("residential","unclassified") else 1.3
-            road_mesh(s["line"],origin,w,asphalt if w>2 else residential,"Road "+s["name"])
-            if s["name"]:
-                p=s["line"][len(s["line"])//2];x,z=xy(p[0],p[1],*origin)
-                add_text(s["name"],"Street name "+s["name"],(x,.12,z),2.2,trim)
-        for lab in items["labels"]:
-            x,z=xy(lab["point"][0],lab["point"][1],*origin);add_text(lab["name"],"Street label "+lab["name"],(x,.15,z),2,trim)
-        filename=f"amman_{tx}_{ty}.glb";target=out/filename
-        bpy.ops.export_scene.gltf(filepath=str(target),export_format="GLB",use_selection=False,export_apply=True)
-        manifest["tiles"].append({"tile":f"{tx}_{ty}","file":filename,"buildings":len(items["buildings"]),"streets":len(items["streets"]),"labels":len(items["labels"]),"bytes":target.stat().st_size})
-        manifest["counts"]["buildings"]+=len(items["buildings"]);manifest["counts"]["streets"]+=len(items["streets"]);manifest["counts"]["street_labels"]+=len(items["labels"])
-        print("EXPORTED",target,len(items["buildings"]),len(items["streets"]))
+        filename=f"{prefix}_{tx}_{ty}.glb";target=out/filename
+        if target.exists() and target.stat().st_size>1024: print("RESUME_SKIP_EXISTING",target);continue
+        try:
+            bpy.ops.object.select_all(action="SELECT");bpy.ops.object.delete(use_global=False)
+            bpy.context.scene.unit_settings.system="METRIC"
+            for b in items["buildings"]:add_building(b,origin,walls,roofm,glass,trim,signm)
+            for s in items["streets"]:
+                hw=s["highway"].lower();w=12 if hw in ("motorway","trunk") else 8 if hw in ("primary","secondary") else 5 if hw=="tertiary" else 3.2 if hw in ("residential","unclassified") else 1.3
+                road_mesh(s["line"],origin,w,asphalt if w>2 else residential,"Road "+s["name"])
+                if s["name"]:
+                    p=s["line"][len(s["line"])//2];x,z=xy(p[0],p[1],*origin)
+                    add_text(s["name"],"Street name "+s["name"],(x,.12,z),2.2,trim)
+            for lab in items["labels"]:
+                x,z=xy(lab["point"][0],lab["point"][1],*origin);add_text(lab["name"],"Street label "+lab["name"],(x,.15,z),2,trim)
+            bpy.ops.export_scene.gltf(filepath=str(target),export_format="GLB",use_selection=False,export_apply=True)
+            manifest["tiles"].append({"tile":f"{tx}_{ty}","file":filename,"buildings":len(items["buildings"]),"streets":len(items["streets"]),"labels":len(items["labels"]),"bytes":target.stat().st_size})
+            manifest["counts"]["buildings"]+=len(items["buildings"]);manifest["counts"]["streets"]+=len(items["streets"]);manifest["counts"]["street_labels"]+=len(items["labels"])
+            print("EXPORTED",target,len(items["buildings"]),len(items["streets"]))
+            (out/"manifest.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False),encoding="utf-8")
+            if cfg.get("repo_commit",True):
+                try:
+                    repo_root=Path.cwd().parents[1];rel=target.resolve().relative_to(repo_root.resolve())
+                    subprocess.run(["git","add","--",str(rel)],cwd=repo_root,check=True)
+                    subprocess.run(["git","-c","user.name=github-actions[bot]","-c","user.email=41898282+github-actions[bot]@users.noreply.github.com","commit","-m",f"Add generated {city} GLB tile {tx}_{ty}"],cwd=repo_root,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+                    subprocess.run(["git","push","origin","HEAD:main"],cwd=repo_root,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+                    print("CHECKPOINT_PUSHED",rel)
+                except Exception as e: print("CHECKPOINT_PUSH_FAILED",repr(e))
+        except Exception as e:
+            print("TILE_FAILED_CONTINUING",city,tx,ty,repr(e));traceback.print_exc()
+            try: (out/"failures.jsonl").open("a",encoding="utf-8").write(json.dumps({"city":city,"tile":f"{tx}_{ty}","error":repr(e)})+"\\n")
+            except Exception: pass
+
     (out/"manifest.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False),encoding="utf-8")
-    print("AMMAN GLB COMPLETE",json.dumps(manifest["counts"]))
+    print(city+" GLB COMPLETE",json.dumps(manifest["counts"]))
 if __name__=="__main__":main()
