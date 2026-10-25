@@ -17,18 +17,26 @@
   "countries": {
     "Jordan": {
       "buildings_features_scanned": 464413,
-      "skipped_empty_geometry": 462328,
+      "buildings_polygon_buildings_exported": 231164,
+      "height_unknown": 448762,
+      "height_osm_height": 7538,
+      "height_levels_estimate": 6028,
       "building_details_features_scanned": 464456,
-      "unique_tiles": 0,
-      "features_exported_total": 0,
+      "building_details_polygon_buildings_exported": 231164,
+      "unique_tiles": 685,
+      "features_exported_total": 462328,
       "warning": "buildings and building_details may overlap; this first export preserves both source layers for comparison and does not deduplicate physical buildings"
     },
     "Palestine": {
       "buildings_features_scanned": 2087961,
-      "skipped_empty_geometry": 2028670,
+      "buildings_polygon_buildings_exported": 1014335,
+      "height_osm_height": 12770,
+      "height_unknown": 1965174,
+      "height_levels_estimate": 50726,
       "building_details_features_scanned": 2088828,
-      "unique_tiles": 0,
-      "features_exported_total": 0,
+      "building_details_polygon_buildings_exported": 1014335,
+      "unique_tiles": 818,
+      "features_exported_total": 2028670,
       "warning": "buildings and building_details may overlap; this first export preserves both source layers for comparison and does not deduplicate physical buildings"
     }
   }
