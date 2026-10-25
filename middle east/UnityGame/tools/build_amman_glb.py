@@ -150,7 +150,17 @@ def main():
             tiles[key(c[0],c[1])]["labels"].append({"name":tag(p,"name","name:en"),"point":c})
     walls=mat("Amman limestone facade",(.72,.65,.52));roofm=mat("Concrete and stone roofs",(.48,.43,.36));glass=mat("Blue grey window glass",(.22,.38,.46),.24,.18);trim=mat("Facade trim",(.88,.82,.68));signm=mat("Shop sign backing",(.12,.20,.16),.65)
     asphalt=mat("Asphalt",(.16,.16,.15));residential=mat("Residential road",(.27,.26,.24))
+    manifest_path=out/"manifest.json"
     manifest={"city":city,"bounds":{"west":west,"east":east,"south":south,"north":north},"tile_degrees":tile,"tiles":[],"counts":{"buildings":0,"streets":0,"street_labels":0}}
+    # Preserve checkpointed tiles across separate regional-cell invocations.
+    if manifest_path.exists():
+        try:
+            previous=json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["tiles"]=previous.get("tiles",[])
+            manifest["counts"]=previous.get("counts",manifest["counts"])
+        except Exception as e:
+            print("MANIFEST_READ_WARNING",repr(e))
+    known={entry.get("file") for entry in manifest["tiles"]}
     for (tx,ty),items in sorted(tiles.items()):
         filename=f"{prefix}_{tx}_{ty}.glb";target=out/filename
         if target.exists() and target.stat().st_size>1024: print("RESUME_SKIP_EXISTING",target);continue
@@ -167,15 +177,17 @@ def main():
             for lab in items["labels"]:
                 x,z=xy(lab["point"][0],lab["point"][1],*origin);add_text(lab["name"],"Street label "+lab["name"],(x,.15,z),2,trim)
             bpy.ops.export_scene.gltf(filepath=str(target),export_format="GLB",use_selection=False,export_apply=True)
-            manifest["tiles"].append({"tile":f"{tx}_{ty}","file":filename,"buildings":len(items["buildings"]),"streets":len(items["streets"]),"labels":len(items["labels"]),"bytes":target.stat().st_size})
-            manifest["counts"]["buildings"]+=len(items["buildings"]);manifest["counts"]["streets"]+=len(items["streets"]);manifest["counts"]["street_labels"]+=len(items["labels"])
+            if filename not in known:
+                manifest["tiles"].append({"tile":f"{tx}_{ty}","file":filename,"buildings":len(items["buildings"]),"streets":len(items["streets"]),"labels":len(items["labels"]),"bytes":target.stat().st_size})
+                known.add(filename)
+                manifest["counts"]["buildings"]+=len(items["buildings"]);manifest["counts"]["streets"]+=len(items["streets"]);manifest["counts"]["street_labels"]+=len(items["labels"])
             print("EXPORTED",target,len(items["buildings"]),len(items["streets"]))
-            (out/"manifest.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False),encoding="utf-8")
+            manifest_path.write_text(json.dumps(manifest,indent=2,ensure_ascii=False),encoding="utf-8")
             if cfg.get("repo_commit",True):
                 try:
                     repo_root=Path(os.environ.get("GITHUB_WORKSPACE", subprocess.check_output(["git","rev-parse","--show-toplevel"],cwd=Path(__file__).resolve().parents[3],text=True).strip())).resolve()
                     rel=target.resolve().relative_to(repo_root)
-                    subprocess.run(["git","add","--",str(rel),str((out/"manifest.json").resolve().relative_to(repo_root.resolve()))],cwd=repo_root,check=True)
+                    subprocess.run(["git","add","--",str(rel),str(manifest_path.resolve().relative_to(repo_root.resolve()))],cwd=repo_root,check=True)
                     subprocess.run(["git","-c","user.name=github-actions[bot]","-c","user.email=41898282+github-actions[bot]@users.noreply.github.com","commit","-m",f"Add generated {city} GLB tile {tx}_{ty}"],cwd=repo_root,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
                     subprocess.run(["git","push","origin","HEAD:main"],cwd=repo_root,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
                     print("CHECKPOINT_PUSHED",rel)
