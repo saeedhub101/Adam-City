@@ -121,7 +121,7 @@ def main():
                 _, old_handle = handles.popitem(last=False)
                 old_handle.close()
 
-        for layer in ("buildings", "building_details"):
+        for layer in ("buildings",):
             path = ROOT / country / "layers" / f"{layer}.geojson.gz"
             if not path.is_file():
                 country_stats[f"missing_{layer}_source"] += 1
@@ -172,7 +172,7 @@ def main():
 
         country_stats["unique_tiles"] = len(tile_counts)
         country_stats["features_exported_total"] = sum(tile_counts.values())
-        country_stats["warning"] = "buildings and building_details may overlap; this first export preserves both source layers for comparison and does not deduplicate physical buildings"
+        country_stats["warning"] = "Game tiles use the canonical buildings layer only to prevent duplicate physical buildings from the overlapping building_details export. building_details remains available separately in the source layers."
         report["countries"][country] = dict(country_stats)
         # Per-country manifest lists relative tile path and feature count.
         manifest = {
