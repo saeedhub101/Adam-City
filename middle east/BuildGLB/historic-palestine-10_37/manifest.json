@@ -1,0 +1,81 @@
+{
+  "city": "Historic Palestine cell 10_37",
+  "bounds": {
+    "west": 34.15,
+    "east": 35.95,
+    "south": 29.4,
+    "north": 33.35
+  },
+  "tile_degrees": 0.01,
+  "tiles": [
+    {
+      "tile": "3517_3310",
+      "file": "historic-palestine-10_37_3517_3310.glb",
+      "buildings": 1,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 10832
+    },
+    {
+      "tile": "3518_3310",
+      "file": "historic-palestine-10_37_3518_3310.glb",
+      "buildings": 17,
+      "streets": 2,
+      "labels": 0,
+      "bytes": 131288
+    },
+    {
+      "tile": "3519_3310",
+      "file": "historic-palestine-10_37_3519_3310.glb",
+      "buildings": 16,
+      "streets": 8,
+      "labels": 0,
+      "bytes": 112476
+    },
+    {
+      "tile": "3520_3310",
+      "file": "historic-palestine-10_37_3520_3310.glb",
+      "buildings": 0,
+      "streets": 3,
+      "labels": 0,
+      "bytes": 5156
+    },
+    {
+      "tile": "3521_3310",
+      "file": "historic-palestine-10_37_3521_3310.glb",
+      "buildings": 24,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 175644
+    },
+    {
+      "tile": "3522_3310",
+      "file": "historic-palestine-10_37_3522_3310.glb",
+      "buildings": 107,
+      "streets": 14,
+      "labels": 0,
+      "bytes": 728912
+    },
+    {
+      "tile": "3523_3310",
+      "file": "historic-palestine-10_37_3523_3310.glb",
+      "buildings": 44,
+      "streets": 21,
+      "labels": 0,
+      "bytes": 286416
+    },
+    {
+      "tile": "3524_3310",
+      "file": "historic-palestine-10_37_3524_3310.glb",
+      "buildings": 7,
+      "streets": 9,
+      "labels": 0,
+      "bytes": 78648
+    }
+  ],
+  "counts": {
+    "buildings": 216,
+    "streets": 68,
+    "street_labels": 0
+  }
+}
