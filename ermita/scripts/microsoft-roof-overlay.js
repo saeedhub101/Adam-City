@@ -9,13 +9,16 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
 (async function () {
   const status = document.getElementById('status');
   const errorBox = document.getElementById('error');
-  const map = await waitForMap();
-  if (!map) return;
-
   const sourceUrl = new URL('ermita/maps/sources/microsoft-satellite-buildings/microsoft-philippines-satellite-footprints-malate.geojson', location.href).href;
   const root = 'complete_data/OSM/data/buildings/Ermita/';
-  const checkbox = makeToggle();
   const parts = new Map();
+  let map = null;
+  const checkbox = makeToggle();
+  map = await waitForMap();
+  if (!map) {
+    checkbox.disabled = true;
+    return;
+  }
   let sourceFeatures = null;
   let loading = false;
   let enabled = false;
