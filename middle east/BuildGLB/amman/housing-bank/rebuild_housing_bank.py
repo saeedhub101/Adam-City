@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import bpy, math, json
 from pathlib import Path
+
 ROOT = Path(__file__).resolve().parents[4]
 SOURCE = ROOT / "middle east/BuildGLB/amman/amman_3590_3197_source.glb"
 OUTPUT = ROOT / "middle east/BuildGLB/amman/amman_3590_3197.glb"
@@ -54,7 +55,8 @@ def build():
     bpy.context.scene["target_height_m"]=HEIGHT
 
 def main():
-    if not SOURCE.exists(): raise FileNotFoundError(str(SOURCE))
+    if not SOURCE.exists() or SOURCE.stat().st_size == 0:
+        raise FileNotFoundError("Existing committed GLB tile was not copied to source path: "+str(SOURCE))
     bpy.ops.object.select_all(action="SELECT"); bpy.ops.object.delete(use_global=False)
     bpy.ops.import_scene.gltf(filepath=str(SOURCE))
     removed=[]
@@ -65,6 +67,8 @@ def main():
         cx=sum(v.x for v in cs)/8; cz=sum(v.z for v in cs)/8
         if math.hypot(cx-X,cz-Z)<=90:
             removed.append(o.name); bpy.data.objects.remove(o,do_unlink=True)
+    if not removed:
+        raise RuntimeError("No existing building mesh was identified near Housing Bank coordinates; refusing to export a duplicate tower or overwrite the original tile.")
     build()
     bpy.ops.object.select_all(action="SELECT")
     bpy.ops.export_scene.gltf(filepath=str(OUTPUT),export_format="GLB",use_selection=True,export_apply=True)
@@ -72,6 +76,6 @@ def main():
     REPORT.write_text("# Housing Bank Complex rebuild\n\nTarget coordinates: 31.971306, 35.907389\n\n"
       "Reconstructed 21-storey, 98 m stepped tower from published exterior photographs: projecting pale floor plates, dark continuous glazing bands, podium, crown and roof antennas. "
       "Non-target tile objects are preserved. This is a photo-referenced geometric reconstruction, not photogrammetry.\n\n"
-      "Removed nearby source building meshes: "+(", ".join(removed) if removed else "NONE FOUND; verify coordinate frame before using output")+"\n",encoding="utf-8")
+      "Removed nearby source building meshes: "+", ".join(removed)+"\n",encoding="utf-8")
     print("HOUSING_BANK_REBUILD_COMPLETE",json.dumps(removed),str(OUTPUT))
 if __name__=="__main__": main()
