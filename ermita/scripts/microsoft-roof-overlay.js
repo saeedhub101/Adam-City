@@ -99,6 +99,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
         total += entry.candidateCount;
         matched += entry.roofCount;
       }
+      map.triggerRepaint();
       if (status) status.textContent = 'تم تطبيق أسطح Microsoft على GLB: ' + matched + ' سطحًا مطابقًا من ' + total + ' مضلعًا مرشحًا. لم تتغير ملفات GLB الأصلية.';
     } finally {
       loading = false;
@@ -109,6 +110,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
     for (const entry of parts.values()) {
       entry.group.visible = false;
     }
+    map.triggerRepaint();
     if (status) status.textContent = 'تم إخفاء أسطح Microsoft؛ ملفات GLB الأصلية لم تتغير.';
   }
 
