@@ -76,8 +76,9 @@ def add_building(item,origin,wallm,roofm,glassm,trim,signm):
     ob["osm_id"]=str(item["id"]);ob["building_name"]=item["name"];ob["height_m"]=h
     # Roof cap with small parapet lip on flat roofs.
     roof=mesh_obj("Roof_"+str(item["id"]),[(x,h,z) for x,z in pts],[tuple(t) for t in tri],roofm)
-    # Window rows are real geometry, spaced by façade edge length and floor count.
+    # Batch all facade windows into one mesh per building to keep city exports scalable.
     floors=max(1,min(50,round(h/3.1)));window_h=min(1.25,max(.65,h/(floors+1)*.48))
+    winverts=[];winfaces=[]
     for i in range(n):
         a=pts[i];b=pts[(i+1)%n];dx=b[0]-a[0];dz=b[1]-a[1];length=math.hypot(dx,dz)
         if length<3 or length>100:continue
@@ -87,9 +88,17 @@ def add_building(item,origin,wallm,roofm,glassm,trim,signm):
             if y+window_h>h-.35:continue
             for k in range(count):
                 t=(k+.5)/count;cx=a[0]+dx*t;cz=a[1]+dz*t
-                ww=min(1.35,length/count*.48);bottom=y
-                v=[(cx-dx/length*ww/2+nx,bottom,cz-dz/length*ww/2+nz),(cx+dx/length*ww/2+nx,bottom,cz+dz/length*ww/2+nz),(cx+dx/length*ww/2+nx,bottom+window_h,cz+dz/length*ww/2+nz),(cx-dx/length*ww/2+nx,bottom+window_h,cz-dz/length*ww/2+nz)]
-                mesh_obj("Window",v,[(0,1,2,3)],glassm)
+                ww=min(1.35,length/count*.48);base=len(winverts)
+                winverts.extend([(cx-dx/length*ww/2+nx,y,cz-dz/length*ww/2+nz),(cx+dx/length*ww/2+nx,y,cz+dz/length*ww/2+nz),(cx+dx/length*ww/2+nx,y+window_h,cz+dz/length*ww/2+nz),(cx-dx/length*ww/2+nx,y+window_h,cz-dz/length*ww/2+nz)])
+                winfaces.append((base,base+1,base+2,base+3))
+    if winfaces:mesh_obj("Facade windows "+str(item["id"]),winverts,winfaces,glassm)
+    # Roof access hut / service block and low parapet give flat roofs a more believable silhouette.
+    if h>=6:
+        cx=sum(p[0] for p in pts)/n;cz=sum(p[1] for p in pts)/n
+        rw=min(2.4,max(.8,(max(p[0] for p in pts)-min(p[0] for p in pts))*.22))
+        rd=min(2.4,max(.8,(max(p[1] for p in pts)-min(p[1] for p in pts))*.22))
+        rv=[(cx-rw/2,h,cz-rd/2),(cx+rw/2,h,cz-rd/2),(cx+rw/2,h,cz+rd/2),(cx-rw/2,h,cz+rd/2),(cx-rw/2,h+1.2,cz-rd/2),(cx+rw/2,h+1.2,cz-rd/2),(cx+rw/2,h+1.2,cz+rd/2),(cx-rw/2,h+1.2,cz+rd/2)]
+        mesh_obj("Roof access hut "+str(item["id"]),rv,[(0,1,2,3),(4,7,6,5),(0,4,5,1),(1,5,6,2),(2,6,7,3),(3,7,4,0)],roofm)
     # Address/building number marker on first edge, facing outward.
     number=tag(item.get("properties",{}),"addr:housenumber","ref") if item.get("properties") else ""
     if not number:number=str(item.get("number",""))
