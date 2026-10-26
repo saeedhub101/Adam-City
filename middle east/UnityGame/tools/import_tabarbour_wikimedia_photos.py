@@ -43,7 +43,10 @@ def sha256(path):
 def allowed(meta):
     lic=(meta.get("LicenseShortName") or {}).get("value","").lower() if isinstance(meta.get("LicenseShortName"),dict) else str(meta.get("LicenseShortName") or "").lower()
     usage=(meta.get("UsageTerms") or {}).get("value","").lower() if isinstance(meta.get("UsageTerms"),dict) else str(meta.get("UsageTerms") or "").lower()
-    return any(x in lic for x in ("cc0","public domain","cc by","cc-by","cc by-sa","cc-by-sa")) or "public domain" in usage
+    if "public domain" in lic or lic.strip()=="cc0" or "public domain" in usage or "cc0" in usage: return True
+    if lic.startswith(("cc by ", "cc-by-", "cc by-sa", "cc-by-sa")):
+        return not any(term in lic for term in ("nc", "nd"))
+    return False
 
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
