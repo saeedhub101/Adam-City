@@ -24,7 +24,7 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 </div>
 <button id="panelToggle" type="button" aria-expanded="true" aria-controls="panelContents" style="display:block;width:100%;margin:8px 0;padding:5px 10px;border:1px solid var(--line);border-radius:7px;background:#20333f;color:var(--text);font-size:16px;font-weight:700;cursor:pointer">−</button>
 <div id="panelContents">
-<div class="group"><div class="group-title">ملفات GLB — طبربور</div><div id="glb-files"></div></div>
+<div class="group"><div class="group-title">ملفات GLB — طبربور</div><label class="row"><input type="checkbox" id="flipGlb" checked> قلب المباني رأسياً (تجربة مؤقتة)</label><div id="glb-files"></div></div>
 <div class="status" id="status">جارٍ تحميل خريطة طبربور وملفات GLB…</div><div id="error"></div>
 </div>
 </section>
@@ -86,6 +86,9 @@ import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/
 import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.0/meshopt_decoder.module.js';
 (async function(){
  const status=document.getElementById('status'),errorBox=document.getElementById('error'),container=document.getElementById('glb-files');
+ const flipGlb=document.getElementById('flipGlb');
+ const loadedModels=[];
+ flipGlb.addEventListener('change',()=>{for(const entry of loadedModels){entry.model.scale.y=flipGlb.checked?-1:1;entry.map.triggerRepaint();}});
  const base='middle%20east/BuildGLB/tabarbour-real/glb/';
  try{
   const response=await fetch(new URL(base+'manifest.json',location.href));if(!response.ok)throw new Error('Manifest HTTP '+response.status);
@@ -111,7 +114,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
      camera=new THREE.Camera();scene=new THREE.Scene();scene.add(new THREE.AmbientLight(0xffffff,2.0));
      const light=new THREE.DirectionalLight(0xffffff,2.0);light.position.set(0,-70,100).normalize();scene.add(light);
      const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
-     loader.load(modelUrl,gltf=>{model=gltf.scene;model.visible=!!toggle.checked;scene.add(model);ready=true;loading=false;status.textContent='تم تحميل '+tile.file;mapInstance.triggerRepaint()},undefined,err=>{loading=false;errorBox.style.display='block';errorBox.textContent='تعذر تحميل '+tile.file+': '+(err?.message||err)});
+     loader.load(modelUrl,gltf=>{model=gltf.scene;model.scale.y=flipGlb.checked?-1:1;loadedModels.push({model,map:mapInstance});model.visible=!!toggle.checked;scene.add(model);ready=true;loading=false;status.textContent='تم تحميل '+tile.file+' — القلب الرأسي '+(flipGlb.checked?'مفعّل':'متوقف');mapInstance.triggerRepaint()},undefined,err=>{loading=false;errorBox.style.display='block';errorBox.textContent='تعذر تحميل '+tile.file+': '+(err?.message||err)});
     },
     render(gl,args){
      if(!renderer||!model||!model.visible)return;
