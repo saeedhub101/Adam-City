@@ -61,6 +61,37 @@ def triangulate(poly):
 def add_text(body,name,loc,size,material,rotation=(0,0,0)):
     cu=bpy.data.curves.new(name,"FONT");cu.body=body;cu.size=size;cu.extrude=0
     ob=bpy.data.objects.new(name,cu);bpy.context.collection.objects.link(ob);ob.location=loc;ob.rotation_euler=rotation;cu.materials.append(material);return ob
+def osm_material(p,role,fallback):
+    raw=tag(p,role+":colour",role+":color").strip().lower()
+    palette={"white":(0.88,0.85,0.78),"black":(0.12,0.12,0.11),"grey":(0.48,0.48,0.46),"gray":(0.48,0.48,0.46),
+      "red":(0.62,0.16,0.12),"brown":(0.38,0.25,0.16),"beige":(0.72,0.64,0.48),"yellow":(0.78,0.64,0.32),
+      "blue":(0.20,0.36,0.58),"green":(0.22,0.40,0.25),"sandstone":(0.70,0.57,0.39)}
+    col=None
+    if raw.startswith("#") and len(raw) in (4,7):
+        try:
+            h=raw[1:]
+            if len(h)==3:h="".join(ch*2 for ch in h)
+            col=tuple(int(h[i:i+2],16)/255 for i in (0,2,4))
+        except Exception:col=None
+    if col is None:col=palette.get(raw)
+    material=tag(p,role+":material",role+":surface").strip().lower()
+    if col is None and material:
+        if any(v in material for v in ("glass","metal","steel","aluminium")):col=(0.35,0.43,0.47)
+        elif any(v in material for v in ("brick","clay","tile")):col=(0.48,0.27,0.18)
+        elif any(v in material for v in ("concrete","cement")):col=(0.56,0.54,0.49)
+        elif any(v in material for v in ("stone","limestone","sandstone")):col=(0.70,0.62,0.49)
+    if col is None:return fallback
+    rough=.28 if material and any(v in material for v in ("glass","metal","steel")) else .82
+    metallic=.45 if material and any(v in material for v in ("metal","steel","aluminium")) else 0
+    return mat("OSM "+role+" "+(material or raw),col,rough,metallic)
+def flat_polygon(name,ring,origin,y,material):
+    if len(ring)>1 and ring[0]==ring[-1]:ring=ring[:-1]
+    if len(ring)<3:return None
+    pts=[xy(p[0],p[1],*origin) for p in ring]
+    tri=triangulate(pts)
+    if not tri:return None
+    verts=[(x,y,z) for x,z in pts]
+    return mesh_obj(name,verts,tri,material)
 def add_building(item,origin,wallm,roofm,glassm,trim,signm):
     ring=item["ring"][:-1] if len(item["ring"])>3 and item["ring"][0]==item["ring"][-1] else item["ring"]
     if len(ring)<3:return
@@ -72,8 +103,15 @@ def add_building(item,origin,wallm,roofm,glassm,trim,signm):
     faces=[]
     for a,b,c in tri:faces.extend([(a,c,b),(n+a,n+b,n+c)])
     for i in range(n):j=(i+1)%n;faces.append((i,j,n+j,n+i))
+    p=item.get("properties") or {}
+    wallm=osm_material(p,"building",wallm);roofm=osm_material(p,"roof",roofm)
     ob=mesh_obj("Building_"+str(item["id"]),verts,faces,wallm)
     ob["osm_id"]=str(item["id"]);ob["building_name"]=item["name"];ob["height_m"]=h
+    for k in ("building","building:use","amenity","shop","office","tourism","historic","addr:housenumber","addr:street","addr:postcode","addr:city",
+              "name","name:en","ref","operator","brand","building:levels","levels","height","building:material","building:colour",
+              "roof:shape","roof:material","roof:colour","roof:levels","roof:height","start_date","heritage"):
+        if p.get(k) not in (None,""):ob["osm_"+k.replace(":","_")]=str(p[k])
+    ob["osm_tags_json"]=json.dumps(p,ensure_ascii=False)[:16000]
     # Roof cap with small parapet lip on flat roofs.
     roof=mesh_obj("Roof_"+str(item["id"]),[(x,h,z) for x,z in pts],[tuple(t) for t in tri],roofm)
     # Batch all facade windows into one mesh per building to keep city exports scalable.
@@ -125,7 +163,11 @@ def main():
     city=cfg.get("city","Amman");prefix=cfg.get("prefix",city.lower().replace(" ","-"))
     origin=( (west+east)/2,(south+north)/2 )
     buildings=read(data/"buildings.geojson.gz");streets=read(data/"streets.geojson.gz");names=read(data/"streetnames.geojson.gz") if (data/"streetnames.geojson.gz").exists() else []
-    tiles=defaultdict(lambda:{"buildings":[],"streets":[],"labels":[]})
+    def read_optional(name):
+        path=data/(name+".geojson.gz")
+        return read(path) if path.exists() else []
+    waters=read_optional("water");landcovers=read_optional("landcover");places=read_optional("places");addresses=read_optional("addresses")
+    tiles=defaultdict(lambda:{"buildings":[],"streets":[],"labels":[],"water":[],"landcover":[],"places":[],"addresses":[]})
     def key(lon,lat):return (math.floor(lon/tile),math.floor(lat/tile))
     for f in buildings:
         p=f.get("properties") or {};g=f.get("geometry") or {};c=g.get("coordinates") or []
@@ -148,8 +190,28 @@ def main():
         p=f.get("properties") or {};g=f.get("geometry") or {};c=g.get("coordinates") or []
         if g.get("type")=="Point" and len(c)>=2 and west<=c[0]<=east and south<=c[1]<=north:
             tiles[key(c[0],c[1])]["labels"].append({"name":tag(p,"name","name:en"),"point":c})
-    walls=mat("Amman limestone facade",(.72,.65,.52));roofm=mat("Concrete and stone roofs",(.48,.43,.36));glass=mat("Blue grey window glass",(.22,.38,.46),.24,.18);trim=mat("Facade trim",(.88,.82,.68));signm=mat("Shop sign backing",(.12,.20,.16),.65)
-    asphalt=mat("Asphalt",(.16,.16,.15));residential=mat("Residential road",(.27,.26,.24))
+    def collect_polygons(features,keyname):
+        for f in features:
+            p=f.get("properties") or {};g=f.get("geometry") or {};coords=g.get("coordinates") or []
+            polygons=coords if g.get("type")=="MultiPolygon" else [coords] if g.get("type")=="Polygon" else []
+            for poly in polygons:
+                if not poly or not poly[0]:continue
+                ring=[[q[0],q[1]] for q in poly[0] if len(q)>1]
+                if len(ring)<4:continue
+                lon=sum(q[0] for q in ring)/len(ring);lat=sum(q[1] for q in ring)/len(ring)
+                if west<=lon<=east and south<=lat<=north:tiles[key(lon,lat)][keyname].append({"ring":ring,"properties":p,"id":f.get("id") or p.get("@id") or ""})
+    collect_polygons(waters,"water");collect_polygons(landcovers,"landcover")
+    for f in places:
+        p=f.get("properties") or {};g=f.get("geometry") or {};co=g.get("coordinates") or []
+        if g.get("type")=="Point" and len(co)>=2 and west<=co[0]<=east and south<=co[1]<=north:
+            tiles[key(co[0],co[1])]["places"].append({"point":co,"name":tag(p,"name","name:en"),"properties":p,"id":f.get("id") or p.get("@id") or ""})
+    for f in addresses:
+        p=f.get("properties") or {};g=f.get("geometry") or {};co=g.get("coordinates") or []
+        if g.get("type")=="Point" and len(co)>=2 and west<=co[0]<=east and south<=co[1]<=north:
+            tiles[key(co[0],co[1])]["addresses"].append({"point":co,"name":tag(p,"addr:housenumber","name"),"properties":p,"id":f.get("id") or p.get("@id") or ""})
+    walls=mat("Unspecified building facade",(.72,.65,.52));roofm=mat("Unspecified roof material",(.48,.43,.36));glass=mat("Window glass",(.22,.38,.46),.24,.18);trim=mat("Facade trim",(.88,.82,.68));signm=mat("Shop sign backing",(.12,.20,.16),.65)
+    asphalt=mat("Road asphalt",(.16,.16,.15));residential=mat("Road surface",(.27,.26,.24))
+    waterm=mat("OSM water",(.12,.34,.52),.32,.05);greenm=mat("OSM landcover",(.28,.38,.20),.95)
     manifest_path=out/"manifest.json"
     manifest={"city":city,"bounds":{"west":west,"east":east,"south":south,"north":north},"tile_degrees":tile,"tiles":[],"counts":{"buildings":0,"streets":0,"street_labels":0}}
     # Preserve checkpointed tiles across separate regional-cell invocations.
@@ -177,14 +239,35 @@ def main():
             for b in items["buildings"]:add_building(b,origin,walls,roofm,glass,trim,signm)
             for s in items["streets"]:
                 hw=s["highway"].lower();w=12 if hw in ("motorway","trunk") else 8 if hw in ("primary","secondary") else 5 if hw=="tertiary" else 3.2 if hw in ("residential","unclassified") else 1.3
-                road_mesh(s["line"],origin,w,asphalt if w>2 else residential,"Road "+s["name"])
+                road=road_mesh(s["line"],origin,w,asphalt if w>2 else residential,"Road "+s["name"])
+                if road:
+                    p=s.get("properties") or {}
+                    for keyname in ("name","ref","highway","surface","lanes","maxspeed","oneway","bridge","tunnel","layer","access","service","junction","motor_vehicle","bicycle","foot","lit"):
+                        if p.get(keyname) not in (None,""):road["osm_"+keyname]=str(p[keyname])
+                    road["osm_tags_json"]=json.dumps(p,ensure_ascii=False)[:8000]
                 if s["name"]:
                     p=s["line"][len(s["line"])//2];x,z=xy(p[0],p[1],*origin)
                     add_text(s["name"],"Street name "+s["name"],(x,.12,z),2.2,trim)
+            for item in items["water"]:
+                flat_polygon("Water "+str(item["id"]),item["ring"],origin,.025,waterm)
+            for item in items["landcover"]:
+                flat_polygon("Landcover "+str(item["id"]),item["ring"],origin,.005,greenm)
+            for item in items["places"]:
+                x,z=xy(item["point"][0],item["point"][1],*origin)
+                ob=add_text(item["name"] or str(item["id"]),"Place "+str(item["id"]),(x,.2,z),2.4,trim)
+                if ob:
+                    ob["osm_id"]=str(item["id"]);ob["osm_tags_json"]=json.dumps(item["properties"],ensure_ascii=False)[:8000]
+            for item in items["addresses"]:
+                x,z=xy(item["point"][0],item["point"][1],*origin)
+                ob=add_text(item["name"] or str(item["id"]),"Address "+str(item["id"]),(x,.22,z),.65,trim)
+                if ob:
+                    ob["osm_id"]=str(item["id"]);ob["osm_tags_json"]=json.dumps(item["properties"],ensure_ascii=False)[:8000]
             for lab in items["labels"]:
                 x,z=xy(lab["point"][0],lab["point"][1],*origin);add_text(lab["name"],"Street label "+lab["name"],(x,.15,z),2,trim)
             bpy.ops.export_scene.gltf(filepath=str(target),export_format="GLB",use_selection=False,export_apply=True)
-            record={"tile":f"{tx}_{ty}","file":filename,"buildings":len(items["buildings"]),"streets":len(items["streets"]),"labels":len(items["labels"]),"bytes":target.stat().st_size,"counts_known":True}
+            record={"tile":f"{tx}_{ty}","file":filename,"buildings":len(items["buildings"]),"streets":len(items["streets"]),"labels":len(items["labels"]),
+                    "water_features":len(items["water"]),"landcover_features":len(items["landcover"]),"place_points":len(items["places"]),"address_points":len(items["addresses"]),
+                    "bytes":target.stat().st_size,"counts_known":True}
             existing=next((entry for entry in manifest["tiles"] if entry.get("file")==filename),None)
             if existing is None:
                 manifest["tiles"].append(record)
@@ -211,6 +294,10 @@ def main():
         "buildings":sum(int(x.get("buildings") or 0) for x in manifest["tiles"]),
         "streets":sum(int(x.get("streets") or 0) for x in manifest["tiles"]),
         "street_labels":sum(int(x.get("labels") or 0) for x in manifest["tiles"]),
+        "water_features":sum(int(x.get("water_features") or 0) for x in manifest["tiles"]),
+        "landcover_features":sum(int(x.get("landcover_features") or 0) for x in manifest["tiles"]),
+        "place_points":sum(int(x.get("place_points") or 0) for x in manifest["tiles"]),
+        "address_points":sum(int(x.get("address_points") or 0) for x in manifest["tiles"]),
     }
     (out/"manifest.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False),encoding="utf-8")
     print(city+" GLB COMPLETE",json.dumps(manifest["counts"]))
