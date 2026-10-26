@@ -110,6 +110,13 @@ def main():
       "nasa_gibs_satellite",OUT/"nasa-gibs-sentinel2-tabarbour.mbtiles",
       lambda z,x,y:f"https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/Sentinel-2_L1C/default/{day}/GoogleMapsCompatible_Level13/{z}/{y}/{x}.jpg",
       range(10,14),"jpg","NASA GIBS Sentinel-2 L1C imagery; top-down satellite imagery, not facade photos")
+    if results["nasa_gibs_satellite"].get("tiles_saved",0)==0:
+        print("SENTINEL2_NO_TILES; trying public NASA VIIRS true-colour fallback",flush=True)
+        day2=(datetime.date.today()-datetime.timedelta(days=10)).isoformat()
+        results["nasa_gibs_viirs_fallback"]=run_tiles(
+          "nasa_gibs_viirs_fallback",OUT/"nasa-gibs-viirs-fallback-tabarbour.mbtiles",
+          lambda z,x,y:f"https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_TrueColor/default/{day2}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg",
+          range(7,10),"jpg","NASA GIBS VIIRS true-colour fallback; coarse top-down imagery, not facade photos")
     write_report("summary",OUT/"regional-source-import-report.json",0,0,[],True,{"results":results})
     print(json.dumps(results,ensure_ascii=False,indent=2),flush=True)
 if __name__=="__main__": main()
