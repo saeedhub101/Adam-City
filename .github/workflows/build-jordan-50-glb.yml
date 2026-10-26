@@ -1,0 +1,135 @@
+name: Build Jordan-wide OSM GLB regions (maximum 50)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "middle east/UnityGame/tools/build_amman_glb.py"
+      - "middle east/Jordan/layers/**"
+      - "middle east/Jordan/osm/jordan-latest.osm.pbf"
+      - ".github/workflows/build-jordan-50-glb.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: jordan-50-glb-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - name: Checkout only Jordan sources and the new output directory
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+          lfs: false
+          sparse-checkout: |
+            /middle east/Jordan/layers/
+            /middle east/Jordan/osm/
+            /middle east/UnityGame/tools/build_amman_glb.py
+            /middle east/BuildGLB/jordan-50/
+          sparse-checkout-cone-mode: false
+
+      - name: Install Blender and OSM infrastructure tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y blender osmium-tool gzip
+          blender --version
+          osmium --version
+
+      - name: Export non-building OSM infrastructure from the saved Jordan PBF
+        shell: bash
+        run: |
+          set -euo pipefail
+          PBF="middle east/Jordan/osm/jordan-latest.osm.pbf"
+          test -s "$PBF"
+          # Keep the source PBF and all original tags/IDs; this filtered extract is temporary.
+          osmium tags-filter "$PBF" -o /tmp/jordan-infrastructure.osm.pbf --overwrite \
+            nwr/railway nwr/waterway nwr/power nwr/public_transport \
+            nwr/highway=traffic_signals nwr/highway=bus_stop nwr/highway=stop \
+            nwr/amenity=traffic_signals nwr/amenity=bus_station nwr/amenity=parking \
+            nwr/traffic_sign nwr/natural=tree nwr/natural=water nwr/natural=wetland \
+            nwr/landuse nwr/leisure nwr/aeroway nwr/man_made nwr/barrier \
+            nwr/bridge nwr/tunnel nwr/water nwr/sewer nwr/utility nwr/route
+          osmium export /tmp/jordan-infrastructure.osm.pbf \
+            --attributes=type,id \
+            -o /tmp/jordan-infrastructure.geojson --overwrite
+          gzip -1 -c /tmp/jordan-infrastructure.geojson > /tmp/jordan-infrastructure.geojson.gz
+          ls -lh /tmp/jordan-infrastructure.geojson.gz
+
+      - name: Build country-wide GLBs from all saved Jordan layers
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "middle east/BuildGLB/jordan-50"
+          export PYTHONPATH="/usr/lib/python3/dist-packages"
+          blender --background --python-exit-code 1 \
+            --python "middle east/UnityGame/tools/build_amman_glb.py" -- \
+            --data "middle east/Jordan/layers" \
+            --out "middle east/BuildGLB/jordan-50" \
+            --west 34.9 --east 39.4 --south 29.1 --north 33.4 \
+            --tile 1.0 --city Jordan --prefix jordan \
+            --repo_commit false --force true \
+            --infra_path /tmp/jordan-infrastructure.geojson.gz
+
+      - name: Validate every GLB and enforce the 50-file cap
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, pathlib
+          out=pathlib.Path("middle east/BuildGLB/jordan-50")
+          manifest=json.loads((out/"manifest.json").read_text(encoding="utf-8"))
+          files=sorted(out.glob("jordan_*.glb"))
+          if not files:
+              raise SystemExit("FAIL: no Jordan GLB files were generated")
+          if len(files)>50:
+              raise SystemExit(f"FAIL: {len(files)} GLBs exceeds the 50-file limit")
+          for p in files:
+              with p.open("rb") as f: header=f.read(12)
+              if len(header)!=12 or header[:4]!=b"glTF":
+                  raise SystemExit(f"FAIL: invalid GLB header: {p}")
+          listed={x.get("file") for x in manifest.get("tiles",[])}
+          missing=[p.name for p in files if p.name not in listed]
+          if missing:
+              raise SystemExit("FAIL: GLBs missing from manifest: "+", ".join(missing[:10]))
+          print(json.dumps({
+              "glb_files":len(files),
+              "bytes_total":sum(p.stat().st_size for p in files),
+              "counts":manifest.get("counts",{}),
+              "origin":manifest.get("origin"),
+              "sample_files":[{"name":p.name,"bytes":p.stat().st_size} for p in files[:8]]
+          },indent=2))
+          PY
+
+      - name: Commit validated Jordan GLBs and manifest to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --sparse -- "middle east/BuildGLB/jordan-50"
+          if git diff --cached --quiet; then
+            echo "No GLB changes to commit."
+            exit 0
+          fi
+          git commit -m "Build Jordan-wide OSM GLBs (maximum 50 files)"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              sleep "$attempt"
+              continue
+            fi
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            sleep "$attempt"
+          done
+          echo "Failed to push the validated Jordan GLB set after five attempts." >&2
+          exit 1
