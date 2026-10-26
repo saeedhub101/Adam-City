@@ -121,53 +121,137 @@ def add_building(item,origin,wallm,roofm,glassm,trim,signm):
     if n>300:return
     tri=triangulate(pts)
     if not tri:return
+    p=item.get("properties") or {}
+    wallm=osm_material(p,"building",wallm);roofm=osm_material(p,"roof",roofm)
+    # The base mass follows the actual OSM footprint and mapped height where available.
     verts=[(x,0,z) for x,z in pts]+[(x,h,z) for x,z in pts]
     faces=[]
     for a,b,c in tri:faces.extend([(a,c,b),(n+a,n+b,n+c)])
     for i in range(n):j=(i+1)%n;faces.append((i,j,n+j,n+i))
-    p=item.get("properties") or {}
-    wallm=osm_material(p,"building",wallm);roofm=osm_material(p,"roof",roofm)
     ob=mesh_obj("Building_"+str(item["id"]),verts,faces,wallm)
     ob["osm_id"]=str(item["id"]);ob["building_name"]=item["name"];ob["height_m"]=h;ob["height_source"]=item.get("height_source","procedural_default_not_surveyed")
     for k in ("building","building:use","amenity","shop","office","tourism","historic","addr:housenumber","addr:street","addr:postcode","addr:city",
               "name","name:en","ref","operator","brand","building:levels","levels","height","building:material","building:colour",
-              "roof:shape","roof:material","roof:colour","roof:levels","roof:height","start_date","heritage"):
+              "roof:shape","roof:material","roof:colour","roof:levels","roof:height","roof:orientation","start_date","heritage",
+              "entrance","door","window","balcony","building:facade","facade:material","facade:colour"):
         if p.get(k) not in (None,""):ob["osm_"+k.replace(":","_")]=str(p[k])
     ob["osm_tags_json"]=json.dumps(p,ensure_ascii=False)[:16000]
-    ob["window_source"]="procedural_not_surveyed";ob["facade_texture_source"]="OSM tags where present; no facade photo texture inferred"
-    # Roof cap with small parapet lip on flat roofs.
-    roof=mesh_obj("Roof_"+str(item["id"]),[(x,h,z) for x,z in pts],[tuple(t) for t in tri],roofm)
-    # Batch all facade windows into one mesh per building to keep city exports scalable.
-    floors=max(1,min(50,round(h/3.1)));window_h=min(1.25,max(.65,h/(floors+1)*.48))
-    winverts=[];winfaces=[]
+    ob["facade_geometry_source"]="OSM footprint and tags; repeated architectural details are procedural where OSM has no detail geometry"
+    ob["window_source"]="procedural_layout_from_mapped_height_and_levels; not individually surveyed"
+    ob["facade_texture_source"]="No verified building-specific photo texture available; OSM material/colour tags used when present"
+    ob["roof_geometry_source"]="OSM roof tags where present; fallback roof form explicitly inferred"
+
+    # Roof form follows roof:shape/roof:height tags; otherwise a conservative flat roof.
+    roof_shape=tag(p,"roof:shape").lower()
+    roof_h=0.0
+    try: roof_h=float(tag(p,"roof:height").lower().replace("meters","").replace("m","").strip())
+    except Exception: roof_h=0.0
+    roof_h=max(0.0,min(roof_h or (h*0.12 if roof_shape in ("gabled","hipped","pyramidal") else 0.0),12.0))
+    if roof_shape in ("gabled","hipped","pyramidal") and roof_h>0.2:
+        # Approximate a pitched roof using the real footprint's principal bounding-box axis.
+        minx,maxx=min(q[0] for q in pts),max(q[0] for q in pts)
+        minz,maxz=min(q[1] for q in pts),max(q[1] for q in pts)
+        xspan=maxx-minx;zspan=maxz-minz
+        ridge_x=(xspan>=zspan)
+        mid=(minx+maxx)/2 if ridge_x else (minz+maxz)/2
+        roofverts=[]
+        for x,z in pts:
+            d=abs(z-mid) if ridge_x else abs(x-mid)
+            span=max((zspan if ridge_x else xspan)/2,0.1)
+            y=h+roof_h*(1.0-min(1.0,d/span))
+            roofverts.append((x,y,z))
+        roof_faces=[tuple(t) for t in tri]
+        mesh_obj("Pitched roof "+str(item["id"]),roofverts,roof_faces,roofm)
+        ob["generated_roof_shape"]=roof_shape
+    else:
+        mesh_obj("Roof_"+str(item["id"]),[(x,h,z) for x,z in pts],[tuple(t) for t in tri],roofm)
+        ob["generated_roof_shape"]="flat_or_unspecified"
+
+    # Generate a regular window layout from measured/mapped floors and footprint edges.
+    # It is labelled inferred rather than claiming that individual window locations were surveyed.
+    floors_raw=tag(p,"building:levels","levels")
+    try:floors=max(1,min(50,int(round(float(floors_raw)))))
+    except Exception:floors=max(1,min(50,round(h/3.1)))
+    floor_height=h/max(floors,1)
+    window_h=min(1.45,max(.65,floor_height*.48))
+    winverts=[];winfaces=[];frameverts=[];framefaces=[]
     for i in range(n):
         a=pts[i];b=pts[(i+1)%n];dx=b[0]-a[0];dz=b[1]-a[1];length=math.hypot(dx,dz)
         if length<3 or length>100:continue
-        count=min(24,max(1,int(length/3.0)));nx=-dz/(length or 1)*.055;nz=dx/(length or 1)*.055
+        count=min(30,max(1,int(length/2.8)))
+        nx=-dz/(length or 1)*.065;nz=dx/(length or 1)*.065
         for floor in range(floors):
-            y=1.0+floor*min(3.1,h/floors)
-            if y+window_h>h-.35:continue
+            base_y=floor*floor_height+max(.8,floor_height*.28)
+            if base_y+window_h>h-max(.25,roof_h):continue
             for k in range(count):
                 t=(k+.5)/count;cx=a[0]+dx*t;cz=a[1]+dz*t
-                ww=min(1.35,length/count*.48);base=len(winverts)
-                winverts.extend([(cx-dx/length*ww/2+nx,y,cz-dz/length*ww/2+nz),(cx+dx/length*ww/2+nx,y,cz+dz/length*ww/2+nz),(cx+dx/length*ww/2+nx,y+window_h,cz+dz/length*ww/2+nz),(cx-dx/length*ww/2+nx,y+window_h,cz-dz/length*ww/2+nz)])
-                winfaces.append((base,base+1,base+2,base+3))
+                ww=min(1.45,length/count*.52);hh=window_h
+                v0=(cx-dx/length*ww/2+nx,base_y,cz-dz/length*ww/2+nz)
+                v1=(cx+dx/length*ww/2+nx,base_y,cz+dz/length*ww/2+nz)
+                v2=(v1[0],base_y+hh,v1[2]);v3=(v0[0],base_y+hh,v0[2])
+                ix=len(winverts);winverts.extend([v0,v1,v2,v3]);winfaces.append((ix,ix+1,ix+2,ix+3))
+                # Thin contrasting frame geometry makes windows legible at street-level scale.
+                fw=.055
+                for q0,q1 in ((v0,v1),(v1,v2),(v2,v3),(v3,v0)):
+                    jx=len(frameverts);frameverts.extend([q0,q1,(q1[0]+nx*.15,q1[1],q1[2]+nz*.15),(q0[0]+nx*.15,q0[1],q0[2]+nz*.15)])
+                    framefaces.append((jx,jx+1,jx+2,jx+3))
     if winfaces:mesh_obj("Facade windows "+str(item["id"]),winverts,winfaces,glassm)
-    # Roof access hut / service block and low parapet give flat roofs a more believable silhouette.
-    if h>=6:
-        cx=sum(p[0] for p in pts)/n;cz=sum(p[1] for p in pts)/n
-        rw=min(2.4,max(.8,(max(p[0] for p in pts)-min(p[0] for p in pts))*.22))
-        rd=min(2.4,max(.8,(max(p[1] for p in pts)-min(p[1] for p in pts))*.22))
-        rv=[(cx-rw/2,h,cz-rd/2),(cx+rw/2,h,cz-rd/2),(cx+rw/2,h,cz+rd/2),(cx-rw/2,h,cz+rd/2),(cx-rw/2,h+1.2,cz-rd/2),(cx+rw/2,h+1.2,cz-rd/2),(cx+rw/2,h+1.2,cz+rd/2),(cx-rw/2,h+1.2,cz+rd/2)]
-        mesh_obj("Roof access hut "+str(item["id"]),rv,[(0,1,2,3),(4,7,6,5),(0,4,5,1),(1,5,6,2),(2,6,7,3),(3,7,4,0)],roofm)
-    # Address/building number marker on first edge, facing outward.
-    number=tag(item.get("properties",{}),"addr:housenumber","ref") if item.get("properties") else ""
-    if not number:number=str(item.get("number",""))
+    if framefaces:mesh_obj("Window frames "+str(item["id"]),frameverts,framefaces,trim)
+
+    # Door/shopfront is placed on the longest footprint edge as a clearly marked inferred entrance.
+    # If a mapped entrance/door tag exists, preserve that evidence in the building metadata above.
+    edge=max(range(n),key=lambda i:math.hypot(pts[(i+1)%n][0]-pts[i][0],pts[(i+1)%n][1]-pts[i][1]))
+    a=pts[edge];b=pts[(edge+1)%n];dx=b[0]-a[0];dz=b[1]-a[1];length=math.hypot(dx,dz)
+    if length>=2.2:
+        t=.5;cx=a[0]+dx*t;cz=a[1]+dz*t;nx=-dz/(length or 1)*.09;nz=dx/(length or 1)*.09
+        dw=min(1.15,length*.22);dh=min(2.25,max(1.9,h*.32))
+        dv=[(cx-dx/length*dw/2+nx,0.04,cz-dz/length*dw/2+nz),
+            (cx+dx/length*dw/2+nx,0.04,cz+dz/length*dw/2+nz),
+            (cx+dx/length*dw/2+nx,dh,cz+dz/length*dw/2+nz),
+            (cx-dx/length*dw/2+nx,dh,cz-dz/length*dw/2+nz)]
+        mesh_obj("Entrance door inferred "+str(item["id"]),dv,[(0,1,2,3)],signm)
+        ob["entrance_geometry"]="inferred_on_longest_footprint_edge_not_mapped_door_location"
+
+    # Balconies are generated only when OSM explicitly marks balcony=yes or balcony:*
+    # tags, avoiding fictional balconies for buildings without evidence.
+    balcony_evidence=(tag(p,"balcony").lower() in ("yes","true","covered","open") or
+                      any(str(k).startswith("balcony:") and str(v).lower() not in ("no","false","0","")
+                          for k,v in p.items()))
+    if balcony_evidence and h>=3.2:
+        for i in range(n):
+            a=pts[i];b=pts[(i+1)%n];dx=b[0]-a[0];dz=b[1]-a[1];length=math.hypot(dx,dz)
+            if length<5 or length>60:continue
+            count=min(8,max(1,int(length/5.0)))
+            nx=-dz/(length or 1)*.7;nz=dx/(length or 1)*.7
+            for floor in range(1,floors):
+                yy=floor*floor_height+.15
+                for k in range(count):
+                    t=(k+.5)/count;cx=a[0]+dx*t;cz=a[1]+dz*t;ww=min(2.4,length/count*.55)
+                    vv=[(cx-dx/length*ww/2,yy,cz-dz/length*ww/2),
+                        (cx+dx/length*ww/2,yy,cz+dz/length*ww/2),
+                        (cx+dx/length*ww/2+nx,yy,cz+dz/length*ww/2+nz),
+                        (cx-dx/length*ww/2+nx,yy,cz-dz/length*ww/2+nz)]
+                    mesh_obj("Balcony slab "+str(item["id"]),vv,[(0,1,2,3)],roofm)
+                    railh=.95
+                    rv=[vv[0],vv[1],(vv[1][0],yy+railh,vv[1][2]),(vv[0][0],yy+railh,vv[0][2])]
+                    mesh_obj("Balcony rail "+str(item["id"]),rv,[(0,1,2,3)],trim)
+        ob["balcony_geometry_source"]="OSM balcony tags"
+    # Roof access hut/equipment silhouette is added only to taller buildings and marked inferred.
+    if h>=9:
+        cx=sum(q[0] for q in pts)/n;cz=sum(q[1] for q in pts)/n
+        rw=min(2.4,max(.8,(max(q[0] for q in pts)-min(q[0] for q in pts))*.18))
+        rd=min(2.4,max(.8,(max(q[1] for q in pts)-min(q[1] for q in pts))*.18))
+        rv=[(cx-rw/2,h,cz-rd/2),(cx+rw/2,h,cz-rd/2),(cx+rw/2,h,cz+rd/2),(cx-rw/2,h,cz+rd/2),
+            (cx-rw/2,h+1.0,cz-rd/2),(cx+rw/2,h+1.0,cz-rd/2),(cx+rw/2,h+1.0,cz+rd/2),(cx-rw/2,h+1.0,cz+rd/2)]
+        mesh_obj("Roof service block inferred "+str(item["id"]),rv,[(0,1,2,3),(4,7,6,5),(0,4,5,1),(1,5,6,2),(2,6,7,3),(3,7,4,0)],roofm)
+        ob["roof_equipment_source"]="inferred_service_block_not_surveyed"
+
+    number=tag(p,"addr:housenumber","ref")
     if number:
-        p=pts[0];add_text(number,"Building number "+number,(p[0],2,p[1]),.8,trim)
-    name=item.get("name","")
+        a=pts[edge];add_text(number,"Building number "+number,(a[0],2,a[1]),.8,trim)
+    name=tag(p,"name","name:en","brand")
     if name:
-        p=pts[0];add_text(name,"Building sign "+name,(p[0],min(3,h*.55),p[1]),.55,signm)
+        a=pts[edge];add_text(name,"Building sign "+name,(a[0],min(3,h*.55),a[1]),.55,signm)
 
 def road_mesh(line,origin,width,material,name,y=.015):
     pts=[xy(p[0],p[1],*origin) for p in line]
