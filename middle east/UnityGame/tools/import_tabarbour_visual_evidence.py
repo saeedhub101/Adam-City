@@ -35,7 +35,7 @@ def sha256(path):
 
 def norm(value):
     value = str(value or "").casefold()
-    value = re.sub(r"[^\w\u0600-\u06ff]+", " ", value, flags=re.UNICODE)
+    value = "".join(ch if ch.isalnum() or ch.isspace() else " " for ch in value)
     return " ".join(value.split())
 
 def load_building_index():
