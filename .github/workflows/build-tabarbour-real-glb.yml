@@ -178,17 +178,30 @@ jobs:
           root="middle east/BuildGLB/tabarbour-real/source"
           mkdir -p "$root/dem"
           prefix="s3://copernicus-dem-30m/Copernicus_DSM_COG_10_N31_00_E035_00_DEM/"
-          aws s3 cp "$prefix" "$root/dem/" --recursive --no-sign-request --region eu-central-1
+          if ! aws s3 cp "$prefix" "$root/dem/" --recursive --no-sign-request --region eu-central-1; then
+            echo "::warning::Copernicus GLO-30 download failed; continuing with other source imports."
+            printf '{"status":"download_failed","source":"Copernicus DEM GLO-30","requires_api_key":false}\n' > "$root/dem/dem-import-status.json"
+            exit 0
+          fi
           dem=$(find "$root/dem" -type f -iname '*.tif' -size +1M | head -n 1)
-          test -n "$dem"
-          gdalinfo "$dem" > "$root/dem/dem-gdalinfo.txt"
-          gdal_translate -q -of XYZ -outsize 240 240 "$dem" "$RUNNER_TEMP/tabarbour-dem.xyz"
-          blender --background --python-exit-code 1 \
-            --python "middle east/UnityGame/tools/build_tabarbour_dem_terrain.py" -- \
-            --input "$RUNNER_TEMP/tabarbour-dem.xyz" \
-            --out "$root/dem/tabarbour-terrain-dem.glb" \
-            --west 35.90 --east 35.99 --south 31.96 --north 32.04
-          test -s "$root/dem/tabarbour-terrain-dem.glb"
+          if [ -z "$dem" ]; then
+            echo "::warning::No DEM GeoTIFF found in public Copernicus tile; continuing."
+            printf '{"status":"dem_geotiff_missing","source":"Copernicus DEM GLO-30","requires_api_key":false}\n' > "$root/dem/dem-import-status.json"
+            exit 0
+          fi
+          if gdalinfo "$dem" > "$root/dem/dem-gdalinfo.txt" &&
+             gdal_translate -q -of XYZ -outsize 240 240 "$dem" "$RUNNER_TEMP/tabarbour-dem.xyz" &&
+             blender --background --python-exit-code 1 \
+               --python "middle east/UnityGame/tools/build_tabarbour_dem_terrain.py" -- \
+               --input "$RUNNER_TEMP/tabarbour-dem.xyz" \
+               --out "$root/dem/tabarbour-terrain-dem.glb" \
+               --west 35.90 --east 35.99 --south 31.96 --north 32.04 &&
+             test -s "$root/dem/tabarbour-terrain-dem.glb"; then
+            printf '{"status":"terrain_glb_created","source":"Copernicus DEM GLO-30","file":"tabarbour-terrain-dem.glb","requires_api_key":false}\n' > "$root/dem/dem-import-status.json"
+          else
+            echo "::warning::DEM terrain conversion failed; continuing with building GLBs and photos."
+            printf '{"status":"terrain_conversion_failed","source":"Copernicus DEM GLO-30","requires_api_key":false}\n' > "$root/dem/dem-import-status.json"
+          fi
 
       - name: Persist DEM and terrain outputs immediately
         if: always()
