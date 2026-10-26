@@ -3,7 +3,7 @@
 Uses public endpoints without API keys or tokens. Photos remain evidence candidates until
 their real-world building identity is verified; no image is falsely assigned to a facade.
 """
-import hashlib, json, os, pathlib, time, urllib.parse, urllib.request
+import gzip, hashlib, json, os, pathlib, re, time, urllib.parse, urllib.request
 
 ROOT = pathlib.Path(os.environ.get("GITHUB_WORKSPACE", ".")).resolve()
 OUT = ROOT / "middle east/BuildGLB/tabarbour-real/photos"
@@ -32,6 +32,51 @@ def sha256(path):
         for chunk in iter(lambda: f.read(1024 * 1024), b""):
             h.update(chunk)
     return h.hexdigest()
+
+def norm(value):
+    value = str(value or "").casefold()
+    value = re.sub(r"[^\\w\\u0600-\\u06ff]+", " ", value, flags=re.UNICODE)
+    return " ".join(value.split())
+
+def load_building_index():
+    """Read the saved local OSM building layer and index stable OSM ids by exact names."""
+    candidates = [
+        ROOT / "middle east/BuildGLB/tabarbour-real/source/layers/buildings.geojson.gz",
+        ROOT / "middle east/Jordan/layers/buildings.geojson.gz",
+    ]
+    path = next((p for p in candidates if p.is_file()), None)
+    if not path:
+        return {}, {"status":"unavailable", "reason":"saved buildings.geojson.gz not found"}
+    index = {}
+    count = 0
+    try:
+        with gzip.open(path, "rt", encoding="utf-8") as f:
+            data = json.load(f)
+        for feature in data.get("features", []):
+            props = feature.get("properties") or {}
+            geom = feature.get("geometry") or {}
+            names = {norm(props.get(k)) for k in ("name","name:en","name:ar","official_name","brand") if props.get(k)}
+            names.discard("")
+            if not names:
+                continue
+            fid = feature.get("id") or props.get("@id") or props.get("osm_id") or props.get("way_id") or props.get("relation_id")
+            if fid is None:
+                continue
+            kind = props.get("@type") or props.get("type") or "way"
+            fid = str(fid)
+            if "/" not in fid: fid = str(kind) + "/" + fid
+            rec = {"osm_id":fid, "names":[n for n in (props.get("name"),props.get("name:en"),props.get("name:ar"),props.get("brand")) if n],
+                   "geometry_type":geom.get("type"), "properties":props}
+            for name in names: index.setdefault(name, []).append(rec)
+            count += 1
+        return index, {"status":"loaded", "file":str(path.relative_to(ROOT)), "named_building_features":count, "unique_names":len(index)}
+    except Exception as e:
+        return {}, {"status":"error", "file":str(path), "error":repr(e)[:300]}
+
+def exact_building_matches(title, index):
+    matches = index.get(norm(title), [])
+    return [{"osm_id":x["osm_id"],"osm_names":x["names"],"match_method":"exact_normalized_name",
+             "confidence":"candidate_exact_name_not_visual_identity_proof"} for x in matches[:20]]
 
 def license_is_reusable(meta):
     def val(k):
@@ -120,7 +165,7 @@ def wikipedia():
         if i%5==0:
             write_json(manifest,{"area":"Tabarbour, Amman, Jordan","bounds":BOUNDS,
               "source":"Wikipedia public API; Commons license metadata checked before image download",
-              "records":len(records),"downloaded_images":downloaded,"items":records})
+              "records":len(records),"downloaded_images":downloaded,"building_index":building_index_report,"items":records})
     write_json(manifest,{"area":"Tabarbour, Amman, Jordan","bounds":BOUNDS,
       "source":"Wikipedia public endpoints in Arabic and English; no API key; Commons image license checked",
       "records":len(records),"downloaded_images":downloaded,"items":records})
