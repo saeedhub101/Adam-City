@@ -36,6 +36,7 @@ jobs:
             /middle east/Jordan/osm/jordan-latest.osm.pbf
             /middle east/UnityGame/tools/build_amman_glb.py
             /middle east/UnityGame/tools/crop_tabarbour_layers.py
+            /middle east/UnityGame/tools/import_tabarbour_source_layers.py
             /middle east/UnityGame/tools/import_tabarbour_wikimedia_photos.py
             /middle east/BuildGLB/tabarbour-real/
           sparse-checkout-cone-mode: false
