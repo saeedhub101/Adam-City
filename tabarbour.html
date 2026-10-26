@@ -26,21 +26,10 @@ h1{font-size:20px;margin:0 0 4px}p{margin:6px 0;color:var(--muted);line-height:1
 <section id="panel">
 <button id="hide" aria-label="Collapse panel">−</button>
 <h1>Tabarbour 3D</h1>
-<p>View of the saved GLB city tiles — buildings, mapped roads, landcover, addresses and infrastructure included in each model. No models are regenerated here.</p>
-<div class="stats">
- <div class="stat"><b id="buildingCount">11,286</b><span>mapped buildings</span></div>
- <div class="stat"><b id="streetCount">7,491</b><span>street features</span></div>
- <div class="stat"><b id="tileCount">20</b><span>GLB tiles</span></div>
- <div class="stat"><b id="sizeCount">~370 MB</b><span>model data total</span></div>
-</div>
-<div id="status">Loading manifest…</div>
+<p>Compare the original OpenFreeMap Liberty ground and OpenMapTiles building layer at the same Tabarbour location.</p>
+
 <p><b>OpenFreeMap Liberty source layers</b> — shown in the same map and geographic position.</p><div class="tile"><input id="libertyGroundToggle" type="checkbox" checked><span class="name">✓ OpenFreeMap Liberty ground</span></div><div class="tile"><input id="omtBuildingsToggle" type="checkbox"><span class="name">✓ OpenMapTiles buildings</span></div><p>Map style and vector buildings are loaded from OpenFreeMap / OpenMapTiles. Internet connection required.</p>
-<p><b>Map data layers</b> — toggle building footprints/details, roads, street names, addresses, places, water, vegetation, bridges, tunnels, traffic signals and transport features.</p><div id="layerToggles"></div>
-<div class="actions"><button id="showAll">Check all tiles</button><button id="clearAll">Uncheck all</button><button id="resetView">Reset view</button></div>
-<p><b>Choose tiles</b> — check a tile to load it automatically; uncheck it to hide it. Large tiles may take time to download.</p>
-<div id="tiles"></div>
-<p>Data bounds: 35.90–35.99° E, 31.96–32.04° N. GLB axis conversion is applied for upright buildings; shared local origin is 35.945° E, 32.000° N. A local Copernicus DEM is stored in source/dem as GeoTIFF; it is not falsely marked as a rendered layer.</p>
-<p><a href="https://github.com/saeedhub101/Adam-City/tree/main/middle%20east/BuildGLB/tabarbour-real">Open source files in repository</a></p>
+
 </section>
 <button id="reopen" style="display:none;position:fixed;z-index:3;top:10px;left:10px;background:#101b25;color:white;border:1px solid #395061;border-radius:8px;padding:10px">Show controls</button>
 <div id="hint">Drag: orbit · Scroll/pinch: zoom · Right-drag: pan</div>
