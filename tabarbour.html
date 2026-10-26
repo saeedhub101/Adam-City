@@ -34,7 +34,7 @@ h1{font-size:20px;margin:0 0 4px}p{margin:6px 0;color:var(--muted);line-height:1
  <div class="stat"><b id="sizeCount">~370 MB</b><span>model data total</span></div>
 </div>
 <div id="status">Loading manifest…</div>
-<p><b>Original source layers</b> — independent controls.</p><div class="tile"><input id="sourceFloorToggle" type="checkbox" checked><span class="name">✓ OpenFreeMap Liberty style</span></div><div class="tile"><input id="sourceBuildingsToggle" type="checkbox"><span class="name">✓ Original OSM building footprints</span></div><p>OpenFreeMap Liberty vector map (no API key). Switches between the map and the local GLB scene.</p>
+<p><b>Original source layers</b> — independent controls.</p><div class="tile"><input id="sourceFloorToggle" type="checkbox" checked><span class="name">✓ OpenFreeMap Liberty style</span></div><div class="tile"><input id="sourceBuildingsToggle" type="checkbox"><span class="name">✓ OpenFreeMap native buildings + GLB</span></div><p>OpenFreeMap Liberty and local GLB models share one 3D scene. Use the second toggle to show local footprint data; Liberty's native buildings are part of the style.</p>
 <p><b>Map data layers</b> — toggle building footprints/details, roads, street names, addresses, places, water, vegetation, bridges, tunnels, traffic signals and transport features.</p><div id="layerToggles"></div>
 <div class="actions"><button id="showAll">Check all tiles</button><button id="clearAll">Uncheck all</button><button id="resetView">Reset view</button></div>
 <p><b>Choose tiles</b> — check a tile to load it automatically; uncheck it to hide it. Large tiles may take time to download.</p>
@@ -50,12 +50,12 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.m
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/loaders/GLTFLoader.js';
 const BASE='./middle%20east/BuildGLB/tabarbour-real/glb/';
-const libertyMap = new maplibregl.Map({container:'libertyMap',style:'https://tiles.openfreemap.org/styles/liberty',center:[35.945,32.0],zoom:14,pitch:45,bearing:0,attributionControl:true});
+const libertyMap = new maplibregl.Map({container:'libertyMap',style:'https://tiles.openfreemap.org/styles/liberty',center:[35.945,32.0],zoom:14,pitch:55,bearing:0,attributionControl:true,antialias:true});
 const root=document.getElementById('view'), status=document.getElementById('status'), tilesEl=document.getElementById('tiles');
 const scene=new THREE.Scene(); scene.background=new THREE.Color(0x9db5c3);
 scene.fog=new THREE.Fog(0x9db5c3,4500,18000);
 const camera=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.1,100000);camera.position.set(-2600,2200,2800);
-const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;root.appendChild(renderer.domElement);
+let renderer=null; // MapLibre owns the canvas; Three.js renders GLBs into the same WebGL context.
 scene.add(new THREE.HemisphereLight(0xe6f5ff,0x766b57,2.0));
 const sun=new THREE.DirectionalLight(0xfff1d6,3.0);sun.position.set(-1800,3200,1200);scene.add(sun);
 // OSM raster tiles are placed geographically on the ground plane; no synthetic green floor.
@@ -66,15 +66,14 @@ function lonLatToTile(lon,lat,z){const n=2**z;return {x:(lon+180)/360*n,y:(1-Mat
 function tileToLon(x,z){return x/2**z*360-180}
 function tileToLat(y,z){return Math.atan(Math.sinh(Math.PI*(1-2*y/2**z)))*180/Math.PI}
 function loadOriginalOsmGround(){if(sourceMapGroup.children.length)return;const center=lonLatToTile(SOURCE_MAP_CENTER[0],SOURCE_MAP_CENTER[1],SOURCE_MAP_ZOOM);const loader=new THREE.TextureLoader();loader.setCrossOrigin("anonymous");for(let ty=Math.floor(center.y)-SOURCE_MAP_RADIUS;ty<=Math.floor(center.y)+SOURCE_MAP_RADIUS;ty++){for(let tx=Math.floor(center.x)-SOURCE_MAP_RADIUS;tx<=Math.floor(center.x)+SOURCE_MAP_RADIUS;tx++){const west=tileToLon(tx,SOURCE_MAP_ZOOM),east=tileToLon(tx+1,SOURCE_MAP_ZOOM),north=tileToLat(ty,SOURCE_MAP_ZOOM),south=tileToLat(ty+1,SOURCE_MAP_ZOOM);const x1=(west-SOURCE_MAP_CENTER[0])*111320*Math.cos(SOURCE_MAP_CENTER[1]*Math.PI/180),x2=(east-SOURCE_MAP_CENTER[0])*111320*Math.cos(SOURCE_MAP_CENTER[1]*Math.PI/180),z1=(north-SOURCE_MAP_CENTER[1])*111320,z2=(south-SOURCE_MAP_CENTER[1])*111320;loader.load(`https://tile.openstreetmap.org/${SOURCE_MAP_ZOOM}/${tx}/${ty}.png`,texture=>{texture.colorSpace=THREE.SRGBColorSpace;texture.flipY=false;texture.minFilter=THREE.LinearFilter;const mesh=new THREE.Mesh(new THREE.PlaneGeometry(Math.abs(x2-x1),Math.abs(z1-z2)),new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide}));mesh.rotation.x=-Math.PI/2;mesh.position.set((x1+x2)/2,-2.5,(z1+z2)/2);mesh.renderOrder=1;sourceMapGroup.add(mesh)},undefined,()=>{setStatus("Some OSM map tiles could not load. Check the connection and reload.",true)})}}}
-const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,0,0);controls.enableDamping=true;controls.dampingFactor=.06;controls.maxDistance=15000;controls.minDistance=20;controls.minPolarAngle=0.06;controls.maxPolarAngle=Math.PI/2-0.025;controls.screenSpacePanning=false;
+const controls={target:new THREE.Vector3(),update(){}}; // Camera/navigation are controlled by MapLibre in the shared scene.
 const loader=new GLTFLoader(), loaded=new Map();let manifest=null;
 const dataLayers=new Map(); const layerToggles=document.getElementById('layerToggles');let sourceFloorEnabled=true;
 const LAYERS=[['buildings','Building footprints','layers/buildings.geojson.gz','polygon'],['building_details','Building details & heights','layers/building_details.geojson.gz','polygon'],['streets','Roads & paths','layers/streets.geojson.gz','line'],['streetnames','Street names','layers/streetnames.geojson.gz','label'],['addresses','Building numbers / addresses','layers/addresses.geojson.gz','label'],['places','Neighborhoods & places','layers/places.geojson.gz','label'],['water','Water features','layers/water.geojson.gz','polygon'],['landcover','Trees, vegetation & land cover','layers/landcover.geojson.gz','polygon'],['infrastructure','Bridges, tunnels, signals & transport','tabarbour-infrastructure.geojson.gz','mixed']];
 const LAYER_BASE='./middle%20east/BuildGLB/tabarbour-real/source/';
 const sourceFloorToggle=document.getElementById('sourceFloorToggle'),sourceBuildingsToggle=document.getElementById('sourceBuildingsToggle');
 sourceFloorToggle.checked=true;
-sourceFloorToggle.addEventListener('change',()=>{sourceFloorEnabled=sourceFloorToggle.checked;document.body.classList.toggle('liberty-mode',sourceFloorEnabled);sourceMapGroup.visible=false;sourceFloorToggle.nextElementSibling.textContent=sourceFloorEnabled?'✓ OpenFreeMap Liberty style':'✓ 3D GLB scene';if(sourceFloorEnabled){libertyMap.resize();setStatus('OpenFreeMap Liberty loaded as the map view. Uncheck to return to the GLB scene.')}else{setStatus('Returned to the local GLB scene.')}});
-document.body.classList.add('liberty-mode');
+sourceFloorToggle.checked=true;sourceFloorToggle.disabled=true;sourceFloorToggle.nextElementSibling.textContent='✓ OpenFreeMap Liberty + GLB shared scene';document.body.classList.add('liberty-mode');sourceMapGroup.visible=false;
 sourceBuildingsToggle.addEventListener('change',()=>{const cb=layerToggles.querySelector('input[data-layer="buildings"]');if(cb){cb.checked=sourceBuildingsToggle.checked;cb.dispatchEvent(new Event('change'))}});
 function layerControl(id,label,file,kind){const l=document.createElement('label');l.className='tile';const cb=document.createElement('input');cb.type='checkbox';cb.checked=false;cb.dataset.layer=id;const s=document.createElement('span');s.className='name';s.textContent=label;const st=document.createElement('span');st.className='state';st.dataset.layerstate=id;st.textContent=id==='buildings'?'Off':'Loading';l.append(cb,s,st);layerToggles.append(l);cb.addEventListener('change',()=>{const o=dataLayers.get(id);if(id==='buildings'){const master=document.getElementById('sourceBuildingsToggle');if(master)master.checked=cb.checked}if(!cb.checked){if(o)o.visible=false;if(id==='buildings'&&!o)st.textContent='Off';return}if(o){o.visible=id==='buildings'||sourceFloorEnabled;return}loadDataLayer(id,label,file,kind,false)})}
 function featureLabel(p){return p.name||p['name:en']||p['addr:housenumber']||p.ref||p['addr:street']||p.operator||p.highway||p.amenity||p.waterway||p.natural||p.landuse||p.railway||p.public_transport||p.bridge||p.tunnel||''}
@@ -168,7 +167,7 @@ async function init(){
  ts.forEach(addTile);setStatus('Manifest loaded. Target tile selected: tabarbour_1797_1599.glb');const target=ts.find(t=>t.file==='tabarbour_1797_1599.glb');if(target)loadFile(target).catch(()=>{});
  }catch(e){setStatus('Manifest unavailable: '+e.message+'. You can still use the page after checking repository paths.',true)}
 }
-function frameLoaded(){const box=new THREE.Box3();for(const obj of loaded.values())box.expandByObject(obj);if(box.isEmpty())return;const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());controls.target.copy(center);const max=Math.max(size.x,size.y,size.z,10);camera.position.set(center.x-max*1.0,center.y+max*.75,center.z+max*1.1);camera.near=Math.max(.1,max/10000);camera.far=Math.max(100000,max*10);camera.updateProjectionMatrix();controls.update()}
+function frameLoaded(){const box=new THREE.Box3();for(const obj of loaded.values())box.expandByObject(obj);if(box.isEmpty())return;const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());const lon=35.945+center.x/(111320*Math.cos(32*Math.PI/180));const lat=32+center.z/111320;const span=Math.max(size.x,size.z,100);libertyMap.flyTo({center:[lon,lat],zoom:Math.max(12,Math.min(17,Math.log2(40000/span)+12)),pitch:60,duration:900});}
 const pending=new Map();
 function disposeObject(obj){obj.traverse(o=>{if(o.isMesh){o.geometry?.dispose();if(o.material){for(const m of (Array.isArray(o.material)?o.material:[o.material]))m.dispose()}}})}
 function hideTile(file){const obj=loaded.get(file);if(obj){scene.remove(obj);disposeObject(obj);loaded.delete(file)}}
@@ -204,10 +203,12 @@ tilesEl.addEventListener('change',async event=>{
 });
 document.getElementById('showAll').onclick=()=>tilesEl.querySelectorAll('input').forEach(c=>{if(!c.checked){c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}))}});
 document.getElementById('clearAll').onclick=()=>tilesEl.querySelectorAll('input').forEach(c=>{if(c.checked){c.checked=false;c.dispatchEvent(new Event('change',{bubbles:true}))}});
-document.getElementById('resetView').onclick=()=>{if(loaded.size){frameLoaded()}else{camera.position.set(-2600,2200,2800);controls.target.set(0,0,0);controls.update()}};
+document.getElementById('resetView').onclick=()=>{if(loaded.size){frameLoaded()}else{libertyMap.flyTo({center:[35.945,32],zoom:14,pitch:55,bearing:0})}};
 document.getElementById('hide').onclick=()=>{document.getElementById('panel').style.display='none';document.getElementById('reopen').style.display='block'};
 document.getElementById('reopen').onclick=()=>{document.getElementById('panel').style.display='block';document.getElementById('reopen').style.display='none'};
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
-function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();init();
+addEventListener('resize',()=>{libertyMap.resize()});
+const glbCustomLayer={id:'tabarbour-glb-scene',type:'custom',renderingMode:'3d',onAdd(map,gl){renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;},render(gl,matrix){if(!renderer)return;const mc=maplibregl.MercatorCoordinate.fromLngLat([35.945,32.0],0);const s=mc.meterInMercatorCoordinateUnits();const model=new THREE.Matrix4().makeTranslation(mc.x,mc.y,0).multiply(new THREE.Matrix4().makeScale(s,-s,s));camera.projectionMatrix.fromArray(matrix).multiply(model);camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();camera.matrixWorld.identity();camera.matrixWorldInverse.identity();renderer.resetState();renderer.clearDepth();renderer.render(scene,camera);libertyMap.triggerRepaint();}};
+libertyMap.on('load',()=>{libertyMap.addLayer(glbCustomLayer);});
+function animate(){requestAnimationFrame(animate);}animate();init();
 </script>
 </body></html>
