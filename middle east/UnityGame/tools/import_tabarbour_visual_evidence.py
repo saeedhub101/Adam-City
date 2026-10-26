@@ -82,8 +82,12 @@ def license_is_reusable(meta):
     def val(k):
         v = meta.get(k) or {}
         return v.get("value", "") if isinstance(v, dict) else str(v)
-    text = (val("LicenseShortName") + " " + val("UsageTerms")).lower()
-    return any(x in text for x in ("cc0", "public domain", "cc by", "cc-by", "cc by-sa", "cc-by-sa"))
+    license_name = val("LicenseShortName").strip().lower()
+    usage = val("UsageTerms").strip().lower()
+    if "public domain" in license_name or license_name == "cc0": return True
+    if license_name.startswith(("cc by ", "cc-by-", "cc by-sa", "cc-by-sa")):
+        return not any(term in license_name for term in ("nc", "nd"))
+    return "public domain" in usage or "cc0" in usage
 
 def fetch_commons_image(record, index):
     thumb = record.get("thumbnail_url")
