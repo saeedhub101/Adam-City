@@ -28,5 +28,12 @@ Open this folder as a Unity project (Unity 2022.3 LTS or newer). The editor boot
 
 Controls: WASD move, Left Shift run, hold right mouse button and move mouse to orbit camera. Use the on-screen buttons to switch region.
 
-## Accuracy boundary
-The existing Amman GLBs contain detailed generated meshes, facade/window geometry and streets, but the GLB generation script constructs these from OSM footprints and tags. They are not photogrammetry scans, and should not be described as fully real photographed buildings. The nearby GLB mesh is now the preferred geometry around the Tabarbour start point; the broader Jordan/Palestine coverage still needs existing GLB tile sets and runtime data installed/connected. A Unity Editor compile, Play-mode test and standalone player build have not yet been run in this environment, so a finished tested game build is not claimed.
+## Accuracy and offline-only policy
+
+- Unity gameplay must use files already committed in this repository. No runtime web map, hosted tile service, external API, or external model URL is permitted.
+- OSM footprints, tags, and the existing `BuildGLB/amman` exports are not photogrammetry. The GLB exporter creates extruded masses and synthetic window/facade geometry; the Unity scene therefore no longer displays those files as real buildings.
+- The temporary safety floor is invisible and exists only to prevent the player falling while testing movement. It is not a terrain representation.
+- The current repository inventory does not establish a georeferenced photogrammetric city surface covering Tabarbour/Amman or Jordan and Palestine at large. The game must not fill that gap with generated buildings, random colors, fake windows, or online imagery.
+- Only add a building/terrain mesh after verifying that its original source is a real scan/orthophoto, its license permits project use, and its geographic transform is documented.
+- Movement: WASD; hold Left Shift to run; hold right mouse button and move mouse to orbit the camera.
+- Build/runtime verification still requires opening the project in Unity 2022.3 LTS; Unity Editor and a player build have not been run here.
