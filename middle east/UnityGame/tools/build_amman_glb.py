@@ -146,7 +146,7 @@ def add_building(item,origin,wallm,roofm,glassm,trim,signm):
     if name:
         p=pts[0];add_text(name,"Building sign "+name,(p[0],min(3,h*.55),p[1]),.55,signm)
 
-def road_mesh(line,origin,width,material,name):
+def road_mesh(line,origin,width,material,name,y=.015):
     pts=[xy(p[0],p[1],*origin) for p in line]
     verts=[];faces=[]
     for i,(x,z) in enumerate(pts):
@@ -154,7 +154,7 @@ def road_mesh(line,origin,width,material,name):
         elif i==len(pts)-1:dx,dz=x-pts[i-1][0],z-pts[i-1][1]
         else:dx,dz=pts[i+1][0]-pts[i-1][0],pts[i+1][1]-pts[i-1][1]
         l=math.hypot(dx,dz) or 1;ox=-dz/l*width/2;oz=dx/l*width/2
-        verts.extend([(x+ox,.015,z+oz),(x-ox,.015,z-oz)])
+        verts.extend([(x+ox,y,z+oz),(x-ox,y,z-oz)])
     for i in range(len(pts)-1):a=2*i;faces.append((a,a+1,a+3,a+2))
     return mesh_obj(name,verts,faces,material)
 def main():
@@ -166,8 +166,13 @@ def main():
     def read_optional(name):
         path=data/(name+".geojson.gz")
         return read(path) if path.exists() else []
-    waters=read_optional("water");landcovers=read_optional("landcover");places=read_optional("places");addresses=read_optional("addresses")
-    tiles=defaultdict(lambda:{"buildings":[],"streets":[],"labels":[],"water":[],"landcover":[],"places":[],"addresses":[]})
+    waters=read_optional("water");landcovers=read_optional("landcover");places=read_optional("places");addresses=read_optional("addresses");infrastructure=read_optional("infrastructure")
+    detail_features=read_optional("building_details")
+    detail_by_id={}
+    for df in detail_features:
+        dp=df.get("properties") or {};did=str(df.get("id") or dp.get("@id") or dp.get("osm_id") or "")
+        if did:detail_by_id[did]=dp
+    tiles=defaultdict(lambda:{"buildings":[],"streets":[],"labels":[],"water":[],"landcover":[],"places":[],"addresses":[],"infra_lines":[],"infra_points":[],"infra_polygons":[]})
     def key(lon,lat):return (math.floor(lon/tile),math.floor(lat/tile))
     for f in buildings:
         p=f.get("properties") or {};g=f.get("geometry") or {};c=g.get("coordinates") or []
@@ -178,14 +183,17 @@ def main():
             if len(ring)<4:continue
             lon=sum(q[0] for q in ring)/len(ring);lat=sum(q[1] for q in ring)/len(ring)
             if not(west<=lon<=east and south<=lat<=north):continue
-            h=height(p);tiles[key(lon,lat)]["buildings"].append({"id":(f.get("id") or p.get("@id") or p.get("osm_id") or p.get("way_id") or p.get("relation_id") or ""),"name":tag(p,"name","name:en"),"height":h,"ring":ring,"properties":p})
+            fid=str(f.get("id") or p.get("@id") or p.get("osm_id") or p.get("way_id") or p.get("relation_id") or "")
+            if fid in detail_by_id:
+                merged=dict(detail_by_id[fid]);merged.update(p);p=merged
+            h=height(p);tiles[key(lon,lat)]["buildings"].append({"id":fid,"name":tag(p,"name","name:en"),"height":h,"ring":ring,"properties":p})
     for f in streets:
         p=f.get("properties") or {};g=f.get("geometry") or {};c=g.get("coordinates") or []
         lines=[c] if g.get("type")=="LineString" else c if g.get("type")=="MultiLineString" else []
         for line in lines:
             if len(line)<2:continue
             lon=sum(q[0] for q in line)/len(line);lat=sum(q[1] for q in line)/len(line)
-            if west<=lon<=east and south<=lat<=north:tiles[key(lon,lat)]["streets"].append({"line":line,"name":tag(p,"name","name:en","ref"),"highway":tag(p,"highway")})
+            if west<=lon<=east and south<=lat<=north:tiles[key(lon,lat)]["streets"].append({"line":line,"name":tag(p,"name","name:en","ref"),"highway":tag(p,"highway"),"properties":p,"id":f.get("id") or p.get("@id") or ""})
     for f in names:
         p=f.get("properties") or {};g=f.get("geometry") or {};c=g.get("coordinates") or []
         if g.get("type")=="Point" and len(c)>=2 and west<=c[0]<=east and south<=c[1]<=north:
@@ -201,6 +209,34 @@ def main():
                 lon=sum(q[0] for q in ring)/len(ring);lat=sum(q[1] for q in ring)/len(ring)
                 if west<=lon<=east and south<=lat<=north:tiles[key(lon,lat)][keyname].append({"ring":ring,"properties":p,"id":f.get("id") or p.get("@id") or ""})
     collect_polygons(waters,"water");collect_polygons(landcovers,"landcover")
+    for f in infrastructure:
+        p=f.get("properties") or {};g=f.get("geometry") or {};gt=g.get("type");co=g.get("coordinates") or []
+        fid=str(f.get("id") or p.get("@id") or p.get("osm_id") or "")
+        if gt=="Point" and len(co)>=2:
+            lon,lat=co[0],co[1]
+            if west<=lon<=east and south<=lat<=north:tiles[key(lon,lat)]["infra_points"].append({"point":co,"properties":p,"id":fid})
+        elif gt=="LineString":
+            if len(co)>=2:
+                lon=sum(q[0] for q in co)/len(co);lat=sum(q[1] for q in co)/len(co)
+                if west<=lon<=east and south<=lat<=north:tiles[key(lon,lat)]["infra_lines"].append({"line":co,"properties":p,"id":fid})
+        elif gt=="MultiLineString":
+            for line in co:
+                if len(line)>=2:
+                    lon=sum(q[0] for q in line)/len(line);lat=sum(q[1] for q in line)/len(line)
+                    if west<=lon<=east and south<=lat<=north:tiles[key(lon,lat)]["infra_lines"].append({"line":line,"properties":p,"id":fid})
+        elif gt=="Polygon":
+            if co and co[0]:
+                ring=[[q[0],q[1]] for q in co[0] if len(q)>1]
+                if len(ring)>=4:
+                    lon=sum(q[0] for q in ring)/len(ring);lat=sum(q[1] for q in ring)/len(ring)
+                    if west<=lon<=east and south<=lat<=north:tiles[key(lon,lat)]["infra_polygons"].append({"ring":ring,"properties":p,"id":fid})
+        elif gt=="MultiPolygon":
+            for poly in co:
+                if poly and poly[0]:
+                    ring=[[q[0],q[1]] for q in poly[0] if len(q)>1]
+                    if len(ring)>=4:
+                        lon=sum(q[0] for q in ring)/len(ring);lat=sum(q[1] for q in ring)/len(ring)
+                        if west<=lon<=east and south<=lat<=north:tiles[key(lon,lat)]["infra_polygons"].append({"ring":ring,"properties":p,"id":fid})
     for f in places:
         p=f.get("properties") or {};g=f.get("geometry") or {};co=g.get("coordinates") or []
         if g.get("type")=="Point" and len(co)>=2 and west<=co[0]<=east and south<=co[1]<=north:
@@ -257,16 +293,45 @@ def main():
                 ob=add_text(item["name"] or str(item["id"]),"Place "+str(item["id"]),(x,.2,z),2.4,trim)
                 if ob:
                     ob["osm_id"]=str(item["id"]);ob["osm_tags_json"]=json.dumps(item["properties"],ensure_ascii=False)[:8000]
-            for item in items["addresses"]:
-                x,z=xy(item["point"][0],item["point"][1],*origin)
-                ob=add_text(item["name"] or str(item["id"]),"Address "+str(item["id"]),(x,.22,z),.65,trim)
+            # OSM infrastructure: railways, waterways, power lines, barriers, transit and traffic devices.
+            for item in items["infra_lines"]:
+                p=item["properties"];rail=tag(p,"railway");waterway=tag(p,"waterway");power=tag(p,"power")
+                bridge=tag(p,"bridge","man_made")=="bridge";tunnel=tag(p,"tunnel") not in ("","no")
+                width=.9 if rail else .35 if power else 1.2 if waterway else .45
+                material=mat("OSM railway",(.20,.20,.20)) if rail else waterm if waterway else mat("OSM power line",(.35,.35,.32)) if power else residential
+                y=-.8 if tunnel else .3 if bridge else .04 if rail else .025
+                ob=road_mesh(item["line"],origin,width,material,"Infrastructure "+str(item["id"]),y)
                 if ob:
-                    ob["osm_id"]=str(item["id"]);ob["osm_tags_json"]=json.dumps(item["properties"],ensure_ascii=False)[:8000]
+                    ob["osm_id"]=str(item["id"]);ob["osm_tags_json"]=json.dumps(p,ensure_ascii=False)[:8000]
+            for item in items["infra_polygons"]:
+                p=item["properties"];land=tag(p,"leisure","landuse","natural");water_tag=tag(p,"natural","waterway","water")
+                material=waterm if water_tag in ("water","riverbank","wetland") else greenm if land else residential
+                ob=flat_polygon("Infrastructure "+str(item["id"]),item["ring"],origin,.02,material)
+                if ob:
+                    ob["osm_id"]=str(item["id"]);ob["osm_tags_json"]=json.dumps(p,ensure_ascii=False)[:8000]
+            for item in items["infra_points"]:
+                p=item["properties"];x,z=xy(item["point"][0],item["point"][1],*origin)
+                kind=tag(p,"highway","railway","public_transport","natural","power","man_made","amenity")
+                h=.35 if kind in ("traffic_signals","stop","crossing") else 3.5 if kind=="tree" else 1.2
+                w=.12 if kind=="traffic_signals" else .35
+                verts=[(x-w,0,z-w),(x+w,0,z-w),(x+w,0,z+w),(x-w,0,z+w),(x-w,h,z-w),(x+w,h,z-w),(x+w,h,z+w),(x-w,h,z+w)]
+                faces=[(0,1,2,3),(4,7,6,5),(0,4,5,1),(1,5,6,2),(2,6,7,3),(3,7,4,0)]
+                material=mat("OSM tree marker",(.16,.36,.14)) if kind=="tree" else mat("OSM transport marker",(.76,.42,.10))
+                ob=mesh_obj("OSM "+kind+" "+str(item["id"]),verts,faces,material)
+                ob["osm_id"]=str(item["id"]);ob["osm_tags_json"]=json.dumps(p,ensure_ascii=False)[:8000]
+            for item in items["addresses"]:
+                # Address records stay as georeferenced metadata objects, not thousands of tiny text meshes.
+                x,z=xy(item["point"][0],item["point"][1],*origin)
+                ob=mesh_obj("Address "+str(item["id"]),[(x,.22,z),(x+.01,.22,z),(x,.23,z+.01)],[(0,1,2)],trim)
+                if ob:
+                    ob["osm_id"]=str(item["id"]);ob["address_label"]=item["name"]
+                    ob["osm_tags_json"]=json.dumps(item["properties"],ensure_ascii=False)[:8000]
             for lab in items["labels"]:
                 x,z=xy(lab["point"][0],lab["point"][1],*origin);add_text(lab["name"],"Street label "+lab["name"],(x,.15,z),2,trim)
             bpy.ops.export_scene.gltf(filepath=str(target),export_format="GLB",use_selection=False,export_apply=True)
             record={"tile":f"{tx}_{ty}","file":filename,"buildings":len(items["buildings"]),"streets":len(items["streets"]),"labels":len(items["labels"]),
                     "water_features":len(items["water"]),"landcover_features":len(items["landcover"]),"place_points":len(items["places"]),"address_points":len(items["addresses"]),
+                    "infrastructure_lines":len(items["infra_lines"]),"infrastructure_points":len(items["infra_points"]),"infrastructure_polygons":len(items["infra_polygons"]),
                     "bytes":target.stat().st_size,"counts_known":True}
             existing=next((entry for entry in manifest["tiles"] if entry.get("file")==filename),None)
             if existing is None:
@@ -298,6 +363,9 @@ def main():
         "landcover_features":sum(int(x.get("landcover_features") or 0) for x in manifest["tiles"]),
         "place_points":sum(int(x.get("place_points") or 0) for x in manifest["tiles"]),
         "address_points":sum(int(x.get("address_points") or 0) for x in manifest["tiles"]),
+        "infrastructure_lines":sum(int(x.get("infrastructure_lines") or 0) for x in manifest["tiles"]),
+        "infrastructure_points":sum(int(x.get("infrastructure_points") or 0) for x in manifest["tiles"]),
+        "infrastructure_polygons":sum(int(x.get("infrastructure_polygons") or 0) for x in manifest["tiles"]),
     }
     (out/"manifest.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False),encoding="utf-8")
     print(city+" GLB COMPLETE",json.dumps(manifest["counts"]))
