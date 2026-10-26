@@ -1,0 +1,7 @@
+{
+  "area": "Tabarbour, Amman, Jordan",
+  "bounds": {"west": 35.90, "south": 31.96, "east": 35.99, "north": 32.04},
+  "source": "Geofabrik Jordan OSM PBF, clipped locally with osmium",
+  "layers": ["buildings", "building_details", "streets", "streetnames", "addresses", "water", "landcover", "places", "infrastructure"],
+  "policy": "Keyless public download; source data checkpointed before GLB generation"
+}
