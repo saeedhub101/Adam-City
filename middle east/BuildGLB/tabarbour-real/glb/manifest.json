@@ -1,0 +1,38 @@
+{
+  "city": "Tabarbour",
+  "bounds": {
+    "west": 35.9,
+    "east": 35.99,
+    "south": 31.96,
+    "north": 32.04
+  },
+  "origin": {
+    "longitude": 35.945,
+    "latitude": 32.0,
+    "crs": "WGS84 input; local equirectangular meters; X=east, Z=north, Y=height"
+  },
+  "tile_degrees": 0.02,
+  "tiles": [
+    {
+      "tile": "1795_1598",
+      "file": "tabarbour_1795_1598.glb",
+      "buildings": 2624,
+      "streets": 903,
+      "labels": 8,
+      "water_features": 0,
+      "landcover_features": 33,
+      "place_points": 1,
+      "address_points": 197,
+      "infrastructure_lines": 183,
+      "infrastructure_points": 121,
+      "infrastructure_polygons": 87,
+      "bytes": 86164536,
+      "counts_known": true
+    }
+  ],
+  "counts": {
+    "buildings": 0,
+    "streets": 0,
+    "street_labels": 0
+  }
+}
