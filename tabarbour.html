@@ -197,7 +197,7 @@ function loadFile(t){
     if(m.roughness!==undefined)m.roughness=Math.max(m.roughness,0.72);
     if(m.metalness!==undefined)m.metalness=Math.min(m.metalness,0.05);
     m.needsUpdate=true;
-   }}}}});
+   }}}});
    pending.delete(t.file);
    const cb=[...tilesEl.querySelectorAll('input')].find(x=>x.dataset.file===t.file);
    if(!cb?.checked){disposeObject(obj);if(state)state.textContent='Hidden';resolve(null);return}
