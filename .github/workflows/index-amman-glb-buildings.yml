@@ -2,15 +2,6 @@ name: Index existing Amman GLB buildings against saved OSM source
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "middle east/UnityGame/tools/build_glb_building_index.py"
-      - "middle east/UnityGame/tools/export_jordan_building_source_with_ids.py"
-      - "middle east/UnityGame/tools/build_amman_glb.py"
-      - "middle east/Jordan/layers/buildings.geojson.gz"
-      - "middle east/BuildGLB/amman/manifest.json"
-      - ".github/workflows/index-amman-glb-buildings.yml"
 
 permissions:
   contents: write
