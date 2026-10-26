@@ -73,21 +73,52 @@ jobs:
           fi
           find "middle east/BuildGLB/tabarbour-real/glb" -maxdepth 1 -type f -name 'tabarbour_*.glb' -printf 'EXISTING_GLB %f %s bytes\n' 2>/dev/null || true
 
-      - name: Download fresh source data directly from Geofabrik
+      - name: Download or resume primary OSM source data from Geofabrik
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/source"
-          curl --fail --location --retry 5 --retry-all-errors --connect-timeout 30 \
-            "https://download.geofabrik.de/asia/jordan-latest.osm.pbf" \
-            -o "$RUNNER_TEMP/source/jordan-latest.osm.pbf"
-          test -s "$RUNNER_TEMP/source/jordan-latest.osm.pbf"
-          sha256sum "$RUNNER_TEMP/source/jordan-latest.osm.pbf"
-          osmium extract -b 35.90,31.96,35.99,32.04 \
-            "$RUNNER_TEMP/source/jordan-latest.osm.pbf" \
-            -o "$RUNNER_TEMP/source/tabarbour.osm.pbf" --overwrite
-          osmium export "$RUNNER_TEMP/source/tabarbour.osm.pbf" \
-            --attributes=type,id -o "$RUNNER_TEMP/source/tabarbour-source.geojson" --overwrite
+          root="middle east/BuildGLB/tabarbour-real/source"
+          mkdir -p "$RUNNER_TEMP/source" "$root"
+          if [ -s "$root/tabarbour.osm.pbf" ]; then
+            echo "RESUME_EXISTING_CLIPPED_OSM_PBF"
+            cp "$root/tabarbour.osm.pbf" "$RUNNER_TEMP/source/tabarbour.osm.pbf"
+          else
+            if ! curl --fail --location --retry 5 --retry-all-errors --connect-timeout 30 \
+              "https://download.geofabrik.de/asia/jordan-latest.osm.pbf" \
+              -o "$RUNNER_TEMP/source/jordan-latest.osm.pbf"; then
+              echo "::warning::Geofabrik download failed; all secondary source steps will still run."
+              exit 1
+            fi
+            if ! osmium extract -b 35.90,31.96,35.99,32.04 \
+              "$RUNNER_TEMP/source/jordan-latest.osm.pbf" \
+              -o "$RUNNER_TEMP/source/tabarbour.osm.pbf" --overwrite; then
+              echo "::warning::OSM clipping failed; secondary sources will still run."
+              exit 1
+            fi
+            cp "$RUNNER_TEMP/source/tabarbour.osm.pbf" "$root/tabarbour.osm.pbf"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -- "$root/tabarbour.osm.pbf"
+            if ! git diff --cached --quiet; then
+              git commit -m "Checkpoint Tabarbour clipped OSM PBF immediately"
+              for attempt in 1 2 3 4 5; do
+                git fetch origin main || { sleep "$attempt"; continue; }
+                git rebase origin/main || { git rebase --abort; sleep "$attempt"; continue; }
+                git push origin HEAD:main && break
+                sleep "$attempt"
+              done
+            fi
+          fi
+          if [ ! -s "$RUNNER_TEMP/source/tabarbour.osm.pbf" ]; then
+            echo "::warning::No clipped OSM PBF available; secondary sources will continue."
+            exit 1
+          fi
+          if ! osmium export "$RUNNER_TEMP/source/tabarbour.osm.pbf" \
+            --attributes=type,id -o "$RUNNER_TEMP/source/tabarbour-source.geojson" --overwrite; then
+            echo "::warning::OSM export failed; secondary sources will continue."
+            exit 1
+          fi
           python3 "middle east/UnityGame/tools/import_tabarbour_source_layers.py" \
             "$RUNNER_TEMP/source/tabarbour-source.geojson" "$RUNNER_TEMP/fresh-jordan-layers"
 
@@ -166,6 +197,7 @@ jobs:
           exit 1
 
       - name: Import keyless OpenFreeMap vector tiles and satellite imagery
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
@@ -224,12 +256,14 @@ jobs:
           exit 0
 
       - name: Discover and checkpoint freely licensed Wikimedia photo evidence
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
           python3 "middle east/UnityGame/tools/import_tabarbour_wikimedia_photos.py"
 
       - name: Import keyless Wikipedia article evidence
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
