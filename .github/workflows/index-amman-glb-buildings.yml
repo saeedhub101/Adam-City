@@ -7,6 +7,7 @@ on:
     paths:
       - "middle east/UnityGame/tools/build_glb_building_index.py"
       - "middle east/UnityGame/tools/export_jordan_building_source_with_ids.py"
+      - "middle east/UnityGame/tools/build_amman_glb.py"
       - "middle east/Jordan/layers/buildings.geojson.gz"
       - "middle east/BuildGLB/amman/manifest.json"
       - ".github/workflows/index-amman-glb-buildings.yml"
@@ -34,13 +35,21 @@ jobs:
             middle east/UnityGame
           sparse-checkout-cone-mode: true
 
-      - name: Install OSM ID-preserving exporter
+      - name: Install Blender and OSM ID-preserving exporter
         run: |
           sudo apt-get update
-          sudo apt-get install -y osmium-tool
+          sudo apt-get install -y osmium-tool blender
 
       - name: Re-export saved OSM buildings with original IDs
         run: python3 "middle east/UnityGame/tools/export_jordan_building_source_with_ids.py"
+
+      - name: Rebuild existing city tiles with stable OSM building IDs
+        run: |
+          blender -b --python-exit-code 1 --python "middle east/UnityGame/tools/build_amman_glb.py" -- \
+            --data "middle east/Jordan/layers" \
+            --out "middle east/BuildGLB/amman" \
+            --west 35.72 --east 36.08 --south 31.70 --north 32.12 \
+            --tile 0.01 --city Amman --prefix amman --repo_commit false --force true
 
       - name: Match GLB tile IDs to repository OSM records
         run: python3 "middle east/UnityGame/tools/build_glb_building_index.py"
@@ -53,6 +62,7 @@ jobs:
           git checkout -- "middle east/Jordan/layers/buildings.geojson.gz" || true
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "middle east/BuildGLB/amman"
           if [ -f "middle east/UnityGame/BuildData/AMMAN-GLB-INDEX-DIAGNOSTICS.json" ]; then
             git add -- "middle east/UnityGame/BuildData/AMMAN-GLB-INDEX-DIAGNOSTICS.json"
           fi
