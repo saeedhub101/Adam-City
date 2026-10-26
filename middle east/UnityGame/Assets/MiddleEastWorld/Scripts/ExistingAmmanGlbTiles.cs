@@ -21,44 +21,11 @@ namespace MiddleEastWorld
         readonly List<GltfImport> imports = new List<GltfImport>();
         bool started;
 
-        async void Start()
+        void Start()
         {
-            if (started) return;
-            started = true;
-            string folder = Path.Combine(Application.streamingAssetsPath, "AmmanGLB");
-            if (!Directory.Exists(folder))
-            {
-                Debug.LogWarning("Existing Amman GLB tiles are not installed. In Unity, run MiddleEastWorld > Install Existing Tabarbour GLB Tiles.");
-                return;
-            }
-
-            Vector3 offset = GeoProjection.ToLocal(sourceOriginLon, sourceOriginLat, gameOriginLon, gameOriginLat);
-            var root = new GameObject("Existing GLB city tiles — Tabarbour");
-            root.transform.position = offset;
-            string[] files = Directory.GetFiles(folder, "*.glb");
-            Array.Sort(files);
-            foreach (string file in files)
-            {
-                var importer = new GltfImport();
-                bool loaded;
-                try { loaded = await importer.Load(new Uri(file).AbsoluteUri); }
-                catch (Exception ex) { Debug.LogWarning("Could not load existing GLB " + Path.GetFileName(file) + ": " + ex.Message); continue; }
-                if (!loaded)
-                {
-                    Debug.LogWarning("GLB import failed: " + Path.GetFileName(file));
-                    continue;
-                }
-                var tileRoot = new GameObject(Path.GetFileNameWithoutExtension(file));
-                tileRoot.transform.SetParent(root.transform, false);
-                bool instantiated = await importer.InstantiateMainSceneAsync(tileRoot.transform);
-                if (instantiated) imports.Add(importer);
-                else
-                {
-                    Destroy(tileRoot);
-                    Debug.LogWarning("GLB scene could not be instantiated: " + Path.GetFileName(file));
-                }
-            }
-            Debug.Log("Loaded " + imports.Count + " existing Amman GLB tile(s) around Tabarbour.");
+            // BuildGLB/amman is generated from OSM footprints and synthetic facade/window
+            // geometry, not photogrammetry. Reject it under the photogrammetry-only policy.
+            Debug.LogWarning("Amman OSM-generated GLB tiles are disabled. No synthetic building geometry will be loaded.");
         }
     }
 }
