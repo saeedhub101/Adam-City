@@ -110,7 +110,7 @@ def main():
             print("SOURCE_QUERY_FAILED",mode,q,repr(e),flush=True)
     downloaded=0
     # Hard cap prevents unexpectedly importing a huge general-purpose image catalogue.
-    for pid,page in sorted(found.items(),key=lambda kv:kv[0])[:30]:
+    for candidate_index,(pid,page) in enumerate(sorted(found.items(),key=lambda kv:kv[0])[:30],1):
         info=page.get("__info",{});meta=page.get("__meta",{});title=page.get("title","")
         def meta_value(key):
             v=meta.get(key,{})
@@ -151,7 +151,7 @@ def main():
         except Exception as e:
             record["status"]="download_failed";record["error"]=repr(e)[:500]
         records[pid]=record
-        if downloaded and downloaded%5==0:
+        if candidate_index % 5 == 0:
             MANIFEST.write_text(json.dumps({"area":"Tabarbour, Amman, Jordan","bounds":BOUNDS,"policy":"Free-license Wikimedia Commons only; no key. Automatically links exact building-name phrases as candidates; human visual verification is still required before using a photo as a facade texture.","named_osm_buildings_indexed":len(building_index),"items":list(records.values())},ensure_ascii=False,indent=2),encoding="utf-8")
             commit_batch("Checkpoint Tabarbour Wikimedia photo evidence batch")
     MANIFEST.write_text(json.dumps({"area":"Tabarbour, Amman, Jordan","bounds":BOUNDS,"policy":"Free-license Wikimedia Commons only; no key; proximity is not building identity; candidates are never auto-applied.","queries_attempted":[q or "geosearch radius 10 km" for _,q in queries],"items":list(records.values())},ensure_ascii=False,indent=2),encoding="utf-8")
