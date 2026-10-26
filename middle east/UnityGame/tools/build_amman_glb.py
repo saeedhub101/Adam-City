@@ -8,7 +8,7 @@ from collections import defaultdict
 
 def args():
     a=sys.argv[sys.argv.index("--")+1:] if "--" in sys.argv else []
-    d={"data":"../Jordan/layers","out":"../BuildGLB/Amman","west":35.72,"east":36.08,"south":31.70,"north":32.12,"tile":0.01,"city":"Amman","prefix":"amman","repo_commit":True,"force":False
+    d={"data":"../Jordan/layers","out":"../BuildGLB/Amman","west":35.72,"east":36.08,"south":31.70,"north":32.12,"tile":0.01,"city":"Amman","prefix":"amman","repo_commit":True,"force":False}
     for i in range(0,len(a),2):
         k=a[i].lstrip("-"); v=a[i+1]
         d[k]=float(v) if k in ("west","east","south","north","tile") else (v.lower() in ("true","1","yes") if k in ("repo_commit","force") else v)
