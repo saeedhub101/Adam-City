@@ -17,7 +17,11 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <div id="map" aria-label="خريطة ثلاثية الأبعاد لطبربور"></div>
 <section class="panel">
 <h1>ADAM CITY · طبربور</h1>
-<div class="sub">ملفات GLB لطبربور فقط. اختر أي ملف لعرضه على الخريطة.</div>
+<div class="sub">الخريطة الأساسية ومباني المصدر، مع ملفات GLB لطبربور.</div>
+<div class="group"><div class="group-title">المصدر الأصلي للخريطة</div>
+<label class="row"><input type="checkbox" id="baseGround" checked> إظهار أرضية الخريطة الأساسية (الشوارع والمياه والحدائق والتسميات)</label>
+<label class="row"><input type="checkbox" id="baseBuildings" checked> إظهار مباني المصدر الأساسية ثلاثية الأبعاد</label>
+</div>
 <div class="group"><div class="group-title">ملفات GLB — طبربور</div><div id="glb-files"></div></div>
 <div class="status" id="status">جارٍ تحميل خريطة طبربور وملفات GLB…</div><div id="error"></div>
 </section>
@@ -30,11 +34,19 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
   const res=await fetch('https://tiles.openfreemap.org/styles/liberty');
   if(!res.ok)throw new Error('Style HTTP '+res.status);
   const style=await res.json();
+  const originalLayers=style.layers.map(l=>({...l}));
+  const baseBuildingIds=originalLayers.filter(l=>l.type==='fill-extrusion'&&(/building/i.test(l.id+' '+(l['source-layer']||'')))).map(l=>l.id);
+  const baseGroundIds=originalLayers.filter(l=>!baseBuildingIds.includes(l.id)).map(l=>l.id);
   const map=new maplibregl.Map({container:'map',style,center:[35.945,32.0],zoom:14,pitch:55,bearing:0,antialias:true});
   window.adamCityMap=map;
   map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');
   map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
-  map.on('load',()=>{status.textContent='خريطة طبربور جاهزة. اختر ملفات GLB من القائمة.'});
+  const visibility=(ids,on)=>ids.forEach(id=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none')});
+  map.on('load',()=>{
+   document.getElementById('baseGround').addEventListener('change',e=>visibility(baseGroundIds,e.target.checked));
+   document.getElementById('baseBuildings').addEventListener('change',e=>visibility(baseBuildingIds,e.target.checked));
+   status.textContent='خريطة طبربور جاهزة. يمكنك التحكم بالخريطة والمباني الأساسية وملفات GLB.';
+  });
   map.on('error',e=>{if(e.error){status.textContent='خطأ في الخريطة: '+e.error.message;errorBox.style.display='block';errorBox.textContent=e.error.message}});
  }catch(e){status.textContent='تعذر تحميل الخريطة الأساسية.';errorBox.style.display='block';errorBox.textContent=e.message}
 })();
