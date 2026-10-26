@@ -163,7 +163,7 @@ jobs:
           out=root/"glb"
           files=sorted(out.glob("tabarbour_*.glb"))
           report={"area":"Tabarbour, Amman, Jordan","bounds":{"west":35.90,"east":35.99,"south":31.96,"north":32.04},
-                  "source_policy":"Fresh Geofabrik/OpenStreetMap source download at build time; no paid service, no API key, no external runtime assets",
+                  "source_policy":"Fresh Geofabrik/OpenStreetMap source download; Wikipedia/Wikimedia license-checked image evidence; Mapillary metadata requires MAPILLARY_ACCESS_TOKEN; generated assets are stored locally for offline runtime",
                   "glb_count":len(files),"glbs":[],"errors":[]}
           if not (out/"manifest.json").is_file():
               report["errors"].append("manifest.json missing")
