@@ -482,7 +482,9 @@
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
       "building_link_status": "unmatched_no_verified_building_identity",
-      "image_status": "thumbnail_download_failed"
+      "image_status": "skipped_license_not_confirmed_free",
+      "image_license": "",
+      "commons_file_title": "File:Damac_residential_tower_in_New_Abdali,_Amman,_2024.jpg"
     },
     {
       "source": "Wikipedia",
@@ -499,7 +501,8 @@
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
       "building_link_status": "unmatched_no_verified_building_identity",
-      "image_status": "thumbnail_download_failed"
+      "image_status": "thumbnail_download_failed",
+      "image_error": "<HTTPError 429: 'Too Many Requests'>"
     },
     {
       "source": "Wikipedia",
