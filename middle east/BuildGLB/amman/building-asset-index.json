@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "policy": "verify exported GLB node identity against saved OSM IDs; no geometry, material, texture, or coordinate synthesis",
+  "coordinate_reference": "WGS84 longitude/latitude from the saved OSM source",
+  "glb_manifest": "middle east/BuildGLB/amman/manifest.json",
+  "source": "middle east/Jordan/layers/buildings.geojson.gz",
+  "counts": {
+    "matched_source_building_parts": 0,
+    "parts_without_existing_glb_tile": 0,
+    "parts_without_matching_exported_glb_node": 0,
+    "parts_outside_glb_bounds": 0
+  },
+  "buildings": []
+}
