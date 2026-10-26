@@ -1,0 +1,193 @@
+name: Build real-data Tabarbour GLBs with keyless photo evidence
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/build-tabarbour-real-glb.yml"
+      - "middle east/UnityGame/tools/crop_tabarbour_layers.py"
+      - "middle east/UnityGame/tools/import_tabarbour_wikimedia_photos.py"
+      - "middle east/UnityGame/tools/build_amman_glb.py"
+      - "middle east/Jordan/layers/**"
+      - "middle east/Jordan/osm/jordan-latest.osm.pbf"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tabarbour-real-glb
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - name: Checkout source layers, existing exporter and Tabarbour outputs
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          lfs: false
+          sparse-checkout: |
+            /middle east/Jordan/layers/
+            /middle east/Jordan/osm/jordan-latest.osm.pbf
+            /middle east/UnityGame/tools/build_amman_glb.py
+            /middle east/UnityGame/tools/crop_tabarbour_layers.py
+            /middle east/UnityGame/tools/import_tabarbour_wikimedia_photos.py
+            /middle east/BuildGLB/tabarbour-real/
+          sparse-checkout-cone-mode: false
+
+      - name: Install free local processing tools
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y blender osmium-tool gzip
+          python3 -m pip install --user ijson
+          blender --version
+          osmium --version
+          python3 -c 'import ijson; print("streaming JSON ready")'
+
+      - name: Inventory local inputs and resume state
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "TABARBOUR_BOUNDS=35.90,31.96,35.99,32.04"
+          for f in buildings building_details streets streetnames addresses landcover water places; do
+            p="middle east/Jordan/layers/$f.geojson.gz"
+            if [ -s "$p" ]; then printf 'SOURCE_PRESENT %s %s bytes\n' "$p" "$(stat -c %s "$p")"; else printf 'SOURCE_MISSING %s\n' "$p"; fi
+          done
+          if [ -s "middle east/Jordan/osm/jordan-latest.osm.pbf" ]; then
+            echo "SOURCE_PRESENT Jordan OSM PBF $(stat -c %s "middle east/Jordan/osm/jordan-latest.osm.pbf") bytes"
+          else
+            echo "SOURCE_MISSING Jordan OSM PBF; mapped infrastructure extraction will be skipped"
+          fi
+          find "middle east/BuildGLB/tabarbour-real/glb" -maxdepth 1 -type f -name 'tabarbour_*.glb' -printf 'EXISTING_GLB %f %s bytes\n' 2>/dev/null || true
+
+      - name: Stream existing Jordan layers down to Tabarbour
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "middle east/UnityGame/tools/crop_tabarbour_layers.py" \
+            "middle east/Jordan/layers" "$RUNNER_TEMP/tabarbour-layers"
+
+      - name: Extract locally mapped transport, trees and infrastructure
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/tabarbour-infrastructure.geojson"
+          gz="$RUNNER_TEMP/tabarbour-infrastructure.geojson.gz"
+          pbf="middle east/Jordan/osm/jordan-latest.osm.pbf"
+          if [ -s "$pbf" ] && osmium extract -b 35.90,31.96,35.99,32.04 "$pbf" -o "$RUNNER_TEMP/tabarbour.osm.pbf" --overwrite; then
+            if osmium tags-filter "$RUNNER_TEMP/tabarbour.osm.pbf" -o "$RUNNER_TEMP/tabarbour-infra.osm.pbf" --overwrite \
+              nwr/railway nwr/waterway nwr/power nwr/public_transport \
+              nwr/highway=traffic_signals nwr/highway=bus_stop nwr/highway=stop \
+              nwr/amenity=bus_station nwr/amenity=parking nwr/traffic_sign \
+              nwr/natural=tree nwr/natural=water nwr/natural=wetland \
+              nwr/landuse nwr/leisure nwr/aeroway nwr/man_made nwr/barrier \
+              nwr/bridge nwr/tunnel nwr/water nwr/sewer nwr/utility nwr/route; then
+              osmium export "$RUNNER_TEMP/tabarbour-infra.osm.pbf" --attributes=type,id -o "$out" --overwrite
+              gzip -1 -c "$out" > "$gz"
+              echo "INFRASTRUCTURE_EXTRACTED bytes=$(stat -c %s "$gz")"
+            else
+              echo "INFRASTRUCTURE_EXTRACTION_FAILED; continuing with locally saved thematic layers"
+              printf '{"type":"FeatureCollection","features":[]}' > "$out"
+              gzip -1 -c "$out" > "$gz"
+            fi
+          else
+            echo "PBF_MISSING_OR_CLIP_FAILED; continuing with locally saved thematic layers"
+            printf '{"type":"FeatureCollection","features":[]}' > "$out"
+            gzip -1 -c "$out" > "$gz"
+          fi
+
+      - name: Discover and checkpoint freely licensed Wikimedia photo evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "middle east/UnityGame/tools/import_tabarbour_wikimedia_photos.py"
+
+      - name: Build and checkpoint Tabarbour regional GLBs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "middle east/BuildGLB/tabarbour-real/glb"
+          export PYTHONPATH="/usr/lib/python3/dist-packages:${PYTHONPATH:-}"
+          blender --background --python-exit-code 1 \
+            --python "middle east/UnityGame/tools/build_amman_glb.py" -- \
+            --data "$RUNNER_TEMP/tabarbour-layers" \
+            --out "middle east/BuildGLB/tabarbour-real/glb" \
+            --west 35.90 --east 35.99 --south 31.96 --north 32.04 \
+            --tile 0.02 --city Tabarbour --prefix tabarbour \
+            --repo_commit true --force false \
+            --infra_path "$RUNNER_TEMP/tabarbour-infrastructure.geojson.gz"
+
+      - name: Validate actual GLB payloads and write final source report
+        id: validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import gzip, hashlib, json, pathlib, sys
+          root=pathlib.Path("middle east/BuildGLB/tabarbour-real")
+          out=root/"glb"
+          files=sorted(out.glob("tabarbour_*.glb"))
+          report={"area":"Tabarbour, Amman, Jordan","bounds":{"west":35.90,"east":35.99,"south":31.96,"north":32.04},
+                  "source_policy":"No paid service, no API key, no external runtime assets",
+                  "glb_count":len(files),"glbs":[],"errors":[]}
+          if not (out/"manifest.json").is_file():
+              report["errors"].append("manifest.json missing")
+          for p in files:
+              digest=hashlib.sha256(p.read_bytes()).hexdigest()
+              with p.open("rb") as f: header=f.read(12)
+              item={"file":p.name,"bytes":p.stat().st_size,"sha256":digest,
+                    "valid_glb_header":len(header)==12 and header[:4]==b"glTF"}
+              if not item["valid_glb_header"]: report["errors"].append("invalid GLB header: "+p.name)
+              if p.stat().st_size>95*1024*1024: report["errors"].append("GLB too large for safe repository storage: "+p.name)
+              report["glbs"].append(item)
+          if not files: report["errors"].append("No Tabarbour GLB payloads were generated")
+          try:
+              m=json.loads((out/"manifest.json").read_text(encoding="utf-8"))
+              report["feature_counts"]=m.get("counts",{})
+              report["origin"]=m.get("origin")
+              listed={x.get("file") for x in m.get("tiles",[])}
+              for p in files:
+                  if p.name not in listed: report["errors"].append("GLB missing from manifest: "+p.name)
+          except Exception as e:
+              report["errors"].append("manifest parse/coverage error: "+repr(e))
+          photos=root/"photos"/"wikimedia-photo-manifest.json"
+          if photos.exists():
+              try:
+                  pm=json.loads(photos.read_text(encoding="utf-8"))
+                  report["wikimedia_candidates"]={"records":len(pm.get("items",[])),
+                      "downloaded":sum(1 for x in pm.get("items",[]) if x.get("downloaded")),
+                      "note":"Candidate photos are not auto-applied without verified building identity and facade mapping"}
+              except Exception as e: report["errors"].append("photo manifest parse error: "+repr(e))
+          else: report["errors"].append("Wikimedia photo manifest missing")
+          root.mkdir(parents=True,exist_ok=True)
+          (root/"validation-report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          if report["errors"]: sys.exit(1)
+          PY
+
+      - name: Persist final report and any completed outputs
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "middle east/BuildGLB/tabarbour-real"
+          if git diff --cached --quiet; then
+            echo "No additional final-report changes to commit."
+            exit 0
+          fi
+          git commit -m "Save Tabarbour GLB validation and source report"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main || { sleep "$attempt"; continue; }
+            git rebase origin/main || { git rebase --abort; sleep "$attempt"; continue; }
+            git push origin HEAD:main && exit 0
+            sleep "$attempt"
+          done
+          echo "::error::Final report push failed; earlier tile checkpoints are preserved where their pushes succeeded."
+          exit 1
