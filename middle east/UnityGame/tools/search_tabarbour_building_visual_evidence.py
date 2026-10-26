@@ -92,7 +92,7 @@ def write_outputs(records, report):
     BASE.mkdir(parents=True,exist_ok=True)
     tmp=OUT_GZ.with_suffix(".jsonl.gz.part")
     with gzip.open(tmp,"wt",encoding="utf-8",compresslevel=6) as f:
-        for row in records: f.write(json.dumps(row,ensure_ascii=False,separators=(",",":"))+"\\n")
+        for row in records: f.write(json.dumps(row,ensure_ascii=False,separators=(",",":"))+"\n")
     tmp.replace(OUT_GZ)
     REPORT.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
 
@@ -191,7 +191,7 @@ def main():
             "no_api_keys_or_api_endpoints":True,"auto_facade_texture_assignment":False,
             "search_policy":"Coordinates are the centroid of each saved OSM footprint. Search results are candidates only; visually compare facade, address, camera direction and footprint before accepting.",
             "searched_osm_ids":sorted(done),"updated_utc":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())}
-    write_outputs(records,report); checkpoint()
+    write_outputs(records,report); write_gallery(records); checkpoint()
     # Search named buildings first; all buildings still receive coordinate-specific maps/image-search links.
     for idx,(fid,rec,query) in enumerate(named,1):
         q=urllib.parse.quote(query)
