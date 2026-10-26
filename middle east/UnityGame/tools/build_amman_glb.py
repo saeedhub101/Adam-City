@@ -106,7 +106,7 @@ def add_building(item,origin,wallm,roofm,glassm,trim,signm):
     p=item.get("properties") or {}
     wallm=osm_material(p,"building",wallm);roofm=osm_material(p,"roof",roofm)
     ob=mesh_obj("Building_"+str(item["id"]),verts,faces,wallm)
-    ob["osm_id"]=str(item["id"]);ob["building_name"]=item["name"];ob["height_m"]=h
+    ob["osm_id"]=str(item["id"]);ob["building_name"]=item["name"];ob["height_m"]=h;ob["height_source"]=item.get("height_source","procedural_default_not_surveyed")
     for k in ("building","building:use","amenity","shop","office","tourism","historic","addr:housenumber","addr:street","addr:postcode","addr:city",
               "name","name:en","ref","operator","brand","building:levels","levels","height","building:material","building:colour",
               "roof:shape","roof:material","roof:colour","roof:levels","roof:height","start_date","heritage"):
@@ -186,7 +186,11 @@ def main():
             fid=str(f.get("id") or p.get("@id") or p.get("osm_id") or p.get("way_id") or p.get("relation_id") or "")
             if fid in detail_by_id:
                 merged=dict(detail_by_id[fid]);merged.update(p);p=merged
-            h=height(p);tiles[key(lon,lat)]["buildings"].append({"id":fid,"name":tag(p,"name","name:en"),"height":h,"ring":ring,"properties":p})
+            raw_height=tag(p,"height","building:height")
+            raw_levels=tag(p,"building:levels","levels")
+            h=height(p)
+            height_source="osm:height" if raw_height else "osm:building:levels" if raw_levels else "procedural_default_not_surveyed"
+            tiles[key(lon,lat)]["buildings"].append({"id":fid,"name":tag(p,"name","name:en"),"height":h,"height_source":height_source,"ring":ring,"properties":p})
     for f in streets:
         p=f.get("properties") or {};g=f.get("geometry") or {};c=g.get("coordinates") or []
         lines=[c] if g.get("type")=="LineString" else c if g.get("type")=="MultiLineString" else []
@@ -275,9 +279,10 @@ def main():
             for b in items["buildings"]:add_building(b,origin,walls,roofm,glass,trim,signm)
             for s in items["streets"]:
                 hw=s["highway"].lower();w=12 if hw in ("motorway","trunk") else 8 if hw in ("primary","secondary") else 5 if hw=="tertiary" else 3.2 if hw in ("residential","unclassified") else 1.3
-                road=road_mesh(s["line"],origin,w,asphalt if w>2 else residential,"Road "+s["name"])
+                p=s.get("properties") or {}
+                road_y=-.8 if tag(p,"tunnel") not in ("","no") else .3 if tag(p,"bridge") not in ("","no") else .015
+                road=road_mesh(s["line"],origin,w,asphalt if w>2 else residential,"Road "+s["name"],road_y)
                 if road:
-                    p=s.get("properties") or {}
                     for keyname in ("name","ref","highway","surface","lanes","maxspeed","oneway","bridge","tunnel","layer","access","service","junction","motor_vehicle","bicycle","foot","lit"):
                         if p.get(keyname) not in (None,""):road["osm_"+keyname]=str(p[keyname])
                     road["osm_tags_json"]=json.dumps(p,ensure_ascii=False)[:8000]
@@ -295,7 +300,9 @@ def main():
                     ob["osm_id"]=str(item["id"]);ob["osm_tags_json"]=json.dumps(item["properties"],ensure_ascii=False)[:8000]
             # OSM infrastructure: railways, waterways, power lines, barriers, transit and traffic devices.
             for item in items["infra_lines"]:
-                p=item["properties"];rail=tag(p,"railway");waterway=tag(p,"waterway");power=tag(p,"power")
+                p=item["properties"]
+                if tag(p,"highway"):continue
+                rail=tag(p,"railway");waterway=tag(p,"waterway");power=tag(p,"power")
                 bridge=tag(p,"bridge","man_made")=="bridge";tunnel=tag(p,"tunnel") not in ("","no")
                 width=.9 if rail else .35 if power else 1.2 if waterway else .45
                 material=mat("OSM railway",(.20,.20,.20)) if rail else waterm if waterway else mat("OSM power line",(.35,.35,.32)) if power else residential
