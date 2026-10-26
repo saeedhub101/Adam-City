@@ -294,7 +294,7 @@ jobs:
             --out "middle east/BuildGLB/tabarbour-real/glb" \
             --west 35.90 --east 35.99 --south 31.96 --north 32.04 \
             --tile 0.02 --city Tabarbour --prefix tabarbour \
-            --repo_commit true --force false \
+            --repo_commit true --force true \
             --infra_path "$RUNNER_TEMP/tabarbour-infrastructure.geojson.gz"
 
       - name: Validate actual GLB payloads and write final source report
