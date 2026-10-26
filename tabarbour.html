@@ -70,7 +70,7 @@ const LAYER_BASE='./middle%20east/BuildGLB/tabarbour-real/source/';
 const sourceFloorToggle=document.getElementById('sourceFloorToggle'),sourceBuildingsToggle=document.getElementById('sourceBuildingsToggle');
 sourceFloorToggle.addEventListener('change',()=>{sourceFloorEnabled=sourceFloorToggle.checked;sourceMapGroup.visible=sourceFloorEnabled;if(sourceFloorEnabled)loadOriginalOsmGround()});
 sourceBuildingsToggle.addEventListener('change',()=>{const cb=layerToggles.querySelector('input[data-layer="buildings"]');if(cb){cb.checked=sourceBuildingsToggle.checked;cb.dispatchEvent(new Event('change'))}});
-function layerControl(id,label,file,kind){const l=document.createElement('label');l.className='tile';const cb=document.createElement('input');cb.type='checkbox';cb.checked=id!=='buildings';cb.dataset.layer=id;const s=document.createElement('span');s.className='name';s.textContent=label;const st=document.createElement('span');st.className='state';st.dataset.layerstate=id;st.textContent=id==='buildings'?'Off':'Loading';l.append(cb,s,st);layerToggles.append(l);cb.addEventListener('change',()=>{const o=dataLayers.get(id);if(id==='buildings'){const master=document.getElementById('sourceBuildingsToggle');if(master)master.checked=cb.checked}if(!cb.checked){if(o)o.visible=false;if(id==='buildings'&&!o)st.textContent='Off';return}if(o){o.visible=id==='buildings'||sourceFloorEnabled;return}loadDataLayer(id,label,file,kind,false)})}
+function layerControl(id,label,file,kind){const l=document.createElement('label');l.className='tile';const cb=document.createElement('input');cb.type='checkbox';cb.checked=false;cb.dataset.layer=id;const s=document.createElement('span');s.className='name';s.textContent=label;const st=document.createElement('span');st.className='state';st.dataset.layerstate=id;st.textContent=id==='buildings'?'Off':'Loading';l.append(cb,s,st);layerToggles.append(l);cb.addEventListener('change',()=>{const o=dataLayers.get(id);if(id==='buildings'){const master=document.getElementById('sourceBuildingsToggle');if(master)master.checked=cb.checked}if(!cb.checked){if(o)o.visible=false;if(id==='buildings'&&!o)st.textContent='Off';return}if(o){o.visible=id==='buildings'||sourceFloorEnabled;return}loadDataLayer(id,label,file,kind,false)})}
 function featureLabel(p){return p.name||p['name:en']||p['addr:housenumber']||p.ref||p['addr:street']||p.operator||p.highway||p.amenity||p.waterway||p.natural||p.landuse||p.railway||p.public_transport||p.bridge||p.tunnel||''}
 const KOBRA_PHARMACY=[35.940358,31.997579];
 let kobraFootprintFound=false;
@@ -152,7 +152,7 @@ function addTile(t,i){
 }
 async function init(){
  try{
- for(const l of LAYERS){if(l[0]==='buildings')layerControl(...l);else loadDataLayer(...l)}const r=await fetch(BASE+'manifest.json');if(!r.ok)throw new Error('Manifest HTTP '+r.status);
+ for(const l of LAYERS)layerControl(...l);const r=await fetch(BASE+'manifest.json');if(!r.ok)throw new Error('Manifest HTTP '+r.status);
  manifest=await r.json();const ts=manifest.tiles||manifest.glbs||[];
  document.getElementById('tileCount').textContent=fmt(ts.length);
  const counts=manifest.counts||manifest.feature_counts||{};
