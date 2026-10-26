@@ -1,4 +1,4 @@
-name: Index existing Amman GLB buildings against saved OSM source
+name: Index existing Amman GLB buildings without rebuilding assets
 
 on:
   workflow_dispatch:
@@ -16,7 +16,6 @@ concurrency:
 
 jobs:
   index:
-    if: false # Retired: do not regenerate the legacy 0.01-degree Amman tile set.
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -30,22 +29,6 @@ jobs:
             middle east/Jordan/layers
             middle east/UnityGame
           sparse-checkout-cone-mode: true
-
-      - name: Install Blender and OSM ID-preserving exporter
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y osmium-tool blender
-
-      - name: Re-export saved OSM buildings with original IDs
-        run: python3 "middle east/UnityGame/tools/export_jordan_building_source_with_ids.py"
-
-      - name: Rebuild existing city tiles with stable OSM building IDs
-        run: |
-          blender -b --python-exit-code 1 --python "middle east/UnityGame/tools/build_amman_glb.py" -- \
-            --data "middle east/Jordan/layers" \
-            --out "middle east/BuildGLB/amman" \
-            --west 35.72 --east 36.08 --south 31.70 --north 32.12 \
-            --tile 0.01 --city Amman --prefix amman --repo_commit false --force true
 
       - name: Match GLB tile IDs to repository OSM records
         run: python3 "middle east/UnityGame/tools/build_glb_building_index.py"
