@@ -2,14 +2,6 @@ name: Build Regional Middle East GLB Tiles
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "middle east/UnityGame/tools/build_amman_glb.py"
-      - "middle east/UnityGame/tools/split_osm_regions.py"
-      - "middle east/Jordan/layers/**"
-      - "middle east/Palestine/layers/**"
-      - ".github/workflows/build-amman-glb.yml"
 
 permissions:
   contents: write
