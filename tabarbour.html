@@ -77,7 +77,7 @@ async function init(){
  ts.forEach(addTile);setStatus('Manifest loaded. Choose tiles, then load them.');
  }catch(e){setStatus('Manifest unavailable: '+e.message+'. You can still use the page after checking repository paths.',true)}
 }
-function frameObject(obj){const box=new THREE.Box3().setFromObject(obj);if(box.isEmpty())return;const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());controls.target.copy(center);const max=Math.max(size.x,size.y,size.z);camera.position.set(center.x+max*1.0,center.y+max*.75,center.z+max*1.1);camera.near=Math.max(.1,max/10000);camera.far=Math.max(100000,max*10);camera.updateProjectionMatrix();controls.update()}
+function frameLoaded(){const box=new THREE.Box3();for(const obj of loaded.values())box.expandByObject(obj);if(box.isEmpty())return;const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());controls.target.copy(center);const max=Math.max(size.x,size.y,size.z,10);camera.position.set(center.x+max*1.0,center.y+max*.75,center.z+max*1.1);camera.near=Math.max(.1,max/10000);camera.far=Math.max(100000,max*10);camera.updateProjectionMatrix();controls.update()}
 async function loadFile(t){
  if(loaded.has(t.file))return loaded.get(t.file);
  const state=document.querySelector('[data-state="'+CSS.escape(t.file)+'"]');if(state)state.textContent='Loading…';
@@ -92,11 +92,11 @@ document.getElementById('loadVisible').onclick=async()=>{
  const ts=manifest?.tiles||manifest?.glbs||[];const selected=[...tilesEl.querySelectorAll('input:checked')].map(c=>c.dataset.file);
  if(!selected.length){setStatus('Check at least one tile first.',true);return}
  let n=0;for(const f of selected){const t=ts.find(x=>x.file===f);if(t){try{await loadFile(t);n++}catch{}}}
- const all=new THREE.Group();for(const obj of loaded.values())all.add(obj);frameObject(all);setStatus('Finished: '+n+' selected tile(s) processed; '+loaded.size+' tile(s) visible.');
+ frameLoaded();setStatus('Finished: '+n+' selected tile(s) processed; '+loaded.size+' tile(s) visible.');
 };
 document.getElementById('showAll').onclick=()=>tilesEl.querySelectorAll('input').forEach(c=>c.checked=true);
 document.getElementById('clearAll').onclick=()=>tilesEl.querySelectorAll('input').forEach(c=>c.checked=false);
-document.getElementById('resetView').onclick=()=>{if(loaded.size){const g=new THREE.Group();for(const o of loaded.values())g.add(o);frameObject(g)}else{camera.position.set(2600,2200,2800);controls.target.set(0,0,0);controls.update()}};
+document.getElementById('resetView').onclick=()=>{if(loaded.size){frameLoaded()}else{camera.position.set(2600,2200,2800);controls.target.set(0,0,0);controls.update()}};
 document.getElementById('hide').onclick=()=>{document.getElementById('panel').style.display='none';document.getElementById('reopen').style.display='block'};
 document.getElementById('reopen').onclick=()=>{document.getElementById('panel').style.display='block';document.getElementById('reopen').style.display='none'};
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
