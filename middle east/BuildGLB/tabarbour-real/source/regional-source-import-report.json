@@ -1,0 +1,141 @@
+{
+  "area": "Tabarbour, Amman, Jordan",
+  "bounds": {
+    "west": 35.9,
+    "south": 31.96,
+    "east": 35.99,
+    "north": 32.04
+  },
+  "sources": {
+    "openfreemap_vector_tiles": {
+      "status": "in_progress",
+      "expected_tiles": 1624,
+      "saved_tiles": 0,
+      "error_count": 250,
+      "errors_sample": [
+        {
+          "z": 12,
+          "x": 2456,
+          "y": 1662,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 12,
+          "x": 2456,
+          "y": 1663,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 12,
+          "x": 2457,
+          "y": 1662,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 12,
+          "x": 2457,
+          "y": 1663,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4912,
+          "y": 3325,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4912,
+          "y": 3326,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4912,
+          "y": 3327,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4913,
+          "y": 3325,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4913,
+          "y": 3326,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4913,
+          "y": 3327,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4914,
+          "y": 3325,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4914,
+          "y": 3326,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4914,
+          "y": 3327,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9825,
+          "y": 6651,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9825,
+          "y": 6652,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9825,
+          "y": 6653,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9825,
+          "y": 6654,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9825,
+          "y": 6655,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9826,
+          "y": 6651,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9826,
+          "y": 6652,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        }
+      ],
+      "file": "middle east/BuildGLB/tabarbour-real/source/openfreemap-tabarbour-z12-17.mbtiles"
+    }
+  },
+  "updated_utc": "2026-10-26T09:40:20.602204+00:00"
+}
