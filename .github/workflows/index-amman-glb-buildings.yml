@@ -30,6 +30,14 @@ jobs:
             middle east/UnityGame
           sparse-checkout-cone-mode: true
 
+      - name: Install OSM PBF tooling (no network data import)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y osmium-tool
+
+      - name: Export local saved OSM PBF with stable OSM IDs
+        run: python3 "middle east/UnityGame/tools/export_jordan_building_source_with_ids.py"
+
       - name: Match GLB tile IDs to repository OSM records
         run: python3 "middle east/UnityGame/tools/build_glb_building_index.py"
 
