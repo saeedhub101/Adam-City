@@ -17,96 +17,26 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <div id="map" aria-label="خريطة ثلاثية الأبعاد لطبربور"></div>
 <section class="panel">
 <h1>ADAM CITY · طبربور</h1>
-<div class="sub">مفاتيح للمصادر الأصلية وملفات GLB لطبربور.</div>
-<div class="group"><div class="group-title">المصدر الأصلي للخريطة</div>
-<label class="row"><input type="checkbox" id="baseGround" checked> إظهار أرضية الخريطة الأصلية (الشوارع، المياه، الحدائق والتسميات)</label>
-<label class="row"><input type="checkbox" id="baseBuildings" checked> إظهار مباني المصدر الأصلية ثلاثية الأبعاد</label>
-</div>
-<div class="group"><div class="group-title">مجلدات OSM — طبقات مستقلة</div>
-<label class="row"><input type="checkbox" id="osm-raw"> 1. raw — بيانات OSM الخام (ليست طبقة خريطة مباشرة)</label>
-<label class="row"><input type="checkbox" id="osm-features"> 2. features — جميع المعالم الجغرافية</label>
-<label class="row"><input type="checkbox" id="osm-tags"> 3. tags — جدول الوسوم (بيانات وصفية وليست طبقة مكانية)</label>
-<label class="row"><input type="checkbox" id="roxas-boulevard-glb"> 4.1 Roxas Boulevard — مباني GLB (طبقة مستقلة)</label>
-<label class="row"><input type="checkbox" id="osm-roads" checked> 5. roads — الطرق وتفاصيل هندستها</label>
-<label class="row"><input type="checkbox" id="enhanced-glb-part-1"> 5.1 GLB — الجزء 1 (مواد وواجهات ونوافذ)</label>
-<label class="row"><input type="checkbox" id="enhanced-glb-part-2"> 5.2 GLB — الجزء 2 (مواد وواجهات ونوافذ)</label>
-<label class="row"><input type="checkbox" id="enhanced-glb-part-3"> 5.3 GLB — الجزء 3 (مواد وواجهات ونوافذ)</label>
-<label class="row"><input type="checkbox" id="enhanced-glb-part-4"> 5.4 GLB — الجزء 4 (مواد وواجهات ونوافذ)</label>
-<label class="row"><input type="checkbox" id="robinsons-enhancement"> Robinsons Place Manila — نموذج ثلاثي الأبعاد مستقل جديد</label>
-<label class="row"><input type="checkbox" id="osm-thematic"> 6. thematic — المتاجر والعلامات والتفاصيل الموضوعية</label>
-<label class="row"><input type="checkbox" id="osm-pedestrian"> 7. pedestrian — تفاصيل المشاة</label>
-<label class="row"><input type="checkbox" id="osm-addresses"> 8. addresses — العناوين وأسماء الشوارع والرموز البريدية</label>
-<label class="row"><input type="checkbox" id="osm-administrative"> 9. administrative — الحدود الإدارية</label>
-<label class="row"><input type="checkbox" id="osm-places"> 10. places — المتاجر والطعام والصحة والتعليم والخدمات</label>
-<label class="row"><input type="checkbox" id="osm-nature"> 11. nature — المياه والأشجار والحدائق والغطاء النباتي</label>
-
-</div>
-<div class="status" id="status">جارٍ تحميل خريطة المصدر…</div><div id="error"></div>
+<div class="sub">ملفات GLB لطبربور فقط. اختر أي ملف لعرضه على الخريطة.</div>
+<div class="group"><div class="group-title">ملفات GLB — طبربور</div><div id="glb-files"></div></div>
+<div class="status" id="status">جارٍ تحميل خريطة طبربور وملفات GLB…</div><div id="error"></div>
 </section>
 <div class="attribution">OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors</div>
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
 <script>
 (async function(){
- const status=document.getElementById('status'), errorBox=document.getElementById('error');
- const url=p=>new URL(p,location.href).href;
- let style;
- try{const res=await fetch('https://tiles.openfreemap.org/styles/liberty');if(!res.ok)throw new Error('Style HTTP '+res.status);style=await res.json();}
- catch(e){errorBox.style.display='block';errorBox.textContent='تعذر تحميل نمط OpenFreeMap: '+e.message;status.textContent='تعذر تحميل الخريطة الأساسية.';return;}
- const originalLayers=style.layers.map(l=>({...l}));
- const baseBuildingIds=originalLayers.filter(l=>l.type==='fill-extrusion'&&(/building/i.test(l.id+' '+(l['source-layer']||'')))).map(l=>l.id);
- const map=new maplibregl.Map({container:'map',style,center:[35.945,32.0],zoom:14,pitch:55,bearing:0,antialias:true}); window.adamCityMap=map;
- map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');
- map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
- const visibility=(id,on)=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none');};
- const setGroup=(ids,on)=>ids.forEach(id=>visibility(id,on));
- const groups={raw:[],features:[],tags:[],buildings:[],roads:[],thematic:[],pedestrian:[],addresses:[],administrative:[],places:[],nature:[]};
- const sourcePaths=[];
- function addSourceLayer(key,sourceId,path,kind,color){
-   const resolvedUrl=url(path);sourcePaths.push({sourceId,path,resolvedUrl});
-   map.addSource(sourceId,{type:'geojson',data:resolvedUrl});
-   const ids=[];
-   if(kind==='buildings'){
-     // OSM exports retain the original tags inside properties.tags; support both nested and flattened schemas.
-     const tag=(name)=>['coalesce',['get',name],['get',name,['get','tags']]];
-     const height=tag('height'), levels=['coalesce',['get','building:levels'],['get','building:levels',['get','tags']],['get','levels'],['get','levels',['get','tags']]];
-     const id=sourceId+'-3d';map.addLayer({id,type:'fill-extrusion',source:sourceId,filter:['==',['geometry-type'],'Polygon'],layout:{visibility:'none'},paint:{
-       'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building:colour',['get','tags']],color||'#c8bca9'],
-       'fill-extrusion-height':['max',3,['case',['>', ['to-number',height,0],0],['to-number',height,0],['>', ['to-number',levels,0],0],['*',['to-number',levels,0],3.15],5]],
-       'fill-extrusion-base':['max',0,['to-number',tag('min_height'),0]],'fill-extrusion-opacity':0.92,'fill-extrusion-vertical-gradient':true}});ids.push(id);
-   }else{
-     const fill=sourceId+'-fill',line=sourceId+'-line',circle=sourceId+'-point';
-     map.addLayer({id:fill,type:'fill',source:sourceId,layout:{visibility:'none'},paint:{'fill-color':color||'#5aa99b','fill-opacity':0.24,'fill-outline-color':color||'#5aa99b'}});ids.push(fill);
-     map.addLayer({id:line,type:'line',source:sourceId,layout:{visibility:'none','line-cap':'round','line-join':'round'},paint:{'line-color':color||'#5aa99b','line-width':['interpolate',['linear'],['zoom'],10,1,16,2.5],'line-opacity':0.9}});ids.push(line);
-     map.addLayer({id:circle,type:'circle',source:sourceId,layout:{visibility:'none'},paint:{'circle-radius':['interpolate',['linear'],['zoom'],10,2,16,5],'circle-color':color||'#5aa99b','circle-stroke-color':'#ffffff','circle-stroke-width':0.7}});ids.push(circle);
-   }
-   groups[key].push(...ids);
- }
- function bind(key){const el=document.getElementById('osm-'+key);el.addEventListener('change',()=>{setGroup(groups[key],el.checked);if(key==='raw'||key==='tags')status.textContent=key==='raw'?'raw يحتوي بيانات المصدر الخام، ولا يُرسم مباشرة على الخريطة.':'tags عبارة عن جداول وسوم CSV، ولا تُرسم مباشرة كمعالم جغرافية.';});}
- map.on('error',e=>{if(e.error){const source=e.sourceId?' | source='+e.sourceId:'';const msg='خطأ في تحميل طبقة: '+e.error.message+source;status.textContent=msg;errorBox.style.display='block';errorBox.textContent=msg+' — راجع مسار GeoJSON أو استجابة GitHub Pages.';console.error('ADAM CITY map error',e);}});
- map.on('load',()=>{
-  try{
-   addSourceLayer('features','osm-features-src','complete_data/OSM/data/features/ermita-features.geojson','map','#8ab5c5');
-   addSourceLayer('roads','osm-roads-src','complete_data/OSM/data/roads/ermita-road-network.geojson','map','#f0c979');
-   addSourceLayer('roads','osm-road-engineering-src','complete_data/OSM/data/roads/ermita-road-engineering-details.geojson','map','#e28c63');
-   addSourceLayer('thematic','osm-branded-stores-src','complete_data/OSM/data/thematic/ermita-branded-stores.geojson','map','#e9a5d1');
-   addSourceLayer('thematic','osm-signals-src','complete_data/OSM/data/thematic/ermita-street-signs-and-signals.geojson','map','#ffd166');
-   addSourceLayer('pedestrian','osm-pedestrian-src','complete_data/OSM/data/pedestrian/ermita-pedestrian-street-details.geojson','map','#9ee493');
-   addSourceLayer('addresses','osm-addresses-src','complete_data/OSM/data/addresses/ermita-addresses-street-names-postcodes.geojson','map','#f4f1bb');
-   addSourceLayer('administrative','osm-admin-src','complete_data/OSM/data/administrative/ermita-administrative-boundaries.geojson','map','#a78bfa');
-   addSourceLayer('places','osm-places-src','complete_data/OSM/data/places/ermita-shops-food-health-education-religion-services.geojson','map','#ff8fab');
-   addSourceLayer('nature','osm-water-src','complete_data/OSM/data/nature/ermita-water-and-natural-features.geojson','map','#67c9e8');
-   addSourceLayer('nature','osm-vegetation-src','complete_data/OSM/data/nature/ermita-trees-parks-vegetation.geojson','map','#71c982');
-   // Bind all eleven OSM directory toggles; raw and tags are inventory/data tables rather than direct map layers.
-   ['raw','features','tags','roads','thematic','pedestrian','addresses','administrative','places','nature'].forEach(bind);
-   // Show the two core spatial OSM layers immediately so the test page visibly verifies the local datasets.
-   setGroup(groups.roads,true);
-   // The custom 3D facade layer must render AFTER OSM extrusions added above; otherwise solid buildings cover the windows.
-   if(map.getLayer('windows-facade-details')) map.moveLayer('windows-facade-details');
-   document.getElementById('baseGround').addEventListener('change',ev=>originalLayers.filter(l=>!baseBuildingIds.includes(l.id)).forEach(l=>visibility(l.id,ev.target.checked)));
-   document.getElementById('baseBuildings').addEventListener('change',ev=>setGroup(baseBuildingIds,ev.target.checked));
-   status.textContent='الخريطة جاهزة. طبقات OSM مضافة؛ فعّل مربعات الاختيار لإظهارها. مجلدا raw وtags جداول/بيانات خام وليسا طبقات مكانية مباشرة.';
-  }catch(e){errorBox.style.display='block';errorBox.textContent='تعذر تجهيز طبقات OSM: '+(e.message||e);status.textContent='تم تحميل الخريطة الأساسية، لكن بعض طبقات OSM لم تُجهّز.';}
- });
+ const status=document.getElementById('status'),errorBox=document.getElementById('error');
+ try{
+  const res=await fetch('https://tiles.openfreemap.org/styles/liberty');
+  if(!res.ok)throw new Error('Style HTTP '+res.status);
+  const style=await res.json();
+  const map=new maplibregl.Map({container:'map',style,center:[35.945,32.0],zoom:14,pitch:55,bearing:0,antialias:true});
+  window.adamCityMap=map;
+  map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');
+  map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
+  map.on('load',()=>{status.textContent='خريطة طبربور جاهزة. اختر ملفات GLB من القائمة.'});
+  map.on('error',e=>{if(e.error){status.textContent='خطأ في الخريطة: '+e.error.message;errorBox.style.display='block';errorBox.textContent=e.error.message}});
+ }catch(e){status.textContent='تعذر تحميل الخريطة الأساسية.';errorBox.style.display='block';errorBox.textContent=e.message}
 })();
 </script>
 <script type="importmap">
