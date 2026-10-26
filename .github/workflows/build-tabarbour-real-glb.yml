@@ -51,10 +51,13 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y blender osmium-tool gzip awscli gdal-bin
-          python3 -m pip install --user ijson
+          sudo apt-get install -y blender osmium-tool gzip gdal-bin python3-ijson pipx
+          pipx install awscli
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.local/bin:$PATH"
           blender --version
           osmium --version
+          aws --version
           python3 -c 'import ijson; print("streaming JSON ready")'
 
       - name: Inventory local inputs and resume state
