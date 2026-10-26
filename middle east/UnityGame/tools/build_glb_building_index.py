@@ -99,11 +99,32 @@ def main():
     tiles = {x.get("tile"): x.get("file") for x in manifest.get("tiles", [])
              if x.get("tile") and x.get("file")}
     assets = {}
+    glb_files_present = glb_headers_valid = glb_files_with_nodes = 0
+    glb_file_samples = []
+    glb_node_name_samples = []
     for tile, filename in tiles.items():
         path = GLB_DIR / filename
         if not path.is_file():
             continue
-        for name in glb_node_names(path):
+        glb_files_present += 1
+        try:
+            with path.open("rb") as probe:
+                header = probe.read(12)
+            magic = header[:4].decode("ascii", errors="replace")
+            if header[:4] == b"glTF" and len(header) == 12:
+                glb_headers_valid += 1
+        except OSError:
+            magic = "read-error"
+        names = glb_node_names(path)
+        if names:
+            glb_files_with_nodes += 1
+        if len(glb_file_samples) < 5:
+            glb_file_samples.append({"file": filename, "exists": True, "bytes": path.stat().st_size,
+                                     "header_magic": magic, "node_names_count": len(names),
+                                     "first_node_names": names[:8]})
+        if len(glb_node_name_samples) < 20:
+            glb_node_name_samples.extend(names[:20-len(glb_node_name_samples)])
+        for name in names:
             match = BUILDING_RE.match(name)
             if not match:
                 continue
@@ -179,6 +200,9 @@ def main():
 
     counts = {
         "manifest_tiles": len(tiles),
+        "manifest_glb_files_present": glb_files_present,
+        "glb_files_with_valid_header": glb_headers_valid,
+        "glb_files_with_named_nodes": glb_files_with_nodes,
         "existing_glb_files_scanned": len({x["glb_file"] for x in assets.values()}),
         "exported_building_nodes": len(assets), "matched_to_osm_source": matched,
         "unmatched_glb_nodes_retained": len(assets) - matched,
@@ -193,6 +217,7 @@ def main():
         "manifest": "middle east/BuildGLB/amman/manifest.json",
         "next_action": "Inspect unmatched_source_samples to determine the actual exported OSM ID schema; do not generate facade textures until stable identity joins work.",
         "counts": counts, "unmatched_source_samples": samples,
+        "glb_file_samples": glb_file_samples, "glb_node_name_samples": glb_node_name_samples,
     }
     DIAGNOSTICS.parent.mkdir(parents=True, exist_ok=True)
     DIAGNOSTICS.write_text(json.dumps(diagnostic, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
