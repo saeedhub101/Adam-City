@@ -335,8 +335,15 @@
     }
   ],
   "counts": {
-    "buildings": 0,
-    "streets": 0,
-    "street_labels": 0
+    "buildings": 11286,
+    "streets": 7491,
+    "street_labels": 42,
+    "water_features": 1,
+    "landcover_features": 335,
+    "place_points": 35,
+    "address_points": 793,
+    "infrastructure_lines": 771,
+    "infrastructure_points": 513,
+    "infrastructure_polygons": 439
   }
 }

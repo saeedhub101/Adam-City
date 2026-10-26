@@ -8,13 +8,13 @@
   },
   "wikipedia": {
     "records": 50,
-    "downloaded_images": 0,
+    "downloaded_images": 3,
     "languages": [
       "en",
       "ar"
     ]
   },
-  "generated_at_utc": "2026-10-26T09:46:46Z",
+  "generated_at_utc": "2026-10-26T10:00:26Z",
   "source_policy": "No API keys or tokens. Wikipedia/Wikimedia are public keyless endpoints.",
   "building_matching": "Wikipedia titles are automatically compared to locally saved OSM building names; exact matches are candidates only, not visual identity proof.",
   "scope_note": "No API keys/tokens. Photos are not automatically applied as facade textures without verified identity."
