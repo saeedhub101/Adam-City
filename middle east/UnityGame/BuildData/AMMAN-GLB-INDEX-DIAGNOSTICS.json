@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "status": "blocked_zero_matches",
+  "repository": "saeedhub101/Adam-City",
+  "branch": "main",
+  "source": "middle east/Jordan/layers/buildings.geojson.gz",
+  "manifest": "middle east/BuildGLB/amman/manifest.json",
+  "next_action": "Inspect unmatched_source_samples to determine the actual exported OSM ID schema; do not generate facade textures until stable identity joins work.",
+  "counts": {
+    "manifest_tiles": 1477,
+    "existing_glb_files_scanned": 0,
+    "exported_building_nodes": 0,
+    "matched_to_osm_source": 0,
+    "unmatched_glb_nodes_retained": 0,
+    "source_features_with_polygon_geometry": 231208,
+    "source_polygon_parts": 231226,
+    "source_features_missing_osm_id": 0,
+    "source_geometry_types": {
+      "LineString": 230906,
+      "MultiPolygon": 231208,
+      "Point": 2299
+    }
+  },
+  "unmatched_source_samples": []
+}
