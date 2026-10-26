@@ -70,7 +70,7 @@ namespace MiddleEastWorld
             yield return ReadText(basePath+"manifest.json",s=>json=s);
             if(string.IsNullOrEmpty(json))
             {
-                Debug.LogError("Missing MiddleEastWorld/"+region+"/manifest.json. Generate chunks with tools/prepare_unity_data.py and copy BuildData into Assets/StreamingAssets/MiddleEastWorld/.");
+                Debug.LogWarning("Missing optional OSM runtime manifest for "+region+". Existing local GLB tiles can still render; streamed OSM streets and fallback buildings are unavailable until repository BuildData is installed.");
                 yield break;
             }
             var manifest=JsonUtility.FromJson<ChunkManifest>(json);
