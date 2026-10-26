@@ -17,7 +17,8 @@ DIAGNOSTICS = ROOT / "middle east" / "UnityGame" / "BuildData" / "AMMAN-GLB-INDE
 BUILDING_RE = re.compile(r"^Building_(.+?)(?:\.\d+)?$")
 
 
-def glb_node_names(path):
+def glb_nodes(path):
+    """Read GLB node names and extras; Blender exports custom OSM properties in extras."""
     try:
         with path.open("rb") as stream:
             header = stream.read(12)
@@ -34,9 +35,14 @@ def glb_node_names(path):
                 return []
             payload = stream.read(chunk_length).rstrip(b" \t\r\n\x00")
         doc = json.loads(payload.decode("utf-8"))
-        return [n.get("name", "") for n in doc.get("nodes", []) if n.get("name")]
+        return [{"name": n.get("name", ""), "extras": n.get("extras") or {}}
+                for n in doc.get("nodes", []) if n.get("name")]
     except (OSError, ValueError, UnicodeDecodeError, struct.error):
         return []
+
+
+def glb_node_names(path):
+    return [n["name"] for n in glb_nodes(path)]
 
 
 def normalize_osm_id(value):
@@ -56,18 +62,26 @@ def normalize_osm_id(value):
 
 def osm_id(feature):
     props = feature.get("properties") or {}
-    candidates = [feature.get(k) for k in ("id", "@id", "osm_id")]
-    candidates.extend(props.get(k) for k in (
-        "osm_id", "@id", "id", "building_id", "element_id",
-        "osm_way_id", "way_id", "osm_relation_id", "relation_id"
-    ))
-    for wrapper in ("tags", "attributes", "osm", "metadata", "properties"):
+    kind = props.get("@type") or props.get("type") or feature.get("@type")
+    # Prefer the source export's explicit OSM identity; GeoJSON feature.id may be synthetic.
+    candidates = [
+        props.get("@id"), props.get("osm_id"), props.get("osm_way_id"), props.get("way_id"),
+        props.get("osm_relation_id"), props.get("relation_id"), props.get("element_id"),
+        props.get("building_id"),
+    ]
+    if props.get("id") not in (None, "") and kind:
+        candidates.append(f"{kind}/{props.get('id')}")
+    for wrapper in ("tags", "attributes", "osm", "metadata"):
         nested = props.get(wrapper)
         if isinstance(nested, dict):
-            candidates.extend(nested.get(k) for k in (
-                "@id", "osm_id", "id", "osm_way_id", "way_id", "element_id",
-                "osm_relation_id", "relation_id"
-            ))
+            nested_kind = nested.get("@type") or nested.get("type") or kind
+            candidates.extend([nested.get("@id"), nested.get("osm_id"), nested.get("osm_way_id"),
+                               nested.get("way_id"), nested.get("osm_relation_id"), nested.get("relation_id")])
+            if nested.get("id") not in (None, "") and nested_kind:
+                candidates.append(f"{nested_kind}/{nested.get('id')}")
+    raw_id = feature.get("id")
+    if isinstance(raw_id, str) and re.match(r"^(way|relation|node)[/:_-]", raw_id, re.I):
+        candidates.append(raw_id)
     for value in candidates:
         result = normalize_osm_id(value)
         if result:
@@ -115,7 +129,8 @@ def main():
                 glb_headers_valid += 1
         except OSError:
             magic = "read-error"
-        names = glb_node_names(path)
+        nodes = glb_nodes(path)
+        names = [n["name"] for n in nodes]
         if names:
             glb_files_with_nodes += 1
         if len(glb_file_samples) < 5:
@@ -124,11 +139,20 @@ def main():
                                      "first_node_names": names[:8]})
         if len(glb_node_name_samples) < 20:
             glb_node_name_samples.extend(names[:20-len(glb_node_name_samples)])
-        for name in names:
-            match = BUILDING_RE.match(name)
-            if not match:
+        for node in nodes:
+            name = node["name"]
+            if not name.startswith("Building_"):
                 continue
-            bid = normalize_osm_id(match.group(1))
+            extras = node.get("extras") or {}
+            bid = ""
+            for key in ("osm_id", "osm_way_id", "way_id", "@id", "id"):
+                bid = normalize_osm_id(extras.get(key))
+                if bid:
+                    break
+            if not bid:
+                match = BUILDING_RE.match(name)
+                if match:
+                    bid = normalize_osm_id(match.group(1))
             if bid:
                 assets[(tile, bid, name)] = {
                     "osm_id": bid, "tile": tile, "glb_file": filename,
@@ -215,9 +239,15 @@ def main():
         "repository": "saeedhub101/Adam-City", "branch": "main",
         "source": "middle east/Jordan/layers/buildings.geojson.gz",
         "manifest": "middle east/BuildGLB/amman/manifest.json",
-        "next_action": "Inspect unmatched_source_samples to determine the actual exported OSM ID schema; do not generate facade textures until stable identity joins work.",
+        "next_action": "If identity joins remain zero, inspect glb_node_extras_samples; do not fabricate matches or alter source GLBs.",
         "counts": counts, "unmatched_source_samples": samples,
         "glb_file_samples": glb_file_samples, "glb_node_name_samples": glb_node_name_samples,
+        "glb_node_extras_samples": [
+            {"file": filename, "node": n["name"], "extras": n.get("extras", {})}
+            for filename in [x["file"] for x in glb_file_samples]
+            for n in glb_nodes(GLB_DIR / filename)
+            if n["name"].startswith("Building_")
+        ][:12],
     }
     DIAGNOSTICS.parent.mkdir(parents=True, exist_ok=True)
     DIAGNOSTICS.write_text(json.dumps(diagnostic, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
