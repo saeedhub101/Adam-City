@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Tabarbour 3D — Current GLB Data</title>
+<style>
+:root{color-scheme:dark;--bg:#0a1118;--panel:#111d28;--line:#2a3b49;--muted:#9bb0c0;--accent:#68d5c2}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);font:14px system-ui,sans-serif;color:#edf5fa}
+#view{position:fixed;inset:0}canvas{display:block;width:100%;height:100%}
+#panel{position:fixed;z-index:2;top:12px;left:12px;width:min(365px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;background:#101b25ed;border:1px solid var(--line);border-radius:14px;padding:15px;backdrop-filter:blur(12px);box-shadow:0 12px 40px #0008}
+h1{font-size:20px;margin:0 0 4px}p{margin:6px 0;color:var(--muted);line-height:1.45}.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.stat{background:#182734;border:1px solid var(--line);border-radius:9px;padding:9px}.stat b{display:block;font-size:18px;color:#fff}.stat span{font-size:11px;color:var(--muted)}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.actions button,.tile button{background:#1e3341;color:#edf5fa;border:1px solid #395061;border-radius:8px;padding:8px 10px;cursor:pointer}.actions button:hover,.tile button:hover{border-color:var(--accent)}
+#tiles{display:grid;gap:5px}.tile{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid #273947;border-radius:8px;background:#13212c}.tile input{accent-color:var(--accent)}.tile .name{flex:1;min-width:0}.tile small{display:block;color:var(--muted);font-size:11px}.tile .state{font-size:11px;color:var(--accent);white-space:nowrap}
+#status{padding:8px 10px;border-radius:8px;background:#182734;color:var(--accent);margin:9px 0;overflow-wrap:anywhere}
+#hint{position:fixed;right:12px;bottom:12px;background:#101b25d9;padding:10px 13px;border-radius:9px;border:1px solid var(--line);color:#d5e3ec;z-index:1}
+#hide{float:right}a{color:var(--accent)}.error{color:#ffb4a9!important}
+@media(max-width:600px){#panel{top:8px;left:8px;max-height:65dvh;width:calc(100vw - 16px);padding:12px}#hint{font-size:11px;max-width:48vw}}
+</style>
+</head>
+<body>
+<div id="view"></div>
+<section id="panel">
+<button id="hide" aria-label="Collapse panel">−</button>
+<h1>Tabarbour 3D</h1>
+<p>View of the saved GLB city tiles — buildings, mapped roads, landcover, addresses and infrastructure included in each model. No models are regenerated here.</p>
+<div class="stats">
+ <div class="stat"><b id="buildingCount">11,286</b><span>mapped buildings</span></div>
+ <div class="stat"><b id="streetCount">7,491</b><span>street features</span></div>
+ <div class="stat"><b id="tileCount">20</b><span>GLB tiles</span></div>
+ <div class="stat"><b id="sizeCount">~370 MB</b><span>model data total</span></div>
+</div>
+<div id="status">Loading manifest…</div>
+<div class="actions"><button id="loadVisible">Load checked tiles</button><button id="showAll">Check all tiles</button><button id="clearAll">Uncheck all</button><button id="resetView">Reset view</button></div>
+<p><b>Choose tiles</b> — tiles load only when you press “Load checked tiles”. Loading all 20 at once may be heavy on phones.</p>
+<div id="tiles"></div>
+<p>Data bounds: 35.90–35.99° E, 31.96–32.04° N. GLB coordinates use the saved local origin at 35.945° E, 32.000° N. Terrain elevation is only shown if it is present in the GLB; no separate DEM is fabricated.</p>
+<p><a href="https://github.com/saeedhub101/Adam-City/tree/main/middle%20east/BuildGLB/tabarbour-real">Open source files in repository</a></p>
+</section>
+<button id="reopen" style="display:none;position:fixed;z-index:3;top:10px;left:10px;background:#101b25;color:white;border:1px solid #395061;border-radius:8px;padding:10px">Show controls</button>
+<div id="hint">Drag: orbit · Scroll/pinch: zoom · Right-drag: pan</div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/loaders/GLTFLoader.js';
+const BASE='./middle%20east/BuildGLB/tabarbour-real/glb/';
+const root=document.getElementById('view'), status=document.getElementById('status'), tilesEl=document.getElementById('tiles');
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x9db5c3);
+scene.fog=new THREE.Fog(0x9db5c3,4500,18000);
+const camera=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.1,100000);camera.position.set(2600,2200,2800);
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;root.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xe6f5ff,0x766b57,2.0));
+const sun=new THREE.DirectionalLight(0xfff1d6,3.0);sun.position.set(-1800,3200,1200);scene.add(sun);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(12000,12000),new THREE.MeshStandardMaterial({color:0x9aab91,roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-3;scene.add(ground);
+const grid=new THREE.GridHelper(12000,60,0x526b72,0x73878a);grid.position.y=-2.5;scene.add(grid);
+const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,0,0);controls.enableDamping=true;controls.dampingFactor=.06;controls.maxDistance=15000;controls.minDistance=20;
+const loader=new GLTFLoader(), loaded=new Map();let manifest=null;
+function setStatus(s,bad=false){status.textContent=s;status.classList.toggle('error',bad)}
+function fmt(n){return Number(n||0).toLocaleString()}
+function addTile(t,i){
+ const label=document.createElement('label');label.className='tile';
+ const cb=document.createElement('input');cb.type='checkbox';cb.checked=i<3;cb.dataset.file=t.file;
+ const name=document.createElement('span');name.className='name';name.textContent=t.file.replace('.glb','');const small=document.createElement('small');small.textContent=fmt(t.buildings)+' buildings · '+(t.bytes/1048576).toFixed(1)+' MB';name.appendChild(small);
+ const state=document.createElement('span');state.className='state';state.textContent='Not loaded';state.dataset.state=t.file;
+ label.append(cb,name,state);tilesEl.appendChild(label);
+}
+async function init(){
+ try{
+ const r=await fetch(BASE+'manifest.json');if(!r.ok)throw new Error('Manifest HTTP '+r.status);
+ manifest=await r.json();const ts=manifest.tiles||manifest.glbs||[];
+ document.getElementById('tileCount').textContent=fmt(ts.length);
+ const counts=manifest.counts||manifest.feature_counts||{};
+ if(counts.buildings)document.getElementById('buildingCount').textContent=fmt(counts.buildings);
+ if(counts.streets)document.getElementById('streetCount').textContent=fmt(counts.streets);
+ document.getElementById('sizeCount').textContent='~'+Math.round(ts.reduce((a,t)=>a+(t.bytes||0),0)/1048576)+' MB';
+ ts.forEach(addTile);setStatus('Manifest loaded. Choose tiles, then load them.');
+ }catch(e){setStatus('Manifest unavailable: '+e.message+'. You can still use the page after checking repository paths.',true)}
+}
+function frameObject(obj){const box=new THREE.Box3().setFromObject(obj);if(box.isEmpty())return;const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());controls.target.copy(center);const max=Math.max(size.x,size.y,size.z);camera.position.set(center.x+max*1.0,center.y+max*.75,center.z+max*1.1);camera.near=Math.max(.1,max/10000);camera.far=Math.max(100000,max*10);camera.updateProjectionMatrix();controls.update()}
+async function loadFile(t){
+ if(loaded.has(t.file))return loaded.get(t.file);
+ const state=document.querySelector('[data-state="'+CSS.escape(t.file)+'"]');if(state)state.textContent='Loading…';
+ setStatus('Loading '+t.file+' — large tiles may take time.');
+ try{
+ const gltf=await loader.loadAsync(BASE+encodeURIComponent(t.file));const obj=gltf.scene;obj.name=t.file;
+ obj.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=true;if(o.material){for(const m of (Array.isArray(o.material)?o.material:[o.material])){if(m.color&&m.color.getHex()===0xffffff)m.color.setHex(0xd6c8ad);m.needsUpdate=true}}}});
+ scene.add(obj);loaded.set(t.file,obj);if(state)state.textContent='Loaded';setStatus('Loaded '+loaded.size+' / '+((manifest?.tiles||manifest?.glbs||[]).length)+' tiles.');return obj;
+ }catch(e){if(state)state.textContent='Failed';setStatus('Could not load '+t.file+': '+e.message,true);throw e}
+}
+document.getElementById('loadVisible').onclick=async()=>{
+ const ts=manifest?.tiles||manifest?.glbs||[];const selected=[...tilesEl.querySelectorAll('input:checked')].map(c=>c.dataset.file);
+ if(!selected.length){setStatus('Check at least one tile first.',true);return}
+ let n=0;for(const f of selected){const t=ts.find(x=>x.file===f);if(t){try{await loadFile(t);n++}catch{}}}
+ const all=new THREE.Group();for(const obj of loaded.values())all.add(obj);frameObject(all);setStatus('Finished: '+n+' selected tile(s) processed; '+loaded.size+' tile(s) visible.');
+};
+document.getElementById('showAll').onclick=()=>tilesEl.querySelectorAll('input').forEach(c=>c.checked=true);
+document.getElementById('clearAll').onclick=()=>tilesEl.querySelectorAll('input').forEach(c=>c.checked=false);
+document.getElementById('resetView').onclick=()=>{if(loaded.size){const g=new THREE.Group();for(const o of loaded.values())g.add(o);frameObject(g)}else{camera.position.set(2600,2200,2800);controls.target.set(0,0,0);controls.update()}};
+document.getElementById('hide').onclick=()=>{document.getElementById('panel').style.display='none';document.getElementById('reopen').style.display='block'};
+document.getElementById('reopen').onclick=()=>{document.getElementById('panel').style.display='block';document.getElementById('reopen').style.display='none'};
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();init();
+</script>
+</body></html>
