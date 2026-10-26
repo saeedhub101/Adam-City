@@ -72,6 +72,17 @@ def triangulate(poly):
 def add_text(body,name,loc,size,material,rotation=(0,0,0)):
     cu=bpy.data.curves.new(name,"FONT");cu.body=body;cu.size=size;cu.extrude=0
     ob=bpy.data.objects.new(name,cu);bpy.context.collection.objects.link(ob);ob.location=loc;ob.rotation_euler=rotation;cu.materials.append(material);return ob
+def road_surface_material(properties,default):
+    surface=tag(properties,"surface","tracktype").strip().lower()
+    choices={
+      "asphalt":((.16,.16,.15),.92),"concrete":((.48,.47,.44),.88),"paved":((.34,.34,.32),.88),
+      "paving_stones":((.48,.43,.36),.9),"cobblestone":((.40,.37,.32),.95),
+      "gravel":((.42,.39,.34),.98),"dirt":((.39,.31,.22),1.0),"earth":((.39,.31,.22),1.0),
+      "ground":((.43,.36,.26),1.0),"unpaved":((.42,.36,.27),1.0),"sand":((.68,.56,.37),1.0)
+    }
+    if surface not in choices:return default
+    color,rough=choices[surface]
+    return mat("OSM road surface "+surface,color,rough)
 def osm_material(p,role,fallback):
     raw=tag(p,role+":colour",role+":color").strip().lower()
     palette={"white":(0.88,0.85,0.78),"black":(0.12,0.12,0.11),"grey":(0.48,0.48,0.46),"gray":(0.48,0.48,0.46),
@@ -123,6 +134,7 @@ def add_building(item,origin,wallm,roofm,glassm,trim,signm):
               "roof:shape","roof:material","roof:colour","roof:levels","roof:height","start_date","heritage"):
         if p.get(k) not in (None,""):ob["osm_"+k.replace(":","_")]=str(p[k])
     ob["osm_tags_json"]=json.dumps(p,ensure_ascii=False)[:16000]
+    ob["window_source"]="procedural_not_surveyed";ob["facade_texture_source"]="OSM tags where present; no facade photo texture inferred"
     # Roof cap with small parapet lip on flat roofs.
     roof=mesh_obj("Roof_"+str(item["id"]),[(x,h,z) for x,z in pts],[tuple(t) for t in tri],roofm)
     # Batch all facade windows into one mesh per building to keep city exports scalable.
@@ -294,7 +306,7 @@ def main():
                 hw=s["highway"].lower();w=12 if hw in ("motorway","trunk") else 8 if hw in ("primary","secondary") else 5 if hw=="tertiary" else 3.2 if hw in ("residential","unclassified") else 1.3
                 p=s.get("properties") or {}
                 road_y=-.8 if tag(p,"tunnel") not in ("","no") else .3 if tag(p,"bridge") not in ("","no") else .015
-                road=road_mesh(s["line"],origin,w,asphalt if w>2 else residential,"Road "+s["name"],road_y)
+                road=road_mesh(s["line"],origin,w,road_surface_material(p,asphalt if w>2 else residential),"Road "+s["name"],road_y)
                 if road:
                     for keyname in ("name","ref","highway","surface","lanes","maxspeed","oneway","bridge","tunnel","layer","access","service","junction","motor_vehicle","bicycle","foot","lit"):
                         if p.get(keyname) not in (None,""):road["osm_"+keyname]=str(p[keyname])
@@ -334,9 +346,17 @@ def main():
                 kind=tag(p,"highway","railway","public_transport","natural","power","man_made","amenity")
                 h=.35 if kind in ("traffic_signals","stop","crossing") else 3.5 if kind=="tree" else 1.2
                 w=.12 if kind=="traffic_signals" else .35
-                verts=[(x-w,0,z-w),(x+w,0,z-w),(x+w,0,z+w),(x-w,0,z+w),(x-w,h,z-w),(x+w,h,z-w),(x+w,h,z+w),(x-w,h,z+w)]
-                faces=[(0,1,2,3),(4,7,6,5),(0,4,5,1),(1,5,6,2),(2,6,7,3),(3,7,4,0)]
-                material=mat("OSM tree marker",(.16,.36,.14)) if kind=="tree" else mat("OSM transport marker",(.76,.42,.10))
+                if kind=="tree":
+                    verts=[(x-.12,0,z-.12),(x+.12,0,z-.12),(x+.12,0,z+.12),(x-.12,0,z+.12),
+                           (x-.12,1.35,z-.12),(x+.12,1.35,z-.12),(x+.12,1.35,z+.12),(x-.12,1.35,z+.12),
+                           (x-.85,1.1,z-.85),(x+.85,1.1,z-.85),(x+.85,1.1,z+.85),(x-.85,1.1,z+.85),(x, h+1.5, z)]
+                    faces=[(0,1,2,3),(4,7,6,5),(0,4,5,1),(1,5,6,2),(2,6,7,3),(3,7,4,0),
+                           (8,9,12),(9,10,12),(10,11,12),(11,8,12),(8,11,10,9)]
+                    material=mat("OSM tree foliage",(.15,.32,.12),.95)
+                else:
+                    verts=[(x-w,0,z-w),(x+w,0,z-w),(x+w,0,z+w),(x-w,0,z+w),(x-w,h,z-w),(x+w,h,z-w),(x+w,h,z+w),(x-w,h,z+w)]
+                    faces=[(0,1,2,3),(4,7,6,5),(0,4,5,1),(1,5,6,2),(2,6,7,3),(3,7,4,0)]
+                    material=mat("OSM transport marker",(.76,.42,.10))
                 ob=mesh_obj("OSM "+kind+" "+str(item["id"]),verts,faces,material)
                 ob["osm_id"]=str(item["id"]);ob["osm_tags_json"]=json.dumps(p,ensure_ascii=False)[:8000]
             for item in items["addresses"]:
