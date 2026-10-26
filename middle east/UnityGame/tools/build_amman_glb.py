@@ -129,9 +129,10 @@ def load_verified_photo_index():
         print("PHOTO_TEXTURE_MANIFEST_ERROR",repr(e)); return index
     for rec in records:
         if not rec.get("downloaded") or not rec.get("file"): continue
-        lic=str(rec.get("license","")).lower()
-        if not (lic=="cc0" or "public domain" in lic or lic.startswith(("cc by ","cc-by-","cc by-sa","cc-by-sa"))): continue
-        if any(x in lic for x in ("nc","nd")): continue
+        lic=str(rec.get("license","")).strip().lower().replace("_"," ").replace("creative commons","cc")
+        compact=lic.replace(" ","")
+        if not (compact in ("cc0","publicdomain") or "public domain" in lic or compact.startswith(("ccby","ccby-sa","ccby-nc"))): continue
+        if "nc" in compact or "nd" in compact: continue
         image_path=(Path.cwd()/rec["file"]).resolve()
         if not image_path.is_file(): continue
         # Require the importer’s name-phrase match and do not use nearby/unmatched images.
@@ -344,7 +345,8 @@ def main():
     for df in detail_features:
         dp=df.get("properties") or {};did=osm_identity(df,dp)
         if did:detail_by_id[did]=dp
-    photo_index=load_verified_photo_index() if prefix.lower()=="tabarbour" else {}\n    tiles=defaultdict(lambda:{"buildings":[],"streets":[],"labels":[],"water":[],"landcover":[],"places":[],"addresses":[],"infra_lines":[],"infra_points":[],"infra_polygons":[]})
+    photo_index=load_verified_photo_index() if prefix.lower()=="tabarbour" else {}
+    tiles=defaultdict(lambda:{"buildings":[],"streets":[],"labels":[],"water":[],"landcover":[],"places":[],"addresses":[],"infra_lines":[],"infra_points":[],"infra_polygons":[]})
     def key(lon,lat):return (math.floor(lon/tile),math.floor(lat/tile))
     for f in buildings:
         p=f.get("properties") or {};g=f.get("geometry") or {};c=g.get("coordinates") or []
@@ -362,7 +364,10 @@ def main():
             raw_levels=tag(p,"building:levels","levels")
             h=height(p)
             height_source="osm:height" if raw_height else "osm:building:levels" if raw_levels else "procedural_default_not_surveyed"
-            photo_candidates=photo_index.get(str(fid),[])\n            photo_record=photo_candidates[0] if len(photo_candidates)==1 else None\n            if photo_record: print("MATCHED_FACADE_PHOTO",fid,photo_record.get("title"),flush=True)\n            tiles[key(lon,lat)]["buildings"].append({"id":fid,"name":tag(p,"name","name:en"),"height":h,"height_source":height_source,"ring":ring,"properties":p,"photo_record":photo_record})
+            photo_candidates=photo_index.get(str(fid),[])
+            photo_record=photo_candidates[0] if len(photo_candidates)==1 else None
+            if photo_record: print("MATCHED_FACADE_PHOTO",fid,photo_record.get("title"),flush=True)
+            tiles[key(lon,lat)]["buildings"].append({"id":fid,"name":tag(p,"name","name:en"),"height":h,"height_source":height_source,"ring":ring,"properties":p,"photo_record":photo_record})
     for f in streets:
         p=f.get("properties") or {};g=f.get("geometry") or {};c=g.get("coordinates") or []
         lines=[c] if g.get("type")=="LineString" else c if g.get("type")=="MultiLineString" else []
