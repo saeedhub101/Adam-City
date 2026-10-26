@@ -5,6 +5,24 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using MiddleEastWorld;
 
+[InitializeOnLoad]
+public static class MiddleEastWorldBootstrap
+{
+    static MiddleEastWorldBootstrap()
+    {
+        EditorApplication.delayCall += EnsureStarterScene;
+    }
+
+    static void EnsureStarterScene()
+    {
+        const string scenePath = "Assets/MiddleEastWorld/Scenes/MiddleEastOpenWorld.unity";
+        if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+        if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), scenePath))) return;
+        MiddleEastWorldSetup.CreatePlayableScene();
+        Debug.Log("Created the default Tabarbour starter scene. Install the repository's existing generated runtime data before Play.");
+    }
+}
+
 public static class MiddleEastWorldSetup
 {
     [MenuItem("MiddleEastWorld/Create Playable Open World Scene")]
