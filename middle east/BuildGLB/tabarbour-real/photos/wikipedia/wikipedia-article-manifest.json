@@ -133,7 +133,8 @@
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
-      "building_link_status": "unmatched_no_verified_building_identity"
+      "building_link_status": "unmatched_no_verified_building_identity",
+      "image_status": "no_direct_wikimedia_thumbnail"
     },
     {
       "source": "Wikipedia",
@@ -152,7 +153,15 @@
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
-      "building_link_status": "unmatched_no_verified_building_identity"
+      "building_link_status": "unmatched_no_verified_building_identity",
+      "image_status": "downloaded_license_checked_thumbnail",
+      "image_file": "middle east/BuildGLB/tabarbour-real/photos/wikipedia/images/en_17440517.png",
+      "image_bytes": 67207,
+      "image_sha256": "38486e071feadfed1abdab03c88025d5d89a800f9c4d30795eaf48a513f94620",
+      "image_license": "CC0",
+      "image_artist": "<a href=\"//commons.wikimedia.org/wiki/User:Makeandtoss\" title=\"User:Makeandtoss\">Makeandtoss</a>",
+      "commons_file_title": "File:Amman_district_09.png",
+      "download_url": "https://upload.wikimedia.org/wikipedia/commons/3/37/Amman_district_09.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled"
     },
     {
       "source": "Wikipedia",
@@ -168,7 +177,9 @@
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
-      "building_link_status": "unmatched_no_verified_building_identity"
+      "building_link_status": "unmatched_no_verified_building_identity",
+      "image_status": "thumbnail_download_failed",
+      "image_error": "<HTTPError 429: 'Too many requests (f061ab2)'>"
     },
     {
       "source": "Wikipedia",
@@ -184,7 +195,8 @@
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
-      "building_link_status": "unmatched_no_verified_building_identity"
+      "building_link_status": "unmatched_no_verified_building_identity",
+      "image_status": "no_direct_wikimedia_thumbnail"
     },
     {
       "source": "Wikipedia",
@@ -200,7 +212,9 @@
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
-      "building_link_status": "unmatched_no_verified_building_identity"
+      "building_link_status": "unmatched_no_verified_building_identity",
+      "image_status": "thumbnail_download_failed",
+      "image_error": "<HTTPError 429: 'Too many requests (f061ab2)'>"
     },
     {
       "source": "Wikipedia",
