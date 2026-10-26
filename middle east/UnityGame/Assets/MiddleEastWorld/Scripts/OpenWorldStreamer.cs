@@ -77,6 +77,7 @@ namespace MiddleEastWorld
             if(manifest==null || manifest.layers==null) { Debug.LogError("Invalid region manifest: "+region); yield break; }
             Index(manifest.layers.buildings,buildingIndex);
             Index(manifest.layers.streets,streetIndex);
+            if (region == "Jordan") RemoveBuildingChunksCoveredByExistingGlbTiles();
             buildingsRoot=new GameObject("Streamed Buildings — "+region);
             streetsRoot=new GameObject("Streamed Streets — "+region);
             ready=true;
@@ -88,6 +89,18 @@ namespace MiddleEastWorld
         {
             if(layer==null||layer.chunks==null)return;
             foreach(var c in layer.chunks) if(c!=null&&!string.IsNullOrEmpty(c.tile)) index[c.tile]=c;
+        }
+
+        void RemoveBuildingChunksCoveredByExistingGlbTiles()
+        {
+            // The installed 5x5 GLB tile neighborhood is detailed geometry.
+            // Suppress duplicate extruded OSM buildings in the overlapping 3x3
+            // runtime cells while preserving OSM street rendering and distant fallback.
+            int tx=(int)Math.Floor(originLon/tileDegrees);
+            int ty=(int)Math.Floor(originLat/tileDegrees);
+            for(int x=tx-1;x<=tx+1;x++)
+                for(int y=ty-1;y<=ty+1;y++)
+                    buildingIndex.Remove(x+"_"+y);
         }
 
         void Update()
