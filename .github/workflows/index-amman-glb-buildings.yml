@@ -6,8 +6,10 @@ on:
     branches: [main]
     paths:
       - "middle east/UnityGame/tools/build_glb_building_index.py"
+      - "middle east/UnityGame/tools/export_jordan_building_source_with_ids.py"
       - "middle east/Jordan/layers/buildings.geojson.gz"
       - "middle east/BuildGLB/amman/manifest.json"
+      - ".github/workflows/index-amman-glb-buildings.yml"
 
 permissions:
   contents: write
@@ -19,27 +21,53 @@ concurrency:
 jobs:
   index:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
           fetch-depth: 0
+
+      - name: Install OSM ID-preserving exporter
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y osmium-tool
+
+      - name: Re-export saved OSM buildings with original IDs
+        run: python3 "middle east/UnityGame/tools/export_jordan_building_source_with_ids.py"
+
       - name: Match GLB tile IDs to repository OSM records
         run: python3 "middle east/UnityGame/tools/build_glb_building_index.py"
-      - name: Commit index
+
+      - name: Commit index and diagnostics even when matching is blocked
+        if: always()
+        shell: bash
         run: |
           set -euo pipefail
+          git checkout -- "middle east/Jordan/layers/buildings.geojson.gz" || true
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # A separate workflow may update main while the inventory is running.
-          # Rebase before committing generated data so the push is not stale.
-          git fetch origin main
-          git rebase origin/main
-          git add -- "middle east/BuildGLB/amman/building-asset-index.json"
-          if git diff --cached --quiet; then
-            echo "Building index is already current."
-          else
-            git commit -m "Index Amman GLB buildings by original OSM identity"
-            git push origin HEAD:main
+          git add -- "middle east/UnityGame/BuildData/AMMAN-GLB-INDEX-DIAGNOSTICS.json"
+          if [ -f "middle east/BuildGLB/amman/building-asset-index.json" ] &&
+             python3 -c 'import json; p=json.load(open("middle east/UnityGame/BuildData/AMMAN-GLB-INDEX-DIAGNOSTICS.json")); raise SystemExit(0 if p.get("counts",{}).get("matched_to_osm_source",0)>0 else 1)'; then
+            git add -- "middle east/BuildGLB/amman/building-asset-index.json"
           fi
+          if git diff --cached --quiet; then
+            echo "No new index or diagnostic output to commit."
+            exit 0
+          fi
+          git commit -m "Save Amman GLB identity matching diagnostics and index"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              sleep "$attempt"
+              continue
+            fi
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            sleep "$attempt"
+          done
+          echo "Could not push diagnostics/index after five retries." >&2
+          exit 1
