@@ -8,10 +8,10 @@
   },
   "sources": {
     "openfreemap_vector_tiles": {
-      "status": "in_progress",
+      "status": "complete_with_gaps",
       "expected_tiles": 1624,
       "saved_tiles": 0,
-      "error_count": 1500,
+      "error_count": 1624,
       "errors_sample": [
         {
           "z": 12,
@@ -134,7 +134,612 @@
           "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
         }
       ],
-      "file": "middle east/BuildGLB/tabarbour-real/source/openfreemap-tabarbour-z12-17.mbtiles"
+      "file": "middle east/BuildGLB/tabarbour-real/source/openfreemap-tabarbour-z12-17.mbtiles",
+      "tiles_expected": 1624,
+      "tiles_saved": 0,
+      "errors": [
+        {
+          "z": 12,
+          "x": 2456,
+          "y": 1662,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 12,
+          "x": 2456,
+          "y": 1663,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 12,
+          "x": 2457,
+          "y": 1662,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 12,
+          "x": 2457,
+          "y": 1663,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4912,
+          "y": 3325,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4912,
+          "y": 3326,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4912,
+          "y": 3327,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4913,
+          "y": 3325,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4913,
+          "y": 3326,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4913,
+          "y": 3327,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4914,
+          "y": 3325,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4914,
+          "y": 3326,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 13,
+          "x": 4914,
+          "y": 3327,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9825,
+          "y": 6651,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9825,
+          "y": 6652,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9825,
+          "y": 6653,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9825,
+          "y": 6654,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9825,
+          "y": 6655,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9826,
+          "y": 6651,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9826,
+          "y": 6652,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9826,
+          "y": 6653,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9826,
+          "y": 6654,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9826,
+          "y": 6655,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9827,
+          "y": 6651,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9827,
+          "y": 6652,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9827,
+          "y": 6653,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9827,
+          "y": 6654,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9827,
+          "y": 6655,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9828,
+          "y": 6651,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9828,
+          "y": 6652,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9828,
+          "y": 6653,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9828,
+          "y": 6654,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9828,
+          "y": 6655,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9829,
+          "y": 6651,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9829,
+          "y": 6652,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9829,
+          "y": 6653,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9829,
+          "y": 6654,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 14,
+          "x": 9829,
+          "y": 6655,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13302,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13303,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13304,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13305,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13306,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13307,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13308,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13309,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13310,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13311,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13302,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13303,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13304,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13305,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13306,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13307,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13308,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13309,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13310,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13311,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13302,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13303,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13304,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13305,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13306,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13307,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13308,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13309,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13310,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13311,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13302,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13303,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13304,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13305,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13306,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13307,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13308,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13309,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13310,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13311,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13302,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13303,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13304,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13305,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13306,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13307,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13308,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13309,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13310,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13311,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13302,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13303,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13304,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13305,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13306,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13307,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13308,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13309,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13310,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13311,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19657,
+          "y": 13302,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        },
+        {
+          "z": 15,
+          "x": 19657,
+          "y": 13303,
+          "error": "ValueError('unexpected payload/content-type application/vnd.mapbox-vector-tile bytes=0')"
+        }
+      ],
+      "bytes": 20480
     },
     "nasa_gibs_satellite": {
       "status": "complete_with_gaps",
@@ -1072,5 +1677,5 @@
       }
     }
   },
-  "updated_utc": "2026-10-26T09:59:38.944557+00:00"
+  "updated_utc": "2026-10-26T09:59:57.543745+00:00"
 }
