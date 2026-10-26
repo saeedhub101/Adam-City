@@ -19,7 +19,7 @@ public static class MiddleEastWorldBootstrap
         if (EditorApplication.isPlayingOrWillChangePlaymode) return;
         if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), scenePath))) return;
         MiddleEastWorldSetup.CreatePlayableScene();
-        Debug.Log("Created the default Tabarbour starter scene. Install the repository's existing generated runtime data before Play.");
+        Debug.Log("Created the Tabarbour starter scene. Existing local Amman GLB tiles are installed from the repository and loaded offline; no external runtime source is used.");
     }
 }
 
