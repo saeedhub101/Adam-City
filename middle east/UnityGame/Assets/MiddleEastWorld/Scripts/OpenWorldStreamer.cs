@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace MiddleEastWorld
 {
@@ -55,13 +54,27 @@ namespace MiddleEastWorld
 
         IEnumerator ReadText(string path, Action<string> callback)
         {
-            string uri=path;
-            if(!uri.Contains("://")) uri="file://"+uri;
-            using(var req=UnityWebRequest.Get(uri))
+            // All runtime data must be a local file inside StreamingAssets.
+            // No HTTP, hosted tiles, remote APIs, or external model URLs are permitted.
+            string root = Path.GetFullPath(Application.streamingAssetsPath) + Path.DirectorySeparatorChar;
+            string full = Path.GetFullPath(path);
+            if (!full.StartsWith(root, StringComparison.OrdinalIgnoreCase))
             {
-                yield return req.SendWebRequest();
-                callback(req.result==UnityWebRequest.Result.Success?req.downloadHandler.text:null);
+                Debug.LogError("Blocked non-local runtime data path: " + path);
+                callback(null);
+                yield break;
             }
+            if (!File.Exists(full))
+            {
+                Debug.LogWarning("Missing repository-local runtime file: " + full);
+                callback(null);
+                yield break;
+            }
+            string text = null;
+            try { text = File.ReadAllText(full); }
+            catch (Exception e) { Debug.LogError("Could not read local runtime file: " + e.Message); }
+            callback(text);
+            yield return null;
         }
 
         IEnumerator LoadManifest()
@@ -129,26 +142,10 @@ namespace MiddleEastWorld
 
         IEnumerator LoadBuildingChunk(ChunkInfo chunk)
         {
-            string json=null; yield return ReadText(basePath+chunk.file,s=>json=s);
-            if(string.IsNullOrEmpty(json)){Debug.LogWarning("Building chunk unavailable: "+chunk.file);yield break;}
-            var data=JsonUtility.FromJson<ChunkFeatures<RuntimeBuilding>>(json);
-            if(data==null||data.features==null)yield break;
-            int count=0;
-            foreach(var b in data.features)
-            {
-                if(count++>=maxBuildingsPerChunk)break;
-                if(b.ring==null||b.ring.Length<4)continue;
-                var points=new List<Vector2>(b.ring.Length);
-                foreach(var q in b.ring){if(q==null||q.Length<2)continue;var p=Project(q[0],q[1]);points.Add(new Vector2(p.x,p.z));}
-                if(points.Count>3&&(points[0]-points[points.Count-1]).sqrMagnitude<.01f)points.RemoveAt(points.Count-1);
-                var mesh=Extrude(points,Mathf.Clamp(b.height,2.5f,250f));if(!mesh)continue;
-                var go=new GameObject(string.IsNullOrEmpty(b.name)?"Building "+b.id:b.name);
-                go.transform.SetParent(buildingsRoot.transform,false);
-                go.AddComponent<MeshFilter>().sharedMesh=mesh;
-                go.AddComponent<MeshRenderer>().sharedMaterial=BuildingMaterial(b.material);
-                var collider=go.AddComponent<MeshCollider>();collider.sharedMesh=mesh;
-                if(count%250==0)yield return null;
-            }
+            // Deliberately disabled: OSM outlines and estimated heights are not scanned
+            // buildings. Only verified existing local GLB assets may supply building geometry.
+            Debug.LogWarning("Skipped OSM extrusion for " + chunk.file + "; use verified local GLB building assets.");
+            yield break;
         }
 
         IEnumerator LoadStreetChunk(ChunkInfo chunk)
@@ -182,47 +179,6 @@ namespace MiddleEastWorld
             return new Vector3((float)((lon-lon0)*111319.490793*Math.Cos(lat0*Math.PI/180)),0,(float)((lat-lat0)*111319.490793));
         }
 
-        Mesh Extrude(List<Vector2> p,float h)
-        {
-            int n=p.Count;if(n<3)return null;
-            var verts=new Vector3[n*2];
-            for(int i=0;i<n;i++){verts[i]=new Vector3(p[i].x,0,p[i].y);verts[n+i]=new Vector3(p[i].x,h,p[i].y);}
-            var tris=new List<int>();
-            // Ear clipping for concave OSM footprints.
-            var ids=new List<int>();for(int i=0;i<n;i++)ids.Add(i);
-            bool ccw=SignedArea(p)>0;int guard=0;
-            while(ids.Count>2&&guard++<n*n)
-            {
-                bool cut=false;
-                for(int i=0;i<ids.Count;i++)
-                {
-                    int ia=ids[(i+ids.Count-1)%ids.Count],ib=ids[i],ic=ids[(i+1)%ids.Count];
-                    if(Cross(p[ia],p[ib],p[ic])*(ccw?1:-1)<=0.00001f)continue;
-                    bool contains=false;
-                    foreach(int k in ids){if(k==ia||k==ib||k==ic)continue;if(InTriangle(p[k],p[ia],p[ib],p[ic])){contains=true;break;}}
-                    if(contains)continue;
-                    tris.Add(ia);tris.Add(ib);tris.Add(ic);
-                    tris.Add(n+ic);tris.Add(n+ib);tris.Add(n+ia);
-                    ids.RemoveAt(i);cut=true;break;
-                }
-                if(!cut)break;
-            }
-            for(int i=0;i<n;i++){int j=(i+1)%n;tris.Add(i);tris.Add(j);tris.Add(j+n);tris.Add(i);tris.Add(j+n);tris.Add(i+n);}
-            var mesh=new Mesh();if(verts.Length>65000)mesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;
-            mesh.vertices=verts;mesh.triangles=tris.ToArray();mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
-        }
-        float SignedArea(List<Vector2> p){float a=0;for(int i=0,j=p.Count-1;i<p.Count;j=i++)a+=p[j].x*p[i].y-p[i].x*p[j].y;return a*.5f;}
-        float Cross(Vector2 a,Vector2 b,Vector2 c){return (b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);}
-        bool InTriangle(Vector2 p,Vector2 a,Vector2 b,Vector2 c){float x=Cross(a,b,p),y=Cross(b,c,p),z=Cross(c,a,p);return (x>=0&&y>=0&&z>=0)||(x<=0&&y<=0&&z<=0);}
-        Material BuildingMaterial(string hint)
-        {
-            var m=new Material(Shader.Find("Standard"));string h=(hint??"").ToLowerInvariant();
-            if(h.Contains("glass"))m.color=new Color(.38f,.52f,.58f);
-            else if(h.Contains("brick"))m.color=new Color(.58f,.34f,.25f);
-            else if(h.Contains("stone"))m.color=new Color(.68f,.61f,.49f);
-            else m.color=new Color(.76f,.72f,.64f);
-            m.SetFloat("_Glossiness",h.Contains("glass")?.62f:.22f);return m;
-        }
         float WidthFor(string highway){switch((highway??"").ToLowerInvariant()){case "motorway":case "trunk":return 13;case "primary":return 9;case "secondary":return 7;case "tertiary":return 5;case "footway":case "path":return 1.3f;default:return 3.5f;}}
         Color ColorForRoad(string highway){string h=(highway??"").ToLowerInvariant();return h=="footway"||h=="path"?new Color(.62f,.55f,.43f):new Color(.20f,.20f,.19f);}
         void OnGUI()
