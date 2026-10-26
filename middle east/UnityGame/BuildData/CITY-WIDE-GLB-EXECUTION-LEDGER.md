@@ -1,35 +1,34 @@
 # City-wide GLB execution ledger
 
-Last updated: 2026-10-26  
-Repository: `saeedhub101/Adam-City` — branch `main`
+Last updated: 2026-10-26 UTC  
+Repository: saeedhub101/Adam-City — branch main
 
 ## Current position
 
 - [x] Documented city-wide geographic batches and the image verification gate.
-- [x] Updated the indexer to inventory existing exported `Building_` nodes even when source matching fails.
-- [x] Diagnosed the prior workflow failure from its actual logs.
-- [x] Fixed the index workflow to fetch/rebase the latest `main` before committing generated output.
-- [x] Added runtime diagnostics that print the actual first OSM GeoJSON feature schema so the ID mismatch can be fixed from observed data, not guessed field names.
-- [ ] Complete a trustworthy source-to-GLB identity join.
-- [ ] Save the full index to `main` and verify it was committed.
+- [x] Confirmed the previous source join failed because the saved thematic GeoJSON does not preserve original OSM object IDs. The first diagnostic sample had only the property entrance=main; all 231,208 polygon features in that export lacked a recognized source ID.
+- [x] Added a workflow-only exporter that reads the repository's saved Jordan PBF and uses osmium export attributes to preserve the original OSM type/id in the temporary GeoJSON.
+- [x] Updated the index workflow to install osmium-tool, regenerate the local ID-preserving source, run the matcher, restore the tracked GeoJSON, and commit diagnostics even when matching is blocked.
+- [x] Added retry logic around Git rebase/push to handle concurrent main commits.
+- [ ] Complete and verify a trustworthy source-to-GLB identity join.
+- [ ] Save the full index to main and verify its counts and commit SHA.
 - [ ] Produce and validate real facade/roof GLBs from approved photo/survey evidence. No new photorealistic GLB is claimed yet.
 
 ## Latest execution
 
-- Current run: [40274057694](https://github.com/saeedhub101/Adam-City/actions/runs/40274057694) — running the updated indexer with source-schema diagnostics.
-- Previous run: [40273391055](https://github.com/saeedhub101/Adam-City/actions/runs/40273391055) — scanned 1,477 manifest tiles, 490 present GLB files and 89,231 exported building nodes; matched 0 OSM records; identified 231,208 polygon features without recognized explicit IDs.
-- In run 40273391055 the index-generation step completed, but the commit/push step failed with `[rejected] main -> main (fetch first)` because another commit updated `main` while the workflow was running. The workflow now rebases before committing.
-- Earlier [40272094590](https://github.com/saeedhub101/Adam-City/actions/runs/40272094590) failed the old empty-index guard. [40272105443](https://github.com/saeedhub101/Adam-City/actions/runs/40272105443) was cancelled before verified texture outputs. Earlier green run [40271467485](https://github.com/saeedhub101/Adam-City/actions/runs/40271467485) is not proof of a valid textured GLB because Blender had reported a Python failure.
+- Current index run: [40275961180](https://github.com/saeedhub101/Adam-City/actions/runs/40275961180) — workflow now exports OSM IDs from the saved PBF before matching. It was in progress at the last check; output counts have not yet been verified.
+- Previous diagnostic run: [40274057694](https://github.com/saeedhub101/Adam-City/actions/runs/40274057694) — found 89,231 named Building_ nodes across 490 existing GLBs, but zero source matches because the GeoJSON export had no explicit OSM IDs. Its commit step failed on unstaged changes/rebase.
+- Earlier run [40273391055](https://github.com/saeedhub101/Adam-City/actions/runs/40273391055) also had zero matches and failed to push its index because main changed during execution.
+- LiDAR importer run [40275828086](https://github.com/saeedhub101/Adam-City/actions/runs/40275828086) is running the revised geographic downloader rather than the former thousands-page global S3 catalog crawl. Verified payload totals are not yet available.
 
-## Next steps — avoid repeating completed work
+## Next steps — do not repeat completed work
 
-1. Read the schema diagnostics from run 40274057694 and adapt the ID parser to the actual local data format.
-2. Rerun the index only after fixing the schema mismatch; retain unmatched assets and never guess identity by proximity.
-3. Verify the generated index exists in the remote repository and record counts/commit SHA here.
-4. Process image and survey candidates in geographic batches, inspecting actual images and recording license, exact-building identity, facade coverage, and accept/reject reasons.
-5. Generate new GLBs only from approved evidence, preserve source assets/coordinates, validate output files and visual appearance, then continue automatically through further batches.
-6. Update this ledger at each meaningful phase with run IDs, output paths, failure causes, and the exact next action.
+1. Inspect run 40275961180 after the identity-preserving export; confirm the match count is nonzero and check for any way/relation ID encoding mismatch.
+2. Verify the generated index exists on main and record its actual counts and commit SHA.
+3. Continue local image/survey review in geographic batches. A nearby camera coordinate is not proof of which facade is shown.
+4. Generate new GLBs only from approved evidence; preserve source geometry and coordinates, validate output files, and visually check against the exact building.
+5. Do not claim photo-realistic output until a new GLB is committed, parses, remains aligned, and is verified against an approved image of the exact building.
 
 ## Photo evidence
 
-Two candidates have been opened and rejected for exact-building texturing. Source, license status, visual review and reasons are recorded in `TABARBOUR-PHOTO-REVIEWS.json`. No exact-building image is approved there yet.
+The existing Tabarbour photo reviews reject both previously examined candidates for exact-building facade texturing. No exact-building image is approved there yet.
