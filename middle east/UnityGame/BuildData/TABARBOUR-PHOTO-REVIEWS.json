@@ -15,7 +15,7 @@
       "capture_date": "2011-03-04",
       "camera_position": {
         "latitude": 32.012952,
-        "longitude": 35.981770
+        "longitude": 35.98177
       },
       "visual_review": {
         "actual_image_opened_and_inspected": true,
@@ -32,6 +32,32 @@
       },
       "decision": "rejected",
       "allowed_use": "Area context only; do not use as a building texture, facade decal, or geometry source.",
+      "reviewed_on": "2026-10-26"
+    },
+    {
+      "candidate_id": "cec-tabarbour-commercial-building-project-photo",
+      "target_building_osm_id": null,
+      "target_glb": null,
+      "image_source": "CEC Jordan project page",
+      "image_page": "https://www.cec.jo/projects/tabarbour-commercial-building.html",
+      "image_direct": "https://www.cec.jo/media/tabarbour.webp",
+      "license_attribution": "No explicit image license identified during review; obtain permission/confirm terms before reuse.",
+      "visual_review": {
+        "actual_image_opened_and_inspected": true,
+        "page_identifies_project_as_tabarbour": true,
+        "exact_target_building_geolocation_confirmed": false,
+        "view_type": "exterior construction site",
+        "usable_for_completed_facade_texture": false,
+        "usable_for_accurate_final_glb_geometry": false,
+        "reasons": [
+          "The image shows an unfinished concrete frame rather than the completed building appearance.",
+          "The image is low resolution and does not show finished facade, windows, doors, or roof details.",
+          "The page identifies the project as being in Tabarbour but does not provide coordinates that link it to a specific existing OSM feature or GLB node.",
+          "Image reuse rights were not established."
+        ]
+      },
+      "decision": "rejected",
+      "allowed_use": "Context only; not authorized as a texture or as a source for a finished GLB.",
       "reviewed_on": "2026-10-26"
     }
   ],
