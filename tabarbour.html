@@ -65,16 +65,38 @@ function featureLabel(p){return p.name||p['name:en']||p['addr:housenumber']||p.r
 function coordsToVec(c){const lon=c[0],lat=c[1];if(!Number.isFinite(lon)||!Number.isFinite(lat))return null;return new THREE.Vector3((lon-35.945)*111320*Math.cos(32*Math.PI/180),0,(lat-32)*111320)}
 function geometryPoints(coords,out=[]){if(Array.isArray(coords)&&typeof coords[0]==='number'){const v=coordsToVec(coords);if(v)out.push(v)}else if(Array.isArray(coords))coords.forEach(x=>geometryPoints(x,out));return out}
 function makeTextSprite(text){const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');ctx.font='bold 24px sans-serif';const w=Math.min(600,Math.ceil(ctx.measureText(text).width)+20);canvas.width=w;canvas.height=38;ctx.font='bold 24px sans-serif';ctx.fillStyle='rgba(10,20,28,.85)';ctx.fillRect(0,0,w,38);ctx.strokeStyle='#d5e7ee';ctx.strokeRect(1,1,w-2,36);ctx.fillStyle='#fff';ctx.textBaseline='middle';ctx.fillText(text,8,19,w-16);const tex=new THREE.CanvasTexture(canvas);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,depthTest:false}));sp.scale.set(w*1.1,42,1);sp.renderOrder=20;return sp}
+async function readLayerJSON(response,file){
+ const bytes=await response.arrayBuffer();let raw=new Uint8Array(bytes);
+ // Pages may transparently decompress .gz files; only decompress when gzip magic remains.
+ if(raw.length>=2&&raw[0]===31&&raw[1]===139){
+  if(typeof DecompressionStream==='undefined')throw Error('Gzip decompression unavailable');
+  raw=new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
+ }
+ return JSON.parse(new TextDecoder().decode(raw));
+}
+function featureAnchor(geometry){
+ if(!geometry)return null;
+ if(geometry.type==='Point')return coordsToVec(geometry.coordinates);
+ if(geometry.type==='MultiPoint')return coordsToVec(geometry.coordinates[0]);
+ const lines=[];
+ function collect(g){
+  if(!g)return;
+  if(g.type==='LineString')lines.push(g.coordinates);
+  else if(g.type==='MultiLineString')lines.push(...g.coordinates);
+  else if(g.type==='Polygon')lines.push(...g.coordinates.slice(0,1));
+  else if(g.type==='MultiPolygon')for(const p of g.coordinates)lines.push(...p.slice(0,1));
+  else if(g.type==='GeometryCollection')for(const x of g.geometries||[])collect(x);
+ }
+ collect(geometry);let best=null,bestLen=-1;
+ for(const line of lines){let total=0,segments=[];for(let i=1;i<line.length;i++){const a=coordsToVec(line[i-1]),b=coordsToVec(line[i]);if(!a||!b)continue;const d=a.distanceTo(b);segments.push({a,b,d});total+=d}if(total>bestLen&&segments.length){let target=total/2,run=0;for(const s of segments){if(run+s.d>=target){best=s.a.clone().lerp(s.b,(target-run)/(s.d||1));break}run+=s.d}bestLen=total}}
+ if(best)return best;
+ const pts=geometryPoints(geometry.coordinates||[]);return pts.length?pts[Math.floor(pts.length/2)].clone():null;
+}
 async function loadDataLayer(id,label,file,kind){
  layerControl(id,label);const state=layerToggles.querySelector('[data-layerstate="'+id+'"]');
  try{
   const response=await fetch(LAYER_BASE+file,{cache:'force-cache'});if(!response.ok)throw Error('HTTP '+response.status);
-  let textData;
-  if(file.endsWith('.gz')){
-   if(typeof DecompressionStream==='undefined')throw Error('This browser cannot decompress the repository .gz layer');
-   const bytes=await response.arrayBuffer();textData=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
-  }else textData=await response.text();
-  const fc=JSON.parse(textData),group=new THREE.Group();group.name=id;
+  const fc=await readLayerJSON(response,file),group=new THREE.Group();group.name=id;
   const colors={buildings:0xd5c4a4,building_details:0xeee0c4,streets:0xe6d8b9,streetnames:0xe7f1ff,addresses:0xffffff,places:0xffe08a,water:0x28a9e8,landcover:0x679b55,infrastructure:0xffa34b};
   const mat=new THREE.LineBasicMaterial({color:colors[id]||0xe6d8b9,transparent:true,opacity:.92,depthTest:true});
   const fillMat=new THREE.MeshBasicMaterial({color:colors[id]||0xd5c4a4,transparent:true,opacity:id==='water'?.35:.20,side:THREE.DoubleSide,depthWrite:false});
@@ -97,8 +119,8 @@ async function loadDataLayer(id,label,file,kind){
    }
    if(type==='GeometryCollection')for(const child of g.geometries||[])renderGeometry(child,p);
   }
-  for(const f of (fc.features||[])){const p=f.properties||{};if(kind==='label'){const name=featureLabel(p);if(!name)continue;const pts=geometryPoints(f.geometry?.coordinates||[]);if(!pts.length)continue;const mid=pts[Math.floor(pts.length/2)].clone();mid.y=id==='addresses'?14:22;const sprite=makeTextSprite(String(name));sprite.position.copy(mid);group.add(sprite);n++}else renderGeometry(f.geometry,p)}
-  scene.add(group);dataLayers.set(id,group);state.textContent=n.toLocaleString()+' features';
+  for(const f of (fc.features||[])){const p=f.properties||{};if(kind==='label'){const name=featureLabel(p);if(!name)continue;const anchor=featureAnchor(f.geometry);if(!anchor)continue;anchor.y=id==='addresses'?14:22;const sprite=makeTextSprite(String(name));sprite.position.copy(anchor);group.add(sprite);n++}else renderGeometry(f.geometry,p)}
+  scene.add(group);dataLayers.set(id,group);state.textContent=n.toLocaleString()+' features';state.style.color='#68d5c2';
  }catch(e){state.textContent='ERROR';state.title=String(e);state.style.color='#ffb4a9';setStatus('Layer '+label+' failed: '+String(e.message||e),true)}
 }
 function setStatus(s,bad=false){status.textContent=s;status.classList.toggle('error',bad)}
