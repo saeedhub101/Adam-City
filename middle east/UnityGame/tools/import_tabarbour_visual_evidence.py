@@ -43,6 +43,59 @@ def sha256(path):
             h.update(chunk)
     return h.hexdigest()
 
+def license_is_reusable(meta):
+    lic = meta.get("LicenseShortName") or {}
+    lic = lic.get("value", "") if isinstance(lic, dict) else str(lic)
+    usage = meta.get("UsageTerms") or {}
+    usage = usage.get("value", "") if isinstance(usage, dict) else str(usage)
+    text = (str(lic) + " " + str(usage)).lower()
+    return any(x in text for x in ("cc0", "public domain", "cc by", "cc-by", "cc by-sa", "cc-by-sa"))
+
+def download_wikipedia_thumbnail(record, index):
+    url = record.get("thumbnail_url")
+    if not url or not url.startswith("https://upload.wikimedia.org/"):
+        record["image_status"] = "no_direct_wikimedia_thumbnail"
+        return
+    parts = urllib.parse.urlparse(url).path.split("/")
+    try:
+        filename = urllib.parse.unquote(parts[-2] if "thumb" in parts else parts[-1])
+        title = "File:" + filename
+        api = "https://commons.wikimedia.org/w/api.php"
+        params = {"action":"query","format":"json","prop":"imageinfo","iiprop":"url|extmetadata",
+                  "iiurlwidth":"1600","titles":title}
+        data = get_json(request_url(api, params))
+        pages = data.get("query", {}).get("pages", {})
+        page = next(iter(pages.values()), {})
+        info = (page.get("imageinfo") or [{}])[0]
+        meta = info.get("extmetadata") or {}
+        lic = meta.get("LicenseShortName") or {}
+        lic = lic.get("value", "") if isinstance(lic, dict) else str(lic)
+        if not license_is_reusable(meta):
+            record.update({"image_status":"skipped_license_not_confirmed_free","image_license":lic,"commons_file_title":title})
+            return
+        download_url = info.get("thumburl") or url
+        ext = pathlib.Path(urllib.parse.urlparse(download_url).path).suffix.lower()
+        if ext not in (".jpg",".jpeg",".png",".webp"): ext = ".jpg"
+        target = WIKI_OUT / "images" / (str(record.get("language","xx")) + "_" + str(record.get("pageid",index)) + ext)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        req = urllib.request.Request(download_url, headers={"User-Agent": UA})
+        with urllib.request.urlopen(req, timeout=60) as res:
+            payload = res.read(18 * 1024 * 1024 + 1)
+            ctype = res.headers.get("Content-Type","").lower()
+        if len(payload) > 18 * 1024 * 1024 or not ctype.startswith("image/") or len(payload) < 4096:
+            record.update({"image_status":"skipped_invalid_or_oversize_image","image_license":lic})
+            return
+        tmp = target.with_suffix(target.suffix + ".part")
+        tmp.write_bytes(payload); tmp.replace(target)
+        record.update({"image_status":"downloaded_license_checked_thumbnail",
+                       "image_file":str(target.relative_to(ROOT)),"image_bytes":target.stat().st_size,
+                       "image_sha256":sha256(target),"image_license":lic,
+                       "image_artist":((meta.get("Artist") or {}).get("value","") if isinstance(meta.get("Artist"),dict) else str(meta.get("Artist") or "")),
+                       "commons_file_title":title,"download_url":download_url})
+    except Exception as e:
+        record["image_status"] = "thumbnail_download_failed"
+        record["image_error"] = repr(e)[:400]
+
 def wikipedia():
     WIKI_OUT.mkdir(parents=True, exist_ok=True)
     found = {}
@@ -81,13 +134,23 @@ def wikipedia():
         except Exception as e:
             print("WIKIPEDIA_QUERY_FAILED", lang, repr(e), flush=True)
     records = list(found.values())
+    downloaded = 0
+    for i, record in enumerate(records[:30], 1):
+        download_wikipedia_thumbnail(record, i)
+        if record.get("image_status") == "downloaded_license_checked_thumbnail": downloaded += 1
+        if i % 5 == 0:
+            write_json(WIKI_OUT / "wikipedia-article-manifest.json", {
+                "area": "Tabarbour, Amman, Jordan", "bounds": BOUNDS,
+                "source": "Wikipedia Action API; images downloaded only after Commons license metadata check",
+                "records": len(records), "downloaded_images": downloaded, "items": records
+            })
     write_json(WIKI_OUT / "wikipedia-article-manifest.json", {
         "area": "Tabarbour, Amman, Jordan", "bounds": BOUNDS,
-        "source": "Wikipedia Action API geosearch, English and Arabic",
-        "records": len(records), "items": records
+        "source": "Wikipedia Action API geosearch, English and Arabic; images downloaded only after Commons license metadata check",
+        "records": len(records), "downloaded_images": downloaded, "items": records
     })
-    print("WIKIPEDIA_EVIDENCE_RECORDS", len(records), flush=True)
-    return {"records": len(records), "languages": ["en", "ar"]}
+    print("WIKIPEDIA_EVIDENCE_RECORDS", len(records), "downloaded_images", downloaded, flush=True)
+    return {"records": len(records), "downloaded_images": downloaded, "languages": ["en", "ar"]}
 
 def mapillary():
     MAP_OUT.mkdir(parents=True, exist_ok=True)
