@@ -14,12 +14,12 @@ permissions:
 
 concurrency:
   group: amman-glb-building-index
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   index:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,8 +29,13 @@ jobs:
         run: python3 "middle east/UnityGame/tools/build_glb_building_index.py"
       - name: Commit index
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # A separate workflow may update main while the inventory is running.
+          # Rebase before committing generated data so the push is not stale.
+          git fetch origin main
+          git rebase origin/main
           git add -- "middle east/BuildGLB/amman/building-asset-index.json"
           if git diff --cached --quiet; then
             echo "Building index is already current."
