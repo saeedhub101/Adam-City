@@ -2,6 +2,10 @@ name: Index existing Amman GLB buildings against saved OSM source
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/index-amman-glb-buildings.yml"
 
 permissions:
   contents: write
@@ -12,6 +16,7 @@ concurrency:
 
 jobs:
   index:
+    if: false # Retired: do not regenerate the legacy 0.01-degree Amman tile set.
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
