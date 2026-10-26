@@ -6,13 +6,14 @@
     "south": 31.96,
     "north": 32.04
   },
-  "source": "Wikipedia public endpoints in Arabic and English; no API key; Commons image license checked",
+  "source": "Wikipedia public endpoints; Commons license metadata checked before download; no API key",
   "records": 50,
   "downloaded_images": 3,
   "building_index": {
-    "status": "error",
-    "file": "/home/runner/work/Adam-City/Adam-City/middle east/BuildGLB/tabarbour-real/source/layers/buildings.geojson.gz",
-    "error": "JSONDecodeError('Expecting value: line 1 column 41 (char 40)')"
+    "status": "loaded",
+    "file": "middle east/BuildGLB/tabarbour-real/source/layers/buildings.geojson.gz",
+    "named_building_features": 286,
+    "unique_names": 162
   },
   "items": [
     {
@@ -71,8 +72,27 @@
       "extract": "The King Abdullah I Mosque (Arabic: مسجد الملك عبد الله الأول) is a mosque, located in Amman, Jordan. Named in honour of Abdullah I, the mosque was built between 1982 and 1989 and is capped by a blue mosaic dome beneath which 3,000 Muslims may offer prayer. It is in the Abdali area of the city.\nTourists are allowed to visit. Men must have long trousers on and women must cover their heads, arms and legs. A hooded gown is provided free of charge for this purpose.",
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
-      "matched_buildings": [],
-      "building_link_status": "unmatched_no_verified_building_identity",
+      "matched_buildings": [
+        {
+          "osm_id": "way/333946090",
+          "osm_names": [
+            "مسجد الملك عبد الله",
+            "King Abdullah I Mosque"
+          ],
+          "match_method": "exact_normalized_name",
+          "confidence": "candidate_exact_name_not_visual_identity_proof"
+        },
+        {
+          "osm_id": "way/333946090",
+          "osm_names": [
+            "مسجد الملك عبد الله",
+            "King Abdullah I Mosque"
+          ],
+          "match_method": "exact_normalized_name",
+          "confidence": "candidate_exact_name_not_visual_identity_proof"
+        }
+      ],
+      "building_link_status": "exact_name_match_candidates",
       "image_status": "no_direct_wikimedia_thumbnail"
     },
     {
@@ -93,8 +113,14 @@
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
       "building_link_status": "unmatched_no_verified_building_identity",
-      "image_status": "thumbnail_download_failed",
-      "image_error": "<HTTPError 429: 'Too many requests (f061ab2)'>"
+      "image_status": "downloaded_license_checked_thumbnail",
+      "image_file": "middle east/BuildGLB/tabarbour-real/photos/wikipedia/images/en_5376510.jpg",
+      "image_bytes": 266959,
+      "image_sha256": "7696a5763a24368f91c13f82957b54612b36b9fd5e17132b2d10856d628218c0",
+      "image_license": "CC BY-SA 2.0",
+      "image_artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/photos/99733328@N00\">Shannon Hobbs</a>",
+      "commons_file_title": "File:World's_biggest_flagpolejordanamman.jpg",
+      "download_url": "https://upload.wikimedia.org/wikipedia/commons/e/ec/World%27s_biggest_flagpolejordanamman.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled"
     },
     {
       "source": "Wikipedia",
@@ -109,7 +135,7 @@
       "thumbnail_url": null,
       "thumbnail_width": null,
       "thumbnail_height": null,
-      "extract": "College De La Salle Frères is a private Catholic school in Amman, Jordan.\nThe school was established in 1950 and is sponsored by the Institute of the Brothers of the Christian Schools, also known as the De La Salle Brothers. It is part of a network of such schools operating in 80 countries around the world.",
+      "extract": "College De La Salle Frères is a private Catholic school in Amman, Jordan.\nThe school was established in 1950 and is sponsored by the Institute of the Brothers of the Christian Schools, also known as the De La Salle Brothers. It is part of a network of such schools operating in 80 countries around the world.\n\n",
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
@@ -129,7 +155,7 @@
       "thumbnail_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Jordan_Senate_2024.svg/1920px-Jordan_Senate_2024.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
       "thumbnail_width": 1600,
       "thumbnail_height": 822,
-      "extract": "The Parliament of Jordan (Arabic: مجلس الأمة Majlis Al-Umma) is the bicameral legislature of Jordan. Established by the 1952 Constitution, the legislature consists of two houses: the  Senate (Arabic: مجلس الأعيان Majlis Al-Aayan) and the House of Representatives (Arabic: مجلس النواب Majlis Al-Nuwaab).\nThe Senate has 69 members, all of whom are directly appointed by the king, while the House of Representatives has 138 elected members, with nine seats reserved for Christians, three for Chechen and Circassian minorities, and fifteen for women. The members of both houses serve for four-year terms.",
+      "extract": "The Parliament of Jordan (Arabic: مجلس الأمة Majlis Al-Umma) is the bicameral legislature of Jordan. Established by the 1952 Constitution, the legislature consists of two houses: the  Senate (Arabic: مجلس الأعيان Majlis Al-Aayan) and the House of Representatives (Arabic: مجلس النواب Majlis Al-Nuwaab).\nThe Senate has 69 members, all of whom are directly appointed by the king, while the House of Representatives has 138 elected members, with nine seats reserved for Christians, three for Chechen and Circassian minorities, and fifteen for women. The members of both houses serve for four-year terms.\n\n",
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
@@ -149,7 +175,7 @@
       "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/3/37/Amman_district_09.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
       "thumbnail_width": 740,
       "thumbnail_height": 498,
-      "extract": "Abdali (Arabic: العبدلي) is an area in the Greater Amman Municipality, Jordan. It is named for King Abdullah I who founded it in the 1940s. It covers an area of 15 square kilometres (6 sq mi) in the heart of Amman, with a population of 165,333 in 2015. Large parts of the district are residential, and it also has several important government buildings and businesses. The area has several bus stations.\n\n",
+      "extract": "Abdali (Arabic: العبدلي) is an area in the Greater Amman Municipality, Jordan. It is named for King Abdullah I who founded it in the 1940s. It covers an area of 15 square kilometres (6 sq mi) in the heart of Amman, with a population of 165,333 in 2015. Large parts of the district are residential, and it also has several important government buildings and businesses. The area has several bus stations.",
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
@@ -173,13 +199,12 @@
       "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Amman_Hotel_Regency.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
       "thumbnail_width": 838,
       "thumbnail_height": 587,
-      "extract": "Al Shumaysani  is a neighborhood in the Al-Abdali district of the Amman Governorate in north-western Jordan.\n\n",
+      "extract": "Al Shumaysani  is a neighborhood in the Al-Abdali district of the Amman Governorate in north-western Jordan.",
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
       "building_link_status": "unmatched_no_verified_building_identity",
-      "image_status": "thumbnail_download_failed",
-      "image_error": "<HTTPError 429: 'Too many requests (f061ab2)'>"
+      "image_status": "thumbnail_download_failed"
     },
     {
       "source": "Wikipedia",
@@ -191,7 +216,7 @@
       "thumbnail_url": null,
       "thumbnail_width": null,
       "thumbnail_height": null,
-      "extract": "Al-Qarṭuʽiyah (القرطوعية) is a town in the Amman Governorate of north-western Jordan.\nIt is located several miles north-east of Amman.\n\n",
+      "extract": "Al-Qarṭuʽiyah (القرطوعية) is a town in the Amman Governorate of north-western Jordan.\nIt is located several miles north-east of Amman.",
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
@@ -213,8 +238,7 @@
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
       "building_link_status": "unmatched_no_verified_building_identity",
-      "image_status": "thumbnail_download_failed",
-      "image_error": "<HTTPError 429: 'Too many requests (f061ab2)'>"
+      "image_status": "thumbnail_download_failed"
     },
     {
       "source": "Wikipedia",
@@ -226,7 +250,7 @@
       "thumbnail_url": null,
       "thumbnail_width": null,
       "thumbnail_height": null,
-      "extract": "Ar Riwaq is a town in the Amman Governorate of north-western Jordan.\n\n",
+      "extract": "Ar Riwaq is a town in the Amman Governorate of north-western Jordan.",
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
@@ -294,7 +318,7 @@
       "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/b/bb/President_George_W._Bush_and_Jordan%27s_King_Abdullah_II_meet_Wednesday%2C_Nov._29%2C_2006%2C_at_Raghadan_Palace_in_Amman.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
       "thumbnail_width": 515,
       "thumbnail_height": 354,
-      "extract": "Raghadan Palace (Arabic: قصر رغدان, romanized: Qaṣr Raġadān), the first Hashemite structure in Jordan, was built by King Abdullah I, the founding monarch of the country. Upon his arrival in Amman, King Abdullah I initially resided in a modest Ottoman-style house near the Roman Theater. He also used a hilltop area in Marka to welcome delegations and host celebrations.\nFollowing successful negotiations with the British authorities, resulting in their recognition of an independent government in Eastern Jordan, King Abdullah I selected an elevated location in 1924 to construct an official royal residence overlooking downtown Amman. This coincided with the first Hashemite restoration. The palace was named \"Raghadan\", symbolizing prosperity and comfort, and embodied hope and optimism. The design of the palace was intended to reflect both grandeur and simplicity, while harmonizing with the historical significance of the city. The palace's stained glass windows were inspired by the style of Al-Aqsa Mosque.\n\n",
+      "extract": "Raghadan Palace (Arabic: قصر رغدان, romanized: Qaṣr Raġadān), the first Hashemite structure in Jordan, was built by King Abdullah I, the founding monarch of the country. Upon his arrival in Amman, King Abdullah I initially resided in a modest Ottoman-style house near the Roman Theater. He also used a hilltop area in Marka to welcome delegations and host celebrations.\nFollowing successful negotiations with the British authorities, resulting in their recognition of an independent government in Eastern Jordan, King Abdullah I selected an elevated location in 1924 to construct an official royal residence overlooking downtown Amman. This coincided with the first Hashemite restoration. The palace was named \"Raghadan\", symbolizing prosperity and comfort, and embodied hope and optimism. The design of the palace was intended to reflect both grandeur and simplicity, while harmonizing with the historical significance of the city. The palace's stained glass windows were inspired by the style of Al-Aqsa Mosque.",
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
@@ -364,8 +388,7 @@
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
       "building_link_status": "unmatched_no_verified_building_identity",
-      "image_status": "thumbnail_download_failed",
-      "image_error": "<HTTPError 429: 'Too Many Requests'>"
+      "image_status": "thumbnail_download_failed"
     },
     {
       "source": "Wikipedia",
@@ -450,8 +473,7 @@
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
       "building_link_status": "unmatched_no_verified_building_identity",
-      "image_status": "thumbnail_download_failed",
-      "image_error": "<HTTPError 429: 'Too Many Requests'>"
+      "image_status": "thumbnail_download_failed"
     },
     {
       "source": "Wikipedia",
@@ -468,8 +490,7 @@
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
       "building_link_status": "unmatched_no_verified_building_identity",
-      "image_status": "thumbnail_download_failed",
-      "image_error": "<HTTPError 429: 'Too Many Requests'>"
+      "image_status": "thumbnail_download_failed"
     },
     {
       "source": "Wikipedia",
@@ -501,8 +522,25 @@
       "extract": "",
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
-      "matched_buildings": [],
-      "building_link_status": "unmatched_no_verified_building_identity",
+      "matched_buildings": [
+        {
+          "osm_id": "way/587205053",
+          "osm_names": [
+            "Al Iskan Bank Building"
+          ],
+          "match_method": "exact_normalized_name",
+          "confidence": "candidate_exact_name_not_visual_identity_proof"
+        },
+        {
+          "osm_id": "way/587205053",
+          "osm_names": [
+            "Al Iskan Bank Building"
+          ],
+          "match_method": "exact_normalized_name",
+          "confidence": "candidate_exact_name_not_visual_identity_proof"
+        }
+      ],
+      "building_link_status": "exact_name_match_candidates",
       "image_status": "no_direct_wikimedia_thumbnail"
     },
     {
@@ -520,8 +558,7 @@
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
       "building_link_status": "unmatched_no_verified_building_identity",
-      "image_status": "thumbnail_download_failed",
-      "image_error": "<HTTPError 429: 'Too Many Requests'>"
+      "image_status": "thumbnail_download_failed"
     },
     {
       "source": "Wikipedia",
@@ -538,8 +575,7 @@
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
       "building_link_status": "unmatched_no_verified_building_identity",
-      "image_status": "thumbnail_download_failed",
-      "image_error": "<HTTPError 429: 'Too Many Requests'>"
+      "image_status": "thumbnail_download_failed"
     },
     {
       "source": "Wikipedia",
@@ -863,8 +899,27 @@
       "extract": "العبدلي مول هو مركز تسوق بلغت تكلفته 300 مليون دولار، يقع في مدينة عمان (مدينة) في الأردن. تملكه شركة العبدلي مول. تم افتتاح هذا المركز التجاري في أيار عام 2016، وهو جزء من مشروع العبدلي.\nيحتوي هذا المجمع التجاري الضخم على مساحات لوقوف السيارات تتسع لحوالي 2400 سيارة، إضافة لأكثر من 160 متجر لبيع التجزئة والعديد من المطاعم والمقاهي ومركز ترفيه وتسع قاعات سينما وسوبر ماركت. يقع المول على مساحة 227’327 كم مربع، منها 57,121 كم مربع قابلة للتأجير.",
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
-      "matched_buildings": [],
-      "building_link_status": "unmatched_no_verified_building_identity"
+      "matched_buildings": [
+        {
+          "osm_id": "way/420072717",
+          "osm_names": [
+            "العبدلي مول",
+            "Al-Abdali Mall"
+          ],
+          "match_method": "exact_normalized_name",
+          "confidence": "candidate_exact_name_not_visual_identity_proof"
+        },
+        {
+          "osm_id": "way/420072717",
+          "osm_names": [
+            "العبدلي مول",
+            "Al-Abdali Mall"
+          ],
+          "match_method": "exact_normalized_name",
+          "confidence": "candidate_exact_name_not_visual_identity_proof"
+        }
+      ],
+      "building_link_status": "exact_name_match_candidates"
     },
     {
       "source": "Wikipedia",
@@ -898,7 +953,7 @@
       "thumbnail_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8f/Z_Amman_Hejaz_Railway_Station_4.jpg/1920px-Z_Amman_Hejaz_Railway_Station_4.jpg?utm_source=ar.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
       "thumbnail_width": 1600,
       "thumbnail_height": 898,
-      "extract": "محطة قطار عمان هي محطة قطار رئيسية سابقة في وسط عمان بالأردن، بُنِيَت جزءاً من خط حديد الحجاز إبان عهد الدولة العثمانية.\nرَبَطَ افتتاح محطة عمان في عام 1904 المدينة بـ دمشق ولاحقاً بـ المدينة المنورة بحلول الوقت الذي أتمت فيه السلطات العثمانية بناء السكة الحديدية في عام 1908. وساعَدَت المحطة في أيامها الأولى على تحويل عمان من قرية صغيرة إلى مركز تجاري رئيسي في المنطقة.\nتستضيف المحطة حالياً متحفاً مخصصاً للسكة الحديدية، وتُطلِق رحلات سياحية إلى مواقع داخل الأردن، بما في ذلك أطلال أم الجمال. وأصبحت منطقة المحطة تُعرَف باسم «المحطة».",
+      "extract": "محطة قطار عمان هي محطة قطار رئيسية سابقة في وسط عمان بالأردن، بُنِيَت جزءاً من خط حديد الحجاز إبان عهد الدولة العثمانية.\nرَبَطَ افتتاح محطة عمان في عام 1904 المدينة بـ دمشق ولاحقاً بـ المدينة المنورة بحلول الوقت الذي أتمت فيه السلطات العثمانية بناء السكة الحديدية في عام 1908. وساعَدَت المحطة في أيامها الأولى على تحويل عمان من قرية صغيرة إلى مركز تجاري رئيسي في المنطقة.\nتستضيف المحطة حالياً متحفاً مخصصاً للسكة الحديدية، وتُطلِق رحلات سياحية إلى مواقع داخل الأردن، بما في ذلك أطلال أم الجمال. وأصبحت منطقة المحطة تُعرَف باسم «المحطة».\n\n",
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
