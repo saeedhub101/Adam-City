@@ -1,41 +1,19 @@
-name: Publish Manila page
+name: Publish Tabarbour 3D preview
 
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/deploy-pages.yml'
-      - 'middle-east.html'
       - 'tabarbour.html'
-      - 'middle east/**'
-      - 'manila.html'
-      - 'test.html'
-      - 'ermita-malate-3d.html'
-      - 'ermita/**'
-      - 'complete_data/OSM/data/**'
-      - 'complete_data/OSM/Markets/robinsons-place-facade-details.js'
-      - 'ermita/maps/sources/openfreemap/building-fallback.geojson'
-      - 'manila-bundry.html'
-      - 'Manila/vector-tiles/**'
-      - 'Manila/3d-rag/apply-report.json'
-      - 'complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-004.geojson'
-      - 'complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-005.geojson'
-      - 'complete_data/OFT/building-fallback.geojson'
-      - 'complete_data/open free tile/building-fallback.geojson'
-      - 'complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-011.geojson'
-      - 'complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts/part-080.geojson'
+      - 'middle east/BuildGLB/tabarbour-real/glb/**'
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Import Middle East free map data"]
-    types: [completed]
-    branches: [main]
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Publishing only: no conversion, splitting, downloading, or data generation.
 concurrency:
   group: github-pages
   cancel-in-progress: false
@@ -47,162 +25,35 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout repository
+      - name: Checkout only Tabarbour page and GLB assets
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+          lfs: false
+          sparse-checkout: |
+            /tabarbour.html
+            /middle east/BuildGLB/tabarbour-real/glb/
+          sparse-checkout-cone-mode: false
 
-      - name: Assemble the page from available saved files
+      - name: Assemble minimal Tabarbour site
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p site/Manila/vector-tiles site/Manila/3d-rag
-          mkdir -p site/ermita/maps/sources/openfreemap site/complete_data/OFT/layers site/complete_data/OSM/data
-          geojson_dir='complete_data/OSM/data/buildings/Ermita/ermita-buildings-master.parts/part-001-readable-parts'
-          mkdir -p "site/$geojson_dir" site/complete_data/open-free-tile
-
-          # Copy pages only when present; absent optional files should not fail publishing.
-          if [ -f manila.html ]; then cp manila.html site/manila.html; else echo "WARNING: manila.html is missing"; fi
-          if [ -f middle-east.html ]; then cp middle-east.html site/middle-east.html; else echo "WARNING: middle-east.html is missing"; fi
-          if [ -f tabarbour.html ]; then cp tabarbour.html site/tabarbour.html; else echo "ERROR: tabarbour.html is missing"; exit 1; fi
-          if [ -f test.html ]; then cp test.html site/test.html; else echo "ERROR: test.html is missing"; exit 1; fi
-          if [ -f ermita-malate-3d.html ]; then cp ermita-malate-3d.html site/ermita-malate-3d.html; else echo "ERROR: ermita-malate-3d.html is missing"; exit 1; fi
-          if [ -d ermita ]; then cp -a ermita/. site/ermita/; else echo "ERROR: ermita assets directory is missing"; exit 1; fi
-
-          # Publish the independent Middle East map and its verified regional OSM files.
-          if [ -d 'middle east' ]; then
-            cp -a 'middle east' site/
-            mkdir -p 'site/middle east/Palestine/osm/tiles'
-            tile_index='site/middle east/Palestine/osm/tiles/index.html'
-            {
-              printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Palestine-area OSM tiles</title><body style="font:16px system-ui;max-width:900px;margin:2rem auto;padding:0 1rem"><h1>Palestine-area OSM tiles</h1><p>Geofabrik combined Israel + Palestine extract, spatially partitioned into valid OSM PBF files. This is not a Palestine-only source. See the manifest for provenance.</p><ul>'
-              find 'site/middle east/Palestine/osm/tiles' -maxdepth 1 -type f -name '*.osm.pbf' -printf '%f\n' | sort | while IFS= read -r file; do
-                printf '<li><a href="%s">%s</a></li>\n' "$file" "$file"
-              done
-              printf '%s\n' '</ul><p><a href="../../metadata/import-status.json">Import manifest</a> · <a href="../../../../middle-east.html">Back to map</a></p></body></html>'
-            } > "$tile_index"
-            echo "Published Middle East map data and download index."
-          else
-            echo "WARNING: Middle East data directory is missing; publishing map page only."
-          fi
-
-          # Publish the standalone Robinsons facade-detail module used by test.html.
-          mkdir -p site/complete_data/OSM/Markets
-          if [ -s complete_data/OSM/Markets/robinsons-place-facade-details.js ]; then
-            cp complete_data/OSM/Markets/robinsons-place-facade-details.js site/complete_data/OSM/Markets/
-          else
-            echo "ERROR: Robinsons facade-detail module is missing or empty"
+          test -s tabarbour.html || { echo "ERROR: tabarbour.html is missing"; exit 1; }
+          test -s 'middle east/BuildGLB/tabarbour-real/glb/manifest.json' || {
+            echo "ERROR: Tabarbour GLB manifest is missing"
             exit 1
-          fi
-          # Publish the independent Robinsons Place Manila 3D model module used by test.html.
-          robinsons_model='complete_data/OSM/Markets/robinsons-rebuilt-model.js'
-          if [ -s "$robinsons_model" ]; then
-            mkdir -p site/complete_data/OSM/Markets
-            cp "$robinsons_model" site/complete_data/OSM/Markets/
-            echo "Published independent Robinsons Place Manila model module."
-          else
-            echo "ERROR: Robinsons model module is missing or empty: $robinsons_model"
-            exit 1
-          fi
+          }
 
-          # Publish the four GLB models used by the enhanced-GLB controls on test.html.
-          # The source files live at the repository root, but Pages serves only the site/ artifact.
-          for part in 1 2 3 4; do
-            glb="complete_data/OSM/data/buildings/Ermita/Parts$part.glb"
-            origin="complete_data/OSM/data/buildings/Ermita/part$part/part$part-origin.json"
-            if [ -s "$glb" ]; then
-              mkdir -p site/complete_data/OSM/data/buildings/Ermita
-              cp "$glb" site/complete_data/OSM/data/buildings/Ermita/
-            else
-              echo "ERROR: required test.html GLB is missing or empty: $glb"
-              exit 1
-            fi
-            if [ -s "$origin" ]; then
-              mkdir -p "site/complete_data/OSM/data/buildings/Ermita/part$part"
-              cp "$origin" "site/complete_data/OSM/data/buildings/Ermita/part$part/"
-            else
-              echo "ERROR: required test.html origin sidecar is missing or empty: $origin"
-              exit 1
-            fi
-          done
-          echo "Published Parts1.glb–Parts4.glb and origin sidecars for test.html."
-
-          # Publish only OSM files actually referenced by manila.html. Copying the
-          # entire source-data tree made the Pages artifact exceed GitHub's 1 GB limit.
-          enhanced_src='complete_data/OSM/data/buildings/Ermita/enhanced'
-          enhanced_dst='site/complete_data/OSM/data/buildings/Ermita/enhanced'
-          if [ -d "$enhanced_src" ]; then
-            mkdir -p "$enhanced_dst"
-            for part in 1 2 3 4; do
-              glb="$enhanced_src/part$part-roof-storefront-details.glb"
-              origin="complete_data/OSM/data/buildings/Ermita/part$part/part$part-origin.json"
-              if [ -s "$glb" ]; then
-                cp "$glb" "$enhanced_dst/"
-              else
-                echo "ERROR: required enhanced GLB is missing or empty: $glb"
-                exit 1
-              fi
-              if [ -s "$origin" ]; then
-                mkdir -p "site/complete_data/OSM/data/buildings/Ermita/part$part"
-                cp "$origin" "site/complete_data/OSM/data/buildings/Ermita/part$part/"
-              else
-                echo "ERROR: required origin sidecar is missing or empty: $origin"
-                exit 1
-              fi
-            done
-            echo "Published four enhanced GLB overlays and their origin sidecars."
-          else
-            echo "ERROR: enhanced GLB directory is missing: $enhanced_src"
-            exit 1
-          fi
-          if [ -f manila-bundry.html ]; then cp manila-bundry.html site/manila-bundry.html; else echo "WARNING: manila-bundry.html is missing"; fi
-
-          # Publish the exact OpenFreeMap GeoJSON path referenced by manila.html.
-          fallback_ermita='ermita/maps/sources/openfreemap/building-fallback.geojson'
-          if [ -s "$fallback_ermita" ]; then
-            cp "$fallback_ermita" "site/$fallback_ermita"
-            echo "Published local OpenFreeMap building fallback: $fallback_ermita ($(wc -c < "$fallback_ermita") bytes)"
-          else
-            echo "ERROR: required local OpenFreeMap building fallback is missing or empty: $fallback_ermita"
-            exit 1
-          fi
-
-          for file in part-004.geojson part-005.geojson part-011.geojson part-080.geojson; do
-            if [ -f "$geojson_dir/$file" ]; then
-              cp "$geojson_dir/$file" "site/$geojson_dir/$file"
-            else
-              echo "WARNING: optional GeoJSON missing: $geojson_dir/$file"
-            fi
-          done
-
-          fallback='complete_data/open free tile/building-fallback.geojson'
-          if [ -f "$fallback" ]; then
-            cp "$fallback" site/complete_data/open-free-tile/building-fallback.geojson
-          else
-            echo "WARNING: optional GeoJSON missing: $fallback"
-          fi
-
-          # Source 2 and Source 4 controls were removed from manila.html;
-          # their obsolete datasets are no longer copied to the Pages artifact.
-
-          if [ -d Manila/vector-tiles ]; then
-            pbf_count="$(find Manila/vector-tiles -type f -name '*.pbf' | wc -l)"
-            if [ "$pbf_count" -gt 0 ]; then
-              cp -a Manila/vector-tiles/. site/Manila/vector-tiles/
-            else
-              echo "WARNING: no PBF files found; publishing without vector tiles"
-            fi
-          else
-            echo "WARNING: Manila/vector-tiles directory is missing; publishing without vector tiles"
-          fi
-
-          if [ -s Manila/3d-rag/apply-report.json ]; then
-            cp Manila/3d-rag/apply-report.json site/Manila/3d-rag/apply-report.json
-          else
-            echo "INFO: no apply-report.json; skipping report"
-          fi
-
+          mkdir -p 'site/middle east/BuildGLB/tabarbour-real/glb'
+          cp tabarbour.html site/tabarbour.html
+          cp -a 'middle east/BuildGLB/tabarbour-real/glb/.' 'site/middle east/BuildGLB/tabarbour-real/glb/'
           touch site/.nojekyll
-          printf '%s' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=manila.html"><title>Manila</title><a href="manila.html">Open Manila</a></html>' > site/index.html
-          echo "Publish-only build complete. Existing files copied where available; no data generation performed."
+          printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=tabarbour.html"><title>Tabarbour 3D</title><a href="tabarbour.html">Open Tabarbour 3D</a></html>' > site/index.html
+          echo "Published Tabarbour page and its GLB assets only."
+          du -sh site
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
