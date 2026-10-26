@@ -204,7 +204,14 @@
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
       "building_link_status": "unmatched_no_verified_building_identity",
-      "image_status": "thumbnail_download_failed"
+      "image_status": "downloaded_license_checked_thumbnail",
+      "image_file": "middle east/BuildGLB/tabarbour-real/photos/wikipedia/images/en_17489236.jpg",
+      "image_bytes": 41688,
+      "image_sha256": "91582ccf954093650714266a6d1a3d520a43f5d253441718b70349abb0b6e245",
+      "image_license": "CC BY-SA 3.0",
+      "image_artist": "No machine-readable author provided. <a href=\"//commons.wikimedia.org/wiki/User:WarXboT\" title=\"User:WarXboT\">WarXboT</a> assumed (based on copyright claims).",
+      "commons_file_title": "File:Amman_Hotel_Regency.jpg",
+      "download_url": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Amman_Hotel_Regency.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled"
     },
     {
       "source": "Wikipedia",
@@ -238,7 +245,8 @@
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
       "building_link_status": "unmatched_no_verified_building_identity",
-      "image_status": "thumbnail_download_failed"
+      "image_status": "thumbnail_download_failed",
+      "image_error": "<HTTPError 429: 'Too many requests (f061ab2)'>"
     },
     {
       "source": "Wikipedia",
