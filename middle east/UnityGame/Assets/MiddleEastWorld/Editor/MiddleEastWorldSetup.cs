@@ -81,6 +81,8 @@ public static class MiddleEastWorldSetup
 
         var world = new GameObject("Open World — Jordan / Palestine");
         var streamer = world.AddComponent<OpenWorldStreamer>();
+        world.AddComponent<ExistingAmmanGlbTiles>();
+        ExistingAmmanGlbInstaller.InstallNearbyTiles();
         streamer.player=player.transform;
         streamer.region="Jordan";
         streamer.originLon=35.940358;
@@ -93,7 +95,7 @@ public static class MiddleEastWorldSetup
         EditorSceneManager.SaveScene(scene, starterScenePath);
         EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(starterScenePath, true) };
         AssetDatabase.SaveAssets();
-        Debug.Log("Tabarbour controller scene created at 31.997579, 35.940358. No generated OSM building meshes or unverified GLB tiles are displayed. Connect only verified, repository-local photogrammetry assets and terrain.");
+        Debug.Log("Tabarbour scene created. Existing repository GLB tiles are enabled locally; no external runtime source is used. Their source geometry is OSM-derived, so do not describe them as photogrammetry.");
     }
 
     static void EnsureFolder(string path)
