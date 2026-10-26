@@ -167,97 +167,68 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=WORKERS) as pool:
         except Exception as e: print(f"Worker failed: {type(e).__name__}: {e}",flush=True)
 
 
-# Public OpenAltimetry fallback: actual sampled laser measurements, not CMR metadata.
-# Raw ATL03/ATL08 granule downloads above may require Earthdata authentication. The public
-# OpenAltimetry API can return sampled observation JSON without downloading the protected HDF5.
-def _walk_track_ids(obj):
-    found=set()
-    if isinstance(obj, dict):
-        for key, value in obj.items():
-            if str(key).casefold() in {"track","trackid","track_id","rgt","referencegroundtrack"}:
-                try:
-                    n=int(value)
-                    if 1 <= n <= 2000: found.add(n)
-                except (TypeError, ValueError):
-                    pass
-            found.update(_walk_track_ids(value))
-    elif isinstance(obj, list):
-        for value in obj: found.update(_walk_track_ids(value))
-    return found
-
-def _count_observations(obj):
-    if isinstance(obj, dict):
-        keys={str(k).casefold() for k in obj}
-        if ({"latitude","longitude","height"} <= keys or
-            {"lat","lon","height"} <= keys or
-            {"latitude","longitude","h"} <= keys or
-            {"lat","lon","h"} <= keys):
-            return 1
-        return sum(_count_observations(v) for v in obj.values())
-    if isinstance(obj, list):
-        return sum(_count_observations(v) for v in obj)
-    return 0
-
-oa_saved_this_run=0
-oa_observations_this_run=0
-oa_errors=0
-oa_start=date(2023,1,1)
-oa_end=date.today()
-for region,bbox in boxes.items():
-    west,south,east,north=[float(x) for x in bbox.split(",")]
-    d=oa_start
-    while d<=oa_end:
-        tracks_url="https://openaltimetry.earthdatacloud.nasa.gov/data/api/icesat2/getTracks"
-        try:
-            tr=S.get(tracks_url,params={"date":d.isoformat(),"minx":west,"miny":south,
-                "maxx":east,"maxy":north,"outputFormat":"json"},timeout=(15,45))
-            if tr.status_code!=200:
-                oa_errors+=1
-                d+=timedelta(days=14)
+# Public SlideRule fallback: obtain actual sampled satellite laser measurements through a
+# public processing service when the original HDF5 granules require Earthdata credentials.
+slr_saved=0
+slr_observations=0
+slr_errors=0
+try:
+    from datetime import datetime, timezone
+    from sliderule import icesat2
+    icesat2.init(url="slideruleearth.io", verbose=True, max_resources=4, loglevel=20, rethrow=True)
+    t1=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    for region,bbox in boxes.items():
+        west,south,east,north=[float(x) for x in bbox.split(",")]
+        ident=aid(f"sliderule|ATL03|{region}|2023-01-01|{t1[:10]}")
+        with lock:
+            if ident in state["completed_assets"]:
                 continue
-            track_payload=tr.json()
-            tracks=sorted(_walk_track_ids(track_payload))
-            # Limit per date to keep the public API respectful; date sampling still spans 2023 onward.
-            for track in tracks[:2]:
-                ident=aid(f"openaltimetry|{region}|{d.isoformat()}|{track}")
-                with lock:
-                    if ident in state["completed_assets"]: continue
-                params={"date":d.isoformat(),"minx":west,"miny":south,"maxx":east,"maxy":north,
-                        "trackId":track,"client":"portal","outputFormat":"json","sampling":"true"}
-                try:
-                    data_url="https://openaltimetry.earthdatacloud.nasa.gov/data/api/icesat2/atl03"
-                    response=S.get(data_url,params=params,timeout=(20,90))
-                    if response.status_code!=200 or not response.text.strip():
-                        oa_errors+=1
-                        continue
-                    payload=response.json()
-                    count=_count_observations(payload)
-                    if count<1:
-                        continue
-                    target=RAW/"openaltimetry"/region/f"{d.isoformat()}_track{track}.json"
-                    save_json(target,payload)
-                    size=target.stat().st_size
-                    with lock:
-                        state["completed_assets"][ident]={"url":response.url,"title":target.name,
-                            "source":"OpenAltimetry public ATL03 API","collection":"ATL03","region":region,
-                            "bytes":size,"validation":f"JSON parsed; observation records={count}",
-                            "stored":[{"file":str(target),"bytes":size}],
-                            "data_kind":"actual sampled spaceborne laser photon observations; not dense airborne city LiDAR"}
-                        oa_saved_this_run+=1
-                        oa_observations_this_run+=count
-                    if oa_saved_this_run%5==0:
-                        checkpoint("Checkpoint actual OpenAltimetry laser observations")
-                    print(f"SAVED ACTUAL LASER OBSERVATIONS: {region} {d.isoformat()} track={track} records={count}",flush=True)
-                except Exception as exc:
-                    oa_errors+=1
-                    print(f"OpenAltimetry data request failed {region} {d.isoformat()} track={track}: {exc}",flush=True)
+        params={
+            "poly":[
+                {"lon":west,"lat":south},{"lon":east,"lat":south},
+                {"lon":east,"lat":north},{"lon":west,"lat":north},{"lon":west,"lat":south}
+            ],
+            "t0":"2023-01-01T00:00:00Z","t1":t1,"srt":0,"cnf":3
+        }
+        try:
+            frame=icesat2.atl03sp(params,keep_id=True)
+            if frame is None or len(frame)==0:
+                print(f"SlideRule returned no ATL03 observations for {region}",flush=True)
+                continue
+            original_rows=len(frame)
+            stride=max(1,(original_rows+24999)//25000)
+            if stride>1:
+                frame=frame.iloc[::stride].copy()
+            payload=json.loads(frame.to_json())
+            target=RAW/"sliderule"/region/"atl03_ground_observations.geojson"
+            save_json(target,payload)
+            size=target.stat().st_size
+            saved_rows=len(frame)
+            with lock:
+                state["completed_assets"][ident]={
+                    "url":"https://slideruleearth.io (public processing API)",
+                    "title":target.name,"source":"SlideRule Earth / NASA ICESat-2 ATL03",
+                    "collection":"ATL03","region":region,"bytes":size,
+                    "validation":f"GeoJSON parsed; saved observations={saved_rows}; source rows={original_rows}",
+                    "stored":[{"file":str(target),"bytes":size}],
+                    "data_kind":"actual sampled spaceborne laser observations; not dense airborne city LiDAR",
+                    "source_rows":original_rows,"saved_rows":saved_rows,"sampling_stride":stride
+                }
+                slr_saved+=1
+                slr_observations+=saved_rows
+            checkpoint("Checkpoint actual SlideRule ATL03 observations: "+region)
+            print(f"SAVED ACTUAL SLIDERULE OBSERVATIONS: {region} rows={saved_rows} source_rows={original_rows}",flush=True)
         except Exception as exc:
-            oa_errors+=1
-            print(f"OpenAltimetry track query failed {region} {d.isoformat()}: {exc}",flush=True)
-        d+=timedelta(days=14)
-if oa_saved_this_run:
-    checkpoint("Checkpoint actual OpenAltimetry laser observation batch")
-print(f"OpenAltimetry fallback complete: files={oa_saved_this_run}, observations={oa_observations_this_run}, api_errors={oa_errors}",flush=True)
+            slr_errors+=1
+            with lock:
+                state["errors"][f"sliderule-{region}"]={"error":f"{type(exc).__name__}: {exc}"}
+            print(f"SlideRule request failed for {region}: {type(exc).__name__}: {exc}",flush=True)
+except Exception as exc:
+    slr_errors+=1
+    with lock:
+        state["errors"]["sliderule-init"]={"error":f"{type(exc).__name__}: {exc}"}
+    print(f"SlideRule fallback unavailable: {type(exc).__name__}: {exc}",flush=True)
+print(f"SlideRule fallback complete: files={slr_saved}, observations={slr_observations}, errors={slr_errors}",flush=True)
 
 done=state["completed_assets"]; skipped=state["skipped_assets"]; errors=state["errors"]
 total_bytes=sum(int(x.get("bytes",0)) for x in done.values())
@@ -265,7 +236,7 @@ lines=["# Jordan and Palestine — verified LiDAR / laser-data import","",
 "Storage target: middle east/LiDAR/downloads/.","","## Method","",
 "- Geographic NASA CMR searches only; no full global S3 catalog crawl.",
 f"- Up to {MAX_PAGES} pages per collection/region; {WORKERS} concurrent downloads.",
-"- Direct HDF5, LAS/LAZ and ZIP payloads are signature-validated. If NASA raw granules require authentication, the public OpenAltimetry API is queried for actual sampled ATL03 laser observations saved as local JSON.",
+"- Direct HDF5, LAS/LAZ and ZIP payloads are signature-validated. If raw granules require Earthdata authentication, the public SlideRule processing service is queried for actual sampled ATL03 laser observations saved as local GeoJSON.",
 "- Existing completed URLs are skipped and partial downloads resume with HTTP Range where supported.",
 "- Files over 80 MiB are split into chunks with a reassembly manifest.",
 "- Satellite laser footprints are not dense airborne city point clouds; metadata is not counted as data.","",
