@@ -21,6 +21,17 @@ def tag(p,*keys):
         v=p.get(k)
         if v not in (None,"","no"):return str(v)
     return ""
+def osm_identity(feature,properties):
+    props=properties or {}
+    value=props.get("@id")
+    kind=props.get("@type") or props.get("type")
+    if value not in (None,""):
+        value=str(value)
+        if "/" in value or not kind:return value
+        return str(kind)+"/"+value
+    value=feature.get("id") or props.get("osm_id") or props.get("way_id") or props.get("relation_id") or ""
+    if value not in (None,"") and kind and "/" not in str(value):return str(kind)+"/"+str(value)
+    return str(value)
 def height(p):
     try:
         h=float(tag(p,"height","building:height").lower().replace("meters","").replace("m","").strip())
@@ -170,7 +181,7 @@ def main():
     detail_features=read_optional("building_details")
     detail_by_id={}
     for df in detail_features:
-        dp=df.get("properties") or {};did=str(df.get("id") or dp.get("@id") or dp.get("osm_id") or "")
+        dp=df.get("properties") or {};did=osm_identity(df,dp)
         if did:detail_by_id[did]=dp
     tiles=defaultdict(lambda:{"buildings":[],"streets":[],"labels":[],"water":[],"landcover":[],"places":[],"addresses":[],"infra_lines":[],"infra_points":[],"infra_polygons":[]})
     def key(lon,lat):return (math.floor(lon/tile),math.floor(lat/tile))
@@ -183,7 +194,7 @@ def main():
             if len(ring)<4:continue
             lon=sum(q[0] for q in ring)/len(ring);lat=sum(q[1] for q in ring)/len(ring)
             if not(west<=lon<=east and south<=lat<=north):continue
-            fid=str(f.get("id") or p.get("@id") or p.get("osm_id") or p.get("way_id") or p.get("relation_id") or "")
+            fid=osm_identity(f,p)
             if fid in detail_by_id:
                 merged=dict(detail_by_id[fid]);merged.update(p);p=merged
             raw_height=tag(p,"height","building:height")
@@ -197,7 +208,7 @@ def main():
         for line in lines:
             if len(line)<2:continue
             lon=sum(q[0] for q in line)/len(line);lat=sum(q[1] for q in line)/len(line)
-            if west<=lon<=east and south<=lat<=north:tiles[key(lon,lat)]["streets"].append({"line":line,"name":tag(p,"name","name:en","ref"),"highway":tag(p,"highway"),"properties":p,"id":f.get("id") or p.get("@id") or ""})
+            if west<=lon<=east and south<=lat<=north:tiles[key(lon,lat)]["streets"].append({"line":line,"name":tag(p,"name","name:en","ref"),"highway":tag(p,"highway"),"properties":p,"id":osm_identity(f,p)})
     for f in names:
         p=f.get("properties") or {};g=f.get("geometry") or {};c=g.get("coordinates") or []
         if g.get("type")=="Point" and len(c)>=2 and west<=c[0]<=east and south<=c[1]<=north:
@@ -211,7 +222,7 @@ def main():
                 ring=[[q[0],q[1]] for q in poly[0] if len(q)>1]
                 if len(ring)<4:continue
                 lon=sum(q[0] for q in ring)/len(ring);lat=sum(q[1] for q in ring)/len(ring)
-                if west<=lon<=east and south<=lat<=north:tiles[key(lon,lat)][keyname].append({"ring":ring,"properties":p,"id":f.get("id") or p.get("@id") or ""})
+                if west<=lon<=east and south<=lat<=north:tiles[key(lon,lat)][keyname].append({"ring":ring,"properties":p,"id":osm_identity(f,p)})
     collect_polygons(waters,"water");collect_polygons(landcovers,"landcover")
     for f in infrastructure:
         p=f.get("properties") or {};g=f.get("geometry") or {};gt=g.get("type");co=g.get("coordinates") or []
@@ -244,11 +255,11 @@ def main():
     for f in places:
         p=f.get("properties") or {};g=f.get("geometry") or {};co=g.get("coordinates") or []
         if g.get("type")=="Point" and len(co)>=2 and west<=co[0]<=east and south<=co[1]<=north:
-            tiles[key(co[0],co[1])]["places"].append({"point":co,"name":tag(p,"name","name:en"),"properties":p,"id":f.get("id") or p.get("@id") or ""})
+            tiles[key(co[0],co[1])]["places"].append({"point":co,"name":tag(p,"name","name:en"),"properties":p,"id":osm_identity(f,p)})
     for f in addresses:
         p=f.get("properties") or {};g=f.get("geometry") or {};co=g.get("coordinates") or []
         if g.get("type")=="Point" and len(co)>=2 and west<=co[0]<=east and south<=co[1]<=north:
-            tiles[key(co[0],co[1])]["addresses"].append({"point":co,"name":tag(p,"addr:housenumber","name"),"properties":p,"id":f.get("id") or p.get("@id") or ""})
+            tiles[key(co[0],co[1])]["addresses"].append({"point":co,"name":tag(p,"addr:housenumber","name"),"properties":p,"id":osm_identity(f,p)})
     walls=mat("Unspecified building facade",(.72,.65,.52));roofm=mat("Unspecified roof material",(.48,.43,.36));glass=mat("Window glass",(.22,.38,.46),.24,.18);trim=mat("Facade trim",(.88,.82,.68));signm=mat("Shop sign backing",(.12,.20,.16),.65)
     asphalt=mat("Road asphalt",(.16,.16,.15));residential=mat("Road surface",(.27,.26,.24))
     waterm=mat("OSM water",(.12,.34,.52),.32,.05);greenm=mat("OSM landcover",(.28,.38,.20),.95)
