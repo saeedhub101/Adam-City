@@ -3,7 +3,7 @@
 Uses public endpoints without API keys or tokens. Photos remain evidence candidates until
 their real-world building identity is verified; no image is falsely assigned to a facade.
 """
-import gzip, hashlib, json, os, pathlib, re, time, urllib.parse, urllib.request
+import gzip, hashlib, json, os, pathlib, re, subprocess, time, urllib.parse, urllib.request
 
 ROOT = pathlib.Path(os.environ.get("GITHUB_WORKSPACE", ".")).resolve()
 OUT = ROOT / "middle east/BuildGLB/tabarbour-real/photos"
@@ -25,6 +25,27 @@ def write_json(path, obj):
     tmp = path.with_suffix(path.suffix + ".part")
     tmp.write_text(json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
     tmp.replace(path)
+
+def checkpoint(message):
+    try:
+        subprocess.run(["git","add","--",str(OUT.relative_to(ROOT))],cwd=ROOT,check=True)
+        if subprocess.run(["git","diff","--cached","--quiet"],cwd=ROOT).returncode==0: return True
+        subprocess.run(["git","-c","user.name=github-actions[bot]","-c","user.email=41898282+github-actions[bot]@users.noreply.github.com","commit","-m",message],cwd=ROOT,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+        for attempt in range(1,6):
+            if subprocess.run(["git","fetch","origin","main"],cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode:
+                time.sleep(attempt); continue
+            rb=subprocess.run(["git","rebase","origin/main"],cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+            if rb.returncode:
+                subprocess.run(["git","rebase","--abort"],cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+                time.sleep(attempt); continue
+            if subprocess.run(["git","push","origin","HEAD:main"],cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0:
+                print("WIKIPEDIA_CHECKPOINT_PUSHED",message,flush=True); return True
+            time.sleep(attempt)
+        print("WIKIPEDIA_CHECKPOINT_PUSH_FAILED",message,flush=True)
+        return False
+    except Exception as e:
+        print("WIKIPEDIA_CHECKPOINT_ERROR",repr(e),flush=True)
+        return False
 
 def sha256(path):
     h = hashlib.sha256()
@@ -161,18 +182,35 @@ def wikipedia():
             print("WIKIPEDIA_QUERY_FAILED",lang,repr(e),flush=True)
     records=list(found.values())
     manifest=WIKI_OUT/"wikipedia-article-manifest.json"
-    downloaded=0
-    # Save progress every five records, so an interrupted run retains completed work.
+    old_items={}
+    if manifest.exists():
+        try:
+            previous=json.loads(manifest.read_text(encoding="utf-8"))
+            old_items={(x.get("language"),x.get("pageid")):x for x in previous.get("items",[])}
+        except Exception: pass
+    building_index, building_index_report=load_building_index()
+    for rec in records:
+        rec["matched_buildings"]=exact_building_matches(rec.get("title"),building_index)
+        rec["building_link_status"]="exact_name_match_candidates" if rec["matched_buildings"] else "unmatched_no_verified_building_identity"
+        prior=old_items.get((rec.get("language"),rec.get("pageid")),{})
+        for key in ("image_status","image_file","image_bytes","image_sha256","image_license","image_artist","commons_file_title","download_url"):
+            if prior.get(key): rec[key]=prior[key]
+    downloaded=sum(1 for rec in records if rec.get("image_sha256") and (ROOT/rec["image_file"]).is_file())
+    # Skip already saved thumbnails; persist and push a checkpoint every five records.
     for i, rec in enumerate(records[:30],1):
-        fetch_commons_image(rec,i)
-        if rec.get("image_status")=="downloaded_license_checked_thumbnail": downloaded+=1
+        existing=(ROOT/rec["image_file"]) if rec.get("image_file") else None
+        if not (existing and existing.is_file() and rec.get("image_sha256")):
+            fetch_commons_image(rec,i)
         if i%5==0:
             write_json(manifest,{"area":"Tabarbour, Amman, Jordan","bounds":BOUNDS,
-              "source":"Wikipedia public API; Commons license metadata checked before image download",
+              "source":"Wikipedia public endpoints; Commons license metadata checked before download; no API key",
               "records":len(records),"downloaded_images":downloaded,"building_index":building_index_report,"items":records})
+            checkpoint("Checkpoint Tabarbour Wikipedia evidence batch "+str(i))
     write_json(manifest,{"area":"Tabarbour, Amman, Jordan","bounds":BOUNDS,
       "source":"Wikipedia public endpoints in Arabic and English; no API key; Commons image license checked",
-      "records":len(records),"downloaded_images":downloaded,"items":records})
+      "records":len(records),"downloaded_images":sum(1 for rec in records if rec.get("image_sha256")),
+      "building_index":building_index_report,"items":records})
+    checkpoint("Save Tabarbour Wikipedia evidence manifest")
     print("WIKIPEDIA_EVIDENCE_RECORDS",len(records),"downloaded_images",downloaded,flush=True)
     return {"records":len(records),"downloaded_images":downloaded,"languages":["en","ar"]}
 
@@ -181,7 +219,8 @@ def main():
     report={"area":"Tabarbour, Amman, Jordan","bounds":BOUNDS,
       "wikipedia":wikipedia(),"generated_at_utc":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime()),
       "source_policy":"No API keys or tokens. Wikipedia/Wikimedia are public keyless endpoints.",
-      "scope_note":"Evidence intake only; photos are not automatically assigned to buildings without verified identity."}
+      "building_matching":"Wikipedia titles are automatically compared to locally saved OSM building names; exact matches are candidates only, not visual identity proof.",
+      "scope_note":"No API keys/tokens. Photos are not automatically applied as facade textures without verified identity."}
     write_json(OUT/"visual-evidence-import-report.json",report)
     print(json.dumps(report,ensure_ascii=False),flush=True)
 
