@@ -67,24 +67,36 @@ def run_tiles(label, path, url_fn, zooms, fmt, attribution, max_tiles=None):
         if max_tiles: tiles=tiles[:max_tiles]
         total=len(tiles)
         for i,(z,x,y) in enumerate(tiles,1):
+            tms_y=(2**z-1)-y
+            # Resume safely: already downloaded tiles remain in the MBTiles database and are not fetched again.
+            exists=db.execute("SELECT 1 FROM tiles WHERE zoom_level=? AND tile_column=? AND tile_row=? LIMIT 1",(z,x,tms_y)).fetchone()
+            if exists:
+                if i%250==0:
+                    db.commit()
+                    write_report(label,path,total,ok=db.execute("SELECT COUNT(*) FROM tiles").fetchone()[0],errors=errors,complete=False)
+                    checkpoint([path, OUT/"regional-source-import-report.json"],"Resume checkpoint "+label+" tile "+str(i))
+                continue
             try:
                 data,ctype=fetch(url_fn(z,x,y))
                 if len(data)<100 or ("image" not in ctype.lower() and fmt!="pbf"):
                     raise ValueError("unexpected payload/content-type "+ctype+" bytes="+str(len(data)))
-                tms_y=(2**z-1)-y
                 db.execute("INSERT OR REPLACE INTO tiles VALUES(?,?,?,?)",(z,x,tms_y,data))
             except Exception as e:
                 errors.append({"z":z,"x":x,"y":y,"error":repr(e)[:180]})
             if i%50==0:
                 db.commit()
-                write_report(label,path,total,ok=i-len(errors),errors=errors,complete=False)
-                print(label,"checkpoint",i,"/",total,"failed",len(errors),flush=True)
+                saved=db.execute("SELECT COUNT(*) FROM tiles").fetchone()[0]
+                write_report(label,path,total,ok=saved,errors=errors,complete=False)
+                print(label,"checkpoint",i,"/",total,"saved",saved,"failed",len(errors),flush=True)
                 if i % 250 == 0:
                     checkpoint([path, OUT/"regional-source-import-report.json"],"Checkpoint "+label+" tile batch "+str(i))
         db.commit()
     finally: db.close()
-    result={"status":"complete_with_gaps" if errors else "complete","tiles_expected":total,"tiles_saved":total-len(errors),"errors":errors[:100],"error_count":len(errors),"file":str(path.relative_to(ROOT)),"bytes":path.stat().st_size if path.exists() else 0}
-    write_report(label,path,total,ok=total-len(errors),errors=errors,complete=True,extra=result)
+    db=sqlite3.connect(path)
+    saved_count=db.execute("SELECT COUNT(*) FROM tiles").fetchone()[0]
+    db.close()
+    result={"status":"complete_with_gaps" if errors else "complete","tiles_expected":total,"tiles_saved":saved_count,"errors":errors[:100],"error_count":len(errors),"file":str(path.relative_to(ROOT)),"bytes":path.stat().st_size if path.exists() else 0}
+    write_report(label,path,total,ok=saved_count,errors=errors,complete=True,extra=result)
     checkpoint([path, OUT/"regional-source-import-report.json"],"Save completed "+label+" tile database")
     return result
 def write_report(label,path,total,ok,errors,complete,extra=None):
