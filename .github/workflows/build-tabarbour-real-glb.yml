@@ -127,12 +127,6 @@ jobs:
             gzip -1 -c "$out" > "$gz"
           fi
 
-      - name: Import keyless OpenFreeMap vector tiles and satellite imagery
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 "middle east/UnityGame/tools/import_tabarbour_regional_sources.py"
-
       - name: Persist clipped OSM source and classified layers during the run
         shell: bash
         run: |
@@ -170,6 +164,12 @@ jobs:
           done
           echo "::error::Could not persist Tabarbour source checkpoint"
           exit 1
+
+      - name: Import keyless OpenFreeMap vector tiles and satellite imagery
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "middle east/UnityGame/tools/import_tabarbour_regional_sources.py"
 
       - name: Download Copernicus GLO-30 DEM and generate terrain GLB
         shell: bash
