@@ -19,10 +19,29 @@ def tiles_for_bounds(z):
     w,s,e,n = BOUNDS
     x0,y1 = xyz(w,s,z); x1,y0 = xyz(e,n,z)
     return [(z,x,y) for x in range(min(x0,x1),max(x0,x1)+1) for y in range(min(y0,y1),max(y0,y1)+1)]
-def fetch(url, timeout=35):
-    req=urllib.request.Request(url, headers={"User-Agent":UA})
-    with urllib.request.urlopen(req,timeout=timeout) as r:
-        return r.read(), r.headers.get("Content-Type","")
+def fetch(url, timeout=35, attempts=5):
+    """Retry transient network/rate-limit failures; never treat an error page as a tile."""
+    last = None
+    for attempt in range(1, attempts + 1):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/x-protobuf, application/vnd.mapbox-vector-tile, image/*, */*"})
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                data, ctype = r.read(), r.headers.get("Content-Type", "")
+                if not data:
+                    raise ValueError("empty tile response; content-type=" + ctype)
+                return data, ctype
+        except urllib.error.HTTPError as e:
+            last = e
+            # Missing tiles are not transient; retry only rate limits and server errors.
+            if e.code not in (408, 425, 429, 500, 502, 503, 504):
+                raise
+        except (urllib.error.URLError, TimeoutError, OSError, ValueError) as e:
+            last = e
+        if attempt < attempts:
+            delay = min(20, attempt * 2)
+            print("TILE_RETRY", attempt, "of", attempts, "wait", delay, "seconds", repr(last)[:180], flush=True)
+            time.sleep(delay)
+    raise RuntimeError("tile fetch failed after retries: " + repr(last)[:300])
 def mbtiles(path, name, fmt, attribution):
     path.parent.mkdir(parents=True,exist_ok=True)
     db=sqlite3.connect(path)
@@ -78,8 +97,13 @@ def run_tiles(label, path, url_fn, zooms, fmt, attribution, max_tiles=None):
                 continue
             try:
                 data,ctype=fetch(url_fn(z,x,y))
-                if len(data)<100 or ("image" not in ctype.lower() and fmt!="pbf"):
-                    raise ValueError("unexpected payload/content-type "+ctype+" bytes="+str(len(data)))
+                if len(data) < 50:
+                    raise ValueError("tile payload too small/content-type " + ctype + " bytes=" + str(len(data)))
+                low_ctype = ctype.lower()
+                if fmt == "pbf" and any(x in low_ctype for x in ("text/html", "application/json", "text/plain")):
+                    raise ValueError("server returned non-vector-tile payload/content-type " + ctype + " bytes=" + str(len(data)))
+                if fmt != "pbf" and "image" not in low_ctype:
+                    raise ValueError("unexpected imagery payload/content-type " + ctype + " bytes=" + str(len(data)))
                 db.execute("INSERT OR REPLACE INTO tiles VALUES(?,?,?,?)",(z,x,tms_y,data))
             except Exception as e:
                 errors.append({"z":z,"x":x,"y":y,"error":repr(e)[:180]})
@@ -110,11 +134,13 @@ def write_report(label,path,total,ok,errors,complete,extra=None):
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
     results={}
+    # OpenFreeMap documents the versioned tile path as /planet/latest/{z}/{x}/{y}.pbf.
+    # Do not omit "latest": the old URL interpreted z as a snapshot id and returned zero-byte errors.
     # Each source runs independently; one endpoint outage must not suppress the other source.
     try:
         results["openfreemap_vector_tiles"]=run_tiles(
           "openfreemap_vector_tiles",OUT/"openfreemap-tabarbour-z12-17.mbtiles",
-          lambda z,x,y:f"https://tiles.openfreemap.org/planet/{z}/{x}/{y}.pbf",
+          lambda z,x,y:f"https://tiles.openfreemap.org/planet/latest/{z}/{x}/{y}.pbf",
           range(12,18),"pbf","© OpenStreetMap contributors; OpenFreeMap / OpenMapTiles")
     except Exception as e:
         results["openfreemap_vector_tiles"]={"status":"source_failed","error":repr(e)[:500],"requires_api_key":False}
