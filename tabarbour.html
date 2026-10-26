@@ -22,14 +22,19 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 <label class="row"><input type="checkbox" id="baseGround" checked> إظهار أرضية الخريطة الأساسية (الشوارع والمياه والحدائق والتسميات)</label>
 <label class="row"><input type="checkbox" id="baseBuildings" checked> إظهار مباني المصدر الأساسية ثلاثية الأبعاد</label>
 </div>
+<button id="panelToggle" type="button" aria-expanded="true" aria-controls="panelContents" style="display:block;width:100%;margin:8px 0;padding:5px 10px;border:1px solid var(--line);border-radius:7px;background:#20333f;color:var(--text);font-size:16px;font-weight:700;cursor:pointer">−</button>
+<div id="panelContents">
 <div class="group"><div class="group-title">ملفات GLB — طبربور</div><div id="glb-files"></div></div>
 <div class="status" id="status">جارٍ تحميل خريطة طبربور وملفات GLB…</div><div id="error"></div>
+</div>
 </section>
 <div class="attribution">OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors</div>
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
 <script>
 (async function(){
  const status=document.getElementById('status'),errorBox=document.getElementById('error');
+ const panelContents=document.getElementById('panelContents'),panelToggle=document.getElementById('panelToggle');
+ panelToggle.addEventListener('click',()=>{const collapsed=panelContents.style.display==='none';panelContents.style.display=collapsed?'block':'none';panelToggle.textContent=collapsed?'−':'+';panelToggle.setAttribute('aria-expanded',String(collapsed));});
  try{
   const res=await fetch('https://tiles.openfreemap.org/styles/liberty');
   if(!res.ok)throw new Error('Style HTTP '+res.status);
