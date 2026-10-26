@@ -8,6 +8,8 @@
 :root{color-scheme:dark;--bg:#0a1118;--panel:#111d28;--line:#2a3b49;--muted:#9bb0c0;--accent:#68d5c2}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);font:14px system-ui,sans-serif;color:#edf5fa}
 #view{position:fixed;inset:0}canvas{display:block;width:100%;height:100%}
+#libertyMap{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+#view{display:none!important}
 #panel{position:fixed;z-index:2;top:12px;left:12px;width:min(365px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;background:#101b25ed;border:1px solid var(--line);border-radius:14px;padding:15px;backdrop-filter:blur(12px);box-shadow:0 12px 40px #0008}
 h1{font-size:20px;margin:0 0 4px}p{margin:6px 0;color:var(--muted);line-height:1.45}.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.stat{background:#182734;border:1px solid var(--line);border-radius:9px;padding:9px}.stat b{display:block;font-size:18px;color:#fff}.stat span{font-size:11px;color:var(--muted)}
 .actions{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.actions button,.tile button{background:#1e3341;color:#edf5fa;border:1px solid #395061;border-radius:8px;padding:8px 10px;cursor:pointer}.actions button:hover,.tile button:hover{border-color:var(--accent)}
@@ -15,28 +17,12 @@ h1{font-size:20px;margin:0 0 4px}p{margin:6px 0;color:var(--muted);line-height:1
 #status{padding:8px 10px;border-radius:8px;background:#182734;color:var(--accent);margin:9px 0;overflow-wrap:anywhere}
 #hint{position:fixed;right:12px;bottom:12px;background:#101b25d9;padding:10px 13px;border-radius:9px;border:1px solid var(--line);color:#d5e3ec;z-index:1}
 #hide{float:right}a{color:var(--accent)}.error{color:#ffb4a9!important}
-#omtCompare{position:fixed;z-index:4;right:12px;top:12px;width:min(440px,43vw);height:min(430px,48vh);min-height:260px;background:#101b25;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 10px 35px #0008}
-.compareHead{height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 9px;font-size:12px;background:#101b25}
-.compareHead button{background:#1e3341;color:white;border:1px solid #395061;border-radius:6px;padding:4px 8px}
-#libertyMap{height:calc(100% - 105px);width:100%;background:#dce5e8}
-.compareControls{display:flex;gap:10px;flex-wrap:wrap;padding:7px 9px;font-size:11px;background:#101b25}
-.compareControls label{display:flex;align-items:center;gap:4px}.compareControls input{accent-color:var(--accent)}
-#omtCompare>small{display:block;padding:0 9px 5px;color:var(--muted);font-size:9px}
-@media(max-width:600px){#omtCompare{top:auto;right:8px;bottom:48px;width:min(62vw,300px);height:34vh;min-height:200px}.compareHead{font-size:10px} .compareControls{gap:4px;font-size:9px}}
 @media(max-width:600px){#panel{top:8px;left:8px;max-height:65dvh;width:calc(100vw - 16px);padding:12px}#hint{font-size:11px;max-width:48vw}}
 </style>
 </head>
 <body>
-<div id="view"></div>
-<div id="omtCompare" aria-label="OpenFreeMap Liberty and OpenMapTiles comparison">
-  <div class="compareHead"><b>Source comparison · OpenFreeMap / OpenMapTiles</b><button id="compareHide" type="button">Hide</button></div>
-  <div id="libertyMap"></div>
-  <div class="compareControls">
-    <label><input id="libertyGroundToggle" type="checkbox" checked> OpenFreeMap Liberty ground</label>
-    <label><input id="omtBuildingsToggle" type="checkbox"> OpenMapTiles buildings</label>
-  </div>
-  <small>© OpenStreetMap contributors · © OpenMapTiles</small>
-</div>
+<div id="libertyMap" aria-label="OpenFreeMap Liberty map with OpenMapTiles buildings"></div>
+<div id="view" style="display:none"></div>
 <section id="panel">
 <button id="hide" aria-label="Collapse panel">−</button>
 <h1>Tabarbour 3D</h1>
@@ -48,7 +34,7 @@ h1{font-size:20px;margin:0 0 4px}p{margin:6px 0;color:var(--muted);line-height:1
  <div class="stat"><b id="sizeCount">~370 MB</b><span>model data total</span></div>
 </div>
 <div id="status">Loading manifest…</div>
-<p><b>Original source layers</b> — independent controls.</p><div class="tile"><input id="sourceFloorToggle" type="checkbox" checked><span class="name">✓ Original OSM map ground</span></div><div class="tile"><input id="sourceBuildingsToggle" type="checkbox"><span class="name">✓ Original OSM building footprints</span></div><p>Map tiles: © OpenStreetMap contributors. The map ground loads directly from OSM.</p>
+<p><b>OpenFreeMap Liberty source layers</b> — shown in the same map and geographic position.</p><div class="tile"><input id="libertyGroundToggle" type="checkbox" checked><span class="name">✓ OpenFreeMap Liberty ground</span></div><div class="tile"><input id="omtBuildingsToggle" type="checkbox"><span class="name">✓ OpenMapTiles buildings</span></div><p>Map style and vector buildings are loaded from OpenFreeMap / OpenMapTiles. Internet connection required.</p>
 <p><b>Map data layers</b> — toggle building footprints/details, roads, street names, addresses, places, water, vegetation, bridges, tunnels, traffic signals and transport features.</p><div id="layerToggles"></div>
 <div class="actions"><button id="showAll">Check all tiles</button><button id="clearAll">Uncheck all</button><button id="resetView">Reset view</button></div>
 <p><b>Choose tiles</b> — check a tile to load it automatically; uncheck it to hide it. Large tiles may take time to download.</p>
@@ -67,10 +53,10 @@ import maplibregl from 'https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/+esm';
 const libertyMap = new maplibregl.Map({
  container:'libertyMap',
  style:'https://tiles.openfreemap.org/styles/liberty',
- center:[35.945,32.000],zoom:14,pitch:0,bearing:0,
- attributionControl:false
+ center:[35.945,32.000],zoom:14,pitch:55,bearing:0,
+ attributionControl:{compact:true}
 });
-libertyMap.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-right');
+libertyMap.addControl(new maplibregl.NavigationControl({showCompass:true}),'top-right');
 let omtBuildingLayerId=null;
 libertyMap.on('load',()=>{
  const style=libertyMap.getStyle();
@@ -84,26 +70,16 @@ libertyMap.on('load',()=>{
     'fill-extrusion-color':['coalesce',['get','colour'],['get','render_colour'],'#c9b89c'],
     'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],8]]],
     'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],0]]],
-    'fill-extrusion-opacity':0.9
+    'fill-extrusion-opacity':0.92
    },
    layout:{visibility:'none'}
   });
   omtBuildingLayerId='omt-buildings-compare';
+  const floorToggle=document.getElementById('libertyGroundToggle');
+  const buildingsToggle=document.getElementById('omtBuildingsToggle');
+  floorToggle.addEventListener('change',()=>{document.getElementById('libertyMap').style.visibility=floorToggle.checked?'visible':'hidden'});
+  buildingsToggle.addEventListener('change',()=>{if(omtBuildingLayerId&&libertyMap.getLayer(omtBuildingLayerId))libertyMap.setLayoutProperty(omtBuildingLayerId,'visibility',buildingsToggle.checked?'visible':'none')});
  }catch(e){console.error('OpenMapTiles building layer could not be added:',e)}
-});
-document.getElementById('libertyGroundToggle').addEventListener('change',e=>{
- document.getElementById('libertyMap').style.visibility=e.target.checked?'visible':'hidden';
- document.getElementById('libertyMap').style.opacity=e.target.checked?'1':'0';
-});
-document.getElementById('omtBuildingsToggle').addEventListener('change',e=>{
- if(omtBuildingLayerId&&libertyMap.getLayer(omtBuildingLayerId))libertyMap.setLayoutProperty(omtBuildingLayerId,'visibility',e.target.checked?'visible':'none');
-});
-document.getElementById('compareHide').addEventListener('click',()=>{
- document.getElementById('omtCompare').style.display='none';
- const b=document.createElement('button');b.id='compareReopen';b.textContent='Show source comparison';
- b.style.cssText='position:fixed;z-index:5;right:12px;top:12px;background:#101b25;color:white;border:1px solid #395061;border-radius:8px;padding:9px';
- b.onclick=()=>{document.getElementById('omtCompare').style.display='block';b.remove();setTimeout(()=>libertyMap.resize(),50)};
- document.body.appendChild(b);
 });
 const BASE='./middle%20east/BuildGLB/tabarbour-real/glb/';
 const root=document.getElementById('view'), status=document.getElementById('status'), tilesEl=document.getElementById('tiles');
@@ -113,23 +89,14 @@ const camera=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.1,100000);ca
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;root.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xe6f5ff,0x766b57,2.0));
 const sun=new THREE.DirectionalLight(0xfff1d6,3.0);sun.position.set(-1800,3200,1200);scene.add(sun);
-// OSM raster tiles are placed geographically on the ground plane; no synthetic green floor.
-const ground=new THREE.Mesh(new THREE.PlaneGeometry(30000,30000),new THREE.MeshBasicMaterial({color:0x9aab91,side:THREE.DoubleSide}));ground.rotation.x=-Math.PI/2;ground.position.y=-3;ground.renderOrder=0;scene.add(ground);ground.visible=false;
-const sourceMapGroup=new THREE.Group();sourceMapGroup.name="original-osm-map-ground";scene.add(sourceMapGroup);
-const SOURCE_MAP_ZOOM=13, SOURCE_MAP_RADIUS=3, SOURCE_MAP_CENTER=[35.945,32.0];
-function lonLatToTile(lon,lat,z){const n=2**z;return {x:(lon+180)/360*n,y:(1-Math.asinh(Math.tan(lat*Math.PI/180))/Math.PI)/2*n}}
-function tileToLon(x,z){return x/2**z*360-180}
-function tileToLat(y,z){return Math.atan(Math.sinh(Math.PI*(1-2*y/2**z)))*180/Math.PI}
-function loadOriginalOsmGround(){if(sourceMapGroup.children.length)return;const center=lonLatToTile(SOURCE_MAP_CENTER[0],SOURCE_MAP_CENTER[1],SOURCE_MAP_ZOOM);const loader=new THREE.TextureLoader();loader.setCrossOrigin("anonymous");for(let ty=Math.floor(center.y)-SOURCE_MAP_RADIUS;ty<=Math.floor(center.y)+SOURCE_MAP_RADIUS;ty++){for(let tx=Math.floor(center.x)-SOURCE_MAP_RADIUS;tx<=Math.floor(center.x)+SOURCE_MAP_RADIUS;tx++){const west=tileToLon(tx,SOURCE_MAP_ZOOM),east=tileToLon(tx+1,SOURCE_MAP_ZOOM),north=tileToLat(ty,SOURCE_MAP_ZOOM),south=tileToLat(ty+1,SOURCE_MAP_ZOOM);const x1=(west-SOURCE_MAP_CENTER[0])*111320*Math.cos(SOURCE_MAP_CENTER[1]*Math.PI/180),x2=(east-SOURCE_MAP_CENTER[0])*111320*Math.cos(SOURCE_MAP_CENTER[1]*Math.PI/180),z1=(north-SOURCE_MAP_CENTER[1])*111320,z2=(south-SOURCE_MAP_CENTER[1])*111320;loader.load(`https://tile.openstreetmap.org/${SOURCE_MAP_ZOOM}/${tx}/${ty}.png`,texture=>{texture.colorSpace=THREE.SRGBColorSpace;texture.flipY=false;texture.minFilter=THREE.LinearFilter;const mesh=new THREE.Mesh(new THREE.PlaneGeometry(Math.abs(x2-x1),Math.abs(z1-z2)),new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide}));mesh.rotation.x=-Math.PI/2;mesh.position.set((x1+x2)/2,-2.5,(z1+z2)/2);mesh.renderOrder=1;sourceMapGroup.add(mesh)},undefined,()=>{setStatus("Some OSM map tiles could not load. Check the connection and reload.",true)})}}}
+// OpenFreeMap Liberty is the primary map surface; OpenMapTiles buildings are toggled on the same map.
 const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,0,0);controls.enableDamping=true;controls.dampingFactor=.06;controls.maxDistance=15000;controls.minDistance=20;controls.minPolarAngle=0.06;controls.maxPolarAngle=Math.PI/2-0.025;controls.screenSpacePanning=false;
 const loader=new GLTFLoader(), loaded=new Map();let manifest=null;
 const dataLayers=new Map(); const layerToggles=document.getElementById('layerToggles');let sourceFloorEnabled=true;
 const LAYERS=[['buildings','Building footprints','layers/buildings.geojson.gz','polygon'],['building_details','Building details & heights','layers/building_details.geojson.gz','polygon'],['streets','Roads & paths','layers/streets.geojson.gz','line'],['streetnames','Street names','layers/streetnames.geojson.gz','label'],['addresses','Building numbers / addresses','layers/addresses.geojson.gz','label'],['places','Neighborhoods & places','layers/places.geojson.gz','label'],['water','Water features','layers/water.geojson.gz','polygon'],['landcover','Trees, vegetation & land cover','layers/landcover.geojson.gz','polygon'],['infrastructure','Bridges, tunnels, signals & transport','tabarbour-infrastructure.geojson.gz','mixed']];
 const LAYER_BASE='./middle%20east/BuildGLB/tabarbour-real/source/';
-const sourceFloorToggle=document.getElementById('sourceFloorToggle'),sourceBuildingsToggle=document.getElementById('sourceBuildingsToggle');
-sourceFloorToggle.addEventListener('change',()=>{sourceFloorEnabled=sourceFloorToggle.checked;sourceMapGroup.visible=sourceFloorEnabled;if(sourceFloorEnabled)loadOriginalOsmGround()});
-sourceBuildingsToggle.addEventListener('change',()=>{const cb=layerToggles.querySelector('input[data-layer="buildings"]');if(cb){cb.checked=sourceBuildingsToggle.checked;cb.dispatchEvent(new Event('change'))}});
-function layerControl(id,label,file,kind){const l=document.createElement('label');l.className='tile';const cb=document.createElement('input');cb.type='checkbox';cb.checked=id!=='buildings';cb.dataset.layer=id;const s=document.createElement('span');s.className='name';s.textContent=label;const st=document.createElement('span');st.className='state';st.dataset.layerstate=id;st.textContent=id==='buildings'?'Off':'Loading';l.append(cb,s,st);layerToggles.append(l);cb.addEventListener('change',()=>{const o=dataLayers.get(id);if(id==='buildings'){const master=document.getElementById('sourceBuildingsToggle');if(master)master.checked=cb.checked}if(!cb.checked){if(o)o.visible=false;if(id==='buildings'&&!o)st.textContent='Off';return}if(o){o.visible=id==='buildings'||sourceFloorEnabled;return}loadDataLayer(id,label,file,kind,false)})}
+
+function layerControl(id,label,file,kind){const l=document.createElement('label');l.className='tile';const cb=document.createElement('input');cb.type='checkbox';cb.checked=id!=='buildings';cb.dataset.layer=id;const s=document.createElement('span');s.className='name';s.textContent=label;const st=document.createElement('span');st.className='state';st.dataset.layerstate=id;st.textContent=id==='buildings'?'Off':'Loading';l.append(cb,s,st);layerToggles.append(l);cb.addEventListener('change',()=>{const o=dataLayers.get(id);if(!cb.checked){if(o)o.visible=false;if(id==='buildings'&&!o)st.textContent='Off';return}if(o){o.visible=id==='buildings'||sourceFloorEnabled;return}loadDataLayer(id,label,file,kind,false)})}
 function featureLabel(p){return p.name||p['name:en']||p['addr:housenumber']||p.ref||p['addr:street']||p.operator||p.highway||p.amenity||p.waterway||p.natural||p.landuse||p.railway||p.public_transport||p.bridge||p.tunnel||''}
 const KOBRA_PHARMACY=[35.940358,31.997579];
 let kobraFootprintFound=false;
@@ -197,7 +164,7 @@ async function loadDataLayer(id,label,file,kind,makeControl=true){
   }
   for(const f of (fc.features||[])){const p=f.properties||{};if(kind==='label'){const name=featureLabel(p);if(!name)continue;const anchor=featureAnchor(f.geometry);if(!anchor)continue;anchor.y=id==='addresses'?14:22;const sprite=makeTextSprite(String(name));sprite.position.copy(anchor);group.add(sprite);n++}else renderGeometry(f.geometry,p)}
   if(id==='buildings')addKobraMarker();
-  scene.add(group);dataLayers.set(id,group);const toggle=layerToggles.querySelector('input[data-layer="'+id+'"]');group.visible=!!toggle?.checked&&(id==='buildings'||sourceFloorEnabled);state.textContent=n.toLocaleString()+' features';state.style.color='#68d5c2';
+  scene.add(group);dataLayers.set(id,group);const toggle=layerToggles.querySelector('input[data-layer="'+id+'"]');group.visible=!!toggle?.checked;state.textContent=n.toLocaleString()+' features';state.style.color='#68d5c2';
  }catch(e){state.textContent='ERROR';state.title=String(e);state.style.color='#ffb4a9';setStatus('Layer '+label+' failed: '+String(e.message||e),true)}
 }
 function setStatus(s,bad=false){status.textContent=s;status.classList.toggle('error',bad)}
