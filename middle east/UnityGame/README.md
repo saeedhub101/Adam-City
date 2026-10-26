@@ -9,7 +9,8 @@ Unity game source for the Jordan and Palestine datasets stored under `middle eas
 - glTFast loads the existing GLB meshes copied from the repository into `StreamingAssets/AmmanGLB/`.
 - Repository-local OSM street chunks can be rendered as line overlays. Procedurally extruded OSM building fallback is disabled so it cannot be mistaken for real architecture.
 - Jordan / Palestine region switching in the in-game overlay.
-- Spatially chunked OSM building and street data, loaded around the player as they move.
+- Existing Amman GLB tiles load from local repository files around Tabarbour; their documented source origin is shifted to the game origin.
+- A source-to-asset index workflow matches GLB building IDs and tile locations against original Jordan OSM records and records available source tags.
 - Original compressed GeoJSON source archives remain untouched.
 
 ## Data source boundary
@@ -32,10 +33,11 @@ Controls: WASD move, Left Shift run, hold right mouse button and move mouse to o
 ## Accuracy and offline-only policy
 
 - Unity gameplay must use files already committed in this repository. No runtime web map, hosted tile service, external API, or external model URL is permitted.
-- The existing `BuildGLB/amman` GLBs are still loaded and displayed; they have not been disabled. However, they were generated from OSM footprints and contain extruded masses plus procedurally generated facade/window details, so they are not photogrammetry and should not be described as photo-realistic scanned buildings.
+- The existing `BuildGLB/amman` GLBs are loaded and displayed from local files; they were not disabled. Their geometry was generated from OSM footprints and the exporter added synthetic facade/window details. They are not photogrammetry and must not be described as scanned/photo-realistic buildings.
 - The temporary safety floor is invisible and exists only to prevent the player falling while testing movement. It is not a terrain representation.
-- The repository contains many local GLBs and reference photos, but the current Tabarbour inventory does not establish a georeferenced aerial orthophoto or photogrammetric city mesh suitable for applying real building textures there. Reference photos must not be projected onto unrelated buildings without a verified match and transform.
-- Improving these GLBs to true photographic realism requires verified local source imagery / scan textures mapped to the correct buildings. Do not invent window patterns, facade colors, or building details to simulate that evidence.
+- The repository contains many GLBs and imagery for other areas, but the checked Middle East asset tree contains no local georeferenced facade-photo set or city-scale photogrammetry texture package for Tabarbour. Manila/Ermita imagery must not be attached to Amman buildings. LiDAR catalog JSON pages are discovery metadata, not downloaded point-cloud files.
+- `tools/build_glb_building_index.py` and `.github/workflows/index-amman-glb-buildings.yml` now generate a local source-matched index by OSM ID, tile, and coordinate, including original height/material/roof tags where present. This improves exact building matching; it does not itself change mesh appearance.
+- True photographic realism cannot be fabricated from footprints or LiDAR catalogue records. Only apply image textures when a matching, locally stored, correctly georeferenced photo or scan is verified. Do not invent window patterns, facade colors, or building details.
 - Only add a building/terrain mesh after verifying that its original source is a real scan/orthophoto, its license permits project use, and its geographic transform is documented.
 - Movement: WASD; hold Left Shift to run; hold right mouse button and move mouse to orbit the camera.
 - Build/runtime verification still requires opening the project in Unity 2022.3 LTS; Unity Editor and a player build have not been run here.
