@@ -34,7 +34,7 @@ h1{font-size:20px;margin:0 0 4px}p{margin:6px 0;color:var(--muted);line-height:1
 <div class="actions"><button id="loadVisible">Load checked tiles</button><button id="showAll">Check all tiles</button><button id="clearAll">Uncheck all</button><button id="resetView">Reset view</button></div>
 <p><b>Choose tiles</b> — tiles load only when you press “Load checked tiles”. Loading all 20 at once may be heavy on phones.</p>
 <div id="tiles"></div>
-<p>Data bounds: 35.90–35.99° E, 31.96–32.04° N. GLB coordinates use the saved local origin at 35.945° E, 32.000° N. Terrain elevation is only shown if it is present in the GLB; no separate DEM is fabricated.</p>
+<p>Data bounds: 35.90–35.99° E, 31.96–32.04° N. GLBs are converted from source Z-up to viewer Y-up; shared local origin is 35.945° E, 32.000° N. Terrain elevation is only shown if it is present in the GLB; no separate DEM is fabricated.</p>
 <p><a href="https://github.com/saeedhub101/Adam-City/tree/main/middle%20east/BuildGLB/tabarbour-real">Open source files in repository</a></p>
 </section>
 <button id="reopen" style="display:none;position:fixed;z-index:3;top:10px;left:10px;background:#101b25;color:white;border:1px solid #395061;border-radius:8px;padding:10px">Show controls</button>
@@ -84,6 +84,9 @@ async function loadFile(t){
  setStatus('Loading '+t.file+' — large tiles may take time.');
  try{
  const gltf=await loader.loadAsync(BASE+encodeURIComponent(t.file));const obj=gltf.scene;obj.name=t.file;
+ // These GLBs are Z-up (X=east, Y=north, Z=height); Three.js is Y-up.
+ // Convert axes consistently for every tile: source height Z becomes viewer height Y.
+ obj.rotation.x=-Math.PI/2;
  obj.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=true;if(o.material){for(const m of (Array.isArray(o.material)?o.material:[o.material])){if(m.color&&m.color.getHex()===0xffffff)m.color.setHex(0xd6c8ad);m.needsUpdate=true}}}});
  scene.add(obj);loaded.set(t.file,obj);if(state)state.textContent='Loaded';setStatus('Loaded '+loaded.size+' / '+((manifest?.tiles||manifest?.glbs||[]).length)+' tiles.');return obj;
  }catch(e){if(state)state.textContent='Failed';setStatus('Could not load '+t.file+': '+e.message,true);throw e}
