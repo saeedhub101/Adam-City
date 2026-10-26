@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Keyless Wikimedia Commons photo intake for Tabarbour; candidate photos are never auto-assigned to buildings."""
-import hashlib, json, os, pathlib, re, subprocess, time, urllib.parse, urllib.request
+import gzip, hashlib, json, os, pathlib, re, subprocess, time, urllib.parse, urllib.request
 
 ROOT = pathlib.Path(os.environ.get("GITHUB_WORKSPACE", ".")).resolve()
 OUT = ROOT / "middle east/BuildGLB/tabarbour-real/photos"
@@ -48,8 +48,47 @@ def allowed(meta):
         return not any(term in lic for term in ("nc", "nd"))
     return False
 
+def normalize_name(value):
+    value=str(value or "").casefold()
+    value="".join(ch if ch.isalnum() or ch.isspace() else " " for ch in value)
+    return " ".join(value.split())
+
+def load_named_buildings():
+    path=ROOT/"middle east/BuildGLB/tabarbour-real/source/layers/buildings.geojson.gz"
+    if not path.is_file(): return []
+    out=[]
+    try:
+        with gzip.open(path,"rt",encoding="utf-8") as f: data=json.load(f)
+        for feature in data.get("features",[]):
+            p=feature.get("properties") or {}
+            names=[p.get(k) for k in ("name","name:en","name:ar","official_name","brand") if p.get(k)]
+            fid=feature.get("id") or p.get("@id") or p.get("osm_id") or p.get("way_id") or p.get("relation_id")
+            if not fid: continue
+            kind=p.get("@type") or p.get("type") or "way"
+            fid=str(fid)
+            if "/" not in fid: fid=kind+"/"+fid
+            for name in names:
+                n=normalize_name(name)
+                if len(n)>=4: out.append({"osm_id":fid,"name":str(name),"normalized":n})
+        return out
+    except Exception as e:
+        print("BUILDING_NAME_INDEX_FAILED",repr(e),flush=True)
+        return []
+
+def match_commons_image_to_buildings(title, description, building_index):
+    haystack=normalize_name(str(title or "")+" "+str(description or ""))
+    matches=[]
+    for b in building_index:
+        if b["normalized"] in haystack:
+            matches.append({"osm_id":b["osm_id"],"building_name":b["name"],
+              "match_method":"building_name_phrase_in_commons_title_or_description",
+              "confidence":"candidate_match_requires_visual_review"})
+            if len(matches)>=20: break
+    return matches
+
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
+    building_index=load_named_buildings()
     old={}
     if MANIFEST.exists():
         try: old=json.loads(MANIFEST.read_text(encoding="utf-8"))
@@ -80,9 +119,16 @@ def main():
             "query":page.get("__query"),"source":"Wikimedia Commons","license":meta_value("LicenseShortName"),
             "artist":meta_value("Artist"),"credit":meta_value("Credit"),"description":meta_value("ImageDescription"),
             "width":info.get("width"),"height":info.get("height"),"downloaded":False,
-            "decision":"unverified_candidate_only_not_applied_to_any_building"}
+            "decision":"candidate_not_applied_as_facade_texture"}
+        record["matched_buildings"]=match_commons_image_to_buildings(title,record.get("description",""),building_index)
+        record["building_link_status"]="name_match_candidates" if record["matched_buildings"] else "unmatched_no_building_name_evidence"
+        record["decision"]="automatically_linked_candidate_requires_visual_review" if record["matched_buildings"] else "candidate_not_applied_as_facade_texture"
         if pid in records and records[pid].get("sha256"):
-            record.update(records[pid]);records[pid]=record;continue
+            record.update(records[pid])
+            if not record.get("matched_buildings"):
+                record["matched_buildings"]=match_commons_image_to_buildings(title,record.get("description",""),building_index)
+                record["building_link_status"]="name_match_candidates" if record["matched_buildings"] else "unmatched_no_building_name_evidence"
+            records[pid]=record;continue
         if not allowed(meta):
             record["status"]="skipped_license_not_confirmed_free";records[pid]=record;continue
         url=info.get("thumburl") or info.get("url")
@@ -106,7 +152,7 @@ def main():
             record["status"]="download_failed";record["error"]=repr(e)[:500]
         records[pid]=record
         if downloaded and downloaded%5==0:
-            MANIFEST.write_text(json.dumps({"area":"Tabarbour, Amman, Jordan","bounds":BOUNDS,"policy":"Free-license Wikimedia Commons only; no key; proximity is not building identity; candidates are never auto-applied.","items":list(records.values())},ensure_ascii=False,indent=2),encoding="utf-8")
+            MANIFEST.write_text(json.dumps({"area":"Tabarbour, Amman, Jordan","bounds":BOUNDS,"policy":"Free-license Wikimedia Commons only; no key. Automatically links exact building-name phrases as candidates; human visual verification is still required before using a photo as a facade texture.","named_osm_buildings_indexed":len(building_index),"items":list(records.values())},ensure_ascii=False,indent=2),encoding="utf-8")
             commit_batch("Checkpoint Tabarbour Wikimedia photo evidence batch")
     MANIFEST.write_text(json.dumps({"area":"Tabarbour, Amman, Jordan","bounds":BOUNDS,"policy":"Free-license Wikimedia Commons only; no key; proximity is not building identity; candidates are never auto-applied.","queries_attempted":[q or "geosearch radius 10 km" for _,q in queries],"items":list(records.values())},ensure_ascii=False,indent=2),encoding="utf-8")
     commit_batch("Save Tabarbour Wikimedia photo intake manifest")
