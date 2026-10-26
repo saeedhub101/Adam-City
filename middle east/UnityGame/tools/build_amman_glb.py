@@ -8,7 +8,7 @@ from collections import defaultdict
 
 def args():
     a=sys.argv[sys.argv.index("--")+1:] if "--" in sys.argv else []
-    d={"data":"../Jordan/layers","out":"../BuildGLB/Amman","west":35.72,"east":36.08,"south":31.70,"north":32.12,"tile":0.01,"city":"Amman","prefix":"amman","repo_commit":True,"force":False}
+    d={"data":"../Jordan/layers","out":"../BuildGLB/Amman","west":35.72,"east":36.08,"south":31.70,"north":32.12,"tile":0.01,"city":"Amman","prefix":"amman","repo_commit":True,"force":False,"infra_path":""}
     for i in range(0,len(a),2):
         k=a[i].lstrip("-"); v=a[i+1]
         d[k]=float(v) if k in ("west","east","south","north","tile") else (v.lower() in ("true","1","yes") if k in ("repo_commit","force") else v)
@@ -164,7 +164,7 @@ def main():
     origin=( (west+east)/2,(south+north)/2 )
     buildings=read(data/"buildings.geojson.gz");streets=read(data/"streets.geojson.gz");names=read(data/"streetnames.geojson.gz") if (data/"streetnames.geojson.gz").exists() else []
     def read_optional(name):
-        path=data/(name+".geojson.gz")
+        path=Path(cfg.get("infra_path","")) if name=="infrastructure" and cfg.get("infra_path") else data/(name+".geojson.gz")
         return read(path) if path.exists() else []
     waters=read_optional("water");landcovers=read_optional("landcover");places=read_optional("places");addresses=read_optional("addresses");infrastructure=read_optional("infrastructure")
     detail_features=read_optional("building_details")
@@ -253,7 +253,9 @@ def main():
     asphalt=mat("Road asphalt",(.16,.16,.15));residential=mat("Road surface",(.27,.26,.24))
     waterm=mat("OSM water",(.12,.34,.52),.32,.05);greenm=mat("OSM landcover",(.28,.38,.20),.95)
     manifest_path=out/"manifest.json"
-    manifest={"city":city,"bounds":{"west":west,"east":east,"south":south,"north":north},"tile_degrees":tile,"tiles":[],"counts":{"buildings":0,"streets":0,"street_labels":0}}
+    manifest={"city":city,"bounds":{"west":west,"east":east,"south":south,"north":north},
+              "origin":{"longitude":origin[0],"latitude":origin[1],"crs":"WGS84 input; local equirectangular meters; X=east, Z=north, Y=height"},
+              "tile_degrees":tile,"tiles":[],"counts":{"buildings":0,"streets":0,"street_labels":0}}
     # Preserve checkpointed tiles across separate regional-cell invocations.
     if manifest_path.exists():
         try:
