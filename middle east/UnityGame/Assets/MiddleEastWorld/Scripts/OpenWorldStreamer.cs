@@ -46,8 +46,10 @@ namespace MiddleEastWorld
         public void SetRegion(string value)
         {
             region=value=="Palestine"?"Palestine":"Jordan";
-            originLon=region=="Jordan"?35.91:35.20;
-            originLat=region=="Jordan"?31.95:31.90;
+            // Jordan starts at the user's requested Tabarbour point. Keep chunk
+            // coordinates relative to this origin so the player spawns in-place.
+            originLon=region=="Jordan"?35.940358:35.20;
+            originLat=region=="Jordan"?31.997579:31.90;
             lon0=originLon;lat0=originLat;
         }
 
