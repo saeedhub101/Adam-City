@@ -123,6 +123,42 @@ jobs:
             gzip -1 -c "$out" > "$gz"
           fi
 
+      - name: Persist clipped OSM source and classified layers during the run
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="middle east/BuildGLB/tabarbour-real/source"
+          mkdir -p "$root/layers"
+          cp "$RUNNER_TEMP/source/tabarbour.osm.pbf" "$root/tabarbour.osm.pbf"
+          cp "$RUNNER_TEMP/fresh-jordan-layers/"*.geojson.gz "$root/layers/"
+          cp "$RUNNER_TEMP/fresh-jordan-layers/source-import-report.json" "$root/layers/"
+          cp "$RUNNER_TEMP/tabarbour-infrastructure.geojson.gz" "$root/"
+          cat > "$root/source-manifest.json" <<'JSON'
+          {
+            "area": "Tabarbour, Amman, Jordan",
+            "bounds": {"west": 35.90, "south": 31.96, "east": 35.99, "north": 32.04},
+            "source": "Geofabrik Jordan OSM PBF, clipped locally with osmium",
+            "layers": ["buildings", "building_details", "streets", "streetnames", "addresses", "water", "landcover", "places", "infrastructure"],
+            "policy": "Keyless public download; source data checkpointed before GLB generation"
+          }
+          JSON
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "$root"
+          if git diff --cached --quiet; then
+            echo "Source checkpoint unchanged."
+            exit 0
+          fi
+          git commit -m "Checkpoint Tabarbour source data before GLB generation"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main || { sleep "$attempt"; continue; }
+            git rebase origin/main || { git rebase --abort; sleep "$attempt"; continue; }
+            git push origin HEAD:main && exit 0
+            sleep "$attempt"
+          done
+          echo "::error::Could not persist Tabarbour source checkpoint"
+          exit 1
+
       - name: Discover and checkpoint freely licensed Wikimedia photo evidence
         shell: bash
         run: |
