@@ -237,7 +237,11 @@ const glbCustomLayer={id:'tabarbour-glb-scene',type:'custom',renderingMode:'3d',
    camera.projectionMatrix.copy(new THREE.Matrix4().fromArray(matrix).multiply(model));
    camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
    camera.matrixWorld.identity();camera.matrixWorldInverse.identity();
-   renderer.resetState();renderer.render(scene,camera);
+   renderer.resetState();
+   // Clear the basemap depth buffer so the GLB meshes are not rejected by terrain/building depth values.
+   gl.clear(gl.DEPTH_BUFFER_BIT);
+   renderer.render(scene,camera);
+   renderer.resetState();
   }catch(e){setStatus('3D scene render error: '+(e.message||e),true);console.error('Tabarbour 3D render error',e)}
  }
 };
