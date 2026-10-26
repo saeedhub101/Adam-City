@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-"""Build an offline index matching existing Amman GLB building nodes to saved OSM records.
+"""Inventory every Amman GLB building node and cross-reference saved OSM geometry.
 
-This script does not generate geometry, alter GLBs, add textures, or download anything.
-It writes an auditable source-to-asset index from the repository's compressed source data.
+This is a city-wide inventory, not a texture generator. Original GLBs, coordinates,
+and mesh geometry are never modified. Unmatched assets are retained in the index so
+a source-schema mismatch cannot silently erase the entire city's inventory.
 """
 import gzip
 import json
 import math
+import re
 import struct
+from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -15,56 +18,48 @@ GLB_DIR = ROOT / "middle east" / "BuildGLB" / "amman"
 SOURCE = ROOT / "middle east" / "Jordan" / "layers" / "buildings.geojson.gz"
 MANIFEST = GLB_DIR / "manifest.json"
 OUTPUT = GLB_DIR / "building-asset-index.json"
+BUILDING_RE = re.compile(r"^Building_(.+?)(?:\.\d+)?$")
+
 
 def glb_node_names(path):
-    """Read only the GLB JSON chunk and return exported node names."""
-    if not path.is_file():
-        return set()
-    with path.open("rb") as stream:
-        header = stream.read(12)
-        if len(header) != 12 or header[:4] != b"glTF":
-            return set()
-        _magic, version, total_length = struct.unpack("<4sII", header)
-        if version != 2:
-            return set()
-        chunk_header = stream.read(8)
-        if len(chunk_header) != 8:
-            return set()
-        chunk_length, chunk_type = struct.unpack("<II", chunk_header)
-        if chunk_type != 0x4E4F534A or chunk_length > total_length:
-            return set()
-        payload = stream.read(chunk_length).rstrip(bytes([0x20, 0x09, 0x0D, 0x0A, 0x00]))
+    """Read GLB JSON chunk and return named nodes without loading mesh payloads."""
     try:
-        gltf = json.loads(payload.decode("utf-8"))
-    except (UnicodeDecodeError, json.JSONDecodeError):
-        return set()
-    return {node.get("name", "") for node in gltf.get("nodes", []) if node.get("name")}
+        with path.open("rb") as stream:
+            header = stream.read(12)
+            if len(header) != 12 or header[:4] != b"glTF":
+                return []
+            _, version, total_length = struct.unpack("<4sII", header)
+            if version != 2:
+                return []
+            chunk_header = stream.read(8)
+            if len(chunk_header) != 8:
+                return []
+            chunk_length, chunk_type = struct.unpack("<II", chunk_header)
+            if chunk_type != 0x4E4F534A or chunk_length > total_length:
+                return []
+            payload = stream.read(chunk_length).rstrip(b" \t\r\n\x00")
+        doc = json.loads(payload.decode("utf-8"))
+        return [n.get("name", "") for n in doc.get("nodes", []) if n.get("name")]
+    except (OSError, ValueError, UnicodeDecodeError, struct.error):
+        return []
 
 
-
-def source_building_id(feature):
-    """Return the stable OSM identity regardless of GeoJSON exporter conventions."""
+def osm_id(feature):
     props = feature.get("properties") or {}
-    value = feature.get("id")
-    if value in (None, ""):
-        for key in ("osm_id", "@id", "id", "building_id", "element_id"):
-            value = props.get(key)
-            if value not in (None, ""):
-                break
-    if value in (None, ""):
-        return ""
-    value = str(value).strip()
-    if "/" in value and value.split("/", 1)[0] in ("way", "relation", "node"):
-        value = value.split("/", 1)[1]
-    return value
-
-
-def tag(props, *keys):
-    for key in keys:
-        value = props.get(key)
-        if value not in (None, "", "no"):
+    values = [feature.get("id")]
+    values.extend(props.get(k) for k in (
+        "osm_id", "@id", "id", "building_id", "element_id", "osm_way_id", "way_id"
+    ))
+    for value in values:
+        if value in (None, ""):
+            continue
+        value = str(value).strip()
+        m = re.search(r"(?:way|relation|node)/([0-9]+)$", value)
+        if m:
+            return m.group(1)
+        if value.isdigit():
             return value
-    return None
+    return ""
 
 
 def outer_rings(feature):
@@ -76,107 +71,124 @@ def outer_rings(feature):
         polys = coords
     else:
         return []
-    result = []
+    rings = []
     for poly in polys:
-        if not poly or not poly[0]:
+        if not poly or not isinstance(poly[0], list):
             continue
         ring = [p for p in poly[0] if isinstance(p, list) and len(p) >= 2]
         if len(ring) >= 3:
-            result.append(ring)
-    return result
+            rings.append(ring)
+    return rings
 
 
 def main():
-    if not SOURCE.is_file():
-        raise FileNotFoundError(f"Missing repository-local OSM source: {SOURCE}")
-    if not MANIFEST.is_file():
-        raise FileNotFoundError(f"Missing existing GLB manifest: {MANIFEST}")
-
+    if not MANIFEST.is_file() or not SOURCE.is_file():
+        raise FileNotFoundError(f"Required local inputs missing: {MANIFEST} or {SOURCE}")
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
-    known_tiles = {entry["tile"]: entry["file"] for entry in manifest.get("tiles", [])
-                   if entry.get("tile") and entry.get("file")}
-    entries = []
-    node_names_by_file = {}
-    missing_tiles = 0
-    missing_glb_nodes = 0
-    outside_bounds = 0
     bounds = manifest.get("bounds", {})
     tile_size = float(manifest.get("tile_degrees", 0.01))
+    tiles = {x.get("tile"): x.get("file") for x in manifest.get("tiles", [])
+             if x.get("tile") and x.get("file")}
 
+    # Inventory every existing GLB first. This preserves assets even when source
+    # GeoJSON IDs differ from exported node IDs.
+    assets = {}
+    for tile, filename in tiles.items():
+        path = GLB_DIR / filename
+        if not path.is_file():
+            continue
+        for name in glb_node_names(path):
+            match = BUILDING_RE.match(name)
+            if not match:
+                continue
+            bid = match.group(1)
+            key = (tile, bid, name)
+            assets[key] = {
+                "osm_id": bid, "tile": tile, "glb_file": filename,
+                "glb_node_name": name, "source_match": False,
+                "longitude": None, "latitude": None, "name": None,
+                "height": None, "levels": None, "building": None,
+                "facade_material": None, "facade_colour": None,
+                "roof_shape": None, "roof_material": None, "roof_colour": None,
+            }
+
+    source_count = 0
+    polygon_count = 0
+    missing_source_id = 0
+    source_by_id = defaultdict(list)
+    geometry_samples = defaultdict(int)
     with gzip.open(SOURCE, "rt", encoding="utf-8") as stream:
         source = json.load(stream)
-
     for feature in source.get("features", []):
-        props = feature.get("properties") or {}
-        osm_id = source_building_id(feature)
-        if not osm_id:
+        geometry_samples[(feature.get("geometry") or {}).get("type", "missing")] += 1
+        rings = outer_rings(feature)
+        if not rings:
             continue
-        for part_index, ring in enumerate(outer_rings(feature)):
-            # Use only source coordinates; do not reposition or reshape the GLB.
-            lon = sum(p[0] for p in ring) / len(ring)
-            lat = sum(p[1] for p in ring) / len(ring)
+        source_count += 1
+        sid = osm_id(feature)
+        if not sid:
+            missing_source_id += 1
+            continue
+        props = feature.get("properties") or {}
+        for part, ring in enumerate(rings):
+            polygon_count += 1
+            lon = sum(float(p[0]) for p in ring) / len(ring)
+            lat = sum(float(p[1]) for p in ring) / len(ring)
             if not (bounds.get("west", -180) <= lon <= bounds.get("east", 180)
                     and bounds.get("south", -90) <= lat <= bounds.get("north", 90)):
-                outside_bounds += 1
                 continue
-            tx, ty = math.floor(lon / tile_size), math.floor(lat / tile_size)
-            tile = f"{tx}_{ty}"
-            glb_file = known_tiles.get(tile)
-            glb_path = GLB_DIR / glb_file if glb_file else None
-            if not glb_file or not glb_path.is_file():
-                missing_tiles += 1
-                node_match = False
-            else:
-                if glb_file not in node_names_by_file:
-                    node_names_by_file[glb_file] = glb_node_names(glb_path)
-                names = node_names_by_file[glb_file]
-                node_match = any(name == f"Building_{osm_id}" or name.startswith(f"Building_{osm_id}.")
-                                 for name in names)
-                if not node_match:
-                    missing_glb_nodes += 1
-            entries.append({
-                "osm_id": osm_id,
-                "polygon_part": part_index,
-                "glb_node_name_prefix": f"Building_{osm_id}",
-                "tile": tile,
-                "glb_file": glb_file,
-                "glb_node_verified": node_match,
-                "longitude": round(lon, 8),
-                "latitude": round(lat, 8),
-                "name": tag(props, "name", "name:en"),
-                "height": tag(props, "height", "building:height", "render_height"),
-                "levels": tag(props, "building:levels", "levels"),
-                "building": tag(props, "building"),
-                "facade_material": tag(props, "facade:material", "building:material", "material"),
-                "facade_colour": tag(props, "facade:colour", "building:colour"),
-                "roof_shape": tag(props, "roof:shape"),
-                "roof_material": tag(props, "roof:material"),
-                "roof_colour": tag(props, "roof:colour"),
-                "source": "middle east/Jordan/layers/buildings.geojson.gz"
+            tile = f"{math.floor(lon / tile_size)}_{math.floor(lat / tile_size)}"
+            source_by_id[sid].append({
+                "tile": tile, "part": part, "longitude": round(lon, 8),
+                "latitude": round(lat, 8), "name": props.get("name") or props.get("name:en"),
+                "height": props.get("height") or props.get("building:height") or props.get("render_height"),
+                "levels": props.get("building:levels") or props.get("levels"),
+                "building": props.get("building"),
+                "facade_material": props.get("facade:material") or props.get("building:material") or props.get("material"),
+                "facade_colour": props.get("facade:colour") or props.get("building:colour"),
+                "roof_shape": props.get("roof:shape"),
+                "roof_material": props.get("roof:material"),
+                "roof_colour": props.get("roof:colour"),
             })
 
-    if not entries:
-        raise RuntimeError(
-            "No OSM building records were indexed. Refusing to publish an empty index; "
-            "check the source feature IDs, bounds, and GLB manifest."
-        )
+    matched = 0
+    for key, asset in assets.items():
+        candidates = source_by_id.get(asset["osm_id"], [])
+        # A stable OSM ID is the primary join; tile is a consistency check, not
+        # a reason to discard the node (exports may place centroids at tile edges).
+        candidate = next((c for c in candidates if c["tile"] == asset["tile"]), None)
+        if candidate is None and len(candidates) == 1:
+            candidate = candidates[0]
+        if candidate:
+            asset.update(candidate)
+            asset["source_match"] = True
+            matched += 1
 
+    rows = sorted(assets.values(), key=lambda x: (x["tile"], x["osm_id"], x["glb_node_name"]))
     result = {
-        "schema_version": 1,
-        "policy": "verify exported GLB node identity against saved OSM IDs; no geometry, material, texture, or coordinate synthesis",
-        "coordinate_reference": "WGS84 longitude/latitude from the saved OSM source",
+        "schema_version": 2,
+        "scope": "all existing Amman GLB tiles listed in manifest.json",
+        "policy": "inventory all existing exported Building_ nodes; source joins are evidence-based; no geometry, coordinates, materials, or textures are synthesized",
+        "coordinate_reference": "WGS84 longitude/latitude only when joined to saved OSM source geometry",
         "glb_manifest": "middle east/BuildGLB/amman/manifest.json",
         "source": "middle east/Jordan/layers/buildings.geojson.gz",
         "counts": {
-            "matched_source_building_parts": len(entries),
-            "parts_without_existing_glb_tile": missing_tiles,
-            "parts_without_matching_exported_glb_node": missing_glb_nodes,
-            "parts_outside_glb_bounds": outside_bounds
+            "manifest_tiles": len(tiles),
+            "existing_glb_files_scanned": len({x["glb_file"] for x in rows}),
+            "exported_building_nodes": len(rows),
+            "matched_to_osm_source": matched,
+            "unmatched_glb_nodes_retained": len(rows) - matched,
+            "source_features_with_polygon_geometry": source_count,
+            "source_polygon_parts": polygon_count,
+            "source_features_missing_osm_id": missing_source_id,
+            "source_geometry_types": dict(sorted(geometry_samples.items())),
         },
-        "buildings": sorted(entries, key=lambda x: (x["tile"], x["osm_id"], x["polygon_part"]))
+        "buildings": rows,
     }
     OUTPUT.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"output": str(OUTPUT), **result["counts"]}, ensure_ascii=False))
+    if not rows:
+        raise RuntimeError("No Building_ nodes were found in manifest GLBs; refusing to call the inventory successful.")
 
 
 if __name__ == "__main__":
