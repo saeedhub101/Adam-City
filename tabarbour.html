@@ -100,9 +100,15 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
   const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:Number(origin.longitude),lat:Number(origin.latitude)},0);
   // Restore the previously used GLB-to-MapLibre transform; do not rotate or flip the model axes.
   const meters=anchor.meterInMercatorCoordinateUnits();
-  const projectedMeters=meters*Math.cos(Number(origin.latitude)*Math.PI/180);
-  const glbToMap=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
-   .scale(new THREE.Vector3(projectedMeters,-projectedMeters,meters));
+  // Manifest axis convention: local X=east, Y=height, Z=north.
+  // MapLibre Mercator convention: X=east, Y=south, Z=up.
+  // Convert the axes without changing the GLB files or mirroring north/south.
+  const glbToMap=new THREE.Matrix4().set(
+   meters,0,0,anchor.x,
+   0,0,-meters,anchor.y,
+   0,meters,0,anchor.z,
+   0,0,0,1
+  );
   for(const tile of manifest.tiles||[]){
    const label=document.createElement('label');label.className='row';
    const toggle=document.createElement('input');toggle.type='checkbox';toggle.id='glb-'+tile.tile;
