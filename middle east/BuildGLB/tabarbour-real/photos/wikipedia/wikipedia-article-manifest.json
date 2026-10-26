@@ -502,7 +502,8 @@
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
-      "building_link_status": "unmatched_no_verified_building_identity"
+      "building_link_status": "unmatched_no_verified_building_identity",
+      "image_status": "no_direct_wikimedia_thumbnail"
     },
     {
       "source": "Wikipedia",
@@ -518,7 +519,9 @@
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
-      "building_link_status": "unmatched_no_verified_building_identity"
+      "building_link_status": "unmatched_no_verified_building_identity",
+      "image_status": "thumbnail_download_failed",
+      "image_error": "<HTTPError 429: 'Too Many Requests'>"
     },
     {
       "source": "Wikipedia",
@@ -534,7 +537,9 @@
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
-      "building_link_status": "unmatched_no_verified_building_identity"
+      "building_link_status": "unmatched_no_verified_building_identity",
+      "image_status": "thumbnail_download_failed",
+      "image_error": "<HTTPError 429: 'Too Many Requests'>"
     },
     {
       "source": "Wikipedia",
@@ -550,7 +555,8 @@
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
-      "building_link_status": "unmatched_no_verified_building_identity"
+      "building_link_status": "unmatched_no_verified_building_identity",
+      "image_status": "no_direct_wikimedia_thumbnail"
     },
     {
       "source": "Wikipedia",
@@ -566,7 +572,8 @@
       "status": "article_evidence_candidate",
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
-      "building_link_status": "unmatched_no_verified_building_identity"
+      "building_link_status": "unmatched_no_verified_building_identity",
+      "image_status": "no_direct_wikimedia_thumbnail"
     },
     {
       "source": "Wikipedia",
