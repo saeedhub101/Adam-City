@@ -128,8 +128,16 @@ jobs:
         run: |
           set -euo pipefail
           if [ ! -d "$RUNNER_TEMP/fresh-jordan-layers" ]; then
-            echo "::warning::No fresh OSM thematic layers; continuing with other source imports."
-            exit 1
+            saved="middle east/BuildGLB/tabarbour-real/source/layers"
+            if compgen -G "$saved/*.geojson.gz" >/dev/null; then
+              echo "RESUME_SAVED_THEMATIC_LAYERS"
+              mkdir -p "$RUNNER_TEMP/fresh-jordan-layers"
+              cp "$saved/"*.geojson.gz "$RUNNER_TEMP/fresh-jordan-layers/"
+              [ ! -s "$saved/source-import-report.json" ] || cp "$saved/source-import-report.json" "$RUNNER_TEMP/fresh-jordan-layers/"
+            else
+              echo "::warning::No fresh or saved OSM thematic layers; continuing with other source imports."
+              exit 1
+            fi
           fi
           python3 "middle east/UnityGame/tools/crop_tabarbour_layers.py" \
             "$RUNNER_TEMP/fresh-jordan-layers" "$RUNNER_TEMP/tabarbour-layers"
