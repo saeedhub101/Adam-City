@@ -6,7 +6,7 @@ Storage target: middle east/LiDAR/downloads/.
 
 - Geographic NASA CMR searches only; no full global S3 catalog crawl.
 - Up to 3 pages per collection/region; 4 concurrent downloads.
-- Only direct HDF5, LAS/LAZ and ZIP payloads are accepted; signatures are validated.
+- Direct HDF5, LAS/LAZ and ZIP payloads are signature-validated. If NASA raw granules require authentication, the public OpenAltimetry API is queried for actual sampled ATL03 laser observations saved as local JSON.
 - Existing completed URLs are skipped and partial downloads resume with HTTP Range where supported.
 - Files over 80 MiB are split into chunks with a reassembly manifest.
 - Satellite laser footprints are not dense airborne city point clouds; metadata is not counted as data.
