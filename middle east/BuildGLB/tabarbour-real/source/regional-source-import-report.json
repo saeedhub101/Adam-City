@@ -934,7 +934,19 @@
         }
       ],
       "bytes": 20480
+    },
+    "nasa_gibs_viirs_fallback": {
+      "status": "complete",
+      "expected_tiles": 3,
+      "saved_tiles": 3,
+      "error_count": 0,
+      "errors_sample": [],
+      "file": "middle east/BuildGLB/tabarbour-real/source/nasa-gibs-viirs-fallback-tabarbour.mbtiles",
+      "tiles_expected": 3,
+      "tiles_saved": 3,
+      "errors": [],
+      "bytes": 65536
     }
   },
-  "updated_utc": "2026-10-26T09:45:59.101248+00:00"
+  "updated_utc": "2026-10-26T09:46:01.223851+00:00"
 }
