@@ -5,30 +5,31 @@ Repository: saeedhub101/Adam-City — branch main
 
 ## Current position
 
-- [x] Documented city-wide geographic batches and the image verification gate.
-- [x] Confirmed the previous source join failed because the saved thematic GeoJSON does not preserve original OSM object IDs. The first diagnostic sample had only the property entrance=main; all 231,208 polygon features in that export lacked a recognized source ID.
-- [x] Added a workflow-only exporter that reads the repository's saved Jordan PBF and uses osmium export attributes to preserve the original OSM type/id in the temporary GeoJSON.
-- [x] Updated the index workflow to install osmium-tool, regenerate the local ID-preserving source, run the matcher, restore the tracked GeoJSON, and commit diagnostics even when matching is blocked.
-- [x] Added retry logic around Git rebase/push to handle concurrent main commits.
-- [ ] Complete and verify a trustworthy source-to-GLB identity join.
-- [ ] Save the full index to main and verify its counts and commit SHA.
-- [ ] Produce and validate real facade/roof GLBs from approved photo/survey evidence. No new photorealistic GLB is claimed yet.
+- [x] Found why the previous identity join returned zero: the source GeoJSON had lost its OSM IDs, and existing GLB node names are literally Building_, Building_.001, etc. They contain no building ID.
+- [x] Added an exporter that regenerates the local Jordan building GeoJSON from the repository's saved PBF using osmium attributes to preserve original OSM IDs.
+- [x] Updated the Amman GLB builder to read the preserved @id value and support a force rebuild that updates existing manifest entries rather than skipping old GLBs.
+- [x] Updated the Amman index workflow to use sparse checkout, install Blender/osmium, rebuild existing tiles with stable IDs, then index them and save diagnostics.
+- [x] Added diagnostic samples for GLB file presence, GLB header validity, and actual node names. The previous diagnostic confirmed 1,477 manifest files exist and have valid GLB headers; the names are empty IDs, not missing files.
+- [ ] Verify rebuilt Amman GLB node IDs, geometry alignment, full source match count, and the committed index SHA.
+- [ ] Continue local photo/survey review and create new photorealistic facade assets only when an exact building image is approved.
 
-## Latest execution
+## Active run
 
-- Current index run: [40275961180](https://github.com/saeedhub101/Adam-City/actions/runs/40275961180) — workflow now exports OSM IDs from the saved PBF before matching. It was in progress at the last check; output counts have not yet been verified.
-- Previous diagnostic run: [40274057694](https://github.com/saeedhub101/Adam-City/actions/runs/40274057694) — found 89,231 named Building_ nodes across 490 existing GLBs, but zero source matches because the GeoJSON export had no explicit OSM IDs. Its commit step failed on unstaged changes/rebase.
-- Earlier run [40273391055](https://github.com/saeedhub101/Adam-City/actions/runs/40273391055) also had zero matches and failed to push its index because main changed during execution.
-- LiDAR importer run [40275828086](https://github.com/saeedhub101/Adam-City/actions/runs/40275828086) is running the revised geographic downloader rather than the former thousands-page global S3 catalog crawl. Verified payload totals are not yet available.
+- [Amman GLB ID rebuild and index](https://github.com/saeedhub101/Adam-City/actions/runs/40276645698) — in progress at last check. It now exports the saved PBF with IDs, rebuilds the existing Amman tiles, and then runs the identity matcher. No new matched index has been verified yet.
+- [SlideRule satellite laser import](https://github.com/saeedhub101/Adam-City/actions/runs/40276478392) — in progress at last check. Direct CMR granule URLs produced 7,728 HTTP 401 skips and zero raw files; OpenAltimetry API returned 200 errors. The importer now tries the public SlideRule service to retrieve actual sampled ATL03 observations into the repository. No observations are counted until a nonempty GeoJSON is saved and validated.
+- [Older regional GLB generation](https://github.com/saeedhub101/Adam-City/actions/runs/40276627962) — also triggered by the builder change; its default mode skips existing GLBs and does not perform the forced Amman rebuild.
 
-## Next steps — do not repeat completed work
+## Data quality rules
 
-1. Inspect run 40275961180 after the identity-preserving export; confirm the match count is nonzero and check for any way/relation ID encoding mismatch.
-2. Verify the generated index exists on main and record its actual counts and commit SHA.
-3. Continue local image/survey review in geographic batches. A nearby camera coordinate is not proof of which facade is shown.
-4. Generate new GLBs only from approved evidence; preserve source geometry and coordinates, validate output files, and visually check against the exact building.
-5. Do not claim photo-realistic output until a new GLB is committed, parses, remains aligned, and is verified against an approved image of the exact building.
+- OSM geometry, IDs, and the current tile origin must stay aligned. No nearest-centroid-only joins.
+- The Amman GLB regeneration uses the same saved OSM geometry and local-coordinate origin; it is intended to repair identity metadata and node names, not invent a new facade design.
+- Satellite laser observations are sparse spaceborne measurements, not dense airborne city LiDAR and not proof of a building's facade appearance.
+- The procedural limestone texture experiment is not an exact-building photograph and must not be described as photorealistic evidence.
+- Do not report a task as complete until a GLB is committed, parses, preserves alignment, and its identity join is verified.
 
-## Photo evidence
+## Next steps
 
-The existing Tabarbour photo reviews reject both previously examined candidates for exact-building facade texturing. No exact-building image is approved there yet.
+1. Inspect run 40276645698 output and the committed AMMAN-GLB-INDEX-DIAGNOSTICS.json.
+2. If IDs now match, record matched/unmatched counts and the exact commit SHA.
+3. Continue photo matching against repository-local images. The existing Tabarbour review rejects the two previously considered photo candidates; no exact-building photo is approved there yet.
+4. Review SlideRule output separately and report whether any actual observation rows were imported. Do not label satellite samples as airborne LiDAR.
