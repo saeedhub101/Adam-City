@@ -18,6 +18,7 @@ INPUTS = [
 ]
 OUT_GZ = BASE / "building-visual-search-index.jsonl.gz"
 REPORT = BASE / "building-visual-search-report.json"
+GALLERY = BASE / "building-image-review.html"
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 MAX_RETRIES = 3
 
@@ -41,10 +42,19 @@ def centroid(geometry):
 
 class Links(HTMLParser):
     def __init__(self):
-        super().__init__(); self.links=[]; self.title=""; self._title=False
+        super().__init__(); self.links=[]; self.image_records=[]; self.title=""; self._title=False
     def handle_starttag(self, tag, attrs):
         a=dict(attrs)
-        if tag=="a" and a.get("href"): self.links.append((a["href"], a.get("aria-label","")))
+        if tag=="a" and a.get("href"):
+            self.links.append((a["href"], a.get("aria-label","")))
+            if "iusc" in a.get("class","").split() and a.get("m"):
+                try:
+                    meta=json.loads(html.unescape(a["m"]))
+                    if meta.get("murl"):
+                        self.image_records.append({"image_url":meta.get("murl"),"thumbnail_url":meta.get("turl"),
+                            "source_page":meta.get("purl"),"title":meta.get("t","")})
+                except Exception:
+                    pass
         if tag=="title": self._title=True
     def handle_endtag(self, tag):
         if tag=="title": self._title=False
@@ -72,11 +82,11 @@ def fetch_search(url, engine):
                 if href not in [x["url"] for x in found]:
                     found.append({"url":href,"anchor":label[:180]})
                 if len(found)>=12: break
-            return {"status":"ok" if found else "no_results_or_blocked","page_title":p.title[:180],"results":found}
+            return {"status":"ok" if found else "no_results_or_blocked","page_title":p.title[:180],"results":found,"images":p.image_records[:12]}
         except Exception as e:
             last=repr(e)
             if attempt<MAX_RETRIES: time.sleep(attempt*2)
-    return {"status":"failed","error":last,"results":[]}
+    return {"status":"failed","error":last,"results":[],"images":[]}
 
 def write_outputs(records, report):
     BASE.mkdir(parents=True,exist_ok=True)
@@ -86,8 +96,30 @@ def write_outputs(records, report):
     tmp.replace(OUT_GZ)
     REPORT.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
 
+def write_gallery(records):
+    # Review-only HTML. The game never loads these remote images; nothing is assigned to GLB.
+    cards=[]
+    for r in records:
+        if not r.get("name") or not r.get("candidates"): continue
+        imgs=[x for x in r["candidates"] if x.get("image_url","").startswith("http")]
+        if not imgs: continue
+        links=r.get("search_urls",{})
+        block=[f'<article><h3>{html.escape(r.get("name") or r["osm_id"])}</h3>',
+               f'<p>OSM {html.escape(r["osm_id"])} · {r.get("latitude")}, {r.get("longitude")}</p>',
+               f'<p><a href="{html.escape(links.get("google_maps",""),quote=True)}">Google Maps</a> · '
+               f'<a href="{html.escape(links.get("google_street_view",""),quote=True)}">Street View</a> · '
+               f'<a href="{html.escape(links.get("google_images",""),quote=True)}">Google Images</a></p>']
+        for im in imgs[:6]:
+            iu=html.escape(im.get("image_url",""),quote=True)
+            sp=html.escape(im.get("source_page") or im.get("image_url",""),quote=True)
+            title=html.escape(im.get("title","Unverified image candidate"))
+            block.append(f'<a class="photo" href="{sp}" target="_blank" rel="noopener"><img loading="lazy" src="{iu}" alt="{title}"><span>{title}</span></a>')
+        block.append('<p class="warning">Candidate only — visually confirm the exact building and image rights before use.</p></article>')
+        cards.append("".join(block))
+    GALLERY.write_text("""<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Tabarbour building image review</title><style>body{font:16px system-ui;margin:1rem;background:#f4f4f4;color:#222}article{background:white;border:1px solid #ddd;border-radius:10px;padding:1rem;margin:1rem 0}article h3{margin:.2rem 0}.photos{display:flex;gap:12px;flex-wrap:wrap}.photo{display:inline-flex;flex-direction:column;width:min(220px,44%);margin:.3rem;text-decoration:none;color:inherit}.photo img{width:100%;height:150px;object-fit:contain;background:#eee}.warning{color:#8a3b00;font-weight:600}</style><h1>Tabarbour — building image review</h1><p>Images are unverified search candidates loaded from their source websites for manual review. This page is not used by the game and does not assign textures automatically.</p>"""+"".join(cards)+"</html>",encoding="utf-8")
+
 def checkpoint():
-    rel=[str(OUT_GZ.relative_to(ROOT)),str(REPORT.relative_to(ROOT))]
+    rel=[str(OUT_GZ.relative_to(ROOT)),str(REPORT.relative_to(ROOT)),str(GALLERY.relative_to(ROOT))]
     subprocess.run(["git","add","--",*rel],cwd=ROOT,check=True)
     if subprocess.run(["git","diff","--cached","--quiet"],cwd=ROOT).returncode==0: return
     subprocess.run(["git","-c","user.name=github-actions[bot]","-c","user.email=41898282+github-actions[bot]@users.noreply.github.com","commit","-m","Checkpoint Tabarbour per-building visual evidence search"],cwd=ROOT,check=True)
@@ -145,7 +177,7 @@ def main():
                 "bing_images":"https://www.bing.com/images/search?q="+q,
                 "wikimedia_commons":"https://commons.wikimedia.org/w/index.php?search="+q+"&title=Special:MediaSearch&type=image",
                 "openverse":"https://openverse.org/search/image?q="+q,
-                "openstreetmap":"https://www.openstreetmap.org/"+urllib.parse.quote(fid)
+                "openstreetmap":"https://www.openstreetmap.org/"+urllib.parse.quote(fid,safe="/")
             },
             "candidates":[],"verification":{"status":"unverified","rule":"Never assign an image to a building based on proximity or search-result title alone."}
         })
@@ -172,7 +204,11 @@ def main():
             {"source":"Google Search","url":x["url"],"title":x.get("anchor",""),"status":"unverified_candidate"}
             for x in rec["web_search"].get("results",[])
         ] + [
-            {"source":"Bing Images","url":x["url"],"title":x.get("anchor",""),"status":"unverified_candidate"}
+            {"source":"Bing Images source page","url":x.get("source_page") or x.get("image_url"),"image_url":x.get("image_url"),
+             "thumbnail_url":x.get("thumbnail_url"),"title":x.get("title",""),"status":"unverified_candidate"}
+            for x in rec["image_search"].get("images",[])
+        ] + [
+            {"source":"Bing Images result page","url":x["url"],"title":x.get("anchor",""),"status":"unverified_candidate"}
             for x in rec["image_search"].get("results",[])
         ]
         rec["verification"]={"status":"needs_visual_review","verified_building_identity":False,"facade_texture_allowed":False}
@@ -182,12 +218,12 @@ def main():
             report.update({"buildings_indexed":len(records),"named_buildings_searched":len(done),
                            "searched_osm_ids":sorted(done),"last_checkpoint_osm_id":fid,
                            "updated_utc":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())})
-            write_outputs(records,report); checkpoint()
+            write_outputs(records,report); write_gallery(records); checkpoint()
             print("BUILDING_SEARCH_PROGRESS",idx,"/",len(named),"indexed",len(records),flush=True)
     report.update({"buildings_indexed":len(by_id),"named_buildings_searched":len(done),
                    "searched_osm_ids":sorted(done),"completed":len(done)==sum(1 for r in by_id.values() if r.get("name")),
                    "updated_utc":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())})
-    write_outputs(list(by_id.values()),report); checkpoint()
+    write_outputs(list(by_id.values()),report); write_gallery(list(by_id.values())); checkpoint()
     print(json.dumps({k:v for k,v in report.items() if k!="searched_osm_ids"},ensure_ascii=False,indent=2),flush=True)
 
 if __name__=="__main__": main()
