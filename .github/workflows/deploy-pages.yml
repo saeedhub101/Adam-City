@@ -1,12 +1,6 @@
 name: Publish Tabarbour 3D preview
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/deploy-pages.yml'
-      - 'tabarbour.html'
-      - 'middle east/BuildGLB/tabarbour-real/glb/**'
   workflow_dispatch:
 
 permissions:
@@ -61,7 +55,10 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: site
+          name: tabarbour-preview-${{ github.run_id }}
 
       - name: Publish page
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: tabarbour-preview-${{ github.run_id }}
