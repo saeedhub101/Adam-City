@@ -28,7 +28,7 @@ public static class MiddleEastWorldSetup
         RenderSettings.fogEndDistance = 1100f;
 
         var ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        ground.name = "Temporary terrain base — OSM world streams over this";
+        ground.name = "Tabarbour starter ground — temporary until existing terrain mesh is connected";
         ground.transform.position = new Vector3(0,-.12f,0);
         ground.transform.localScale = new Vector3(2000,1,2000);
         var groundMat = new Material(Shader.Find("Standard"));
@@ -38,6 +38,8 @@ public static class MiddleEastWorldSetup
 
         var player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
         player.name = "Player";
+        // Spawn at the requested Tabarbour / Cobra Pharmacy coordinates.
+        // The streamer uses these coordinates as its local geographic origin.
         player.transform.position = new Vector3(0,1.1f,0);
         Object.DestroyImmediate(player.GetComponent<CapsuleCollider>());
         player.AddComponent<CharacterController>();
@@ -62,12 +64,15 @@ public static class MiddleEastWorldSetup
         var streamer = world.AddComponent<OpenWorldStreamer>();
         streamer.player=player.transform;
         streamer.region="Jordan";
+        streamer.originLon=35.940358;
+        streamer.originLat=31.997579;
         streamer.tileRadius=2;
+        streamer.tileDegrees=0.02f;
         streamer.streetLabels=true;
 
         EditorSceneManager.SaveScene(scene, "Assets/MiddleEastWorld/Scenes/MiddleEastOpenWorld.unity");
         AssetDatabase.SaveAssets();
-        Debug.Log("Playable scene created. Copy generated BuildData/Jordan and BuildData/Palestine into Assets/StreamingAssets/MiddleEastWorld/ before running.");
+        Debug.Log("Tabarbour starter scene created at 31.997579, 35.940358. Install the already-generated BuildData into StreamingAssets before running; no new geographic data is downloaded.");
     }
 
     static void EnsureFolder(string path)
