@@ -176,7 +176,7 @@ async function init(){
  ts.forEach(addTile);setStatus('Manifest loaded. Target tile selected: tabarbour_1797_1599.glb');const target=ts.find(t=>t.file==='tabarbour_1797_1599.glb');if(target)loadFile(target).catch(()=>{});
  }catch(e){setStatus('Manifest unavailable: '+e.message+'. You can still use the page after checking repository paths.',true)}
 }
-function frameLoaded(){const box=new THREE.Box3();for(const obj of loaded.values())box.expandByObject(obj);if(box.isEmpty())return;const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());const lon=35.945+center.x/(111319.490793*Math.cos(32*Math.PI/180));const lat=32+center.z/111319.490793;const span=Math.max(size.x,size.z,100);libertyMap.flyTo({center:[lon,lat],zoom:Math.max(12,Math.min(17,Math.log2(40000/span)+12)),pitch:60,duration:900});}
+function frameLoaded(){const box=new THREE.Box3();for(const obj of loaded.values())box.expandByObject(obj);if(box.isEmpty())return;const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());const lon=35.945+center.x/(111319.490793*Math.cos(32*Math.PI/180));const lat=32-center.z/111319.490793;const span=Math.max(size.x,size.z,100);libertyMap.flyTo({center:[lon,lat],zoom:Math.max(12,Math.min(17,Math.log2(40000/span)+12)),pitch:60,duration:900});}
 const pending=new Map();
 function disposeObject(obj){obj.traverse(o=>{if(o.isMesh){o.geometry?.dispose();if(o.material){for(const m of (Array.isArray(o.material)?o.material:[o.material]))m.dispose()}}})}
 function hideTile(file){const obj=loaded.get(file);if(obj){scene.remove(obj);disposeObject(obj);loaded.delete(file)}}
@@ -238,10 +238,17 @@ const glbCustomLayer={id:'tabarbour-glb-scene',type:'custom',renderingMode:'3d',
    // with the common origin recorded in the GLB manifest (35.945, 32.0).
    // MapLibre's matrix already contains the live camera/view transform; apply the
    // fixed geographic model transform to it on every frame, never to the camera itself.
+   // The exported GLBs are Y-up: X=east, Y=height, Z=-north.
+   // Rotate height into MapLibre's Z-up axis, then flip Mercator Y so north
+   // moves toward smaller Mercator Y. Use the shared origin from manifest.json.
+   const origin=manifest?.origin||{longitude:35.945,latitude:32.0};
+   const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:Number(origin.longitude),lat:Number(origin.latitude)},0);
+   const meters=anchor.meterInMercatorCoordinateUnits();
+   const projectedMeters=meters*Math.cos(Number(origin.latitude)*Math.PI/180);
    const model=new THREE.Matrix4()
-     .makeTranslation(mc.x,mc.y,0)
-     .multiply(new THREE.Matrix4().makeRotationX(Math.PI/2))
-     .multiply(new THREE.Matrix4().makeScale(s,s,s));
+     .makeTranslation(anchor.x,anchor.y,anchor.z)
+     .multiply(new THREE.Matrix4().makeScale(projectedMeters,-projectedMeters,meters))
+     .multiply(new THREE.Matrix4().makeRotationX(Math.PI/2));
    const viewProjection=new THREE.Matrix4().fromArray(matrix);
    camera.projectionMatrix.copy(viewProjection.multiply(model));
    camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
