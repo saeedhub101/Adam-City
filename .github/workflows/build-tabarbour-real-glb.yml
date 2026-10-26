@@ -163,7 +163,7 @@ jobs:
           cp "$RUNNER_TEMP/fresh-jordan-layers/source-import-report.json" "$root/layers/"
           cp "$RUNNER_TEMP/tabarbour-infrastructure.geojson.gz" "$root/"
           if [ -s "$root/openfreemap-tabarbour-z12-17.mbtiles" ]; then echo "OPENFREEMAP_MBtiles_PRESENT"; fi
-          if [ -s "$root/nasa-gibs-satellite-tabarbour.mbtiles" ]; then echo "NASA_GIBS_MBtiles_PRESENT"; fi
+          if [ -s "$root/nasa-gibs-sentinel2-tabarbour.mbtiles" ]; then echo "NASA_GIBS_SENTINEL2_MBtiles_PRESENT"; fi
           cat > "$root/source-manifest.json" <<'JSON'
           {
             "area": "Tabarbour, Amman, Jordan",
@@ -176,7 +176,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -- "$root"
-          git add -- "middle east/BuildGLB/tabarbour-real/photos"
           if git diff --cached --quiet; then
             echo "Source checkpoint unchanged."
             exit 0
@@ -265,8 +264,21 @@ jobs:
               try:
                   er=json.loads(evidence.read_text(encoding="utf-8"))
                   report["wikipedia_candidates"]=er.get("wikipedia",{})
+                  report["building_matching"]=er.get("building_matching")
               except Exception as e: report["errors"].append("visual evidence report parse error: "+repr(e))
-          else: report.setdefault("warnings",[]).append("Wikipedia/Mapillary evidence report missing")
+          else: report.setdefault("warnings",[]).append("Wikipedia evidence report missing")
+          regional=root/"source"/"regional-source-import-report.json"
+          if regional.exists():
+              try: report["regional_sources"]=json.loads(regional.read_text(encoding="utf-8"))
+              except Exception as e: report["errors"].append("regional source report parse error: "+repr(e))
+          else: report.setdefault("warnings",[]).append("OpenFreeMap/NASA satellite source report missing")
+          terrain=root/"source"/"dem"/"tabarbour-terrain-dem.glb"
+          if terrain.exists():
+              with terrain.open("rb") as f: th=f.read(12)
+              report["dem_terrain_glb"]={"file":str(terrain.relative_to(root)),"bytes":terrain.stat().st_size,"valid_glb_header":len(th)==12 and th[:4]==b"glTF"}
+              if not report["dem_terrain_glb"]["valid_glb_header"]: report["errors"].append("invalid DEM terrain GLB header")
+          else:
+              report.setdefault("warnings",[]).append("Copernicus DEM terrain GLB missing")
           root.mkdir(parents=True,exist_ok=True)
           (root/"validation-report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
           print(json.dumps(report,ensure_ascii=False,indent=2))
