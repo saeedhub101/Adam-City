@@ -7,6 +7,7 @@ It writes an auditable source-to-asset index from the repository's compressed so
 import gzip
 import json
 import math
+import struct
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -14,6 +15,31 @@ GLB_DIR = ROOT / "middle east" / "BuildGLB" / "amman"
 SOURCE = ROOT / "middle east" / "Jordan" / "layers" / "buildings.geojson.gz"
 MANIFEST = GLB_DIR / "manifest.json"
 OUTPUT = GLB_DIR / "building-asset-index.json"
+
+def glb_node_names(path):
+    """Read only the GLB JSON chunk and return exported node names."""
+    if not path.is_file():
+        return set()
+    with path.open("rb") as stream:
+        header = stream.read(12)
+        if len(header) != 12 or header[:4] != b"glTF":
+            return set()
+        _magic, version, total_length = struct.unpack("<4sII", header)
+        if version != 2:
+            return set()
+        chunk_header = stream.read(8)
+        if len(chunk_header) != 8:
+            return set()
+        chunk_length, chunk_type = struct.unpack("<II", chunk_header)
+        if chunk_type != 0x4E4F534A or chunk_length > total_length:
+            return set()
+        payload = stream.read(chunk_length).rstrip(bytes([0x20, 0x09, 0x0D, 0x0A, 0x00]))
+    try:
+        gltf = json.loads(payload.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return set()
+    return {node.get("name", "") for node in gltf.get("nodes", []) if node.get("name")}
+
 
 
 def tag(props, *keys):
@@ -53,7 +79,9 @@ def main():
     known_tiles = {entry["tile"]: entry["file"] for entry in manifest.get("tiles", [])
                    if entry.get("tile") and entry.get("file")}
     entries = []
+    node_names_by_file = {}
     missing_tiles = 0
+    missing_glb_nodes = 0
     outside_bounds = 0
     bounds = manifest.get("bounds", {})
     tile_size = float(manifest.get("tile_degrees", 0.01))
@@ -77,14 +105,25 @@ def main():
             tx, ty = math.floor(lon / tile_size), math.floor(lat / tile_size)
             tile = f"{tx}_{ty}"
             glb_file = known_tiles.get(tile)
-            if not glb_file:
+            glb_path = GLB_DIR / glb_file if glb_file else None
+            if not glb_file or not glb_path.is_file():
                 missing_tiles += 1
+                node_match = False
+            else:
+                if glb_file not in node_names_by_file:
+                    node_names_by_file[glb_file] = glb_node_names(glb_path)
+                names = node_names_by_file[glb_file]
+                node_match = any(name == f"Building_{osm_id}" or name.startswith(f"Building_{osm_id}.")
+                                 for name in names)
+                if not node_match:
+                    missing_glb_nodes += 1
             entries.append({
                 "osm_id": osm_id,
                 "polygon_part": part_index,
                 "glb_node_name_prefix": f"Building_{osm_id}",
                 "tile": tile,
                 "glb_file": glb_file,
+                "glb_node_verified": node_match,
                 "longitude": round(lon, 8),
                 "latitude": round(lat, 8),
                 "name": tag(props, "name", "name:en"),
@@ -101,13 +140,14 @@ def main():
 
     result = {
         "schema_version": 1,
-        "policy": "source-matched metadata only; no geometry, material, texture, or coordinate synthesis",
+        "policy": "verify exported GLB node identity against saved OSM IDs; no geometry, material, texture, or coordinate synthesis",
         "coordinate_reference": "WGS84 longitude/latitude from the saved OSM source",
         "glb_manifest": "middle east/BuildGLB/amman/manifest.json",
         "source": "middle east/Jordan/layers/buildings.geojson.gz",
         "counts": {
             "matched_source_building_parts": len(entries),
-            "parts_without_manifest_tile": missing_tiles,
+            "parts_without_existing_glb_tile": missing_tiles,
+            "parts_without_matching_exported_glb_node": missing_glb_nodes,
             "parts_outside_glb_bounds": outside_bounds
         },
         "buildings": sorted(entries, key=lambda x: (x["tile"], x["osm_id"], x["polygon_part"]))
