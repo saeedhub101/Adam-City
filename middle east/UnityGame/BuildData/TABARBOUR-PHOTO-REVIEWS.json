@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "area": "Tabarbour, Amman, Jordan",
+  "policy": "No image is usable for a building GLB until the actual image is visually inspected and exact target identity is confirmed.",
+  "reviews": [
+    {
+      "candidate_id": "commons-tabarbour-ain-ribat-panoramio-2011",
+      "target_building_osm_id": null,
+      "target_glb": null,
+      "image_source": "Wikimedia Commons",
+      "image_page": "https://commons.wikimedia.org/wiki/File:Tabarbour_%D8%B7%D8%A8%D8%B1%D8%A8%D9%88%D8%B1_%D8%B9%D9%8A%D9%86_%D8%B1%D8%A8%D8%A7%D8%B7_-_panoramio.jpg",
+      "image_direct": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Tabarbour_%D8%B7%D8%A8%D8%B1%D8%A8%D9%88%D8%B1_%D8%B9%D9%8A%D9%86_%D8%B1%D8%A8%D8%A7%D8%B7_-_panoramio.jpg",
+      "license": "CC BY 3.0",
+      "photographer": "alshawarbeh",
+      "capture_date": "2011-03-04",
+      "camera_position": {
+        "latitude": 32.012952,
+        "longitude": 35.981770
+      },
+      "visual_review": {
+        "actual_image_opened_and_inspected": true,
+        "depicts_general_tab arbour_area": true,
+        "exact_target_building_identified": false,
+        "exterior_view": true,
+        "interior_or_render": false,
+        "facade_obscured_or_unsuitable": true,
+        "reasons": [
+          "The image is a broad roadside scene rather than a verified view of a specific target building.",
+          "The main wall/building is seen at a distance and provides insufficient facade detail for faithful texturing or reconstruction.",
+          "The vehicle mirror occupies a large part of the foreground and the image does not establish the target building identity or facade orientation."
+        ]
+      },
+      "decision": "rejected",
+      "allowed_use": "Area context only; do not use as a building texture, facade decal, or geometry source.",
+      "reviewed_on": "2026-10-26"
+    }
+  ],
+  "approval_rule": "Only records with decision approved_exact_building and a non-null target building identity may be used for the specifically documented visible facade. Rejected, partial, unknown, or unreviewed images must never be used to generate or texture a building GLB."
+}
