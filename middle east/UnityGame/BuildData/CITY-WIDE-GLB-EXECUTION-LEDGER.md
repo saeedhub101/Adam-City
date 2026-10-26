@@ -1,35 +1,62 @@
-# City-wide GLB execution ledger
+# Jordan-wide GLB execution ledger
 
 Last updated: 2026-10-26 UTC  
 Repository: saeedhub101/Adam-City — branch main
 
-## Current position
+## Required output contract
 
-- [x] Found why the previous identity join returned zero: the source GeoJSON had lost its OSM IDs, and existing GLB node names are literally Building_, Building_.001, etc. They contain no building ID.
-- [x] Added an exporter that regenerates the local Jordan building GeoJSON from the repository's saved PBF using osmium attributes to preserve original OSM IDs.
-- [x] Updated the Amman GLB builder to read the preserved @id value and support a force rebuild that updates existing manifest entries rather than skipping old GLBs.
-- [x] Updated the Amman index workflow to use sparse checkout, install Blender/osmium, rebuild existing tiles with stable IDs, then index them and save diagnostics.
-- [x] Added diagnostic samples for GLB file presence, GLB header validity, and actual node names. The previous diagnostic confirmed 1,477 manifest files exist and have valid GLB headers; the names are empty IDs, not missing files.
-- [ ] Verify rebuilt Amman GLB node IDs, geometry alignment, full source match count, and the committed index SHA.
-- [ ] Continue local photo/survey review and create new photorealistic facade assets only when an exact building image is approved.
+- At most 50 regional GLB files for the generated Jordan country model.
+- Use the saved Jordan OSM PBF and all locally stored Jordan OSM layers; preserve source OSM IDs and original tags.
+- Combine many buildings and infrastructure features per GLB, rather than one file per building or tiny 0.01-degree tile.
+- Keep all files local to the repository/game build; no live map or external asset URLs at runtime.
+- Do not fabricate measured heights, facade textures, colors, or imagery. Any procedural geometry must be marked as procedural in metadata.
 
-## Active run
+## Completed changes
 
-- [Amman GLB ID rebuild and index](https://github.com/saeedhub101/Adam-City/actions/runs/40276645698) — in progress at last check. It now exports the saved PBF with IDs, rebuilds the existing Amman tiles, and then runs the identity matcher. No new matched index has been verified yet.
-- [SlideRule satellite laser import](https://github.com/saeedhub101/Adam-City/actions/runs/40276478392) — in progress at last check. Direct CMR granule URLs produced 7,728 HTTP 401 skips and zero raw files; OpenAltimetry API returned 200 errors. The importer now tries the public SlideRule service to retrieve actual sampled ATL03 observations into the repository. No observations are counted until a nonempty GeoJSON is saved and validated.
-- [Older regional GLB generation](https://github.com/saeedhub101/Adam-City/actions/runs/40276627962) — also triggered by the builder change; its default mode skips existing GLBs and does not perform the forced Amman rebuild.
+- [x] Retired the legacy automatic regional workflow that generated thousands of small GLBs.
+- [x] Retired the legacy Amman index workflow from automatic execution.
+- [x] Fixed a syntax error in the existing Blender exporter.
+- [x] Added support for saved OSM water, landcover, places, addresses, and building-detail tags.
+- [x] Added OSM infrastructure parsing for railways, waterways, power lines, trees, traffic signals, transit objects, bridges/tunnels, barriers, and other mapped infrastructure from the saved PBF.
+- [x] Added source OSM IDs/tags as GLB custom properties, OSM-derived road surface materials, OSM-tagged building/roof material colors where present, and explicit flags for procedural default heights/windows.
+- [x] Added a new country-wide workflow that generates large geographic GLBs, validates every GLB header, and hard-fails if the result exceeds 50 files.
+- [x] Changed the LiDAR workflow to an audit-only gate. It no longer downloads GEDI/ICESat-2 satellite samples as a substitute for building LiDAR.
+- [ ] Verify the new country GLBs, counts, and manifest on main after the current build completes.
+- [ ] Add and integrate a Jordan DEM/terrain source. The repository inventory previously found no Jordan-specific DEM or local satellite imagery assets.
+- [ ] Search for licensed local orthophotos/satellite imagery and real 3D building models, then integrate only if the data can be stored and used offline.
+- [ ] After validation, remove only the obsolete generated grid-tile GLBs; preserve curated individual building models and overlays.
 
-## Data quality rules
+## Active workflows
 
-- OSM geometry, IDs, and the current tile origin must stay aligned. No nearest-centroid-only joins.
-- The Amman GLB regeneration uses the same saved OSM geometry and local-coordinate origin; it is intended to repair identity metadata and node names, not invent a new facade design.
-- Satellite laser observations are sparse spaceborne measurements, not dense airborne city LiDAR and not proof of a building's facade appearance.
-- The procedural limestone texture experiment is not an exact-building photograph and must not be described as photorealistic evidence.
-- Do not report a task as complete until a GLB is committed, parses, preserves alignment, and its identity join is verified.
+- New Jordan-wide build: [current run](https://github.com/saeedhub101/Adam-City/actions/workflows/build-jordan-50-glb.yml) — builds from existing OSM layers plus a temporary infrastructure extract of the saved Jordan PBF. No output is claimed until the run passes validation and commits.
+- LiDAR suitability audit: [latest run](https://github.com/saeedhub101/Adam-City/actions/runs/40277696651) — completed; found 0 LAS/LAZ/COPC files in the current download folder and imported 0 new payloads.
+- Legacy tiny-tile workflow: retired and set to skip, to avoid regenerating the old file explosion.
 
-## Next steps
+## Current source inventory and limitations
 
-1. Inspect run 40276645698 output and the committed AMMAN-GLB-INDEX-DIAGNOSTICS.json.
-2. If IDs now match, record matched/unmatched counts and the exact commit SHA.
-3. Continue photo matching against repository-local images. The existing Tabarbour review rejects the two previously considered photo candidates; no exact-building photo is approved there yet.
-4. Review SlideRule output separately and report whether any actual observation rows were imported. Do not label satellite samples as airborne LiDAR.
+Locally available Jordan layers:
+- buildings and building details
+- street/road geometry and street names
+- address points
+- administrative boundaries
+- landcover
+- place labels
+- water features
+- saved Jordan OSM PBF, used to extract additional infrastructure
+
+Not yet present as local Jordan assets:
+- dense airborne/terrestrial LiDAR point clouds
+- Jordan DEM/terrain raster
+- local orthophotos/satellite imagery for facade/roof texturing
+- broad coverage of verified photogrammetric or surveyed 3D building models
+
+OSM does not generally provide exact facade photographs, per-window layouts, roof texture images, or measured building heights for every building. Those fields will remain unknown unless a suitable source is found. Procedural windows/material defaults are visual placeholders, not survey evidence.
+
+## Validation gate
+
+A build is complete only when:
+1. The workflow reports 1–50 GLBs and all headers validate.
+2. The manifest lists every generated GLB, its feature counts, and the shared georeference origin.
+3. GLBs contain source OSM identifiers and retained tags.
+4. The manifest and GLBs are committed to main.
+5. No legacy regeneration workflow recreates the tiny-tile set.
