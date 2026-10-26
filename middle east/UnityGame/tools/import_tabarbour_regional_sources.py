@@ -73,13 +73,13 @@ def main():
       "openfreemap_vector_tiles",OUT/"openfreemap-tabarbour-z12-17.mbtiles",
       lambda z,x,y:f"https://tiles.openfreemap.org/planet/{z}/{x}/{y}.pbf",
       range(12,18),"pbf","© OpenStreetMap contributors; OpenFreeMap / OpenMapTiles")
-    # NASA GIBS true-colour satellite basemap, keyless WMTS tiles. These are top-down imagery,
-    # not street-level facades and cannot establish wall texture/height on their own.
-    day=(datetime.date.today()-datetime.timedelta(days=20)).isoformat()
+    # NASA GIBS Sentinel-2 L1C imagery, keyless WMTS tiles. Top-down imagery is useful for
+    # land cover/context but is not street-level facade photography. Gaps are explicitly reported.
+    day=(datetime.date.today()-datetime.timedelta(days=45)).isoformat()
     results["nasa_gibs_satellite"]=run_tiles(
-      "nasa_gibs_satellite",OUT/"nasa-gibs-satellite-tabarbour.mbtiles",
-      lambda z,x,y:f"https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_TrueColor/default/{day}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg",
-      range(7,10),"jpg","NASA GIBS VIIRS corrected reflectance true color")
+      "nasa_gibs_satellite",OUT/"nasa-gibs-sentinel2-tabarbour.mbtiles",
+      lambda z,x,y:f"https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/Sentinel-2_L1C/default/{day}/GoogleMapsCompatible_Level13/{z}/{y}/{x}.jpg",
+      range(10,14),"jpg","NASA GIBS Sentinel-2 L1C imagery; top-down satellite imagery, not facade photos")
     write_report("summary",OUT/"regional-source-import-report.json",0,0,[],True,{"results":results})
     print(json.dumps(results,ensure_ascii=False,indent=2),flush=True)
 if __name__=="__main__": main()
