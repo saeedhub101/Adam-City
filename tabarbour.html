@@ -16,7 +16,7 @@ h1{font-size:20px;margin:0 0 4px}p{margin:6px 0;color:var(--muted);line-height:1
 #hint{position:fixed;right:12px;bottom:12px;background:#101b25d9;padding:10px 13px;border-radius:9px;border:1px solid var(--line);color:#d5e3ec;z-index:1}
 #hide{float:right}a{color:var(--accent)}.error{color:#ffb4a9!important}
 @media(max-width:600px){#panel{top:8px;left:8px;max-height:65dvh;width:calc(100vw - 16px);padding:12px}#hint{font-size:11px;max-width:48vw}}
-#libertyMap{position:fixed;inset:0;z-index:0;display:none}#view{z-index:1;pointer-events:none}#view canvas{pointer-events:auto}body.liberty-mode #libertyMap{display:block}body.liberty-mode #view{display:none}body.liberty-mode #hint{display:none}
+#libertyMap{position:fixed;inset:0;width:100vw;height:100dvh;z-index:0;display:block}#view{display:none!important}#libertyMap .maplibregl-canvas-container,#libertyMap canvas{width:100%!important;height:100%!important}body.liberty-mode #hint{display:block}
 </style>
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
@@ -34,7 +34,7 @@ h1{font-size:20px;margin:0 0 4px}p{margin:6px 0;color:var(--muted);line-height:1
  <div class="stat"><b id="sizeCount">~370 MB</b><span>model data total</span></div>
 </div>
 <div id="status">Loading manifest…</div>
-<p><b>Original source layers</b> — independent controls.</p><div class="tile"><input id="sourceFloorToggle" type="checkbox" checked><span class="name">✓ OpenFreeMap Liberty style</span></div><div class="tile"><input id="sourceBuildingsToggle" type="checkbox"><span class="name">✓ Local building footprints (toggle)</span></div><p>OpenFreeMap Liberty and local GLB models share one 3D scene. Use the second toggle to show local footprint data; Liberty's native buildings are part of the style.</p>
+<p><b>Original source layers</b> — independent controls.</p><div class="tile"><input id="sourceFloorToggle" type="checkbox" checked><span class="name">OpenFreeMap Liberty map base</span></div><div class="tile"><input id="sourceBuildingsToggle" type="checkbox" checked><span class="name">OpenFreeMap Liberty 3D buildings</span></div><p>These controls are independent: hide the map base, hide Liberty's native 3D buildings, or hide local building footprints from the layer list. GLB tiles remain a separate layer on the same map.</p>
 <p><b>Map data layers</b> — toggle building footprints/details, roads, street names, addresses, places, water, vegetation, bridges, tunnels, traffic signals and transport features.</p><div id="layerToggles"></div>
 <div class="actions"><button id="showAll">Check all tiles</button><button id="clearAll">Uncheck all</button><button id="resetView">Reset view</button></div>
 <p><b>Choose tiles</b> — check a tile to load it automatically; uncheck it to hide it. Large tiles may take time to download.</p>
@@ -71,9 +71,19 @@ const dataLayers=new Map(); const layerToggles=document.getElementById('layerTog
 const LAYERS=[['buildings','Building footprints','layers/buildings.geojson.gz','polygon'],['building_details','Building details & heights','layers/building_details.geojson.gz','polygon'],['streets','Roads & paths','layers/streets.geojson.gz','line'],['streetnames','Street names','layers/streetnames.geojson.gz','label'],['addresses','Building numbers / addresses','layers/addresses.geojson.gz','label'],['places','Neighborhoods & places','layers/places.geojson.gz','label'],['water','Water features','layers/water.geojson.gz','polygon'],['landcover','Trees, vegetation & land cover','layers/landcover.geojson.gz','polygon'],['infrastructure','Bridges, tunnels, signals & transport','tabarbour-infrastructure.geojson.gz','mixed']];
 const LAYER_BASE='./middle%20east/BuildGLB/tabarbour-real/source/';
 const sourceFloorToggle=document.getElementById('sourceFloorToggle'),sourceBuildingsToggle=document.getElementById('sourceBuildingsToggle');
-sourceFloorToggle.checked=true;
-sourceFloorToggle.checked=true;sourceFloorToggle.disabled=true;sourceFloorToggle.nextElementSibling.textContent='✓ OpenFreeMap Liberty + GLB shared scene';document.body.classList.add('liberty-mode');sourceMapGroup.visible=false;
-sourceBuildingsToggle.addEventListener('change',()=>{const cb=layerToggles.querySelector('input[data-layer="buildings"]');if(cb){cb.checked=sourceBuildingsToggle.checked;cb.dispatchEvent(new Event('change'))}});
+sourceFloorToggle.checked=true;sourceBuildingsToggle.checked=true;sourceMapGroup.visible=false;
+let libertyBaseVisibility=new Map();
+function applyLibertyVisibility(){
+ if(!libertyMap.isStyleLoaded())return;
+ for(const layer of libertyMap.getStyle().layers||[]){
+  if(layer.type==='custom')continue;
+  const is3DBuilding=layer.type==='fill-extrusion'||/building.*3d|3d.*building/i.test(layer.id);
+  const visible=is3DBuilding?sourceBuildingsToggle.checked:sourceFloorToggle.checked;
+  libertyMap.setLayoutProperty(layer.id,'visibility',visible?'visible':'none');
+ }
+}
+sourceFloorToggle.addEventListener('change',applyLibertyVisibility);
+sourceBuildingsToggle.addEventListener('change',applyLibertyVisibility);
 function layerControl(id,label,file,kind){const l=document.createElement('label');l.className='tile';const cb=document.createElement('input');cb.type='checkbox';cb.checked=false;cb.dataset.layer=id;const s=document.createElement('span');s.className='name';s.textContent=label;const st=document.createElement('span');st.className='state';st.dataset.layerstate=id;st.textContent=id==='buildings'?'Off':'Loading';l.append(cb,s,st);layerToggles.append(l);cb.addEventListener('change',()=>{const o=dataLayers.get(id);if(id==='buildings'){const master=document.getElementById('sourceBuildingsToggle');if(master)master.checked=cb.checked}if(!cb.checked){if(o)o.visible=false;if(id==='buildings'&&!o)st.textContent='Off';return}if(o){o.visible=id==='buildings'||sourceFloorEnabled;return}loadDataLayer(id,label,file,kind,false)})}
 function featureLabel(p){return p.name||p['name:en']||p['addr:housenumber']||p.ref||p['addr:street']||p.operator||p.highway||p.amenity||p.waterway||p.natural||p.landuse||p.railway||p.public_transport||p.bridge||p.tunnel||''}
 const KOBRA_PHARMACY=[35.940358,31.997579];
@@ -233,7 +243,7 @@ const glbCustomLayer={id:'tabarbour-glb-scene',type:'custom',renderingMode:'3d',
 };
 libertyMap.on('error',e=>{const message=e&&e.error&&e.error.message?e.error.message:'Map/style/tile loading error';setStatus('OpenFreeMap error: '+message,true);console.error('Tabarbour map error',e)});
 libertyMap.on('load',()=>{try{libertyMap.addLayer(glbCustomLayer);setStatus('OpenFreeMap Liberty loaded; initializing shared GLB scene…')}catch(e){setStatus('Could not attach GLB scene: '+(e.message||e),true);console.error(e)}});
-libertyMap.on('style.load',()=>{sourceFloorToggle.checked=true});
+libertyMap.on('style.load',()=>{applyLibertyVisibility();});
 
 function animate(){requestAnimationFrame(animate);}animate();init();
 </script>
