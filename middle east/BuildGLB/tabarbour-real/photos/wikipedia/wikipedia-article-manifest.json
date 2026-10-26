@@ -396,7 +396,8 @@
       "note": "Geographic proximity does not prove this image depicts a particular building.",
       "matched_buildings": [],
       "building_link_status": "unmatched_no_verified_building_identity",
-      "image_status": "thumbnail_download_failed"
+      "image_status": "thumbnail_download_failed",
+      "image_error": "<HTTPError 429: 'Too many requests (f061ab2)'>"
     },
     {
       "source": "Wikipedia",
