@@ -3,7 +3,7 @@
 No API key/token. Packages tiles into MBTiles to avoid thousands of tiny repository files.
 Tiles are source evidence/basemap inputs, not building facade photography.
 """
-import datetime, json, math, os, pathlib, sqlite3, time, urllib.error, urllib.parse, urllib.request
+import datetime, json, math, os, pathlib, sqlite3, subprocess, time, urllib.error, urllib.parse, urllib.request
 
 ROOT = pathlib.Path(os.environ.get("GITHUB_WORKSPACE", ".")).resolve()
 OUT = ROOT / "middle east/BuildGLB/tabarbour-real/source"
@@ -33,6 +33,33 @@ def mbtiles(path, name, fmt, attribution):
     meta={"name":name,"type":"baselayer","version":"1","description":"Tabarbour, Amman regional extract","format":fmt,"bounds":",".join(map(str,BOUNDS)),"attribution":attribution}
     for k,v in meta.items(): db.execute("INSERT OR REPLACE INTO metadata(name,value) VALUES(?,?)",(k,v))
     return db
+def checkpoint(paths, message):
+    """Commit a durable MBTiles/report checkpoint to main while the workflow is still running."""
+    root=ROOT
+    try:
+        subprocess.run(["git","add","--",*[str(p.relative_to(root)) for p in paths]],cwd=root,check=True)
+        if subprocess.run(["git","diff","--cached","--quiet"],cwd=root).returncode==0:
+            return True
+        subprocess.run(["git","-c","user.name=github-actions[bot]","-c","user.email=41898282+github-actions[bot]@users.noreply.github.com",
+                       "commit","-m",message],cwd=root,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+        for attempt in range(1,6):
+            fetch=subprocess.run(["git","fetch","origin","main"],cwd=root,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+            if fetch.returncode:
+                time.sleep(attempt); continue
+            rb=subprocess.run(["git","rebase","origin/main"],cwd=root,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+            if rb.returncode:
+                subprocess.run(["git","rebase","--abort"],cwd=root,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+                time.sleep(attempt); continue
+            push=subprocess.run(["git","push","origin","HEAD:main"],cwd=root,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+            if push.returncode==0:
+                print("SOURCE_CHECKPOINT_PUSHED",message,flush=True); return True
+            time.sleep(attempt)
+        print("SOURCE_CHECKPOINT_PUSH_FAILED",message,flush=True)
+        return False
+    except Exception as e:
+        print("SOURCE_CHECKPOINT_ERROR",message,repr(e),flush=True)
+        return False
+
 def run_tiles(label, path, url_fn, zooms, fmt, attribution, max_tiles=None):
     db=mbtiles(path,label,fmt,attribution); total=ok=0; errors=[]
     try:
@@ -52,10 +79,13 @@ def run_tiles(label, path, url_fn, zooms, fmt, attribution, max_tiles=None):
                 db.commit()
                 write_report(label,path,total,ok=i-len(errors),errors=errors,complete=False)
                 print(label,"checkpoint",i,"/",total,"failed",len(errors),flush=True)
+                if i % 250 == 0:
+                    checkpoint([path, OUT/"regional-source-import-report.json"],"Checkpoint "+label+" tile batch "+str(i))
         db.commit()
     finally: db.close()
     result={"status":"complete_with_gaps" if errors else "complete","tiles_expected":total,"tiles_saved":total-len(errors),"errors":errors[:100],"error_count":len(errors),"file":str(path.relative_to(ROOT)),"bytes":path.stat().st_size if path.exists() else 0}
     write_report(label,path,total,ok=total-len(errors),errors=errors,complete=True,extra=result)
+    checkpoint([path, OUT/"regional-source-import-report.json"],"Save completed "+label+" tile database")
     return result
 def write_report(label,path,total,ok,errors,complete,extra=None):
     p=OUT/"regional-source-import-report.json"
