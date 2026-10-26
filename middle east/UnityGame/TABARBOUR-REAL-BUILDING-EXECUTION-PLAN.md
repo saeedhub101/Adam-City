@@ -63,7 +63,10 @@ Do not report success merely because Blender or a workflow exits with status 0. 
 6. Validate visually and technically, update the evidence manifest, and correct failures.
 7. Expand to the rest of Tabarbour only after the pilot passes; expand to other neighborhoods only after Tabarbour is accepted.
 
-## Current known blocker
+## Current known blockers found during execution
+
+- The existing script `middle east/BuildGLB/amman/realistic/texture_two_buildings.py` points at `amman_3590_3200.glb`. The Tabarbour start coordinate `35.940358, 31.997579` falls in tile `amman_3594_3199.glb` under the repository's 0.01-degree tiling scheme. The old script therefore targets a different tile and must not be used to select Tabarbour buildings.
+- A Wikimedia photo tagged as Tabarbour was opened and visually inspected, then rejected: it is a broad roadside scene, the target building cannot be identified, and it lacks facade detail. The rejection is recorded in `middle east/UnityGame/BuildData/TABARBOUR-PHOTO-REVIEWS.json`.
 
 The existing `middle east/BuildGLB/amman/realistic/texture_two_buildings.py` script deliberately stops rather than applying its generated procedural limestone pattern and misrepresenting it as exact photographic realism. Do not remove that safety stop unless the replacement pipeline uses approved evidence and verifies the actual exported GLB. Existing GLBs are geometry assets, not proof of photogrammetric capture.
 
