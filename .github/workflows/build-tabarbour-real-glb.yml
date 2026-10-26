@@ -133,25 +133,6 @@ jobs:
           set -euo pipefail
           python3 "middle east/UnityGame/tools/import_tabarbour_regional_sources.py"
 
-      - name: Download Copernicus GLO-30 DEM and generate terrain GLB
-        shell: bash
-        run: |
-          set -euo pipefail
-          root="middle east/BuildGLB/tabarbour-real/source"
-          mkdir -p "$root/dem"
-          prefix="s3://copernicus-dem-30m/Copernicus_DSM_COG_10_N31_00_E035_00_DEM/"
-          aws s3 cp "$prefix" "$root/dem/" --recursive --no-sign-request --region eu-central-1
-          dem=$(find "$root/dem" -type f -iname '*.tif' -size +1M | head -n 1)
-          test -n "$dem"
-          gdalinfo "$dem" > "$root/dem/dem-gdalinfo.txt"
-          gdal_translate -q -of XYZ -outsize 240 240 "$dem" "$RUNNER_TEMP/tabarbour-dem.xyz"
-          blender --background --python-exit-code 1 \
-            --python "middle east/UnityGame/tools/build_tabarbour_dem_terrain.py" -- \
-            --input "$RUNNER_TEMP/tabarbour-dem.xyz" \
-            --out "$root/dem/tabarbour-terrain-dem.glb" \
-            --west 35.90 --east 35.99 --south 31.96 --north 32.04
-          test -s "$root/dem/tabarbour-terrain-dem.glb"
-
       - name: Persist clipped OSM source and classified layers during the run
         shell: bash
         run: |
@@ -189,6 +170,45 @@ jobs:
           done
           echo "::error::Could not persist Tabarbour source checkpoint"
           exit 1
+
+      - name: Download Copernicus GLO-30 DEM and generate terrain GLB
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="middle east/BuildGLB/tabarbour-real/source"
+          mkdir -p "$root/dem"
+          prefix="s3://copernicus-dem-30m/Copernicus_DSM_COG_10_N31_00_E035_00_DEM/"
+          aws s3 cp "$prefix" "$root/dem/" --recursive --no-sign-request --region eu-central-1
+          dem=$(find "$root/dem" -type f -iname '*.tif' -size +1M | head -n 1)
+          test -n "$dem"
+          gdalinfo "$dem" > "$root/dem/dem-gdalinfo.txt"
+          gdal_translate -q -of XYZ -outsize 240 240 "$dem" "$RUNNER_TEMP/tabarbour-dem.xyz"
+          blender --background --python-exit-code 1 \
+            --python "middle east/UnityGame/tools/build_tabarbour_dem_terrain.py" -- \
+            --input "$RUNNER_TEMP/tabarbour-dem.xyz" \
+            --out "$root/dem/tabarbour-terrain-dem.glb" \
+            --west 35.90 --east 35.99 --south 31.96 --north 32.04
+          test -s "$root/dem/tabarbour-terrain-dem.glb"
+
+      - name: Persist DEM and terrain outputs immediately
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          root="middle east/BuildGLB/tabarbour-real/source"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "$root/dem" "$root/regional-source-import-report.json"
+          if git diff --cached --quiet; then echo "No new DEM artifacts to checkpoint."; exit 0; fi
+          git commit -m "Checkpoint Tabarbour Copernicus DEM terrain"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main || { sleep "$attempt"; continue; }
+            git rebase origin/main || { git rebase --abort; sleep "$attempt"; continue; }
+            git push origin HEAD:main && exit 0
+            sleep "$attempt"
+          done
+          echo "::warning::DEM checkpoint push failed; final output may still be saved later."
+          exit 0
 
       - name: Discover and checkpoint freely licensed Wikimedia photo evidence
         shell: bash
