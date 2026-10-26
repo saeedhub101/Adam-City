@@ -10,7 +10,7 @@
 .panel{position:absolute;z-index:5;top:10px;right:10px;width:min(300px,calc(100vw - 20px));height:auto;max-height:72dvh;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#67d5c2 #172631;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:0 8px 26px #0005;backdrop-filter:blur(12px)}
 .panel::-webkit-scrollbar{width:7px}.panel::-webkit-scrollbar-track{background:#172631;border-radius:8px}.panel::-webkit-scrollbar-thumb{background:#527c83;border-radius:8px}.panel::-webkit-scrollbar-thumb:hover{background:#67d5c2}
 .panel .status{position:sticky;bottom:-12px;background:var(--panel);padding-bottom:8px}
-h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(--muted);margin-bottom:10px}.group{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}.group-title{font-size:12px;color:var(--accent);font-weight:700;margin-bottom:5px}.row{display:flex;align-items:flex-start;gap:8px;margin:7px 0;font-size:12px;line-height:1.4}input{accent-color:var(--accent);width:16px;height:16px;flex:0 0 auto;margin-top:1px}.status{font-size:10px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere;margin-top:9px;border-top:1px solid var(--line);padding-top:8px}#error{display:none;color:#ffdadd;background:#542c31;padding:8px;border-radius:7px;font-size:11px;margin-top:8px;direction:ltr;overflow-wrap:anywhere}.attribution{position:absolute;bottom:8px;left:8px;z-index:2;background:#101a23df;padding:5px 8px;border-radius:6px;font-size:10px;direction:ltr}
+h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(--muted);margin-bottom:10px}.group{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}.group-title{font-size:12px;color:var(--accent);font-weight:700;margin-bottom:5px}.axis-controls{display:grid;grid-template-columns:1fr;gap:6px;margin:8px 0}.axis-btn{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:#20333f;color:var(--text);font:inherit;font-size:12px;text-align:right;cursor:pointer}.axis-btn[aria-pressed="true"]{background:#15584f;border-color:var(--accent);color:#fff}.row{display:flex;align-items:flex-start;gap:8px;margin:7px 0;font-size:12px;line-height:1.4}input{accent-color:var(--accent);width:16px;height:16px;flex:0 0 auto;margin-top:1px}.status{font-size:10px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere;margin-top:9px;border-top:1px solid var(--line);padding-top:8px}#error{display:none;color:#ffdadd;background:#542c31;padding:8px;border-radius:7px;font-size:11px;margin-top:8px;direction:ltr;overflow-wrap:anywhere}.attribution{position:absolute;bottom:8px;left:8px;z-index:2;background:#101a23df;padding:5px 8px;border-radius:6px;font-size:10px;direction:ltr}
 @media(max-width:520px){.panel{top:6px;right:6px;width:min(270px,calc(100vw - 12px));max-height:55dvh;padding:9px}h1{font-size:14px}.row{font-size:11px;margin:5px 0}}
 </style></head>
 <body>
@@ -24,7 +24,7 @@ h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(-
 </div>
 <button id="panelToggle" type="button" aria-expanded="true" aria-controls="panelContents" style="display:block;width:100%;margin:8px 0;padding:5px 10px;border:1px solid var(--line);border-radius:7px;background:#20333f;color:var(--text);font-size:16px;font-weight:700;cursor:pointer">−</button>
 <div id="panelContents">
-<div class="group"><div class="group-title">ملفات GLB — طبربور</div><label class="row"><input type="checkbox" id="flipGlb" checked> عرض المباني مقلوبة داخل الأرض (تجربة)</label><div id="glb-files"></div></div>
+<div class="group"><div class="group-title">تصحيح اتجاه ملفات GLB</div><div class="axis-controls"><button type="button" class="axis-btn" id="flipNorthSouth" aria-pressed="false">↕ عكس الشمال والجنوب</button><button type="button" class="axis-btn" id="flipEastWest" aria-pressed="false">↔ عكس الشرق والغرب</button><button type="button" class="axis-btn" id="flipUpsideDown" aria-pressed="false">↻ قلب المباني رأسًا على عقب</button></div><div class="sub">يمكن تشغيل كل خيار أو إيقافه بشكل مستقل.</div></div><div class="group"><div class="group-title">ملفات GLB — طبربور</div><div id="glb-files"></div></div>
 <div class="status" id="status">جارٍ تحميل خريطة طبربور وملفات GLB…</div><div id="error"></div>
 </div>
 </section>
@@ -86,9 +86,12 @@ import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/
 import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.0/meshopt_decoder.module.js';
 (async function(){
  const status=document.getElementById('status'),errorBox=document.getElementById('error'),container=document.getElementById('glb-files');
- const flipGlb=document.getElementById('flipGlb');
  const loadedModels=[];
- flipGlb.addEventListener('change',()=>{for(const entry of loadedModels){entry.model.rotation.x=flipGlb.checked?-Math.PI/2:0;entry.map.triggerRepaint();}});
+ const axisState={northSouth:false,eastWest:false,upsideDown:false};
+ const axisButtons={northSouth:document.getElementById('flipNorthSouth'),eastWest:document.getElementById('flipEastWest'),upsideDown:document.getElementById('flipUpsideDown')};
+ function applyAxisTransforms(model){model.rotation.set(0,0,0);model.scale.set(axisState.eastWest?-1:1,axisState.northSouth?-1:1,axisState.upsideDown?-1:1);}
+ for(const [key,button] of Object.entries(axisButtons)){button.addEventListener('click',()=>{axisState[key]=!axisState[key];button.setAttribute('aria-pressed',String(axisState[key]));applyAllAxisTransforms();});}
+ function applyAllAxisTransforms(){for(const entry of loadedModels){applyAxisTransforms(entry.model);entry.map.triggerRepaint();}}
  const base='middle%20east/BuildGLB/tabarbour-real/glb/';
  try{
   const response=await fetch(new URL(base+'manifest.json',location.href));if(!response.ok)throw new Error('Manifest HTTP '+response.status);
@@ -114,7 +117,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
      camera=new THREE.Camera();scene=new THREE.Scene();scene.add(new THREE.AmbientLight(0xffffff,2.0));
      const light=new THREE.DirectionalLight(0xffffff,2.0);light.position.set(0,-70,100).normalize();scene.add(light);
      const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
-     loader.load(modelUrl,gltf=>{model=gltf.scene;model.rotation.x=flipGlb.checked?-Math.PI/2:0;loadedModels.push({model,map:mapInstance});model.visible=!!toggle.checked;scene.add(model);ready=true;loading=false;status.textContent='تم تحميل '+tile.file+' — القلب الرأسي '+(flipGlb.checked?'مفعّل':'متوقف');mapInstance.triggerRepaint()},undefined,err=>{loading=false;errorBox.style.display='block';errorBox.textContent='تعذر تحميل '+tile.file+': '+(err?.message||err)});
+     loader.load(modelUrl,gltf=>{model=gltf.scene;applyAxisTransforms(model);loadedModels.push({model,map:mapInstance});model.visible=!!toggle.checked;scene.add(model);ready=true;loading=false;status.textContent='تم تحميل '+tile.file+' — يمكنك تعديل اتجاه المحاور من الأزرار أعلاه.';mapInstance.triggerRepaint()},undefined,err=>{loading=false;errorBox.style.display='block';errorBox.textContent='تعذر تحميل '+tile.file+': '+(err?.message||err)});
     },
     render(gl,args){
      if(!renderer||!model||!model.visible)return;
