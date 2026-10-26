@@ -13,7 +13,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]  # repository/middle east
 PHOTOS = ROOT / "landmark-photos.json"
-BUILDINGS = ROOT / "Jordan" / "layers" / "building_details.geojson.gz"
+BUILDING_SOURCES = [
+    ("Jordan", ROOT / "Jordan" / "layers" / "building_details.geojson.gz"),
+    ("Palestine", ROOT / "Palestine" / "layers" / "building_details.geojson.gz"),
+]
 OUT = ROOT / "UnityGame" / "BuildData" / "photo-building-match-candidates.json"
 START = (35.940358, 31.997579)  # Tabarbour, lon/lat
 PHOTO_SEARCH_RADIUS_M = 150.0
@@ -65,15 +68,18 @@ def representative_point(geometry):
     return sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts)
 
 
-def tile_path(lon, lat):
+def tile_path(area, lon, lat):
+    if str(area).casefold() != "amman":
+        return None
     x, y = math.floor(lon * 100), math.floor(lat * 100)
     return f"BuildGLB/amman/amman_{x}_{y}.glb"
 
 
 def main():
-    if not PHOTOS.exists() or not BUILDINGS.exists():
+    missing = [str(path) for _, path in BUILDING_SOURCES if not path.exists()]
+    if not PHOTOS.exists() or missing:
         raise FileNotFoundError(
-            f"Required repository-local inputs missing: {PHOTOS} and/or {BUILDINGS}"
+            f"Required repository-local inputs missing: {PHOTOS}; building layers missing: {missing}"
         )
 
     with PHOTOS.open(encoding="utf-8") as f:
@@ -96,7 +102,7 @@ def main():
             "lon": lon,
             "lat": lat,
             "distance_from_tabarbour_m": round(haversine_m(START[0], START[1], lon, lat), 1),
-            "nearby_glb_tile": tile_path(lon, lat),
+            "nearby_glb_tile": tile_path(props.get("area", ""), lon, lat),
             "candidates": [],
             "status": "candidate_only_no_camera_heading_or_visual_identity_check",
         })
@@ -105,25 +111,27 @@ def main():
     cell_deg = 0.002
     grid = {}
     building_count = 0
-    with gzip.open(BUILDINGS, "rt", encoding="utf-8") as f:
-        data = json.load(f)
-    for feature in data.get("features", []):
-        geometry = feature.get("geometry")
-        point = representative_point(geometry)
-        if not point:
-            continue
-        lon, lat = point
-        props = feature.get("properties") or {}
-        item = {
-            "id": str(feature.get("id", props.get("@id", props.get("osm_id", "")))),
-            "name": str(props.get("name") or props.get("name:en") or ""),
-            "building": str(props.get("building", "")),
-            "lon": lon,
-            "lat": lat,
-        }
-        key = (math.floor(lon / cell_deg), math.floor(lat / cell_deg))
-        grid.setdefault(key, []).append(item)
-        building_count += 1
+    for region, source_path in BUILDING_SOURCES:
+        with gzip.open(source_path, "rt", encoding="utf-8") as f:
+            data = json.load(f)
+        for feature in data.get("features", []):
+            geometry = feature.get("geometry")
+            point = representative_point(geometry)
+            if not point:
+                continue
+            lon, lat = point
+            props = feature.get("properties") or {}
+            item = {
+                "region": region,
+                "id": str(feature.get("id", props.get("@id", props.get("osm_id", "")))),
+                "name": str(props.get("name") or props.get("name:en") or ""),
+                "building": str(props.get("building", "")),
+                "lon": lon,
+                "lat": lat,
+            }
+            key = (math.floor(lon / cell_deg), math.floor(lat / cell_deg))
+            grid.setdefault(key, []).append(item)
+            building_count += 1
 
     for photo in photos:
         gx, gy = math.floor(photo["lon"] / cell_deg), math.floor(photo["lat"] / cell_deg)
