@@ -176,7 +176,7 @@ async function init(){
  ts.forEach(addTile);setStatus('Manifest loaded. Target tile selected: tabarbour_1797_1599.glb');const target=ts.find(t=>t.file==='tabarbour_1797_1599.glb');if(target)loadFile(target).catch(()=>{});
  }catch(e){setStatus('Manifest unavailable: '+e.message+'. You can still use the page after checking repository paths.',true)}
 }
-function frameLoaded(){const box=new THREE.Box3();for(const obj of loaded.values())box.expandByObject(obj);if(box.isEmpty())return;const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());const lon=35.945+center.x/(111320*Math.cos(32*Math.PI/180));const lat=32+center.z/111320;const span=Math.max(size.x,size.z,100);libertyMap.flyTo({center:[lon,lat],zoom:Math.max(12,Math.min(17,Math.log2(40000/span)+12)),pitch:60,duration:900});}
+function frameLoaded(){const box=new THREE.Box3();for(const obj of loaded.values())box.expandByObject(obj);if(box.isEmpty())return;const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());const lon=35.945+center.x/(111319.490793*Math.cos(32*Math.PI/180));const lat=32+center.z/111319.490793;const span=Math.max(size.x,size.z,100);libertyMap.flyTo({center:[lon,lat],zoom:Math.max(12,Math.min(17,Math.log2(40000/span)+12)),pitch:60,duration:900});}
 const pending=new Map();
 function disposeObject(obj){obj.traverse(o=>{if(o.isMesh){o.geometry?.dispose();if(o.material){for(const m of (Array.isArray(o.material)?o.material:[o.material]))m.dispose()}}})}
 function hideTile(file){const obj=loaded.get(file);if(obj){scene.remove(obj);disposeObject(obj);loaded.delete(file)}}
@@ -234,15 +234,22 @@ const glbCustomLayer={id:'tabarbour-glb-scene',type:'custom',renderingMode:'3d',
    const s=mc.meterInMercatorCoordinateUnits();
    // Convert local GLB axes (X=east, Y=height, Z=north) into MapLibre Mercator axes (X=east, Y=south, Z=up).
    // Rotate local Y-up into world Z-up, then uniformly scale meters into Mercator units.
-   const model=new THREE.Matrix4().makeTranslation(mc.x,mc.y,0)
+   // GLB tiles use local equirectangular meters: X=east, Z=north, Y=height,
+   // with the common origin recorded in the GLB manifest (35.945, 32.0).
+   // MapLibre's matrix already contains the live camera/view transform; apply the
+   // fixed geographic model transform to it on every frame, never to the camera itself.
+   const model=new THREE.Matrix4()
+     .makeTranslation(mc.x,mc.y,0)
      .multiply(new THREE.Matrix4().makeRotationX(Math.PI/2))
      .multiply(new THREE.Matrix4().makeScale(s,s,s));
-   camera.projectionMatrix.copy(new THREE.Matrix4().fromArray(matrix).multiply(model));
+   const viewProjection=new THREE.Matrix4().fromArray(matrix);
+   camera.projectionMatrix.copy(viewProjection.multiply(model));
    camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
-   camera.matrixWorld.identity();camera.matrixWorldInverse.identity();
+   camera.matrixWorld.identity();
+   camera.matrixWorldInverse.identity();
+   camera.near=0.1;camera.far=1e9;
+   camera.updateMatrixWorld(true);
    renderer.resetState();
-   // Clear the basemap depth buffer so the GLB meshes are not rejected by terrain/building depth values.
-   gl.clear(gl.DEPTH_BUFFER_BIT);
    renderer.render(scene,camera);
    renderer.resetState();
   }catch(e){setStatus('3D scene render error: '+(e.message||e),true);console.error('Tabarbour 3D render error',e)}
