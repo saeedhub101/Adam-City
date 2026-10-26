@@ -74,7 +74,6 @@ jobs:
             --out "middle east/BuildGLB/jordan-50" \
             --west 34.9 --east 39.4 --south 29.1 --north 33.4 \
             --tile 0.75 --city Jordan --prefix jordan \
-            # Checkpoint each completed GLB + manifest directly to main; reuse valid files on resume.
             --repo_commit true --force false \
             --infra_path /tmp/jordan-infrastructure.geojson.gz
 
