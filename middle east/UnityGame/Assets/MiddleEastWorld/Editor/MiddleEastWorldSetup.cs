@@ -45,14 +45,15 @@ public static class MiddleEastWorldSetup
         RenderSettings.fogStartDistance = 180f;
         RenderSettings.fogEndDistance = 1100f;
 
+        // A collision-only safety floor keeps the player controllable while no verified
+        // local orthophoto/terrain surface is available. It is invisible and is NOT presented
+        // as terrain or a photorealistic world surface.
         var ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        ground.name = "Tabarbour starter ground — temporary until existing terrain mesh is connected";
+        ground.name = "Collision safety floor — invisible, not world terrain";
         ground.transform.position = new Vector3(0,-.12f,0);
         ground.transform.localScale = new Vector3(2000,1,2000);
-        var groundMat = new Material(Shader.Find("Standard"));
-        groundMat.color = new Color(.55f,.49f,.38f);
-        groundMat.SetFloat("_Glossiness",.05f);
-        ground.GetComponent<Renderer>().sharedMaterial = groundMat;
+        var groundRenderer = ground.GetComponent<Renderer>();
+        if (groundRenderer) groundRenderer.enabled = false;
 
         var player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
         player.name = "Player";
@@ -80,7 +81,6 @@ public static class MiddleEastWorldSetup
 
         var world = new GameObject("Open World — Jordan / Palestine");
         var streamer = world.AddComponent<OpenWorldStreamer>();
-        world.AddComponent<ExistingAmmanGlbTiles>();
         streamer.player=player.transform;
         streamer.region="Jordan";
         streamer.originLon=35.940358;
@@ -89,12 +89,11 @@ public static class MiddleEastWorldSetup
         streamer.tileDegrees=0.02f;
         streamer.streetLabels=true;
 
-        ExistingAmmanGlbInstaller.InstallNearbyTiles();
         const string starterScenePath = "Assets/MiddleEastWorld/Scenes/MiddleEastOpenWorld.unity";
         EditorSceneManager.SaveScene(scene, starterScenePath);
         EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(starterScenePath, true) };
         AssetDatabase.SaveAssets();
-        Debug.Log("Tabarbour starter scene created at 31.997579, 35.940358. Install the already-generated BuildData into StreamingAssets before running; no new geographic data is downloaded.");
+        Debug.Log("Tabarbour controller scene created at 31.997579, 35.940358. No generated OSM building meshes or unverified GLB tiles are displayed. Connect only verified, repository-local photogrammetry assets and terrain.");
     }
 
     static void EnsureFolder(string path)
