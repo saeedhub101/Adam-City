@@ -89,7 +89,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
  const loadedModels=[];
  const axisState={northSouth:false,eastWest:false,upsideDown:false};
  const axisButtons={northSouth:document.getElementById('flipNorthSouth'),eastWest:document.getElementById('flipEastWest'),upsideDown:document.getElementById('flipUpsideDown')};
- function applyAxisTransforms(model){model.rotation.set(0,0,0);model.scale.set(axisState.eastWest?-1:1,axisState.northSouth?-1:1,axisState.upsideDown?-1:1);}
+ function applyAxisTransforms(model){model.rotation.set(0,0,0);model.scale.set(axisState.eastWest?-1:1,axisState.upsideDown?-1:1,axisState.northSouth?-1:1);}
  for(const [key,button] of Object.entries(axisButtons)){button.addEventListener('click',()=>{axisState[key]=!axisState[key];button.setAttribute('aria-pressed',String(axisState[key]));applyAllAxisTransforms();});}
  function applyAllAxisTransforms(){for(const entry of loadedModels){applyAxisTransforms(entry.model);entry.map.triggerRepaint();}}
  const base='middle%20east/BuildGLB/tabarbour-real/glb/';
