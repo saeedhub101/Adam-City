@@ -123,9 +123,14 @@ jobs:
             "$RUNNER_TEMP/source/tabarbour-source.geojson" "$RUNNER_TEMP/fresh-jordan-layers"
 
       - name: Prepare fresh source layers for GLB builder
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
+          if [ ! -d "$RUNNER_TEMP/fresh-jordan-layers" ]; then
+            echo "::warning::No fresh OSM thematic layers; continuing with other source imports."
+            exit 1
+          fi
           python3 "middle east/UnityGame/tools/crop_tabarbour_layers.py" \
             "$RUNNER_TEMP/fresh-jordan-layers" "$RUNNER_TEMP/tabarbour-layers"
 
@@ -159,15 +164,16 @@ jobs:
           fi
 
       - name: Persist clipped OSM source and classified layers during the run
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
           root="middle east/BuildGLB/tabarbour-real/source"
           mkdir -p "$root/layers"
-          cp "$RUNNER_TEMP/source/tabarbour.osm.pbf" "$root/tabarbour.osm.pbf"
-          cp "$RUNNER_TEMP/fresh-jordan-layers/"*.geojson.gz "$root/layers/"
-          cp "$RUNNER_TEMP/fresh-jordan-layers/source-import-report.json" "$root/layers/"
-          cp "$RUNNER_TEMP/tabarbour-infrastructure.geojson.gz" "$root/"
+          [ ! -s "$RUNNER_TEMP/source/tabarbour.osm.pbf" ] || cp "$RUNNER_TEMP/source/tabarbour.osm.pbf" "$root/tabarbour.osm.pbf"
+          compgen -G "$RUNNER_TEMP/fresh-jordan-layers/*.geojson.gz" >/dev/null && cp "$RUNNER_TEMP/fresh-jordan-layers/"*.geojson.gz "$root/layers/" || true
+          [ ! -s "$RUNNER_TEMP/fresh-jordan-layers/source-import-report.json" ] || cp "$RUNNER_TEMP/fresh-jordan-layers/source-import-report.json" "$root/layers/"
+          [ ! -s "$RUNNER_TEMP/tabarbour-infrastructure.geojson.gz" ] || cp "$RUNNER_TEMP/tabarbour-infrastructure.geojson.gz" "$root/"
           if [ -s "$root/openfreemap-tabarbour-z12-17.mbtiles" ]; then echo "OPENFREEMAP_MBtiles_PRESENT"; fi
           if [ -s "$root/nasa-gibs-sentinel2-tabarbour.mbtiles" ]; then echo "NASA_GIBS_SENTINEL2_MBtiles_PRESENT"; fi
           cat > "$root/source-manifest.json" <<'JSON'
