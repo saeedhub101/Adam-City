@@ -8,6 +8,9 @@
   "next_action": "Inspect unmatched_source_samples to determine the actual exported OSM ID schema; do not generate facade textures until stable identity joins work.",
   "counts": {
     "manifest_tiles": 1477,
+    "manifest_glb_files_present": 1477,
+    "glb_files_with_valid_header": 1477,
+    "glb_files_with_named_nodes": 1477,
     "existing_glb_files_scanned": 0,
     "exported_building_nodes": 0,
     "matched_to_osm_source": 0,
@@ -21,5 +24,103 @@
       "Point": 2299
     }
   },
-  "unmatched_source_samples": []
+  "unmatched_source_samples": [],
+  "glb_file_samples": [
+    {
+      "file": "amman_3572_3170.glb",
+      "exists": true,
+      "bytes": 57804,
+      "header_magic": "glTF",
+      "node_names_count": 19,
+      "first_node_names": [
+        "Building_",
+        "Roof_",
+        "Facade windows ",
+        "Roof access hut ",
+        "Building_.001",
+        "Roof_.001",
+        "Facade windows .001",
+        "Roof access hut .001"
+      ]
+    },
+    {
+      "file": "amman_3572_3171.glb",
+      "exists": true,
+      "bytes": 62128,
+      "header_magic": "glTF",
+      "node_names_count": 26,
+      "first_node_names": [
+        "Building_",
+        "Roof_",
+        "Facade windows ",
+        "Roof access hut ",
+        "Building_.001",
+        "Roof_.001",
+        "Facade windows .001",
+        "Roof access hut .001"
+      ]
+    },
+    {
+      "file": "amman_3572_3172.glb",
+      "exists": true,
+      "bytes": 9396,
+      "header_magic": "glTF",
+      "node_names_count": 4,
+      "first_node_names": [
+        "Road ",
+        "Road .001",
+        "Road .002",
+        "Road .003"
+      ]
+    },
+    {
+      "file": "amman_3572_3173.glb",
+      "exists": true,
+      "bytes": 2628,
+      "header_magic": "glTF",
+      "node_names_count": 1,
+      "first_node_names": [
+        "Road "
+      ]
+    },
+    {
+      "file": "amman_3572_3174.glb",
+      "exists": true,
+      "bytes": 25548,
+      "header_magic": "glTF",
+      "node_names_count": 8,
+      "first_node_names": [
+        "Road ",
+        "Road .001",
+        "Road .002",
+        "Road .003",
+        "Road .004",
+        "Road .005",
+        "Road .006",
+        "Road .007"
+      ]
+    }
+  ],
+  "glb_node_name_samples": [
+    "Building_",
+    "Roof_",
+    "Facade windows ",
+    "Roof access hut ",
+    "Building_.001",
+    "Roof_.001",
+    "Facade windows .001",
+    "Roof access hut .001",
+    "Building_.002",
+    "Roof_.002",
+    "Facade windows .002",
+    "Roof access hut .002",
+    "Building_.003",
+    "Roof_.003",
+    "Facade windows .003",
+    "Roof access hut .003",
+    "Road ",
+    "Road .001",
+    "Road .002",
+    "Building_"
+  ]
 }
