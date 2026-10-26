@@ -20,7 +20,7 @@ def main(src,dst):
   for f in out.values(): f.write('{"type":"FeatureCollection","features":[')
   first={k:True for k in TAGS}
   with src.open("rb") as inp:
-   for feature in ijson.items(inp,"features.item"):
+   for feature in ijson.items(inp,"features.item", use_float=True):
     p=feature.get("properties") or {}
     for name,match in TAGS.items():
      if match(p):
