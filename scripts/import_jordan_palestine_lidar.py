@@ -5,6 +5,7 @@ Do not crawl the entire global Open LiDAR S3 bucket: catalog records are not imp
 Only non-empty, signature-validated direct payloads count as completed assets.
 """
 import concurrent.futures, hashlib, json, os, re, subprocess, threading, time
+from datetime import date, timedelta
 from pathlib import Path
 from urllib.parse import urlparse
 import requests
@@ -165,13 +166,106 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=WORKERS) as pool:
         try: print("Download result: "+str(future.result()),flush=True)
         except Exception as e: print(f"Worker failed: {type(e).__name__}: {e}",flush=True)
 
+
+# Public OpenAltimetry fallback: actual sampled laser measurements, not CMR metadata.
+# Raw ATL03/ATL08 granule downloads above may require Earthdata authentication. The public
+# OpenAltimetry API can return sampled observation JSON without downloading the protected HDF5.
+def _walk_track_ids(obj):
+    found=set()
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            if str(key).casefold() in {"track","trackid","track_id","rgt","referencegroundtrack"}:
+                try:
+                    n=int(value)
+                    if 1 <= n <= 2000: found.add(n)
+                except (TypeError, ValueError):
+                    pass
+            found.update(_walk_track_ids(value))
+    elif isinstance(obj, list):
+        for value in obj: found.update(_walk_track_ids(value))
+    return found
+
+def _count_observations(obj):
+    if isinstance(obj, dict):
+        keys={str(k).casefold() for k in obj}
+        if ({"latitude","longitude","height"} <= keys or
+            {"lat","lon","height"} <= keys or
+            {"latitude","longitude","h"} <= keys or
+            {"lat","lon","h"} <= keys):
+            return 1
+        return sum(_count_observations(v) for v in obj.values())
+    if isinstance(obj, list):
+        return sum(_count_observations(v) for v in obj)
+    return 0
+
+oa_saved_this_run=0
+oa_observations_this_run=0
+oa_errors=0
+oa_start=date(2023,1,1)
+oa_end=date.today()
+for region,bbox in boxes.items():
+    west,south,east,north=[float(x) for x in bbox.split(",")]
+    d=oa_start
+    while d<=oa_end:
+        tracks_url="https://openaltimetry.earthdatacloud.nasa.gov/data/api/icesat2/getTracks"
+        try:
+            tr=S.get(tracks_url,params={"date":d.isoformat(),"minx":west,"miny":south,
+                "maxx":east,"maxy":north,"outputFormat":"json"},timeout=(15,45))
+            if tr.status_code!=200:
+                oa_errors+=1
+                d+=timedelta(days=14)
+                continue
+            track_payload=tr.json()
+            tracks=sorted(_walk_track_ids(track_payload))
+            # Limit per date to keep the public API respectful; date sampling still spans 2023 onward.
+            for track in tracks[:2]:
+                ident=aid(f"openaltimetry|{region}|{d.isoformat()}|{track}")
+                with lock:
+                    if ident in state["completed_assets"]: continue
+                params={"date":d.isoformat(),"minx":west,"miny":south,"maxx":east,"maxy":north,
+                        "trackId":track,"client":"portal","outputFormat":"json","sampling":"true"}
+                try:
+                    data_url="https://openaltimetry.earthdatacloud.nasa.gov/data/api/icesat2/atl03"
+                    response=S.get(data_url,params=params,timeout=(20,90))
+                    if response.status_code!=200 or not response.text.strip():
+                        oa_errors+=1
+                        continue
+                    payload=response.json()
+                    count=_count_observations(payload)
+                    if count<1:
+                        continue
+                    target=RAW/"openaltimetry"/region/f"{d.isoformat()}_track{track}.json"
+                    save_json(target,payload)
+                    size=target.stat().st_size
+                    with lock:
+                        state["completed_assets"][ident]={"url":response.url,"title":target.name,
+                            "source":"OpenAltimetry public ATL03 API","collection":"ATL03","region":region,
+                            "bytes":size,"validation":f"JSON parsed; observation records={count}",
+                            "stored":[{"file":str(target),"bytes":size}],
+                            "data_kind":"actual sampled spaceborne laser photon observations; not dense airborne city LiDAR"}
+                        oa_saved_this_run+=1
+                        oa_observations_this_run+=count
+                    if oa_saved_this_run%5==0:
+                        checkpoint("Checkpoint actual OpenAltimetry laser observations")
+                    print(f"SAVED ACTUAL LASER OBSERVATIONS: {region} {d.isoformat()} track={track} records={count}",flush=True)
+                except Exception as exc:
+                    oa_errors+=1
+                    print(f"OpenAltimetry data request failed {region} {d.isoformat()} track={track}: {exc}",flush=True)
+        except Exception as exc:
+            oa_errors+=1
+            print(f"OpenAltimetry track query failed {region} {d.isoformat()}: {exc}",flush=True)
+        d+=timedelta(days=14)
+if oa_saved_this_run:
+    checkpoint("Checkpoint actual OpenAltimetry laser observation batch")
+print(f"OpenAltimetry fallback complete: files={oa_saved_this_run}, observations={oa_observations_this_run}, api_errors={oa_errors}",flush=True)
+
 done=state["completed_assets"]; skipped=state["skipped_assets"]; errors=state["errors"]
 total_bytes=sum(int(x.get("bytes",0)) for x in done.values())
 lines=["# Jordan and Palestine — verified LiDAR / laser-data import","",
 "Storage target: middle east/LiDAR/downloads/.","","## Method","",
 "- Geographic NASA CMR searches only; no full global S3 catalog crawl.",
 f"- Up to {MAX_PAGES} pages per collection/region; {WORKERS} concurrent downloads.",
-"- Only direct HDF5, LAS/LAZ and ZIP payloads are accepted; signatures are validated.",
+"- Direct HDF5, LAS/LAZ and ZIP payloads are signature-validated. If NASA raw granules require authentication, the public OpenAltimetry API is queried for actual sampled ATL03 laser observations saved as local JSON.",
 "- Existing completed URLs are skipped and partial downloads resume with HTTP Range where supported.",
 "- Files over 80 MiB are split into chunks with a reassembly manifest.",
 "- Satellite laser footprints are not dense airborne city point clouds; metadata is not counted as data.","",
