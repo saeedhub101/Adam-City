@@ -90,7 +90,9 @@ public static class MiddleEastWorldSetup
         streamer.streetLabels=true;
 
         ExistingAmmanGlbInstaller.InstallNearbyTiles();
-        EditorSceneManager.SaveScene(scene, "Assets/MiddleEastWorld/Scenes/MiddleEastOpenWorld.unity");
+        const string starterScenePath = "Assets/MiddleEastWorld/Scenes/MiddleEastOpenWorld.unity";
+        EditorSceneManager.SaveScene(scene, starterScenePath);
+        EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(starterScenePath, true) };
         AssetDatabase.SaveAssets();
         Debug.Log("Tabarbour starter scene created at 31.997579, 35.940358. Install the already-generated BuildData into StreamingAssets before running; no new geographic data is downloaded.");
     }
