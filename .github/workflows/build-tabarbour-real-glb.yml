@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/build-tabarbour-real-glb.yml"
       - "middle east/UnityGame/tools/crop_tabarbour_layers.py"
+      - "middle east/UnityGame/tools/import_tabarbour_source_layers.py"
       - "middle east/UnityGame/tools/import_tabarbour_wikimedia_photos.py"
       - "middle east/UnityGame/tools/build_amman_glb.py"
       - "middle east/Jordan/layers/**"
@@ -65,12 +66,30 @@ jobs:
           fi
           find "middle east/BuildGLB/tabarbour-real/glb" -maxdepth 1 -type f -name 'tabarbour_*.glb' -printf 'EXISTING_GLB %f %s bytes\n' 2>/dev/null || true
 
-      - name: Stream existing Jordan layers down to Tabarbour
+      - name: Download fresh source data directly from Geofabrik
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/source"
+          curl --fail --location --retry 5 --retry-all-errors --connect-timeout 30 \
+            "https://download.geofabrik.de/asia/jordan-latest.osm.pbf" \
+            -o "$RUNNER_TEMP/source/jordan-latest.osm.pbf"
+          test -s "$RUNNER_TEMP/source/jordan-latest.osm.pbf"
+          sha256sum "$RUNNER_TEMP/source/jordan-latest.osm.pbf"
+          osmium extract -b 35.90,31.96,35.99,32.04 \
+            "$RUNNER_TEMP/source/jordan-latest.osm.pbf" \
+            -o "$RUNNER_TEMP/source/tabarbour.osm.pbf" --overwrite
+          osmium export "$RUNNER_TEMP/source/tabarbour.osm.pbf" \
+            --attributes=type,id -o "$RUNNER_TEMP/source/tabarbour-source.geojson" --overwrite
+          python3 "middle east/UnityGame/tools/import_tabarbour_source_layers.py" \
+            "$RUNNER_TEMP/source/tabarbour-source.geojson" "$RUNNER_TEMP/fresh-jordan-layers"
+
+      - name: Prepare fresh source layers for GLB builder
         shell: bash
         run: |
           set -euo pipefail
           python3 "middle east/UnityGame/tools/crop_tabarbour_layers.py" \
-            "middle east/Jordan/layers" "$RUNNER_TEMP/tabarbour-layers"
+            "$RUNNER_TEMP/fresh-jordan-layers" "$RUNNER_TEMP/tabarbour-layers"
 
       - name: Extract locally mapped transport, trees and infrastructure
         shell: bash
@@ -78,9 +97,9 @@ jobs:
           set -euo pipefail
           out="$RUNNER_TEMP/tabarbour-infrastructure.geojson"
           gz="$RUNNER_TEMP/tabarbour-infrastructure.geojson.gz"
-          pbf="middle east/Jordan/osm/jordan-latest.osm.pbf"
-          if [ -s "$pbf" ] && osmium extract -b 35.90,31.96,35.99,32.04 "$pbf" -o "$RUNNER_TEMP/tabarbour.osm.pbf" --overwrite; then
-            if osmium tags-filter "$RUNNER_TEMP/tabarbour.osm.pbf" -o "$RUNNER_TEMP/tabarbour-infra.osm.pbf" --overwrite \
+          pbf="$RUNNER_TEMP/source/tabarbour.osm.pbf"
+          if [ -s "$pbf" ]; then
+            if osmium tags-filter "$pbf" -o "$RUNNER_TEMP/tabarbour-infra.osm.pbf" --overwrite \
               nwr/railway nwr/waterway nwr/power nwr/public_transport \
               nwr/highway=traffic_signals nwr/highway=bus_stop nwr/highway=stop \
               nwr/amenity=bus_station nwr/amenity=parking nwr/traffic_sign \
@@ -133,7 +152,7 @@ jobs:
           out=root/"glb"
           files=sorted(out.glob("tabarbour_*.glb"))
           report={"area":"Tabarbour, Amman, Jordan","bounds":{"west":35.90,"east":35.99,"south":31.96,"north":32.04},
-                  "source_policy":"No paid service, no API key, no external runtime assets",
+                  "source_policy":"Fresh Geofabrik/OpenStreetMap source download at build time; no paid service, no API key, no external runtime assets",
                   "glb_count":len(files),"glbs":[],"errors":[]}
           if not (out/"manifest.json").is_file():
               report["errors"].append("manifest.json missing")
