@@ -135,7 +135,7 @@ function setStatus(s,bad=false){status.textContent=s;status.classList.toggle('er
 function fmt(n){return Number(n||0).toLocaleString()}
 function addTile(t,i){
  const label=document.createElement('label');label.className='tile';
- const cb=document.createElement('input');cb.type='checkbox';cb.checked=false;cb.dataset.file=t.file;
+ const cb=document.createElement('input');cb.type='checkbox';cb.checked=t.file==='tabarbour_1797_1599.glb';cb.dataset.file=t.file;
  const name=document.createElement('span');name.className='name';name.textContent=t.file.replace('.glb','');const small=document.createElement('small');small.textContent=fmt(t.buildings)+' buildings · '+(t.bytes/1048576).toFixed(1)+' MB';name.appendChild(small);
  const state=document.createElement('span');state.className='state';state.textContent='Not loaded';state.dataset.state=t.file;
  label.append(cb,name,state);tilesEl.appendChild(label);
@@ -149,7 +149,7 @@ async function init(){
  if(counts.buildings)document.getElementById('buildingCount').textContent=fmt(counts.buildings);
  if(counts.streets)document.getElementById('streetCount').textContent=fmt(counts.streets);
  document.getElementById('sizeCount').textContent='~'+Math.round(ts.reduce((a,t)=>a+(t.bytes||0),0)/1048576)+' MB';
- ts.forEach(addTile);setStatus('Manifest loaded. Check any tile to load it.');
+ ts.forEach(addTile);setStatus('Manifest loaded. Target tile selected: tabarbour_1797_1599.glb');const target=ts.find(t=>t.file==='tabarbour_1797_1599.glb');if(target)loadFile(target).catch(()=>{});
  }catch(e){setStatus('Manifest unavailable: '+e.message+'. You can still use the page after checking repository paths.',true)}
 }
 function frameLoaded(){const box=new THREE.Box3();for(const obj of loaded.values())box.expandByObject(obj);if(box.isEmpty())return;const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());controls.target.copy(center);const max=Math.max(size.x,size.y,size.z,10);camera.position.set(center.x+max*1.0,center.y+max*.75,center.z+max*1.1);camera.near=Math.max(.1,max/10000);camera.far=Math.max(100000,max*10);camera.updateProjectionMatrix();controls.update()}
