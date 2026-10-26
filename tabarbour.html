@@ -34,7 +34,7 @@ h1{font-size:20px;margin:0 0 4px}p{margin:6px 0;color:var(--muted);line-height:1
 <div class="actions"><button id="showAll">Check all tiles</button><button id="clearAll">Uncheck all</button><button id="resetView">Reset view</button></div>
 <p><b>Choose tiles</b> — check a tile to load it automatically; uncheck it to hide it. Large tiles may take time to download.</p>
 <div id="tiles"></div>
-<p>Data bounds: 35.90–35.99° E, 31.96–32.04° N. The original GLB orientation is preserved; shared local origin is 35.945° E, 32.000° N. Terrain elevation is only shown if it is present in the GLB; no separate DEM is fabricated.</p>
+<p>Data bounds: 35.90–35.99° E, 31.96–32.04° N. GLB axis conversion is applied for upright buildings; shared local origin is 35.945° E, 32.000° N. Terrain elevation is only shown if it is present in the GLB; no separate DEM is fabricated.</p>
 <p><a href="https://github.com/saeedhub101/Adam-City/tree/main/middle%20east/BuildGLB/tabarbour-real">Open source files in repository</a></p>
 </section>
 <button id="reopen" style="display:none;position:fixed;z-index:3;top:10px;left:10px;background:#101b25;color:white;border:1px solid #395061;border-radius:8px;padding:10px">Show controls</button>
@@ -52,9 +52,9 @@ const camera=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.1,100000);ca
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));renderer.setSize(innerWidth,innerHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;root.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xe6f5ff,0x766b57,2.0));
 const sun=new THREE.DirectionalLight(0xfff1d6,3.0);sun.position.set(-1800,3200,1200);scene.add(sun);
-const ground=new THREE.Mesh(new THREE.PlaneGeometry(12000,12000),new THREE.MeshStandardMaterial({color:0x9aab91,roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-3;scene.add(ground);
-const grid=new THREE.GridHelper(12000,60,0x526b72,0x73878a);grid.position.y=-2.5;scene.add(grid);
-const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,0,0);controls.enableDamping=true;controls.dampingFactor=.06;controls.maxDistance=15000;controls.minDistance=20;
+// One fixed, opaque ground surface; no floating grid that can look like a moving floor.
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(30000,30000),new THREE.MeshStandardMaterial({color:0x9aab91,roughness:1,side:THREE.FrontSide}));ground.rotation.x=-Math.PI/2;ground.position.y=-3;ground.renderOrder=0;scene.add(ground);
+const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,0,0);controls.enableDamping=true;controls.dampingFactor=.06;controls.maxDistance=15000;controls.minDistance=20;controls.minPolarAngle=0.06;controls.maxPolarAngle=Math.PI/2-0.025;controls.screenSpacePanning=false;
 const loader=new GLTFLoader(), loaded=new Map();let manifest=null;
 function setStatus(s,bad=false){status.textContent=s;status.classList.toggle('error',bad)}
 function fmt(n){return Number(n||0).toLocaleString()}
@@ -90,7 +90,8 @@ function loadFile(t){
   if(state)state.textContent='0%';
   loader.load(BASE+encodeURIComponent(t.file),gltf=>{
    const obj=gltf.scene;obj.name=t.file;
-   // Keep the GLB's authored orientation; rotating the whole model caused buildings to appear inverted.
+   // The source meshes were authored with Y as height in Blender; Blender's glTF axis conversion maps that height to -Z. Convert back to Three.js Y-up so buildings stand upright and north remains horizontal Z.
+   obj.rotation.x=Math.PI/2;
    obj.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=true;if(o.material){for(const m of (Array.isArray(o.material)?o.material:[o.material])){if(m.color&&m.color.getHex()===0xffffff)m.color.setHex(0xd6c8ad);m.needsUpdate=true}}}});
    pending.delete(t.file);
    const cb=[...tilesEl.querySelectorAll('input')].find(x=>x.dataset.file===t.file);
