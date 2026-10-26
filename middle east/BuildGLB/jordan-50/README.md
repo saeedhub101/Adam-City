@@ -16,6 +16,10 @@ OSM data does not supply measured facade photos, exact window positions, roof te
 
 The current repository inventory does not yet contain a Jordan-specific DEM or local orthophotos. Terrain elevation, satellite/orthophoto textures, and verified photogrammetric models are separate follow-up data-import tasks; this folder must not be described as a fully textured photogrammetric city until those assets are actually integrated.
 
+## Incremental persistence and resume (required)
+
+The build must save each completed GLB and update `manifest.json` to `main` during the build, not wait for the final validation/commit step. The exporter is invoked with `--repo_commit true --force false`: after each tile it commits and pushes that GLB plus the manifest, and a later run reuses valid existing GLBs instead of rebuilding them. If the run is cancelled, times out, or fails on a later tile, previously checkpointed files remain in the repository. Validation at the end is an additional check, not the first persistence point. Keep the output to at most 50 regional GLBs rather than creating thousands of tiny files.
+
 ## Validation
 
 The workflow must:
