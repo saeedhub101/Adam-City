@@ -245,11 +245,12 @@ const glbCustomLayer={id:'tabarbour-glb-scene',type:'custom',renderingMode:'3d',
    const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:Number(origin.longitude),lat:Number(origin.latitude)},0);
    const meters=anchor.meterInMercatorCoordinateUnits();
    const projectedMeters=meters*Math.cos(Number(origin.latitude)*Math.PI/180);
+   // GLB/glTF models are already Y-up. Do not rotate the model 90 degrees:
+   // that incorrectly tips the vertical building axis into the horizontal plane.
+   // Match test.html's proven geographic placement transform.
    const model=new THREE.Matrix4()
      .makeTranslation(anchor.x,anchor.y,anchor.z)
-     .multiply(new THREE.Matrix4().makeScale(projectedMeters,-projectedMeters,meters))
-     .multiply(new THREE.Matrix4().makeRotationX(Math.PI/2))
-     .multiply(new THREE.Matrix4().makeScale(-1,1,-1));
+     .multiply(new THREE.Matrix4().makeScale(projectedMeters,-projectedMeters,meters));
    const viewProjection=new THREE.Matrix4().fromArray(matrix);
    camera.projectionMatrix.copy(viewProjection.multiply(model));
    camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
