@@ -42,6 +42,23 @@ def glb_node_names(path):
 
 
 
+def source_building_id(feature):
+    """Return the stable OSM identity regardless of GeoJSON exporter conventions."""
+    props = feature.get("properties") or {}
+    value = feature.get("id")
+    if value in (None, ""):
+        for key in ("osm_id", "@id", "id", "building_id", "element_id"):
+            value = props.get(key)
+            if value not in (None, ""):
+                break
+    if value in (None, ""):
+        return ""
+    value = str(value).strip()
+    if "/" in value and value.split("/", 1)[0] in ("way", "relation", "node"):
+        value = value.split("/", 1)[1]
+    return value
+
+
 def tag(props, *keys):
     for key in keys:
         value = props.get(key)
@@ -91,7 +108,7 @@ def main():
 
     for feature in source.get("features", []):
         props = feature.get("properties") or {}
-        osm_id = str(feature.get("id", ""))
+        osm_id = source_building_id(feature)
         if not osm_id:
             continue
         for part_index, ring in enumerate(outer_rings(feature)):
@@ -137,6 +154,12 @@ def main():
                 "roof_colour": tag(props, "roof:colour"),
                 "source": "middle east/Jordan/layers/buildings.geojson.gz"
             })
+
+    if not entries:
+        raise RuntimeError(
+            "No OSM building records were indexed. Refusing to publish an empty index; "
+            "check the source feature IDs, bounds, and GLB manifest."
+        )
 
     result = {
         "schema_version": 1,
