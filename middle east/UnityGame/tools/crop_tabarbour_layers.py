@@ -61,7 +61,7 @@ def main(src,dst):
         with gzip.open(inp,"rb") as fin, gzip.open(tmp,"wt",encoding="utf-8",compresslevel=5) as fout:
             fout.write('{"type":"FeatureCollection","features":[')
             first=True
-            for feature in ijson.items(fin,"features.item"):
+            for feature in ijson.items(fin,"features.item", use_float=True):
                 scanned+=1
                 if not intersects(feature): continue
                 if not first: fout.write(",")
