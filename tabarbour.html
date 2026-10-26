@@ -92,14 +92,11 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
   const manifest=await response.json(),origin=manifest.origin;
   const map=await new Promise((resolve,reject)=>{let n=0;const check=()=>{if(window.adamCityMap?.isStyleLoaded())return resolve(window.adamCityMap);if(++n>600)return reject(new Error('انتهت مهلة انتظار الخريطة'));setTimeout(check,100)};check()});
   const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:Number(origin.longitude),lat:Number(origin.latitude)},0);
-  // GLB coordinates are local physical metres: X=east, Y=height, Z=north.
-  // MapLibre's custom-layer world axes are X=east, Y=south, Z=up.
-  // Rotate local Y-up into MapLibre's Z-up and use one metres-to-Mercator scale.
+  // Restore the previously used GLB-to-MapLibre transform; do not rotate or flip the model axes.
   const meters=anchor.meterInMercatorCoordinateUnits();
-  const glbToMap=new THREE.Matrix4()
-   .makeTranslation(anchor.x,anchor.y,anchor.z)
-   .multiply(new THREE.Matrix4().makeRotationX(Math.PI/2))
-   .scale(new THREE.Vector3(meters,meters,meters));
+  const projectedMeters=meters*Math.cos(Number(origin.latitude)*Math.PI/180);
+  const glbToMap=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z)
+   .scale(new THREE.Vector3(projectedMeters,-projectedMeters,meters));
   for(const tile of manifest.tiles||[]){
    const label=document.createElement('label');label.className='row';
    const toggle=document.createElement('input');toggle.type='checkbox';toggle.id='glb-'+tile.tile;
@@ -122,7 +119,7 @@ import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.
      if(!values||values.length!==16)return;
      const matrix=Array.from(values,Number);if(matrix.some(v=>!Number.isFinite(v)))return;
      const projection=new THREE.Matrix4().fromArray(matrix);
-     // Convert GLB local east/height/north metres into map east/south/up Mercator coordinates.
+     // Keep the original axis mapping and anchor the GLB at the manifest's geographic origin.
      camera.projectionMatrix.copy(projection).multiply(glbToMap);camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
      renderer.resetState();renderer.render(scene,camera);renderer.resetState();
     }
