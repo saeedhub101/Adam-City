@@ -1,4 +1,4 @@
-name: Build real-data Tabarbour GLBs with keyless photo evidence
+name: Build Tabarbour GLBs with source data and visual evidence
 
 on:
   workflow_dispatch:
@@ -9,6 +9,7 @@ on:
       - "middle east/UnityGame/tools/crop_tabarbour_layers.py"
       - "middle east/UnityGame/tools/import_tabarbour_source_layers.py"
       - "middle east/UnityGame/tools/import_tabarbour_wikimedia_photos.py"
+      - "middle east/UnityGame/tools/import_tabarbour_visual_evidence.py"
       - "middle east/UnityGame/tools/build_amman_glb.py"
       - "middle east/Jordan/layers/**"
       - "middle east/Jordan/osm/jordan-latest.osm.pbf"
@@ -38,6 +39,7 @@ jobs:
             /middle east/UnityGame/tools/crop_tabarbour_layers.py
             /middle east/UnityGame/tools/import_tabarbour_source_layers.py
             /middle east/UnityGame/tools/import_tabarbour_wikimedia_photos.py
+            /middle east/UnityGame/tools/import_tabarbour_visual_evidence.py
             /middle east/BuildGLB/tabarbour-real/
           sparse-checkout-cone-mode: false
 
@@ -127,6 +129,14 @@ jobs:
           set -euo pipefail
           python3 "middle east/UnityGame/tools/import_tabarbour_wikimedia_photos.py"
 
+      - name: Import Wikipedia article evidence and Mapillary street imagery metadata
+        shell: bash
+        env:
+          MAPILLARY_ACCESS_TOKEN: ${{ secrets.MAPILLARY_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 "middle east/UnityGame/tools/import_tabarbour_visual_evidence.py"
+
       - name: Build and checkpoint Tabarbour regional GLBs
         shell: bash
         run: |
@@ -184,6 +194,16 @@ jobs:
                       "note":"Candidate photos are not auto-applied without verified building identity and facade mapping"}
               except Exception as e: report["errors"].append("photo manifest parse error: "+repr(e))
           else: report["errors"].append("Wikimedia photo manifest missing")
+          evidence=root/"photos"/"visual-evidence-import-report.json"
+          if evidence.exists():
+              try:
+                  er=json.loads(evidence.read_text(encoding="utf-8"))
+                  report["wikipedia_candidates"]=er.get("wikipedia",{})
+                  report["mapillary_candidates"]=er.get("mapillary",{})
+                  if er.get("mapillary",{}).get("status")=="skipped_missing_secret":
+                      report.setdefault("warnings",[]).append("Mapillary import skipped: configure repository secret MAPILLARY_ACCESS_TOKEN to enable it")
+              except Exception as e: report["errors"].append("visual evidence report parse error: "+repr(e))
+          else: report.setdefault("warnings",[]).append("Wikipedia/Mapillary evidence report missing")
           root.mkdir(parents=True,exist_ok=True)
           (root/"validation-report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
           print(json.dumps(report,ensure_ascii=False,indent=2))
