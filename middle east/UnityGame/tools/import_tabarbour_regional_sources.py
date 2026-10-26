@@ -110,25 +110,40 @@ def write_report(label,path,total,ok,errors,complete,extra=None):
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
     results={}
-    # Public OpenFreeMap vector tile service. Zoom 12-17, packaged into one MBTiles database.
-    results["openfreemap_vector_tiles"]=run_tiles(
-      "openfreemap_vector_tiles",OUT/"openfreemap-tabarbour-z12-17.mbtiles",
-      lambda z,x,y:f"https://tiles.openfreemap.org/planet/{z}/{x}/{y}.pbf",
-      range(12,18),"pbf","© OpenStreetMap contributors; OpenFreeMap / OpenMapTiles")
-    # NASA GIBS Sentinel-2 L1C imagery, keyless WMTS tiles. Top-down imagery is useful for
-    # land cover/context but is not street-level facade photography. Gaps are explicitly reported.
+    # Each source runs independently; one endpoint outage must not suppress the other source.
+    try:
+        results["openfreemap_vector_tiles"]=run_tiles(
+          "openfreemap_vector_tiles",OUT/"openfreemap-tabarbour-z12-17.mbtiles",
+          lambda z,x,y:f"https://tiles.openfreemap.org/planet/{z}/{x}/{y}.pbf",
+          range(12,18),"pbf","© OpenStreetMap contributors; OpenFreeMap / OpenMapTiles")
+    except Exception as e:
+        results["openfreemap_vector_tiles"]={"status":"source_failed","error":repr(e)[:500],"requires_api_key":False}
+        write_report("openfreemap_vector_tiles",OUT/"openfreemap-tabarbour-z12-17.mbtiles",0,0,[{"error":repr(e)[:300]}],True,results["openfreemap_vector_tiles"])
+        print("OPENFREEMAP_SOURCE_FAILED_CONTINUING",repr(e),flush=True)
+    # NASA GIBS Sentinel-2 L1C imagery. Top-down imagery is not street-level facade photography.
     day=(datetime.date.today()-datetime.timedelta(days=45)).isoformat()
-    results["nasa_gibs_satellite"]=run_tiles(
-      "nasa_gibs_satellite",OUT/"nasa-gibs-sentinel2-tabarbour.mbtiles",
-      lambda z,x,y:f"https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/Sentinel-2_L1C/default/{day}/GoogleMapsCompatible_Level13/{z}/{y}/{x}.jpg",
-      range(10,14),"jpg","NASA GIBS Sentinel-2 L1C imagery; top-down satellite imagery, not facade photos")
-    if results["nasa_gibs_satellite"].get("tiles_saved",0)==0:
+    try:
+        results["nasa_gibs_satellite"]=run_tiles(
+          "nasa_gibs_satellite",OUT/"nasa-gibs-sentinel2-tabarbour.mbtiles",
+          lambda z,x,y:f"https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/Sentinel-2_L1C/default/{day}/GoogleMapsCompatible_Level13/{z}/{y}/{x}.jpg",
+          range(10,14),"jpg","NASA GIBS Sentinel-2 L1C imagery; top-down satellite imagery, not facade photos")
+    except Exception as e:
+        results["nasa_gibs_satellite"]={"status":"source_failed","error":repr(e)[:500],"requires_api_key":False}
+        write_report("nasa_gibs_satellite",OUT/"nasa-gibs-sentinel2-tabarbour.mbtiles",0,0,[{"error":repr(e)[:300]}],True,results["nasa_gibs_satellite"])
+        print("SENTINEL2_SOURCE_FAILED_CONTINUING",repr(e),flush=True)
+    if results.get("nasa_gibs_satellite",{}).get("tiles_saved",0)==0:
         print("SENTINEL2_NO_TILES; trying public NASA VIIRS true-colour fallback",flush=True)
         day2=(datetime.date.today()-datetime.timedelta(days=10)).isoformat()
-        results["nasa_gibs_viirs_fallback"]=run_tiles(
-          "nasa_gibs_viirs_fallback",OUT/"nasa-gibs-viirs-fallback-tabarbour.mbtiles",
-          lambda z,x,y:f"https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_TrueColor/default/{day2}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg",
-          range(7,10),"jpg","NASA GIBS VIIRS true-colour fallback; coarse top-down imagery, not facade photos")
+        try:
+            results["nasa_gibs_viirs_fallback"]=run_tiles(
+              "nasa_gibs_viirs_fallback",OUT/"nasa-gibs-viirs-fallback-tabarbour.mbtiles",
+              lambda z,x,y:f"https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_TrueColor/default/{day2}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg",
+              range(7,10),"jpg","NASA GIBS VIIRS true-colour fallback; coarse top-down imagery, not facade photos")
+        except Exception as e:
+            results["nasa_gibs_viirs_fallback"]={"status":"source_failed","error":repr(e)[:500],"requires_api_key":False}
+            write_report("nasa_gibs_viirs_fallback",OUT/"nasa-gibs-viirs-fallback-tabarbour.mbtiles",0,0,[{"error":repr(e)[:300]}],True,results["nasa_gibs_viirs_fallback"])
+            print("VIIRS_SOURCE_FAILED_CONTINUING",repr(e),flush=True)
     write_report("summary",OUT/"regional-source-import-report.json",0,0,[],True,{"results":results})
+    checkpoint([OUT/"regional-source-import-report.json"],"Save Tabarbour regional source summary")
     print(json.dumps(results,ensure_ascii=False,indent=2),flush=True)
 if __name__=="__main__": main()
