@@ -38,10 +38,18 @@ namespace MiddleEastWorld
         void Awake()
         {
             controller = GetComponent<CharacterController>() ?? gameObject.AddComponent<CharacterController>();
+            // Predictable capsule settings for collision against verified static meshes.
+            controller.height = Mathf.Max(controller.height, 1.8f);
+            controller.radius = Mathf.Clamp(controller.radius, 0.28f, 0.42f);
+            controller.center = new Vector3(0f, controller.height * 0.5f, 0f);
+            controller.stepOffset = Mathf.Min(0.35f, controller.height * 0.2f);
+            controller.skinWidth = 0.04f;
+            controller.minMoveDistance = 0f;
             viewCamera = Camera.main;
         }
         void Update()
         {
+            if (!viewCamera) viewCamera = Camera.main;
             float x = Input.GetAxisRaw("Horizontal"), z = Input.GetAxisRaw("Vertical");
             Vector3 forward = viewCamera ? Vector3.ProjectOnPlane(viewCamera.transform.forward, Vector3.up).normalized : transform.forward;
             Vector3 right = viewCamera ? Vector3.ProjectOnPlane(viewCamera.transform.right, Vector3.up).normalized : transform.right;
