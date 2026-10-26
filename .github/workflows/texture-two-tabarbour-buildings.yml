@@ -3,30 +3,62 @@ on:
   push:
     branches: [main]
     paths:
+      - ".github/workflows/texture-two-tabarbour-buildings.yml"
       - "middle east/BuildGLB/amman/realistic/texture_two_buildings.py"
   workflow_dispatch:
 permissions:
   contents: write
+concurrency:
+  group: texture-two-tabarbour-buildings
+  cancel-in-progress: false
 jobs:
   texture:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
       - name: Install Blender
         run: |
           sudo apt-get update
           sudo apt-get install -y blender
-      - name: Build textured individual building GLBs
-        run: blender --background --python "middle east/BuildGLB/amman/realistic/texture_two_buildings.py"
+      - name: Build and verify textured individual building GLBs
+        shell: bash
+        run: |
+          set -euo pipefail
+          log_file="$RUNNER_TEMP/blender-texture.log"
+          set +e
+          blender --background --python "middle east/BuildGLB/amman/realistic/texture_two_buildings.py" 2>&1 | tee "$log_file"
+          blender_status=${PIPESTATUS[0]}
+          set -e
+          if [ "$blender_status" -ne 0 ]; then
+            echo "::error::Blender exited with status $blender_status"
+            exit "$blender_status"
+          fi
+          if ! grep -q "TEXTURED_BUILDINGS_COMPLETE" "$log_file"; then
+            echo "::error::Blender did not report TEXTURED_BUILDINGS_COMPLETE; it may have printed a Python traceback while exiting with status 0."
+            exit 1
+          fi
+          shopt -s nullglob
+          outputs=("middle east/BuildGLB/amman/realistic/buildings/"*"_textured.glb")
+          if [ "${#outputs[@]}" -lt 2 ]; then
+            echo "::error::Expected at least two non-empty textured GLB outputs; found ${#outputs[@]}."
+            exit 1
+          fi
+          for file in "${outputs[@]}"; do
+            test -s "$file"
+          done
+          echo "Verified ${#outputs[@]} textured GLB files."
       - name: Commit outputs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "middle east/BuildGLB/amman/realistic/buildings"
+          git add -- "middle east/BuildGLB/amman/realistic/buildings"
           if git diff --cached --quiet; then
-            echo "No output changes to commit"
+            echo "No output changes to commit."
           else
-            git commit -m "Add textured individual Tabarbour building models"
-            git push origin main
+            git commit -m "Add verified textured individual Tabarbour building models"
+            git push origin HEAD:main
           fi
