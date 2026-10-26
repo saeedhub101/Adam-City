@@ -740,7 +740,201 @@
         }
       ],
       "bytes": 20480
+    },
+    "nasa_gibs_satellite": {
+      "status": "complete_with_gaps",
+      "expected_tiles": 15,
+      "saved_tiles": 0,
+      "error_count": 15,
+      "errors_sample": [
+        {
+          "z": 10,
+          "x": 614,
+          "y": 415,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 11,
+          "x": 1228,
+          "y": 831,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 12,
+          "x": 2456,
+          "y": 1662,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 12,
+          "x": 2456,
+          "y": 1663,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 12,
+          "x": 2457,
+          "y": 1662,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 12,
+          "x": 2457,
+          "y": 1663,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4912,
+          "y": 3325,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4912,
+          "y": 3326,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4912,
+          "y": 3327,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4913,
+          "y": 3325,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4913,
+          "y": 3326,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4913,
+          "y": 3327,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4914,
+          "y": 3325,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4914,
+          "y": 3326,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4914,
+          "y": 3327,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        }
+      ],
+      "file": "middle east/BuildGLB/tabarbour-real/source/nasa-gibs-sentinel2-tabarbour.mbtiles",
+      "tiles_expected": 15,
+      "tiles_saved": 0,
+      "errors": [
+        {
+          "z": 10,
+          "x": 614,
+          "y": 415,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 11,
+          "x": 1228,
+          "y": 831,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 12,
+          "x": 2456,
+          "y": 1662,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 12,
+          "x": 2456,
+          "y": 1663,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 12,
+          "x": 2457,
+          "y": 1662,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 12,
+          "x": 2457,
+          "y": 1663,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4912,
+          "y": 3325,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4912,
+          "y": 3326,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4912,
+          "y": 3327,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4913,
+          "y": 3325,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4913,
+          "y": 3326,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4913,
+          "y": 3327,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4914,
+          "y": 3325,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4914,
+          "y": 3326,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        },
+        {
+          "z": 13,
+          "x": 4914,
+          "y": 3327,
+          "error": "<HTTPError 400: 'Bad Request'>"
+        }
+      ],
+      "bytes": 20480
     }
   },
-  "updated_utc": "2026-10-26T09:45:55.855282+00:00"
+  "updated_utc": "2026-10-26T09:45:59.101248+00:00"
 }
