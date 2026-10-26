@@ -129,10 +129,8 @@ jobs:
           set -euo pipefail
           python3 "middle east/UnityGame/tools/import_tabarbour_wikimedia_photos.py"
 
-      - name: Import Wikipedia article evidence and Mapillary street imagery metadata
+      - name: Import keyless Wikipedia article evidence
         shell: bash
-        env:
-          MAPILLARY_ACCESS_TOKEN: ${{ secrets.MAPILLARY_ACCESS_TOKEN }}
         run: |
           set -euo pipefail
           python3 "middle east/UnityGame/tools/import_tabarbour_visual_evidence.py"
@@ -163,7 +161,7 @@ jobs:
           out=root/"glb"
           files=sorted(out.glob("tabarbour_*.glb"))
           report={"area":"Tabarbour, Amman, Jordan","bounds":{"west":35.90,"east":35.99,"south":31.96,"north":32.04},
-                  "source_policy":"Fresh Geofabrik/OpenStreetMap source download; Wikipedia/Wikimedia license-checked image evidence; Mapillary metadata requires MAPILLARY_ACCESS_TOKEN; generated assets are stored locally for offline runtime",
+                  "source_policy":"Fresh Geofabrik/OpenStreetMap download; Wikipedia/Wikimedia keyless public endpoints; license-checked Wikimedia image candidates; no API keys or tokens; generated assets are stored locally for offline runtime",
                   "glb_count":len(files),"glbs":[],"errors":[]}
           if not (out/"manifest.json").is_file():
               report["errors"].append("manifest.json missing")
@@ -199,9 +197,6 @@ jobs:
               try:
                   er=json.loads(evidence.read_text(encoding="utf-8"))
                   report["wikipedia_candidates"]=er.get("wikipedia",{})
-                  report["mapillary_candidates"]=er.get("mapillary",{})
-                  if er.get("mapillary",{}).get("status")=="skipped_missing_secret":
-                      report.setdefault("warnings",[]).append("Mapillary import skipped: configure repository secret MAPILLARY_ACCESS_TOKEN to enable it")
               except Exception as e: report["errors"].append("visual evidence report parse error: "+repr(e))
           else: report.setdefault("warnings",[]).append("Wikipedia/Mapillary evidence report missing")
           root.mkdir(parents=True,exist_ok=True)
