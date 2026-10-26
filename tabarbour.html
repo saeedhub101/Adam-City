@@ -15,11 +15,28 @@ h1{font-size:20px;margin:0 0 4px}p{margin:6px 0;color:var(--muted);line-height:1
 #status{padding:8px 10px;border-radius:8px;background:#182734;color:var(--accent);margin:9px 0;overflow-wrap:anywhere}
 #hint{position:fixed;right:12px;bottom:12px;background:#101b25d9;padding:10px 13px;border-radius:9px;border:1px solid var(--line);color:#d5e3ec;z-index:1}
 #hide{float:right}a{color:var(--accent)}.error{color:#ffb4a9!important}
+#omtCompare{position:fixed;z-index:4;right:12px;top:12px;width:min(440px,43vw);height:min(430px,48vh);min-height:260px;background:#101b25;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 10px 35px #0008}
+.compareHead{height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 9px;font-size:12px;background:#101b25}
+.compareHead button{background:#1e3341;color:white;border:1px solid #395061;border-radius:6px;padding:4px 8px}
+#libertyMap{height:calc(100% - 105px);width:100%;background:#dce5e8}
+.compareControls{display:flex;gap:10px;flex-wrap:wrap;padding:7px 9px;font-size:11px;background:#101b25}
+.compareControls label{display:flex;align-items:center;gap:4px}.compareControls input{accent-color:var(--accent)}
+#omtCompare>small{display:block;padding:0 9px 5px;color:var(--muted);font-size:9px}
+@media(max-width:600px){#omtCompare{top:auto;right:8px;bottom:48px;width:min(62vw,300px);height:34vh;min-height:200px}.compareHead{font-size:10px} .compareControls{gap:4px;font-size:9px}}
 @media(max-width:600px){#panel{top:8px;left:8px;max-height:65dvh;width:calc(100vw - 16px);padding:12px}#hint{font-size:11px;max-width:48vw}}
 </style>
 </head>
 <body>
 <div id="view"></div>
+<div id="omtCompare" aria-label="OpenFreeMap Liberty and OpenMapTiles comparison">
+  <div class="compareHead"><b>Source comparison · OpenFreeMap / OpenMapTiles</b><button id="compareHide" type="button">Hide</button></div>
+  <div id="libertyMap"></div>
+  <div class="compareControls">
+    <label><input id="libertyGroundToggle" type="checkbox" checked> OpenFreeMap Liberty ground</label>
+    <label><input id="omtBuildingsToggle" type="checkbox"> OpenMapTiles buildings</label>
+  </div>
+  <small>© OpenStreetMap contributors · © OpenMapTiles</small>
+</div>
 <section id="panel">
 <button id="hide" aria-label="Collapse panel">−</button>
 <h1>Tabarbour 3D</h1>
@@ -46,6 +63,48 @@ h1{font-size:20px;margin:0 0 4px}p{margin:6px 0;color:var(--muted);line-height:1
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js';
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/loaders/GLTFLoader.js';
+import maplibregl from 'https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/+esm';
+const libertyMap = new maplibregl.Map({
+ container:'libertyMap',
+ style:'https://tiles.openfreemap.org/styles/liberty',
+ center:[35.945,32.000],zoom:14,pitch:0,bearing:0,
+ attributionControl:false
+});
+libertyMap.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-right');
+let omtBuildingLayerId=null;
+libertyMap.on('load',()=>{
+ const style=libertyMap.getStyle();
+ const sourceId=Object.keys(style.sources||{}).find(id=>style.sources[id]?.type==='vector');
+ if(!sourceId){console.error('No vector tile source found in Liberty style');return}
+ try{
+  libertyMap.addLayer({
+   id:'omt-buildings-compare',type:'fill-extrusion',source:sourceId,'source-layer':'building',
+   minzoom:13,
+   paint:{
+    'fill-extrusion-color':['coalesce',['get','colour'],['get','render_colour'],'#c9b89c'],
+    'fill-extrusion-height':['max',2,['to-number',['coalesce',['get','render_height'],['get','height'],8]]],
+    'fill-extrusion-base':['max',0,['to-number',['coalesce',['get','render_min_height'],0]]],
+    'fill-extrusion-opacity':0.9
+   },
+   layout:{visibility:'none'}
+  });
+  omtBuildingLayerId='omt-buildings-compare';
+ }catch(e){console.error('OpenMapTiles building layer could not be added:',e)}
+});
+document.getElementById('libertyGroundToggle').addEventListener('change',e=>{
+ document.getElementById('libertyMap').style.visibility=e.target.checked?'visible':'hidden';
+ document.getElementById('libertyMap').style.opacity=e.target.checked?'1':'0';
+});
+document.getElementById('omtBuildingsToggle').addEventListener('change',e=>{
+ if(omtBuildingLayerId&&libertyMap.getLayer(omtBuildingLayerId))libertyMap.setLayoutProperty(omtBuildingLayerId,'visibility',e.target.checked?'visible':'none');
+});
+document.getElementById('compareHide').addEventListener('click',()=>{
+ document.getElementById('omtCompare').style.display='none';
+ const b=document.createElement('button');b.id='compareReopen';b.textContent='Show source comparison';
+ b.style.cssText='position:fixed;z-index:5;right:12px;top:12px;background:#101b25;color:white;border:1px solid #395061;border-radius:8px;padding:9px';
+ b.onclick=()=>{document.getElementById('omtCompare').style.display='block';b.remove();setTimeout(()=>libertyMap.resize(),50)};
+ document.body.appendChild(b);
+});
 const BASE='./middle%20east/BuildGLB/tabarbour-real/glb/';
 const root=document.getElementById('view'), status=document.getElementById('status'), tilesEl=document.getElementById('tiles');
 const scene=new THREE.Scene(); scene.background=new THREE.Color(0x9db5c3);
