@@ -189,9 +189,15 @@ function loadFile(t){
   if(state)state.textContent='0%';
   loader.load(BASE+encodeURIComponent(t.file),gltf=>{
    const obj=gltf.scene;obj.name=t.file;
-   // The source meshes were authored with Y as height in Blender; Blender's glTF axis conversion maps that height to -Z. Convert back to Three.js Y-up so buildings stand upright and north remains horizontal Z.
-   obj.rotation.x=Math.PI/2;
-   obj.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=true;if(o.material){for(const m of (Array.isArray(o.material)?o.material:[o.material])){if(m.color&&m.color.getHex()===0xffffff)m.color.setHex(0xd6c8ad);m.needsUpdate=true}}}});
+   // Manifest declares local GLB axes as X=east, Z=north, Y=height. Do not rotate the whole tile: that would turn height into a horizontal axis and displace the geometry.
+   obj.rotation.set(0,0,0);
+   obj.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=true;if(o.material){for(const m of (Array.isArray(o.material)?o.material:[o.material])){
+    // Replace broken near-black/default materials that render as opaque black patches; preserve valid textured and colored materials.
+    if(m.color){const hex=m.color.getHex();if(hex===0x000000||hex<0x080808)m.color.setHex(0xb9a98d);else if(hex===0xffffff)m.color.setHex(0xd6c8ad);}
+    if(m.roughness!==undefined)m.roughness=Math.max(m.roughness,0.72);
+    if(m.metalness!==undefined)m.metalness=Math.min(m.metalness,0.05);
+    m.needsUpdate=true;
+   }}}}});
    pending.delete(t.file);
    const cb=[...tilesEl.querySelectorAll('input')].find(x=>x.dataset.file===t.file);
    if(!cb?.checked){disposeObject(obj);if(state)state.textContent='Hidden';resolve(null);return}
