@@ -245,14 +245,15 @@ const glbCustomLayer={id:'tabarbour-glb-scene',type:'custom',renderingMode:'3d',
    const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:Number(origin.longitude),lat:Number(origin.latitude)},0);
    const meters=anchor.meterInMercatorCoordinateUnits();
    const projectedMeters=meters*Math.cos(Number(origin.latitude)*Math.PI/180);
-   // The saved GLBs use X=east, Y=height, Z=north.
-   // MapLibre's Mercator frame uses X=east, Y=northing (south-positive), Z=up.
-   // Keep GLB height on MapLibre Z; map GLB northing to negative Mercator Y.
-   // The previous scale put GLB height on the map's north/south axis, stacking
-   // neighborhoods (e.g. Tareq, Khalda and Marka) vertically instead of side by side.
-   const model=new THREE.Matrix4()
-     .makeTranslation(anchor.x,anchor.y,anchor.z)
-     .multiply(new THREE.Matrix4().makeScale(projectedMeters,meters,-projectedMeters));
+   // GLB axes: X=east, Y=height, Z=north.
+   // MapLibre axes: X=east, Y=south-positive Mercator, Z=up.
+   // Permute axes (not just scale them): GLB Y -> map Z, GLB Z -> map -Y.
+   const model=new THREE.Matrix4().set(
+     projectedMeters, 0, 0, anchor.x,
+     0, 0, -projectedMeters, anchor.y,
+     0, meters, 0, anchor.z,
+     0, 0, 0, 1
+   );
    const viewProjection=new THREE.Matrix4().fromArray(matrix);
    camera.projectionMatrix.copy(viewProjection.multiply(model));
    camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
