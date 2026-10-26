@@ -11,6 +11,7 @@ Starting location: Tabarbour, Amman (`35.940358, 31.997579`)
 - The nearby 5×5 tile set around Tabarbour contains **25 existing GLB tiles** (building and street geometry). These must remain enabled and be loaded from the repository, not from an online service.
 - `middle east/landmark-photos.json` contains **80 geotagged photo records**. The closest listed photo to Tabarbour is about **5.2 km** away; there are **no listed photos within 2 km** of the game start point.
 - The Amman photos in that catalog are clustered around Jabal Amman / downtown. Their GPS points identify the camera location, not the photographed facade; the metadata does not provide a reliable camera heading for assigning a facade texture.
+- The LiDAR import report under `complete_data/LiDAR/LIDAR_IMPORT_REPORT.md` records **0 files and 0 bytes downloaded**. The repository has LiDAR catalog metadata, but the audited file tree contains no raw LAS/LAZ/E57/PLY/PCD point-cloud payloads for this area. Satellite laser footprints are not dense building scans.
 - `middle east/BuildGLB/amman/realistic/texture_two_buildings.py` explicitly creates a **procedural limestone pattern**, not a real photo texture. It must not be treated as photographic realism or applied to unrelated buildings.
 
 ## Changes made for this task
