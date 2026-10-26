@@ -13,7 +13,7 @@ permissions:
 
 # A revised importer replaces an incomplete older run. Checkpoints are pushed to main and resumable.
 concurrency:
-  group: jordan-palestine-lidar-import-v3
+  group: jordan-palestine-lidar-import-v2
   cancel-in-progress: true
 
 jobs:
