@@ -114,6 +114,54 @@ def flat_polygon(name,ring,origin,y,material):
     if not tri:return None
     verts=[(x,y,z) for x,z in pts]
     return mesh_obj(name,verts,tri,material)
+def norm_photo_name(value):
+    value=str(value or "").casefold()
+    return " ".join("".join(ch if ch.isalnum() or ch.isspace() else " " for ch in value).split())
+
+def load_verified_photo_index():
+    """Index downloaded, freely licensed photos only when the existing importer found an exact building-name phrase."""
+    root=Path(__file__).resolve().parents[2]/"BuildGLB/tabarbour-real/photos"
+    manifest=root/"wikimedia-photo-manifest.json"
+    index={}
+    if not manifest.is_file(): return index
+    try: records=json.loads(manifest.read_text(encoding="utf-8")).get("items",[])
+    except Exception as e:
+        print("PHOTO_TEXTURE_MANIFEST_ERROR",repr(e)); return index
+    for rec in records:
+        if not rec.get("downloaded") or not rec.get("file"): continue
+        lic=str(rec.get("license","")).lower()
+        if not (lic=="cc0" or "public domain" in lic or lic.startswith(("cc by ","cc-by-","cc by-sa","cc-by-sa"))): continue
+        if any(x in lic for x in ("nc","nd")): continue
+        image_path=(Path.cwd()/rec["file"]).resolve()
+        if not image_path.is_file(): continue
+        # Require the importer’s name-phrase match and do not use nearby/unmatched images.
+        for match in rec.get("matched_buildings",[]):
+            if match.get("match_method")!="building_name_phrase_in_commons_title_or_description": continue
+            if not match.get("osm_id") or not match.get("building_name"): continue
+            index.setdefault(str(match["osm_id"]),[]).append({**rec,"_absolute_file":str(image_path)})
+    print("BUILDING_SPECIFIC_LICENSED_PHOTOS",sum(len(v) for v in index.values()))
+    return index
+
+def image_material(photo,building_id):
+    try:
+        image=bpy.data.images.load(photo["_absolute_file"],check_existing=True)
+        image.pack()
+        material=bpy.data.materials.new("Photo facade "+str(building_id))
+        material.use_nodes=True
+        nodes=material.node_tree.nodes; links=material.node_tree.links
+        bs=nodes.get("Principled BSDF")
+        tex=nodes.new("ShaderNodeTexImage");tex.image=image;tex.interpolation="Linear"
+        links.new(tex.outputs["Color"],bs.inputs["Base Color"])
+        bs.inputs["Roughness"].default_value=.86
+        material["photo_source"]=photo.get("commons_page","")
+        material["photo_license"]=photo.get("license","")
+        material["photo_artist"]=photo.get("artist","")
+        material["photo_attribution"]=photo.get("credit","")
+        return material
+    except Exception as e:
+        print("PHOTO_TEXTURE_LOAD_FAILED",str(building_id),repr(e))
+        return None
+
 def add_building(item,origin,wallm,roofm,glassm,trim,signm):
     ring=item["ring"][:-1] if len(item["ring"])>3 and item["ring"][0]==item["ring"][-1] else item["ring"]
     if len(ring)<3:return
@@ -129,6 +177,23 @@ def add_building(item,origin,wallm,roofm,glassm,trim,signm):
     for a,b,c in tri:faces.extend([(a,c,b),(n+a,n+b,n+c)])
     for i in range(n):j=(i+1)%n;faces.append((i,j,n+j,n+i))
     ob=mesh_obj("Building_"+str(item["id"]),verts,faces,wallm)
+    photo=item.get("photo_record")
+    photo_mat=image_material(photo,item["id"]) if photo else None
+    if photo_mat:
+        # Apply the photo only to the longest exterior wall; all other faces retain the mapped/material fallback.
+        ob.data.materials.append(photo_mat)
+        edge_index=max(range(n),key=lambda i:math.hypot(pts[(i+1)%n][0]-pts[i][0],pts[(i+1)%n][1]-pts[i][1]))
+        wall_poly_index=len(tri)*2+edge_index
+        if wall_poly_index<len(ob.data.polygons):
+            ob.data.polygons[wall_poly_index].material_index=len(ob.data.materials)-1
+            uv=ob.data.uv_layers.active or ob.data.uv_layers.new(name="FacadePhotoUV")
+            for loop_index,uvco in zip(ob.data.polygons[wall_poly_index].loop_indices,((0,0),(1,0),(1,1),(0,1))):
+                uv.data[loop_index].uv=uvco
+            ob["facade_texture_source"]="matched Wikimedia Commons building-name photo projected onto longest facade; see attribution metadata"
+            ob["photo_source_url"]=photo.get("commons_page","")
+            ob["photo_license"]=photo.get("license","")
+            ob["photo_artist"]=photo.get("artist","")
+            ob["photo_credit"]=photo.get("credit","")
     ob["osm_id"]=str(item["id"]);ob["building_name"]=item["name"];ob["height_m"]=h;ob["height_source"]=item.get("height_source","procedural_default_not_surveyed")
     for k in ("building","building:use","amenity","shop","office","tourism","historic","addr:housenumber","addr:street","addr:postcode","addr:city",
               "name","name:en","ref","operator","brand","building:levels","levels","height","building:material","building:colour",
@@ -138,7 +203,7 @@ def add_building(item,origin,wallm,roofm,glassm,trim,signm):
     ob["osm_tags_json"]=json.dumps(p,ensure_ascii=False)[:16000]
     ob["facade_geometry_source"]="OSM footprint and tags; repeated architectural details are procedural where OSM has no detail geometry"
     ob["window_source"]="procedural_layout_from_mapped_height_and_levels; not individually surveyed"
-    ob["facade_texture_source"]="No verified building-specific photo texture available; OSM material/colour tags used when present"
+    if not photo_mat: ob["facade_texture_source"]="No matched licensed building photo found; OSM material/colour tags used when present"
     ob["roof_geometry_source"]="OSM roof tags where present; fallback roof form explicitly inferred"
 
     # Roof form follows roof:shape/roof:height tags; otherwise a conservative flat roof.
@@ -279,7 +344,7 @@ def main():
     for df in detail_features:
         dp=df.get("properties") or {};did=osm_identity(df,dp)
         if did:detail_by_id[did]=dp
-    tiles=defaultdict(lambda:{"buildings":[],"streets":[],"labels":[],"water":[],"landcover":[],"places":[],"addresses":[],"infra_lines":[],"infra_points":[],"infra_polygons":[]})
+    photo_index=load_verified_photo_index() if prefix.lower()=="tabarbour" else {}\n    tiles=defaultdict(lambda:{"buildings":[],"streets":[],"labels":[],"water":[],"landcover":[],"places":[],"addresses":[],"infra_lines":[],"infra_points":[],"infra_polygons":[]})
     def key(lon,lat):return (math.floor(lon/tile),math.floor(lat/tile))
     for f in buildings:
         p=f.get("properties") or {};g=f.get("geometry") or {};c=g.get("coordinates") or []
@@ -297,7 +362,7 @@ def main():
             raw_levels=tag(p,"building:levels","levels")
             h=height(p)
             height_source="osm:height" if raw_height else "osm:building:levels" if raw_levels else "procedural_default_not_surveyed"
-            tiles[key(lon,lat)]["buildings"].append({"id":fid,"name":tag(p,"name","name:en"),"height":h,"height_source":height_source,"ring":ring,"properties":p})
+            photo_candidates=photo_index.get(str(fid),[])\n            photo_record=photo_candidates[0] if len(photo_candidates)==1 else None\n            if photo_record: print("MATCHED_FACADE_PHOTO",fid,photo_record.get("title"),flush=True)\n            tiles[key(lon,lat)]["buildings"].append({"id":fid,"name":tag(p,"name","name:en"),"height":h,"height_source":height_source,"ring":ring,"properties":p,"photo_record":photo_record})
     for f in streets:
         p=f.get("properties") or {};g=f.get("geometry") or {};c=g.get("coordinates") or []
         lines=[c] if g.get("type")=="LineString" else c if g.get("type")=="MultiLineString" else []
