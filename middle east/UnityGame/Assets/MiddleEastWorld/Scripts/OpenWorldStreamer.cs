@@ -75,11 +75,11 @@ namespace MiddleEastWorld
             }
             var manifest=JsonUtility.FromJson<ChunkManifest>(json);
             if(manifest==null || manifest.layers==null) { Debug.LogError("Invalid region manifest: "+region); yield break; }
-            Index(manifest.layers.buildings,buildingIndex);
+            // Deliberately do not index or render OSM footprints as extruded buildings.
+            // Footprints and tags are not photogrammetry; displaying them as 3D buildings
+            // would invent geometry/materials contrary to the project accuracy rules.
             Index(manifest.layers.streets,streetIndex);
-            if (region == "Jordan") RemoveBuildingChunksCoveredByExistingGlbTiles();
-            buildingsRoot=new GameObject("Streamed Buildings — "+region);
-            streetsRoot=new GameObject("Streamed Streets — "+region);
+            streetsRoot=new GameObject("Repository Streets — "+region);
             ready=true;
             Debug.Log("World streamer ready: "+region+"; "+buildingIndex.Count+" building chunks; "+streetIndex.Count+" street chunks.");
             RefreshTiles();
@@ -119,7 +119,6 @@ namespace MiddleEastWorld
                     string key=(tx+x)+"_"+(ty+y);
                     if(loaded.Add(key))
                     {
-                        if(buildingIndex.TryGetValue(key,out var b)) StartCoroutine(LoadBuildingChunk(b));
                         if(streetIndex.TryGetValue(key,out var s)) StartCoroutine(LoadStreetChunk(s));
                     }
                 }
