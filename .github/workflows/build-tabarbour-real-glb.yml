@@ -10,6 +10,7 @@ on:
       - "middle east/UnityGame/tools/import_tabarbour_source_layers.py"
       - "middle east/UnityGame/tools/import_tabarbour_wikimedia_photos.py"
       - "middle east/UnityGame/tools/import_tabarbour_visual_evidence.py"
+      - "middle east/UnityGame/tools/search_tabarbour_building_visual_evidence.py"
       - "middle east/UnityGame/tools/import_tabarbour_regional_sources.py"
       - "middle east/UnityGame/tools/build_tabarbour_dem_terrain.py"
       - "middle east/UnityGame/tools/build_amman_glb.py"
@@ -273,19 +274,12 @@ jobs:
           echo "::warning::DEM checkpoint push failed; final output may still be saved later."
           exit 0
 
-      - name: Discover and checkpoint freely licensed Wikimedia photo evidence
+      - name: Search per-building visual evidence without APIs
         continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
-          python3 "middle east/UnityGame/tools/import_tabarbour_wikimedia_photos.py"
-
-      - name: Import keyless Wikipedia article evidence
-        continue-on-error: true
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 "middle east/UnityGame/tools/import_tabarbour_visual_evidence.py"
+          python3 "middle east/UnityGame/tools/search_tabarbour_building_visual_evidence.py"
 
       - name: Build and checkpoint Tabarbour regional GLBs
         shell: bash
