@@ -95,6 +95,13 @@ def assign_texture(obj, image):
     obj.select_set(False)
 
 def main():
+    raise RuntimeError(
+        "Refusing to export fabricated 'realistic' buildings: this script generates a "
+        "procedural limestone texture, not a photograph of the selected buildings. "
+        "Use middle east/UnityGame/tools/audit_local_photo_building_matches.py to find "
+        "repository-local photo candidates; only add a photo texture after the exact "
+        "building and facade orientation have been verified."
+    )
     if not SOURCE.exists():
         raise FileNotFoundError(f"Source GLB not found: {SOURCE}")
     bpy.ops.object.select_all(action="SELECT")
