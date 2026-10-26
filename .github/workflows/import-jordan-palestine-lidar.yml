@@ -11,10 +11,9 @@ on:
 permissions:
   contents: write
 
-# A revised importer replaces an incomplete older run. Within the active run,
-# each checkpoint is pushed to main and can be resumed by a later run.
+# A revised importer replaces an incomplete older run. Checkpoints are pushed to main and resumable.
 concurrency:
-  group: jordan-palestine-lidar-import-v2
+  group: jordan-palestine-lidar-import-v3
   cancel-in-progress: true
 
 jobs:
@@ -22,32 +21,52 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 350
     steps:
-      - name: Checkout main with full history for checkpoint pushes
+      - name: Checkout only LiDAR import paths with shallow history
         uses: actions/checkout@v4
         with:
           ref: main
-          fetch-depth: 0
+          fetch-depth: 1
+          sparse-checkout: |
+            scripts
+            middle east/LiDAR
+          sparse-checkout-cone-mode: true
           lfs: false
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - name: Install importer dependency
         run: python -m pip install --disable-pip-version-check requests
+
       - name: Discover, download, and checkpoint public LiDAR assets
         env:
           PYTHONUNBUFFERED: "1"
         run: python scripts/import_jordan_palestine_lidar.py
+
       - name: Commit any final report changes
         if: always()
         shell: bash
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -- "middle east/LiDAR"
           if ! git diff --cached --quiet; then
             git commit -m "Checkpoint Jordan and Palestine LiDAR import report"
-            git fetch origin main
-            git rebase origin/main
-            git push origin HEAD:main
+            for attempt in 1 2 3 4 5; do
+              git fetch origin main
+              if ! git rebase origin/main; then
+                git rebase --abort || true
+                sleep "$attempt"
+                continue
+              fi
+              if git push origin HEAD:main; then
+                exit 0
+              fi
+              sleep "$attempt"
+            done
+            echo "Could not push final LiDAR report after five retries." >&2
+            exit 1
           fi
