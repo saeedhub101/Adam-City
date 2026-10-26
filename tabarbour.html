@@ -1,276 +1,185 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Tabarbour 3D — Current GLB Data</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ADAM CITY — Tabarbour</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.css">
 <style>
-:root{color-scheme:dark;--bg:#0a1118;--panel:#111d28;--line:#2a3b49;--muted:#9bb0c0;--accent:#68d5c2}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);font:14px system-ui,sans-serif;color:#edf5fa}
-#view{position:fixed;inset:0}canvas{display:block;width:100%;height:100%}
-#panel{position:fixed;z-index:2;top:12px;left:12px;width:min(365px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;background:#101b25ed;border:1px solid var(--line);border-radius:14px;padding:15px;backdrop-filter:blur(12px);box-shadow:0 12px 40px #0008}
-h1{font-size:20px;margin:0 0 4px}p{margin:6px 0;color:var(--muted);line-height:1.45}.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.stat{background:#182734;border:1px solid var(--line);border-radius:9px;padding:9px}.stat b{display:block;font-size:18px;color:#fff}.stat span{font-size:11px;color:var(--muted)}
-.actions{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.actions button,.tile button{background:#1e3341;color:#edf5fa;border:1px solid #395061;border-radius:8px;padding:8px 10px;cursor:pointer}.actions button:hover,.tile button:hover{border-color:var(--accent)}
-#tiles{display:grid;gap:5px}.tile{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid #273947;border-radius:8px;background:#13212c}.tile input{accent-color:var(--accent)}.tile .name{flex:1;min-width:0}.tile small{display:block;color:var(--muted);font-size:11px}.tile .state{font-size:11px;color:var(--accent);white-space:nowrap}
-#status{padding:8px 10px;border-radius:8px;background:#182734;color:var(--accent);margin:9px 0;overflow-wrap:anywhere}
-#hint{position:fixed;right:12px;bottom:12px;background:#101b25d9;padding:10px 13px;border-radius:9px;border:1px solid var(--line);color:#d5e3ec;z-index:1}
-#hide{float:right}a{color:var(--accent)}.error{color:#ffb4a9!important}
-@media(max-width:600px){#panel{top:8px;left:8px;max-height:65dvh;width:calc(100vw - 16px);padding:12px}#hint{font-size:11px;max-width:48vw}}
-#libertyMap{position:fixed;inset:0;width:100vw;height:100dvh;z-index:0;display:block}#view{display:none!important}#libertyMap .maplibregl-canvas-container,#libertyMap canvas{width:100%!important;height:100%!important}body.liberty-mode #hint{display:block}
-</style>
-<link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
-<script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
-</head>
+:root{color-scheme:dark;--panel:rgba(16,26,35,.96);--line:#344654;--text:#eef4f7;--muted:#a7b8c4;--accent:#67d5c2}
+*{box-sizing:border-box}html,body,#map{height:100%;width:100%;margin:0}body{font-family:system-ui,sans-serif;background:#101a23;color:var(--text)}#map{position:absolute;inset:0}
+.panel{position:absolute;z-index:5;top:10px;right:10px;width:min(300px,calc(100vw - 20px));height:auto;max-height:72dvh;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#67d5c2 #172631;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:0 8px 26px #0005;backdrop-filter:blur(12px)}
+.panel::-webkit-scrollbar{width:7px}.panel::-webkit-scrollbar-track{background:#172631;border-radius:8px}.panel::-webkit-scrollbar-thumb{background:#527c83;border-radius:8px}.panel::-webkit-scrollbar-thumb:hover{background:#67d5c2}
+.panel .status{position:sticky;bottom:-12px;background:var(--panel);padding-bottom:8px}
+h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.5;color:var(--muted);margin-bottom:10px}.group{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}.group-title{font-size:12px;color:var(--accent);font-weight:700;margin-bottom:5px}.row{display:flex;align-items:flex-start;gap:8px;margin:7px 0;font-size:12px;line-height:1.4}input{accent-color:var(--accent);width:16px;height:16px;flex:0 0 auto;margin-top:1px}.status{font-size:10px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere;margin-top:9px;border-top:1px solid var(--line);padding-top:8px}#error{display:none;color:#ffdadd;background:#542c31;padding:8px;border-radius:7px;font-size:11px;margin-top:8px;direction:ltr;overflow-wrap:anywhere}.attribution{position:absolute;bottom:8px;left:8px;z-index:2;background:#101a23df;padding:5px 8px;border-radius:6px;font-size:10px;direction:ltr}
+@media(max-width:520px){.panel{top:6px;right:6px;width:min(270px,calc(100vw - 12px));max-height:55dvh;padding:9px}h1{font-size:14px}.row{font-size:11px;margin:5px 0}}
+</style></head>
 <body>
-<div id="libertyMap" aria-label="OpenFreeMap Liberty map"></div><div id="view"></div>
-<section id="panel">
-<button id="hide" aria-label="Collapse panel">−</button>
-<h1>Tabarbour 3D</h1>
-<p>View of the saved GLB city tiles — buildings, mapped roads, landcover, addresses and infrastructure included in each model. No models are regenerated here.</p>
-<div class="stats">
- <div class="stat"><b id="buildingCount">11,286</b><span>mapped buildings</span></div>
- <div class="stat"><b id="streetCount">7,491</b><span>street features</span></div>
- <div class="stat"><b id="tileCount">20</b><span>GLB tiles</span></div>
- <div class="stat"><b id="sizeCount">~370 MB</b><span>model data total</span></div>
+<div id="map" aria-label="خريطة ثلاثية الأبعاد لطبربور"></div>
+<section class="panel">
+<h1>ADAM CITY · طبربور</h1>
+<div class="sub">مفاتيح للمصادر الأصلية وملفات GLB لطبربور.</div>
+<div class="group"><div class="group-title">المصدر الأصلي للخريطة</div>
+<label class="row"><input type="checkbox" id="baseGround" checked> إظهار أرضية الخريطة الأصلية (الشوارع، المياه، الحدائق والتسميات)</label>
+<label class="row"><input type="checkbox" id="baseBuildings" checked> إظهار مباني المصدر الأصلية ثلاثية الأبعاد</label>
 </div>
-<div id="status">Loading manifest…</div>
-<p><b>Original source layers</b> — independent controls.</p><div class="tile"><input id="sourceFloorToggle" type="checkbox" checked><span class="name">OpenFreeMap Liberty map base</span></div><div class="tile"><input id="sourceBuildingsToggle" type="checkbox" checked><span class="name">OpenFreeMap Liberty 3D buildings</span></div><p>These controls are independent: hide the map base, hide Liberty's native 3D buildings, or hide local building footprints from the layer list. GLB tiles remain a separate layer on the same map.</p>
-<p><b>Map data layers</b> — toggle building footprints/details, roads, street names, addresses, places, water, vegetation, bridges, tunnels, traffic signals and transport features.</p><div id="layerToggles"></div>
-<div class="actions"><button id="showAll">Check all tiles</button><button id="clearAll">Uncheck all</button><button id="resetView">Reset view</button></div>
-<p><b>Choose tiles</b> — check a tile to load it automatically; uncheck it to hide it. Large tiles may take time to download.</p>
-<div id="tiles"></div>
-<p>Data bounds: 35.90–35.99° E, 31.96–32.04° N. GLB axis conversion is applied for upright buildings; shared local origin is 35.945° E, 32.000° N. A local Copernicus DEM is stored in source/dem as GeoTIFF; it is not falsely marked as a rendered layer.</p>
-<p><a href="https://github.com/saeedhub101/Adam-City/tree/main/middle%20east/BuildGLB/tabarbour-real">Open source files in repository</a></p>
-</section>
-<button id="reopen" style="display:none;position:fixed;z-index:3;top:10px;left:10px;background:#101b25;color:white;border:1px solid #395061;border-radius:8px;padding:10px">Show controls</button>
-<div id="hint">Drag: orbit · Scroll/pinch: zoom · Right-drag: pan</div>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js"}}</script>
-<script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/controls/OrbitControls.js';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/loaders/GLTFLoader.js';
-const BASE='./middle%20east/BuildGLB/tabarbour-real/glb/';
-const libertyMap = new maplibregl.Map({container:'libertyMap',style:'https://tiles.openfreemap.org/styles/liberty',center:[35.945,32.0],zoom:14,pitch:55,bearing:0,attributionControl:true,antialias:true});
-const root=document.getElementById('view'), status=document.getElementById('status'), tilesEl=document.getElementById('tiles');
-const scene=new THREE.Scene(); scene.background=null; scene.fog=null;
-const camera=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.1,100000);camera.position.set(-2600,2200,2800);
-let renderer=null; // MapLibre owns the canvas; Three.js renders GLBs into the same WebGL context.
-scene.add(new THREE.HemisphereLight(0xe6f5ff,0x766b57,2.0));
-const sun=new THREE.DirectionalLight(0xfff1d6,3.0);sun.position.set(-1800,3200,1200);scene.add(sun);
-// OSM raster tiles are placed geographically on the ground plane; no synthetic green floor.
-const ground=new THREE.Mesh(new THREE.PlaneGeometry(30000,30000),new THREE.MeshBasicMaterial({color:0x9aab91,side:THREE.DoubleSide}));ground.rotation.x=-Math.PI/2;ground.position.y=-3;ground.renderOrder=0;scene.add(ground);ground.visible=false;
-const sourceMapGroup=new THREE.Group();sourceMapGroup.name="original-osm-map-ground";scene.add(sourceMapGroup);
-const SOURCE_MAP_ZOOM=13, SOURCE_MAP_RADIUS=3, SOURCE_MAP_CENTER=[35.945,32.0];
-function lonLatToTile(lon,lat,z){const n=2**z;return {x:(lon+180)/360*n,y:(1-Math.asinh(Math.tan(lat*Math.PI/180))/Math.PI)/2*n}}
-function tileToLon(x,z){return x/2**z*360-180}
-function tileToLat(y,z){return Math.atan(Math.sinh(Math.PI*(1-2*y/2**z)))*180/Math.PI}
-function loadOriginalOsmGround(){if(sourceMapGroup.children.length)return;const center=lonLatToTile(SOURCE_MAP_CENTER[0],SOURCE_MAP_CENTER[1],SOURCE_MAP_ZOOM);const loader=new THREE.TextureLoader();loader.setCrossOrigin("anonymous");for(let ty=Math.floor(center.y)-SOURCE_MAP_RADIUS;ty<=Math.floor(center.y)+SOURCE_MAP_RADIUS;ty++){for(let tx=Math.floor(center.x)-SOURCE_MAP_RADIUS;tx<=Math.floor(center.x)+SOURCE_MAP_RADIUS;tx++){const west=tileToLon(tx,SOURCE_MAP_ZOOM),east=tileToLon(tx+1,SOURCE_MAP_ZOOM),north=tileToLat(ty,SOURCE_MAP_ZOOM),south=tileToLat(ty+1,SOURCE_MAP_ZOOM);const x1=(west-SOURCE_MAP_CENTER[0])*111320*Math.cos(SOURCE_MAP_CENTER[1]*Math.PI/180),x2=(east-SOURCE_MAP_CENTER[0])*111320*Math.cos(SOURCE_MAP_CENTER[1]*Math.PI/180),z1=(north-SOURCE_MAP_CENTER[1])*111320,z2=(south-SOURCE_MAP_CENTER[1])*111320;loader.load(`https://tile.openstreetmap.org/${SOURCE_MAP_ZOOM}/${tx}/${ty}.png`,texture=>{texture.colorSpace=THREE.SRGBColorSpace;texture.flipY=false;texture.minFilter=THREE.LinearFilter;const mesh=new THREE.Mesh(new THREE.PlaneGeometry(Math.abs(x2-x1),Math.abs(z1-z2)),new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide}));mesh.rotation.x=-Math.PI/2;mesh.position.set((x1+x2)/2,-2.5,(z1+z2)/2);mesh.renderOrder=1;sourceMapGroup.add(mesh)},undefined,()=>{setStatus("Some OSM map tiles could not load. Check the connection and reload.",true)})}}}
-const controls={target:new THREE.Vector3(),update(){}}; // Camera/navigation are controlled by MapLibre in the shared scene.
-const loader=new GLTFLoader(), loaded=new Map();let manifest=null;
-const dataLayers=new Map(); const layerToggles=document.getElementById('layerToggles');let sourceFloorEnabled=true;
-const LAYERS=[['buildings','Building footprints','layers/buildings.geojson.gz','polygon'],['building_details','Building details & heights','layers/building_details.geojson.gz','polygon'],['streets','Roads & paths','layers/streets.geojson.gz','line'],['streetnames','Street names','layers/streetnames.geojson.gz','label'],['addresses','Building numbers / addresses','layers/addresses.geojson.gz','label'],['places','Neighborhoods & places','layers/places.geojson.gz','label'],['water','Water features','layers/water.geojson.gz','polygon'],['landcover','Trees, vegetation & land cover','layers/landcover.geojson.gz','polygon'],['infrastructure','Bridges, tunnels, signals & transport','tabarbour-infrastructure.geojson.gz','mixed']];
-const LAYER_BASE='./middle%20east/BuildGLB/tabarbour-real/source/';
-const sourceFloorToggle=document.getElementById('sourceFloorToggle'),sourceBuildingsToggle=document.getElementById('sourceBuildingsToggle');
-sourceFloorToggle.checked=true;sourceBuildingsToggle.checked=true;sourceMapGroup.visible=false;
-let libertyBaseVisibility=new Map();
-function applyLibertyVisibility(){
- if(!libertyMap.isStyleLoaded())return;
- for(const layer of libertyMap.getStyle().layers||[]){
-  if(layer.type==='custom')continue;
-  const is3DBuilding=layer.type==='fill-extrusion'||/building.*3d|3d.*building/i.test(layer.id);
-  const visible=is3DBuilding?sourceBuildingsToggle.checked:sourceFloorToggle.checked;
-  libertyMap.setLayoutProperty(layer.id,'visibility',visible?'visible':'none');
- }
-}
-sourceFloorToggle.addEventListener('change',applyLibertyVisibility);
-sourceBuildingsToggle.addEventListener('change',applyLibertyVisibility);
-function layerControl(id,label,file,kind){const l=document.createElement('label');l.className='tile';const cb=document.createElement('input');cb.type='checkbox';cb.checked=false;cb.dataset.layer=id;const s=document.createElement('span');s.className='name';s.textContent=label;const st=document.createElement('span');st.className='state';st.dataset.layerstate=id;st.textContent=id==='buildings'?'Off':'Loading';l.append(cb,s,st);layerToggles.append(l);cb.addEventListener('change',()=>{const o=dataLayers.get(id);if(id==='buildings'){const master=document.getElementById('sourceBuildingsToggle');if(master)master.checked=cb.checked}if(!cb.checked){if(o)o.visible=false;if(id==='buildings'&&!o)st.textContent='Off';return}if(o){o.visible=id==='buildings'||sourceFloorEnabled;return}loadDataLayer(id,label,file,kind,false)})}
-function featureLabel(p){return p.name||p['name:en']||p['addr:housenumber']||p.ref||p['addr:street']||p.operator||p.highway||p.amenity||p.waterway||p.natural||p.landuse||p.railway||p.public_transport||p.bridge||p.tunnel||''}
-const KOBRA_PHARMACY=[35.940358,31.997579];
-let kobraFootprintFound=false;
-function pointInRing(point,ring){let inside=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const xi=ring[i][0],yi=ring[i][1],xj=ring[j][0],yj=ring[j][1];const cross=((yi>point[1])!==(yj>point[1]))&&(point[0]<(xj-xi)*(point[1]-yi)/(yj-yi+Number.EPSILON)+xi);if(cross)inside=!inside}return inside}
-function geometryContainsKobra(g){if(!g)return false;const p=KOBRA_PHARMACY;if(g.type==='Polygon')return !!g.coordinates?.[0]&&pointInRing(p,g.coordinates[0]);if(g.type==='MultiPolygon')return g.coordinates.some(poly=>poly[0]&&pointInRing(p,poly[0]));if(g.type==='GeometryCollection')return (g.geometries||[]).some(geometryContainsKobra);return false}
-function addKobraMarker(){if(scene.getObjectByName('kobra-pharmacy-marker'))return;const p=coordsToVec(KOBRA_PHARMACY);if(!p)return;const marker=new THREE.Group();marker.name='kobra-pharmacy-marker';p.y=5;const ring=new THREE.Mesh(new THREE.TorusGeometry(20,3,8,48),new THREE.MeshBasicMaterial({color:0xff1744,depthTest:false}));ring.rotation.x=Math.PI/2;ring.position.copy(p);ring.renderOrder=30;marker.add(ring);const pin=new THREE.Mesh(new THREE.SphereGeometry(7,16,12),new THREE.MeshBasicMaterial({color:0xffff00,depthTest:false}));pin.position.set(p.x,22,p.z);pin.renderOrder=31;marker.add(pin);const stem=new THREE.Mesh(new THREE.CylinderGeometry(1.5,1.5,32,8),new THREE.MeshBasicMaterial({color:0xff1744,depthTest:false}));stem.position.set(p.x,14,p.z);stem.renderOrder=30;marker.add(stem);const label=makeTextSprite('KOBRA PHARMACY — CHECK LOCATION');label.position.set(p.x,48,p.z);label.scale.multiplyScalar(1.35);marker.add(label);scene.add(marker)}
-function coordsToVec(c){const lon=c[0],lat=c[1];if(!Number.isFinite(lon)||!Number.isFinite(lat))return null;return new THREE.Vector3((lon-35.945)*111320*Math.cos(32*Math.PI/180),0,(lat-32)*111320)}
-function geometryPoints(coords,out=[]){if(Array.isArray(coords)&&typeof coords[0]==='number'){const v=coordsToVec(coords);if(v)out.push(v)}else if(Array.isArray(coords))coords.forEach(x=>geometryPoints(x,out));return out}
-function makeTextSprite(text){const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');ctx.font='bold 24px sans-serif';const w=Math.min(600,Math.ceil(ctx.measureText(text).width)+20);canvas.width=w;canvas.height=38;ctx.font='bold 24px sans-serif';ctx.fillStyle='rgba(10,20,28,.85)';ctx.fillRect(0,0,w,38);ctx.strokeStyle='#d5e7ee';ctx.strokeRect(1,1,w-2,36);ctx.fillStyle='#fff';ctx.textBaseline='middle';ctx.fillText(text,8,19,w-16);const tex=new THREE.CanvasTexture(canvas);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,depthTest:false}));sp.scale.set(w*1.1,42,1);sp.renderOrder=20;return sp}
-async function readLayerJSON(response,file){
- const bytes=await response.arrayBuffer();let raw=new Uint8Array(bytes);
- // Pages may transparently decompress .gz files; only decompress when gzip magic remains.
- if(raw.length>=2&&raw[0]===31&&raw[1]===139){
-  if(typeof DecompressionStream==='undefined')throw Error('Gzip decompression unavailable');
-  raw=new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
- }
- return JSON.parse(new TextDecoder().decode(raw));
-}
-function featureAnchor(geometry){
- if(!geometry)return null;
- if(geometry.type==='Point')return coordsToVec(geometry.coordinates);
- if(geometry.type==='MultiPoint')return coordsToVec(geometry.coordinates[0]);
- const lines=[];
- function collect(g){
-  if(!g)return;
-  if(g.type==='LineString')lines.push(g.coordinates);
-  else if(g.type==='MultiLineString')lines.push(...g.coordinates);
-  else if(g.type==='Polygon')lines.push(...g.coordinates.slice(0,1));
-  else if(g.type==='MultiPolygon')for(const p of g.coordinates)lines.push(...p.slice(0,1));
-  else if(g.type==='GeometryCollection')for(const x of g.geometries||[])collect(x);
- }
- collect(geometry);let best=null,bestLen=-1;
- for(const line of lines){let total=0,segments=[];for(let i=1;i<line.length;i++){const a=coordsToVec(line[i-1]),b=coordsToVec(line[i]);if(!a||!b)continue;const d=a.distanceTo(b);segments.push({a,b,d});total+=d}if(total>bestLen&&segments.length){let target=total/2,run=0;for(const s of segments){if(run+s.d>=target){best=s.a.clone().lerp(s.b,(target-run)/(s.d||1));break}run+=s.d}bestLen=total}}
- if(best)return best;
- const pts=geometryPoints(geometry.coordinates||[]);return pts.length?pts[Math.floor(pts.length/2)].clone():null;
-}
-async function loadDataLayer(id,label,file,kind,makeControl=true){
- if(makeControl)layerControl(id,label,file,kind);const state=layerToggles.querySelector('[data-layerstate="'+id+'"]');
- try{
-  const response=await fetch(LAYER_BASE+file,{cache:'force-cache'});if(!response.ok)throw Error('HTTP '+response.status);
-  const fc=await readLayerJSON(response,file),group=new THREE.Group();group.name=id;
-  const colors={buildings:0xd5c4a4,building_details:0xeee0c4,streets:0xe6d8b9,streetnames:0xe7f1ff,addresses:0xffffff,places:0xffe08a,water:0x28a9e8,landcover:0x679b55,infrastructure:0xffa34b};
-  const mat=new THREE.LineBasicMaterial({color:colors[id]||0xe6d8b9,transparent:true,opacity:.92,depthTest:true});
-  const fillMat=new THREE.MeshBasicMaterial({color:colors[id]||0xd5c4a4,transparent:true,opacity:id==='water'?.35:.20,side:THREE.DoubleSide,depthWrite:false});
-  let n=0;
-  function renderGeometry(g,p){
-   if(!g)return;
-   const type=g.type, c=g.coordinates;
-   if(type==='Point'){const v=coordsToVec(c);if(!v)return;v.y=kind==='mixed'?12:8;
-    if(kind==='label'){const name=featureLabel(p);if(name){const sp=makeTextSprite(String(name));sp.position.copy(v);group.add(sp);n++}}
-    else {const dot=new THREE.Mesh(new THREE.SphereGeometry(id==='infrastructure'?4:2.5,7,5),new THREE.MeshBasicMaterial({color:colors[id]||0xffffff}));dot.position.copy(v);group.add(dot);n++}return;
-   }
-   if(type==='MultiPoint'){for(const q of c)renderGeometry({type:'Point',coordinates:q},p);return}
-   if(type==='LineString'||type==='MultiLineString'){
-    const lines=type==='LineString'?[c]:c;for(const line of lines){const pts=line.map(coordsToVec).filter(Boolean);if(pts.length>1){const geo=new THREE.BufferGeometry().setFromPoints(pts);group.add(new THREE.Line(geo,mat.clone()));n++}}return;
-   }
-   if(type==='Polygon'||type==='MultiPolygon'){
-    const polys=type==='Polygon'?[c]:c;
-    const isKobra=id==='buildings'&&geometryContainsKobra(g);
-    for(const poly of polys){if(!poly.length)continue;const ring=poly[0].map(coordsToVec).filter(Boolean);if(ring.length>2){const lineGeo=new THREE.BufferGeometry().setFromPoints(ring);const outline=mat.clone();if(isKobra){outline.color.setHex(0xff1744);outline.depthTest=false;outline.depthWrite=false;outline.linewidth=4;ring.forEach(v=>v.y=7);lineGeo.setFromPoints(ring);kobraFootprintFound=true;}group.add(new THREE.LineLoop(lineGeo,outline));n++;}}
-    if(isKobra){addKobraMarker();setStatus('Kobra Pharmacy target marked in red/yellow. Confirm the outlined footprint visually.',false)}
-    return;
-   }
-   if(type==='GeometryCollection')for(const child of g.geometries||[])renderGeometry(child,p);
-  }
-  for(const f of (fc.features||[])){const p=f.properties||{};if(kind==='label'){const name=featureLabel(p);if(!name)continue;const anchor=featureAnchor(f.geometry);if(!anchor)continue;anchor.y=id==='addresses'?14:22;const sprite=makeTextSprite(String(name));sprite.position.copy(anchor);group.add(sprite);n++}else renderGeometry(f.geometry,p)}
-  if(id==='buildings')addKobraMarker();
-  scene.add(group);dataLayers.set(id,group);const toggle=layerToggles.querySelector('input[data-layer="'+id+'"]');group.visible=!!toggle?.checked&&(id==='buildings'||sourceFloorEnabled);state.textContent=n.toLocaleString()+' features';state.style.color='#68d5c2';
- }catch(e){state.textContent='ERROR';state.title=String(e);state.style.color='#ffb4a9';setStatus('Layer '+label+' failed: '+String(e.message||e),true)}
-}
-function setStatus(s,bad=false){status.textContent=s;status.classList.toggle('error',bad)}
-function fmt(n){return Number(n||0).toLocaleString()}
-function addTile(t,i){
- const label=document.createElement('label');label.className='tile';
- const cb=document.createElement('input');cb.type='checkbox';cb.checked=t.file==='tabarbour_1797_1599.glb';cb.dataset.file=t.file;
- const name=document.createElement('span');name.className='name';name.textContent=t.file.replace('.glb','');const small=document.createElement('small');small.textContent=fmt(t.buildings)+' buildings · '+(t.bytes/1048576).toFixed(1)+' MB';name.appendChild(small);
- const state=document.createElement('span');state.className='state';state.textContent='Not loaded';state.dataset.state=t.file;
- label.append(cb,name,state);tilesEl.appendChild(label);
-}
-async function init(){
- try{
- for(const l of LAYERS)layerControl(...l);const r=await fetch(BASE+'manifest.json');if(!r.ok)throw new Error('Manifest HTTP '+r.status);
- manifest=await r.json();const ts=manifest.tiles||manifest.glbs||[];
- document.getElementById('tileCount').textContent=fmt(ts.length);
- const counts=manifest.counts||manifest.feature_counts||{};
- if(counts.buildings)document.getElementById('buildingCount').textContent=fmt(counts.buildings);
- if(counts.streets)document.getElementById('streetCount').textContent=fmt(counts.streets);
- document.getElementById('sizeCount').textContent='~'+Math.round(ts.reduce((a,t)=>a+(t.bytes||0),0)/1048576)+' MB';
- ts.forEach(addTile);setStatus('Manifest loaded. Target tile selected: tabarbour_1797_1599.glb');const target=ts.find(t=>t.file==='tabarbour_1797_1599.glb');if(target)loadFile(target).catch(()=>{});
- }catch(e){setStatus('Manifest unavailable: '+e.message+'. You can still use the page after checking repository paths.',true)}
-}
-function frameLoaded(){const box=new THREE.Box3();for(const obj of loaded.values())box.expandByObject(obj);if(box.isEmpty())return;const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());const lon=35.945+center.x/(111319.490793*Math.cos(32*Math.PI/180));const lat=32-center.z/111319.490793;const span=Math.max(size.x,size.z,100);libertyMap.flyTo({center:[lon,lat],zoom:Math.max(12,Math.min(17,Math.log2(40000/span)+12)),pitch:60,duration:900});}
-const pending=new Map();
-function disposeObject(obj){obj.traverse(o=>{if(o.isMesh){o.geometry?.dispose();if(o.material){for(const m of (Array.isArray(o.material)?o.material:[o.material]))m.dispose()}}})}
-function hideTile(file){const obj=loaded.get(file);if(obj){scene.remove(obj);disposeObject(obj);loaded.delete(file)}}
-function loadFile(t){
- if(loaded.has(t.file))return Promise.resolve(loaded.get(t.file));
- if(pending.has(t.file))return pending.get(t.file);
- const state=tilesEl.querySelector('[data-state="'+CSS.escape(t.file)+'"]');
- const promise=new Promise((resolve,reject)=>{
-  setStatus('Loading '+t.file+' — 0%');
-  if(state)state.textContent='0%';
-  loader.load(BASE+encodeURIComponent(t.file),gltf=>{
-   const obj=gltf.scene;obj.name=t.file;
-   // Keep the GLB's original materials, colors, and textures intact; only configure render flags.
-   obj.rotation.set(0,0,0);
-   obj.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=true;if(o.material){for(const m of (Array.isArray(o.material)?o.material:[o.material]))m.needsUpdate=true}}});
-   pending.delete(t.file);
-   const cb=[...tilesEl.querySelectorAll('input')].find(x=>x.dataset.file===t.file);
-   if(!cb?.checked){disposeObject(obj);if(state)state.textContent='Hidden';resolve(null);return}
-   scene.add(obj);loaded.set(t.file,obj);if(state)state.textContent='100% · Shown';if(loaded.size===1)frameLoaded();
-   setStatus('Loaded '+t.file+' (100%) · '+loaded.size+' tile(s) visible.');resolve(obj);
-  },event=>{
-   if(event.lengthComputable&&event.total>0){const pct=Math.min(99,Math.round(event.loaded/event.total*100));if(state)state.textContent=pct+'%';setStatus('Loading '+t.file+' — '+pct+'%')}
-   else {if(state)state.textContent=(event.loaded/1048576).toFixed(1)+' MB';setStatus('Loading '+t.file+' — '+(event.loaded/1048576).toFixed(1)+' MB')}
-  },error=>{pending.delete(t.file);if(state)state.textContent='Failed';setStatus('Could not load '+t.file+': '+(error?.message||'network error'),true);reject(error)});
- });
- pending.set(t.file,promise);return promise;
-}
-tilesEl.addEventListener('change',async event=>{
- const cb=event.target;if(!cb.matches('input[type="checkbox"]'))return;
- const ts=manifest?.tiles||manifest?.glbs||[];const t=ts.find(x=>x.file===cb.dataset.file);if(!t)return;
- if(!cb.checked){hideTile(t.file);const state=tilesEl.querySelector('[data-state="'+CSS.escape(t.file)+'"]');if(state)state.textContent='Hidden';setStatus('Hidden '+t.file+'. '+loaded.size+' tile(s) visible.');return}
- try{await loadFile(t)}catch{}
-});
-document.getElementById('showAll').onclick=()=>tilesEl.querySelectorAll('input').forEach(c=>{if(!c.checked){c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}))}});
-document.getElementById('clearAll').onclick=()=>tilesEl.querySelectorAll('input').forEach(c=>{if(c.checked){c.checked=false;c.dispatchEvent(new Event('change',{bubbles:true}))}});
-document.getElementById('resetView').onclick=()=>{if(loaded.size){frameLoaded()}else{libertyMap.flyTo({center:[35.945,32],zoom:14,pitch:55,bearing:0})}};
-document.getElementById('hide').onclick=()=>{document.getElementById('panel').style.display='none';document.getElementById('reopen').style.display='block'};
-document.getElementById('reopen').onclick=()=>{document.getElementById('panel').style.display='block';document.getElementById('reopen').style.display='none'};
-addEventListener('resize',()=>{libertyMap.resize()});
-const glbCustomLayer={id:'tabarbour-glb-scene',type:'custom',renderingMode:'3d',
- onAdd(map,gl){
-  try{
-   renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true,alpha:true});
-   renderer.autoClear=false;renderer.outputColorSpace=THREE.SRGBColorSpace;
-   renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;
-  }catch(e){setStatus('3D renderer initialization failed: '+(e.message||e),true);throw e}
- },
- render(gl,args){
-  if(!renderer)return;
-  try{
-   // MapLibre GL JS 5 passes a render-arguments object, not a raw matrix array.
-   const matrix=args&&args.defaultProjectionData&&args.defaultProjectionData.mainMatrix;
-   if(!matrix){setStatus('Map loaded, but its 3D projection matrix is unavailable.',true);return}
-   const mc=maplibregl.MercatorCoordinate.fromLngLat({lng:35.945,lat:32.0},0);
-   const s=mc.meterInMercatorCoordinateUnits();
-   // Convert local GLB axes (X=east, Y=height, Z=north) into MapLibre Mercator axes (X=east, Y=south, Z=up).
-   // Rotate local Y-up into world Z-up, then uniformly scale meters into Mercator units.
-   // GLB tiles use local equirectangular meters: X=east, Z=north, Y=height,
-   // with the common origin recorded in the GLB manifest (35.945, 32.0).
-   // MapLibre's matrix already contains the live camera/view transform; apply the
-   // fixed geographic model transform to it on every frame, never to the camera itself.
-   // The exported GLBs are Y-up: X=east, Y=height, Z=-north.
-   // Rotate height into MapLibre's Z-up axis, then flip Mercator Y so north
-   // moves toward smaller Mercator Y. Use the shared origin from manifest.json.
-   const origin=manifest?.origin||{longitude:35.945,latitude:32.0};
-   const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:Number(origin.longitude),lat:Number(origin.latitude)},0);
-   const meters=anchor.meterInMercatorCoordinateUnits();
-   const projectedMeters=meters*Math.cos(Number(origin.latitude)*Math.PI/180);
-   // GLB axes: X=east, Y=height, Z=north.
-   // MapLibre axes: X=east, Y=south-positive Mercator, Z=up.
-   // Permute axes (not just scale them): GLB Y -> map Z, GLB Z -> map -Y.
-   const model=new THREE.Matrix4().set(
-     projectedMeters, 0, 0, anchor.x,
-     0, 0, -projectedMeters, anchor.y,
-     0, meters, 0, anchor.z,
-     0, 0, 0, 1
-   );
-   const viewProjection=new THREE.Matrix4().fromArray(matrix);
-   camera.projectionMatrix.copy(viewProjection.multiply(model));
-   camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
-   camera.matrixWorld.identity();
-   camera.matrixWorldInverse.identity();
-   camera.near=0.1;camera.far=1e9;
-   camera.updateMatrixWorld(true);
-   renderer.resetState();
-   renderer.render(scene,camera);
-   renderer.resetState();
-  }catch(e){setStatus('3D scene render error: '+(e.message||e),true);console.error('Tabarbour 3D render error',e)}
- }
-};
-libertyMap.on('error',e=>{const message=e&&e.error&&e.error.message?e.error.message:'Map/style/tile loading error';setStatus('OpenFreeMap error: '+message,true);console.error('Tabarbour map error',e)});
-libertyMap.on('load',()=>{try{libertyMap.addLayer(glbCustomLayer);setStatus('OpenFreeMap Liberty loaded; initializing shared GLB scene…')}catch(e){setStatus('Could not attach GLB scene: '+(e.message||e),true);console.error(e)}});
-libertyMap.on('style.load',()=>{applyLibertyVisibility();});
+<div class="group"><div class="group-title">مجلدات OSM — طبقات مستقلة</div>
+<label class="row"><input type="checkbox" id="osm-raw"> 1. raw — بيانات OSM الخام (ليست طبقة خريطة مباشرة)</label>
+<label class="row"><input type="checkbox" id="osm-features"> 2. features — جميع المعالم الجغرافية</label>
+<label class="row"><input type="checkbox" id="osm-tags"> 3. tags — جدول الوسوم (بيانات وصفية وليست طبقة مكانية)</label>
+<label class="row"><input type="checkbox" id="roxas-boulevard-glb"> 4.1 Roxas Boulevard — مباني GLB (طبقة مستقلة)</label>
+<label class="row"><input type="checkbox" id="osm-roads" checked> 5. roads — الطرق وتفاصيل هندستها</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-1"> 5.1 GLB — الجزء 1 (مواد وواجهات ونوافذ)</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-2"> 5.2 GLB — الجزء 2 (مواد وواجهات ونوافذ)</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-3"> 5.3 GLB — الجزء 3 (مواد وواجهات ونوافذ)</label>
+<label class="row"><input type="checkbox" id="enhanced-glb-part-4"> 5.4 GLB — الجزء 4 (مواد وواجهات ونوافذ)</label>
+<label class="row"><input type="checkbox" id="robinsons-enhancement"> Robinsons Place Manila — نموذج ثلاثي الأبعاد مستقل جديد</label>
+<label class="row"><input type="checkbox" id="osm-thematic"> 6. thematic — المتاجر والعلامات والتفاصيل الموضوعية</label>
+<label class="row"><input type="checkbox" id="osm-pedestrian"> 7. pedestrian — تفاصيل المشاة</label>
+<label class="row"><input type="checkbox" id="osm-addresses"> 8. addresses — العناوين وأسماء الشوارع والرموز البريدية</label>
+<label class="row"><input type="checkbox" id="osm-administrative"> 9. administrative — الحدود الإدارية</label>
+<label class="row"><input type="checkbox" id="osm-places"> 10. places — المتاجر والطعام والصحة والتعليم والخدمات</label>
+<label class="row"><input type="checkbox" id="osm-nature"> 11. nature — المياه والأشجار والحدائق والغطاء النباتي</label>
 
-function animate(){requestAnimationFrame(animate);}animate();init();
+</div>
+<div class="status" id="status">جارٍ تحميل خريطة المصدر…</div><div id="error"></div>
+</section>
+<div class="attribution">OpenFreeMap / OpenMapTiles · © OpenStreetMap contributors</div>
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
+<script>
+(async function(){
+ const status=document.getElementById('status'), errorBox=document.getElementById('error');
+ const url=p=>new URL(p,location.href).href;
+ let style;
+ try{const res=await fetch('https://tiles.openfreemap.org/styles/liberty');if(!res.ok)throw new Error('Style HTTP '+res.status);style=await res.json();}
+ catch(e){errorBox.style.display='block';errorBox.textContent='تعذر تحميل نمط OpenFreeMap: '+e.message;status.textContent='تعذر تحميل الخريطة الأساسية.';return;}
+ const originalLayers=style.layers.map(l=>({...l}));
+ const baseBuildingIds=originalLayers.filter(l=>l.type==='fill-extrusion'&&(/building/i.test(l.id+' '+(l['source-layer']||'')))).map(l=>l.id);
+ const map=new maplibregl.Map({container:'map',style,center:[35.945,32.0],zoom:14,pitch:55,bearing:0,antialias:true}); window.adamCityMap=map;
+ map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'bottom-left');
+ map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
+ const visibility=(id,on)=>{if(map.getLayer(id))map.setLayoutProperty(id,'visibility',on?'visible':'none');};
+ const setGroup=(ids,on)=>ids.forEach(id=>visibility(id,on));
+ const groups={raw:[],features:[],tags:[],buildings:[],roads:[],thematic:[],pedestrian:[],addresses:[],administrative:[],places:[],nature:[]};
+ const sourcePaths=[];
+ function addSourceLayer(key,sourceId,path,kind,color){
+   const resolvedUrl=url(path);sourcePaths.push({sourceId,path,resolvedUrl});
+   map.addSource(sourceId,{type:'geojson',data:resolvedUrl});
+   const ids=[];
+   if(kind==='buildings'){
+     // OSM exports retain the original tags inside properties.tags; support both nested and flattened schemas.
+     const tag=(name)=>['coalesce',['get',name],['get',name,['get','tags']]];
+     const height=tag('height'), levels=['coalesce',['get','building:levels'],['get','building:levels',['get','tags']],['get','levels'],['get','levels',['get','tags']]];
+     const id=sourceId+'-3d';map.addLayer({id,type:'fill-extrusion',source:sourceId,filter:['==',['geometry-type'],'Polygon'],layout:{visibility:'none'},paint:{
+       'fill-extrusion-color':['coalesce',['get','render_color'],['get','colour'],['get','building:colour'],['get','building:colour',['get','tags']],color||'#c8bca9'],
+       'fill-extrusion-height':['max',3,['case',['>', ['to-number',height,0],0],['to-number',height,0],['>', ['to-number',levels,0],0],['*',['to-number',levels,0],3.15],5]],
+       'fill-extrusion-base':['max',0,['to-number',tag('min_height'),0]],'fill-extrusion-opacity':0.92,'fill-extrusion-vertical-gradient':true}});ids.push(id);
+   }else{
+     const fill=sourceId+'-fill',line=sourceId+'-line',circle=sourceId+'-point';
+     map.addLayer({id:fill,type:'fill',source:sourceId,layout:{visibility:'none'},paint:{'fill-color':color||'#5aa99b','fill-opacity':0.24,'fill-outline-color':color||'#5aa99b'}});ids.push(fill);
+     map.addLayer({id:line,type:'line',source:sourceId,layout:{visibility:'none','line-cap':'round','line-join':'round'},paint:{'line-color':color||'#5aa99b','line-width':['interpolate',['linear'],['zoom'],10,1,16,2.5],'line-opacity':0.9}});ids.push(line);
+     map.addLayer({id:circle,type:'circle',source:sourceId,layout:{visibility:'none'},paint:{'circle-radius':['interpolate',['linear'],['zoom'],10,2,16,5],'circle-color':color||'#5aa99b','circle-stroke-color':'#ffffff','circle-stroke-width':0.7}});ids.push(circle);
+   }
+   groups[key].push(...ids);
+ }
+ function bind(key){const el=document.getElementById('osm-'+key);el.addEventListener('change',()=>{setGroup(groups[key],el.checked);if(key==='raw'||key==='tags')status.textContent=key==='raw'?'raw يحتوي بيانات المصدر الخام، ولا يُرسم مباشرة على الخريطة.':'tags عبارة عن جداول وسوم CSV، ولا تُرسم مباشرة كمعالم جغرافية.';});}
+ map.on('error',e=>{if(e.error){const source=e.sourceId?' | source='+e.sourceId:'';const msg='خطأ في تحميل طبقة: '+e.error.message+source;status.textContent=msg;errorBox.style.display='block';errorBox.textContent=msg+' — راجع مسار GeoJSON أو استجابة GitHub Pages.';console.error('ADAM CITY map error',e);}});
+ map.on('load',()=>{
+  try{
+   addSourceLayer('features','osm-features-src','complete_data/OSM/data/features/ermita-features.geojson','map','#8ab5c5');
+   addSourceLayer('roads','osm-roads-src','complete_data/OSM/data/roads/ermita-road-network.geojson','map','#f0c979');
+   addSourceLayer('roads','osm-road-engineering-src','complete_data/OSM/data/roads/ermita-road-engineering-details.geojson','map','#e28c63');
+   addSourceLayer('thematic','osm-branded-stores-src','complete_data/OSM/data/thematic/ermita-branded-stores.geojson','map','#e9a5d1');
+   addSourceLayer('thematic','osm-signals-src','complete_data/OSM/data/thematic/ermita-street-signs-and-signals.geojson','map','#ffd166');
+   addSourceLayer('pedestrian','osm-pedestrian-src','complete_data/OSM/data/pedestrian/ermita-pedestrian-street-details.geojson','map','#9ee493');
+   addSourceLayer('addresses','osm-addresses-src','complete_data/OSM/data/addresses/ermita-addresses-street-names-postcodes.geojson','map','#f4f1bb');
+   addSourceLayer('administrative','osm-admin-src','complete_data/OSM/data/administrative/ermita-administrative-boundaries.geojson','map','#a78bfa');
+   addSourceLayer('places','osm-places-src','complete_data/OSM/data/places/ermita-shops-food-health-education-religion-services.geojson','map','#ff8fab');
+   addSourceLayer('nature','osm-water-src','complete_data/OSM/data/nature/ermita-water-and-natural-features.geojson','map','#67c9e8');
+   addSourceLayer('nature','osm-vegetation-src','complete_data/OSM/data/nature/ermita-trees-parks-vegetation.geojson','map','#71c982');
+   // Bind all eleven OSM directory toggles; raw and tags are inventory/data tables rather than direct map layers.
+   ['raw','features','tags','roads','thematic','pedestrian','addresses','administrative','places','nature'].forEach(bind);
+   // Show the two core spatial OSM layers immediately so the test page visibly verifies the local datasets.
+   setGroup(groups.roads,true);
+   // The custom 3D facade layer must render AFTER OSM extrusions added above; otherwise solid buildings cover the windows.
+   if(map.getLayer('windows-facade-details')) map.moveLayer('windows-facade-details');
+   document.getElementById('baseGround').addEventListener('change',ev=>originalLayers.filter(l=>!baseBuildingIds.includes(l.id)).forEach(l=>visibility(l.id,ev.target.checked)));
+   document.getElementById('baseBuildings').addEventListener('change',ev=>setGroup(baseBuildingIds,ev.target.checked));
+   status.textContent='الخريطة جاهزة. طبقات OSM مضافة؛ فعّل مربعات الاختيار لإظهارها. مجلدا raw وtags جداول/بيانات خام وليسا طبقات مكانية مباشرة.';
+  }catch(e){errorBox.style.display='block';errorBox.textContent='تعذر تجهيز طبقات OSM: '+(e.message||e);status.textContent='تم تحميل الخريطة الأساسية، لكن بعض طبقات OSM لم تُجهّز.';}
+ });
+})();
 </script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}
+</script>
+<script>
+window.addEventListener("error",function(ev){
+ const target=ev.target;
+ if(target && target.tagName==="SCRIPT"){
+  const box=document.getElementById("error"),status=document.getElementById("status");
+  if(box){box.style.display="block";box.textContent="فشل تحميل مكتبة JavaScript: "+(target.src||ev.message||"module script");}
+  if(status)status.textContent="توقف تحميل نموذج windows بسبب خطأ JavaScript.";
+ }
+});
+window.addEventListener("unhandledrejection",function(ev){
+ const box=document.getElementById("error"),status=document.getElementById("status");
+ if(box){box.style.display="block";box.textContent="خطأ JavaScript غير معالج: "+(ev.reason?.message||String(ev.reason));}
+ if(status)status.textContent="توقف تحميل نموذج windows بسبب خطأ JavaScript.";
+});
+</script>
+
+
+
+
+
+<script type="module">
+/* Load the new Tabarbour GLB tiles. Keep the original test-page transform unchanged. */
+import * as THREE from 'three';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'https://cdn.jsdelivr.net/npm/meshoptimizer@0.22.0/meshopt_decoder.module.js';
+(async function(){
+ const status=document.getElementById('status'),errorBox=document.getElementById('error'),container=document.getElementById('glb-files');
+ const base='middle%20east/BuildGLB/tabarbour-real/glb/';
+ try{
+  const response=await fetch(new URL(base+'manifest.json',location.href));if(!response.ok)throw new Error('Manifest HTTP '+response.status);
+  const manifest=await response.json(),origin=manifest.origin;
+  const map=await new Promise((resolve,reject)=>{let n=0;const check=()=>{if(window.adamCityMap?.isStyleLoaded())return resolve(window.adamCityMap);if(++n>600)return reject(new Error('انتهت مهلة انتظار الخريطة'));setTimeout(check,100)};check()});
+  const anchor=maplibregl.MercatorCoordinate.fromLngLat({lng:Number(origin.longitude),lat:Number(origin.latitude)},0);
+  const meters=anchor.meterInMercatorCoordinateUnits(),projectedMeters=meters*Math.cos(Number(origin.latitude)*Math.PI/180);
+  for(const tile of manifest.tiles||[]){
+   const label=document.createElement('label');label.className='row';
+   const toggle=document.createElement('input');toggle.type='checkbox';toggle.id='glb-'+tile.tile;
+   const title=document.createElement('span');title.textContent=tile.file+' — '+(tile.buildings||0).toLocaleString()+' مبنى';
+   label.append(toggle,title);container.append(label);
+   let loading=false,ready=false,model=null,renderer=null,camera=null,scene=null;
+   const id='tabarbour-glb-'+tile.tile,modelUrl=new URL(base+tile.file,location.href).href;
+   const layer={
+    id,type:'custom',renderingMode:'3d',
+    onAdd(mapInstance,gl){
+     renderer=new THREE.WebGLRenderer({canvas:mapInstance.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;
+     camera=new THREE.Camera();scene=new THREE.Scene();scene.add(new THREE.AmbientLight(0xffffff,2.0));
+     const light=new THREE.DirectionalLight(0xffffff,2.0);light.position.set(0,-70,100).normalize();scene.add(light);
+     const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
+     loader.load(modelUrl,gltf=>{model=gltf.scene;model.visible=!!toggle.checked;scene.add(model);ready=true;loading=false;status.textContent='تم تحميل '+tile.file;mapInstance.triggerRepaint()},undefined,err=>{loading=false;errorBox.style.display='block';errorBox.textContent='تعذر تحميل '+tile.file+': '+(err?.message||err)});
+    },
+    render(gl,args){
+     if(!renderer||!model||!model.visible)return;
+     const values=args?.defaultProjectionData?.mainMatrix||args?.modelViewProjectionMatrix||((Array.isArray(args)||ArrayBuffer.isView(args))?args:null);
+     if(!values||values.length!==16)return;
+     const matrix=Array.from(values,Number);if(matrix.some(v=>!Number.isFinite(v)))return;
+     const projection=new THREE.Matrix4().fromArray(matrix);
+     // Original test.html transform — intentionally unchanged.
+     const localTransform=new THREE.Matrix4().makeTranslation(anchor.x,anchor.y,anchor.z).scale(new THREE.Vector3(projectedMeters,-projectedMeters,meters));
+     camera.projectionMatrix.copy(projection).multiply(localTransform);camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+     renderer.resetState();renderer.render(scene,camera);renderer.resetState();
+    }
+   };
+   toggle.addEventListener('change',()=>{if(toggle.checked){if(!ready&&!loading){loading=true;try{map.addLayer(layer);map.moveLayer(id)}catch(e){loading=false;errorBox.style.display='block';errorBox.textContent=e.message}}else if(model){model.visible=true;map.triggerRepaint()}}else if(model){model.visible=false;map.triggerRepaint()}});
+  }
+  status.textContent='تم تحميل قائمة ملفات GLB لطبربور.';
+ }catch(e){errorBox.style.display='block';errorBox.textContent='تعذر تجهيز ملفات GLB: '+(e?.message||e);status.textContent='تعذر تحميل ملفات طبربور.'}
+})();
+</script>
+
+
 </body></html>
