@@ -73,7 +73,7 @@ jobs:
             --data "middle east/Jordan/layers" \
             --out "middle east/BuildGLB/jordan-50" \
             --west 34.9 --east 39.4 --south 29.1 --north 33.4 \
-            --tile 1.0 --city Jordan --prefix jordan \
+            --tile 0.75 --city Jordan --prefix jordan \
             --repo_commit false --force true \
             --infra_path /tmp/jordan-infrastructure.geojson.gz
 
@@ -90,6 +90,9 @@ jobs:
               raise SystemExit("FAIL: no Jordan GLB files were generated")
           if len(files)>50:
               raise SystemExit(f"FAIL: {len(files)} GLBs exceeds the 50-file limit")
+          oversized=[(p.name,p.stat().st_size) for p in files if p.stat().st_size>95*1024*1024]
+          if oversized:
+              raise SystemExit("FAIL: GLB exceeds the safe GitHub file size limit: "+repr(oversized[:10]))
           for p in files:
               with p.open("rb") as f: header=f.read(12)
               if len(header)!=12 or header[:4]!=b"glTF":
