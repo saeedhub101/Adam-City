@@ -95,7 +95,7 @@ function loadFile(t){
    pending.delete(t.file);
    const cb=[...tilesEl.querySelectorAll('input')].find(x=>x.dataset.file===t.file);
    if(!cb?.checked){disposeObject(obj);if(state)state.textContent='Hidden';resolve(null);return}
-   scene.add(obj);loaded.set(t.file,obj);if(state)state.textContent='100% · Shown';frameLoaded();
+   scene.add(obj);loaded.set(t.file,obj);if(state)state.textContent='100% · Shown';if(loaded.size===1)frameLoaded();
    setStatus('Loaded '+t.file+' (100%) · '+loaded.size+' tile(s) visible.');resolve(obj);
   },event=>{
    if(event.lengthComputable&&event.total>0){const pct=Math.min(99,Math.round(event.loaded/event.total*100));if(state)state.textContent=pct+'%';setStatus('Loading '+t.file+' — '+pct+'%')}
