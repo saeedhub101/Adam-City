@@ -3,6 +3,10 @@
 Last updated: 2026-10-26 UTC  
 Repository: saeedhub101/Adam-City — branch main
 
+## Mandatory import policy
+
+All future imports must follow [IMPORT_WORKFLOW_POLICY.md](IMPORT_WORKFLOW_POLICY.md): inspect existing data first, import only missing assets, checkpoint and commit during execution, resume after failure, isolate stage errors, avoid millions of small files, and report validated payloads rather than catalog metadata. The currently running Jordan-wide GLB workflow is left untouched until it completes or fails.
+
 ## Required output contract
 
 - At most 50 regional GLB files for the generated Jordan country model.
