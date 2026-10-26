@@ -20,7 +20,6 @@ namespace MiddleEastWorld
         public double gameOriginLon = 35.940358;
         public double gameOriginLat = 31.997579;
         readonly List<GltfImport> imports = new List<GltfImport>();
-        bool started;
 
         async void Start()
         {
@@ -68,6 +67,13 @@ namespace MiddleEastWorld
                 loadedCount++;
             }
             Debug.Log("Loaded " + loadedCount + " existing local Amman GLB tiles. No external runtime data was requested.");
+        }
+
+        void OnDestroy()
+        {
+            foreach (var importer in imports)
+                if (importer != null) importer.Dispose();
+            imports.Clear();
         }
     }
 }
