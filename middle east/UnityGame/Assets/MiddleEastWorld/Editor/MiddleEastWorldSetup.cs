@@ -80,6 +80,7 @@ public static class MiddleEastWorldSetup
 
         var world = new GameObject("Open World — Jordan / Palestine");
         var streamer = world.AddComponent<OpenWorldStreamer>();
+        world.AddComponent<ExistingAmmanGlbTiles>();
         streamer.player=player.transform;
         streamer.region="Jordan";
         streamer.originLon=35.940358;
@@ -88,6 +89,7 @@ public static class MiddleEastWorldSetup
         streamer.tileDegrees=0.02f;
         streamer.streetLabels=true;
 
+        ExistingAmmanGlbInstaller.InstallNearbyTiles();
         EditorSceneManager.SaveScene(scene, "Assets/MiddleEastWorld/Scenes/MiddleEastOpenWorld.unity");
         AssetDatabase.SaveAssets();
         Debug.Log("Tabarbour starter scene created at 31.997579, 35.940358. Install the already-generated BuildData into StreamingAssets before running; no new geographic data is downloaded.");
