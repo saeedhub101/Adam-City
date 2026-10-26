@@ -16,113 +16,15 @@
     "matched_to_osm_source": 0,
     "unmatched_glb_nodes_retained": 0,
     "source_features_with_polygon_geometry": 231208,
-    "source_polygon_parts": 0,
-    "source_features_missing_osm_id": 231208,
+    "source_polygon_parts": 231226,
+    "source_features_missing_osm_id": 0,
     "source_geometry_types": {
       "LineString": 230906,
       "MultiPolygon": 231208,
       "Point": 2299
     }
   },
-  "unmatched_source_samples": [
-    {
-      "feature_keys": [
-        "type",
-        "geometry",
-        "properties"
-      ],
-      "properties_keys": [
-        "amenity",
-        "building",
-        "denomination",
-        "name",
-        "name:ar",
-        "name:en",
-        "religion"
-      ],
-      "geometry_keys": [
-        "type",
-        "coordinates"
-      ],
-      "geometry_type": "MultiPolygon",
-      "sample_id": null,
-      "sample_properties": {
-        "amenity": "place_of_worship",
-        "building": "yes",
-        "denomination": "sunni",
-        "name": "مسجد عباد الرحمن",
-        "name:ar": "مسجد عباد الرحمن",
-        "name:en": "Ebad Al Rahman Mosque",
-        "religion": "muslim"
-      }
-    },
-    {
-      "feature_keys": [
-        "type",
-        "geometry",
-        "properties"
-      ],
-      "properties_keys": [
-        "building",
-        "information",
-        "name",
-        "tourism"
-      ],
-      "geometry_keys": [
-        "type",
-        "coordinates"
-      ],
-      "geometry_type": "MultiPolygon",
-      "sample_id": null,
-      "sample_properties": {
-        "building": "yes",
-        "information": "office",
-        "name": "Ajloun Castle Visitor Center",
-        "tourism": "information"
-      }
-    },
-    {
-      "feature_keys": [
-        "type",
-        "geometry",
-        "properties"
-      ],
-      "properties_keys": [
-        "alt_name:de",
-        "building",
-        "castle_type",
-        "fee",
-        "historic",
-        "image",
-        "name",
-        "name:ar",
-        "name:de",
-        "name:en",
-        "name:fr",
-        "ruins",
-        "tourism",
-        "wikidata",
-        "wikimedia_commons",
-        "wikipedia"
-      ],
-      "geometry_keys": [
-        "type",
-        "coordinates"
-      ],
-      "geometry_type": "MultiPolygon",
-      "sample_id": null,
-      "sample_properties": {
-        "alt_name:de": "Festung Ajloun",
-        "building": "yes",
-        "castle_type": "defensive",
-        "fee": "yes",
-        "historic": "castle",
-        "image": "https://commons.wikimedia.org/wiki/File:Ajlun_Castle_in_2009.jpg",
-        "name": "قلعة عجلون",
-        "name:ar": "قلعة عجلون"
-      }
-    }
-  ],
+  "unmatched_source_samples": [],
   "glb_file_samples": [
     {
       "file": "amman_3572_3170.glb",
