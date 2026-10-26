@@ -8,10 +8,10 @@ from collections import defaultdict
 
 def args():
     a=sys.argv[sys.argv.index("--")+1:] if "--" in sys.argv else []
-    d={"data":"../Jordan/layers","out":"../BuildGLB/Amman","west":35.72,"east":36.08,"south":31.70,"north":32.12,"tile":0.01,"city":"Amman","prefix":"amman","repo_commit":True}
+    d={"data":"../Jordan/layers","out":"../BuildGLB/Amman","west":35.72,"east":36.08,"south":31.70,"north":32.12,"tile":0.01,"city":"Amman","prefix":"amman","repo_commit":True,"force":False
     for i in range(0,len(a),2):
         k=a[i].lstrip("-"); v=a[i+1]
-        d[k]=float(v) if k in ("west","east","south","north","tile") else (v.lower() in ("true","1","yes") if k=="repo_commit" else v)
+        d[k]=float(v) if k in ("west","east","south","north","tile") else (v.lower() in ("true","1","yes") if k in ("repo_commit","force") else v)
     return d
 
 def read(path):
@@ -136,7 +136,7 @@ def main():
             if len(ring)<4:continue
             lon=sum(q[0] for q in ring)/len(ring);lat=sum(q[1] for q in ring)/len(ring)
             if not(west<=lon<=east and south<=lat<=north):continue
-            h=height(p);tiles[key(lon,lat)]["buildings"].append({"id":f.get("id",""),"name":tag(p,"name","name:en"),"height":h,"ring":ring,"properties":p})
+            h=height(p);tiles[key(lon,lat)]["buildings"].append({"id":(f.get("id") or p.get("@id") or p.get("osm_id") or p.get("way_id") or p.get("relation_id") or ""),"name":tag(p,"name","name:en"),"height":h,"ring":ring,"properties":p})
     for f in streets:
         p=f.get("properties") or {};g=f.get("geometry") or {};c=g.get("coordinates") or []
         lines=[c] if g.get("type")=="LineString" else c if g.get("type")=="MultiLineString" else []
@@ -163,7 +163,7 @@ def main():
     known={entry.get("file") for entry in manifest["tiles"]}
     for (tx,ty),items in sorted(tiles.items()):
         filename=f"{prefix}_{tx}_{ty}.glb";target=out/filename
-        if target.exists() and target.stat().st_size>1024:
+        if target.exists() and target.stat().st_size>1024 and not cfg.get("force",False):
             print("RESUME_SKIP_EXISTING",target)
             if filename not in known:
                 # Recover tile inventory after interrupted runs whose manifest was overwritten.
@@ -184,10 +184,13 @@ def main():
             for lab in items["labels"]:
                 x,z=xy(lab["point"][0],lab["point"][1],*origin);add_text(lab["name"],"Street label "+lab["name"],(x,.15,z),2,trim)
             bpy.ops.export_scene.gltf(filepath=str(target),export_format="GLB",use_selection=False,export_apply=True)
-            if filename not in known:
-                manifest["tiles"].append({"tile":f"{tx}_{ty}","file":filename,"buildings":len(items["buildings"]),"streets":len(items["streets"]),"labels":len(items["labels"]),"bytes":target.stat().st_size})
+            record={"tile":f"{tx}_{ty}","file":filename,"buildings":len(items["buildings"]),"streets":len(items["streets"]),"labels":len(items["labels"]),"bytes":target.stat().st_size,"counts_known":True}
+            existing=next((entry for entry in manifest["tiles"] if entry.get("file")==filename),None)
+            if existing is None:
+                manifest["tiles"].append(record)
                 known.add(filename)
-                manifest["counts"]["buildings"]+=len(items["buildings"]);manifest["counts"]["streets"]+=len(items["streets"]);manifest["counts"]["street_labels"]+=len(items["labels"])
+            else:
+                existing.update(record)
             print("EXPORTED",target,len(items["buildings"]),len(items["streets"]))
             manifest_path.write_text(json.dumps(manifest,indent=2,ensure_ascii=False),encoding="utf-8")
             if cfg.get("repo_commit",True):
@@ -204,6 +207,11 @@ def main():
             try: (out/"failures.jsonl").open("a",encoding="utf-8").write(json.dumps({"city":city,"tile":f"{tx}_{ty}","error":repr(e)})+"\\n")
             except Exception: pass
 
+    manifest["counts"]={
+        "buildings":sum(int(x.get("buildings") or 0) for x in manifest["tiles"]),
+        "streets":sum(int(x.get("streets") or 0) for x in manifest["tiles"]),
+        "street_labels":sum(int(x.get("labels") or 0) for x in manifest["tiles"]),
+    }
     (out/"manifest.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False),encoding="utf-8")
     print(city+" GLB COMPLETE",json.dumps(manifest["counts"]))
 if __name__=="__main__":main()
