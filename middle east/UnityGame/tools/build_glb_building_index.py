@@ -119,6 +119,8 @@ def main():
     geometry_samples = defaultdict(int)
     with gzip.open(SOURCE, "rt", encoding="utf-8") as stream:
         source = json.load(stream)
+    sample = (source.get("features") or [{}])[0]
+    print(json.dumps({"source_schema_sample": {"feature_keys": sorted(sample.keys()), "property_keys": sorted((sample.get("properties") or {}).keys()) if isinstance(sample.get("properties") or {}, dict) else [], "feature_id": sample.get("id"), "properties": sample.get("properties")}, "node_match_pattern": BUILDING_RE.pattern}, ensure_ascii=False)[:5000])
     for feature in source.get("features", []):
         geometry_samples[(feature.get("geometry") or {}).get("type", "missing")] += 1
         rings = outer_rings(feature)
