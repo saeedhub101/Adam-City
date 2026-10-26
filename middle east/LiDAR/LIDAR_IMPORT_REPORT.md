@@ -1,28 +1,29 @@
-# Jordan and Palestine — public LiDAR import
+# Jordan and Palestine — verified LiDAR / laser-data import
 
-Storage target: middle east/LiDAR/.
+Storage target: middle east/LiDAR/downloads/.
 
-## Incremental and resume behavior
+## Method
 
-- Each catalog page and each completed asset is committed and pushed to main during the run.
-- Committed progress prevents already imported assets from being downloaded again.
-- Interrupted .part files are retained and resumed using HTTP Range when supported.
-- Files larger than 80 MiB are split into numbered chunks and described by a reassembly JSON file.
-- Auth-gated/unavailable sources are catalogued as skipped, not falsely reported as downloaded.
-- GEDI and ICESat-2 are sparse satellite laser observations, not complete airborne city scans.
+- Geographic NASA CMR searches only; no full global S3 catalog crawl.
+- Up to 3 pages per collection/region; 4 concurrent downloads.
+- Only direct HDF5, LAS/LAZ and ZIP payloads are accepted; signatures are validated.
+- Existing completed URLs are skipped and partial downloads resume with HTTP Range where supported.
+- Files over 80 MiB are split into chunks with a reassembly manifest.
+- Satellite laser footprints are not dense airborne city point clouds; metadata is not counted as data.
 
-## Totals
+## Verified totals
 
-- Completed assets: 0
-- Bytes downloaded this run: 0
-- New assets this run: 0
-- Skipped assets: 7728
-- Retry points/errors: 4
+- Completed validated payloads: 0
+- Bytes represented by completed payloads: 0
+- Bytes transferred this run: 0
+- Newly completed this run: 0
+- Skipped/unavailable: 7728
+- Errors/retry points: 4
 
-## Completed assets
+## Completed payloads
 
 
-## Skipped assets
+## Skipped/unavailable
 
 - NASA CMR ATL03: ATL03_20260719213541_05483202_007_01.h5_dpyQXxz6_ATL03_20260719213541_05483202_007_01.h5 — HTTP 401; not anonymously downloadable
 - NASA CMR ATL03: ATL03_20260718095125_05253206_007_01.h5_dpyQXxz6_ATL03_20260718095125_05253206_007_01.h5 — HTTP 401; not anonymously downloadable
@@ -7753,9 +7754,13 @@ Storage target: middle east/LiDAR/.
 - NASA CMR ATL08: ATL08_20181017130228_02890102_007_01.h5_ATL08_20181017130228_02890102_007_01.h5 — HTTP 401; not anonymously downloadable
 - NASA CMR ATL08: ATL08_20181017130228_02890102_007_01.h5_ATL08_20181017130228_02890102_007_01.h5 — HTTP 401; not anonymously downloadable
 
-## Errors and resume points
+## Errors / resume points
 
 - aws_open_lidar_catalog: CalledProcessError: Command '['git', 'push', 'origin', 'HEAD:main']' returned non-zero exit status 1.
 - 91c856201b9b532ee823: CalledProcessError: Command '['git', 'push', 'origin', 'HEAD:main']' returned non-zero exit status 1.
 - 7e4cf685c0dab00358c0: CalledProcessError: Command '['git', 'push', 'origin', 'HEAD:main']' returned non-zero exit status 1.
 - 6302eb0fe50c77371895: CalledProcessError: Command '['git', 'push', 'origin', 'HEAD:main']' returned non-zero exit status 1.
+
+## Coverage warning
+
+No verified laser payload is recorded yet. NASA Earthdata-protected URLs are not counted as imported. GEDI/ICESat-2 cannot replace dense airborne LiDAR for realistic city buildings.
