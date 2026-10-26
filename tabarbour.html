@@ -31,10 +31,10 @@ h1{font-size:20px;margin:0 0 4px}p{margin:6px 0;color:var(--muted);line-height:1
  <div class="stat"><b id="sizeCount">~370 MB</b><span>model data total</span></div>
 </div>
 <div id="status">Loading manifest…</div>
-<div class="actions"><button id="loadVisible">Load checked tiles</button><button id="showAll">Check all tiles</button><button id="clearAll">Uncheck all</button><button id="resetView">Reset view</button></div>
-<p><b>Choose tiles</b> — tiles load only when you press “Load checked tiles”. Loading all 20 at once may be heavy on phones.</p>
+<div class="actions"><button id="showAll">Check all tiles</button><button id="clearAll">Uncheck all</button><button id="resetView">Reset view</button></div>
+<p><b>Choose tiles</b> — check a tile to load it automatically; uncheck it to hide it. Large tiles may take time to download.</p>
 <div id="tiles"></div>
-<p>Data bounds: 35.90–35.99° E, 31.96–32.04° N. GLBs are converted from source Z-up to viewer Y-up; shared local origin is 35.945° E, 32.000° N. Terrain elevation is only shown if it is present in the GLB; no separate DEM is fabricated.</p>
+<p>Data bounds: 35.90–35.99° E, 31.96–32.04° N. The original GLB orientation is preserved; shared local origin is 35.945° E, 32.000° N. Terrain elevation is only shown if it is present in the GLB; no separate DEM is fabricated.</p>
 <p><a href="https://github.com/saeedhub101/Adam-City/tree/main/middle%20east/BuildGLB/tabarbour-real">Open source files in repository</a></p>
 </section>
 <button id="reopen" style="display:none;position:fixed;z-index:3;top:10px;left:10px;background:#101b25;color:white;border:1px solid #395061;border-radius:8px;padding:10px">Show controls</button>
@@ -60,7 +60,7 @@ function setStatus(s,bad=false){status.textContent=s;status.classList.toggle('er
 function fmt(n){return Number(n||0).toLocaleString()}
 function addTile(t,i){
  const label=document.createElement('label');label.className='tile';
- const cb=document.createElement('input');cb.type='checkbox';cb.checked=i<3;cb.dataset.file=t.file;
+ const cb=document.createElement('input');cb.type='checkbox';cb.checked=false;cb.dataset.file=t.file;
  const name=document.createElement('span');name.className='name';name.textContent=t.file.replace('.glb','');const small=document.createElement('small');small.textContent=fmt(t.buildings)+' buildings · '+(t.bytes/1048576).toFixed(1)+' MB';name.appendChild(small);
  const state=document.createElement('span');state.className='state';state.textContent='Not loaded';state.dataset.state=t.file;
  label.append(cb,name,state);tilesEl.appendChild(label);
@@ -74,31 +74,44 @@ async function init(){
  if(counts.buildings)document.getElementById('buildingCount').textContent=fmt(counts.buildings);
  if(counts.streets)document.getElementById('streetCount').textContent=fmt(counts.streets);
  document.getElementById('sizeCount').textContent='~'+Math.round(ts.reduce((a,t)=>a+(t.bytes||0),0)/1048576)+' MB';
- ts.forEach(addTile);setStatus('Manifest loaded. Choose tiles, then load them.');
+ ts.forEach(addTile);setStatus('Manifest loaded. Check any tile to load it.');
  }catch(e){setStatus('Manifest unavailable: '+e.message+'. You can still use the page after checking repository paths.',true)}
 }
 function frameLoaded(){const box=new THREE.Box3();for(const obj of loaded.values())box.expandByObject(obj);if(box.isEmpty())return;const size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());controls.target.copy(center);const max=Math.max(size.x,size.y,size.z,10);camera.position.set(center.x+max*1.0,center.y+max*.75,center.z+max*1.1);camera.near=Math.max(.1,max/10000);camera.far=Math.max(100000,max*10);camera.updateProjectionMatrix();controls.update()}
-async function loadFile(t){
- if(loaded.has(t.file))return loaded.get(t.file);
- const state=document.querySelector('[data-state="'+CSS.escape(t.file)+'"]');if(state)state.textContent='Loading…';
- setStatus('Loading '+t.file+' — large tiles may take time.');
- try{
- const gltf=await loader.loadAsync(BASE+encodeURIComponent(t.file));const obj=gltf.scene;obj.name=t.file;
- // These GLBs are Z-up (X=east, Y=north, Z=height); Three.js is Y-up.
- // Convert axes consistently for every tile: source height Z becomes viewer height Y.
- obj.rotation.x=-Math.PI/2;
- obj.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=true;if(o.material){for(const m of (Array.isArray(o.material)?o.material:[o.material])){if(m.color&&m.color.getHex()===0xffffff)m.color.setHex(0xd6c8ad);m.needsUpdate=true}}}});
- scene.add(obj);loaded.set(t.file,obj);if(state)state.textContent='Loaded';setStatus('Loaded '+loaded.size+' / '+((manifest?.tiles||manifest?.glbs||[]).length)+' tiles.');return obj;
- }catch(e){if(state)state.textContent='Failed';setStatus('Could not load '+t.file+': '+e.message,true);throw e}
+const pending=new Map();
+function disposeObject(obj){obj.traverse(o=>{if(o.isMesh){o.geometry?.dispose();if(o.material){for(const m of (Array.isArray(o.material)?o.material:[o.material]))m.dispose()}}})}
+function hideTile(file){const obj=loaded.get(file);if(obj){scene.remove(obj);disposeObject(obj);loaded.delete(file)}}
+function loadFile(t){
+ if(loaded.has(t.file))return Promise.resolve(loaded.get(t.file));
+ if(pending.has(t.file))return pending.get(t.file);
+ const state=tilesEl.querySelector('[data-state="'+CSS.escape(t.file)+'"]');
+ const promise=new Promise((resolve,reject)=>{
+  setStatus('Loading '+t.file+' — 0%');
+  if(state)state.textContent='0%';
+  loader.load(BASE+encodeURIComponent(t.file),gltf=>{
+   const obj=gltf.scene;obj.name=t.file;
+   // Keep the GLB's authored orientation; rotating the whole model caused buildings to appear inverted.
+   obj.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=true;if(o.material){for(const m of (Array.isArray(o.material)?o.material:[o.material])){if(m.color&&m.color.getHex()===0xffffff)m.color.setHex(0xd6c8ad);m.needsUpdate=true}}}});
+   pending.delete(t.file);
+   const cb=[...tilesEl.querySelectorAll('input')].find(x=>x.dataset.file===t.file);
+   if(!cb?.checked){disposeObject(obj);if(state)state.textContent='Hidden';resolve(null);return}
+   scene.add(obj);loaded.set(t.file,obj);if(state)state.textContent='100% · Shown';frameLoaded();
+   setStatus('Loaded '+t.file+' (100%) · '+loaded.size+' tile(s) visible.');resolve(obj);
+  },event=>{
+   if(event.lengthComputable&&event.total>0){const pct=Math.min(99,Math.round(event.loaded/event.total*100));if(state)state.textContent=pct+'%';setStatus('Loading '+t.file+' — '+pct+'%')}
+   else {if(state)state.textContent=(event.loaded/1048576).toFixed(1)+' MB';setStatus('Loading '+t.file+' — '+(event.loaded/1048576).toFixed(1)+' MB')}
+  },error=>{pending.delete(t.file);if(state)state.textContent='Failed';setStatus('Could not load '+t.file+': '+(error?.message||'network error'),true);reject(error)});
+ });
+ pending.set(t.file,promise);return promise;
 }
-document.getElementById('loadVisible').onclick=async()=>{
- const ts=manifest?.tiles||manifest?.glbs||[];const selected=[...tilesEl.querySelectorAll('input:checked')].map(c=>c.dataset.file);
- if(!selected.length){setStatus('Check at least one tile first.',true);return}
- let n=0;for(const f of selected){const t=ts.find(x=>x.file===f);if(t){try{await loadFile(t);n++}catch{}}}
- frameLoaded();setStatus('Finished: '+n+' selected tile(s) processed; '+loaded.size+' tile(s) visible.');
-};
-document.getElementById('showAll').onclick=()=>tilesEl.querySelectorAll('input').forEach(c=>c.checked=true);
-document.getElementById('clearAll').onclick=()=>tilesEl.querySelectorAll('input').forEach(c=>c.checked=false);
+tilesEl.addEventListener('change',async event=>{
+ const cb=event.target;if(!cb.matches('input[type="checkbox"]'))return;
+ const ts=manifest?.tiles||manifest?.glbs||[];const t=ts.find(x=>x.file===cb.dataset.file);if(!t)return;
+ if(!cb.checked){hideTile(t.file);const state=tilesEl.querySelector('[data-state="'+CSS.escape(t.file)+'"]');if(state)state.textContent='Hidden';setStatus('Hidden '+t.file+'. '+loaded.size+' tile(s) visible.');return}
+ try{await loadFile(t)}catch{}
+});
+document.getElementById('showAll').onclick=()=>tilesEl.querySelectorAll('input').forEach(c=>{if(!c.checked){c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}))}});
+document.getElementById('clearAll').onclick=()=>tilesEl.querySelectorAll('input').forEach(c=>{if(c.checked){c.checked=false;c.dispatchEvent(new Event('change',{bubbles:true}))}});
 document.getElementById('resetView').onclick=()=>{if(loaded.size){frameLoaded()}else{camera.position.set(2600,2200,2800);controls.target.set(0,0,0);controls.update()}};
 document.getElementById('hide').onclick=()=>{document.getElementById('panel').style.display='none';document.getElementById('reopen').style.display='block'};
 document.getElementById('reopen').onclick=()=>{document.getElementById('panel').style.display='block';document.getElementById('reopen').style.display='none'};
