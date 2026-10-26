@@ -2,6 +2,12 @@ name: Publish Tabarbour 3D preview
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tabarbour.html'
+      - 'middle east/BuildGLB/tabarbour-real/glb/**'
+      - '.github/workflows/deploy-pages.yml'
 
 permissions:
   contents: read
