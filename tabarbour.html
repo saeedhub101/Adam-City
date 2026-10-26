@@ -206,8 +206,35 @@ document.getElementById('resetView').onclick=()=>{if(loaded.size){frameLoaded()}
 document.getElementById('hide').onclick=()=>{document.getElementById('panel').style.display='none';document.getElementById('reopen').style.display='block'};
 document.getElementById('reopen').onclick=()=>{document.getElementById('panel').style.display='block';document.getElementById('reopen').style.display='none'};
 addEventListener('resize',()=>{libertyMap.resize()});
-const glbCustomLayer={id:'tabarbour-glb-scene',type:'custom',renderingMode:'3d',onAdd(map,gl){renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;},render(gl,matrix){if(!renderer)return;const mc=maplibregl.MercatorCoordinate.fromLngLat([35.945,32.0],0);const s=mc.meterInMercatorCoordinateUnits();const model=new THREE.Matrix4().makeTranslation(mc.x,mc.y,0).multiply(new THREE.Matrix4().makeScale(s,-s,s));camera.projectionMatrix.fromArray(matrix).multiply(model);camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();camera.matrixWorld.identity();camera.matrixWorldInverse.identity();renderer.resetState();renderer.clearDepth();renderer.render(scene,camera);libertyMap.triggerRepaint();}};
-libertyMap.on('load',()=>{libertyMap.addLayer(glbCustomLayer);});
+const glbCustomLayer={id:'tabarbour-glb-scene',type:'custom',renderingMode:'3d',
+ onAdd(map,gl){
+  try{
+   renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true,alpha:true});
+   renderer.autoClear=false;renderer.outputColorSpace=THREE.SRGBColorSpace;
+   renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;
+  }catch(e){setStatus('3D renderer initialization failed: '+(e.message||e),true);throw e}
+ },
+ render(gl,args){
+  if(!renderer)return;
+  try{
+   // MapLibre GL JS 5 passes a render-arguments object, not a raw matrix array.
+   const matrix=args&&args.defaultProjectionData&&args.defaultProjectionData.mainMatrix;
+   if(!matrix){setStatus('Map loaded, but its 3D projection matrix is unavailable.',true);return}
+   const mc=maplibregl.MercatorCoordinate.fromLngLat({lng:35.945,lat:32.0},0);
+   const s=mc.meterInMercatorCoordinateUnits();
+   const model=new THREE.Matrix4().makeTranslation(mc.x,mc.y,0)
+     .multiply(new THREE.Matrix4().makeScale(s,-s,s));
+   camera.projectionMatrix.copy(new THREE.Matrix4().fromArray(matrix).multiply(model));
+   camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+   camera.matrixWorld.identity();camera.matrixWorldInverse.identity();
+   renderer.resetState();renderer.render(scene,camera);
+  }catch(e){setStatus('3D scene render error: '+(e.message||e),true);console.error('Tabarbour 3D render error',e)}
+ }
+};
+libertyMap.on('error',e=>{const message=e&&e.error&&e.error.message?e.error.message:'Map/style/tile loading error';setStatus('OpenFreeMap error: '+message,true);console.error('Tabarbour map error',e)});
+libertyMap.on('load',()=>{try{libertyMap.addLayer(glbCustomLayer);setStatus('OpenFreeMap Liberty loaded; initializing shared GLB scene…')}catch(e){setStatus('Could not attach GLB scene: '+(e.message||e),true);console.error(e)}});
+libertyMap.on('style.load',()=>{sourceFloorToggle.checked=true});
+
 function animate(){requestAnimationFrame(animate);}animate();init();
 </script>
 </body></html>
