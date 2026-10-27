@@ -19,8 +19,11 @@ def tiles_for_bounds(z):
     w,s,e,n = BOUNDS
     x0,y1 = xyz(w,s,z); x1,y0 = xyz(e,n,z)
     return [(z,x,y) for x in range(min(x0,x1),max(x0,x1)+1) for y in range(min(y0,y1),max(y0,y1)+1)]
-def fetch(url, timeout=35, attempts=5):
-    """Retry transient network/rate-limit failures; never treat an error page as a tile."""
+class EmptyTileResponse(Exception):
+    """Successful HTTP response with no tile payload; skip without retrying."""
+
+def fetch(url, timeout=18, attempts=2):
+    """Retry transient network errors briefly; empty successful responses are skipped immediately."""
     last = None
     for attempt in range(1, attempts + 1):
         try:
@@ -28,14 +31,16 @@ def fetch(url, timeout=35, attempts=5):
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 data, ctype = r.read(), r.headers.get("Content-Type", "")
                 if not data:
-                    raise ValueError("empty tile response; content-type=" + ctype)
+                    raise EmptyTileResponse("empty tile response; content-type=" + ctype)
                 return data, ctype
+        except EmptyTileResponse:
+            raise
         except urllib.error.HTTPError as e:
             last = e
             # Missing tiles are not transient; retry only rate limits and server errors.
             if e.code not in (408, 425, 429, 500, 502, 503, 504):
                 raise
-        except (urllib.error.URLError, TimeoutError, OSError, ValueError) as e:
+        except (urllib.error.URLError, TimeoutError, OSError) as e:
             last = e
         if attempt < attempts:
             delay = min(20, attempt * 2)
@@ -90,7 +95,7 @@ def run_tiles(label, path, url_fn, zooms, fmt, attribution, max_tiles=None):
             # Resume safely: already downloaded tiles remain in the MBTiles database and are not fetched again.
             exists=db.execute("SELECT 1 FROM tiles WHERE zoom_level=? AND tile_column=? AND tile_row=? LIMIT 1",(z,x,tms_y)).fetchone()
             if exists:
-                if i%250==0:
+                if i%50==0:
                     db.commit()
                     write_report(label,path,total,ok=db.execute("SELECT COUNT(*) FROM tiles").fetchone()[0],errors=errors,complete=False)
                     checkpoint([path, OUT/"regional-source-import-report.json"],"Resume checkpoint "+label+" tile "+str(i))
@@ -107,12 +112,13 @@ def run_tiles(label, path, url_fn, zooms, fmt, attribution, max_tiles=None):
                 db.execute("INSERT OR REPLACE INTO tiles VALUES(?,?,?,?)",(z,x,tms_y,data))
             except Exception as e:
                 errors.append({"z":z,"x":x,"y":y,"error":repr(e)[:180]})
-            if i%50==0:
+            if i%10==0:
                 db.commit()
                 saved=db.execute("SELECT COUNT(*) FROM tiles").fetchone()[0]
                 write_report(label,path,total,ok=saved,errors=errors,complete=False)
                 print(label,"checkpoint",i,"/",total,"saved",saved,"failed",len(errors),flush=True)
-                if i % 250 == 0:
+                # Push durable batches to main during the run, never wait for final completion.
+                if i % 50 == 0:
                     checkpoint([path, OUT/"regional-source-import-report.json"],"Checkpoint "+label+" tile batch "+str(i))
         db.commit()
     finally: db.close()
