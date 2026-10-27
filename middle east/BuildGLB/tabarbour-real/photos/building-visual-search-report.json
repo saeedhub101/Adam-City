@@ -1,0 +1,16 @@
+{
+  "area": "Tabarbour, Amman, Jordan",
+  "source_file": "middle east/BuildGLB/tabarbour-real/source/layers/buildings.geojson.gz",
+  "buildings_indexed": 11384,
+  "named_buildings_total": 145,
+  "named_buildings_searched": 0,
+  "search_engines": [
+    "Google ordinary HTML search",
+    "Bing ordinary HTML image search"
+  ],
+  "no_api_keys_or_api_endpoints": true,
+  "auto_facade_texture_assignment": false,
+  "search_policy": "Coordinates are the centroid of each saved OSM footprint. Search results are candidates only; visually compare facade, address, camera direction and footprint before accepting.",
+  "searched_osm_ids": [],
+  "updated_utc": "2026-10-27T07:32:43Z"
+}
