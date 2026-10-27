@@ -11,7 +11,7 @@
       "status": "in_progress",
       "expected_tiles": 1624,
       "saved_tiles": 38,
-      "error_count": 12,
+      "error_count": 62,
       "errors_sample": [
         {
           "z": 15,
@@ -83,6 +83,54 @@
           "z": 15,
           "x": 19652,
           "y": 13303,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13304,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13305,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13306,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13307,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13308,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13309,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13310,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13311,
           "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
         }
       ],
@@ -1024,5 +1072,5 @@
       }
     }
   },
-  "updated_utc": "2026-10-27T07:27:15.320808+00:00"
+  "updated_utc": "2026-10-27T07:27:25.433485+00:00"
 }
