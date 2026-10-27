@@ -11,127 +11,79 @@
       "status": "in_progress",
       "expected_tiles": 1624,
       "saved_tiles": 38,
-      "error_count": 762,
+      "error_count": 12,
       "errors_sample": [
         {
           "z": 15,
           "x": 19651,
           "y": 13302,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
         },
         {
           "z": 15,
           "x": 19651,
           "y": 13303,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
         },
         {
           "z": 15,
           "x": 19651,
           "y": 13304,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
         },
         {
           "z": 15,
           "x": 19651,
           "y": 13305,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
         },
         {
           "z": 15,
           "x": 19651,
           "y": 13306,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
         },
         {
           "z": 15,
           "x": 19651,
           "y": 13307,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
         },
         {
           "z": 15,
           "x": 19651,
           "y": 13308,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
         },
         {
           "z": 15,
           "x": 19651,
           "y": 13309,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
         },
         {
           "z": 15,
           "x": 19651,
           "y": 13310,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
         },
         {
           "z": 15,
           "x": 19651,
           "y": 13311,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
         },
         {
           "z": 15,
           "x": 19652,
           "y": 13302,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
         },
         {
           "z": 15,
           "x": 19652,
           "y": 13303,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
-        },
-        {
-          "z": 15,
-          "x": 19652,
-          "y": 13304,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
-        },
-        {
-          "z": 15,
-          "x": 19652,
-          "y": 13305,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
-        },
-        {
-          "z": 15,
-          "x": 19652,
-          "y": 13306,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
-        },
-        {
-          "z": 15,
-          "x": 19652,
-          "y": 13307,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
-        },
-        {
-          "z": 15,
-          "x": 19652,
-          "y": 13308,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
-        },
-        {
-          "z": 15,
-          "x": 19652,
-          "y": 13309,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
-        },
-        {
-          "z": 15,
-          "x": 19652,
-          "y": 13310,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
-        },
-        {
-          "z": 15,
-          "x": 19652,
-          "y": 13311,
-          "error": "RuntimeError(\"tile fetch failed after retries: ValueError('empty tile response; content-type=application/vnd.mapbox-vector-tile')\")"
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
         }
       ],
       "file": "middle east/BuildGLB/tabarbour-real/source/openfreemap-tabarbour-z12-17.mbtiles"
@@ -1072,5 +1024,5 @@
       }
     }
   },
-  "updated_utc": "2026-10-27T03:39:30.457245+00:00"
+  "updated_utc": "2026-10-27T07:27:15.320808+00:00"
 }
