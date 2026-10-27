@@ -8,10 +8,10 @@
   },
   "sources": {
     "openfreemap_vector_tiles": {
-      "status": "in_progress",
+      "status": "complete_with_gaps",
       "expected_tiles": 1624,
       "saved_tiles": 38,
-      "error_count": 1562,
+      "error_count": 1586,
       "errors_sample": [
         {
           "z": 15,
@@ -134,7 +134,612 @@
           "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
         }
       ],
-      "file": "middle east/BuildGLB/tabarbour-real/source/openfreemap-tabarbour-z12-17.mbtiles"
+      "file": "middle east/BuildGLB/tabarbour-real/source/openfreemap-tabarbour-z12-17.mbtiles",
+      "tiles_expected": 1624,
+      "tiles_saved": 38,
+      "errors": [
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13302,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13303,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13304,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13305,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13306,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13307,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13308,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13309,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13310,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19651,
+          "y": 13311,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13302,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13303,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13304,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13305,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13306,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13307,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13308,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13309,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13310,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19652,
+          "y": 13311,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13302,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13303,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13304,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13305,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13306,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13307,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13308,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13309,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13310,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19653,
+          "y": 13311,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13302,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13303,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13304,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13305,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13306,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13307,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13308,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13309,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13310,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19654,
+          "y": 13311,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13302,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13303,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13304,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13305,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13306,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13307,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13308,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13309,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13310,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19655,
+          "y": 13311,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13302,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13303,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13304,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13305,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13306,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13307,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13308,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13309,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13310,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19656,
+          "y": 13311,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19657,
+          "y": 13302,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19657,
+          "y": 13303,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19657,
+          "y": 13304,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19657,
+          "y": 13305,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19657,
+          "y": 13306,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19657,
+          "y": 13307,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19657,
+          "y": 13308,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19657,
+          "y": 13309,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19657,
+          "y": 13310,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19657,
+          "y": 13311,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19658,
+          "y": 13302,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19658,
+          "y": 13303,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19658,
+          "y": 13304,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19658,
+          "y": 13305,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19658,
+          "y": 13306,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19658,
+          "y": 13307,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19658,
+          "y": 13308,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19658,
+          "y": 13309,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19658,
+          "y": 13310,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19658,
+          "y": 13311,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19659,
+          "y": 13302,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19659,
+          "y": 13303,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19659,
+          "y": 13304,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19659,
+          "y": 13305,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19659,
+          "y": 13306,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19659,
+          "y": 13307,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19659,
+          "y": 13308,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19659,
+          "y": 13309,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19659,
+          "y": 13310,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 15,
+          "x": 19659,
+          "y": 13311,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 16,
+          "x": 39303,
+          "y": 26605,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 16,
+          "x": 39303,
+          "y": 26606,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 16,
+          "x": 39303,
+          "y": 26607,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 16,
+          "x": 39303,
+          "y": 26608,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 16,
+          "x": 39303,
+          "y": 26609,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 16,
+          "x": 39303,
+          "y": 26610,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 16,
+          "x": 39303,
+          "y": 26611,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 16,
+          "x": 39303,
+          "y": 26612,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 16,
+          "x": 39303,
+          "y": 26613,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        },
+        {
+          "z": 16,
+          "x": 39303,
+          "y": 26614,
+          "error": "EmptyTileResponse('empty tile response; content-type=application/vnd.mapbox-vector-tile')"
+        }
+      ],
+      "bytes": 2428928
     },
     "nasa_gibs_satellite": {
       "status": "complete_with_gaps",
@@ -1072,5 +1677,5 @@
       }
     }
   },
-  "updated_utc": "2026-10-27T07:32:22.919787+00:00"
+  "updated_utc": "2026-10-27T07:32:28.293018+00:00"
 }
